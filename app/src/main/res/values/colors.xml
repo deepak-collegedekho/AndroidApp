@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- <color name="primary_color">#00384f</color>-->
+    <color name="primary_color">#ff062d41</color>
+    <color name="primary_color_dark">#ff062d42</color>
+    <color name="divider1">#ff002f45</color>
+    <color name="bg_divider">#4c000000</color>
+    <color name="primary_color_90">#e500384f</color>
+    <color name="white">#fff</color>
+    <color name="text_lightest_grey">#949494</color>
+    <color name="material_button_blue">#ff1f7eeb</color>
+    <color name="material_button_blue_dark">#ff1f66cb</color>
+    <color name="text_subhead">#037fb2</color>
+    <color name="text_head_blue">#ff072c42</color>
+    <color name="text_subhead_blue">#ff0d71af</color>
+    <color name="text_light_grey">#ff333333</color>
+    <color name="like_green">#ff3c8f00</color>
+    <color name="like_green_selected">#ff45b300</color>
+    <color name="dislike_red_selected">#fff23000</color>
+    <color name="dislike_red">#ffd93000</color>
+</resources>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/AppTheme.CardView.CenterGravity">
+
+    <LinearLayout
+        android:id="@+id/home_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+        <TextView
+            style="@style/AppTheme.TextHomeHead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="I know what I want" />
+
+        <TextView
+            style="@style/AppTheme.TextHomeSubHead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Look up a college you're interested in" />
+
+        <EditText
+            android:id="@+id/search_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/search_bg"
+            android:drawableRight="@drawable/ic_action_search_dark"
+            android:gravity="left|center_vertical"
+            android:hint="@string/home_search"
+            android:includeFontPadding="false"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
+            android:singleLine="true"
+            android:textColor="@color/text_lightest_grey"
+            android:textColorHint="@color/text_lightest_grey"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/button_search_college"
+            style="@style/AppTheme.BlueButton"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/home_search" />
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

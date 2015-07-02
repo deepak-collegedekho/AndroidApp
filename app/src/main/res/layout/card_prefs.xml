@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/AppTheme.CardView.CenterGravity">
+
+    <LinearLayout
+        android:id="@+id/home_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include layout="@layout/item_home_strip" />
+
+        <View style="@style/AppTheme.Divider1" />
+
+        <include layout="@layout/item_home_strip" />
+
+        <View style="@style/AppTheme.Divider1" />
+
+        <include layout="@layout/item_home_strip" />
+    </LinearLayout>
+</android.support.v7.widget.CardView>

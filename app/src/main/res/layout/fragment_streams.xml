@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_color"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+    <TextView
+        style="@style/AppTheme.TextHomeHead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:text="College majors are my top priority" />
+
+    <TextView
+        style="@style/AppTheme.TextHomeSubHead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Find college with the majors you want" />
+
+    <GridView
+        android:id="@+id/stream_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:horizontalSpacing="@dimen/activity_horizontal_margin"
+        android:numColumns="2"
+        android:orientation="vertical"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="@dimen/activity_horizontal_margin"
+        tools:listitem="@layout/card_stream">
+
+    </GridView>
+</LinearLayout>
