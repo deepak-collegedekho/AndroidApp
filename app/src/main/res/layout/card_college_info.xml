@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/AppTheme.InfoCardView"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    style="@style/AppTheme.InfoCardView">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -10,7 +8,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/info_tag"
+            android:id="@+id/textview_cinfo_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -21,9 +19,10 @@
         <View style="@style/AppTheme.Divider1" />
 
         <TextView
+            android:id="@+id/textview_cinfo_about"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="IIT-Roorkee has been ranked at 66th position in Asian Universities Ranking, 2013" />
+            android:text="IIT-Roorkee has been ranked at 66th position in Asian Universities Ranking, 2013asdfghjklqwertyuiosdfghj" />
     </LinearLayout>
 </android.support.v7.widget.CardView>

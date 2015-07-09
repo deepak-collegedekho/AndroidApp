@@ -9,4 +9,5 @@
     <dimen name="corner_radius">3dp</dimen>
     <dimen name="widget_image_height">120dp</dimen>
     <dimen name="like_dislike_size">35dp</dimen>
+    <dimen name="course_label_horizontal_margin">10dp</dimen>
 </resources>

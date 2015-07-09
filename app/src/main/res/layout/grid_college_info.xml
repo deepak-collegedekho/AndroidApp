@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/grid_why_join"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="10dp"
@@ -11,25 +12,17 @@
 
     <include
         layout="@layout/card_college_info"
-        app:layout_columnSpan="2"
-        app:layout_columnWeight="1"
-        app:layout_gravity="fill_horizontal" />
+        app:layout_columnSpan="2" />
 
     <include
         layout="@layout/card_college_info"
-        app:layout_columnSpan="2"
-        app:layout_columnWeight="1"
-        app:layout_gravity="fill_horizontal" />
+        app:layout_columnSpan="2" />
 
     <include
         layout="@layout/card_college_info"
-        app:layout_columnSpan="2"
-        app:layout_columnWeight="1"
-        app:layout_gravity="fill_horizontal" />
+        app:layout_columnSpan="2" />
 
     <include
         layout="@layout/card_college_info"
-        app:layout_columnSpan="2"
-        app:layout_columnWeight="1"
-        app:layout_gravity="fill_horizontal" />
+        app:layout_columnSpan="2" />
 </android.support.v7.widget.GridLayout>

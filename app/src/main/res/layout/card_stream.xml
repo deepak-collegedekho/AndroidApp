@@ -8,12 +8,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <ImageView
+        <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/stream_logo"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
+            android:padding="5dp"
             android:src="@drawable/ic_medicine" />
 
         <TextView
@@ -24,8 +25,11 @@
             android:ellipsize="end"
             android:gravity="center_horizontal"
             android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
             android:paddingTop="5dp"
             android:singleLine="true"
-            android:text="Medical" />
+            android:text="Medical"
+            android:textSize="14sp" />
     </LinearLayout>
 </android.support.v7.widget.CardView>

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.Constants;
 
 
@@ -55,6 +56,13 @@ public class HomeFragment extends Fragment {
         ViewGroup parent = ((ViewGroup) rootView.findViewById(R.id.home_frame));
         for (int i = 0; i < parent.getChildCount(); i += 2) {
             View v = parent.getChildAt(i);
+            v.setTag(User.Prefs.values()[i / 2]);
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemSelected((User.Prefs) v.getTag());
+                }
+            });
             ((ImageView) v.findViewById(R.id.home_image)).setImageResource(Constants.headImages[i]);
             ((TextView) v.findViewById(R.id.home_label_head)).setText(Constants.headLabels[i]);
             ((TextView) v.findViewById(R.id.home_label_subhead)).setText(Constants.headSubLabels[i]);
@@ -63,9 +71,9 @@ public class HomeFragment extends Fragment {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onItemSelected(int position) {
+    public void onItemSelected(User.Prefs pref) {
         if (mListener != null) {
-            mListener.onHomeItemSelected(position);
+            mListener.onHomeItemSelected(pref);
         }
     }
 
@@ -98,7 +106,7 @@ public class HomeFragment extends Fragment {
      */
     public interface OnHomeInteractionListener {
         // TODO: Update argument type and name
-        public void onHomeItemSelected(int position);
+        public void onHomeItemSelected(User.Prefs preference);
     }
 
 }

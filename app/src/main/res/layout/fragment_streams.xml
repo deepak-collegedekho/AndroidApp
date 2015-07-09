@@ -34,6 +34,7 @@
         android:horizontalSpacing="@dimen/activity_horizontal_margin"
         android:numColumns="2"
         android:orientation="vertical"
+        android:scrollbars="none"
         android:stretchMode="columnWidth"
         android:verticalSpacing="@dimen/activity_horizontal_margin"
         tools:listitem="@layout/card_stream">

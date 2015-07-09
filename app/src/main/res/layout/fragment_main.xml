@@ -10,6 +10,6 @@
         android:layout_height="match_parent"
         android:background="@color/bg_divider" />
 
-    <include layout="@layout/card_search_college" />
+    <include layout="@layout/card_prefs" />
 
 </FrameLayout>
