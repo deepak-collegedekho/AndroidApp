@@ -62,14 +62,4 @@
         android:text="Why join NIT Trichy?"
         android:textColor="@color/white"
         android:textSize="18sp" />
-
-    <GridView xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/grid_why_join"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:numColumns="2"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:scrollbars="none"
-        tools:listitem="@layout/card_college_info" />
 </LinearLayout>

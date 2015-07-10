@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Institute;
+import com.collegedekho.app.fragment.InstituteListFragment;
 
 import java.util.ArrayList;
 
@@ -29,7 +30,12 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rootView = LayoutInflater.from(mContext).inflate(R.layout.item_college_list, parent, false);
-        return new InstituteHolder(rootView);
+        try {
+            return new InstituteHolder(rootView, (InstituteListFragment.OnInstituteSelectedListener) mContext);
+        } catch (ClassCastException e) {
+            throw new ClassCastException(mContext.toString()
+                    + " must implement OnInstituteSelectedListener");
+        }
     }
 
     @Override
@@ -55,18 +61,25 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         return mInstitutes.size();
     }
 
-    static class InstituteHolder extends RecyclerView.ViewHolder {
+    static class InstituteHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView instiName;
         TextView instiLocation;
         TextView instiCourses;
+        InstituteListFragment.OnInstituteSelectedListener mListener;
 
-        public InstituteHolder(View itemView) {
+        public InstituteHolder(View itemView, InstituteListFragment.OnInstituteSelectedListener listener) {
             super(itemView);
             instiName = (TextView) itemView.findViewById(R.id.textview_college_name);
             instiLocation = (TextView) itemView.findViewById(R.id.textview_college_location);
             instiCourses = (TextView) itemView.findViewById(R.id.textview_college_courses);
+            mListener = listener;
+            itemView.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View v) {
+            mListener.onCollegeSelected(getAdapterPosition());
+        }
     }
 }

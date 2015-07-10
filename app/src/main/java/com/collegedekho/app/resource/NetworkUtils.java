@@ -4,13 +4,17 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.collegedekho.app.DataLoadListener;
 import com.collegedekho.app.MySingleton;
+import com.collegedekho.app.listener.DataLoadListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,15 +27,19 @@ public class NetworkUtils {
 
     RequestQueue mQueue;
     DataLoadListener mListener;
+    String token;
 
     public NetworkUtils(Context context, DataLoadListener listener) {
         mQueue = MySingleton.getInstance(context.getApplicationContext()).getRequestQueue();
         mListener = listener;
     }
 
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public void getData(@Nullable final String tag, String url) {
-        final StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 mListener.onDataLoaded(tag, response);
@@ -39,13 +47,31 @@ public class NetworkUtils {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                String errorMessage = "Error ";
-                if (error.networkResponse != null)
-                    errorMessage += error.networkResponse.statusCode;
-                errorMessage += ": " + error.getLocalizedMessage();
-                mListener.onError(tag, errorMessage);
+                String json = null;
+
+                NetworkResponse response = error.networkResponse;
+                if (response != null && response.data != null) {
+                    switch (response.statusCode) {
+                        case 400:
+                            json = new String(response.data);
+                            json = trimMessage(json, "message");
+                            break;
+                    }
+                    if (json != null)
+                        mListener.onError(tag, json);
+                }
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                if (token != null) {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("Authorization", "Token " + token);
+                    return params;
+                }
+                return super.getHeaders();
+            }
+        };
         request.setShouldCache(true);
         if (tag != null)
             request.setTag(tag);
@@ -53,7 +79,7 @@ public class NetworkUtils {
     }
 
     public void postData(final String tag, String url, final Map<String, String> params) {
-        final StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 mListener.onDataLoaded(tag, response);
@@ -61,11 +87,19 @@ public class NetworkUtils {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                String errorMessage = "Error ";
-                if (error.networkResponse != null)
-                    errorMessage += error.networkResponse.statusCode;
-                errorMessage += ": " + error.getMessage();
-                mListener.onError(tag, errorMessage);
+                String json = null;
+
+                NetworkResponse response = error.networkResponse;
+                if (response != null && response.data != null) {
+                    switch (response.statusCode) {
+                        case 400:
+                            json = new String(response.data);
+                            json = trimMessage(json, "message");
+                            break;
+                    }
+                    if (json != null)
+                        mListener.onError(tag, json);
+                }
             }
         }) {
             @Override
@@ -84,5 +118,19 @@ public class NetworkUtils {
         if (tag != null)
             request.setTag(tag);
         mQueue.add(request);
+    }
+
+    public String trimMessage(String json, String key) {
+        String trimmedString;
+
+        try {
+            JSONObject obj = new JSONObject(json);
+            trimmedString = obj.getString(key);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return trimmedString;
     }
 }

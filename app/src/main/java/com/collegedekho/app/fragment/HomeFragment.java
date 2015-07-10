@@ -23,7 +23,6 @@ import com.collegedekho.app.resource.Constants;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String TITLE = "Home";
 
 
@@ -33,13 +32,6 @@ public class HomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance() {
         return new HomeFragment();
     }
@@ -70,7 +62,6 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onItemSelected(User.Prefs pref) {
         if (mListener != null) {
             mListener.onHomeItemSelected(pref);
@@ -105,8 +96,7 @@ public class HomeFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnHomeInteractionListener {
-        // TODO: Update argument type and name
-        public void onHomeItemSelected(User.Prefs preference);
+        void onHomeItemSelected(User.Prefs preference);
     }
 
 }

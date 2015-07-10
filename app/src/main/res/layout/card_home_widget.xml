@@ -8,14 +8,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <ImageView
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/textview_widget_image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/widget_image_height"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop" />
 
         <TextView
-            android:id="@+id/college_tag"
+            android:id="@+id/textview_widget_name"
             style="@style/AppTheme.TextHomeHead"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

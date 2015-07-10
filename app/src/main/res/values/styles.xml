@@ -6,6 +6,7 @@
         <item name="android:colorPrimary" tools:ignore="NewApi">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_color_dark</item>
         <item name="android:colorPrimaryDark" tools:ignore="NewApi">@color/primary_color_dark</item>
+        <item name="colorAccent">@color/text_subhead_blue</item>
     </style>
 
     <style name="AppTheme.BlueButton">
@@ -87,8 +88,8 @@
         <item name="android:textColor">@color/textPrimary</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:paddingTop">10dp</item>
-        <item name="android:paddingLeft">5dp</item>
-        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingBottom">5dp</item>
         <item name="android:paddingRight">5dp</item>
     </style>
 
@@ -96,11 +97,15 @@
     <style name="AppTheme.TextView.courseLeftLabel" parent="AppTheme.TextView.style1">
 
         <item name="android:paddingLeft">@dimen/course_label_horizontal_margin</item>
-        <item name="android:paddingRight">25dp</item>
+        <item name="android:paddingRight">15dp</item>
     </style>
 
     <style name="AppTheme.TextView.courseRightLabel" parent="AppTheme.TextView.style1">
 
         <item name="android:paddingRight">25dp</item>
+    </style>
+
+    <style name="AppTheme.TabTextAppearence" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">14sp</item>
     </style>
 </resources>

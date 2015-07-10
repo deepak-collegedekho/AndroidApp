@@ -1,17 +1,20 @@
 package com.collegedekho.app.fragment;
 
 
-import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayout;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.adapter.CollegeInfoAdapter;
 import com.collegedekho.app.entities.Institute;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,44 +72,92 @@ public class CollegeOverviewFragment extends Fragment {
         setupFacilities(inflater, layout);
         ((TextView) rootView.findViewById(R.id.textview_college_location)).setText(text);
         ((TextView) rootView.findViewById(R.id.textview_why_join)).setText("Why join " + mInstitute.getShort_name());
-        GridLayout grid = (GridLayout) rootView.findViewById(R.id.grid_why_join);
-        setupInfo(inflater, grid);
+        ArrayList<String> heads = new ArrayList<>();
+        ArrayList<String> details = new ArrayList<>();
+        getInfo(heads, details);
+        GridView grid = (GridView) rootView.findViewById(R.id.grid_why_join);
+        grid.setAdapter(new CollegeInfoAdapter(getActivity(), heads, details));
+        //GridLayout grid = (GridLayout) rootView.findViewById(R.id.grid_why_join);
+        //setupInfo(inflater, grid);
         return rootView;
     }
 
     private void setupFacilities(LayoutInflater inflater, LinearLayout layout) {
     }
 
-    private void setupInfo(LayoutInflater inflater, GridLayout layout) {
-        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 2, 1);
+    private void getInfo(ArrayList<String> heads, ArrayList<String> details) {
+        if (mInstitute.getAwards_snap() != null && !mInstitute.getAwards_snap().isEmpty()) {
+            heads.add("Achievements");
+            details.add(mInstitute.getAwards_snap());
+        }
+        if (mInstitute.getInfra_snap() != null && !mInstitute.getInfra_snap().isEmpty()) {
+            heads.add("Infrastucture");
+            details.add(mInstitute.getInfra_snap());
+        }
+        if (mInstitute.getPlacement_percentage() != null && !mInstitute.getPlacement_percentage().isEmpty()) {
+            heads.add("Placement");
+            details.add(mInstitute.getPlacement_percentage() + "% Placement");
+        }
+        if (mInstitute.getNear_by_joints_snap() != null && !mInstitute.getNear_by_joints_snap().isEmpty()) {
+            heads.add("Nearby Joints");
+            details.add(mInstitute.getNear_by_joints_snap());
+        }
+    }
+
+    /*private void setupInfo(LayoutInflater inflater, GridLayout layout) {
+        layout.removeAllViews();
+        int c = 0;
         if (mInstitute.getAwards_snap() != null && !mInstitute.getAwards_snap().isEmpty()) {
             View view = inflater.inflate(R.layout.card_college_info, layout, false);
             ((TextView) view.findViewById(R.id.textview_cinfo_tag)).setText("Achievements");
             ((TextView) view.findViewById(R.id.textview_cinfo_about)).setText(mInstitute.getAwards_snap());
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.columnSpec = GridLayout.spec(0, 2, 1);
+            params.rowSpec = GridLayout.spec(0, 1, 1);
             view.setLayoutParams(params);
             layout.addView(view);
+            c++;
         }
         if (mInstitute.getInfra_snap() != null && !mInstitute.getInfra_snap().isEmpty()) {
             View view = inflater.inflate(R.layout.card_college_info, layout, false);
             ((TextView) view.findViewById(R.id.textview_cinfo_tag)).setText("Infrastucture");
             ((TextView) view.findViewById(R.id.textview_cinfo_about)).setText(mInstitute.getInfra_snap());
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.columnSpec = GridLayout.spec((c % 2) == 1 ? 2 : 0, 2, 1);
+            params.rowSpec = GridLayout.spec(0, 1, 1);
             view.setLayoutParams(params);
             layout.addView(view);
+            c++;
         }
         if (mInstitute.getPlacement_percentage() != null && !mInstitute.getPlacement_percentage().isEmpty()) {
             View view = inflater.inflate(R.layout.card_college_info, layout, false);
             ((TextView) view.findViewById(R.id.textview_cinfo_tag)).setText("Placement");
             ((TextView) view.findViewById(R.id.textview_cinfo_about)).setText(mInstitute.getPlacement_percentage() + "% Placement");
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.columnSpec = GridLayout.spec((c % 2) == 1 ? 2 : 0, 2, 1);
+            params.rowSpec = GridLayout.spec(c > 1 ? 1 : 0, 1, 1);
             view.setLayoutParams(params);
             layout.addView(view);
+            c++;
         }
         if (mInstitute.getNear_by_joints_snap() != null && !mInstitute.getNear_by_joints_snap().isEmpty()) {
             View view = inflater.inflate(R.layout.card_college_info, layout, false);
             ((TextView) view.findViewById(R.id.textview_cinfo_tag)).setText("Nearby Joints");
             ((TextView) view.findViewById(R.id.textview_cinfo_about)).setText(mInstitute.getNear_by_joints_snap());
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.columnSpec = GridLayout.spec((c % 2) == 1 ? 2 : 0, 2, 1);
+            params.rowSpec = GridLayout.spec(c > 1 ? 1 : 0, 1, 1);
             view.setLayoutParams(params);
             layout.addView(view);
+            c++;
         }
-    }
+        if (c % 2 == 1) {
+            Space space = new Space(getActivity());
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.columnSpec = GridLayout.spec((c % 2) == 1 ? 2 : 0, 2, 1);
+            params.rowSpec = GridLayout.spec(c > 1 ? 1 : 0, 1, 1);
+            space.setLayoutParams(params);
+            layout.addView(space);
+        }
+    }*/
 }

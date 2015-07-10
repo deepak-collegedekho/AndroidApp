@@ -10,6 +10,7 @@ public class User {
     private String username;
     private String name;
     private String image;
+    private String token;
     private boolean is_anony;
     private Prefs pref;
 
@@ -53,7 +54,7 @@ public class User {
         this.image = image;
     }
 
-    public boolean is_anony() {
+    public boolean getIs_anony() {
         return is_anony;
     }
 
@@ -69,7 +70,15 @@ public class User {
         this.url = url;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public enum Prefs {
-        SURE, NOT_SURE, STREAMKNOWN
+        NOT_SURE, STREAMKNOWN
     }
 }

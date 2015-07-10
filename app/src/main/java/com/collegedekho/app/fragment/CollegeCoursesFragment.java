@@ -1,14 +1,19 @@
 package com.collegedekho.app.fragment;
 
 
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.adapter.CoursePagerAdapter;
+import com.collegedekho.app.entities.InstituteCourse;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,15 +21,11 @@ import com.collegedekho.app.R;
  * create an instance of this fragment.
  */
 public class CollegeCoursesFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_COURSES = "courses";
+    private static final String ARG_COURSE_COUNT = "course_count";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    private ArrayList<ArrayList<InstituteCourse>> mCourses;
+    private CoursePagerAdapter adapter;
 
     public CollegeCoursesFragment() {
         // Required empty public constructor
@@ -34,16 +35,15 @@ public class CollegeCoursesFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param courses Parameter 1.
      * @return A new instance of fragment CollegeOverviewFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static CollegeCoursesFragment newInstance(String param1, String param2) {
+    public static CollegeCoursesFragment newInstance(ArrayList<ArrayList<InstituteCourse>> courses) {
         CollegeCoursesFragment fragment = new CollegeCoursesFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++) {
+            args.putParcelableArrayList(InstituteCourse.CourseLevel.values()[i].name(), courses.get(i));
+        }
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,18 +52,32 @@ public class CollegeCoursesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mCourses = new ArrayList<>();
+            for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++) {
+                ArrayList<InstituteCourse> a = getArguments().getParcelableArrayList(InstituteCourse.CourseLevel.values()[i].name());
+                mCourses.add(a);
+            }
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        TextView textView = new TextView(getActivity());
-        textView.setText(R.string.hello_blank_fragment);
-        return textView;
+        View rootView = inflater.inflate(R.layout.fragment_college_courses, container, false);
+        ViewPager mPager = (ViewPager) rootView.findViewById(R.id.pager_courses);
+        adapter = new CoursePagerAdapter(getChildFragmentManager(), mCourses);
+        mPager.setAdapter(adapter);
+        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.course_tab_layout);
+        tabLayout.setTabTextColors(getResources().getColor(R.color.white), getResources().getColor(R.color.text_subhead_blue));
+        tabLayout.setupWithViewPager(mPager);
+        return rootView;
     }
 
-
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++) {
+            outState.putParcelableArrayList(InstituteCourse.CourseLevel.values()[i].name(), mCourses.get(i));
+        }
+    }
 }

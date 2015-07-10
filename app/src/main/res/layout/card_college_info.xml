@@ -22,6 +22,8 @@
             android:id="@+id/textview_cinfo_about"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="4"
             android:padding="10dp"
             android:text="IIT-Roorkee has been ranked at 66th position in Asian Universities Ranking, 2013asdfghjklqwertyuiosdfghj" />
     </LinearLayout>

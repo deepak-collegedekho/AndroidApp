@@ -1,28 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/grid_why_join"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:numColumns="2"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
-    app:alignmentMode="alignBounds"
-    app:columnCount="4"
-    app:useDefaultMargins="true">
-
-    <include
-        layout="@layout/card_college_info"
-        app:layout_columnSpan="2" />
-
-    <include
-        layout="@layout/card_college_info"
-        app:layout_columnSpan="2" />
-
-    <include
-        layout="@layout/card_college_info"
-        app:layout_columnSpan="2" />
-
-    <include
-        layout="@layout/card_college_info"
-        app:layout_columnSpan="2" />
-</android.support.v7.widget.GridLayout>
+    tools:listitem="@layout/card_college_info" />

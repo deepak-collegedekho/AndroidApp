@@ -9,6 +9,4 @@
     android:numColumns="2"
     android:orientation="vertical"
     android:verticalSpacing="@dimen/activity_horizontal_margin"
-    tools:listitem="@layout/card_home_widget">
-
-</GridView>
+    tools:listitem="@layout/card_home_widget" />
