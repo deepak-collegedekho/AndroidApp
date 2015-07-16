@@ -6,28 +6,25 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.adapter.CollegeInfoAdapter;
 import com.collegedekho.app.entities.Institute;
 
 import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CollegeOverviewFragment#newInstance} factory method to
+ * Use the {@link InstituteOverviewFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CollegeOverviewFragment extends Fragment {
+public class InstituteOverviewFragment extends Fragment {
     private static final String ARG_INSTITUTE = "param1";
-
+    String[] titles = {"Achievements", "Infrastucture", "Placement", "Nearby Joints"};
     private Institute mInstitute;
 
-
-    public CollegeOverviewFragment() {
+    public InstituteOverviewFragment() {
         // Required empty public constructor
     }
 
@@ -36,10 +33,10 @@ public class CollegeOverviewFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param institute Parameter 1.
-     * @return A new instance of fragment CollegeOverviewFragment.
+     * @return A new instance of fragment InstituteOverviewFragment.
      */
-    public static CollegeOverviewFragment newInstance(Institute institute) {
-        CollegeOverviewFragment fragment = new CollegeOverviewFragment();
+    public static InstituteOverviewFragment newInstance(Institute institute) {
+        InstituteOverviewFragment fragment = new InstituteOverviewFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_INSTITUTE, institute);
         fragment.setArguments(args);
@@ -57,7 +54,7 @@ public class CollegeOverviewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_college_overview, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_institute_overview, container, false);
         ((TextView) rootView.findViewById(R.id.textview_college_name)).setText(mInstitute.getName());
         String text = "";
         if (mInstitute.getCity_name() != null)
@@ -72,11 +69,11 @@ public class CollegeOverviewFragment extends Fragment {
         setupFacilities(inflater, layout);
         ((TextView) rootView.findViewById(R.id.textview_college_location)).setText(text);
         ((TextView) rootView.findViewById(R.id.textview_why_join)).setText("Why join " + mInstitute.getShort_name());
-        ArrayList<String> heads = new ArrayList<>();
-        ArrayList<String> details = new ArrayList<>();
-        getInfo(heads, details);
-        GridView grid = (GridView) rootView.findViewById(R.id.grid_why_join);
-        grid.setAdapter(new CollegeInfoAdapter(getActivity(), heads, details));
+        setupInfo((LinearLayout) rootView.findViewById(R.id.college_info_ll1)
+                , (LinearLayout) rootView.findViewById(R.id.college_info_ll1));
+        //getInfo(heads, details);
+        //GridView grid = (GridView) rootView.findViewById(R.id.grid_why_join);
+        //grid.setAdapter(new InstituteInfoAdapter(getActivity(), heads, details));
         //GridLayout grid = (GridLayout) rootView.findViewById(R.id.grid_why_join);
         //setupInfo(inflater, grid);
         return rootView;
@@ -102,6 +99,22 @@ public class CollegeOverviewFragment extends Fragment {
             heads.add("Nearby Joints");
             details.add(mInstitute.getNear_by_joints_snap());
         }
+    }
+
+    private void setupInfo(LinearLayout l1, LinearLayout l2) {
+        int i = 0;
+        setViewDetails(l1.getChildAt(i), titles[i], mInstitute.getAwards_snap());
+        setViewDetails(l2.getChildAt(i), titles[i++], mInstitute.getInfra_snap());
+        setViewDetails(l1.getChildAt(i), titles[i], mInstitute.getPlacement_percentage() + "% Placement");
+        setViewDetails(l2.getChildAt(i), titles[i], mInstitute.getNear_by_joints_snap());
+    }
+
+    private void setViewDetails(View view, String title, String detail) {
+        ((TextView) view.findViewById(R.id.textview_cinfo_tag)).setText(title);
+        if (detail != null && !detail.isEmpty())
+            ((TextView) view.findViewById(R.id.textview_cinfo_about)).setText(detail);
+        else
+            ((TextView) view.findViewById(R.id.textview_cinfo_about)).setText("Not Available");
     }
 
     /*private void setupInfo(LayoutInflater inflater, GridLayout layout) {

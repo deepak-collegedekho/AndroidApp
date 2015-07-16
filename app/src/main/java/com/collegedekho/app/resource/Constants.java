@@ -23,7 +23,10 @@ public class Constants {
     public static final String WIDGET_COURSES = "courses";
     public static final String WIDGET_NEWS = "news";
     public static final String WIDGET_ARTICES = "articles";
-    public static final String BASE_URL = "http://10.0.3.2:8000/api/1/";
+    public static final String IP = "http://10.0.3.2";
+    //public static final String IP = "http://192.168.8.101";
+    //public static final String IP = "http://192.168.1.56";
+    public static final String BASE_URL = IP + ":8000/api/1/";
     public static final String TAG_LOAD_COURSES = "load_courses";
     public static final String TAG_LOAD_HOME = "home";
     public static final String METHOD_GET = "GET";

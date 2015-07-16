@@ -15,13 +15,13 @@ import java.util.ArrayList;
  * @author Mayank Gautam
  *         Created: 10/07/15
  */
-public class CollegeInfoAdapter extends BaseAdapter {
+public class InstituteInfoAdapter extends BaseAdapter {
 
     Context mContext;
     ArrayList<String> heads;
     ArrayList<String> details;
 
-    public CollegeInfoAdapter(Context context, ArrayList<String> heads, ArrayList<String> details) {
+    public InstituteInfoAdapter(Context context, ArrayList<String> heads, ArrayList<String> details) {
         this.heads = heads;
         this.details = details;
         mContext = context;
@@ -46,7 +46,7 @@ public class CollegeInfoAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         CollegeHolder collegeHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.card_college_info, parent, false);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.card_institute_info, parent, false);
             collegeHolder = new CollegeHolder(convertView);
             convertView.setTag(collegeHolder);
         } else

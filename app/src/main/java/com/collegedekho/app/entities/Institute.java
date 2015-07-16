@@ -42,6 +42,8 @@ public class Institute implements Parcelable {
     private String placement_percentage;
     private String avg_salary;
     private String near_by_joints_snap;
+    private String placement;
+    private String max_salary;
 
     public Institute() {
     }
@@ -70,7 +72,25 @@ public class Institute implements Parcelable {
         placement_percentage = source.readString();
         avg_salary = source.readString();
         near_by_joints_snap = source.readString();
+        placement = source.readString();
+        max_salary = source.readString();
 
+    }
+
+    public String getPlacement() {
+        return placement;
+    }
+
+    public void setPlacement(String placement) {
+        this.placement = placement;
+    }
+
+    public String getMax_salary() {
+        return max_salary;
+    }
+
+    public void setMax_salary(String max_salary) {
+        this.max_salary = max_salary;
     }
 
     public String getAwards_snap() {
@@ -167,6 +187,8 @@ public class Institute implements Parcelable {
         dest.writeString(placement_percentage);
         dest.writeString(avg_salary);
         dest.writeString(near_by_joints_snap);
+        dest.writeString(placement);
+        dest.writeString(max_salary);
     }
 
     public String getLogo() {

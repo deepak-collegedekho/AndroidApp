@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,13 +17,18 @@ import android.view.MenuItem;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
+import com.collegedekho.app.entities.News;
+import com.collegedekho.app.entities.Question;
 import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.entities.Widget;
-import com.collegedekho.app.fragment.CollegeDetailFragment;
 import com.collegedekho.app.fragment.HomeFragment;
+import com.collegedekho.app.fragment.InstituteDetailFragment;
 import com.collegedekho.app.fragment.InstituteListFragment;
+import com.collegedekho.app.fragment.InstituteQnAFragment;
 import com.collegedekho.app.fragment.NavigationDrawerFragment;
+import com.collegedekho.app.fragment.NewsDetailFragment;
+import com.collegedekho.app.fragment.NewsListFragment;
 import com.collegedekho.app.fragment.StreamFragment;
 import com.collegedekho.app.fragment.WidgetListFragment;
 import com.collegedekho.app.listener.DataLoadListener;
@@ -44,13 +50,16 @@ public class MainActivity extends AppCompatActivity
         DataLoadListener,
         StreamFragment.OnStreamInteractionListener,
         InstituteListFragment.OnInstituteSelectedListener,
-        OnApplyClickedListener, WidgetListFragment.OnWidgetInteractionListener {
+        OnApplyClickedListener, WidgetListFragment.OnWidgetInteractionListener,
+        NewsListFragment.OnNewsSelectedListener, InstituteQnAFragment.OnQuestionAskedListener {
 
     private static final String TAG = "MainActivity";
     NetworkUtils mNetworkUtils;
-    CollegeDetailFragment cd;
+    InstituteDetailFragment cd;
     List<Institute> institutes;
+    int currentInstitute;
     ProgressDialog progressDialog;
+    String currentTitle;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -68,8 +77,9 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
-        //    Toolbar toolbar = (Toolbar) findViewById(R.id.app_toolbar);
-        //    setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         /*mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);*/
         //mTitle = getTitle();
@@ -230,14 +240,14 @@ public class MainActivity extends AppCompatActivity
     private void displayInstituteList(String response) {
         try {
             institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
-            displayFragment(InstituteListFragment.newInstance(new ArrayList<>(institutes)), true);
+            displayFragment(InstituteListFragment.newInstance(new ArrayList<>(institutes), currentTitle), true);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
     private void displayInstitute(int position) {
-        cd = CollegeDetailFragment.newInstance(institutes.get(position));
+        cd = InstituteDetailFragment.newInstance(institutes.get(position));
         displayFragment(cd, true);
         networkData(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "personalize/institutecourses/", null);
     }
@@ -273,6 +283,15 @@ public class MainActivity extends AppCompatActivity
             case Constants.WIDGET_INSTITUTES:
                 displayInstituteList(response);
                 break;
+            case Constants.WIDGET_NEWS:
+                displayNews(response);
+                break;
+            case Constants.WIDGET_ARTICES:
+                displayNews(response);
+                break;
+            case Constants.WIDGET_COURSES:
+                displayCourses(response);
+                break;
             case Constants.TAG_LOAD_COURSES:
                 updateCourses(response);
                 break;
@@ -284,6 +303,19 @@ public class MainActivity extends AppCompatActivity
             progressDialog.dismiss();
     }
 
+    private void displayCourses(String response) {
+
+    }
+
+    private void displayNews(String response) {
+        try {
+            List<News> newsList = JSON.std.listOfFrom(News.class, extractResults(response));
+            displayFragment(NewsListFragment.newInstance(new ArrayList<>(newsList), currentTitle), true);
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
     private String getPersonalizedMessage(String tag) {
         switch (tag) {
             case Constants.TAG_CREATE_USER:
@@ -292,6 +324,12 @@ public class MainActivity extends AppCompatActivity
                 return "Loading Streams.";
             case Constants.WIDGET_INSTITUTES:
                 return "Loading Institutes.";
+            case Constants.WIDGET_NEWS:
+                return "Loading News.";
+            case Constants.WIDGET_ARTICES:
+                return "Loading Articles.";
+            case Constants.WIDGET_COURSES:
+                return "Loading Courses.";
             case Constants.TAG_LOAD_HOME:
                 return "Loading";
         }
@@ -352,7 +390,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onCollegeSelected(int position) {
+    public void onInstituteSelected(int position) {
+        currentInstitute = position;
         displayInstitute(position);
     }
 
@@ -367,6 +406,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onWidgetSelected(Widget widget) {
+        currentTitle = widget.getTitle();
         switch (widget.getAction_method()) {
             case Constants.METHOD_GET:
                 networkData(widget.getType(), widget.getAction_url(), null);
@@ -399,4 +439,16 @@ public class MainActivity extends AppCompatActivity
         progressDialog.show();
     }
 
+    @Override
+    public void onNewsSelected(News news) {
+        displayFragment(NewsDetailFragment.newInstance(news), true);
+    }
+
+    @Override
+    public void onQuestionAsked(Question question) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("title", question.title);
+        map.put("desc", question.content);
+        map.put("institute", "" + institutes.get(currentInstitute).getId());
+    }
 }

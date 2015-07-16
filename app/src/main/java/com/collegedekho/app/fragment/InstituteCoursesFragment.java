@@ -17,17 +17,17 @@ import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CollegeCoursesFragment#newInstance} factory method to
+ * Use the {@link InstituteCoursesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CollegeCoursesFragment extends Fragment {
+public class InstituteCoursesFragment extends Fragment {
     private static final String ARG_COURSES = "courses";
     private static final String ARG_COURSE_COUNT = "course_count";
 
     private ArrayList<ArrayList<InstituteCourse>> mCourses;
     private CoursePagerAdapter adapter;
 
-    public CollegeCoursesFragment() {
+    public InstituteCoursesFragment() {
         // Required empty public constructor
     }
 
@@ -36,10 +36,10 @@ public class CollegeCoursesFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param courses Parameter 1.
-     * @return A new instance of fragment CollegeOverviewFragment.
+     * @return A new instance of fragment InstituteOverviewFragment.
      */
-    public static CollegeCoursesFragment newInstance(ArrayList<ArrayList<InstituteCourse>> courses) {
-        CollegeCoursesFragment fragment = new CollegeCoursesFragment();
+    public static InstituteCoursesFragment newInstance(ArrayList<ArrayList<InstituteCourse>> courses) {
+        InstituteCoursesFragment fragment = new InstituteCoursesFragment();
         Bundle args = new Bundle();
         for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++) {
             args.putParcelableArrayList(InstituteCourse.CourseLevel.values()[i].name(), courses.get(i));
@@ -63,7 +63,7 @@ public class CollegeCoursesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_college_courses, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_institute_courses, container, false);
         ViewPager mPager = (ViewPager) rootView.findViewById(R.id.pager_courses);
         adapter = new CoursePagerAdapter(getChildFragmentManager(), mCourses);
         mPager.setAdapter(adapter);

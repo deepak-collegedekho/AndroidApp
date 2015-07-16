@@ -12,37 +12,36 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.adapter.InstituteListAdapter;
-import com.collegedekho.app.entities.Institute;
+import com.collegedekho.app.adapter.NewsListAdapter;
+import com.collegedekho.app.entities.News;
 import com.collegedekho.app.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
 
 
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link OnInstituteSelectedListener} interface
+ * {@link OnNewsSelectedListener} interface
  * to handle interaction events.
- * Use the {@link InstituteListFragment#newInstance} factory method to
+ * Use the {@link NewsListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class InstituteListFragment extends Fragment {
-    private static final String ARG_INSTITUTE = "institute";
+public class NewsListFragment extends Fragment {
+    private static final String ARG_NEWS = "news";
     private static final String ARG_TITLE = "title";
 
-    private ArrayList<Institute> mInstitutes;
+    private ArrayList<News> mNews;
     private String mTitle;
 
-    public InstituteListFragment() {
+    public NewsListFragment() {
         // Required empty public constructor
     }
 
-    public static InstituteListFragment newInstance(ArrayList<Institute> institutes, String title) {
-        InstituteListFragment fragment = new InstituteListFragment();
+    public static NewsListFragment newInstance(ArrayList<News> news, String title) {
+        NewsListFragment fragment = new NewsListFragment();
         Bundle args = new Bundle();
-        args.putParcelableArrayList(ARG_INSTITUTE, institutes);
+        args.putParcelableArrayList(ARG_NEWS, news);
         args.putString(ARG_TITLE, title);
         fragment.setArguments(args);
         return fragment;
@@ -52,7 +51,7 @@ public class InstituteListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mInstitutes = getArguments().getParcelableArrayList(ARG_INSTITUTE);
+            mNews = getArguments().getParcelableArrayList(ARG_NEWS);
             mTitle = getArguments().getString(ARG_TITLE);
         }
     }
@@ -60,11 +59,11 @@ public class InstituteListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_institute_listing, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_news_list, container, false);
         ((TextView) rootView.findViewById(R.id.textview_page_title)).setText(mTitle);
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_list);
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new InstituteListAdapter(getActivity(), mInstitutes));
+        recyclerView.setAdapter(new NewsListAdapter(getActivity(), mNews));
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -81,9 +80,8 @@ public class InstituteListFragment extends Fragment {
         super.onDetach();
     }
 
-    public interface OnInstituteSelectedListener {
-        void onInstituteSelected(int position);
-        //void onInstituteLikedDisliked(int liked);
+    public interface OnNewsSelectedListener {
+        void onNewsSelected(News news);
     }
 
 }

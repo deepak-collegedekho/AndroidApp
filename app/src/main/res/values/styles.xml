@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primary_color</item>
         <item name="android:colorPrimary" tools:ignore="NewApi">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_color_dark</item>
@@ -45,7 +45,9 @@
         <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
         <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
         <item name="android:layout_marginTop">@dimen/activity_vertical_margin</item>
-        <item name="cardBackgroundColor">@color/primary_color_90</item>
+        <item name="cardBackgroundColor">@color/card_background_default</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
         <item name="cardCornerRadius">@dimen/corner_radius</item>
         <item name="cardElevation">@dimen/cardview_default_elevation</item>
         <item name="cardUseCompatPadding">true</item>
@@ -69,6 +71,9 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="cardBackgroundColor">@color/white</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:layout_marginTop">8dp</item>
     </style>
 
     <style name="AppTheme.TextView" parent="AppTheme">
@@ -94,6 +99,39 @@
     </style>
 
 
+    <style name="AppTheme.TextView.Head" parent="AppTheme.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingTop">5dp</item>
+    </style>
+
+
+    <style name="AppTheme.TextView.SubHead" parent="AppTheme.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingTop">5dp</item>
+    </style>
+
+    <style name="AppTheme.HeadDivider" parent="AppTheme.TextView">
+        <item name="android:background">@color/bg_divider</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+    </style>
+
     <style name="AppTheme.TextView.courseLeftLabel" parent="AppTheme.TextView.style1">
 
         <item name="android:paddingLeft">@dimen/course_label_horizontal_margin</item>
@@ -108,4 +146,29 @@
     <style name="AppTheme.TabTextAppearence" parent="TextAppearance.AppCompat">
         <item name="android:textSize">14sp</item>
     </style>
+
+    <style name="AppTheme.TextHomeSubHead.Medium" parent="AppTheme.TextHomeSubHead">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="AppTheme.TextView.page_title">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:background">#ff444444</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+
+    <style name="AppTheme.TextView.AboutTextView" parent="AppTheme.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/textSecondary</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
+    </style>
+
 </resources>

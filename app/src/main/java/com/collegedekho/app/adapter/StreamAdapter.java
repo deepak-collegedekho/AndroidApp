@@ -60,7 +60,7 @@ public class StreamAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         Stream s = getItem(position);
-        holder.tag.setText(s.getName());
+        holder.tag.setText(s.getShort_name());
         holder.image.setImageUrl(s.getImage(), mImageLoader);
         return convertView;
     }

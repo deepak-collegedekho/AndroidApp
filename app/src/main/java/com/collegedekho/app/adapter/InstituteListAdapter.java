@@ -29,7 +29,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(mContext).inflate(R.layout.item_college_list, parent, false);
+        View rootView = LayoutInflater.from(mContext).inflate(R.layout.item_institute_list, parent, false);
         try {
             return new InstituteHolder(rootView, (InstituteListFragment.OnInstituteSelectedListener) mContext);
         } catch (ClassCastException e) {
@@ -79,7 +79,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-            mListener.onCollegeSelected(getAdapterPosition());
+            mListener.onInstituteSelected(getAdapterPosition());
         }
     }
 }

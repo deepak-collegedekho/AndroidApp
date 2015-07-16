@@ -1,6 +1,7 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,7 @@ public class WidgetAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.card_home_widget, parent, false);
             holder = new WidgetHolder(convertView);
+            ((CardView) convertView).setPreventCornerOverlap(false);
             convertView.setTag(holder);
         } else {
             holder = (WidgetHolder) convertView.getTag();

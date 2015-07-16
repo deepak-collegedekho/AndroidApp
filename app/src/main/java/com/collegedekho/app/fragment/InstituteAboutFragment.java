@@ -13,10 +13,10 @@ import com.collegedekho.app.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CollegeAboutFragment#newInstance} factory method to
+ * Use the {@link InstituteAboutFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CollegeAboutFragment extends Fragment {
+public class InstituteAboutFragment extends Fragment {
     private static final String ARG_SHORT_NAME = "short_name";
     private static final String ARG_ABOUT = "about";
 
@@ -24,7 +24,7 @@ public class CollegeAboutFragment extends Fragment {
     private String mAbout;
 
 
-    public CollegeAboutFragment() {
+    public InstituteAboutFragment() {
         // Required empty public constructor
     }
 
@@ -34,11 +34,10 @@ public class CollegeAboutFragment extends Fragment {
      *
      * @param shortName Parameter 1.
      * @param about     Parameter 2.
-     * @return A new instance of fragment CollegeOverviewFragment.
+     * @return A new instance of fragment InstituteOverviewFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static CollegeAboutFragment newInstance(String shortName, String about) {
-        CollegeAboutFragment fragment = new CollegeAboutFragment();
+    public static InstituteAboutFragment newInstance(String shortName, String about) {
+        InstituteAboutFragment fragment = new InstituteAboutFragment();
         Bundle args = new Bundle();
         args.putString(ARG_SHORT_NAME, shortName);
         args.putString(ARG_ABOUT, about);
@@ -58,7 +57,7 @@ public class CollegeAboutFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_college_about, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_institute_about, container, false);
         ((TextView) rootView.findViewById(R.id.textview_college_shortname)).setText(mShortName);
         ((TextView) rootView.findViewById(R.id.textview_college_about)).setText(Html.fromHtml(mAbout));
         return rootView;

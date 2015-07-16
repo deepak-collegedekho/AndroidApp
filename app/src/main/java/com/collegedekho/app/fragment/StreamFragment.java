@@ -15,19 +15,8 @@ import com.collegedekho.app.entities.Stream;
 
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link OnStreamInteractionListener} interface
- * to handle interaction events.
- * Use the {@link StreamFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class StreamFragment extends Fragment implements AdapterView.OnItemClickListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_STREAMS = "streams";
 
     private ArrayList<Stream> streams;
 
@@ -37,17 +26,10 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment StreamFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static StreamFragment newInstance(ArrayList<Stream> streams) {
         StreamFragment streamFragment = new StreamFragment();
         Bundle b = new Bundle();
-        b.putParcelableArrayList(ARG_PARAM1, streams);
+        b.putParcelableArrayList(ARG_STREAMS, streams);
         streamFragment.setArguments(b);
         return streamFragment;
     }
@@ -56,7 +38,7 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            streams = getArguments().getParcelableArrayList(ARG_PARAM1);
+            streams = getArguments().getParcelableArrayList(ARG_STREAMS);
         }
     }
 
@@ -98,16 +80,6 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
         onStreamSelected(streams.get(position).uri);
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnStreamInteractionListener {
         void onStreamSelected(String uri);
     }

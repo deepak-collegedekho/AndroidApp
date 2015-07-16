@@ -23,10 +23,10 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CollegeDetailFragment#newInstance} factory method to
+ * Use the {@link InstituteDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CollegeDetailFragment extends Fragment {
+public class InstituteDetailFragment extends Fragment {
     private static final String ARG_INSTITUTE = "param1";
     ArrayList<ArrayList<InstituteCourse>> courses;
     private Institute mInstitute;
@@ -34,7 +34,7 @@ public class CollegeDetailFragment extends Fragment {
     private TabLayout tabLayout;
     private ViewPager mPager;
 
-    public CollegeDetailFragment() {
+    public InstituteDetailFragment() {
         // Required empty public constructor
     }
 
@@ -43,10 +43,10 @@ public class CollegeDetailFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param institute Parameter 1.
-     * @return A new instance of fragment CollegeOverviewFragment.
+     * @return A new instance of fragment InstituteOverviewFragment.
      */
-    public static CollegeDetailFragment newInstance(Institute institute) {
-        CollegeDetailFragment fragment = new CollegeDetailFragment();
+    public static InstituteDetailFragment newInstance(Institute institute) {
+        InstituteDetailFragment fragment = new InstituteDetailFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_INSTITUTE, institute);
         fragment.setArguments(args);
@@ -64,7 +64,7 @@ public class CollegeDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_college_detail, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_institute_detail, container, false);
         if (mInstitute.getBanner() != null) {
             ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
             ((NetworkImageView) rootView.findViewById(R.id.image_college_banner)).setImageUrl(mInstitute.getBanner(), imageLoader);

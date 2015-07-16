@@ -1,0 +1,71 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="none">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/subhead_highest_package"
+            style="@style/AppTheme.TextView.SubHead"
+            android:text="Highest Package Offered: " />
+
+        <TextView
+            android:id="@+id/subhead_average_package"
+            style="@style/AppTheme.TextView.SubHead"
+            android:layout_below="@id/subhead_highest_package"
+            android:text="Average Package Offered: " />
+
+
+        <TextView
+            android:id="@+id/subhead_placement"
+            style="@style/AppTheme.TextView.SubHead"
+            android:layout_below="@id/subhead_average_package"
+            android:text="Placement:" />
+
+        <GridLayout
+            android:id="@+id/company_logo_grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/subhead_placement"
+            android:layout_centerHorizontal="true"
+            android:columnCount="3"
+            android:padding="@dimen/activity_horizontal_margin" />
+
+        <TextView
+            android:id="@+id/text_highest_package"
+            style="@style/AppTheme.TextView.style1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/subhead_highest_package"
+            android:text="50%" />
+
+        <TextView
+            android:id="@+id/text_average_package"
+            style="@style/AppTheme.TextView.style1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/subhead_highest_package"
+            android:layout_toRightOf="@id/subhead_average_package"
+            android:text="50%" />
+
+        <TextView
+            android:id="@+id/text_placement_perc"
+            style="@style/AppTheme.TextView.style1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/subhead_average_package"
+            android:layout_toRightOf="@id/subhead_placement"
+            android:text="50%" />
+
+        <TextView
+            android:id="@+id/about_placement"
+            style="@style/AppTheme.TextView.AboutTextView"
+            android:layout_below="@id/company_logo_grid" />
+
+
+    </RelativeLayout>
+</ScrollView>
