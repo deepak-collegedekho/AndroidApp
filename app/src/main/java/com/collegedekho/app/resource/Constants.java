@@ -31,5 +31,15 @@ public class Constants {
     public static final String TAG_LOAD_HOME = "home";
     public static final String METHOD_GET = "GET";
     public static final String METHOD_POST = "POST";
+    public static final int LIKE_COLLEGE = 0;
+    public static final int DISLIKE_COLLEGE = 1;
+    public static final String TAG_POST_QUESTION = "post_question";
+    public static final String TAG_LOAD_FILTERS = "load_filters";
+    public static final String TAG_RESOURCE_URI = "resource_uri";
+    public static final String TAG_LABEL = "label";
+    public static final String TAG_URI = "uri";
+    public static final String TAG_ATTR = "attr";
+    public static final String TAG_TAGS = "tags";
+
     //public static final String BASE_URL = "http://192.168.1.56:8000/api/1/";
 }

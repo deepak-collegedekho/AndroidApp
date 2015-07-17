@@ -5,7 +5,7 @@ package com.collegedekho.app.entities;
  *         Created: 04/07/15
  */
 public class User {
-    private String url;
+    private String resource_uri;
     private String email;
     private String username;
     private String name;
@@ -62,12 +62,12 @@ public class User {
         this.is_anony = is_anony;
     }
 
-    public String getUrl() {
-        return url;
+    public String getResource_uri() {
+        return resource_uri;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setResource_uri(String resource_uri) {
+        this.resource_uri = resource_uri;
     }
 
     public String getToken() {

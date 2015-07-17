@@ -29,7 +29,8 @@
                 android:inputType="text"
                 android:paddingTop="2dp"
                 android:singleLine="true"
-                android:textColor="@color/textSecondary" />
+                android:textColor="@color/textSecondary"
+                android:textColorHint="#ffa7a8a8" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -45,25 +46,11 @@
                 android:inputType="text"
                 android:maxLines="4"
                 android:paddingTop="2dp"
-                android:textColor="@color/textSecondary" />
+                android:textColor="@color/textSecondary"
+                android:textColorHint="#ffa7a8a8" />
         </android.support.design.widget.TextInputLayout>
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="3dp"
-            android:text="Select Course"
-            android:textColor="?attr/colorControlNormal"
-            android:textSize="12sp" />
-
-        <Spinner
-            android:id="@+id/spinner_question_course"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:contentDescription="Course"
-            android:spinnerMode="dropdown" />
-
-        <Button
             android:id="@+id/button_expert"
             style="@style/AppTheme.BlueButton"
             android:layout_width="wrap_content"

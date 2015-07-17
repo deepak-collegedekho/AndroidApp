@@ -70,7 +70,7 @@ public class InstituteOverviewFragment extends Fragment {
         ((TextView) rootView.findViewById(R.id.textview_college_location)).setText(text);
         ((TextView) rootView.findViewById(R.id.textview_why_join)).setText("Why join " + mInstitute.getShort_name());
         setupInfo((LinearLayout) rootView.findViewById(R.id.college_info_ll1)
-                , (LinearLayout) rootView.findViewById(R.id.college_info_ll1));
+                , (LinearLayout) rootView.findViewById(R.id.college_info_ll2));
         //getInfo(heads, details);
         //GridView grid = (GridView) rootView.findViewById(R.id.grid_why_join);
         //grid.setAdapter(new InstituteInfoAdapter(getActivity(), heads, details));
@@ -102,11 +102,10 @@ public class InstituteOverviewFragment extends Fragment {
     }
 
     private void setupInfo(LinearLayout l1, LinearLayout l2) {
-        int i = 0;
-        setViewDetails(l1.getChildAt(i), titles[i], mInstitute.getAwards_snap());
-        setViewDetails(l2.getChildAt(i), titles[i++], mInstitute.getInfra_snap());
-        setViewDetails(l1.getChildAt(i), titles[i], mInstitute.getPlacement_percentage() + "% Placement");
-        setViewDetails(l2.getChildAt(i), titles[i], mInstitute.getNear_by_joints_snap());
+        setViewDetails(l1.getChildAt(0), titles[0], mInstitute.getAwards_snap());
+        setViewDetails(l2.getChildAt(0), titles[1], mInstitute.getInfra_snap());
+        setViewDetails(l1.getChildAt(1), titles[2], mInstitute.getPlacement_percentage() + "% Placement");
+        setViewDetails(l2.getChildAt(1), titles[3], mInstitute.getNear_by_joints_snap());
     }
 
     private void setViewDetails(View view, String title, String detail) {

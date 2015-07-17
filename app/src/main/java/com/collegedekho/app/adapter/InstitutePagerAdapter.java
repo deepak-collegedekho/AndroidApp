@@ -30,6 +30,7 @@ public class InstitutePagerAdapter extends FragmentPagerAdapter {
     Institute mInstitute;
     Placements p;
     int count = 5;
+    InstituteCoursesFragment f;
     private ArrayList<ArrayList<InstituteCourse>> mCourses;
 
     public InstitutePagerAdapter(FragmentManager fragmentManager, Institute institute) {
@@ -40,6 +41,9 @@ public class InstitutePagerAdapter extends FragmentPagerAdapter {
         p.highestSalary = mInstitute.getMax_salary();
         p.averageSalary = mInstitute.getAvg_salary();
         mCourses = new ArrayList<>();
+        for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++) {
+            mCourses.add(new ArrayList<InstituteCourse>());
+        }
     }
 
     @Override
@@ -50,7 +54,8 @@ public class InstitutePagerAdapter extends FragmentPagerAdapter {
             case ABOUT_POSITION:
                 return InstituteAboutFragment.newInstance(mInstitute.getShort_name(), mInstitute.getDescription());
             case COURSES_POSITION:
-                return InstituteCoursesFragment.newInstance(mCourses);
+                f = InstituteCoursesFragment.newInstance(mCourses);
+                return f;
             case PLACEMENT_POSITION:
                 return InstitutePlacementFragment.newInstance(p);
             case QNA_POSITION:
@@ -82,8 +87,13 @@ public class InstitutePagerAdapter extends FragmentPagerAdapter {
     }
 
     public void setCourses(ArrayList<ArrayList<InstituteCourse>> courses) {
-        mCourses.addAll(courses);
-        notifyDataSetChanged();
+        int count = 0;
+        for (int i = 0; i < courses.size(); i++) {
+            mCourses.get(i).addAll(courses.get(i));
+            count += courses.get(i).size();
+        }
+        if (f != null)
+            f.updateData(count);
     }
 
 }

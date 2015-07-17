@@ -54,6 +54,9 @@ public class StreamAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.tag = (TextView) convertView.findViewById(R.id.stream_tag);
             holder.image = (NetworkImageView) convertView.findViewById(R.id.stream_logo);
+            holder.image.setDefaultImageResId(R.drawable.ic_logo_grey);
+            holder.image.setErrorImageResId(R.drawable.ic_logo_grey);
+
             //convertView.setOnClickListener();
             convertView.setTag(holder);
         } else {
@@ -61,7 +64,8 @@ public class StreamAdapter extends BaseAdapter {
         }
         Stream s = getItem(position);
         holder.tag.setText(s.getShort_name());
-        holder.image.setImageUrl(s.getImage(), mImageLoader);
+        if (s.image != null && !s.image.isEmpty())
+            holder.image.setImageUrl(s.getImage(), mImageLoader);
         return convertView;
     }
 

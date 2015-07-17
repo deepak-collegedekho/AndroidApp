@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.android.volley.toolbox.NetworkImageView
+        <com.collegedekho.app.widget.FadeInImageView
             android:id="@+id/textview_widget_image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/widget_image_height"

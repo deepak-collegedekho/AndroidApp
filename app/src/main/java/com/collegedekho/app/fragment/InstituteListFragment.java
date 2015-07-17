@@ -34,6 +34,7 @@ public class InstituteListFragment extends Fragment {
 
     private ArrayList<Institute> mInstitutes;
     private String mTitle;
+    private OnInstituteSelectedListener mListener;
 
     public InstituteListFragment() {
         // Required empty public constructor
@@ -68,22 +69,39 @@ public class InstituteListFragment extends Fragment {
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        return recyclerView;
+        rootView.findViewById(R.id.button_filter).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener != null)
+                    mListener.onFilterButtonClicked();
+            }
+        });
+        return rootView;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        try {
+            mListener = (OnInstituteSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnInstituteSelectedListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
     }
 
     public interface OnInstituteSelectedListener {
         void onInstituteSelected(int position);
-        //void onInstituteLikedDisliked(int liked);
+
+        void onInstituteLikedDisliked(int position, int liked);
+
+        void onFilterButtonClicked();
     }
 
 }

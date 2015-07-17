@@ -89,7 +89,6 @@ public class InstituteDetailFragment extends Fragment {
     class RandomTask extends AsyncTask<Void, Void, Void> {
 
         List<InstituteCourse> mCourses;
-
         RandomTask(List<InstituteCourse> response) {
             mCourses = response;
         }

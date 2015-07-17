@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.android.volley.toolbox.NetworkImageView
+    <com.collegedekho.app.widget.FadeInImageView
         android:id="@+id/image_college_banner"
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -18,7 +18,8 @@
         android:layout_below="@id/image_college_banner"
         android:background="?attr/colorPrimary"
         android:scrollbars="none"
-        app:layout_scrollFlags="scroll|enterAlways" />
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:tabMode="scrollable" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/college_detail_pager"

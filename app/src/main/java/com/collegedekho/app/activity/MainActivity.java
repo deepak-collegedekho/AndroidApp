@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.entities.News;
@@ -22,6 +23,7 @@ import com.collegedekho.app.entities.Question;
 import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.entities.Widget;
+import com.collegedekho.app.fragment.FilterFragment;
 import com.collegedekho.app.fragment.HomeFragment;
 import com.collegedekho.app.fragment.InstituteDetailFragment;
 import com.collegedekho.app.fragment.InstituteListFragment;
@@ -42,6 +44,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity
@@ -51,15 +54,21 @@ public class MainActivity extends AppCompatActivity
         StreamFragment.OnStreamInteractionListener,
         InstituteListFragment.OnInstituteSelectedListener,
         OnApplyClickedListener, WidgetListFragment.OnWidgetInteractionListener,
-        NewsListFragment.OnNewsSelectedListener, InstituteQnAFragment.OnQuestionAskedListener {
+        NewsListFragment.OnNewsSelectedListener, InstituteQnAFragment.OnQuestionAskedListener,
+        FilterFragment.OnFilterInteractionListener {
 
     private static final String TAG = "MainActivity";
     NetworkUtils mNetworkUtils;
-    InstituteDetailFragment cd;
     List<Institute> institutes;
     int currentInstitute;
     ProgressDialog progressDialog;
     String currentTitle;
+    Fragment currentFragment;
+    String currentPage2;
+    String[] filterTypes = {"Specialization", "Location", "Degrees", "College Type", "Facilities", "Hostel"};
+    String[] randomFacets = {"Relax", "Relax", "It's Just a Little", "Pin Prick", "There",
+            "Is", "no", "Place", "You r receding", "The Distance", "Shift in the", "Horizon",
+            "I have become", "Comfortably Numb", "Another Brick", "In the wall", "Ok"};
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -71,31 +80,6 @@ public class MainActivity extends AppCompatActivity
     private User user;
     private User.Prefs userPref;
     private boolean completedStage2;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        init();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        /*mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);*/
-        //mTitle = getTitle();
-        // Set up the drawer.
-    /*    mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));*/
-        if (user != null) {
-            if (!completedStage2)
-                setUserPref();
-            else
-                networkData(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
-        } else {
-            onNavigationDrawerItemSelected(0);
-        }
-    }
 
     /*public void onSectionAttached(int number) {
         switch (number) {
@@ -119,6 +103,33 @@ public class MainActivity extends AppCompatActivity
             actionBar.setDisplayShowTitleEnabled(true);
         }
     }*/
+    private ArrayList<Folder> mFolderList;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        init();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        /*mNavigationDrawerFragment = (NavigationDrawerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);*/
+        //mTitle = getTitle();
+        // Set up the drawer.
+    /*    mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout));*/
+        if (user != null) {
+            if (!completedStage2)
+                setUserPref();
+            else {
+                networkData(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
+            }
+        } else {
+            onNavigationDrawerItemSelected(0);
+        }
+    }
 
     private void init() {
         mNetworkUtils = new NetworkUtils(this, this);
@@ -196,10 +207,6 @@ public class MainActivity extends AppCompatActivity
             String u = JSON.std.asString(user);
             getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
             setUserPref();
-            HashMap<String, String> hashMap = new HashMap<>();
-            hashMap.put("status", user.getPref().name().toLowerCase());
-            hashMap.put("user", user.getUrl());
-            networkData("", Constants.BASE_URL + "preferences/", hashMap);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -237,6 +244,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /*private void displaySearch() {
+
+    }*/
+
     private void displayInstituteList(String response) {
         try {
             institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
@@ -247,14 +258,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void displayInstitute(int position) {
-        cd = InstituteDetailFragment.newInstance(institutes.get(position));
-        displayFragment(cd, true);
+        displayFragment(InstituteDetailFragment.newInstance(institutes.get(position)), true);
         networkData(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "personalize/institutecourses/", null);
     }
-
-    /*private void displaySearch() {
-
-    }*/
 
     private void loadQuestionaire() {
         new AlertDialog.Builder(this).setMessage("This feature is coming soon!").setTitle("Coming Soon!").setNeutralButton("OK", null)
@@ -262,6 +268,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void displayFragment(Fragment fragment, boolean addToBackstack) {
+        currentFragment = fragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container, fragment);
@@ -298,6 +305,12 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_HOME:
                 updateHome(response);
                 break;
+            case Constants.TAG_POST_QUESTION:
+                new AlertDialog.Builder(this).setMessage("Thank you for posting your question.").show();
+                break;
+            case Constants.TAG_LOAD_FILTERS:
+                updateFilterList(response);
+                break;
         }
         if (progressDialog.isShowing())
             progressDialog.dismiss();
@@ -332,6 +345,10 @@ public class MainActivity extends AppCompatActivity
                 return "Loading Courses.";
             case Constants.TAG_LOAD_HOME:
                 return "Loading";
+            case Constants.TAG_POST_QUESTION:
+                return "Posting your question.";
+            case Constants.TAG_LOAD_FILTERS:
+                return "Loading Filters";
         }
         return null;
     }
@@ -347,9 +364,9 @@ public class MainActivity extends AppCompatActivity
 
     private void updateCourses(String response) {
         try {
-            if (cd != null) {
+            if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
                 List<InstituteCourse> instituteCourses = JSON.std.listOfFrom(InstituteCourse.class, extractResults(response));
-                cd.updateCourses(instituteCourses);
+                ((InstituteDetailFragment) currentFragment).updateCourses(instituteCourses);
             }
 
         } catch (IOException e) {
@@ -382,9 +399,10 @@ public class MainActivity extends AppCompatActivity
     private void onCourseLevelSelected(int level, String streamUri) {
         getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
         HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("status", user.getPref().name().toLowerCase());
         hashMap.put("stream", streamUri);
-        hashMap.put("user", user.getUrl());
-        hashMap.put("level", "" + level);
+        hashMap.put("user", user.getResource_uri());
+        hashMap.put("level", Constants.BASE_URL + "level/" + (level + 1) + "/");
         networkData("", Constants.BASE_URL + "preferences/", hashMap);
         networkData(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
     }
@@ -393,6 +411,42 @@ public class MainActivity extends AppCompatActivity
     public void onInstituteSelected(int position) {
         currentInstitute = position;
         displayInstitute(position);
+    }
+
+    @Override
+    public void onInstituteLikedDisliked(int position, int liked) {
+        //networkData("",);
+    }
+
+    @Override
+    public void onFilterButtonClicked() {
+        if (mFolderList == null)
+            networkData(Constants.TAG_LOAD_FILTERS, Constants.BASE_URL + "personalize/institute_filters/", null);
+        else
+            displayFragment(FilterFragment.newInstance(mFolderList), true);
+    }
+
+    public void updateFilterList(String response) {
+        mFolderList = new ArrayList<>();
+        try {
+            Folder.populateFolderList(JSON.std.getStreamingFactory().createParser(response), mFolderList);
+            displayFragment(FilterFragment.newInstance(mFolderList), true);
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    private void createDummyContent() {
+        for (int i = 0; i < filterTypes.length; i++) {
+            Folder f = new Folder(i, filterTypes[i]);
+            Random random = new Random();
+            for (String randomFacet : randomFacets) {
+                int j = random.nextInt(randomFacets.length);
+                int l = random.nextInt(2);
+                f.addFacet(randomFacets[j], randomFacets[j].replace(" ", "-").toLowerCase(), l);
+            }
+            mFolderList.add(f);
+        }
     }
 
     @Override
@@ -449,6 +503,28 @@ public class MainActivity extends AppCompatActivity
         HashMap<String, String> map = new HashMap<>();
         map.put("title", question.title);
         map.put("desc", question.content);
-        map.put("institute", "" + institutes.get(currentInstitute).getId());
+        map.put("institute", "" + institutes.get(currentInstitute).getResource_uri());
+        map.put("user", user.getResource_uri());
+        map.put("stream", Constants.BASE_URL + "streams/1/");
+        networkData(Constants.TAG_POST_QUESTION, Constants.BASE_URL + "qna/questions/", map);
     }
+
+    @Override
+    public void onFilterApplied() {
+
+    }
+
+    @Override
+    public void onFilterCanceled() {
+
+    }
+
+    @Override
+    public void onFilterTypeChanged(int position) {
+        if (currentFragment instanceof FilterFragment) {
+            ((FilterFragment) currentFragment).updateFilterType(position);
+        }
+    }
+
+
 }

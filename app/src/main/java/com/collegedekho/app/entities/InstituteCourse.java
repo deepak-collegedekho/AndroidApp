@@ -26,7 +26,7 @@ public class InstituteCourse implements Parcelable {
     public String degree_name;
     public int duration;
     public int level;
-
+    public String duration_type_display;
     public InstituteCourse() {
     }
 
@@ -38,6 +38,7 @@ public class InstituteCourse implements Parcelable {
         degree_name = source.readString();
         duration = source.readInt();
         level = source.readInt();
+        duration_type_display = source.readString();
     }
 
     @Override
@@ -54,6 +55,7 @@ public class InstituteCourse implements Parcelable {
         dest.writeString(degree_name);
         dest.writeInt(duration);
         dest.writeInt(level);
+        dest.writeString(duration_type_display);
     }
 
     public long getId() {
@@ -108,8 +110,12 @@ public class InstituteCourse implements Parcelable {
         return level;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public void setDuration_type_display(String duration_type_display) {
+        this.duration_type_display = duration_type_display;
+    }
+
+    public void setDegree_level(int degree_level) {
+        level = degree_level - 1;
     }
 
     public enum CourseLevel {
@@ -118,7 +124,7 @@ public class InstituteCourse implements Parcelable {
         public static String[] getValues() {
             String[] x = new String[values().length];
             for (int i = 0; i < x.length; i++) {
-                x[i] = values()[i].name();
+                x[i] = values()[i].name().replace("_", " ");
             }
             return x;
         }

@@ -67,7 +67,7 @@ public class CourseListAdapter extends RecyclerView.Adapter {
             cName.setText(c.getName());
             cDegree.setText(":  " + c.getDegree_name());
             cStream.setText(":  " + c.getStream_name());
-            cDuration.setText(":  " + c.getDuration() + " Years");
+            cDuration.setText(":  " + c.getDuration() + " " + c.duration_type_display);
             cLevel.setText(":  " + InstituteCourse.CourseLevel.values()[c.getLevel()].name());
             itemView.setTag(c.id);
         }

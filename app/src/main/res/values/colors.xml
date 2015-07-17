@@ -23,4 +23,6 @@
     <color name="dislike_red">#ffd93000</color>
     <color name="textPrimary">#4e595d</color>
     <color name="textSecondary">#797979</color>
+    <color name="bg_filter_item">#ffeeeeee</color>
+    <color name="bg_filter_item_us">#ffdadada</color>
 </resources>

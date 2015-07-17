@@ -51,6 +51,7 @@ public class News implements Parcelable {
     }
 
     public void setTitle(String title) {
+        //this.title = EntityUtils.toString(title, "UTF-8");
         this.title = title;
     }
 

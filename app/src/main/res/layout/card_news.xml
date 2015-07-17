@@ -10,8 +10,8 @@
 
     <com.collegedekho.app.widget.FadeInImageView
         android:id="@+id/image_news_collapsed"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:contentDescription="@string/news_image" />
 
     <TextView
@@ -28,6 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/textview_news_title"
         android:layout_toRightOf="@id/image_news_collapsed"
+        android:paddingLeft="0dp"
         android:singleLine="true"
         android:text="July 13, 2015 06:45 PM"
         android:textSize="14sp" />

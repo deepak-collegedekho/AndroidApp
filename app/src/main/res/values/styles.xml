@@ -7,6 +7,7 @@
         <item name="colorPrimaryDark">@color/primary_color_dark</item>
         <item name="android:colorPrimaryDark" tools:ignore="NewApi">@color/primary_color_dark</item>
         <item name="colorAccent">@color/text_subhead_blue</item>
+        <item name="android:scrollbars">none</item>
     </style>
 
     <style name="AppTheme.BlueButton">
@@ -18,6 +19,10 @@
         <item name="android:paddingLeft">10dp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@drawable/bg_button_blue</item>
+    </style>
+
+    <style name="AppTheme.GreyButton" parent="AppTheme.BlueButton">
+        <item name="android:background">@drawable/bg_button_grey</item>
     </style>
 
     <style name="AppTheme.TextHomeHead" parent="Base.TextAppearance.AppCompat">

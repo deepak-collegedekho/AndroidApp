@@ -77,7 +77,7 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        onStreamSelected(streams.get(position).uri);
+        onStreamSelected(streams.get(position).resourceUri);
     }
 
     public interface OnStreamInteractionListener {

@@ -7,7 +7,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.android.volley.toolbox.NetworkImageView
+        <com.collegedekho.app.widget.FadeInImageView
             android:id="@+id/stream_logo"
             android:layout_width="100dp"
             android:layout_height="100dp"

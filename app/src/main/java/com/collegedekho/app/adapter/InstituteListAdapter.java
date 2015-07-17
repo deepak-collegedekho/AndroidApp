@@ -5,11 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.fragment.InstituteListFragment;
+import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
 
@@ -66,6 +68,8 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         TextView instiName;
         TextView instiLocation;
         TextView instiCourses;
+        ImageView likeButton;
+        ImageView dislikeButton;
         InstituteListFragment.OnInstituteSelectedListener mListener;
 
         public InstituteHolder(View itemView, InstituteListFragment.OnInstituteSelectedListener listener) {
@@ -74,12 +78,27 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             instiLocation = (TextView) itemView.findViewById(R.id.textview_college_location);
             instiCourses = (TextView) itemView.findViewById(R.id.textview_college_courses);
             mListener = listener;
+            likeButton = (ImageView) itemView.findViewById(R.id.button_like_college);
+            dislikeButton = (ImageView) itemView.findViewById(R.id.button_dislike_college);
+            likeButton.setOnClickListener(this);
+            dislikeButton.setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            mListener.onInstituteSelected(getAdapterPosition());
+            switch (v.getId()) {
+                case R.id.button_like_college:
+                    mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.LIKE_COLLEGE);
+                    break;
+                case R.id.button_dislike_college:
+
+                    mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_COLLEGE);
+                    break;
+                default:
+                    mListener.onInstituteSelected(getAdapterPosition());
+                    break;
+            }
         }
     }
 }

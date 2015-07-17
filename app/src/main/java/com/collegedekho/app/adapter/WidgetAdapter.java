@@ -69,11 +69,14 @@ public class WidgetAdapter extends BaseAdapter {
         WidgetHolder(View itemView) {
             wName = (TextView) itemView.findViewById(R.id.textview_widget_name);
             wImage = (NetworkImageView) itemView.findViewById(R.id.textview_widget_image);
+            wImage.setDefaultImageResId(R.drawable.ic_logo_grey);
+            wImage.setErrorImageResId(R.drawable.ic_logo_grey);
         }
 
         void setUp(Widget w, ImageLoader imageLoader) {
             wName.setText(w.getTitle());
-            wImage.setImageUrl(w.getImage(), imageLoader);
+            if (w.getImage() != null && !w.getImage().isEmpty())
+                wImage.setImageUrl(w.getImage(), imageLoader);
         }
     }
 }

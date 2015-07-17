@@ -67,7 +67,7 @@ public class NewsListFragment extends Fragment {
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        return recyclerView;
+        return rootView;
     }
 
     @Override

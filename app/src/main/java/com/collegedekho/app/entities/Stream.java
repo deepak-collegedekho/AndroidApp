@@ -19,7 +19,7 @@ public class Stream implements Parcelable {
             return new Stream[size];
         }
     };
-    public String resourseUri;
+    public String resourceUri;
     public String name;
     public String shortName;
     public String uri;
@@ -30,7 +30,7 @@ public class Stream implements Parcelable {
     }
 
     public Stream(Parcel source) {
-        resourseUri = source.readString();
+        resourceUri = source.readString();
         name = source.readString();
         shortName = source.readString();
         uri = source.readString();
@@ -39,12 +39,12 @@ public class Stream implements Parcelable {
 
     }
 
-    public String getResourse_uri() {
-        return resourseUri;
+    public String getResource_uri() {
+        return resourceUri;
     }
 
-    public void setResourse_uri(String resourse_uri) {
-        this.resourseUri = resourse_uri;
+    public void setResource_uri(String resource_uri) {
+        this.resourceUri = resource_uri;
     }
 
     public String getName() {
@@ -86,7 +86,7 @@ public class Stream implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(resourseUri);
+        dest.writeString(resourceUri);
         dest.writeString(name);
         dest.writeString(shortName);
         dest.writeString(uri);

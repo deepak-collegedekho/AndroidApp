@@ -1,17 +1,48 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
     tools:context="com.collegedekho.app.fragment.FilterFragment">
 
+    <TextView
+        android:id="@+id/textview_page_title"
+        style="@style/AppTheme.TextView.page_title"
+        android:text="FILTERS" />
     <android.support.v7.widget.RecyclerView
-        android:layout_width="100dp"
-        android:layout_height="match_parent" />
+        android:id="@+id/filter_type_list"
+        android:layout_width="120dp"
+        android:layout_height="match_parent"
+        android:layout_below="@id/textview_page_title"
+        android:background="@color/bg_filter_item_us" />
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/filter_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/textview_page_title"
+        android:layout_toRightOf="@id/filter_type_list" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/button_filter_apply"
+        style="@style/AppTheme.BlueButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="2dp"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:text="APPLY" />
+
+    <TextView
+        android:id="@+id/button_filter_cancel"
+        style="@style/AppTheme.GreyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="2dp"
+        android:layout_toLeftOf="@id/button_filter_apply"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:text="CANCEL" />
+</RelativeLayout>

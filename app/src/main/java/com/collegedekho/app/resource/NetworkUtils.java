@@ -48,18 +48,15 @@ public class NetworkUtils {
             @Override
             public void onErrorResponse(VolleyError error) {
                 String json = null;
-
                 NetworkResponse response = error.networkResponse;
                 if (response != null && response.data != null) {
-                    switch (response.statusCode) {
-                        case 400:
-                            json = new String(response.data);
-                            json = trimMessage(json, "message");
-                            break;
-                    }
-                    if (json != null)
-                        mListener.onError(tag, json);
+                    json = new String(response.data);
+                    json = trimMessage(json, "detail");
                 }
+                if (json != null)
+                    mListener.onError(tag, json);
+                else
+                    mListener.onError(tag, "Unidentified Error");
             }
         }) {
             @Override
@@ -67,6 +64,7 @@ public class NetworkUtils {
                 if (token != null) {
                     Map<String, String> params = new HashMap<>();
                     params.put("Authorization", "Token " + token);
+                    params.put("Accept", "application/json");
                     return params;
                 }
                 return super.getHeaders();
@@ -88,18 +86,15 @@ public class NetworkUtils {
             @Override
             public void onErrorResponse(VolleyError error) {
                 String json = null;
-
                 NetworkResponse response = error.networkResponse;
                 if (response != null && response.data != null) {
-                    switch (response.statusCode) {
-                        case 400:
-                            json = new String(response.data);
-                            json = trimMessage(json, "message");
-                            break;
-                    }
-                    if (json != null)
-                        mListener.onError(tag, json);
+                    json = new String(response.data);
+                    json = trimMessage(json, "detail");
                 }
+                if (json != null)
+                    mListener.onError(tag, json);
+                else
+                    mListener.onError(tag, "Unidentified Error");
             }
         }) {
             @Override
@@ -110,7 +105,9 @@ public class NetworkUtils {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("Content-Type", "application/x-www-form-urlencoded");
+                params.put("Authorization", "Token " + token);
+                params.put("Content-Type", "application/form-data");
+                params.put("Accept", "application/json");
                 return params;
             }
         };

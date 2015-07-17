@@ -17,7 +17,6 @@
 
         <include layout="@layout/card_institute_info" />
 
-        <include layout="@layout/card_institute_info" />
     </LinearLayout>
 
     <LinearLayout
@@ -32,7 +31,6 @@
 
         <include layout="@layout/card_institute_info" />
 
-        <include layout="@layout/card_institute_info" />
     </LinearLayout>
 
 

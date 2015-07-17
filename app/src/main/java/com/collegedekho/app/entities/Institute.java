@@ -31,7 +31,7 @@ public class Institute implements Parcelable {
     private String description;
     private String name;
     private String contact_name;
-    private String resourse_uri;
+    private String resource_uri;
     private String banner;
     private String estb_date;
     private String university_name;
@@ -61,7 +61,7 @@ public class Institute implements Parcelable {
         description = source.readString();
         name = source.readString();
         contact_name = source.readString();
-        resourse_uri = source.readString();
+        resource_uri = source.readString();
         banner = source.readString();
         estb_date = source.readString();
         university_name = source.readString();
@@ -176,7 +176,7 @@ public class Institute implements Parcelable {
         dest.writeString(description);
         dest.writeString(name);
         dest.writeString(contact_name);
-        dest.writeString(resourse_uri);
+        dest.writeString(resource_uri);
         dest.writeString(banner);
         dest.writeString(estb_date);
         dest.writeString(university_name);
@@ -279,12 +279,12 @@ public class Institute implements Parcelable {
         this.contact_name = contact_name;
     }
 
-    public String getResourse_uri() {
-        return resourse_uri;
+    public String getResource_uri() {
+        return resource_uri;
     }
 
-    public void setResourse_uri(String resourse_uri) {
-        this.resourse_uri = resourse_uri;
+    public void setResource_uri(String resource_uri) {
+        this.resource_uri = resource_uri;
     }
 
     public int getCourse_count() {

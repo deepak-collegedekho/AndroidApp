@@ -26,7 +26,7 @@ public class CoursePagerAdapter extends FragmentStatePagerAdapter {
         for (int i = 0; i < course.size(); i++) {
             if (course.get(i).size() > 0) {
                 count++;
-                titles.add(InstituteCourse.CourseLevel.values()[i].name());
+                titles.add(InstituteCourse.CourseLevel.values()[i].name().replace("_", " "));
             }
         }
 
