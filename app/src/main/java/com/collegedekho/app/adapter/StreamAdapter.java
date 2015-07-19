@@ -54,8 +54,8 @@ public class StreamAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.tag = (TextView) convertView.findViewById(R.id.stream_tag);
             holder.image = (NetworkImageView) convertView.findViewById(R.id.stream_logo);
-            holder.image.setDefaultImageResId(R.drawable.ic_logo_grey);
-            holder.image.setErrorImageResId(R.drawable.ic_logo_grey);
+            holder.image.setDefaultImageResId(R.drawable.ic_default_image);
+            holder.image.setErrorImageResId(R.drawable.ic_default_image);
 
             //convertView.setOnClickListener();
             convertView.setTag(holder);

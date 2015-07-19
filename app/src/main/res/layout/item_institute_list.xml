@@ -19,7 +19,6 @@
         android:text="Manipal Institute of Technology"
         android:textColor="@color/text_head_blue"
         android:textSize="16sp" />
-
     <TextView
         android:id="@+id/textview_college_location"
         android:layout_width="match_parent"
@@ -49,37 +48,13 @@
         android:layout_below="@id/textview_college_courses"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="@dimen/like_dislike_size"
-            android:layout_height="@dimen/like_dislike_size"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/bg_facility"
-            android:padding="5dp"
-            android:src="@drawable/ic_facility_boys_hostel" />
+        <include layout="@layout/item_facility" />
 
-        <ImageView
-            android:layout_width="@dimen/like_dislike_size"
-            android:layout_height="@dimen/like_dislike_size"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/bg_facility"
-            android:padding="5dp"
-            android:src="@drawable/ic_facility_girls_hostel" />
+        <include layout="@layout/item_facility" />
 
-        <ImageView
-            android:layout_width="@dimen/like_dislike_size"
-            android:layout_height="@dimen/like_dislike_size"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/bg_facility"
-            android:padding="5dp"
-            android:src="@drawable/ic_facility_computer_services" />
+        <include layout="@layout/item_facility" />
 
-        <ImageView
-            android:layout_width="@dimen/like_dislike_size"
-            android:layout_height="@dimen/like_dislike_size"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/bg_facility"
-            android:padding="5dp"
-            android:src="@drawable/ic_facility_counselling" />
+        <include layout="@layout/item_facility" />
 
         <TextView
             android:layout_width="@dimen/like_dislike_size"

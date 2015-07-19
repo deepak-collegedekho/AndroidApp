@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,6 +26,7 @@ import java.util.Map;
  */
 public class NetworkUtils {
 
+    private static final int MY_SOCKET_TIMEOUT_MS = 30000;
     RequestQueue mQueue;
     DataLoadListener mListener;
     String token;
@@ -38,8 +40,12 @@ public class NetworkUtils {
         this.token = token;
     }
 
-    public void getData(@Nullable final String tag, String url) {
-        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+    public void getData(@Nullable final String tag, final String url) {
+        getOrDeleteData(tag, url, Request.Method.GET);
+    }
+
+    public void getOrDeleteData(@Nullable final String tag, final String url, int method) {
+        StringRequest request = new StringRequest(method, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 mListener.onDataLoaded(tag, response);
@@ -54,9 +60,9 @@ public class NetworkUtils {
                     json = trimMessage(json, "detail");
                 }
                 if (json != null)
-                    mListener.onError(tag, json);
+                    mListener.onError(tag, json, url, null);
                 else
-                    mListener.onError(tag, "Unidentified Error");
+                    mListener.onError(tag, "Some Error ocurred please try again.", url, null);
             }
         }) {
             @Override
@@ -70,14 +76,30 @@ public class NetworkUtils {
                 return super.getHeaders();
             }
         };
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         request.setShouldCache(true);
         if (tag != null)
             request.setTag(tag);
         mQueue.add(request);
     }
 
-    public void postData(final String tag, String url, final Map<String, String> params) {
-        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+    public void postData(final String tag, final String url, final Map<String, String> params) {
+        postOrPutData(tag, url, params, Request.Method.POST);
+    }
+
+    public void putData(final String tag, final String url, final Map<String, String> params) {
+        postOrPutData(tag, url, params, Request.Method.PUT);
+    }
+
+    public void deleteData(final String tag, final String url) {
+        getOrDeleteData(tag, url, Request.Method.DELETE);
+    }
+
+    public void postOrPutData(final String tag, final String url, final Map<String, String> params, int method) {
+        StringRequest request = new StringRequest(method, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 mListener.onDataLoaded(tag, response);
@@ -92,9 +114,9 @@ public class NetworkUtils {
                     json = trimMessage(json, "detail");
                 }
                 if (json != null)
-                    mListener.onError(tag, json);
+                    mListener.onError(tag, json, url, params);
                 else
-                    mListener.onError(tag, "Unidentified Error");
+                    mListener.onError(tag, "Unable to process the request.", url, params);
             }
         }) {
             @Override
@@ -111,6 +133,10 @@ public class NetworkUtils {
                 return params;
             }
         };
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         request.setShouldCache(true);
         if (tag != null)
             request.setTag(tag);
@@ -119,7 +145,6 @@ public class NetworkUtils {
 
     public String trimMessage(String json, String key) {
         String trimmedString;
-
         try {
             JSONObject obj = new JSONObject(json);
             trimmedString = obj.getString(key);

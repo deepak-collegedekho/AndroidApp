@@ -92,8 +92,8 @@ public class NewsListAdapter extends RecyclerView.Adapter {
             newsPubDate = (TextView) itemView.findViewById(R.id.textview_news_pubdate);
             newsContent = (TextView) itemView.findViewById(R.id.textview_news_content);
             newsImage = (NetworkImageView) itemView.findViewById(R.id.image_news_collapsed);
-            newsImage.setDefaultImageResId(R.drawable.ic_logo_grey);
-            newsImage.setErrorImageResId(R.drawable.ic_logo_grey);
+            newsImage.setDefaultImageResId(R.drawable.ic_default_image);
+            newsImage.setErrorImageResId(R.drawable.ic_default_image);
             mListener = listener;
             itemView.setOnClickListener(this);
         }

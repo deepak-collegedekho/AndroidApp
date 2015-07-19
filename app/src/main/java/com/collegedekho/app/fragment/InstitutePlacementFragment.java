@@ -53,7 +53,10 @@ public class InstitutePlacementFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_placement, container, false);
-        ((TextView) rootView.findViewById(R.id.about_placement)).setText(Html.fromHtml(mPlacement.about));
+        if (mPlacement.about != null)
+            ((TextView) rootView.findViewById(R.id.about_placement)).setText(Html.fromHtml(mPlacement.about));
+        else
+            ((TextView) rootView.findViewById(R.id.about_placement)).setText("No Placement Data Available");
         if (mPlacement.placementPercentage != null && !mPlacement.placementPercentage.isEmpty())
             ((TextView) rootView.findViewById(R.id.text_placement_perc)).setText(mPlacement.placementPercentage);
         else {

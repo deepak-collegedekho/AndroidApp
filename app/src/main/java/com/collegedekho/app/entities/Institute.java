@@ -3,6 +3,10 @@ package com.collegedekho.app.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.jr.ob.impl.DeferredMap;
+
+import java.util.ArrayList;
+
 /**
  * @author Mayank Gautam
  *         Created: 07/07/15
@@ -44,6 +48,10 @@ public class Institute implements Parcelable {
     private String near_by_joints_snap;
     private String placement;
     private String max_salary;
+    private ArrayList<Facility> facilities;
+    private int current_user_vote_type = -1;
+    private String current_user_shortlist_url;
+    private String current_user_vote_url;
 
     public Institute() {
     }
@@ -74,7 +82,28 @@ public class Institute implements Parcelable {
         near_by_joints_snap = source.readString();
         placement = source.readString();
         max_salary = source.readString();
+        facilities = new ArrayList<>();
+        source.readTypedList(facilities, Facility.CREATOR);
+        current_user_vote_type = source.readInt();
+        current_user_shortlist_url = source.readString();
+        current_user_vote_url = source.readString();
 
+    }
+
+    public String getCurrent_user_vote_url() {
+        return current_user_vote_url;
+    }
+
+    public void setCurrent_user_vote_url(String current_user_vote_url) {
+        this.current_user_vote_url = current_user_vote_url;
+    }
+
+    public String getCurrent_user_shortlist_url() {
+        return current_user_shortlist_url;
+    }
+
+    public void setCurrent_user_shortlist_url(String current_user_shortlist_url) {
+        this.current_user_shortlist_url = current_user_shortlist_url;
     }
 
     public String getPlacement() {
@@ -189,6 +218,10 @@ public class Institute implements Parcelable {
         dest.writeString(near_by_joints_snap);
         dest.writeString(placement);
         dest.writeString(max_salary);
+        dest.writeTypedList(facilities);
+        dest.writeInt(current_user_vote_type);
+        dest.writeString(current_user_shortlist_url);
+        dest.writeString(current_user_vote_url);
     }
 
     public String getLogo() {
@@ -309,6 +342,46 @@ public class Institute implements Parcelable {
 
     public void setEstb_date(String estb_date) {
         this.estb_date = estb_date;
+    }
+
+    public ArrayList<Facility> getFacilities() {
+        return facilities;
+    }
+
+    public void setFacilities(ArrayList facilities) {
+        if (this.facilities == null)
+            this.facilities = new ArrayList<>();
+        for (Object facility : facilities) {
+            if (facility instanceof DeferredMap) {
+                DeferredMap fdm = (DeferredMap) facility;
+                Facility f = new Facility();
+                if (fdm.containsKey("name"))
+                    f.tag = fdm.get("name").toString();
+                if (fdm.containsKey("image")) {
+                    f.image = fdm.get("image").toString();
+                }
+                if (f.image != null)
+                    this.facilities.add(f);
+            }
+
+        }
+    }
+
+    /*public void setFacilities(Map<String,String> facility){
+        if(facilities==null)
+            facilities = new ArrayList<>();
+        Facility f = new Facility();
+        f.tag = facility.get("name");
+        f.image = facility.get("image");
+        facilities.add(f);
+    }*/
+
+    public int getCurrent_user_vote_type() {
+        return current_user_vote_type;
+    }
+
+    public void setCurrent_user_vote_type(int current_user_vote_type) {
+        this.current_user_vote_type = current_user_vote_type;
     }
 
     @Override

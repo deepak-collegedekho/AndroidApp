@@ -21,15 +21,15 @@ public class CoursePagerAdapter extends FragmentStatePagerAdapter {
 
     public CoursePagerAdapter(FragmentManager fm, ArrayList<ArrayList<InstituteCourse>> course) {
         super(fm);
-        mCourse = course;
+        mCourse = new ArrayList<>();
         titles = new ArrayList<>();
         for (int i = 0; i < course.size(); i++) {
             if (course.get(i).size() > 0) {
+                mCourse.add(course.get(i));
                 count++;
                 titles.add(InstituteCourse.CourseLevel.values()[i].name().replace("_", " "));
             }
         }
-
     }
 
     @Override

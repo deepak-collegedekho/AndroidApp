@@ -88,7 +88,13 @@ public class FilterFragment extends Fragment {
         rootView.findViewById(R.id.button_filter_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onFilterCanceled();
+                mListener.onFilterCanceled(false);
+            }
+        });
+        rootView.findViewById(R.id.button_filter_clear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onFilterCanceled(true);
             }
         });
         return rootView;
@@ -129,7 +135,7 @@ public class FilterFragment extends Fragment {
     public interface OnFilterInteractionListener {
         void onFilterApplied();
 
-        void onFilterCanceled();
+        void onFilterCanceled(boolean clearAll);
 
         void onFilterTypeChanged(int position);
     }

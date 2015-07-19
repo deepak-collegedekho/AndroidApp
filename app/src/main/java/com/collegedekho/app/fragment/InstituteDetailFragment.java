@@ -67,7 +67,10 @@ public class InstituteDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_institute_detail, container, false);
         if (mInstitute.getBanner() != null) {
             ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
-            ((NetworkImageView) rootView.findViewById(R.id.image_college_banner)).setImageUrl(mInstitute.getBanner(), imageLoader);
+            NetworkImageView imageView = ((NetworkImageView) rootView.findViewById(R.id.image_college_banner));
+            imageView.setErrorImageResId(R.drawable.default_banner);
+            imageView.setDefaultImageResId(R.drawable.default_banner);
+            imageView.setImageUrl(mInstitute.getBanner(), imageLoader);
         } else {
             ((NetworkImageView) rootView.findViewById(R.id.image_college_banner)).setDefaultImageResId(R.drawable.default_banner);
         }
@@ -82,8 +85,13 @@ public class InstituteDetailFragment extends Fragment {
         return rootView;
     }
 
+
     public void updateCourses(List<InstituteCourse> response) {
         new RandomTask(response).execute();
+    }
+
+    public void updateInstituteShortlist() {
+        mPagerAdapter.updateShortListButton();
     }
 
     class RandomTask extends AsyncTask<Void, Void, Void> {

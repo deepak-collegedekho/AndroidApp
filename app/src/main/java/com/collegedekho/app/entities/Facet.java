@@ -101,7 +101,7 @@ public class Facet implements Parcelable {
     }
 
     public String getTag() {
-        return tag;
+        return uri;
     }
 
     public int getCount() {

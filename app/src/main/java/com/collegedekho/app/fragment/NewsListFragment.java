@@ -61,6 +61,8 @@ public class NewsListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_news_list, container, false);
         ((TextView) rootView.findViewById(R.id.textview_page_title)).setText(mTitle);
+        if (mNews.size() == 0)
+            ((TextView) rootView.findViewById(android.R.id.empty)).setText("This list is empty.");
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(new NewsListAdapter(getActivity(), mNews));

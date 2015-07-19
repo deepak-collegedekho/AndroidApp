@@ -31,6 +31,7 @@ public class InstitutePagerAdapter extends FragmentPagerAdapter {
     Placements p;
     int count = 5;
     InstituteCoursesFragment f;
+    InstituteOverviewFragment o;
     private ArrayList<ArrayList<InstituteCourse>> mCourses;
 
     public InstitutePagerAdapter(FragmentManager fragmentManager, Institute institute) {
@@ -50,7 +51,8 @@ public class InstitutePagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case OVERVIEW_POSITION:
-                return InstituteOverviewFragment.newInstance(mInstitute);
+                o = InstituteOverviewFragment.newInstance(mInstitute);
+                return o;
             case ABOUT_POSITION:
                 return InstituteAboutFragment.newInstance(mInstitute.getShort_name(), mInstitute.getDescription());
             case COURSES_POSITION:
@@ -96,4 +98,8 @@ public class InstitutePagerAdapter extends FragmentPagerAdapter {
             f.updateData(count);
     }
 
+    public void updateShortListButton() {
+        if (o != null)
+            o.updateShortListButton();
+    }
 }

@@ -13,12 +13,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.collegedekho.app.R;
+import com.collegedekho.app.entities.Facet;
 import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.entities.News;
+import com.collegedekho.app.entities.PQuestion;
 import com.collegedekho.app.entities.Question;
 import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.User;
@@ -27,6 +31,7 @@ import com.collegedekho.app.fragment.FilterFragment;
 import com.collegedekho.app.fragment.HomeFragment;
 import com.collegedekho.app.fragment.InstituteDetailFragment;
 import com.collegedekho.app.fragment.InstituteListFragment;
+import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
 import com.collegedekho.app.fragment.NavigationDrawerFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
@@ -55,7 +60,7 @@ public class MainActivity extends AppCompatActivity
         InstituteListFragment.OnInstituteSelectedListener,
         OnApplyClickedListener, WidgetListFragment.OnWidgetInteractionListener,
         NewsListFragment.OnNewsSelectedListener, InstituteQnAFragment.OnQuestionAskedListener,
-        FilterFragment.OnFilterInteractionListener {
+        FilterFragment.OnFilterInteractionListener, InstituteOverviewFragment.OnInstituteShortlistedListener {
 
     private static final String TAG = "MainActivity";
     NetworkUtils mNetworkUtils;
@@ -69,6 +74,11 @@ public class MainActivity extends AppCompatActivity
     String[] randomFacets = {"Relax", "Relax", "It's Just a Little", "Pin Prick", "There",
             "Is", "no", "Place", "You r receding", "The Distance", "Shift in the", "Horizon",
             "I have become", "Comfortably Numb", "Another Brick", "In the wall", "Ok"};
+    String next;
+    // String previousCall;
+    // String previousTag;
+    List<PQuestion> questions;
+    int filterCount;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -79,8 +89,8 @@ public class MainActivity extends AppCompatActivity
     // private CharSequence mTitle;
     private User user;
     private User.Prefs userPref;
+    //private Map<String, String> previousParams;
     private boolean completedStage2;
-
     /*public void onSectionAttached(int number) {
         switch (number) {
             case 1:
@@ -120,7 +130,7 @@ public class MainActivity extends AppCompatActivity
     /*    mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));*/
-        if (user != null) {
+        if (user != null && user.getPref() == User.Prefs.STREAMKNOWN) {
             if (!completedStage2)
                 setUserPref();
             else {
@@ -195,8 +205,10 @@ public class MainActivity extends AppCompatActivity
     private void requestUserCreation() {
         if (user == null)
             networkData(Constants.TAG_CREATE_USER, Constants.BASE_URL + "users/anonymous/", new HashMap<String, String>());
-        else
+        else {
+            user.setPref(userPref);
             setUserPref();
+        }
     }
 
     private void setUser(String json) {
@@ -223,11 +235,19 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /*private void displaySearch() {
+
+    }*/
+
     private String extractResults(String response) {
         try {
             //   JsonFactory jf = new JsonFactory();
             //Result r = Result.createFromJson(jf.createParser(json2));
             Map<String, Object> map = JSON.std.mapFrom(response);
+            if (map.get("next") != null)
+                next = map.get("next").toString();
+            else
+                next = null;
             return JSON.std.asString(map.get("results"));
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -244,51 +264,99 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /*private void displaySearch() {
-
-    }*/
-
-    private void displayInstituteList(String response) {
+    private void updateInstituteList(String response) {
         try {
-            institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
-            displayFragment(InstituteListFragment.newInstance(new ArrayList<>(institutes), currentTitle), true);
+            List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
+            if (currentFragment instanceof InstituteListFragment) {
+                ((InstituteListFragment) currentFragment).updateList(institutes, next);
+            }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
+    private void displayInstituteList(String response, boolean filterAllowed) {
+        try {
+            institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+            if (fragment == null)
+                displayFragment(InstituteListFragment.newInstance(new ArrayList<>(institutes), currentTitle, next, filterAllowed), true, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+            else {
+                if (fragment instanceof InstituteListFragment) {
+                    ((InstituteListFragment) fragment).clearList();
+                    ((InstituteListFragment) fragment).updateList(institutes, next);
+                }
+                displayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    private void displayQuestionnaire(String response) {
+        new AlertDialog.Builder(this).setMessage("This feature is coming soon!").setTitle("Coming Soon!").setNeutralButton("OK", null)
+                .show();
+        /*try {
+            questions = JSON.std.listOfFrom(PQuestion.class,response);
+            new AlertDialog.Builder(this).setMessage("This feature is coming soon!").setTitle("Coming Soon!").setNeutralButton("OK", null)
+                .show();
+            //displayFragment(InstituteListFragment.newInstance(new ArrayList<>(institutes), currentTitle), false);
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }*/
+    }
+
+    //TODO change to personalize institute course
     private void displayInstitute(int position) {
         displayFragment(InstituteDetailFragment.newInstance(institutes.get(position)), true);
-        networkData(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "personalize/institutecourses/", null);
+        networkData(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + institutes.get(position).getId(), null);
     }
 
     private void loadQuestionaire() {
-        new AlertDialog.Builder(this).setMessage("This feature is coming soon!").setTitle("Coming Soon!").setNeutralButton("OK", null)
-                .show();
+        networkData(Constants.TAG_LOAD_QUESTIONNAIRE, Constants.BASE_URL + "questionnaire/", null);
+//        new AlertDialog.Builder(this).setMessage("This feature is coming soon!").setTitle("Coming Soon!").setNeutralButton("OK", null)
+//                .show();
     }
 
-    private void displayFragment(Fragment fragment, boolean addToBackstack) {
+    private void displayFragment(Fragment fragment, boolean addToBackstack, String tag) {
         currentFragment = fragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container, fragment);
-        fragmentTransaction.setCustomAnimations(R.anim.slide_left_to_right, R.anim.slide_right_to_left);
+        fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+        fragmentTransaction.replace(R.id.container, fragment, tag);
         if (addToBackstack)
             fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
+    private void displayFragment(Fragment fragment, boolean addToBackstack) {
+        displayFragment(fragment, addToBackstack, null);
+    }
+
     @Override
     public void onDataLoaded(String tag, String response) {
-        switch (tag) {
+        String[] tags = tag.split("#");
+        String extraTag = null;
+        String like = null;
+        if (tags.length == 2)
+            extraTag = tags[1];
+        if (tags.length == 3) {
+            extraTag = tags[1];
+            like = tags[2];
+        }
+        switch (tags[0]) {
             case Constants.TAG_CREATE_USER:
                 setUser(response);
                 break;
             case Constants.TAG_LOAD_STREAM:
                 displayStreams(response);
                 break;
+            case Constants.WIDGET_SHORTLIST:
+                displayInstituteList(response, false);
+                break;
             case Constants.WIDGET_INSTITUTES:
-                displayInstituteList(response);
+                displayInstituteList(response, true);
                 break;
             case Constants.WIDGET_NEWS:
                 displayNews(response);
@@ -311,9 +379,79 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_FILTERS:
                 updateFilterList(response);
                 break;
+            case Constants.TAG_NEXT_INSTITUTE:
+                updateInstituteList(response);
+                break;
+            case Constants.TAG_SHORTLIST_INSTITUTE:
+                updateShortlistInstitute(response, extraTag);
+                break;
+            case Constants.TAG_DELETESHORTLIST_INSTITUTE:
+                updateShortlistInstitute(null, extraTag);
+                break;
+            case Constants.TAG_LIKE_DISLIKE:
+                updateLikeButton(response, extraTag, Integer.parseInt(like));
+                break;
+            case Constants.TAG_LOAD_QUESTIONNAIRE:
+                displayQuestionnaire(response);
+                break;
         }
         if (progressDialog.isShowing())
             progressDialog.dismiss();
+    }
+
+    private void updateLikeButton(String response, String extraTag, int like) {
+        Institute i = institutes.get(Integer.parseInt(extraTag));
+        if (like == -1) {
+            i.setCurrent_user_vote_type(-1);
+            i.setCurrent_user_vote_url(null);
+        } else {
+            try {
+                Map<String, Object> m = JSON.std.mapFrom(response);
+                i.setCurrent_user_vote_url(m.get("resource_uri").toString());
+                i.setCurrent_user_vote_type(like);
+            } catch (IOException e) {
+                Log.e(TAG, e.getMessage());
+            }
+        }
+        if (currentFragment instanceof InstituteListFragment) {
+            ((InstituteListFragment) currentFragment).updateButtons(Integer.parseInt(extraTag));
+        }
+        /*String message;
+        switch (like){
+            case Constants.LIKE_COLLEGE:
+                message = "Liked ";
+                break;
+            case Constants.DISLIKE_COLLEGE:
+                message = "Disliked ";
+                break;
+            default: message = null;
+                break;
+        }
+        if(message!=null)
+            Toast.makeText(this,message+i.getShort_name(),Toast.LENGTH_SHORT).show();*/
+    }
+
+    private void updateShortlistInstitute(String response, String extraTag) {
+        Institute i = institutes.get(Integer.parseInt(extraTag));
+        String message = null;
+        if (response == null) {
+            i.setCurrent_user_shortlist_url(null);
+            message = " removed from your shortlist";
+        } else {
+            try {
+                message = " added to your shortlist";
+                Map<String, Object> m = JSON.std.mapFrom(response);
+                i.setCurrent_user_shortlist_url(m.get("resource_uri").toString());
+            } catch (IOException e) {
+                Log.e(TAG, e.getMessage());
+            }
+        }
+        if (Integer.parseInt(extraTag) == currentInstitute)
+            if (currentFragment instanceof InstituteDetailFragment) {
+                ((InstituteDetailFragment) currentFragment).updateInstituteShortlist();
+            }
+
+        Toast.makeText(this, i.getShort_name() + message, Toast.LENGTH_SHORT).show();
     }
 
     private void displayCourses(String response) {
@@ -349,6 +487,9 @@ public class MainActivity extends AppCompatActivity
                 return "Posting your question.";
             case Constants.TAG_LOAD_FILTERS:
                 return "Loading Filters";
+            case Constants.TAG_LOAD_QUESTIONNAIRE:
+                return "Loading Questionnaire";
+
         }
         return null;
     }
@@ -375,10 +516,25 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onError(String tag, String response) {
+    public void onError(final String tag, String response, final String url, final Map<String, String> params) {
         if (progressDialog.isShowing())
             progressDialog.dismiss();
-        new AlertDialog.Builder(this).setMessage(response).show();
+        new AlertDialog.Builder(this)
+                .setMessage(response)
+                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        networkData(tag, url, params);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     @Override
@@ -416,14 +572,36 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onInstituteLikedDisliked(int position, int liked) {
         //networkData("",);
+        if (institutes.get(position).getCurrent_user_vote_type() == -1) {
+            Map<String, String> params = new HashMap<>();
+            params.put("vote_type", "" + liked);
+            params.put("institute", institutes.get(position).getResource_uri());
+            params.put("user", user.getResource_uri());
+            networkData(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, Constants.BASE_URL + "institutevotes/", params);
+        } else if (institutes.get(position).getCurrent_user_vote_type() != -1 && liked != -1) {
+            Map<String, String> params = new HashMap<>();
+            params.put("vote_type", "" + liked);
+            params.put("institute", institutes.get(position).getResource_uri());
+            params.put("user", user.getResource_uri());
+            networkData(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institutes.get(position).getCurrent_user_vote_url(), params, Request.Method.PUT);
+        } else {
+            networkData(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institutes.get(position).getCurrent_user_vote_url(), null, Request.Method.DELETE);
+        }
+
     }
 
     @Override
     public void onFilterButtonClicked() {
         if (mFolderList == null)
-            networkData(Constants.TAG_LOAD_FILTERS, Constants.BASE_URL + "personalize/institute_filters/", null);
+            networkData(Constants.TAG_LOAD_FILTERS, Constants.BASE_URL + "personalize/institutes/filters/", null);
         else
             displayFragment(FilterFragment.newInstance(mFolderList), true);
+    }
+
+    @Override
+    public void onEndReached(String next) {
+        if (next != null)
+            networkData(Constants.TAG_NEXT_INSTITUTE, next, null);
     }
 
     public void updateFilterList(String response) {
@@ -471,14 +649,30 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void networkData(String tag, String url, HashMap<String, String> params) {
+    private void networkData(String tag, String url, Map<String, String> params, int method) {
+        // previousCall = url;
+//        previousParams = params;
+//        previousTag = tag;
         String message = getPersonalizedMessage(tag);
         if (message != null)
             showProgressDialog(message);
+        switch (method) {
+            case Request.Method.GET:
+            case Request.Method.DELETE:
+                mNetworkUtils.getOrDeleteData(tag, url, method);
+                break;
+            case Request.Method.POST:
+            case Request.Method.PUT:
+                mNetworkUtils.postOrPutData(tag, url, params, method);
+                break;
+        }
+    }
+
+    private void networkData(String tag, String url, Map<String, String> params) {
         if (params != null)
-            mNetworkUtils.postData(tag, url, params);
+            networkData(tag, url, params, Request.Method.POST);
         else
-            mNetworkUtils.getData(tag, url);
+            networkData(tag, url, null, Request.Method.GET);
     }
 
     private void showProgressDialog(String message) {
@@ -511,11 +705,46 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFilterApplied() {
-
+        Map<String, String> map = new HashMap<>();
+        int count = 0;
+        for (Folder f : mFolderList) {
+            for (Facet ft : f.getFacets())
+                if (ft.isSelected() == 1)
+                    map.put("tag_uris[" + (count++) + "]", ft.getTag());
+        }
+        filterCount = map.size();
+        networkData(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", map);
+        onBackPressed();
+        updateFilterButton();
     }
 
     @Override
-    public void onFilterCanceled() {
+    public void onFilterCanceled(boolean clearAll) {
+        onBackPressed();
+        if (clearAll) {
+            for (Folder f : mFolderList) {
+                for (Facet ft : f.getFacets())
+                    ft.deselect();
+            }
+            filterCount = 0;
+            networkData(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", null);
+        } else {
+            filterCount = 0;
+            for (Folder f : mFolderList) {
+                for (Facet ft : f.getFacets())
+                    if (ft.isSelected() == 1)
+                        filterCount++;
+            }
+        }
+        updateFilterButton();
+    }
+
+    private void updateFilterButton() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+        if (fragment instanceof InstituteListFragment) {
+            ((InstituteListFragment) fragment).updateFilterButton(filterCount);
+        }
 
     }
 
@@ -527,4 +756,16 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public void onInstituteShortlisted() {
+        Institute i = institutes.get(currentInstitute);
+        if (i.getCurrent_user_shortlist_url() == null) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("institute", i.getResource_uri());
+            params.put("user", user.getResource_uri());
+            networkData(Constants.TAG_SHORTLIST_INSTITUTE + "#" + currentInstitute, Constants.BASE_URL + "shortlistedinstitutes/", params);
+        } else {
+            networkData(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + currentInstitute, i.getCurrent_user_shortlist_url(), null, Request.Method.DELETE);
+        }
+    }
 }
