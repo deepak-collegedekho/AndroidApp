@@ -3,6 +3,8 @@ package com.collegedekho.app.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.jr.ob.impl.DeferredMap;
+
 import java.util.ArrayList;
 
 /**
@@ -63,20 +65,53 @@ public class PQuestion implements Parcelable {
         this.required = required;
     }
 
-    public void setChoices(Object choices) {
+    public void setChoices(ArrayList<ArrayList<Object>> choices) {
+        this.choices = new ArrayList<>();
+        for (ArrayList c : choices) {
+            this.choices.add(c.get(1).toString());
+        }
         //this.choices = choices;
         System.out.println();
     }
 
 
-    public void setSecondary(Object choices) {
+    public void setSecondary(ArrayList<Object> secondary) {
+        this.secondary = new ArrayList<>();
+        for (Object o : secondary) {
+            DeferredMap d = (DeferredMap) o;
+            Choice c = new Choice();
+            c.setField(d.get("field").toString());
+            c.setRequired(Boolean.parseBoolean(d.get("required").toString()));
+            c.setType(d.get("type").toString());
+            c.setText(d.get("text").toString());
+            ArrayList<String> choice = new ArrayList<>();
+            if (c.getType().equals("range")) {
+                Object obj = d.get("range");
+                if (obj instanceof ArrayList) {
+                    for (Object obj1 : (ArrayList) obj) {
+                        choice.add(obj1.toString());
+                    }
+                }
+            } else {
+                Object obj = d.get("choices");
+                if (obj instanceof ArrayList) {
+                    for (Object obj1 : (ArrayList) obj) {
+                        if (obj1 instanceof ArrayList) {
+                            choice.add(((ArrayList) obj1).get(1).toString());
+                        }
+                    }
+                }
+            }
+            c.setChoices(choice);
+            this.secondary.add(c);
+        }
         //this.choices = choices;
         System.out.println();
     }
 
-    public void setChoices(ArrayList<String> choices) {
+    /*public void setChoices(ArrayList<String> choices) {
         this.choices = choices;
-    }
+    }*/
 
     public void setField(String field) {
         this.field = field;

@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
         /*mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);*/
         //mTitle = getTitle();
@@ -198,8 +199,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onHomeItemSelected(User.Prefs preference) {
-        requestUserCreation();
         userPref = preference;
+        requestUserCreation();
     }
 
     private void requestUserCreation() {
@@ -267,6 +268,7 @@ public class MainActivity extends AppCompatActivity
     private void updateInstituteList(String response) {
         try {
             List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
+            this.institutes.addAll(institutes);
             if (currentFragment instanceof InstituteListFragment) {
                 ((InstituteListFragment) currentFragment).updateList(institutes, next);
             }
@@ -295,16 +297,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void displayQuestionnaire(String response) {
-        new AlertDialog.Builder(this).setMessage("This feature is coming soon!").setTitle("Coming Soon!").setNeutralButton("OK", null)
-                .show();
-        /*try {
+        /*new AlertDialog.Builder(this).setMessage("This feature is coming soon!").setTitle("Coming Soon!").setNeutralButton("OK", null)
+                .show();*/
+        try {
             questions = JSON.std.listOfFrom(PQuestion.class,response);
-            new AlertDialog.Builder(this).setMessage("This feature is coming soon!").setTitle("Coming Soon!").setNeutralButton("OK", null)
-                .show();
+//            new AlertDialog.Builder(this).setMessage("This feature is coming soon!").setTitle("Coming Soon!").setNeutralButton("OK", null)
+//                .show();
             //displayFragment(InstituteListFragment.newInstance(new ArrayList<>(institutes), currentTitle), false);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
-        }*/
+        }
     }
 
     //TODO change to personalize institute course

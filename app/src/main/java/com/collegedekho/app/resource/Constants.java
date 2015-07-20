@@ -24,8 +24,8 @@ public class Constants {
     public static final String WIDGET_NEWS = "news";
     public static final String WIDGET_ARTICES = "articles";
     //    public static final String IP = "http://10.0.3.2";
-    public static final String IP = "http://www.launch.collegedekho.com";
-    //public static final String IP = "http://192.168.8.100";
+    //public static final String IP = "http://www.launch.collegedekho.com";
+    public static final String IP = "http://192.168.8.101";
     //public static final String IP = "http://192.168.1.56";
     public static final String BASE_URL = IP + ":8000/api/1/";
     public static final String TAG_LOAD_COURSES = "load_courses";
@@ -49,6 +49,12 @@ public class Constants {
     public static final String WIDGET_SHORTLIST = "shortlistedinstitutes";
     public static final String TAG_LOAD_QUESTIONNAIRE = "load_questionnaire";
     public static final String TAG_FRAGMENT_INSTITUTE_LIST = "fragment_institute_list";
+    public static final String QTYPE_SINGLE = "single";
+    public static final String QTYPE_MULTIPLE = "multiple";
+    public static final String QTYPE_DROPDOWN = "dropdown";
+    public static final String QTYPE_INPUT = "input";
+    public static final String QTYPE_RANGE = "range";
+
 
     //public static final String BASE_URL = "http://192.168.1.56:8000/api/1/";
 }
