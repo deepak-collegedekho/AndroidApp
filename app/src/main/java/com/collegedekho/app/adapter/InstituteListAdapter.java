@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -74,11 +75,11 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
     }
 
     public void updateLikeButtons(int position) {
-        notifyItemChanged(position);
+        this.notifyItemChanged(position);
+        this.notifyDataSetChanged();
     }
 
     class InstituteHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
         TextView instiName;
         TextView instiLocation;
         TextView instiCourses;
@@ -129,15 +130,17 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             switch (v.getId()) {
                 case R.id.button_like_college:
                     if (!v.isSelected())
-                        mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.LIKE_COLLEGE);
+                        mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.LIKE_THING);
                     else
-                        mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DELETE_LIKE);
+                        Toast.makeText(mContext, "Already liked..", Toast.LENGTH_SHORT).show();
+                        //mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DELETE_LIKE);
                     break;
                 case R.id.button_dislike_college:
                     if (!v.isSelected())
-                        mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_COLLEGE);
+                        mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_THING);
                     else
-                        mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DELETE_LIKE);
+                        Toast.makeText(mContext, "Already disliked. You really hate this one..", Toast.LENGTH_SHORT).show();
+                    //mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DELETE_LIKE);
                     break;
                 default:
                     mListener.onInstituteSelected(getAdapterPosition());

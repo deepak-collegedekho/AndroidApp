@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.Constants;
 
@@ -27,6 +28,8 @@ public class HomeFragment extends Fragment {
 
 
     private OnHomeInteractionListener mListener;
+
+    private  MainActivity mMainActivity;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -84,6 +87,17 @@ public class HomeFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        this.mMainActivity = (MainActivity) getActivity();
+
+        if (this.mMainActivity != null)
+            this.mMainActivity.currentFragment = this;
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this

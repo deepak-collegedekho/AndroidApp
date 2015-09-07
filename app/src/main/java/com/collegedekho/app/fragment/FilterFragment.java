@@ -97,6 +97,7 @@ public class FilterFragment extends Fragment {
                 mListener.onFilterCanceled(true);
             }
         });
+
         return rootView;
     }
 
@@ -115,6 +116,8 @@ public class FilterFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        //mFolderList = null;
+        System.gc();
     }
 
     public void updateFilterType(int position) {
@@ -139,5 +142,4 @@ public class FilterFragment extends Fragment {
 
         void onFilterTypeChanged(int position);
     }
-
 }

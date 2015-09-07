@@ -3,10 +3,13 @@ package com.collegedekho.app.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.entities.Placements;
+import com.collegedekho.app.entities.QnAAnswers;
+import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.fragment.InstituteAboutFragment;
 import com.collegedekho.app.fragment.InstituteCoursesFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
@@ -19,8 +22,7 @@ import java.util.ArrayList;
  * @author Mayank Gautam
  *         Created: 09/07/15
  */
-public class InstitutePagerAdapter extends FragmentPagerAdapter {
-
+public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     private static final int OVERVIEW_POSITION = 0;
     private static final int ABOUT_POSITION = 1;
     private static final int COURSES_POSITION = 2;
@@ -32,7 +34,9 @@ public class InstitutePagerAdapter extends FragmentPagerAdapter {
     int count = 5;
     InstituteCoursesFragment f;
     InstituteOverviewFragment o;
+    InstituteQnAFragment q;
     private ArrayList<ArrayList<InstituteCourse>> mCourses;
+    private ArrayList<QnAQuestions> mQnAQuestions;
 
     public InstitutePagerAdapter(FragmentManager fragmentManager, Institute institute) {
         super(fragmentManager);
@@ -61,7 +65,8 @@ public class InstitutePagerAdapter extends FragmentPagerAdapter {
             case PLACEMENT_POSITION:
                 return InstitutePlacementFragment.newInstance(p);
             case QNA_POSITION:
-                return InstituteQnAFragment.newInstance();
+                q = InstituteQnAFragment.newInstance(mQnAQuestions, mInstitute.getName());
+                return q;
         }
         return null;
     }
@@ -98,8 +103,29 @@ public class InstitutePagerAdapter extends FragmentPagerAdapter {
             f.updateData(count);
     }
 
+    public void setQnAQuestions(ArrayList<QnAQuestions> qnaQuestions)
+    {
+        if (q != null)
+        {
+            this.mQnAQuestions = qnaQuestions;
+            q.instituteQnAUpdated(qnaQuestions);
+        }
+        this.mQnAQuestions = qnaQuestions;
+    }
+
     public void updateShortListButton() {
         if (o != null)
             o.updateShortListButton();
+    }
+
+    public void questionAdded(QnAQuestions ques)
+    {
+        if (q != null)
+            q.questionAdded(ques);
+    }
+
+    public void answerAdded(QnAAnswers ans)
+    {
+
     }
 }

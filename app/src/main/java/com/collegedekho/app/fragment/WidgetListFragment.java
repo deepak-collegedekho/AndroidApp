@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.WidgetAdapter;
 import com.collegedekho.app.entities.Widget;
 
@@ -24,12 +25,16 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class WidgetListFragment extends Fragment implements AdapterView.OnItemClickListener {
+    public static final String TITLE = "Widgets";
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
 
     private ArrayList<Widget> widgets;
 
     private OnWidgetInteractionListener mListener;
+
+    private MainActivity mMainActivity;
 
     public WidgetListFragment() {
         // Required empty public constructor
@@ -82,6 +87,17 @@ public class WidgetListFragment extends Fragment implements AdapterView.OnItemCl
         super.onDetach();
         mListener = null;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        this.mMainActivity = (MainActivity) getActivity();
+
+        if (this.mMainActivity != null)
+            this.mMainActivity.currentFragment = this;
+    }
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

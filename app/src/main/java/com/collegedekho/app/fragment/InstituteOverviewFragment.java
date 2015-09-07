@@ -16,6 +16,7 @@ import com.collegedekho.app.MySingleton;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
+import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
 
@@ -76,10 +77,14 @@ public class InstituteOverviewFragment extends Fragment {
         ((TextView) rootView.findViewById(R.id.textview_college_location)).setText(text);
         ((TextView) rootView.findViewById(R.id.textview_why_join)).setText("Why join " + mInstitute.getShort_name());
         TextView t = ((TextView) rootView.findViewById(R.id.shortlist_college));
-        if (mInstitute.getCurrent_user_shortlist_url() == null) {
+
+        if (mInstitute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
+        {
             t.setText("Shortlist " + mInstitute.getShort_name());
             t.setBackgroundResource(R.drawable.bg_button_blue);
-        } else {
+        }
+        else
+        {
             t.setText("Delete " + mInstitute.getShort_name() + " from your shortlist");
             t.setBackgroundResource(R.drawable.bg_button_grey);
         }
@@ -223,7 +228,7 @@ public class InstituteOverviewFragment extends Fragment {
         View rootView = getView();
         if (rootView != null) {
             TextView t = (TextView) rootView.findViewById(R.id.shortlist_college);
-            if (mInstitute.getCurrent_user_shortlist_url() == null) {
+            if (mInstitute.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
                 t.setText("Shortlist " + mInstitute.getShort_name());
                 t.setBackgroundResource(R.drawable.bg_button_blue);
             } else {

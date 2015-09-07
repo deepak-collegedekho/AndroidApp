@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RadioButton xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
-    android:text="Single Type" />
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="1"
+    android:layout_margin="4dp"
+    android:gravity="center_horizontal"
+    >
+    <TextView
+        android:id="@+id/single_choice_text"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight=".8"
+        android:text="this is option"
+        android:gravity="center_vertical"
+        />
+    <RadioButton
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight=".1"
+        android:gravity="center"
+        android:id="@+id/single_choice_radio"
+        android:checked="false"
+        android:focusable="false"
+        android:clickable="false"
+        />
+</LinearLayout>

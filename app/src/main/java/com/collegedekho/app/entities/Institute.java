@@ -52,6 +52,8 @@ public class Institute implements Parcelable {
     private int current_user_vote_type = -1;
     private String current_user_shortlist_url;
     private String current_user_vote_url;
+    private int is_shortlisted;
+
 
     public Institute() {
     }
@@ -87,7 +89,7 @@ public class Institute implements Parcelable {
         current_user_vote_type = source.readInt();
         current_user_shortlist_url = source.readString();
         current_user_vote_url = source.readString();
-
+        is_shortlisted = source.readInt();
     }
 
     public String getCurrent_user_vote_url() {
@@ -382,6 +384,14 @@ public class Institute implements Parcelable {
 
     public void setCurrent_user_vote_type(int current_user_vote_type) {
         this.current_user_vote_type = current_user_vote_type;
+    }
+
+    public int getIs_shortlisted() {
+        return is_shortlisted;
+    }
+
+    public void setIs_shortlisted(int is_shortlisted) {
+        this.is_shortlisted = is_shortlisted;
     }
 
     @Override

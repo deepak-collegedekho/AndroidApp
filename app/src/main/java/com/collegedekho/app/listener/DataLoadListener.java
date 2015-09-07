@@ -1,5 +1,7 @@
 package com.collegedekho.app.listener;
 
+import org.json.JSONObject;
+
 import java.util.Map;
 
 /**
@@ -10,5 +12,9 @@ public interface DataLoadListener {
 
     public void onDataLoaded(String tag, String response);
 
-    public void onError(String tag, String response, String url, Map<String, String> params);
+    //public void onJsonObjectRequestDataLoaded(String tag, String response);
+
+    public void onError(String tag, String response, String url, Map<String, String> params, int method);
+
+    public void onJsonObjectRequestError(String tag, String response, String url, JSONObject params, int method);
 }

@@ -47,6 +47,7 @@ public class InstituteCoursesFragment extends Fragment {
             args.putParcelableArrayList(InstituteCourse.CourseLevel.values()[i].name(), courses.get(i));
         }
         fragment.setArguments(args);
+
         return fragment;
     }
 

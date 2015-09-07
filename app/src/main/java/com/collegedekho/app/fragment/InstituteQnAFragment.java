@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -11,29 +14,36 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.entities.Question;
+import com.collegedekho.app.adapter.QnAQuestionsListAdapter;
+import com.collegedekho.app.entities.QnAAnswers;
+import com.collegedekho.app.entities.QnAQuestions;
+
+import java.util.ArrayList;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link OnQuestionAskedListener} interface
- * to handle interaction events.
- * Use the {@link InstituteQnAFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class InstituteQnAFragment extends Fragment implements TextWatcher, AdapterView.OnItemClickListener {
-    //private static final String ARG_COURSES = "courses";
-
-    //Removing Course List for now, too much of a headache.
-    //private ArrayList<InstituteCourse> mCourses;
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
 
     private OnQuestionAskedListener mListener;
-    // private int currentCourseIndex;
     private TextInputLayout til1;
     private TextInputLayout til2;
+    private ArrayList<QnAQuestions> mQnAQuestions;
+    private TextView mEmptyTextView;
+    private TextView mAskExpertButton;
+    private TextView mAskExpertCancelButton;
+    private TextView mAskExpertSubmitButton;
+    private LinearLayout mInstituteQnAAskContainer;
+    private LinearLayout mInstituteQnAQuestionListContainer;
+    private LinearLayout mInstituteQnAAskContainerButtonsControllers;
+    private QnAQuestionsListAdapter mQnAQuestionsListAdapter;
+    private RecyclerView mQuestionsListView;
+    private String mInstitute;
+
 
     public InstituteQnAFragment() {
         // Required empty public constructor
@@ -45,70 +55,159 @@ public class InstituteQnAFragment extends Fragment implements TextWatcher, Adapt
      *
      * @return A new instance of fragment InstituteQnAFragment.
      */
-    public static InstituteQnAFragment newInstance() {
-        //    Bundle args = new Bundle();
-        //args.putParcelableArrayList(ARG_COURSES, courseList);
-        //    fragment.setArguments(args);
-        return new InstituteQnAFragment();
+    public static InstituteQnAFragment newInstance(ArrayList<QnAQuestions> qnaQuestions, String instituteName) {
+        InstituteQnAFragment fragment = new InstituteQnAFragment();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(ARG_PARAM1, qnaQuestions);
+        args.putString(ARG_PARAM2, instituteName);
+        fragment.setArguments(args);
+
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*if (getArguments() != null) {
-            mCourses = getArguments().getParcelableArrayList(ARG_COURSES);
-        }*/
+        if (getArguments() != null) {
+            this.mQnAQuestions = getArguments().getParcelableArrayList(ARG_PARAM1);
+            this.mInstitute = getArguments().getString(ARG_PARAM2);
+        }
+        else
+        {
+            this.mQnAQuestions = new ArrayList<QnAQuestions>();
+            this.mInstitute = "";
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_institute_qna, container, false);
-//        Spinner s = (Spinner) rootView.findViewById(R.id.spinner_question_course);
-//        s.setAdapter(new ArrayAdapter<>(getActivity(),android.R.layout.simple_spinner_item,getCourses()));
-//        s.setOnItemClickListener(this);
-        rootView.findViewById(R.id.button_expert).setOnClickListener(new View.OnClickListener() {
+
+        this.mInstituteQnAAskContainer = (LinearLayout) rootView.findViewById(R.id.institute_qna_ask_question_container);
+        this.mInstituteQnAAskContainerButtonsControllers = (LinearLayout) rootView.findViewById(R.id.institute_qna_question_controls_buttons);
+        this.mInstituteQnAQuestionListContainer = (LinearLayout) rootView.findViewById(R.id.institute_qna_question_recycle_view_container);
+        this.mAskExpertButton = (TextView) rootView.findViewById(R.id.institute_qna_button_ask_expert);
+        this.mAskExpertCancelButton= (TextView) rootView.findViewById(R.id.institute_qna_button_ask_cancel);
+        this.mAskExpertSubmitButton= (TextView) rootView.findViewById(R.id.institute_qna_button_ask_submit);
+        this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
+
+        this.mQnAQuestionsListAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestions);
+
+        this.mQuestionsListView = (RecyclerView) rootView.findViewById(R.id.institute_qna_question_recycle_view);
+
+        this.mQuestionsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        this.mQuestionsListView.setAdapter(this.mQnAQuestionsListAdapter);
+        this.mQuestionsListView.setItemAnimator(new DefaultItemAnimator());
+
+        this.mAskExpertButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onButtonPressed();
+                onAskExpertButtonPressed();
             }
         });
+
+        this.mAskExpertCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onAskExpertCancelButtonPressed();
+            }
+        });
+
+        this.mAskExpertSubmitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onAskExpertSubmitButtonPressed();
+            }
+        });
+
+        if (this.mQnAQuestions.size() != 0)
+        {
+            this.mInstituteQnAQuestionListContainer.setVisibility(View.VISIBLE);
+            this.mAskExpertButton.setEnabled(true);
+            this.mAskExpertButton.setText("Ask an Expert Now");
+
+        }
+        else if (this.mQnAQuestions.size() == 0)
+        {
+            this.mInstituteQnAQuestionListContainer.setVisibility(View.GONE);
+            this.mInstituteQnAAskContainer.setVisibility(View.GONE);
+            this.mEmptyTextView.setText("No questions asked yet. Go ahead shoot one..");
+            this.mAskExpertButton.setText("Ask an Expert Now");
+            this.mAskExpertButton.setEnabled(true);
+        }
+
         return rootView;
     }
 
-    public Question validateData(View rootView) {
-        View check = rootView.findViewById(R.id.question_title);
-        Question q = new Question();
-        q.title = ((EditText) check).getText().toString();
-        boolean valid = q.title.length() > 0;
+    public QnAQuestions validateData(View rootView) {
+        View check = rootView.findViewById(R.id.institute_qna_question_title);
+        QnAQuestions q = new QnAQuestions();
+        q.setInstitute(this.mInstitute);
+        q.setTitle(((EditText) check).getText().toString());
+        boolean valid = q.getTitle().length() > 0;
         ((EditText) check).addTextChangedListener(this);
         til1 = (TextInputLayout) check.getParent();
         if (!valid)
             til1.setError("Question title cannot be empty.");
         else
             til1.setErrorEnabled(false);
-        check = rootView.findViewById(R.id.question_content);
+        check = rootView.findViewById(R.id.institute_qna_question_desc);
         ((EditText) check).addTextChangedListener(this);
         til2 = (TextInputLayout) check.getParent();
-        q.content = ((EditText) check).getText().toString();
-        valid &= q.content.length() > 0;
+        q.setDesc(((EditText) check).getText().toString());
+        valid &= q.getDesc().length() > 0;
         if (!valid)
             til2.setError("Question text cannot be empty.");
         else
             til2.setErrorEnabled(false);
-        //   q.course = ""+mCourses.get(currentCourseIndex).getId();
         if (valid)
             return q;
         return null;
     }
 
-    public void onButtonPressed() {
+    public void onAskExpertCancelButtonPressed()
+    {
+        if (this.mQnAQuestions.size() == 0)
+            this.mEmptyTextView.setVisibility(View.VISIBLE);
+        else
+            this.mInstituteQnAQuestionListContainer.setVisibility(View.VISIBLE);
+
+        this.mInstituteQnAAskContainer.setVisibility(View.GONE);
+
+        this.mAskExpertButton.setVisibility(View.VISIBLE);
+        this.mAskExpertButton.setEnabled(true);
+    }
+
+    public void onAskExpertSubmitButtonPressed()
+    {
         View rootView = getView();
         if (rootView != null) {
-            Question q = validateData(rootView);
+            QnAQuestions q = validateData(rootView);
             if (q != null) {
                 mListener.onQuestionAsked(q);
             }
+        }
+
+        this.mInstituteQnAAskContainer.setVisibility(View.GONE);
+        this.mInstituteQnAQuestionListContainer.setVisibility(View.VISIBLE);
+
+        this.mAskExpertButton.setVisibility(View.VISIBLE);
+        this.mAskExpertButton.setEnabled(true);
+    }
+
+    public void onAskExpertButtonPressed()
+    {
+        /*if (this.mInstituteQnALoader.isShowing()  && this.mInstituteQnALoader != null)
+            this.mInstituteQnALoader.dismiss();*/
+        if (this.mInstituteQnAAskContainer.getVisibility() == View.GONE)
+        {
+            this.mEmptyTextView.setVisibility(View.GONE);
+            this.mInstituteQnAQuestionListContainer.setVisibility(View.GONE);
+            this.mInstituteQnAAskContainer.setVisibility(View.VISIBLE);
+
+            this.mAskExpertButton.setVisibility(View.GONE);
+            this.mAskExpertButton.setEnabled(false);
         }
     }
 
@@ -163,16 +262,55 @@ public class InstituteQnAFragment extends Fragment implements TextWatcher, Adapt
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnQuestionAskedListener {
-        void onQuestionAsked(Question question);
+        void onQuestionAsked(QnAQuestions question);
     }
 
-    /*
-    private ArrayList<String> getCourses(){
-        ArrayList<String> courseList = new ArrayList<>();
-        for(InstituteCourse c: mCourses){
-            courseList.add(c.getName());
+    //adds added answer to the current list
+    public void instituteQnAAnswerUpdated(QnAAnswers qnaAnswer)
+    {
+
+    }
+
+    //adds questions to the current list
+    public void instituteQnAUpdated(ArrayList<QnAQuestions> qnaQuestionList)
+    {
+        this.mQnAQuestions = qnaQuestionList;
+
+        if (this.mQnAQuestions.size() == 0)
+        {
+            this.mInstituteQnAAskContainer.setVisibility(View.VISIBLE);
+            this.mInstituteQnAQuestionListContainer.setVisibility(View.GONE);
         }
-        return courseList;
-    }*/
+        else
+        {
+            this.mInstituteQnAAskContainer.setVisibility(View.GONE);
+            this.mInstituteQnAQuestionListContainer.setVisibility(View.VISIBLE);
+
+            this.mQnAQuestionsListAdapter.notifyDataSetChanged();
+        }
+        this.mAskExpertButton.setEnabled(true);
+        this.mAskExpertButton.setText("Ask an Expert Now");
+
+    }
+
+    public void questionAdded(QnAQuestions ques)
+    {
+        if (this.mQnAQuestions.size() == 0)
+            this.mEmptyTextView.setVisibility(View.GONE);
+
+        if (this.mInstituteQnAAskContainer.getVisibility() == View.VISIBLE)
+        {
+            this.mInstituteQnAQuestionListContainer.setVisibility(View.VISIBLE);
+            this.mInstituteQnAAskContainer.setVisibility(View.GONE);
+        }
+
+        this.mInstituteQnAQuestionListContainer.requestFocus();
+
+        mQnAQuestions.add(mQnAQuestions.size(), ques);
+        mQnAQuestionsListAdapter.notifyItemInserted(mQnAQuestions.size() - 1);
+        mQnAQuestionsListAdapter.notifyDataSetChanged();
+
+        this.mQuestionsListView.scrollToPosition(mQnAQuestions.size() - 1);
+    }
 
 }

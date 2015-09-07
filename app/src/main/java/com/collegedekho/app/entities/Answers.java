@@ -61,6 +61,4 @@ public class Answers implements Parcelable {
         dest.writeString(user);
         dest.writeString(question);
     }
-
-
 }

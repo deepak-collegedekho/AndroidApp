@@ -4,15 +4,40 @@ package com.collegedekho.app.entities;
  * @author Mayank Gautam
  *         Created: 04/07/15
  */
-public class User {
+public class User
+{
+    private String id;
     private String resource_uri;
     private String email;
     private String username;
     private String name;
+    private String added_on;
     private String image;
     private String token;
     private boolean is_anony;
     private Prefs pref;
+    private String stream;
+    private String level;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getAdded_on() {
+        return added_on;
+    }
+
+    public void setAdded_on(String added_on) {
+        this.added_on = added_on;
+    }
+
+    public boolean is_anony() {
+        return is_anony;
+    }
 
     public Prefs getPref() {
         return pref;
@@ -80,5 +105,21 @@ public class User {
 
     public enum Prefs {
         NOT_SURE, STREAMKNOWN
+    }
+
+    public String getStream() {
+        return stream;
+    }
+
+    public void setStream(String stream) {
+        this.stream = stream;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
     }
 }

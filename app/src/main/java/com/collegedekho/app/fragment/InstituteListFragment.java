@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.InstituteListAdapter;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.widget.DividerItemDecoration;
@@ -30,10 +31,12 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class InstituteListFragment extends Fragment {
+    public static final String TITLE = "Institutes";
     private static final String ARG_INSTITUTE = "institute";
     private static final String ARG_TITLE = "title";
     private static final String ARG_NEXT = "next";
     private static final String ARG_FILTER_ALLOWED = "filter_allowed";
+    private static final String ARG_FILTER_COUNT = "filter_count";
     int pastVisiblesItems, visibleItemCount, totalItemCount;
     private ArrayList<Institute> mInstitutes;
     private String mTitle;
@@ -42,7 +45,10 @@ public class InstituteListFragment extends Fragment {
     private InstituteListAdapter mAdapter;
     private String next;
     private boolean filterAllowed;
+    private int filterCount;
     private boolean loading = false;
+    private MainActivity mMainActivity;
+
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -68,13 +74,16 @@ public class InstituteListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static InstituteListFragment newInstance(ArrayList<Institute> institutes, String title, String next, boolean filterAllowed) {
+    public static InstituteListFragment newInstance(ArrayList<Institute> institutes, String title, String next, boolean filterAllowed, int filterCount) {
         InstituteListFragment fragment = new InstituteListFragment();
         Bundle args = new Bundle();
+
         args.putParcelableArrayList(ARG_INSTITUTE, institutes);
         args.putString(ARG_TITLE, title);
         args.putString(ARG_NEXT, next);
         args.putBoolean(ARG_FILTER_ALLOWED, filterAllowed);
+        args.putInt(ARG_FILTER_COUNT, filterCount);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,6 +96,7 @@ public class InstituteListFragment extends Fragment {
             mTitle = getArguments().getString(ARG_TITLE);
             next = getArguments().getString(ARG_NEXT);
             filterAllowed = getArguments().getBoolean(ARG_FILTER_ALLOWED);
+            filterCount = getArguments().getInt(ARG_FILTER_COUNT);
         }
     }
 
@@ -116,6 +126,12 @@ public class InstituteListFragment extends Fragment {
             });
         } else
             rootView.findViewById(R.id.button_filter).setVisibility(View.GONE);
+
+        if (filterCount > 0)
+            ((ImageView) rootView.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter_selected);
+        else
+            ((ImageView) rootView.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter);
+
         return rootView;
     }
 
@@ -134,6 +150,16 @@ public class InstituteListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        this.mMainActivity = (MainActivity) getActivity();
+
+        if (this.mMainActivity != null)
+            this.mMainActivity.currentFragment = this;
     }
 
     public void clearList() {

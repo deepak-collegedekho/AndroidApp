@@ -28,7 +28,7 @@ public class Facet implements Parcelable {
     private String attr;
     private String label;
     private String tag;
-    private int selected = -1;
+    private int is_selected;
     private int count;
     //Every facet has a parent folder.
     private Folder parent;
@@ -40,14 +40,14 @@ public class Facet implements Parcelable {
         attr = parcel.readString();
         label = parcel.readString();
         tag = parcel.readString();
-        selected = parcel.readInt();
+        is_selected = parcel.readInt();
         count = parcel.readInt();
     }
 
     public Facet(String label, String tag, int selected) {
         this.label = label;
         this.tag = tag;
-        this.selected = selected;
+        this.is_selected = selected;
     }
 
     public Facet() {
@@ -76,6 +76,8 @@ public class Facet implements Parcelable {
                 case Constants.TAG_URI:
                     f.uri = jp.getText();
                     break;
+                case Constants.TAG_SELECTED:
+                    f.is_selected = jp.getIntValue();
                 default:
                     jp.skipChildren();
                     break;
@@ -85,15 +87,15 @@ public class Facet implements Parcelable {
     }
 
     public int isSelected() {
-        return selected;
+        return is_selected;
     }
 
     public void select() {
-        selected = 1;
+        is_selected = 1;
     }
 
     public void deselect() {
-        selected = 0;
+        is_selected = 0;
     }
 
     public String getLabel() {
@@ -132,7 +134,7 @@ public class Facet implements Parcelable {
         parcel.writeString(attr);
         parcel.writeString(label);
         parcel.writeString(tag);
-        parcel.writeInt(selected);
+        parcel.writeInt(is_selected);
         parcel.writeInt(count);
     }
 

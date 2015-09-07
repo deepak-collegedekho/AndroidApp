@@ -23,9 +23,11 @@ public class FacetListAdapter extends RecyclerView.Adapter<FacetListAdapter.Face
     }
 
     @Override
-    public FacetHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public FacetHolder onCreateViewHolder(ViewGroup parent, int viewType)
+    {
         LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
         View convertView = inflater.inflate(R.layout.item_filter_view, parent, false);
+
         return new FacetHolder(convertView);
     }
 

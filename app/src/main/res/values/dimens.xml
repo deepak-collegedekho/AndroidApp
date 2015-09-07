@@ -10,4 +10,5 @@
     <dimen name="widget_image_height">120dp</dimen>
     <dimen name="like_dislike_size">35dp</dimen>
     <dimen name="course_label_horizontal_margin">10dp</dimen>
+    <dimen name="gradient_radius">5dp</dimen>
 </resources>

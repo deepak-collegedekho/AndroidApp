@@ -2,17 +2,21 @@ package com.collegedekho.app.activity;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -21,9 +25,12 @@ import com.collegedekho.app.entities.Facet;
 import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
+import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
+import com.collegedekho.app.entities.MyFutureBuddy;
+import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.News;
-import com.collegedekho.app.entities.PQuestion;
-import com.collegedekho.app.entities.Question;
+import com.collegedekho.app.entities.QnAAnswers;
+import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.entities.Widget;
@@ -33,24 +40,33 @@ import com.collegedekho.app.fragment.InstituteDetailFragment;
 import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
+import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
+import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.NavigationDrawerFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsListFragment;
+import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
+import com.collegedekho.app.fragment.QnAQuestionsListFragment;
+import com.collegedekho.app.fragment.SplashFragment;
 import com.collegedekho.app.fragment.StreamFragment;
 import com.collegedekho.app.fragment.WidgetListFragment;
+import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.NetworkUtils;
+import com.facebook.appevents.AppEventsLogger;
 import com.fasterxml.jackson.jr.ob.JSON;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-
 
 public class MainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks,
@@ -60,25 +76,33 @@ public class MainActivity extends AppCompatActivity
         InstituteListFragment.OnInstituteSelectedListener,
         OnApplyClickedListener, WidgetListFragment.OnWidgetInteractionListener,
         NewsListFragment.OnNewsSelectedListener, InstituteQnAFragment.OnQuestionAskedListener,
-        FilterFragment.OnFilterInteractionListener, InstituteOverviewFragment.OnInstituteShortlistedListener {
+        FilterFragment.OnFilterInteractionListener, InstituteOverviewFragment.OnInstituteShortlistedListener,
+        QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
+        QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener,
+        MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
+        MyFutureBuddiesFragment.OnMyFBInteractionListener{
 
     private static final String TAG = "MainActivity";
-    NetworkUtils mNetworkUtils;
+    public static final int GET_PSYCHOMETRIC_RESULTS = 1;
+    public static final String PSYCHOMETRIC_RESULTS = "psychometric_results";
+
+    public NetworkUtils networkUtils;
     List<Institute> institutes;
     int currentInstitute;
     ProgressDialog progressDialog;
     String currentTitle;
-    Fragment currentFragment;
-    String currentPage2;
-    String[] filterTypes = {"Specialization", "Location", "Degrees", "College Type", "Facilities", "Hostel"};
-    String[] randomFacets = {"Relax", "Relax", "It's Just a Little", "Pin Prick", "There",
-            "Is", "no", "Place", "You r receding", "The Distance", "Shift in the", "Horizon",
-            "I have become", "Comfortably Numb", "Another Brick", "In the wall", "Ok"};
+    public Fragment currentFragment;
     String next;
-    // String previousCall;
-    // String previousTag;
-    List<PQuestion> questions;
-    int filterCount;
+    String mTitle;
+    List<MyFutureBuddiesEnumeration> mFbEnumeration;
+    MyFutureBuddy mFB;
+    ArrayList<QnAQuestions> mQnAQuestions = new ArrayList<>();
+    int filterCount = 0;
+    String mFilters = "";
+    Map<String, String> mFilterKeywords = new HashMap<>();
+    Toolbar toolbar;
+    private ArrayList<Folder> mFolderList;
+
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -87,11 +111,11 @@ public class MainActivity extends AppCompatActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     // private CharSequence mTitle;
-    private User user;
+    public static User user;
     private User.Prefs userPref;
-    //private Map<String, String> previousParams;
     private boolean completedStage2;
-    /*public void onSectionAttached(int number) {
+
+    public void onSectionAttached(int number) {
         switch (number) {
             case 1:
                 mTitle = HomeFragment.TITLE;
@@ -105,60 +129,113 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void restoreActionBar() {
+    public void restoreActionBar()
+    {
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
+
+        if (actionBar != null)
+        {
             actionBar.setTitle(mTitle);
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
             actionBar.setDisplayShowTitleEnabled(true);
         }
-    }*/
-    private ArrayList<Folder> mFolderList;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        init();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
-        /*mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);*/
-        //mTitle = getTitle();
-        // Set up the drawer.
-    /*    mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));*/
-        if (user != null && user.getPref() == User.Prefs.STREAMKNOWN) {
-            if (!completedStage2)
-                setUserPref();
-            else {
-                networkData(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
-            }
-        } else {
-            onNavigationDrawerItemSelected(0);
-        }
-    }
 
-    private void init() {
-        mNetworkUtils = new NetworkUtils(this, this);
-        SharedPreferences sp = getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
-        try {
-            if (sp.contains(Constants.KEY_USER)) {
-                user = JSON.std.beanFrom(User.class, sp.getString(Constants.KEY_USER, null));
-                mNetworkUtils.setToken(user.getToken());
-            }
-            completedStage2 = sp.getBoolean(Constants.COMPLETED_SECOND_STAGE, false);
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
+        this.setContentView(R.layout.activity_main);
 
+        this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Stop the Main Animation and Start Secondary
+                if (currentFragment instanceof SplashFragment)
+                    ((SplashFragment) currentFragment).stopMainAnimation();
+
+                //Initialize the app
+                init();
+
+                //check if this device is connected to internet
+                boolean amIConnectedToInternet = networkUtils.isNetworkAvailable();
+
+                if (amIConnectedToInternet) {
+                    if (user != null && user.getPref() == User.Prefs.STREAMKNOWN) {
+                        if (!completedStage2) {
+                            mSetUserPref();
+                        } else {
+                            mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
+                        }
+                    } else {
+                        //onNavigationDrawerItemSelected(0);
+                        mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
+                    }
+                } else {
+                    if (currentFragment instanceof SplashFragment) {
+                        ((SplashFragment) currentFragment).noInternetFound();
+                    }
+                }
+
+                //setSupportActionBar(toolbar);
+                //getSupportActionBar().setDisplayShowTitleEnabled(false);
+                //getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+
+                /*mNavigationDrawerFragment = (NavigationDrawerFragment)
+                        getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+                mTitle = this.getTitle().toString();
+                // Set up the drawer.
+                mNavigationDrawerFragment.setUp(
+                        R.id.navigation_drawer,
+                        (DrawerLayout) findViewById(R.id.drawer_layout));*/
+
+            }
+        }, Constants.MAIN_ANIMATION_TIME);
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(int position) {
+    protected void onResume() {
+        super.onResume();
+
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(this);
+    }
+
+    private void init()
+    {
+        networkUtils = new NetworkUtils(this, this);
+
+        SharedPreferences sp = getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
+
+        try
+        {
+            if (sp.contains(Constants.KEY_USER))
+            {
+                user = JSON.std.beanFrom(User.class, sp.getString(Constants.KEY_USER, null));
+                networkUtils.setToken(user.getToken());
+            }
+
+            completedStage2 = sp.getBoolean(Constants.COMPLETED_SECOND_STAGE, false);
+        }
+        catch (IOException e)
+        {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    @Override
+    public void onNavigationDrawerItemSelected(int position)
+    {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = null;
@@ -172,12 +249,11 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.container, fragment)
                     .commit();
         }
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-/*        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+        /*if (!mNavigationDrawerFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
@@ -189,7 +265,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -198,167 +275,321 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onHomeItemSelected(User.Prefs preference) {
+    public void onHomeItemSelected(User.Prefs preference)
+    {
         userPref = preference;
         requestUserCreation();
     }
 
-    private void requestUserCreation() {
+    private void requestUserCreation()
+    {
         if (user == null)
-            networkData(Constants.TAG_CREATE_USER, Constants.BASE_URL + "users/anonymous/", new HashMap<String, String>());
+            this.mMakeNetworkCall(Constants.TAG_CREATE_USER, Constants.BASE_URL + "users/anonymous/", new HashMap<String, String>());
         else {
             user.setPref(userPref);
-            setUserPref();
+            mSetUserPref();
         }
     }
 
-    private void setUser(String json) {
-        try {
+    private void mSetUser(String json)
+    {
+        try
+        {
             user = JSON.std.beanFrom(User.class, json);
-            mNetworkUtils.setToken(user.getToken());
             user.setPref(userPref);
+
+            networkUtils.setToken(user.getToken());
+
             String u = JSON.std.asString(user);
-            getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
-            setUserPref();
-        } catch (IOException e) {
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+
+            this.mSetUserPref();
+        }
+        catch (IOException e)
+        {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    private void setUserPref() {
-        switch (user.getPref()) {
+    private void mSetUserPref()
+    {
+        switch (user.getPref())
+        {
             case NOT_SURE:
-                loadQuestionaire();
+                this.mMakeNetworkCall(Constants.TAG_LOAD_PYSCHOMETRIC_TEST, Constants.BASE_URL + "psychometrictests/", null);
                 break;
             case STREAMKNOWN:
-                networkData(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
+                this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
                 break;
         }
     }
 
-    /*private void displaySearch() {
-
-    }*/
-
-    private String extractResults(String response) {
-        try {
-            //   JsonFactory jf = new JsonFactory();
-            //Result r = Result.createFromJson(jf.createParser(json2));
+    public String extractResults(String response) {
+        try
+        {
             Map<String, Object> map = JSON.std.mapFrom(response);
             if (map.get("next") != null)
                 next = map.get("next").toString();
             else
                 next = null;
+
+            if (map.containsKey("filters"))
+                this.mFilters = JSON.std.asString(map.get("filters"));
+
             return JSON.std.asString(map.get("results"));
-        } catch (IOException e) {
+        }
+        catch (Exception e)
+        {
             Log.e(TAG, e.getMessage());
         }
+
         return null;
     }
 
-    private void displayStreams(String response) {
-        try {
+    private void displayStreams(String response)
+    {
+        try
+        {
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, extractResults(response));
-            displayFragment(StreamFragment.newInstance(new ArrayList<>(streams)), false);
-        } catch (IOException e) {
+            mDisplayFragment(StreamFragment.newInstance(new ArrayList<>(streams)), false, Constants.TAG_FRAGMENT_STREAMS);
+        }
+        catch (IOException e)
+        {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    private void updateInstituteList(String response) {
-        try {
+    private void updateInstituteList(String response)
+    {
+        try
+        {
             List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
             this.institutes.addAll(institutes);
-            if (currentFragment instanceof InstituteListFragment) {
+
+            if (currentFragment instanceof InstituteListFragment)
+            {
                 ((InstituteListFragment) currentFragment).updateList(institutes, next);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    private void displayInstituteList(String response, boolean filterAllowed) {
-        try {
-            institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
+    private void mDisplayInstituteList(String response, boolean filterAllowed)
+    {
+        try
+        {
+            institutes = JSON.std.listOfFrom(Institute.class, this.extractResults(response));
+
+            /*if (this.mFilters != "")
+                updateFilterList(this.mFilters);*/
+
+            //process filters now
+            //mFolderList = ;
+            //updateFilterList;
+
+            if (this.mFilterKeywords.size() > 0)
+            {
+                //this.mUpdateFilterButton();
+                this.filterCount = this.mFilterKeywords.size();
+
+                //if (currentFragment instanceof InstituteListFragment)
+                    //((InstituteListFragment) currentFragment).updateFilterButton(filterCount);
+            }
+
+
             FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
             if (fragment == null)
-                displayFragment(InstituteListFragment.newInstance(new ArrayList<>(institutes), currentTitle, next, filterAllowed), true, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
-            else {
-                if (fragment instanceof InstituteListFragment) {
+                this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(institutes), currentTitle, next, filterAllowed, this.filterCount), true, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+            else
+            {
+                if (fragment instanceof InstituteListFragment)
+                {
                     ((InstituteListFragment) fragment).clearList();
                     ((InstituteListFragment) fragment).updateList(institutes, next);
                 }
-                displayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+
+                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    private void displayQuestionnaire(String response) {
-        /*new AlertDialog.Builder(this).setMessage("This feature is coming soon!").setTitle("Coming Soon!").setNeutralButton("OK", null)
-                .show();*/
-        try {
-            questions = JSON.std.listOfFrom(PQuestion.class,response);
-//            new AlertDialog.Builder(this).setMessage("This feature is coming soon!").setTitle("Coming Soon!").setNeutralButton("OK", null)
-//                .show();
-            //displayFragment(InstituteListFragment.newInstance(new ArrayList<>(institutes), currentTitle), false);
-        } catch (IOException e) {
+    private void mShowMyFBEnumeration(String response)
+    {
+        try
+        {
+            mFbEnumeration = JSON.std.listOfFrom(MyFutureBuddiesEnumeration.class, extractResults(response));
+
+            mDisplayFragment(MyFutureBuddiesEnumerationFragment.newInstance(new ArrayList<>(mFbEnumeration)), true, Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
+        }
+        catch (IOException e)
+        {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    //TODO change to personalize institute course
-    private void displayInstitute(int position) {
-        displayFragment(InstituteDetailFragment.newInstance(institutes.get(position)), true);
-        networkData(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + institutes.get(position).getId(), null);
+    private void mShowMyFB(String response, int index)
+    {
+
+        try
+        {
+            this.mFB = new MyFutureBuddy();
+            ArrayList<MyFutureBuddyComment> myFBCommentsSet = new ArrayList<>();
+
+            JSONObject fb = new JSONObject(response);
+
+            this.mFB.setComments_count(fb.getInt("comments_count"));
+            this.mFB.setMembers_count(fb.getInt("members_count"));
+            this.mFB.setResource_uri(fb.getString("resource_uri"));
+            this.mFB.setInstitute_name(fb.getString("institute_name"));
+            this.mFB.setIndex(index);
+
+            JSONArray commentsSet = fb.getJSONArray("instituteforumcomment_set");
+
+            for (int i = 0; i < commentsSet.length(); i++)
+            {
+                JSONObject comment = new JSONObject();
+                MyFutureBuddyComment myFBComment = new MyFutureBuddyComment();
+
+                comment = commentsSet.getJSONObject(i);
+
+                myFBComment.setUser(comment.getString("user"));
+                myFBComment.setComment(comment.getString("comment"));
+                myFBComment.setAdded_on(comment.getString("added_on"));
+                myFBComment.setIndex(i);
+                myFBComment.setFbIndex(index);
+
+                myFBCommentsSet.add(myFBComment);
+            }
+
+            this.mFB.setFutureBuddiesCommentsSet(myFBCommentsSet);
+
+            this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB), true, Constants.TAG_FRAGMENT_MY_FB);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
     }
 
-    private void loadQuestionaire() {
-        networkData(Constants.TAG_LOAD_QUESTIONNAIRE, Constants.BASE_URL + "questionnaire/", null);
-//        new AlertDialog.Builder(this).setMessage("This feature is coming soon!").setTitle("Coming Soon!").setNeutralButton("OK", null)
-//                .show();
+    private void mDisplayInstitute(int position)
+    {
+        Institute inst  = institutes.get(position);
+
+        this.mDisplayFragment(InstituteDetailFragment.newInstance(inst), true, Constants.TAG_FRAGMENT_INSTITUTE);
+
+        this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + institutes.get(position).getId(), null);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS, inst.getResource_uri() + "qna/", null, Request.Method.GET);
     }
 
-    private void displayFragment(Fragment fragment, boolean addToBackstack, String tag) {
-        currentFragment = fragment;
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
-        fragmentTransaction.replace(R.id.container, fragment, tag);
-        if (addToBackstack)
-            fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-    }
+    private void loadPyschometricTest(String response)
+    {
+        Bundle bundle = new Bundle();
+        bundle.putString(MainActivity.PSYCHOMETRIC_RESULTS, response);
 
-    private void displayFragment(Fragment fragment, boolean addToBackstack) {
-        displayFragment(fragment, addToBackstack, null);
+        Intent activityIntent = new Intent(MainActivity.this, PsychometricAnalysisActivity.class);
+        activityIntent.putExtras(bundle);
+
+        this.startActivityForResult(activityIntent, MainActivity.GET_PSYCHOMETRIC_RESULTS);
     }
 
     @Override
-    public void onDataLoaded(String tag, String response) {
-        String[] tags = tag.split("#");
-        String extraTag = null;
-        String like = null;
-        if (tags.length == 2)
-            extraTag = tags[1];
-        if (tags.length == 3) {
-            extraTag = tags[1];
-            like = tags[2];
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        // Check which request we're responding to
+        if (requestCode == MainActivity.GET_PSYCHOMETRIC_RESULTS)
+        {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK)
+            {
+                if (PsychometricQuestionFragment.getAnswers() != null)
+                {
+                    //Bundle bundle = data.getExtras();
+                    //HashMap<String, String> hashMap = (HashMap<String, String>) bundle.getSerializable(MainActivity.PSYCHOMETRIC_RESULTS);
+                    JSONObject answersObject = PsychometricQuestionFragment.getAnswers();
+
+                    //TODO: Shim to adhere to server's compliance; removing "[" and  "]" from college_types.
+                    if ( answersObject.has("college_types") )
+                    {
+                        String str = null;
+                        try
+                        {
+                            str = (String) answersObject.get("college_types");
+                            str = str.replaceAll("\\[", "").replaceAll("\\]","").replaceAll("\\s", "");
+
+                            answersObject.put("college_types", str);
+                        }
+                        catch (JSONException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_TEST, Constants.BASE_URL + "psychometrictests/", answersObject, Request.Method.POST);
+                }
+            }
         }
-        switch (tags[0]) {
+    }
+
+    private void mDisplayFragment(Fragment fragment, boolean addToBackstack, String tag)
+    {
+        try
+        {
+            currentFragment = fragment;
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+            fragmentTransaction.replace(R.id.container, fragment, tag);
+
+            if (addToBackstack)
+                fragmentTransaction.addToBackStack(fragment.toString());
+
+            fragmentTransaction.commit();
+
+            if (currentFragment instanceof HomeFragment)
+            {
+                //Show toolbar
+                toolbar = (Toolbar) findViewById(R.id.app_toolbar);
+                toolbar.setVisibility(View.VISIBLE);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
+        }
+    }
+
+    @Override
+    public void onDataLoaded(String tag, String response)
+    {
+        String extraTag = null;
+        String childIndex = null;
+        String parentIndex = null;
+        String like = null;
+        String[] tags = tag.split("#");
+        int voteType = 0;
+
+        switch (tags[0])
+        {
             case Constants.TAG_CREATE_USER:
-                setUser(response);
+                mSetUser(response);
                 break;
             case Constants.TAG_LOAD_STREAM:
                 displayStreams(response);
                 break;
             case Constants.WIDGET_SHORTLIST:
-                displayInstituteList(response, false);
+                mDisplayInstituteList(response, false);
                 break;
             case Constants.WIDGET_INSTITUTES:
-                displayInstituteList(response, true);
+                mDisplayInstituteList(response, true);
                 break;
             case Constants.WIDGET_NEWS:
                 displayNews(response);
@@ -370,13 +601,18 @@ public class MainActivity extends AppCompatActivity
                 displayCourses(response);
                 break;
             case Constants.TAG_LOAD_COURSES:
-                updateCourses(response);
+                this.mUpdateCourses(response);
                 break;
             case Constants.TAG_LOAD_HOME:
-                updateHome(response);
+                this.mUpdateHome(response);
+
+                //Show toolbar
+                toolbar = (Toolbar) findViewById(R.id.app_toolbar);
+
+                toolbar.setVisibility(View.VISIBLE);
                 break;
             case Constants.TAG_POST_QUESTION:
-                new AlertDialog.Builder(this).setMessage("Thank you for posting your question.").show();
+                this.mInstituteQnAQuestionAdded(response);
                 break;
             case Constants.TAG_LOAD_FILTERS:
                 updateFilterList(response);
@@ -385,73 +621,246 @@ public class MainActivity extends AppCompatActivity
                 updateInstituteList(response);
                 break;
             case Constants.TAG_SHORTLIST_INSTITUTE:
+                if (tags.length == 2)
+                    extraTag = tags[1];
                 updateShortlistInstitute(response, extraTag);
                 break;
             case Constants.TAG_DELETESHORTLIST_INSTITUTE:
+                if (tags.length == 2)
+                    extraTag = tags[1];
                 updateShortlistInstitute(null, extraTag);
                 break;
             case Constants.TAG_LIKE_DISLIKE:
-                updateLikeButton(response, extraTag, Integer.parseInt(like));
+                if (tags.length == 2)
+                    extraTag = tags[1];
+                if (tags.length == 3)
+                {
+                    extraTag = tags[1];
+                    like = tags[2];
+                }
+                this.updateLikeButton(response, extraTag, Integer.parseInt(like));
                 break;
-            case Constants.TAG_LOAD_QUESTIONNAIRE:
-                displayQuestionnaire(response);
+            case Constants.TAG_LOAD_PYSCHOMETRIC_TEST:
+                this.loadPyschometricTest(response);
+                break;
+            case Constants.TAG_LOAD_QNA_QUESTIONS:
+                mQnAQuestions.clear();
+                mShowQnAQuestions(response);
+                break;
+            case Constants.WIDGET_FORUMS:
+                mShowMyFBEnumeration(response);
+                break;
+            case Constants.TAG_VOTE_QNA_QUESTION_ENTITY:
+                if (tags.length == 3)
+                {
+                    parentIndex = tags[1];
+                    voteType = Integer.parseInt(tags[2]);
+                    this.mQnAQuestionVoteUpdated(Integer.parseInt(parentIndex), voteType);
+                }
+                break;
+            case Constants.TAG_VOTE_QNA_ANSWER_ENTITY:
+                if (tags.length > 3)
+                {
+                    parentIndex = tags[1];
+                    childIndex  = tags[2];
+                    voteType = Integer.parseInt(tags[3]);
+
+                    this.mQnAAnswerVoteUpdated(Integer.parseInt(parentIndex), Integer.parseInt(childIndex), voteType);
+                }
+                break;
+            case Constants.TAG_LOAD_MY_FB:
+                if (tags.length > 1)
+                {
+                    parentIndex = tags[1];
+
+                    this.mShowMyFB(response, Integer.parseInt(parentIndex));
+                }
+                break;
+            case Constants.TAG_QNA_ANSWER_SUBMITTED:
+                if (tags.length > 1)
+                {
+                    parentIndex = tags[1];
+                    childIndex  = tags[2];
+
+                    this.mOnAnswerAdded(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
+                }
+                break;
+            case Constants.TAG_MY_FB_COMMENT_SUBMITTED:
+                if (tags.length > 1)
+                {
+                    parentIndex = tags[1];
+                    childIndex  = tags[2];
+
+                    this.mOnMyFBCommentAdded(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
+                }
+                break;
+            case Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS:
+                this.mInstituteQnAUpdated(response);
+                break;
+            case Constants.TAG_SUBMIT_PSYCHOMETRIC_TEST:
+                System.out.print(response);
+                this.mUpdateUserPref(response);
+                break;
+            case Constants.TAG_SUBMIT_PREFRENCES:
+                if (tags.length > 1)
+                {
+                    parentIndex = tags[1];
+                    childIndex  = tags[2];
+
+                    this.mStreamAndCourseSelected(parentIndex, childIndex);
+                }
                 break;
         }
-        if (progressDialog.isShowing())
+
+        if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
+    }
+
+    //Saved on DB, now save it in shared preferences.
+    private void mStreamAndCourseSelected(String levelURI, String streamURI)
+    {
+        //save the preferences locally
+        user.setPref(User.Prefs.STREAMKNOWN);
+        user.setLevel(levelURI);
+        user.setStream(streamURI);
+
+        String u = null;
+        try
+        {
+            u = JSON.std.asString(user);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+    }
+
+    private void mUpdateUserPref(String response)
+    {
+        JSONObject psychometricResult;
+
+        try
+        {
+            String stream = "";
+            String level = "";
+
+            psychometricResult = new JSONObject(response);
+
+            HashMap<String, String> hashMap = new HashMap<>();
+
+            if (psychometricResult.has("stream") && ! psychometricResult.isNull("stream"))
+            {
+                stream = psychometricResult.getString("stream");
+
+                user.setPref(User.Prefs.STREAMKNOWN);
+                user.setStream(Constants.BASE_URL + "streams/" + stream + "/");
+            }
+            if (psychometricResult.has("course_levels") && ! psychometricResult.isNull("course_levels"))
+            {
+                level = psychometricResult.getString("course_levels");
+
+                user.setLevel(Constants.BASE_URL + "level/" + level + "/");
+            }
+
+            if (stream != "" && level != "")
+            {
+                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
+
+                try
+                {
+                    String u = JSON.std.asString(user);
+                    this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+
+                    hashMap.put("status", user.getPref().name().toLowerCase());
+                    hashMap.put("stream", user.getStream());
+                    hashMap.put("level", user.getLevel());
+
+                    this.mMakeNetworkCall("", Constants.BASE_URL + "preferences/", hashMap);
+                    this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
+                }
+                catch (IOException e)
+                {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+            else if (stream != "" && level == "")
+            {
+                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
+
+                try
+                {
+                    String u = JSON.std.asString(user);
+                    getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+
+                    hashMap.put("status", user.getPref().name().toLowerCase());
+                    hashMap.put("stream", user.getStream());
+
+                    this.mMakeNetworkCall("", Constants.BASE_URL + "preferences/", hashMap);
+                    this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
+                }
+                catch (IOException e)
+                {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private void updateLikeButton(String response, String extraTag, int like) {
         Institute i = institutes.get(Integer.parseInt(extraTag));
-        if (like == -1) {
+        if (like == -1)
+        {
             i.setCurrent_user_vote_type(-1);
             i.setCurrent_user_vote_url(null);
-        } else {
-            try {
-                Map<String, Object> m = JSON.std.mapFrom(response);
-                i.setCurrent_user_vote_url(m.get("resource_uri").toString());
+        }
+        else
+        {
+            try
+            {
                 i.setCurrent_user_vote_type(like);
-            } catch (IOException e) {
+            }
+            catch (Exception e)
+            {
                 Log.e(TAG, e.getMessage());
             }
         }
-        if (currentFragment instanceof InstituteListFragment) {
+        if (currentFragment instanceof InstituteListFragment)
+        {
             ((InstituteListFragment) currentFragment).updateButtons(Integer.parseInt(extraTag));
         }
-        /*String message;
-        switch (like){
-            case Constants.LIKE_COLLEGE:
-                message = "Liked ";
-                break;
-            case Constants.DISLIKE_COLLEGE:
-                message = "Disliked ";
-                break;
-            default: message = null;
-                break;
-        }
-        if(message!=null)
-            Toast.makeText(this,message+i.getShort_name(),Toast.LENGTH_SHORT).show();*/
     }
 
-    private void updateShortlistInstitute(String response, String extraTag) {
+    private void updateShortlistInstitute(String response, String extraTag)
+    {
         Institute i = institutes.get(Integer.parseInt(extraTag));
         String message = null;
-        if (response == null) {
-            i.setCurrent_user_shortlist_url(null);
+
+        if (response == null)
+        {
+            i.setIs_shortlisted(Constants.SHORTLISTED_NO);
             message = " removed from your shortlist";
-        } else {
-            try {
+        }
+        else
+        {
+            try
+            {
+                i.setIs_shortlisted(Constants.SHORTLISTED_YES);
                 message = " added to your shortlist";
-                Map<String, Object> m = JSON.std.mapFrom(response);
-                i.setCurrent_user_shortlist_url(m.get("resource_uri").toString());
-            } catch (IOException e) {
+            }
+            catch (Exception e)
+            {
                 Log.e(TAG, e.getMessage());
             }
         }
         if (Integer.parseInt(extraTag) == currentInstitute)
-            if (currentFragment instanceof InstituteDetailFragment) {
+            if (currentFragment instanceof InstituteDetailFragment)
                 ((InstituteDetailFragment) currentFragment).updateInstituteShortlist();
-            }
 
         Toast.makeText(this, i.getShort_name() + message, Toast.LENGTH_SHORT).show();
     }
@@ -463,62 +872,86 @@ public class MainActivity extends AppCompatActivity
     private void displayNews(String response) {
         try {
             List<News> newsList = JSON.std.listOfFrom(News.class, extractResults(response));
-            displayFragment(NewsListFragment.newInstance(new ArrayList<>(newsList), currentTitle), true);
+            mDisplayFragment(NewsListFragment.newInstance(new ArrayList<>(newsList), currentTitle), true, Constants.TAG_FRAGMENT_NEWS_LIST);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    private String getPersonalizedMessage(String tag) {
-        switch (tag) {
+    public static String GetPersonalizedMessage(String tag) {
+        switch (tag)
+        {
             case Constants.TAG_CREATE_USER:
-                return "Creating a user.";
+                return "Creating a user...";
             case Constants.TAG_LOAD_STREAM:
-                return "Loading Streams.";
+                return "Loading Streams...";
             case Constants.WIDGET_INSTITUTES:
-                return "Loading Institutes.";
+                return "Loading Institutes...";
             case Constants.WIDGET_NEWS:
-                return "Loading News.";
+                return "Loading News...";
             case Constants.WIDGET_ARTICES:
-                return "Loading Articles.";
+                return "Loading Articles...";
             case Constants.WIDGET_COURSES:
-                return "Loading Courses.";
+                return "Loading Courses...";
             case Constants.TAG_LOAD_HOME:
-                return "Loading";
+                return "Loading...";
             case Constants.TAG_POST_QUESTION:
-                return "Posting your question.";
+                return "Posting your question...";
             case Constants.TAG_LOAD_FILTERS:
-                return "Loading Filters";
-            case Constants.TAG_LOAD_QUESTIONNAIRE:
-                return "Loading Questionnaire";
-
+                return "Loading Filters...";
+            case Constants.TAG_LOAD_PYSCHOMETRIC_TEST:
+                return "Loading Questionnaire...";
+            case Constants.TAG_LOAD_QNA_QUESTIONS:
+                return "Loading Questions...";
+            case Constants.TAG_LOAD_MY_FB:
+                return "Loading your Forums chat...";
+            case Constants.TAG_MY_FB_COMMENT_SUBMITTED:
+                return "Submitting Comment...";
+            case Constants.TAG_QNA_ANSWER_SUBMITTED:
+                return "Submitting Answer...";
+            case Constants.TAG_VOTE_QNA_QUESTION_ENTITY:
+            case Constants.TAG_VOTE_QNA_ANSWER_ENTITY:
+                return "Processing Vote...";
+            case Constants.WIDGET_FORUMS:
+                return "Loading Forums...";
+            case Constants.TAG_SUBMIT_PSYCHOMETRIC_TEST:
+                return "Submitting psychometric analysis...";
         }
         return null;
     }
 
-    private void updateHome(String response) {
-        try {
+    private void mUpdateHome(String response)
+    {
+        try
+        {
             List<Widget> widgets = JSON.std.listOfFrom(Widget.class, extractResults(response));
-            displayFragment(WidgetListFragment.newInstance(new ArrayList<>(widgets)), false);
-        } catch (IOException e) {
+            mDisplayFragment(WidgetListFragment.newInstance(new ArrayList<>(widgets)), false, Constants.TAG_FRAGMENT_WIDGET_LIST);
+        }
+        catch (IOException e)
+        {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    private void updateCourses(String response) {
+    private void mShowQnAQuestions(String response) {
+        mDisplayFragment(QnAQuestionsListFragment.newInstance((this.parseAndReturnQnAList(response))), true, Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
+    }
+
+
+    private void mUpdateCourses(String response) {
         try {
             if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
-                List<InstituteCourse> instituteCourses = JSON.std.listOfFrom(InstituteCourse.class, extractResults(response));
-                ((InstituteDetailFragment) currentFragment).updateCourses(instituteCourses);
+                //List<InstituteCourse> instituteCourses = JSON.std.listOfFrom(InstituteCourse.class, extractResults(response));
+                ((InstituteDetailFragment) currentFragment).updateCourses(response);
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
     @Override
-    public void onError(final String tag, String response, final String url, final Map<String, String> params) {
+    public void onError(final String tag, String response, final String url, final Map<String, String> params, final int method) {
         if (progressDialog.isShowing())
             progressDialog.dismiss();
         new AlertDialog.Builder(this)
@@ -526,7 +959,7 @@ public class MainActivity extends AppCompatActivity
                 .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        networkData(tag, url, params);
+                        MainActivity.this.mMakeNetworkCall(tag, url, params, method);
                         dialog.dismiss();
                     }
                 })
@@ -540,13 +973,36 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onJsonObjectRequestError(final String tag, final String response, final String url, final JSONObject params, final int method) {
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
+        new AlertDialog.Builder(this)
+                .setMessage(response)
+                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        MainActivity.this.mMakeJsonObjectNetworkCall(tag, url, params, method);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+
+    }
+
+    @Override
     public void onStreamSelected(final String streamUri) {
         new AlertDialog.Builder(this)
                 .setTitle("Please select a level")
                 .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        onCourseLevelSelected(which, streamUri);
+                        mOnCourseLevelSelected(which, streamUri);
                         dialog.dismiss();
                     }
                 })
@@ -554,78 +1010,100 @@ public class MainActivity extends AppCompatActivity
                 .show();
     }
 
-    private void onCourseLevelSelected(int level, String streamUri) {
-        getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
+    private void mOnCourseLevelSelected(int level, String streamUri) {
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
+
+        String levelURI = Constants.BASE_URL + "level/" + (level + 1) + "/";
+
+        //send them to DB
         HashMap<String, String> hashMap = new HashMap<>();
+
         hashMap.put("status", user.getPref().name().toLowerCase());
         hashMap.put("stream", streamUri);
         hashMap.put("user", user.getResource_uri());
-        hashMap.put("level", Constants.BASE_URL + "level/" + (level + 1) + "/");
-        networkData("", Constants.BASE_URL + "preferences/", hashMap);
-        networkData(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
+        hashMap.put("level",levelURI);
+
+        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + levelURI +  "#" + streamUri, Constants.BASE_URL + "preferences/", hashMap);
+
+        this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
     }
 
     @Override
     public void onInstituteSelected(int position) {
         currentInstitute = position;
-        displayInstitute(position);
+        this.mDisplayInstitute(position);
     }
 
     @Override
-    public void onInstituteLikedDisliked(int position, int liked) {
-        //networkData("",);
-        if (institutes.get(position).getCurrent_user_vote_type() == -1) {
-            Map<String, String> params = new HashMap<>();
+    public void onInstituteLikedDisliked(int position, int liked)
+    {
+        Institute institute = institutes.get(position);
+        if (institute.getCurrent_user_vote_type() == -1)
+        {
+            //neither liked nor disliked case
+            /*Map<String, String> params = new HashMap<>();
             params.put("vote_type", "" + liked);
-            params.put("institute", institutes.get(position).getResource_uri());
+            params.put("institute", institute.getResource_uri());
             params.put("user", user.getResource_uri());
-            networkData(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, Constants.BASE_URL + "institutevotes/", params);
-        } else if (institutes.get(position).getCurrent_user_vote_type() != -1 && liked != -1) {
-            Map<String, String> params = new HashMap<>();
-            params.put("vote_type", "" + liked);
-            params.put("institute", institutes.get(position).getResource_uri());
-            params.put("user", user.getResource_uri());
-            networkData(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institutes.get(position).getCurrent_user_vote_url(), params, Request.Method.PUT);
-        } else {
-            networkData(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institutes.get(position).getCurrent_user_vote_url(), null, Request.Method.DELETE);
+            this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, Constants.BASE_URL + "institutevotes/", params);
+            //this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getResource_uri() + "upvote/", params);*/
+            if (liked == Constants.LIKE_THING)
+                this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getResource_uri() + "upvote/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getResource_uri() + "downvote/", null, Request.Method.POST);
+
         }
-
+        else if (institute.getCurrent_user_vote_type() != -1 && liked != -1)
+        {
+            //either already liked or disliked case
+            /*Map<String, String> params = new HashMap<>();
+            params.put("vote_type", "" + liked);
+            params.put("institute", institute.getResource_uri());
+            params.put("user", user.getResource_uri());
+            this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getCurrent_user_vote_url(), params, Request.Method.PUT);*/
+            if (liked == Constants.LIKE_THING)
+                this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + -1, institute.getResource_uri() + "upvote/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + -1, institute.getResource_uri() + "downvote/", null, Request.Method.POST);
+        }
+        /*else
+        {
+            //this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getCurrent_user_vote_url(), null, Request.Method.DELETE);
+            this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getCurrent_user_vote_url(), null, Request.Method.DELETE);
+        }*/
     }
 
     @Override
-    public void onFilterButtonClicked() {
-        if (mFolderList == null)
-            networkData(Constants.TAG_LOAD_FILTERS, Constants.BASE_URL + "personalize/institutes/filters/", null);
-        else
-            displayFragment(FilterFragment.newInstance(mFolderList), true);
+    public void onFilterButtonClicked()
+    {
+        if (this.mFilters != "")
+        {
+            updateFilterList(this.mFilters);
+
+            //mDisplayFragment(FilterFragment.newInstance(mFolderList), false);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_FILTER_LIST);
+            if (fragment == null)
+                mDisplayFragment(FilterFragment.newInstance(mFolderList), true, Constants.TAG_FRAGMENT_FILTER_LIST);
+            else
+                mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_FILTER_LIST);
+        }
     }
 
     @Override
     public void onEndReached(String next) {
         if (next != null)
-            networkData(Constants.TAG_NEXT_INSTITUTE, next, null);
+            this.mMakeNetworkCall(Constants.TAG_NEXT_INSTITUTE, next, this.mFilterKeywords);
     }
 
     public void updateFilterList(String response) {
         mFolderList = new ArrayList<>();
         try {
             Folder.populateFolderList(JSON.std.getStreamingFactory().createParser(response), mFolderList);
-            displayFragment(FilterFragment.newInstance(mFolderList), true);
+            //mDisplayFragment(FilterFragment.newInstance(mFolderList), false, Constants.TAG_FRAGMENT_FILTER_LIST);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
-        }
-    }
-
-    private void createDummyContent() {
-        for (int i = 0; i < filterTypes.length; i++) {
-            Folder f = new Folder(i, filterTypes[i]);
-            Random random = new Random();
-            for (String randomFacet : randomFacets) {
-                int j = random.nextInt(randomFacets.length);
-                int l = random.nextInt(2);
-                f.addFacet(randomFacets[j], randomFacets[j].replace(" ", "-").toLowerCase(), l);
-            }
-            mFolderList.add(f);
         }
     }
 
@@ -639,42 +1117,57 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onWidgetSelected(Widget widget) {
+    public void onWidgetSelected(Widget widget)
+    {
         currentTitle = widget.getTitle();
-        switch (widget.getAction_method()) {
+
+        if (widget.getType().equals(Constants.WIDGET_INSTITUTES))
+        {
+            this.mFilterKeywords = this.mGetTheFilters();
+
+            this.mMakeNetworkCall(widget.getType(), widget.getAction_url(), this.mFilterKeywords);
+
+            return;
+        }
+
+        switch (widget.getAction_method())
+        {
             case Constants.METHOD_GET:
-                networkData(widget.getType(), widget.getAction_url(), null);
+                this.mMakeNetworkCall(widget.getType(), widget.getAction_url(), null);
                 break;
             case Constants.METHOD_POST:
-                //networkData(widget.getType(),widget.getAction_url());
+                this.mMakeNetworkCall(widget.getType(), widget.getAction_url(), null);
                 break;
         }
     }
 
-    private void networkData(String tag, String url, Map<String, String> params, int method) {
-        // previousCall = url;
-//        previousParams = params;
-//        previousTag = tag;
-        String message = getPersonalizedMessage(tag);
-        if (message != null)
-            showProgressDialog(message);
-        switch (method) {
-            case Request.Method.GET:
-            case Request.Method.DELETE:
-                mNetworkUtils.getOrDeleteData(tag, url, method);
-                break;
-            case Request.Method.POST:
-            case Request.Method.PUT:
-                mNetworkUtils.postOrPutData(tag, url, params, method);
-                break;
-        }
-    }
+    private Map mGetTheFilters()
+    {
+        Map<String,String> map = new HashMap<>();
 
-    private void networkData(String tag, String url, Map<String, String> params) {
-        if (params != null)
-            networkData(tag, url, params, Request.Method.POST);
-        else
-            networkData(tag, url, null, Request.Method.GET);
+        SharedPreferences sp = getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
+
+        String value = sp.getString(Constants.SELECTED_FILTERS, null);
+
+        if (value != null && value != "")
+        {
+            //split the string to create key-value pairs
+            String[] keyValuePairs = value.replaceAll("\\{", "").replaceAll("\\}","").split(",");
+
+            //iterate over the pairs
+            for(String pair : keyValuePairs)
+            {
+                if (pair != "" && pair != null)
+                {
+                    //split the pairs to get key and value
+                    String[] entry = pair.split("=");
+                    //add them to the hashmap and trim whitespaces
+                    map.put(entry[0].trim(), entry[1].trim());
+                }
+            }
+        }
+
+        return map;
     }
 
     private void showProgressDialog(String message) {
@@ -691,63 +1184,97 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onNewsSelected(News news) {
-        displayFragment(NewsDetailFragment.newInstance(news), true);
+        mDisplayFragment(NewsDetailFragment.newInstance(news), true, Constants.TAG_FRAGMENT_NEWS);
     }
 
     @Override
-    public void onQuestionAsked(Question question) {
+    public void onQuestionAsked(QnAQuestions question) {
         HashMap<String, String> map = new HashMap<>();
-        map.put("title", question.title);
-        map.put("desc", question.content);
+        map.put("title", question.getTitle());
+        map.put("desc", question.getDesc());
         map.put("institute", "" + institutes.get(currentInstitute).getResource_uri());
-        map.put("user", user.getResource_uri());
-        map.put("stream", Constants.BASE_URL + "streams/1/");
-        networkData(Constants.TAG_POST_QUESTION, Constants.BASE_URL + "qna/questions/", map);
+        //map.put("stream", Constants.BASE_URL + "streams/1/");
+        /*map.put("user", user.getResource_uri());
+        //:TODO remove hard coding of streams/1
+        map.put("stream", Constants.BASE_URL + "streams/1/");*/
+        this.mMakeNetworkCall(Constants.TAG_POST_QUESTION, Constants.BASE_URL + "personalize/qna/", map, Request.Method.POST);
     }
 
     @Override
-    public void onFilterApplied() {
-        Map<String, String> map = new HashMap<>();
+    public void onFilterApplied()
+    {
         int count = 0;
-        for (Folder f : mFolderList) {
+
+        for (Folder f : this.mFolderList)
+        {
             for (Facet ft : f.getFacets())
                 if (ft.isSelected() == 1)
-                    map.put("tag_uris[" + (count++) + "]", ft.getTag());
+                    this.mFilterKeywords.put("tag_uris[" + (count++) + "]", ft.getTag());
         }
-        filterCount = map.size();
-        networkData(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", map);
+
+        filterCount = this.mFilterKeywords.size();
+
+        this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mFilterKeywords);
+
         onBackPressed();
-        updateFilterButton();
+
+        this.mUpdateFilterButton();
+
+        //save preferences.
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
+
+       /* try
+        {
+            //Filters filters = JSON.std.beanFrom(Filters.class, this.mFilterKeywords.toString());
+
+            //String f = JSON.std.asString(filters);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }*/
     }
 
     @Override
-    public void onFilterCanceled(boolean clearAll) {
+    public void onFilterCanceled(boolean clearAll)
+    {
         onBackPressed();
-        if (clearAll) {
-            for (Folder f : mFolderList) {
+
+        if (clearAll)
+        {
+            for (Folder f : this.mFolderList)
+            {
                 for (Facet ft : f.getFacets())
                     ft.deselect();
             }
             filterCount = 0;
-            networkData(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", null);
-        } else {
+
+            this.mFilterKeywords = new HashMap<>();
+
+            //reset the filters in preferences
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
+
+            this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", null);
+        }
+        else
+        {
             filterCount = 0;
-            for (Folder f : mFolderList) {
+            for (Folder f : this.mFolderList)
+            {
                 for (Facet ft : f.getFacets())
                     if (ft.isSelected() == 1)
                         filterCount++;
             }
         }
-        updateFilterButton();
+
+        this.mUpdateFilterButton();
     }
 
-    private void updateFilterButton() {
+    private void mUpdateFilterButton() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
         if (fragment instanceof InstituteListFragment) {
             ((InstituteListFragment) fragment).updateFilterButton(filterCount);
         }
-
     }
 
     @Override
@@ -757,17 +1284,307 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     @Override
     public void onInstituteShortlisted() {
         Institute i = institutes.get(currentInstitute);
-        if (i.getCurrent_user_shortlist_url() == null) {
-            HashMap<String, String> params = new HashMap<>();
-            params.put("institute", i.getResource_uri());
-            params.put("user", user.getResource_uri());
-            networkData(Constants.TAG_SHORTLIST_INSTITUTE + "#" + currentInstitute, Constants.BASE_URL + "shortlistedinstitutes/", params);
+        if (i.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
+            this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + currentInstitute, i.getResource_uri() + "shortlist/", null, Request.Method.POST);
         } else {
-            networkData(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + currentInstitute, i.getCurrent_user_shortlist_url(), null, Request.Method.DELETE);
+            this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + currentInstitute, i.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
+        }
+    }
+
+    private void mMakeNetworkCall(String tag, String url, Map<String, String> params, int method)
+    {
+        this.showProgress(tag);
+        this.networkUtils.networkData(tag, url, params, method);
+    }
+
+    private void mMakeNetworkCall(String tag, String url, Map<String, String> params)
+    {
+        this.showProgress(tag);
+        this.networkUtils.networkData(tag, url, params);
+    }
+
+    private void mMakeJsonObjectNetworkCall(String tag, String url, JSONObject params, int method)
+    {
+        this.showProgress(tag);
+        /*try {
+            params.put("college_location_states", "");
+            params.put("college_location_cities", "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }*/
+        this.networkUtils.networkDataWithObjectParam(tag, url, params, method);
+    }
+
+    private void showProgress(String tag)
+    {
+        String message = MainActivity.GetPersonalizedMessage(tag);
+        if (message != null && ! (this.currentFragment instanceof SplashFragment))
+            showProgressDialog(message);
+    }
+
+    @Override
+    public void onQnAQuestionSelected(QnAQuestions qnaQuestion)
+    {
+        this.mDisplayFragment(new QnAQuestionsAndAnswersFragment().newInstance(qnaQuestion), true, Constants.TAG_FRAGMENT_QNA_ANSWERS_LIST);
+    }
+
+    @Override
+    public void onQnAQuestionVote(String resourceURI, int voteType, int position)
+    {
+        Toast.makeText(MainActivity.this, resourceURI + " " + voteType, Toast.LENGTH_SHORT).show();
+        if (voteType == Constants.LIKE_THING)
+            this.mMakeNetworkCall(Constants.TAG_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
+        else
+            this.mMakeNetworkCall(Constants.TAG_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
+    }
+
+    @Override
+    public void onQnAAnswerVote(String resourceURI, int voteType, int answerPosition, int questionPosition)
+    {
+        if (voteType == Constants.LIKE_THING)
+            this.mMakeNetworkCall(Constants.TAG_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
+        else
+            this.mMakeNetworkCall(Constants.TAG_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
+    }
+
+    @Override
+    public void onQnAAnswerSubmitted(String questionURI, String answerText, int questionIndex, int answerIndex)
+    {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("answer_text", answerText);
+        this.mMakeNetworkCall(Constants.TAG_QNA_ANSWER_SUBMITTED + "#" + String.valueOf(questionIndex) + "#" + String.valueOf(answerIndex), questionURI + "answer/", params, Request.Method.POST);
+    }
+
+    private void mQnAQuestionVoteUpdated(int questionIndex, int voteType)
+    {
+        ((QnAQuestionsAndAnswersFragment) currentFragment).onVotingFeedback(questionIndex, -1, voteType);
+    }
+
+    private void mQnAAnswerVoteUpdated(int questionIndex, int answerIndex, int voteType)
+    {
+        ((QnAQuestionsAndAnswersFragment) currentFragment).onVotingFeedback(questionIndex, answerIndex, voteType);
+    }
+
+    private void mOnAnswerAdded(String response, int questionIndex, int index)
+    {
+        try
+        {
+            JSONObject ans = new JSONObject(response);
+
+            QnAAnswers qnaAnswer = new QnAAnswers();
+
+            qnaAnswer.setUser(ans.getString("user"));
+            qnaAnswer.setDownvotes(ans.getInt("downvotes"));
+            qnaAnswer.setUpvotes(ans.getInt("upvotes"));
+            qnaAnswer.setCurrent_user_vote_type(ans.getInt("current_user_vote_type"));
+            qnaAnswer.setAnswer_text(ans.getString("answer_text"));
+            qnaAnswer.setAdded_on(ans.getString("added_on"));
+            qnaAnswer.setId(ans.getLong("id"));
+            qnaAnswer.setQuestion(ans.getString("question"));
+            qnaAnswer.setResource_uri(ans.getString("resource_uri"));
+            qnaAnswer.setIndex(index);
+            qnaAnswer.setQuestionIndex(questionIndex);
+
+            if (currentFragment instanceof QnAQuestionsAndAnswersFragment)
+                ((QnAQuestionsAndAnswersFragment) currentFragment).answerAdded(qnaAnswer);
+            else if (currentFragment instanceof InstituteQnAFragment)
+                ((InstituteQnAFragment) currentFragment).instituteQnAAnswerUpdated(qnaAnswer);
+        }
+
+        catch (JSONException e)
+        {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    @Override
+    public void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position)
+    {
+        this.mMakeNetworkCall(Constants.TAG_LOAD_MY_FB + "#" + String.valueOf(position), myFutureBuddiesEnumeration.getResource_uri(), null, Request.Method.GET);
+    }
+
+    @Override
+    public void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex)
+    {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("comment", commentText);
+        this.mMakeNetworkCall(Constants.TAG_MY_FB_COMMENT_SUBMITTED + "#" + String.valueOf(myFbIndex) + "#" + String.valueOf(myFbCommentIndex), myFbURI + "comment/", params, Request.Method.POST);
+    }
+
+    private void mOnMyFBCommentAdded(String response, int fbIndex, int index)
+    {
+        try
+        {
+            JSONObject comment = new JSONObject(response);
+
+            MyFutureBuddyComment fbComment = new MyFutureBuddyComment();
+
+            fbComment.setComment(comment.getString("comment"));
+            fbComment.setAdded_on(comment.getString("added_on"));
+            fbComment.setUser(comment.getString("user"));
+            fbComment.setIndex(index);
+            fbComment.setFbIndex(fbIndex);
+
+            if (currentFragment instanceof MyFutureBuddiesFragment)
+                ((MyFutureBuddiesFragment) currentFragment).commentAdded(fbComment);
+        }
+
+        catch (JSONException e)
+        {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    private void mInstituteQnAQuestionAdded(String response)
+    {
+        try
+        {
+            ArrayList<String> tagArrayList = new ArrayList<>();
+            ArrayList<QnAAnswers> qnaAnswers = new ArrayList<>();
+
+            JSONObject qns = new JSONObject(response);
+
+            QnAQuestions qnaQuestion = new QnAQuestions();
+
+            qnaQuestion.setUser(qns.getString("user"));
+            qnaQuestion.setView_count(qns.getInt("view_count"));
+            qnaQuestion.setTitle(qns.getString("title"));
+            qnaQuestion.setDesc(qns.getString("desc"));
+            qnaQuestion.setDownvotes(qns.getInt("downvotes"));
+            qnaQuestion.setUpvotes(qns.getInt("upvotes"));
+            qnaQuestion.setCurrent_user_vote_type(qns.getInt("current_user_vote_type"));
+            qnaQuestion.setResource_uri(qns.getString("resource_uri"));
+            qnaQuestion.setAdded_on(qns.getString("added_on"));
+            qnaQuestion.setAnswers_count(qns.getInt("answers_count"));
+            //qnaQuestion.setIndex(i);
+
+            JSONArray answerList = qns.getJSONArray("answer_set");
+
+            for (int j = 0; j < answerList.length(); j++)
+            {
+                JSONObject ans = answerList.getJSONObject(j);
+
+                QnAAnswers qnaAnswer = new QnAAnswers();
+
+                qnaAnswer.setUser(ans.getString("user"));
+                qnaAnswer.setDownvotes(ans.getInt("downvotes"));
+                qnaAnswer.setUpvotes(ans.getInt("upvotes"));
+                qnaAnswer.setCurrent_user_vote_type(ans.getInt("current_user_vote_type"));
+                qnaAnswer.setAnswer_text(ans.getString("answer_text"));
+                qnaAnswer.setAdded_on(ans.getString("added_on"));
+                qnaAnswer.setId(ans.getLong("id"));
+                qnaAnswer.setQuestion(ans.getString("question"));
+                qnaAnswer.setResource_uri(ans.getString("resource_uri"));
+                qnaAnswer.setIndex(j);
+                //qnaAnswer.setQuestionIndex(i);
+
+                qnaAnswers.add(qnaAnswer);
+            }
+
+            JSONArray tagsList = qns.getJSONArray("tags");
+
+            for(int k = 0; k < tagsList.length(); k++)
+            {
+                tagArrayList.add(tagsList.getString(k));
+            }
+
+            qnaQuestion.setAnswer_set(qnaAnswers);
+            qnaQuestion.setTags(tagArrayList);
+
+
+            if (currentFragment instanceof InstituteDetailFragment)
+                ((InstituteDetailFragment) currentFragment).instituteQnAQuestionAdded(qnaQuestion);
+
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void mInstituteQnAUpdated(String response)
+    {
+        if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
+            ((InstituteDetailFragment) currentFragment).updateInstituteQnAQuestions(response);
+    }
+
+    public ArrayList<QnAQuestions> parseAndReturnQnAList(String qnaString)
+    {
+        try
+        {
+            mQnAQuestions.clear();
+
+            QnAQuestions qnaQuestion;
+            ArrayList<String> tagArrayList = new ArrayList<>();
+
+            JSONObject qnaResult = new JSONObject(qnaString);
+            JSONArray resultArray = qnaResult.getJSONArray("results");
+
+            for(int i = 0; i < resultArray.length(); i++)
+            {
+                qnaQuestion = new QnAQuestions();
+                ArrayList<QnAAnswers> qnaAnswers = new ArrayList<>();
+
+                JSONObject qns = resultArray.getJSONObject(i);
+
+                qnaQuestion.setUser(qns.getString("user"));
+                qnaQuestion.setView_count(qns.getInt("view_count"));
+                qnaQuestion.setTitle(qns.getString("title"));
+                qnaQuestion.setDesc(qns.getString("desc"));
+                qnaQuestion.setDownvotes(qns.getInt("downvotes"));
+                qnaQuestion.setUpvotes(qns.getInt("upvotes"));
+                qnaQuestion.setCurrent_user_vote_type(qns.getInt("current_user_vote_type"));
+                qnaQuestion.setResource_uri(qns.getString("resource_uri"));
+                qnaQuestion.setAdded_on(qns.getString("added_on"));
+                qnaQuestion.setAnswers_count(qns.getInt("answers_count"));
+                qnaQuestion.setIndex(i);
+
+                JSONArray answerList = qns.getJSONArray("answer_set");
+
+                for (int j = 0; j < answerList.length(); j++)
+                {
+                    JSONObject ans = answerList.getJSONObject(j);
+
+                    QnAAnswers qnaAnswer = new QnAAnswers();
+
+                    qnaAnswer.setUser(ans.getString("user"));
+                    qnaAnswer.setDownvotes(ans.getInt("downvotes"));
+                    qnaAnswer.setUpvotes(ans.getInt("upvotes"));
+                    qnaAnswer.setCurrent_user_vote_type(ans.getInt("current_user_vote_type"));
+                    qnaAnswer.setAnswer_text(ans.getString("answer_text"));
+                    qnaAnswer.setAdded_on(ans.getString("added_on"));
+                    qnaAnswer.setId(ans.getLong("id"));
+                    qnaAnswer.setQuestion(ans.getString("question"));
+                    qnaAnswer.setResource_uri(ans.getString("resource_uri"));
+                    qnaAnswer.setIndex(j);
+                    qnaAnswer.setQuestionIndex(i);
+
+                    qnaAnswers.add(qnaAnswer);
+                }
+
+                JSONArray tagsList = qns.getJSONArray("tags");
+
+                for(int k = 0; k < tagsList.length(); k++)
+                {
+                    tagArrayList.add(tagsList.getString(k));
+                }
+
+                qnaQuestion.setAnswer_set(qnaAnswers);
+                qnaQuestion.setTags(tagArrayList);
+
+                mQnAQuestions.add(qnaQuestion);
+            }
+        }
+        catch(JSONException e)
+        {
+            Log.e(MainActivity.class.getSimpleName(), e.getMessage() + e.getCause());
+        }
+        finally
+        {
+            return mQnAQuestions;
         }
     }
 }

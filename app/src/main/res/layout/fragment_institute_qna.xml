@@ -1,60 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:fillViewport="true">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:weightSum="1"
         android:orientation="vertical"
-        android:padding="@dimen/activity_horizontal_margin">
-
+        android:gravity="center"
+        android:padding="5dp"
+        >
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Ask a Question"
-            android:textSize="16dp"
-            android:textStyle="bold" />
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/question_title_til"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/question_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Question title"
-                android:inputType="text"
-                android:paddingTop="2dp"
-                android:singleLine="true"
-                android:textColor="@color/textSecondary"
-                android:textColorHint="#ffa7a8a8" />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/question_content_til"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/question_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Your Question"
-                android:inputType="text"
-                android:maxLines="4"
-                android:paddingTop="2dp"
-                android:textColor="@color/textSecondary"
-                android:textColorHint="#ffa7a8a8" />
-        </android.support.design.widget.TextInputLayout>
-
-        <TextView
-            android:id="@+id/button_expert"
-            style="@style/AppTheme.BlueButton"
+            android:id="@android:id/empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ask an expert now" />
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:textSize="16dp" />
+        <LinearLayout
+            android:id="@+id/institute_qna_question_recycle_view_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".8"
+            >
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/institute_qna_question_recycle_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                >
+            </android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/institute_qna_ask_question_container"
+            android:layout_gravity="top"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".8"
+            android:weightSum="1"
+            android:orientation="vertical"
+            android:visibility="gone"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".1"
+                android:text="Ask a Question"
+                android:textStyle="bold"
+                android:gravity="center"
+                />
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/institute_qna_question_title_til"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".2"
+                >
+                <EditText
+                    android:id="@+id/institute_qna_question_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Question title"
+                    android:inputType="text"
+                    android:paddingTop="2dp"
+                    android:singleLine="true"
+                    android:textColor="@color/textSecondary"
+                    android:textColorHint="#ffa7a8a8"
+                    />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/institute_qna_question_content_til"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".2"
+                >
+                <EditText
+                    android:id="@+id/institute_qna_question_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Your Question"
+                    android:inputType="text"
+                    android:maxLines="4"
+                    android:paddingTop="2dp"
+                    android:textColor="@color/textSecondary"
+                    android:textColorHint="#ffa7a8a8"
+                    />
+            </android.support.design.widget.TextInputLayout>
+            <LinearLayout
+                android:id="@+id/institute_qna_question_controls_buttons"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".2"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:id="@+id/institute_qna_button_ask_cancel"
+                    style="@style/AppTheme.BlueButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:text="Cancel"
+                    />
+                <TextView
+                    android:id="@+id/institute_qna_button_ask_submit"
+                    style="@style/AppTheme.BlueButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:text="Submit"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/institute_qna_button_ask_expert"
+            style="@style/AppTheme.BlueButton"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight=".2"
+            android:text="LOADING..."
+            android:enabled="false"
+            android:gravity="center"
+            android:layout_gravity="bottom|center_horizontal"
+            />
     </LinearLayout>
 </ScrollView>
