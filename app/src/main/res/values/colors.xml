@@ -2,6 +2,7 @@
 <resources>
     <!-- <color name="primary_color">#00384f</color>-->
     <color name="primary_color">#ff1f2560</color>
+    <color name="off_white">#dfd9d7</color>
     <!--    <color name="primary_color">#fefaf3</color> -->
     <color name="primary_color_dark">#ff1f2560</color>
     <color name="primary_orange">#ff8d00</color>
@@ -27,9 +28,14 @@
     <color name="textSecondary">#797979</color>
     <color name="bg_filter_item">#ffeeeeee</color>
     <color name="bg_filter_item_us">#ffdadada</color>
+    <color name="bg_category_item_selected">#ffdadada</color>
+    <color name="bg_category_item_unselected">#a4a4a4</color>
+    <color name="bg_category_background">#a4a4a4</color>
     <color name="primaryColor">#0e024d</color>
     <color name="primaryColorDark">#df8b23</color>
     <color name="tag_bg_color">#f4dddcde</color>
     <color name="college_voted">#e69d0f</color>
     <color name="college_downvote">#f4dddcde</color>
+    <color name="comment_card_background">#f4dce6e9</color>
+    <color name="self_comment_card_background">#DFF3D8</color>
 </resources>

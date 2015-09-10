@@ -164,10 +164,6 @@ public class PsychometricAnalysisActivity extends FragmentActivity{
 
     private void mFinishTest()
     {
-        //JSONObject jsonObject= PsychometricQuestionFragment.getAnswers();
-        //hashMap.put("user", MainActivity.user.getId());
-        //this.mMakeNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_TEST, Constants.BASE_URL + "psychometrictests/", hashMap);
-
         //Intent result = new Intent();
         //result.putExtra(MainActivity.PSYCHOMETRIC_RESULTS, jsonObject);
         setResult(Activity.RESULT_OK);

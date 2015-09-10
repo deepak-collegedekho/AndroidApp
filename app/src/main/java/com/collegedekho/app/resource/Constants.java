@@ -2,6 +2,8 @@ package com.collegedekho.app.resource;
 
 import com.collegedekho.app.R;
 
+import java.util.HashMap;
+
 /**
  * @author Mayank Gautam
  *         Created: 29/06/15
@@ -43,12 +45,13 @@ public class Constants
     public static final String TAG_URI = "uri";
     public static final String TAG_ATTR = "attr";
     public static final String TAG_TAGS = "tags";
+    public static final String TAG_ID = "id";
     public static final String TAG_SELECTED = "is_selected";
     public static final String TAG_NEXT_INSTITUTE = "next_institutes";
     public static final String TAG_LIKE_DISLIKE = "like_dislike";
     public static final String TAG_SHORTLIST_INSTITUTE = "shortlist";
     public static final String TAG_DELETESHORTLIST_INSTITUTE = "delete";
-    public static final int DELETE_LIKE = -1;
+    public static final int NEITHER_LIKE_NOR_DISLIKE = -1;
     public static final String WIDGET_SHORTLIST = "shortlistedinstitutes";
     public static final String TAG_LOAD_PYSCHOMETRIC_TEST = "load_pyschometric_test";
     public static final String TAG_LOAD_QNA_QUESTIONS = "qna";
@@ -66,6 +69,7 @@ public class Constants
     public static final String TAG_QNA_ANSWER_SUBMITTED = "qna_answer_submitted";
     public static final String TAG_MY_FB_COMMENT_SUBMITTED = "my_fb_comment_submitted";
     public static final String TAG_LOAD_MY_FB = "load_my_fb";
+    public static final String TAG_REFRESH_MY_FB = "refresh_my_fb";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_TEST = "submit_psychometric_test";
     public static final String TAG_SUBMIT_PREFRENCES = "submit_prefrences";
     public static final String TAG_FRAGMENT_FILTER_LIST = "fragment_filter_list";
@@ -86,6 +90,20 @@ public class Constants
     public static final int MAIN_ANIMATION_TIME = 6500;
     public static final int SECONDARY_ANIMATION_TIME = 2000;
     public static final String SELECTED_FILTERS = "selected_filters";
+    public static volatile boolean IS_CONNECTED_TO_INTERNET;
+    public static final int MY_FB_REFRESH_RATE = 5000;
+    public static final int TYPE_WIFI = 1;
+    public static final int TYPE_MOBILE = 2;
+    public static final int TYPE_NOT_CONNECTED = 0;
+    public static final String SERVER_FAULT = "The servers made a boo boo. Try again later";
+    public static final String NO_CONNECTION_FAULT = "You are not connected to internet. Please connect and try again.";
+    public static final int FILTER_CATEGORY_COURSE_AND_SPECIALIZATION = 0;
+    public static final int FILTER_CATEGORY_LOCATION = 1;
+    public static final int FILTER_CATEGORY_TYPE_AND_SUPPORT_SERVICES = 2;
+    public static final int FILTER_CATEGORY_CAMPUS_AND_HOUSING = 3;
+
+
+    public static final HashMap<Integer, Integer> FilterCategoryMap = new HashMap<Integer, Integer>();
 
     public static final int TYPE_SIMILARLAR_NEWS = 2;
     public static final int TYPE_NEWS = 1;
@@ -94,4 +112,15 @@ public class Constants
     public static final int TYPE_SIMILARLAR_ARTICLES = 2;
     public static final int TYPE_ARTCLES = 1;
 
+    public static final int ID_CITY = 1;
+    public static final int ID_EXAM = 11;
+    public static final int ID_DEGREE = 2;
+    public static final int ID_STREAM = 3;
+    public static final int ID_LEVEL = 9;
+    public static final int ID_SPECIALIZATION = 7;
+    public static final int ID_FEE_RANGE = 10;
+    public static final int ID_FACILITIES = 5;
+    public static final int ID_STATE = 6;
+    public static final int ID_INSTITUTE_TYPE = 4;
+    public static final int ID_HOSTEL = 8;
 }

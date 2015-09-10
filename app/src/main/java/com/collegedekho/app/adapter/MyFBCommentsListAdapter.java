@@ -1,14 +1,18 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 
@@ -63,8 +67,31 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         }
 
         qnaAnswerHolder.commentText.setText(myFBComment.getComment());
-        qnaAnswerHolder.userName.setText(myFBComment.getUser());
         qnaAnswerHolder.dateAddedOn.setText(simpleDate);
+
+        if ((myFBComment.getToken()).equals(MainActivity.user.getToken()))
+        {
+            //if it is my comment
+            /*LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+            params.weight = 1.0f;
+            params.gravity = Gravity.RIGHT;
+
+            qnaAnswerHolder.myFbCardLayout.setLayoutParams(params);*/
+
+            qnaAnswerHolder.myFbCardLayout.setGravity(Gravity.RIGHT);
+            qnaAnswerHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.self_comment_card_background));
+
+            qnaAnswerHolder.userName.setVisibility(View.GONE);
+            qnaAnswerHolder.setIsRecyclable(false);
+        }
+        else
+        {
+            qnaAnswerHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
+
+            qnaAnswerHolder.userName.setText(myFBComment.getUser());
+        }
+
     }
 
     @Override
@@ -76,14 +103,19 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         TextView commentText;
         TextView userName;
         TextView dateAddedOn;
+        LinearLayout myFbCardLayout;
+        CardView myFbCard;
         MyFutureBuddiesFragment.OnMyFBInteractionListener mListener;
 
-        public MyFBCommentsHolder(View itemView, MyFutureBuddiesFragment.OnMyFBInteractionListener listener) {
+        public MyFBCommentsHolder(View itemView, MyFutureBuddiesFragment.OnMyFBInteractionListener listener)
+        {
             super(itemView);
 
             commentText = (TextView) itemView.findViewById(R.id.my_fb_comment_text);
             userName = (TextView) itemView.findViewById(R.id.my_fb_comment_user_name);
             dateAddedOn = (TextView) itemView.findViewById(R.id.my_fb_comment_date_added_on);
+            myFbCardLayout = (LinearLayout) itemView.findViewById(R.id.my_fb_card_layout);
+            myFbCard = (CardView) itemView.findViewById(R.id.my_fb_card);
 
             mListener = listener;
         }

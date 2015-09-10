@@ -2,8 +2,12 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
     <dimen name="m6dp">6dp</dimen>
     <dimen name="m8dp">8dp</dimen>
+
+    <dimen name="activity_horizontal_margin_small">10dp</dimen>
+    <dimen name="activity_vertical_margin_small">10dp</dimen>
 
     <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
          https://developer.android.com/design/patterns/navigation-drawer.html -->
@@ -13,4 +17,5 @@
     <dimen name="like_dislike_size">35dp</dimen>
     <dimen name="course_label_horizontal_margin">10dp</dimen>
     <dimen name="gradient_radius">5dp</dimen>
+    <dimen name="fb_card_width">230dp</dimen>
 </resources>

@@ -87,5 +87,4 @@ public class PsychometricQuestionFragment extends Fragment implements Psychometr
     {
         PsychometricQuestionFragment.mAnswersMap = new JSONObject();
     }
-
 }

@@ -8,13 +8,84 @@
     <TextView
         android:id="@+id/textview_page_title"
         style="@style/AppTheme.TextView.page_title"
-        android:text="FILTERS" />
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/filter_type_list"
-        android:layout_width="120dp"
+        android:text="Filter Colleges By"
+        />
+    <LinearLayout
+        android:id="@+id/filter_category_list"
+        android:layout_width="100dp"
         android:layout_height="match_parent"
         android:layout_below="@id/textview_page_title"
-        android:background="@color/bg_filter_item_us" />
+        android:background="@drawable/bg_category_background"
+        android:orientation="vertical"
+        android:elevation="50dp"
+        >
+        <TextView
+            android:id="@+id/filter_category_c_and_s"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_category"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="10dp"
+            android:text="@string/course_and_specialization"
+            android:textColor="@color/primary_color"
+            android:textSize="14sp"
+            android:clickable="true"
+            />
+        <TextView
+            android:id="@+id/filter_category_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_category"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="10dp"
+            android:text="@string/which_locations"
+            android:textColor="@color/primary_color"
+            android:textSize="14sp"
+            android:clickable="true"
+            />
+        <TextView
+            android:id="@+id/filter_category_t_and_ss"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_category"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="10dp"
+            android:text="@string/type_and_support_services"
+            android:textColor="@color/primary_color"
+            android:textSize="14sp"
+            android:clickable="true"
+            />
+        <TextView
+            android:id="@+id/filter_category_c_and_h"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_category"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="10dp"
+            android:text="@string/campus_and_housing"
+            android:textColor="@color/primary_color"
+            android:textSize="14sp"
+            android:clickable="true"
+            />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/filter_type_list"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_below="@id/textview_page_title"
+        android:background="@color/bg_filter_item_us"
+        android:layout_toRightOf="@id/filter_category_list"
+        android:elevation="5dp"
+        />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/filter_list"

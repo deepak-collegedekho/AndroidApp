@@ -25,6 +25,7 @@ public class Folder implements Parcelable {
     //    private int FLAG_SELECTED = 1 << 0;
 //    private int flags;
     private int guid;
+    private int id;
     private String uri;
     private String resource_uri;
     private String attr;
@@ -39,6 +40,7 @@ public class Folder implements Parcelable {
 
     public Folder(Parcel p) {
         guid = p.readInt();
+        id = p.readInt();
         uri = p.readString();
         resource_uri = p.readString();
         attr = p.readString();
@@ -85,6 +87,9 @@ public class Folder implements Parcelable {
                 case Constants.TAG_TAGS:
                     f.populateFacetList(jp);
                     break;
+                case Constants.TAG_ID:
+                    f.id = jp.getIntValue();
+                    break;
                 default:
                     jp.skipChildren();
             }
@@ -116,7 +121,15 @@ public class Folder implements Parcelable {
         return label;
     }
 
-//    public void setName(String name) {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    //    public void setName(String name) {
 //        this.name = name;
 //    }
 
@@ -133,6 +146,7 @@ public class Folder implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(guid);
+        parcel.writeInt(id);
         parcel.writeString(uri);
         parcel.writeString(resource_uri);
         parcel.writeString(attr);

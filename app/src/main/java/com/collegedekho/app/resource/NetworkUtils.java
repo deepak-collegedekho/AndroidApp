@@ -41,11 +41,22 @@ public class NetworkUtils {
         mContext = context;
     }
 
-    public boolean isNetworkAvailable()
+    public int getConnectivityStatus()
     {
-        ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        if (null != activeNetwork)
+        {
+            if(activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
+                return Constants.TYPE_WIFI;
+
+            if(activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
+                return Constants.TYPE_MOBILE;
+        }
+
+        return Constants.TYPE_NOT_CONNECTED;
     }
 
     public void setToken(String token) {
@@ -80,9 +91,9 @@ public class NetworkUtils {
                     json = trimMessage(json, "detail");
                 }
                 if (json != null)
-                    mListener.onError(tag, json, url, null, method);
+                    mListener.onError(tag, Constants.SERVER_FAULT, url, null, method);
                 else
-                    mListener.onError(tag, "Some Error ocurred please try again.", url, null, method);
+                    mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, null, method);
             }
         })
         {
@@ -147,9 +158,9 @@ public class NetworkUtils {
                 }
                 json = trimMessage(json, "detail");
                 if (json != null)
-                    mListener.onError(tag, json, url, params, method);
+                    mListener.onError(tag, Constants.SERVER_FAULT, url, params, method);
                 else
-                    mListener.onError(tag, "Unable to process the request.", url, params, method);
+                    mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, params, method);
             }
         })
         {
@@ -208,9 +219,9 @@ public class NetworkUtils {
                         }
                         json = trimMessage(json, "detail");
                         if (json != null)
-                            mListener.onJsonObjectRequestError(tag, json, url, params, method);
+                            mListener.onJsonObjectRequestError(tag, Constants.SERVER_FAULT, url, params, method);
                         else
-                            mListener.onJsonObjectRequestError(tag, "Unable to process the request.", url, params, method);
+                            mListener.onJsonObjectRequestError(tag, Constants.NO_CONNECTION_FAULT, url, params, method);
                     }
                 })
         {
@@ -252,7 +263,8 @@ public class NetworkUtils {
         return trimmedString;
     }
 
-    public void networkData(String tag, String url, Map<String, String> params, int method) {
+    public void networkData(String tag, String url, Map<String, String> params, int method)
+    {
         switch (method) {
             case Request.Method.GET:
             case Request.Method.DELETE:

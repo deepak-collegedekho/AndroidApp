@@ -156,7 +156,7 @@ public class InstituteListFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        this.mMainActivity = (MainActivity) getActivity();
+        this.mMainActivity = (MainActivity) this.getActivity();
 
         if (this.mMainActivity != null)
             this.mMainActivity.currentFragment = this;

@@ -9,11 +9,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.FacetListAdapter;
 import com.collegedekho.app.adapter.FilterTypeAdapter;
 import com.collegedekho.app.entities.Folder;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
@@ -26,16 +29,25 @@ import java.util.ArrayList;
  * Use the {@link FilterFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FilterFragment extends Fragment {
+public class FilterFragment extends Fragment implements View.OnClickListener {
     private static final String ARG_FOLDER_LIST = "param1";
 
     private ArrayList<Folder> mFolderList;
+    private ArrayList<Folder> mCurrentFolders;
 
     private OnFilterInteractionListener mListener;
     private FacetListAdapter mFacetAdapter;
+    private FilterTypeAdapter mFilterTypeAdapter;
 
     private int currentPos;
-    private RecyclerView l;
+    private RecyclerView mFilterRecyclerView;
+    private RecyclerView mFilterTypeRecyclerView;
+    private LinearLayout mCategoryListContainer;
+
+    private TextView mCategoryButtonCourseAndSpeciality;
+    private TextView mCategoryButtonLocation;
+    private TextView mCategoryButtonCampusAndHousing;
+    private TextView mCategoryButtonTypeAndSupportServices;
 
     public FilterFragment() {
         // Required empty public constructor
@@ -59,26 +71,47 @@ public class FilterFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mFolderList = getArguments().getParcelableArrayList(ARG_FOLDER_LIST);
+            this.mFolderList = getArguments().getParcelableArrayList(ARG_FOLDER_LIST);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        this.mCurrentFolders = this.mGetFolderOfCategory(Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_filter, container, false);
-        RecyclerView r = (RecyclerView) rootView.findViewById(R.id.filter_type_list);
-        r.setItemAnimator(new DefaultItemAnimator());
-        r.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        r.setLayoutManager(new LinearLayoutManager(getActivity()));
-        r.setAdapter(new FilterTypeAdapter(getActivity(), mFolderList));
-        l = (RecyclerView) rootView.findViewById(R.id.filter_list);
-        mFacetAdapter = new FacetListAdapter(getActivity(), new ArrayList<>(mFolderList.get(currentPos).getFacets()));
-        l.setAdapter(mFacetAdapter);
-        l.setItemAnimator(new DefaultItemAnimator());
-        l.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        l.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        this.mCategoryButtonCourseAndSpeciality = (TextView) rootView.findViewById(R.id.filter_category_c_and_s);
+        this.mCategoryButtonLocation = (TextView) rootView.findViewById(R.id.filter_category_location);
+        this.mCategoryButtonTypeAndSupportServices = (TextView) rootView.findViewById(R.id.filter_category_t_and_ss);
+        this.mCategoryButtonCampusAndHousing = (TextView) rootView.findViewById(R.id.filter_category_c_and_h);
+
+        this.mCategoryButtonCourseAndSpeciality.setOnClickListener(this);
+        this.mCategoryButtonLocation.setOnClickListener(this);
+        this.mCategoryButtonTypeAndSupportServices.setOnClickListener(this);
+        this.mCategoryButtonCampusAndHousing.setOnClickListener(this);
+
+        this.mCategoryButtonCourseAndSpeciality.setSelected(true);
+
+        this.mCategoryListContainer = (LinearLayout) rootView.findViewById(R.id.filter_category_list);
+
+        this.mFilterTypeAdapter = new FilterTypeAdapter(getActivity(), this.mCurrentFolders);
+
+        this.mFilterTypeRecyclerView = (RecyclerView) rootView.findViewById(R.id.filter_type_list);
+        this.mFilterTypeRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        this.mFilterTypeRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        this.mFilterTypeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        this.mFilterTypeRecyclerView.setAdapter(this.mFilterTypeAdapter);
+
+        this.mFacetAdapter = new FacetListAdapter(getActivity(), new ArrayList<>(this.mCurrentFolders.get(this.currentPos).getFacets()));
+
+        this.mFilterRecyclerView = (RecyclerView) rootView.findViewById(R.id.filter_list);
+        this.mFilterRecyclerView.setAdapter(this.mFacetAdapter);
+        this.mFilterRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        this.mFilterRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        this.mFilterRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         rootView.findViewById(R.id.button_filter_apply).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,8 +154,63 @@ public class FilterFragment extends Fragment {
     }
 
     public void updateFilterType(int position) {
-        currentPos = position;
-        mFacetAdapter.updateFilters(mFolderList.get(position).getFacets());
+        this.currentPos = position;
+        this.mFacetAdapter.updateFilters(this.mCurrentFolders.get(position).getFacets());
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        this.mCurrentFolders.clear();
+
+        this.mDeselectAll();
+
+        (v.getRootView().findViewById(v.getId())).setSelected(true);
+
+        switch (v.getId())
+        {
+            case R.id.filter_category_c_and_s:
+                this.mCurrentFolders.addAll(this.mGetFolderOfCategory(Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION));
+                break;
+            case R.id.filter_category_location:
+                this.mCurrentFolders.addAll(this.mGetFolderOfCategory(Constants.FILTER_CATEGORY_LOCATION));
+                break;
+            case R.id.filter_category_t_and_ss:
+                this.mCurrentFolders.addAll(this.mGetFolderOfCategory(Constants.FILTER_CATEGORY_TYPE_AND_SUPPORT_SERVICES));
+                break;
+            case R.id.filter_category_c_and_h:
+                this.mCurrentFolders.addAll(this.mGetFolderOfCategory(Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING));
+                break;
+            default:
+                break;
+        }
+
+        this.mFilterTypeAdapter.notifyDataSetChanged();
+
+        this.updateFilterType(0);
+        //this.mFacetAdapter.updateFilters(this.mCurrentFolders.get(0).getFacets());
+    }
+
+    private void mDeselectAll()
+    {
+        this.mCategoryButtonCourseAndSpeciality.setSelected(false);
+        this.mCategoryButtonLocation.setSelected(false);
+        this.mCategoryButtonTypeAndSupportServices.setSelected(false);
+        this.mCategoryButtonCampusAndHousing.setSelected(false);
+    }
+
+    private ArrayList<Folder> mGetFolderOfCategory(int category)
+    {
+        ArrayList<Folder> currentFolders = new ArrayList<>();
+
+        for (Folder f : this.mFolderList)
+        {
+            if (Constants.FilterCategoryMap.containsKey(f.getId()))
+                if (Constants.FilterCategoryMap.get(f.getId()) == category)
+                    currentFolders.add(f);
+        }
+
+        return currentFolders;
     }
 
     /**

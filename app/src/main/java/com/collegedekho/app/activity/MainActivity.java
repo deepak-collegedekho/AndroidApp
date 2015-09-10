@@ -91,6 +91,23 @@ public class MainActivity extends AppCompatActivity
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleListFragment.OnArticleSelectedListener,
         View.OnClickListener {
 
+    static
+    {
+        Constants.FilterCategoryMap.put(Constants.ID_HOSTEL, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
+        Constants.FilterCategoryMap.put(Constants.ID_FACILITIES, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
+
+        Constants.FilterCategoryMap.put(Constants.ID_FEE_RANGE, Constants.FILTER_CATEGORY_TYPE_AND_SUPPORT_SERVICES);
+        Constants.FilterCategoryMap.put(Constants.ID_INSTITUTE_TYPE, Constants.FILTER_CATEGORY_TYPE_AND_SUPPORT_SERVICES);
+
+        Constants.FilterCategoryMap.put(Constants.ID_CITY, Constants.FILTER_CATEGORY_LOCATION);
+        Constants.FilterCategoryMap.put(Constants.ID_STATE, Constants.FILTER_CATEGORY_LOCATION);
+
+        Constants.FilterCategoryMap.put(Constants.ID_LEVEL, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
+        Constants.FilterCategoryMap.put(Constants.ID_SPECIALIZATION, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
+        Constants.FilterCategoryMap.put(Constants.ID_DEGREE, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
+        Constants.FilterCategoryMap.put(Constants.ID_EXAM, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
+    }
+
     private static final String TAG = "MainActivity";
     public static final int GET_PSYCHOMETRIC_RESULTS = 1;
     public static final String PSYCHOMETRIC_RESULTS = "psychometric_results";
@@ -175,24 +192,28 @@ public class MainActivity extends AppCompatActivity
                 init();
 
                 //check if this device is connected to internet
-                boolean amIConnectedToInternet = networkUtils.isNetworkAvailable();
+                int amIConnectedToInternet = networkUtils.getConnectivityStatus();
 
-                if (amIConnectedToInternet) {
-                    if (user != null && user.getPref() == User.Prefs.STREAMKNOWN) {
-                        if (!completedStage2) {
+                if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED)
+                {
+                    Constants.IS_CONNECTED_TO_INTERNET = true;
+
+                    if (user != null && user.getPref() == User.Prefs.STREAMKNOWN)
+                    {
+                        if (!completedStage2)
                             mSetUserPref();
-                        } else {
+                        else
                             mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
-                        }
-                    } else {
+                    }
+                    else
+                    {
                         //onNavigationDrawerItemSelected(0);
                         mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
                     }
-                } else {
-                    if (currentFragment instanceof SplashFragment) {
-                        ((SplashFragment) currentFragment).noInternetFound();
-                    }
                 }
+                else
+                    if (currentFragment instanceof SplashFragment)
+                        ((SplashFragment) currentFragment).noInternetFound();
 
                 //setSupportActionBar(toolbar);
                 //getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -401,22 +422,8 @@ public class MainActivity extends AppCompatActivity
         {
             institutes = JSON.std.listOfFrom(Institute.class, this.extractResults(response));
 
-            /*if (this.mFilters != "")
-                updateFilterList(this.mFilters);*/
-
-            //process filters now
-            //mFolderList = ;
-            //updateFilterList;
-
             if (this.mFilterKeywords.size() > 0)
-            {
-                //this.mUpdateFilterButton();
                 this.filterCount = this.mFilterKeywords.size();
-
-                //if (currentFragment instanceof InstituteListFragment)
-                    //((InstituteListFragment) currentFragment).updateFilterButton(filterCount);
-            }
-
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
@@ -443,9 +450,9 @@ public class MainActivity extends AppCompatActivity
     {
         try
         {
-            mFbEnumeration = JSON.std.listOfFrom(MyFutureBuddiesEnumeration.class, extractResults(response));
+            this.mFbEnumeration = JSON.std.listOfFrom(MyFutureBuddiesEnumeration.class, this.extractResults(response));
 
-            mDisplayFragment(MyFutureBuddiesEnumerationFragment.newInstance(new ArrayList<>(mFbEnumeration)), true, Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
+            this.mDisplayFragment(MyFutureBuddiesEnumerationFragment.newInstance(new ArrayList<>(this.mFbEnumeration)), true, Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
         }
         catch (IOException e)
         {
@@ -455,19 +462,53 @@ public class MainActivity extends AppCompatActivity
 
     private void mShowMyFB(String response, int index)
     {
+        try
+        {
+            this.mFB = this.mParseAndPopulateMyFB(response, index);
+            this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB), true, Constants.TAG_FRAGMENT_MY_FB);
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    private void mUpdateMyFB(String response, int index, int oldCount)
+    {
+        try
+        {
+            this.mFB = this.mParseAndPopulateMyFB(response, index);
+
+            //if number of comments have increased
+            if (this.mFB.getComments_count() > oldCount)
+            {
+                ArrayList<MyFutureBuddyComment> myFbComments = this.mFB.getFutureBuddiesCommentsSet();
+
+                if (currentFragment instanceof MyFutureBuddiesFragment)
+                    ((MyFutureBuddiesFragment) currentFragment).updateChatPings(myFbComments);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    private MyFutureBuddy mParseAndPopulateMyFB(String response, int index)
+    {
+        MyFutureBuddy myFB = new MyFutureBuddy();
 
         try
         {
-            this.mFB = new MyFutureBuddy();
             ArrayList<MyFutureBuddyComment> myFBCommentsSet = new ArrayList<>();
 
             JSONObject fb = new JSONObject(response);
 
-            this.mFB.setComments_count(fb.getInt("comments_count"));
-            this.mFB.setMembers_count(fb.getInt("members_count"));
-            this.mFB.setResource_uri(fb.getString("resource_uri"));
-            this.mFB.setInstitute_name(fb.getString("institute_name"));
-            this.mFB.setIndex(index);
+            myFB.setComments_count(fb.getInt("comments_count"));
+            myFB.setMembers_count(fb.getInt("members_count"));
+            myFB.setResource_uri(fb.getString("resource_uri"));
+            myFB.setInstitute_name(fb.getString("institute_name"));
+            myFB.setIndex(index);
 
             JSONArray commentsSet = fb.getJSONArray("instituteforumcomment_set");
 
@@ -481,18 +522,21 @@ public class MainActivity extends AppCompatActivity
                 myFBComment.setUser(comment.getString("user"));
                 myFBComment.setComment(comment.getString("comment"));
                 myFBComment.setAdded_on(comment.getString("added_on"));
+                myFBComment.setToken(comment.getString("token"));
                 myFBComment.setIndex(i);
                 myFBComment.setFbIndex(index);
 
                 myFBCommentsSet.add(myFBComment);
             }
 
-            this.mFB.setFutureBuddiesCommentsSet(myFBCommentsSet);
-
-            this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB), true, Constants.TAG_FRAGMENT_MY_FB);
-        } catch (Exception e) {
+            myFB.setFutureBuddiesCommentsSet(myFBCommentsSet);
+        }
+        catch (Exception e)
+        {
             Log.e(TAG, e.getMessage());
         }
+
+        return myFB;
     }
 
     private void mDisplayInstitute(int position)
@@ -645,7 +689,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_LOAD_HOME:
                 this.mUpdateHome(response);
-
                 //Show toolbar
                 toolbar = (Toolbar) findViewById(R.id.app_toolbar);
 
@@ -714,6 +757,15 @@ public class MainActivity extends AppCompatActivity
                     parentIndex = tags[1];
 
                     this.mShowMyFB(response, Integer.parseInt(parentIndex));
+                }
+                break;
+            case Constants.TAG_REFRESH_MY_FB:
+                if (tags.length > 1)
+                {
+                    parentIndex = tags[1];
+                    childIndex  = tags[2];
+
+                    this.mUpdateMyFB(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
                 }
                 break;
             case Constants.TAG_QNA_ANSWER_SUBMITTED:
@@ -854,9 +906,9 @@ public class MainActivity extends AppCompatActivity
 
     private void updateLikeButton(String response, String extraTag, int like) {
         Institute i = institutes.get(Integer.parseInt(extraTag));
-        if (like == -1)
+        if (like == Constants.NEITHER_LIKE_NOR_DISLIKE)
         {
-            i.setCurrent_user_vote_type(-1);
+            i.setCurrent_user_vote_type(Constants.NEITHER_LIKE_NOR_DISLIKE);
             i.setCurrent_user_vote_url(null);
         }
         else
@@ -915,6 +967,7 @@ public class MainActivity extends AppCompatActivity
             parseSimilarNews(newsList);
 
             mDisplayFragment(NewsListFragment.newInstance(new ArrayList<>(newsList), currentTitle), true, Constants.TAG_FRAGMENT_NEWS_LIST);
+
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1062,8 +1115,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onError(final String tag, String response, final String url, final Map<String, String> params, final int method) {
-        if (progressDialog.isShowing())
-            progressDialog.dismiss();
+        if (progressDialog != null)
+            if (progressDialog.isShowing())
+                progressDialog.dismiss();
+
         new AlertDialog.Builder(this)
                 .setMessage(response)
                 .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
@@ -1120,7 +1175,8 @@ public class MainActivity extends AppCompatActivity
                 .show();
     }
 
-    private void mOnCourseLevelSelected(int level, String streamUri) {
+    private void mOnCourseLevelSelected(int level, String streamUri)
+    {
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
 
         String levelURI = Constants.BASE_URL + "level/" + (level + 1) + "/";
@@ -1148,39 +1204,22 @@ public class MainActivity extends AppCompatActivity
     public void onInstituteLikedDisliked(int position, int liked)
     {
         Institute institute = institutes.get(position);
-        if (institute.getCurrent_user_vote_type() == -1)
+        if (institute.getCurrent_user_vote_type() == Constants.NEITHER_LIKE_NOR_DISLIKE)
         {
             //neither liked nor disliked case
-            /*Map<String, String> params = new HashMap<>();
-            params.put("vote_type", "" + liked);
-            params.put("institute", institute.getResource_uri());
-            params.put("user", user.getResource_uri());
-            this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, Constants.BASE_URL + "institutevotes/", params);
-            //this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getResource_uri() + "upvote/", params);*/
             if (liked == Constants.LIKE_THING)
                 this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getResource_uri() + "upvote/", null, Request.Method.POST);
             else
                 this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getResource_uri() + "downvote/", null, Request.Method.POST);
-
         }
-        else if (institute.getCurrent_user_vote_type() != -1 && liked != -1)
+        else if (institute.getCurrent_user_vote_type() != Constants.NEITHER_LIKE_NOR_DISLIKE && liked != Constants.NEITHER_LIKE_NOR_DISLIKE)
         {
             //either already liked or disliked case
-            /*Map<String, String> params = new HashMap<>();
-            params.put("vote_type", "" + liked);
-            params.put("institute", institute.getResource_uri());
-            params.put("user", user.getResource_uri());
-            this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getCurrent_user_vote_url(), params, Request.Method.PUT);*/
             if (liked == Constants.LIKE_THING)
-                this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + -1, institute.getResource_uri() + "upvote/", null, Request.Method.POST);
+                this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, institute.getResource_uri() + "upvote/", null, Request.Method.POST);
             else
-                this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + -1, institute.getResource_uri() + "downvote/", null, Request.Method.POST);
+                this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, institute.getResource_uri() + "downvote/", null, Request.Method.POST);
         }
-        /*else
-        {
-            //this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getCurrent_user_vote_url(), null, Request.Method.DELETE);
-            this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getCurrent_user_vote_url(), null, Request.Method.DELETE);
-        }*/
     }
 
     @Override
@@ -1475,18 +1514,14 @@ public class MainActivity extends AppCompatActivity
     private void mMakeJsonObjectNetworkCall(String tag, String url, JSONObject params, int method)
     {
         this.showProgress(tag);
-        /*try {
-            params.put("college_location_states", "");
-            params.put("college_location_cities", "");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
         this.networkUtils.networkDataWithObjectParam(tag, url, params, method);
     }
 
     private void showProgress(String tag)
     {
-        String message = MainActivity.GetPersonalizedMessage(tag);
+        String[] tags = tag.split("#");
+
+        String message = MainActivity.GetPersonalizedMessage(tags[0]);
         if (message != null && ! (this.currentFragment instanceof SplashFragment))
             showProgressDialog(message);
     }
@@ -1591,6 +1626,7 @@ public class MainActivity extends AppCompatActivity
             fbComment.setComment(comment.getString("comment"));
             fbComment.setAdded_on(comment.getString("added_on"));
             fbComment.setUser(comment.getString("user"));
+            fbComment.setToken(comment.getString("token"));
             fbComment.setIndex(index);
             fbComment.setFbIndex(fbIndex);
 

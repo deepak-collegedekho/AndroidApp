@@ -18,16 +18,16 @@ import java.util.ArrayList;
  *         Created: 07/07/15
  */
 public class FilterTypeAdapter extends RecyclerView.Adapter {
-
     private static final int SELECTED_VIEW = 0;
     private static final int NORMAL_VIEW = 1;
     private final ArrayList<Folder> mFolderList;
     Context mContext;
     int currentSelection;
 
-    public FilterTypeAdapter(Context context, ArrayList<Folder> folderList) {
-        mContext = context;
-        mFolderList = folderList;
+    public FilterTypeAdapter(Context context, ArrayList<Folder> folderList)
+    {
+        this.mContext = context;
+        this.mFolderList = folderList;
     }
 
     @Override
@@ -38,12 +38,13 @@ public class FilterTypeAdapter extends RecyclerView.Adapter {
             rootView.setBackgroundColor(mContext.getResources().getColor(R.color.bg_filter_item));
         else
             rootView.setBackgroundColor(mContext.getResources().getColor(R.color.bg_filter_item_us));
+
         return holder;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((FilterTypeHolder) holder).title.setText(mFolderList.get(position).getLabel());
+        ((FilterTypeHolder) holder).title.setText(this.mFolderList.get(position).getLabel());
     }
 
     @Override
