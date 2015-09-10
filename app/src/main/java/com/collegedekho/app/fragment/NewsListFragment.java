@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.NewsListAdapter;
 import com.collegedekho.app.entities.News;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class NewsListFragment extends Fragment {
     private static final String ARG_TITLE = "title";
 
     private ArrayList<News> mNews;
+    private ArrayList<News> similarNews;
     private String mTitle;
 
     public NewsListFragment() {
@@ -65,7 +67,7 @@ public class NewsListFragment extends Fragment {
             ((TextView) rootView.findViewById(android.R.id.empty)).setText("This list is empty.");
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new NewsListAdapter(getActivity(), mNews));
+        recyclerView.setAdapter(new NewsListAdapter(getActivity(), mNews , Constants.TYPE_NEWS));
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -83,7 +85,7 @@ public class NewsListFragment extends Fragment {
     }
 
     public interface OnNewsSelectedListener {
-        void onNewsSelected(News news);
+        void onNewsSelected(News news ,boolean flag);
     }
 
 }

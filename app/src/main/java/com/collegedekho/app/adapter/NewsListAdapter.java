@@ -1,6 +1,8 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,8 +15,11 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.MySingleton;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.News;
+import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsListFragment;
+import com.collegedekho.app.resource.Constants;
 
+import java.lang.Integer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,10 +38,12 @@ public class NewsListAdapter extends RecyclerView.Adapter {
     private ArrayList<News> mNews;
     private Context mContext;
     private ImageLoader imageLoader;
+    private int type;
 
-    public NewsListAdapter(Context context, ArrayList<News> news) {
+    public NewsListAdapter(Context context, ArrayList<News> news , int type) {
         mNews = news;
         mContext = context;
+        this.type = type;
         imageLoader = MySingleton.getInstance(context).getImageLoader();
         sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -44,7 +51,14 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(mContext).inflate(R.layout.card_news, parent, false);
+        View rootView = null;
+        if(type == Constants.TYPE_NEWS) {
+             rootView = LayoutInflater.from(mContext).inflate(R.layout.card_news, parent, false);
+        }
+        else if(type == Constants.TYPE_SIMILARLAR_NEWS)
+        {
+            rootView = LayoutInflater.from(mContext).inflate(R.layout.card_related_news, parent, false);
+        }
         try {
             return new NewsHolder(rootView, (NewsListFragment.OnNewsSelectedListener) mContext);
         } catch (ClassCastException e) {
@@ -55,22 +69,29 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
         News n = mNews.get(position);
         NewsHolder newsHolder = (NewsHolder) holder;
         newsHolder.newsTitle.setText(n.title);
-        newsHolder.newsContent.setText(n.content);
-        String d = "";
-        try {
-            sdf.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
-            Date date = sdf.parse(n.published_on);
-            sdf.applyPattern("MMMM d, yyyy KK:mm a");
-            d = sdf.format(date);
-        } catch (ParseException e) {
-            Log.e(TAG, "Date format unknown: " + n.published_on);
-        }
-        newsHolder.newsPubDate.setText(d);
+
         if (n.image != null && !n.image.isEmpty())
             newsHolder.newsImage.setImageUrl(n.image, imageLoader);
+
+        if(type == Constants.TYPE_NEWS) {
+            newsHolder.newsContent.setText(n.content);
+            String d = "";
+            try {
+                sdf.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
+                Date date = sdf.parse(n.published_on);
+                sdf.applyPattern("MMMM d, yyyy KK:mm a");
+                d = sdf.format(date);
+            } catch (ParseException e) {
+                Log.e(TAG, "Date format unknown: " + n.published_on);
+            }
+            newsHolder.newsPubDate.setText(d);
+
+        }
+
     }
 
     @Override
@@ -85,12 +106,16 @@ public class NewsListAdapter extends RecyclerView.Adapter {
         TextView newsContent;
         NetworkImageView newsImage;
         NewsListFragment.OnNewsSelectedListener mListener;
+      //  ArrayList<News> relatedNews;
 
         public NewsHolder(View itemView, NewsListFragment.OnNewsSelectedListener listener) {
             super(itemView);
+
+            if(type == Constants.TYPE_NEWS) {
+                newsPubDate = (TextView) itemView.findViewById(R.id.textview_news_pubdate);
+                newsContent = (TextView) itemView.findViewById(R.id.textview_news_content);
+            }
             newsTitle = (TextView) itemView.findViewById(R.id.textview_news_title);
-            newsPubDate = (TextView) itemView.findViewById(R.id.textview_news_pubdate);
-            newsContent = (TextView) itemView.findViewById(R.id.textview_news_content);
             newsImage = (NetworkImageView) itemView.findViewById(R.id.image_news_collapsed);
             newsImage.setDefaultImageResId(R.drawable.ic_default_image);
             newsImage.setErrorImageResId(R.drawable.ic_default_image);
@@ -100,7 +125,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-            mListener.onNewsSelected(mNews.get(getAdapterPosition()));
+                mListener.onNewsSelected(mNews.get(getAdapterPosition()), true);
         }
     }
 }

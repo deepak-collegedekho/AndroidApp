@@ -3,6 +3,10 @@ package com.collegedekho.app.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.lang.Integer;
+import java.lang.String;
+import java.util.ArrayList;
+
 /**
  * @author Mayank Gautam
  *         Created: 03/07/15
@@ -24,6 +28,9 @@ public class News implements Parcelable {
     public String image;
     public long template_type;
     public String published_on;
+    public String similar_news;
+    public int id;
+    private ArrayList<String> similarNewsIds ;
 
     public News() {
     }
@@ -34,6 +41,8 @@ public class News implements Parcelable {
         image = source.readString();
         template_type = source.readLong();
         published_on = source.readString();
+        id  =   source.readInt();
+        similar_news = source.readString();
     }
 
     @Override
@@ -48,6 +57,8 @@ public class News implements Parcelable {
         dest.writeString(image);
         dest.writeLong(template_type);
         dest.writeString(published_on);
+        dest.writeString(similar_news);
+        dest.writeInt(id);
     }
 
     public void setTitle(String title) {
@@ -70,4 +81,16 @@ public class News implements Parcelable {
     public void setPublished_on(String published_on) {
         this.published_on = published_on;
     }
+
+    public int getId() {  return id;  }
+
+    public void setId(int id) { this.id = id;  }
+
+    public String getSimilar_news() { return similar_news;  }
+
+    public void setSimilar_news(String similar_news) { this.similar_news = similar_news;   }
+
+    public ArrayList<String> getSimilarNewsIds() {  return similarNewsIds;  }
+
+    public void setSimilarNewsIds(ArrayList<String> similarNewsIds) { this.similarNewsIds = similarNewsIds;   }
 }

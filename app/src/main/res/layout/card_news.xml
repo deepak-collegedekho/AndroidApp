@@ -19,6 +19,7 @@
         style="@style/AppTheme.TextHomeSubHead.Medium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
         android:layout_toRightOf="@id/image_news_collapsed" />
 
     <TextView
@@ -26,9 +27,9 @@
         style="@style/AppTheme.TextView.style1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
         android:layout_below="@id/textview_news_title"
         android:layout_toRightOf="@id/image_news_collapsed"
-        android:paddingLeft="0dp"
         android:singleLine="true"
         android:text="July 13, 2015 06:45 PM"
         android:textSize="14sp" />
@@ -37,6 +38,7 @@
         android:id="@+id/textview_news_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
         android:layout_below="@id/textview_news_pubdate"
         android:layout_toRightOf="@id/image_news_collapsed"
         android:ellipsize="end"

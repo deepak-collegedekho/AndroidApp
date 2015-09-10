@@ -17,8 +17,8 @@ public class CoursePagerAdapter extends FragmentStatePagerAdapter {
 
     private final ArrayList<String> titles;
     ArrayList<ArrayList<InstituteCourse>> mCourse;
-    int count;
-
+    private CourseFragment courseFragment[];
+    private int count;
     public CoursePagerAdapter(FragmentManager fm, ArrayList<ArrayList<InstituteCourse>> course) {
         super(fm);
         mCourse = new ArrayList<>();
@@ -30,11 +30,14 @@ public class CoursePagerAdapter extends FragmentStatePagerAdapter {
                 titles.add(InstituteCourse.CourseLevel.values()[i].name().replace("_", " "));
             }
         }
+        courseFragment = new CourseFragment[count];
     }
 
     @Override
     public Fragment getItem(int position) {
-        return CourseFragment.newInstance(mCourse.get(position));
+
+            courseFragment[position] = CourseFragment.newInstance(mCourse.get(position));
+             return courseFragment[position];
     }
 
     @Override
@@ -45,5 +48,13 @@ public class CoursePagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         return titles.get(position);
+    }
+
+    public void updateAdapter(int position , int tabPosition)
+    {
+            if(courseFragment[tabPosition] != null)
+            {
+                courseFragment[tabPosition].updateAdapter(position);
+            }
     }
 }

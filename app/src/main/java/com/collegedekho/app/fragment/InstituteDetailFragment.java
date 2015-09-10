@@ -1,11 +1,14 @@
 package com.collegedekho.app.fragment;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +22,7 @@ import com.collegedekho.app.adapter.InstitutePagerAdapter;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.entities.QnAQuestions;
+import com.collegedekho.app.resource.Constants;
 import com.fasterxml.jackson.jr.ob.JSON;
 
 import java.io.IOException;
@@ -96,8 +100,15 @@ public class InstituteDetailFragment extends Fragment {
     }
 
 
-    public void updateCourses(String response) {
-        new LoadCoursesAsyncTask().execute(response);
+    public void updateCourses(String response ,int position, boolean isForCourseApplied) {
+        if(isForCourseApplied) {
+
+            mPagerAdapter.updateCourseFragment(position);
+
+        } else
+        {
+            new LoadCoursesAsyncTask().execute(response);
+        }
     }
 
     public void instituteQnAQuestionAdded(QnAQuestions ques)
@@ -139,10 +150,12 @@ public class InstituteDetailFragment extends Fragment {
             {
                 courses.add(new ArrayList<InstituteCourse>());
             }
-            for (InstituteCourse course : mCourses)
-            {
-                courses.get(course.level).add(course);
+            if(mCourses != null && !mCourses.isEmpty()) {
+                for (InstituteCourse course : mCourses) {
+                    courses.get(course.level).add(course);
+                }
             }
+
             return null;
         }
 

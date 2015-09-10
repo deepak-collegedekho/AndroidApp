@@ -121,20 +121,20 @@ public class InstituteQnAFragment extends Fragment implements TextWatcher, Adapt
             }
         });
 
-        if (this.mQnAQuestions.size() != 0)
-        {
-            this.mInstituteQnAQuestionListContainer.setVisibility(View.VISIBLE);
-            this.mAskExpertButton.setEnabled(true);
-            this.mAskExpertButton.setText("Ask an Expert Now");
-
-        }
-        else if (this.mQnAQuestions.size() == 0)
+        if (this.mQnAQuestions == null || this.mQnAQuestions.size() == 0)
         {
             this.mInstituteQnAQuestionListContainer.setVisibility(View.GONE);
             this.mInstituteQnAAskContainer.setVisibility(View.GONE);
             this.mEmptyTextView.setText("No questions asked yet. Go ahead shoot one..");
             this.mAskExpertButton.setText("Ask an Expert Now");
             this.mAskExpertButton.setEnabled(true);
+        }
+        else
+        {
+            this.mInstituteQnAQuestionListContainer.setVisibility(View.VISIBLE);
+            this.mAskExpertButton.setEnabled(true);
+            this.mAskExpertButton.setText("Ask an Expert Now");
+
         }
 
         return rootView;

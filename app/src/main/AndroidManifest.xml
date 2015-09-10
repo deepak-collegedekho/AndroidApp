@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <!-- To retrieve OAuth 2.0 tokens or invalidate tokens to disconnect a user's Google account from an app -->
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <!-- To retrieve user  phone number -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"

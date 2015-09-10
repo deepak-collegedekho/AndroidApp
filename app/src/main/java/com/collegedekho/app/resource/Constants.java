@@ -73,6 +73,8 @@ public class Constants
     public static final String TAG_FRAGMENT_WIDGET_LIST = "fragment_widget_list";
     public static final String TAG_FRAGMENT_NEWS_LIST = "fragment_news_list";
     public static final String TAG_FRAGMENT_NEWS = "fragment_news";
+    public static final String TAG_FRAGMENT_ARTICLES_LIST = "fragment_articles_list";
+    public static final String TAG_FRAGMENT_ARTICLE = "fragment_article";
     public static final String TAG_FRAGMENT_INSTITUTE = "fragment_institute";
     public static final String TAG_FRAGMENT_MY_FB = "fragment_my_fb";
     public static final String TAG_FRAGMENT_MY_FB_ENUMERATION = "fragment_my_fb_enumeration";
@@ -84,5 +86,12 @@ public class Constants
     public static final int MAIN_ANIMATION_TIME = 6500;
     public static final int SECONDARY_ANIMATION_TIME = 2000;
     public static final String SELECTED_FILTERS = "selected_filters";
+
+    public static final int TYPE_SIMILARLAR_NEWS = 2;
+    public static final int TYPE_NEWS = 1;
+
+
+    public static final int TYPE_SIMILARLAR_ARTICLES = 2;
+    public static final int TYPE_ARTCLES = 1;
 
 }

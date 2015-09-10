@@ -2,6 +2,8 @@ package com.collegedekho.app.fragment;
 
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +26,7 @@ public class CourseFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
 
     private ArrayList<InstituteCourse> courses;
+    private CourseListAdapter mAdapter;
 
     public CourseFragment() {
         // Required empty public constructor
@@ -49,10 +52,22 @@ public class CourseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         RecyclerView rview = (RecyclerView) inflater.inflate(R.layout.fragment_course, container, false);
-        rview.setAdapter(new CourseListAdapter(getActivity(), courses));
+        mAdapter = new CourseListAdapter(getActivity(), courses);
+        rview.setAdapter(mAdapter);
         rview.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         return rview;
     }
 
+    public void updateAdapter(final int position)
+    {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyItemChanged(position);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
+    }
 
 }

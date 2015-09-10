@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,8 @@ public class InstituteCoursesFragment extends Fragment {
     private ArrayList<ArrayList<InstituteCourse>> mCourses;
     private CoursePagerAdapter adapter;
     private int courseCount;
+    private  TabLayout tabLayout;
+    private ViewPager mPager;
 
     public InstituteCoursesFragment() {
         // Required empty public constructor
@@ -77,10 +80,10 @@ public class InstituteCoursesFragment extends Fragment {
     }
 
     private void init(View rootView) {
-        ViewPager mPager = (ViewPager) rootView.findViewById(R.id.pager_courses);
+        mPager = (ViewPager) rootView.findViewById(R.id.pager_courses);
         adapter = new CoursePagerAdapter(getChildFragmentManager(), mCourses);
         mPager.setAdapter(adapter);
-        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.course_tab_layout);
+        tabLayout = (TabLayout) rootView.findViewById(R.id.course_tab_layout);
         tabLayout.setTabTextColors(getResources().getColor(R.color.white), getResources().getColor(R.color.text_subhead_blue));
         tabLayout.setupWithViewPager(mPager);
         tabLayout.setVisibility(View.VISIBLE);
@@ -105,5 +108,11 @@ public class InstituteCoursesFragment extends Fragment {
                 ((TextView) rootView.findViewById(R.id.course_tab_title)).setText("Courses info not available");
             }
         }
+    }
+    public void updateAdapter(int position)
+    {
+        int tabPosition = tabLayout.getSelectedTabPosition();
+       // int pagerPosition = mPager.getCurrentItem();
+        adapter.updateAdapter(position , tabPosition);
     }
 }

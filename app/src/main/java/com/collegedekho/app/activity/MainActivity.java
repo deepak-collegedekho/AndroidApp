@@ -1,11 +1,13 @@
 package com.collegedekho.app.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,14 +15,17 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.collegedekho.app.R;
+import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Facet;
 import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.entities.Institute;
@@ -34,6 +39,8 @@ import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.entities.Widget;
+import com.collegedekho.app.fragment.ArticleDetailFragment;
+import com.collegedekho.app.fragment.ArticleListFragment;
 import com.collegedekho.app.fragment.FilterFragment;
 import com.collegedekho.app.fragment.HomeFragment;
 import com.collegedekho.app.fragment.InstituteDetailFragment;
@@ -64,6 +71,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +88,8 @@ public class MainActivity extends AppCompatActivity
         QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener,
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
-        MyFutureBuddiesFragment.OnMyFBInteractionListener{
+        MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleListFragment.OnArticleSelectedListener,
+        View.OnClickListener {
 
     private static final String TAG = "MainActivity";
     public static final int GET_PSYCHOMETRIC_RESULTS = 1;
@@ -102,7 +111,12 @@ public class MainActivity extends AppCompatActivity
     Map<String, String> mFilterKeywords = new HashMap<>();
     Toolbar toolbar;
     private ArrayList<Folder> mFolderList;
+    private  List<News> newsList;
+    private  List<Articles> articlesList;
+    private Institute mInstitute;
 
+    private boolean isAppliedForCourse = false;
+    String instituteCourseId ="";
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -114,6 +128,7 @@ public class MainActivity extends AppCompatActivity
     public static User user;
     private User.Prefs userPref;
     private boolean completedStage2;
+    private ImageView backArrow;
 
     public void onSectionAttached(int number) {
         switch (number) {
@@ -193,6 +208,9 @@ public class MainActivity extends AppCompatActivity
 
             }
         }, Constants.MAIN_ANIMATION_TIME);
+
+        backArrow = (ImageView)findViewById(R.id.backArrow);
+        backArrow.setOnClickListener(this);
     }
 
     @Override
@@ -479,12 +497,12 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplayInstitute(int position)
     {
-        Institute inst  = institutes.get(position);
+        mInstitute  = institutes.get(position);
 
-        this.mDisplayFragment(InstituteDetailFragment.newInstance(inst), true, Constants.TAG_FRAGMENT_INSTITUTE);
+        this.mDisplayFragment(InstituteDetailFragment.newInstance(mInstitute), true, Constants.TAG_FRAGMENT_INSTITUTE);
 
         this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + institutes.get(position).getId(), null);
-        this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS, inst.getResource_uri() + "qna/", null, Request.Method.GET);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS, mInstitute.getResource_uri() + "qna/", null, Request.Method.GET);
     }
 
     private void loadPyschometricTest(String response)
@@ -560,6 +578,14 @@ public class MainActivity extends AppCompatActivity
                 toolbar = (Toolbar) findViewById(R.id.app_toolbar);
                 toolbar.setVisibility(View.VISIBLE);
             }
+            if (currentFragment instanceof HomeFragment  || currentFragment instanceof  SplashFragment
+                    || currentFragment instanceof  WidgetListFragment)
+            {
+                backArrow.setVisibility(View.GONE);
+            }
+            else {
+                backArrow.setVisibility(View.VISIBLE);
+            }
         }
         catch (Exception e)
         {
@@ -595,13 +621,27 @@ public class MainActivity extends AppCompatActivity
                 displayNews(response);
                 break;
             case Constants.WIDGET_ARTICES:
-                displayNews(response);
+                displayArticles(response);
                 break;
             case Constants.WIDGET_COURSES:
                 displayCourses(response);
                 break;
             case Constants.TAG_LOAD_COURSES:
-                this.mUpdateCourses(response);
+
+                if (tags.length == 2)
+                    extraTag = tags[1];
+                else {
+                    extraTag= "1";
+                }
+                if(isAppliedForCourse) { //TODO delete this when server side store about applied course
+                    SharedPreferences sp = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor edit = sp.edit();
+                    edit.putString(instituteCourseId,instituteCourseId );
+                    edit.commit();
+                }
+                this.mUpdateCourses(response,extraTag );
+                isAppliedForCourse = false;
+
                 break;
             case Constants.TAG_LOAD_HOME:
                 this.mUpdateHome(response);
@@ -871,13 +911,83 @@ public class MainActivity extends AppCompatActivity
 
     private void displayNews(String response) {
         try {
-            List<News> newsList = JSON.std.listOfFrom(News.class, extractResults(response));
+            newsList = JSON.std.listOfFrom(News.class, extractResults(response));
+            parseSimilarNews(newsList);
+
             mDisplayFragment(NewsListFragment.newInstance(new ArrayList<>(newsList), currentTitle), true, Constants.TAG_FRAGMENT_NEWS_LIST);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
+    private void parseSimilarNews(List newsList) {
+
+        if(newsList == null)
+        {
+            return;
+        }
+        for (int i = 0; i < newsList.size(); i++) {
+
+            News news = (News) newsList.get(i);
+            String tempId = news.getSimilar_news();
+            tempId = tempId.replaceAll("L", "");
+            ArrayList<String> similarNewsIds  = new ArrayList<String>();
+            try {
+
+                JSONArray strArray = new JSONArray(tempId);
+                for (int j = 0; j <strArray.length() ; j++) {
+
+                    String id = strArray.getString(j);
+                    similarNewsIds.add(id);
+                }
+            } catch (JSONException e) {
+
+               Log.e(MainActivity.class.getSimpleName(), e.getMessage() + e.getCause());
+
+            }
+            news.setSimilarNewsIds(similarNewsIds);
+            }
+    }
+
+
+    private void displayArticles(String response) {
+        try {
+            articlesList = JSON.std.listOfFrom(Articles.class, extractResults(response));
+            parseSimilarArticle(articlesList);
+
+            mDisplayFragment(ArticleListFragment.newInstance(new ArrayList<>(articlesList), currentTitle), true, Constants.TAG_FRAGMENT_ARTICLES_LIST);
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+    private void parseSimilarArticle(List articleList) {
+
+        if(articleList == null)
+        {
+            return;
+        }
+        for (int i = 0; i < articleList.size(); i++) {
+
+            Articles article = (Articles) articleList.get(i);
+            String tempId = article.getSimilar_articles();
+            tempId = tempId.replaceAll("L", "");
+            ArrayList<String> similarArticlesIds  = new ArrayList<String>();
+            try {
+
+                JSONArray strArray = new JSONArray(tempId);
+                for (int j = 0; j <strArray.length() ; j++) {
+
+                    String id = strArray.getString(j);
+                    similarArticlesIds.add(id);
+                }
+            } catch (JSONException e) {
+
+                Log.e(MainActivity.class.getSimpleName(), e.getMessage() + e.getCause());
+
+            }
+            article.setSimilarArticlesIds(similarArticlesIds);
+        }
+    }
     public static String GetPersonalizedMessage(String tag) {
         switch (tag)
         {
@@ -938,11 +1048,11 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void mUpdateCourses(String response) {
+    private void mUpdateCourses(String response , String extraTag) {
         try {
             if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
                 //List<InstituteCourse> instituteCourses = JSON.std.listOfFrom(InstituteCourse.class, extractResults(response));
-                ((InstituteDetailFragment) currentFragment).updateCourses(response);
+                ((InstituteDetailFragment) currentFragment).updateCourses(response,Integer.parseInt(extraTag), isAppliedForCourse);
             }
 
         } catch (Exception e) {
@@ -1108,12 +1218,41 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onCourseApplied(long id) {
-        /*if (id == -1) {
+    public void onCourseApplied(int position ,InstituteCourse instituteCourse) {
 
-        } else {
-
+        HashMap<String, String> map = new HashMap<>();
+        /*SharedPreferences sp = getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
+        User  user = null;
+        try {
+            user = JSON.std.beanFrom(User.class, sp.getString(Constants.KEY_USER, null));
+        } catch (IOException e) {
+            e.printStackTrace();
         }*/
+        if(user != null)
+        {
+            map.put("name", user.getName());
+            map.put("email", user.getEmail());
+        }
+
+        TelephonyManager tMgr = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        String mPhoneNumber = tMgr.getLine1Number();
+        if(mPhoneNumber != null) {
+            map.put("phone_no", mPhoneNumber);
+        }
+
+        map.put("institute_course", ""+instituteCourse.getId());
+        if(mInstitute != null)
+        {
+            map.put("institute",""+mInstitute.getId());
+        }
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        map.put("year_of_admission",""+year);
+
+        String URL = Constants.BASE_URL + "lms/";
+        isAppliedForCourse = true;
+        instituteCourseId = ""+instituteCourse.getId();
+        this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES+"#" + position ,URL , map, Request.Method.POST);
     }
 
     @Override
@@ -1183,8 +1322,35 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onNewsSelected(News news) {
-        mDisplayFragment(NewsDetailFragment.newInstance(news), true, Constants.TAG_FRAGMENT_NEWS);
+    public void onNewsSelected(News news , boolean addToBackstack) {
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_NEWS);
+            if (fragment == null)
+                mDisplayFragment(NewsDetailFragment.newInstance(news, newsList), addToBackstack, Constants.TAG_FRAGMENT_NEWS);
+            else {
+                if (fragment instanceof NewsDetailFragment) {
+                    ((NewsDetailFragment) fragment).updateNews(news);
+                }
+
+                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_NEWS);
+            }
+    }
+
+    @Override
+    public void onArticleSelected(Articles article, boolean addToBackstack) {
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_ARTICLE);
+        if (fragment == null)
+            mDisplayFragment(ArticleDetailFragment.newInstance(article, articlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE);
+        else {
+            if (fragment instanceof ArticleDetailFragment) {
+                ((ArticleDetailFragment) fragment).updateArticle(article);
+            }
+
+            this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_ARTICLE);
+        }
     }
 
     @Override
@@ -1585,6 +1751,15 @@ public class MainActivity extends AppCompatActivity
         finally
         {
             return mQnAQuestions;
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.backArrow)
+        {
+
+            //getFragmentManager().popBackStack();
         }
     }
 }
