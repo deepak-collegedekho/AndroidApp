@@ -9,7 +9,7 @@ import android.os.Parcelable;
  */
 public class Widget implements Parcelable {
 
-    public static final Creator<Widget> WIDGET_CREATOR = new Creator<Widget>() {
+    public static final Creator<Widget> CREATOR = new Creator<Widget>() {
         @Override
         public Widget createFromParcel(Parcel source) {
             return new Widget(source);
@@ -20,6 +20,7 @@ public class Widget implements Parcelable {
             return new Widget[size];
         }
     };
+
     private long id;
     private String resource_uri;
     private String title;
@@ -40,6 +41,7 @@ public class Widget implements Parcelable {
 
     public Widget() {
     }
+
 
     @Override
     public int describeContents() {

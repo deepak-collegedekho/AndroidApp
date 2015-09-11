@@ -18,6 +18,7 @@ public class Constants
     public static final String KEY_USER = "user_id";
     public static final String TAG_CREATE_USER = "create_user";
     public static final String TAG_LOAD_STREAM = "load_stream";
+    public static final String TAG_UPDATE_STREAM = "update_stream";
     public static final String KEY_STREAMS = "streams";
     public static final String COMPLETED_SECOND_STAGE = "second_stage";
     public static final String WIDGET_INSTITUTES = "institutes";
@@ -33,6 +34,7 @@ public class Constants
     //public static final String BASE_URL = IP + ":8000/api/1/";
     public static final String BASE_URL = IP + "/api/1/";
     public static final String TAG_LOAD_COURSES = "load_courses";
+    public static final String TAG_APPLIED_COURSE = "applied_course";
     public static final String TAG_LOAD_HOME = "home";
     public static final String METHOD_GET = "GET";
     public static final String METHOD_POST = "POST";
@@ -84,6 +86,7 @@ public class Constants
     public static final String TAG_FRAGMENT_MY_FB_ENUMERATION = "fragment_my_fb_enumeration";
     public static final String TAG_FRAGMENT_STREAMS = "fragment_streams";
     public static final String TAG_FRAGMENT_HOME = "fragment_home";
+    public static final String TAG_FRAGMENT_PROFILE = "fragment_profile";
     public static final String TAG_FRAGMENT_QNA_ANSWERS_LIST = "fragment_qna_answers_list";
     public static final int SHORTLISTED_YES = 1;
     public static final int SHORTLISTED_NO = 0;
@@ -107,8 +110,6 @@ public class Constants
 
     public static final int TYPE_SIMILARLAR_NEWS = 2;
     public static final int TYPE_NEWS = 1;
-
-
     public static final int TYPE_SIMILARLAR_ARTICLES = 2;
     public static final int TYPE_ARTCLES = 1;
 

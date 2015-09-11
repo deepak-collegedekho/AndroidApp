@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.InstituteCourse;
+import com.collegedekho.app.fragment.InstituteCoursesFragment;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.resource.Constants;
 
@@ -21,11 +22,11 @@ import java.util.ArrayList;
  *         Created: 09/07/15
  */
 public class CourseListAdapter extends RecyclerView.Adapter {
-    ArrayList<InstituteCourse> mCourses;
+    private ArrayList<InstituteCourse> mCourses;
     private static Context mContext;
 
     public CourseListAdapter(Context activity, ArrayList<InstituteCourse> courses) {
-        mCourses = courses;
+        this.mCourses = courses;
         mContext = activity;
     }
 
@@ -75,17 +76,12 @@ public class CourseListAdapter extends RecyclerView.Adapter {
             cDuration.setText(":  " + c.getDuration() + " " + c.duration_type_display);
             cLevel.setText(":  " + InstituteCourse.CourseLevel.values()[c.getLevel()].name());
             itemView.setTag(c);
-            SharedPreferences sp = mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
-            if (sp.contains("" + c.getId())) {
-                // cApplyBtn.setOnClickListener(null);
+            if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
                 cApplyBtn.setText("Applied");
                 cApplyBtn.setBackgroundResource(R.drawable.bg_button_grey);
-                // cApplyBtn.setClickable(false);
             } else {
-                // cApplyBtn.setOnClickListener(this);
                 cApplyBtn.setText("Apply Now");
                 cApplyBtn.setBackgroundResource(R.drawable.bg_button_blue);
-                //cApplyBtn.setClickable(true);
             }
 
 
@@ -95,11 +91,12 @@ public class CourseListAdapter extends RecyclerView.Adapter {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.button_apply) {
-                if (cApplyBtn.getText().toString().equalsIgnoreCase("Applied")) {
-
+                InstituteCourse c = (InstituteCourse) itemView.getTag();
+                if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId()))
+                {
                     Toast.makeText(mContext,"Already Applied", Toast.LENGTH_SHORT).show();
                 } else {
-                    mListener.onCourseApplied(getAdapterPosition(), (InstituteCourse) itemView.getTag());
+                    mListener.onCourseApplied(getAdapterPosition(), InstituteCoursesFragment.getTabposition(), c);
 
                 }
             }

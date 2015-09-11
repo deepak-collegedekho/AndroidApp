@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.MyFBEnumerationAdapter;
 import com.collegedekho.app.adapter.QnAQuestionsListAdapter;
 import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
@@ -87,5 +88,14 @@ public class MyFutureBuddiesEnumerationFragment extends Fragment {
         void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        MainActivity mMainActivity = (MainActivity) this.getActivity();
+
+        if (mMainActivity != null)
+            mMainActivity.currentFragment = this;
+    }
 
 }

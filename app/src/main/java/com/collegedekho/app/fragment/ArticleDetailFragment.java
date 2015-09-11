@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.MySingleton;
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ArticleListAdapter;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.resource.Constants;
@@ -143,5 +144,15 @@ public class ArticleDetailFragment extends Fragment {
             recyclerView.setHasFixedSize(true);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        MainActivity mMainActivity = (MainActivity) this.getActivity();
+
+        if (mMainActivity != null)
+            mMainActivity.currentFragment = this;
     }
 }

@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.FacetListAdapter;
 import com.collegedekho.app.adapter.FilterTypeAdapter;
 import com.collegedekho.app.entities.Folder;
@@ -229,5 +230,15 @@ public class FilterFragment extends Fragment implements View.OnClickListener {
         void onFilterCanceled(boolean clearAll);
 
         void onFilterTypeChanged(int position);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        MainActivity mMainActivity = (MainActivity) this.getActivity();
+
+        if (mMainActivity != null)
+            mMainActivity.currentFragment = this;
     }
 }

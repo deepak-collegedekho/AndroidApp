@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.NewsListAdapter;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.resource.Constants;
@@ -86,6 +87,15 @@ public class NewsListFragment extends Fragment {
 
     public interface OnNewsSelectedListener {
         void onNewsSelected(News news ,boolean flag);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+
+       MainActivity mMainActivity = (MainActivity) this.getActivity();
+
+        if (mMainActivity != null)
+            mMainActivity.currentFragment = this;
     }
 
 }

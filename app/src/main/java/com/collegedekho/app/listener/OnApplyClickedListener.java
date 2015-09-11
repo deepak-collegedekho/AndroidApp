@@ -7,5 +7,5 @@ import com.collegedekho.app.entities.InstituteCourse;
  *         Created: 09/07/15
  */
 public interface OnApplyClickedListener {
-    void onCourseApplied(int position ,InstituteCourse id);
+    void onCourseApplied(int position ,int tabPosition ,InstituteCourse id);
 }

@@ -10,6 +10,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="action_profile">Profile</string>
+    <string name="action_home">Home</string>
 
     <string name="home_search">Search Colleges</string>
     <string name="search_colleges">Search Colleges</string>

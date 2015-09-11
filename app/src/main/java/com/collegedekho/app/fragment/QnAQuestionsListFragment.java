@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.QnAQuestionsListAdapter;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.widget.DividerItemDecoration;
@@ -83,5 +84,15 @@ public class QnAQuestionsListFragment extends Fragment {
 
     public interface OnQnAQuestionSelectedListener {
         void onQnAQuestionSelected(QnAQuestions qnaQuestion);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        MainActivity mMainActivity = (MainActivity) this.getActivity();
+
+        if (mMainActivity != null)
+            mMainActivity.currentFragment = this;
     }
 }

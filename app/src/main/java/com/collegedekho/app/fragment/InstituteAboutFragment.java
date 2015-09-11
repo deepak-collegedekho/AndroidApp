@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -62,6 +63,7 @@ public class InstituteAboutFragment extends Fragment {
         ((TextView) rootView.findViewById(R.id.textview_college_about)).setText(Html.fromHtml(mAbout));
         return rootView;
     }
+
 
 
 }

@@ -11,7 +11,7 @@
         android:orientation="vertical"
         >
 
-        <include layout="@layout/item_home_strip" />
+        <include layout="@layout/item_home_strip"/>
 
         <View style="@style/AppTheme.Divider1" />
 

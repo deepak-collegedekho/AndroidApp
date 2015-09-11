@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.QnAAnswersListAdapter;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
@@ -238,5 +239,15 @@ public class QnAQuestionsAndAnswersFragment extends Fragment{
         void onQnAQuestionVote(String resourceURI, int voteType, int position);
         void onQnAAnswerVote(String resourceURI, int voteType, int answerPosition, int questionPosition);
         void onQnAAnswerSubmitted(String questionURI, String answerText, int questionIndex, int answerIndex);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        MainActivity mMainActivity = (MainActivity) this.getActivity();
+
+        if (mMainActivity != null)
+            mMainActivity.currentFragment = this;
     }
 }

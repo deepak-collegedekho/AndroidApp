@@ -100,15 +100,10 @@ public class InstituteDetailFragment extends Fragment {
     }
 
 
-    public void updateCourses(String response ,int position, boolean isForCourseApplied) {
-        if(isForCourseApplied) {
+    public void updateCourses(String response ) { new LoadCoursesAsyncTask().execute(response);  }
 
-            mPagerAdapter.updateCourseFragment(position);
-
-        } else
-        {
-            new LoadCoursesAsyncTask().execute(response);
-        }
+    public void updateAppliedCourses(String response ,int position, int tabPosition) {
+                   mPagerAdapter.updateCourseFragment(position , tabPosition);
     }
 
     public void instituteQnAQuestionAdded(QnAQuestions ques)
@@ -191,5 +186,15 @@ public class InstituteDetailFragment extends Fragment {
                 tabLayout.setupWithViewPager(mPager);
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        MainActivity mMainActivity = (MainActivity) this.getActivity();
+
+        if (mMainActivity != null)
+            mMainActivity.currentFragment = this;
     }
 }

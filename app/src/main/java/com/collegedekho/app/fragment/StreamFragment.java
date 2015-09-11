@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.StreamAdapter;
 import com.collegedekho.app.entities.Stream;
 
@@ -21,16 +22,18 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
     private ArrayList<Stream> streams;
 
     private OnStreamInteractionListener mListener;
+    private static boolean isStreamUpdate;
 
     public StreamFragment() {
         // Required empty public constructor
     }
 
-    public static StreamFragment newInstance(ArrayList<Stream> streams) {
+    public static StreamFragment newInstance(ArrayList<Stream> streams , boolean isForUpdate) {
         StreamFragment streamFragment = new StreamFragment();
         Bundle b = new Bundle();
         b.putParcelableArrayList(ARG_STREAMS, streams);
         streamFragment.setArguments(b);
+        isStreamUpdate = isForUpdate;
         return streamFragment;
     }
 
@@ -52,6 +55,11 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
         return rootView;
     }
 
+    public void onStreamUpdated(String uri) {
+        if (mListener != null) {
+            mListener.onStreamUpdated(uri);
+        }
+    }
     public void onStreamSelected(String uri) {
         if (mListener != null) {
             mListener.onStreamSelected(uri);
@@ -77,12 +85,27 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if(isStreamUpdate)
+            onStreamUpdated(streams.get(position).resourceUri);
+        else
         onStreamSelected(streams.get(position).resourceUri);
     }
 
+
     public interface OnStreamInteractionListener {
         void onStreamSelected(String uri);
+
+        void onStreamUpdated(String uri);
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        MainActivity mMainActivity = (MainActivity) this.getActivity();
+
+        if (mMainActivity != null)
+            mMainActivity.currentFragment = this;
+    }
 }

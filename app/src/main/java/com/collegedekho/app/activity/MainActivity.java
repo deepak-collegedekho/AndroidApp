@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -52,6 +54,7 @@ import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.NavigationDrawerFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsListFragment;
+import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.fragment.SplashFragment;
@@ -89,7 +92,8 @@ public class MainActivity extends AppCompatActivity
         QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener,
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleListFragment.OnArticleSelectedListener,
-        View.OnClickListener {
+        ProfileFragment.onProfileUpdateListener
+        {
 
     static
     {
@@ -132,7 +136,6 @@ public class MainActivity extends AppCompatActivity
     private  List<Articles> articlesList;
     private Institute mInstitute;
 
-    private boolean isAppliedForCourse = false;
     String instituteCourseId ="";
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -145,7 +148,6 @@ public class MainActivity extends AppCompatActivity
     public static User user;
     private User.Prefs userPref;
     private boolean completedStage2;
-    private ImageView backArrow;
 
     public void onSectionAttached(int number) {
         switch (number) {
@@ -194,26 +196,20 @@ public class MainActivity extends AppCompatActivity
                 //check if this device is connected to internet
                 int amIConnectedToInternet = networkUtils.getConnectivityStatus();
 
-                if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED)
-                {
+                if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
                     Constants.IS_CONNECTED_TO_INTERNET = true;
 
-                    if (user != null && user.getPref() == User.Prefs.STREAMKNOWN)
-                    {
+                    if (user != null && user.getPref() == User.Prefs.STREAMKNOWN) {
                         if (!completedStage2)
                             mSetUserPref();
                         else
                             mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
-                    }
-                    else
-                    {
+                    } else {
                         //onNavigationDrawerItemSelected(0);
                         mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
                     }
-                }
-                else
-                    if (currentFragment instanceof SplashFragment)
-                        ((SplashFragment) currentFragment).noInternetFound();
+                } else if (currentFragment instanceof SplashFragment)
+                    ((SplashFragment) currentFragment).noInternetFound();
 
                 //setSupportActionBar(toolbar);
                 //getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -230,8 +226,6 @@ public class MainActivity extends AppCompatActivity
             }
         }, Constants.MAIN_ANIMATION_TIME);
 
-        backArrow = (ImageView)findViewById(R.id.backArrow);
-        backArrow.setOnClickListener(this);
     }
 
     @Override
@@ -300,16 +294,51 @@ public class MainActivity extends AppCompatActivity
             restoreActionBar();
             return true;
         }*/
+        getMenuInflater().inflate(R.menu.main, menu);
+
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+     if(currentFragment instanceof ProfileFragment || currentFragment instanceof StreamFragment) {
+          menu.getItem(0).setTitle("Home");
+          }
+          else {
+              menu.getItem(0).setTitle("Profile");
+          }
+          return super.onPrepareOptionsMenu(menu);
+     }
+
+            @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        //int id = item.getItemId();
+        int id = item.getItemId();
+        if(id== R.id.action_profile)
+        {
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
+            if(fragment == null) {
+                mDisplayFragment(ProfileFragment.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
+            }
+            else {
+
+                int count = getSupportFragmentManager().getBackStackEntryCount();
+                for (int i = 0; i < count; i++) {
+                    getSupportFragmentManager().popBackStack();
+                }
+                /*getSupportFragmentManager().popBackStack();
+                if(currentFragment instanceof StreamFragment)
+                {
+                    getSupportFragmentManager().popBackStack();
+                }*/
+               // mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
+            }
+
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -385,12 +414,12 @@ public class MainActivity extends AppCompatActivity
         return null;
     }
 
-    private void displayStreams(String response)
+    private void displayStreams(String response,boolean addToBackstack)
     {
         try
         {
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, extractResults(response));
-            mDisplayFragment(StreamFragment.newInstance(new ArrayList<>(streams)), false, Constants.TAG_FRAGMENT_STREAMS);
+            mDisplayFragment(StreamFragment.newInstance(new ArrayList<>(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
         }
         catch (IOException e)
         {
@@ -621,15 +650,9 @@ public class MainActivity extends AppCompatActivity
                 //Show toolbar
                 toolbar = (Toolbar) findViewById(R.id.app_toolbar);
                 toolbar.setVisibility(View.VISIBLE);
+
             }
-            if (currentFragment instanceof HomeFragment  || currentFragment instanceof  SplashFragment
-                    || currentFragment instanceof  WidgetListFragment)
-            {
-                backArrow.setVisibility(View.GONE);
-            }
-            else {
-                backArrow.setVisibility(View.VISIBLE);
-            }
+
         }
         catch (Exception e)
         {
@@ -653,7 +676,10 @@ public class MainActivity extends AppCompatActivity
                 mSetUser(response);
                 break;
             case Constants.TAG_LOAD_STREAM:
-                displayStreams(response);
+                displayStreams(response, false);
+                break;
+            case Constants.TAG_UPDATE_STREAM:
+                displayStreams(response ,true);
                 break;
             case Constants.WIDGET_SHORTLIST:
                 mDisplayInstituteList(response, false);
@@ -672,27 +698,24 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_LOAD_COURSES:
 
-                if (tags.length == 2)
+                this.mUpdateCourses(response );
+                break;
+            case Constants.TAG_APPLIED_COURSE:
+                String tabposition = null;
+                if (tags.length == 3) {
                     extraTag = tags[1];
-                else {
-                    extraTag= "1";
+                    tabposition = tags[2];
                 }
-                if(isAppliedForCourse) { //TODO delete this when server side store about applied course
-                    SharedPreferences sp = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
-                    SharedPreferences.Editor edit = sp.edit();
-                    edit.putString(instituteCourseId,instituteCourseId );
-                    edit.commit();
-                }
-                this.mUpdateCourses(response,extraTag );
-                isAppliedForCourse = false;
+                getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(instituteCourseId,instituteCourseId ).commit();
+                this.mUpdateAppliedCourses(response, extraTag , tabposition);
 
                 break;
             case Constants.TAG_LOAD_HOME:
                 this.mUpdateHome(response);
                 //Show toolbar
                 toolbar = (Toolbar) findViewById(R.id.app_toolbar);
-
                 toolbar.setVisibility(View.VISIBLE);
+                setSupportActionBar(toolbar);
                 break;
             case Constants.TAG_POST_QUESTION:
                 this.mInstituteQnAQuestionAdded(response);
@@ -1048,6 +1071,8 @@ public class MainActivity extends AppCompatActivity
                 return "Creating a user...";
             case Constants.TAG_LOAD_STREAM:
                 return "Loading Streams...";
+            case Constants.TAG_UPDATE_STREAM:
+                return "Loading Streams...";
             case Constants.WIDGET_INSTITUTES:
                 return "Loading Institutes...";
             case Constants.WIDGET_NEWS:
@@ -1101,11 +1126,23 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void mUpdateCourses(String response , String extraTag) {
+    private void mUpdateCourses(String response) {
         try {
             if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
                 //List<InstituteCourse> instituteCourses = JSON.std.listOfFrom(InstituteCourse.class, extractResults(response));
-                ((InstituteDetailFragment) currentFragment).updateCourses(response,Integer.parseInt(extraTag), isAppliedForCourse);
+                ((InstituteDetailFragment) currentFragment).updateCourses(response);
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+    private void mUpdateAppliedCourses(String response , String extraTag, String tabPosition) {
+         if(extraTag == null ||tabPosition == null) return;
+
+        try {
+            if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
+                ((InstituteDetailFragment) currentFragment).updateAppliedCourses(response, Integer.parseInt(extraTag),Integer.parseInt(tabPosition));
             }
 
         } catch (Exception e) {
@@ -1173,6 +1210,22 @@ public class MainActivity extends AppCompatActivity
                 })
                 .setCancelable(false)
                 .show();
+    }
+    @Override
+    public void onStreamUpdated(String uri) {
+
+        getSupportFragmentManager().popBackStack();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
+        if(fragment == null)
+            mDisplayFragment(ProfileFragment.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
+        else {
+            if (fragment instanceof ProfileFragment) {
+                ((ProfileFragment) fragment).updateStream(uri);
+            }
+            mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
+        }
+
+
     }
 
     private void mOnCourseLevelSelected(int level, String streamUri)
@@ -1257,7 +1310,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onCourseApplied(int position ,InstituteCourse instituteCourse) {
+    public void onCourseApplied(int position ,int tabPosition ,InstituteCourse instituteCourse) {
 
         HashMap<String, String> map = new HashMap<>();
         /*SharedPreferences sp = getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
@@ -1289,9 +1342,8 @@ public class MainActivity extends AppCompatActivity
         map.put("year_of_admission",""+year);
 
         String URL = Constants.BASE_URL + "lms/";
-        isAppliedForCourse = true;
         instituteCourseId = ""+instituteCourse.getId();
-        this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES+"#" + position ,URL , map, Request.Method.POST);
+        this.mMakeNetworkCall(Constants.TAG_APPLIED_COURSE+"#" + position + "#" + tabPosition, URL, map, Request.Method.POST);
     }
 
     @Override
@@ -1789,13 +1841,22 @@ public class MainActivity extends AppCompatActivity
             return mQnAQuestions;
         }
     }
-
     @Override
-    public void onClick(View view) {
-        if(view.getId() == R.id.backArrow)
-        {
+     public void onProfileUpdated(  HashMap<String, String> hashMap) {
 
-            //getFragmentManager().popBackStack();
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        for (int i = 0; i < count; i++) {
+            getSupportFragmentManager().popBackStack();
         }
-    }
+        if(hashMap == null)return;
+        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + hashMap.get("level") +  "#" + hashMap.get("stream"), Constants.BASE_URL + "preferences/", hashMap);
+
+     }
+
+     @Override
+     public void onStreamClicked() {
+
+         this.mMakeNetworkCall(Constants.TAG_UPDATE_STREAM, Constants.BASE_URL + "streams/", null);
+     }
+
 }

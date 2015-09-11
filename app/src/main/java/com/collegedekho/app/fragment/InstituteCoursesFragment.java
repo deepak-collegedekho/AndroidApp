@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.CoursePagerAdapter;
 import com.collegedekho.app.entities.InstituteCourse;
 
@@ -27,10 +28,9 @@ public class InstituteCoursesFragment extends Fragment {
     private static final String ARG_COURSE_COUNT = "course_count";
 
     private ArrayList<ArrayList<InstituteCourse>> mCourses;
-    private CoursePagerAdapter adapter;
-    private int courseCount;
-    private  TabLayout tabLayout;
-    private ViewPager mPager;
+    private CoursePagerAdapter mAdapter;
+    private int mCourseCount;
+    private static TabLayout  mTabLayout;
 
     public InstituteCoursesFragment() {
         // Required empty public constructor
@@ -58,11 +58,11 @@ public class InstituteCoursesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mCourses = new ArrayList<>();
+            this.mCourses = new ArrayList<>();
             for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++) {
                 ArrayList<InstituteCourse> a = getArguments().getParcelableArrayList(InstituteCourse.CourseLevel.values()[i].name());
-                courseCount += a.size();
-                mCourses.add(a);
+                this.mCourseCount += a.size();
+                this.mCourses.add(a);
             }
         }
     }
@@ -71,7 +71,7 @@ public class InstituteCoursesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_institute_courses, container, false);
-        if (courseCount < 1) {
+        if (mCourseCount < 1) {
             ((TextView) rootView.findViewById(R.id.course_tab_title)).setText("Loading Course...");
         } else {
             init(rootView);
@@ -80,13 +80,13 @@ public class InstituteCoursesFragment extends Fragment {
     }
 
     private void init(View rootView) {
-        mPager = (ViewPager) rootView.findViewById(R.id.pager_courses);
-        adapter = new CoursePagerAdapter(getChildFragmentManager(), mCourses);
-        mPager.setAdapter(adapter);
-        tabLayout = (TabLayout) rootView.findViewById(R.id.course_tab_layout);
-        tabLayout.setTabTextColors(getResources().getColor(R.color.white), getResources().getColor(R.color.text_subhead_blue));
-        tabLayout.setupWithViewPager(mPager);
-        tabLayout.setVisibility(View.VISIBLE);
+        ViewPager mPager = (ViewPager) rootView.findViewById(R.id.pager_courses);
+        this.mAdapter = new CoursePagerAdapter(getChildFragmentManager(), mCourses);
+        mPager.setAdapter(mAdapter);
+        mTabLayout = (TabLayout) rootView.findViewById(R.id.course_tab_layout);
+        mTabLayout.setTabTextColors(getResources().getColor(R.color.white), getResources().getColor(R.color.text_subhead_blue));
+        mTabLayout.setupWithViewPager(mPager);
+        mTabLayout.setVisibility(View.VISIBLE);
         ((TextView) rootView.findViewById(R.id.course_tab_title)).setText("Courses Offered");
     }
 
@@ -99,7 +99,7 @@ public class InstituteCoursesFragment extends Fragment {
     }
 
     public void updateData(int courseCount) {
-        this.courseCount = courseCount;
+        this.mCourseCount = courseCount;
         View rootView = getView();
         if (rootView != null) {
             if (courseCount > 0) {
@@ -109,10 +109,15 @@ public class InstituteCoursesFragment extends Fragment {
             }
         }
     }
-    public void updateAdapter(int position)
+    public void updateAdapter(int position ,int tabPosition)
     {
-        int tabPosition = tabLayout.getSelectedTabPosition();
+       // tabPosition = mTabLayout.getSelectedTabPosition();
        // int pagerPosition = mPager.getCurrentItem();
-        adapter.updateAdapter(position , tabPosition);
+        mAdapter.updateAdapter(position , tabPosition);
     }
+    public static int getTabposition()
+    {
+        return mTabLayout.getSelectedTabPosition();
+    }
+
 }

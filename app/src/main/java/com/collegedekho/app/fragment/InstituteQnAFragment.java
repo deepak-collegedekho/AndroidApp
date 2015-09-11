@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.QnAQuestionsListAdapter;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
@@ -312,5 +313,7 @@ public class InstituteQnAFragment extends Fragment implements TextWatcher, Adapt
 
         this.mQuestionsListView.scrollToPosition(mQnAQuestions.size() - 1);
     }
+
+
 
 }
