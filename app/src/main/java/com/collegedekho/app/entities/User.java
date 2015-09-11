@@ -18,6 +18,8 @@ public class User
     private Prefs pref;
     private String stream;
     private String level;
+    private String stream_name;
+    private String level_name;
 
     public String getId() {
         return id;
@@ -121,5 +123,21 @@ public class User
 
     public void setLevel(String level) {
         this.level = level;
+    }
+
+    public String getStream_name() {
+        return stream_name;
+    }
+
+    public void setStream_name(String stream_name) {
+        this.stream_name = stream_name;
+    }
+
+    public String getLevel_name() {
+        return level_name;
+    }
+
+    public void setLevel_name(String level_name) {
+        this.level_name = level_name;
     }
 }

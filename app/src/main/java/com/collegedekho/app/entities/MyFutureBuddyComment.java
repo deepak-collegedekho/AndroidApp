@@ -25,6 +25,7 @@ public class MyFutureBuddyComment implements Parcelable {
     private int index;
     private int fbIndex;
     private String token;
+    private boolean commentSent;
 
     public MyFutureBuddyComment() {
     }
@@ -99,5 +100,13 @@ public class MyFutureBuddyComment implements Parcelable {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public boolean isCommentSent() {
+        return commentSent;
+    }
+
+    public void setCommentSent(boolean commentSent) {
+        this.commentSent = commentSent;
     }
 }

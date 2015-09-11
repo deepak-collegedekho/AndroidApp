@@ -7,12 +7,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.ContactsContract;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +19,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -135,7 +131,6 @@ public class MainActivity extends AppCompatActivity
     private  List<News> newsList;
     private  List<Articles> articlesList;
     private Institute mInstitute;
-
     String instituteCourseId ="";
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -225,7 +220,6 @@ public class MainActivity extends AppCompatActivity
 
             }
         }, Constants.MAIN_ANIMATION_TIME);
-
     }
 
     @Override
@@ -489,12 +483,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void mShowMyFB(String response, int index)
+    private void mShowMyFB(String response, int index, int commentsCount)
     {
         try
         {
             this.mFB = this.mParseAndPopulateMyFB(response, index);
-            this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB), true, Constants.TAG_FRAGMENT_MY_FB);
+            this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), true, Constants.TAG_FRAGMENT_MY_FB);
         }
         catch (Exception e)
         {
@@ -552,6 +546,7 @@ public class MainActivity extends AppCompatActivity
                 myFBComment.setComment(comment.getString("comment"));
                 myFBComment.setAdded_on(comment.getString("added_on"));
                 myFBComment.setToken(comment.getString("token"));
+                myFBComment.setCommentSent(true);
                 myFBComment.setIndex(i);
                 myFBComment.setFbIndex(index);
 
@@ -652,7 +647,6 @@ public class MainActivity extends AppCompatActivity
                 toolbar.setVisibility(View.VISIBLE);
 
             }
-
         }
         catch (Exception e)
         {
@@ -778,8 +772,9 @@ public class MainActivity extends AppCompatActivity
                 if (tags.length > 1)
                 {
                     parentIndex = tags[1];
+                    childIndex = tags[2];
 
-                    this.mShowMyFB(response, Integer.parseInt(parentIndex));
+                    this.mShowMyFB(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
                 }
                 break;
             case Constants.TAG_REFRESH_MY_FB:
@@ -822,7 +817,7 @@ public class MainActivity extends AppCompatActivity
                     parentIndex = tags[1];
                     childIndex  = tags[2];
 
-                    this.mStreamAndCourseSelected(parentIndex, childIndex);
+                    this.mStreamAndCourseSelected(response, parentIndex, childIndex);
                 }
                 break;
         }
@@ -832,12 +827,24 @@ public class MainActivity extends AppCompatActivity
     }
 
     //Saved on DB, now save it in shared preferences.
-    private void mStreamAndCourseSelected(String levelURI, String streamURI)
+    private void mStreamAndCourseSelected(String response, String levelURI, String streamURI)
     {
+        //Retrieve token from pref to save it across the pref updates
+        String token = user.getToken();
+
+        //TODO: May be we can make a new pref entry for token
+        try
+        {
+            user = JSON.std.beanFrom(User.class, response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         //save the preferences locally
         user.setPref(User.Prefs.STREAMKNOWN);
         user.setLevel(levelURI);
         user.setStream(streamURI);
+        user.setToken(token);
 
         String u = null;
         try
@@ -892,7 +899,7 @@ public class MainActivity extends AppCompatActivity
                     hashMap.put("stream", user.getStream());
                     hashMap.put("level", user.getLevel());
 
-                    this.mMakeNetworkCall("", Constants.BASE_URL + "preferences/", hashMap);
+                    this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + user.getLevel() +  "#" + user.getStream(), Constants.BASE_URL + "preferences/", hashMap);
                     this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
                 }
                 catch (IOException e)
@@ -912,7 +919,7 @@ public class MainActivity extends AppCompatActivity
                     hashMap.put("status", user.getPref().name().toLowerCase());
                     hashMap.put("stream", user.getStream());
 
-                    this.mMakeNetworkCall("", Constants.BASE_URL + "preferences/", hashMap);
+                    this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + user.getLevel() +  "#" + user.getStream(), Constants.BASE_URL + "preferences/", hashMap);
                     this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
                 }
                 catch (IOException e)
@@ -1093,8 +1100,8 @@ public class MainActivity extends AppCompatActivity
                 return "Loading Questions...";
             case Constants.TAG_LOAD_MY_FB:
                 return "Loading your Forums chat...";
-            case Constants.TAG_MY_FB_COMMENT_SUBMITTED:
-                return "Submitting Comment...";
+            /*case Constants.TAG_MY_FB_COMMENT_SUBMITTED:
+                return "Submitting Comment...";*/
             case Constants.TAG_QNA_ANSWER_SUBMITTED:
                 return "Submitting Answer...";
             case Constants.TAG_VOTE_QNA_QUESTION_ENTITY:
@@ -1503,6 +1510,7 @@ public class MainActivity extends AppCompatActivity
                 for (Facet ft : f.getFacets())
                     ft.deselect();
             }
+
             filterCount = 0;
 
             this.mFilterKeywords = new HashMap<>();
@@ -1654,9 +1662,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position)
+    public void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position, int commentsCount)
     {
-        this.mMakeNetworkCall(Constants.TAG_LOAD_MY_FB + "#" + String.valueOf(position), myFutureBuddiesEnumeration.getResource_uri(), null, Request.Method.GET);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_MY_FB + "#" + String.valueOf(position) + "#" + String.valueOf(commentsCount), myFutureBuddiesEnumeration.getResource_uri(), null, Request.Method.GET);
     }
 
     @Override
@@ -1665,6 +1673,13 @@ public class MainActivity extends AppCompatActivity
         HashMap<String, String> params = new HashMap<>();
         params.put("comment", commentText);
         this.mMakeNetworkCall(Constants.TAG_MY_FB_COMMENT_SUBMITTED + "#" + String.valueOf(myFbIndex) + "#" + String.valueOf(myFbCommentIndex), myFbURI + "comment/", params, Request.Method.POST);
+    }
+
+    @Override
+    public void onMyFBUpdated(int commentsSize, int myFbIndex)
+    {
+        if (currentFragment instanceof MyFutureBuddiesEnumerationFragment)
+            ((MyFutureBuddiesEnumerationFragment) currentFragment).updateEnumerationList(commentsSize, myFbIndex);
     }
 
     private void mOnMyFBCommentAdded(String response, int fbIndex, int index)
@@ -1681,6 +1696,7 @@ public class MainActivity extends AppCompatActivity
             fbComment.setToken(comment.getString("token"));
             fbComment.setIndex(index);
             fbComment.setFbIndex(fbIndex);
+            fbComment.setCommentSent(true);
 
             if (currentFragment instanceof MyFutureBuddiesFragment)
                 ((MyFutureBuddiesFragment) currentFragment).commentAdded(fbComment);

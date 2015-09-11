@@ -26,6 +26,8 @@ public class MyFutureBuddiesEnumeration implements Parcelable {
     private int comments_count;
     private int members_count;
     private int index;
+    private String city_name;
+    private String state_name;
 
     public MyFutureBuddiesEnumeration() {
     }
@@ -33,6 +35,8 @@ public class MyFutureBuddiesEnumeration implements Parcelable {
     public MyFutureBuddiesEnumeration(Parcel source) {
         resource_uri = source.readString();
         institute_name = source.readString();
+        city_name = source.readString();
+        state_name = source.readString();
         comments_count = source.readInt();
         members_count = source.readInt();
         index = source.readInt();
@@ -47,6 +51,8 @@ public class MyFutureBuddiesEnumeration implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(resource_uri);
         dest.writeString(institute_name);
+        dest.writeString(city_name);
+        dest.writeString(state_name);
         dest.writeInt(comments_count);
         dest.writeInt(members_count);
         dest.writeInt(index);
@@ -90,5 +96,21 @@ public class MyFutureBuddiesEnumeration implements Parcelable {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public String getCity_name() {
+        return city_name;
+    }
+
+    public void setCity_name(String city_name) {
+        this.city_name = city_name;
+    }
+
+    public String getState_name() {
+        return state_name;
+    }
+
+    public void setState_name(String state_name) {
+        this.state_name = state_name;
     }
 }

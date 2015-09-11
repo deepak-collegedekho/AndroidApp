@@ -125,10 +125,11 @@
             style="@style/AppTheme.BlueButton"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight=".2"
+            android:layout_weight=".1"
             android:text="LOADING..."
             android:enabled="false"
             android:gravity="center"
+            android:layout_marginTop="@dimen/activity_vertical_margin_small"
             android:layout_gravity="bottom|center_horizontal"
             />
     </LinearLayout>

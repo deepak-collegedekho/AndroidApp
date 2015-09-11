@@ -17,6 +17,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.MyFBEnumerationAdapter;
 import com.collegedekho.app.adapter.QnAQuestionsListAdapter;
 import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
+import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.widget.DividerItemDecoration;
 
@@ -30,6 +31,7 @@ public class MyFutureBuddiesEnumerationFragment extends Fragment {
     private ArrayList<MyFutureBuddiesEnumeration> mFbEnumeration;
     private MyFBEnumerationAdapter mMyFBEnumerationAdapter;
     private TextView mEmptyTextView;
+    private MainActivity mMainActivity;
 
     public static MyFutureBuddiesEnumerationFragment newInstance(ArrayList<MyFutureBuddiesEnumeration> fbEnumeration) {
         MyFutureBuddiesEnumerationFragment fragment = new MyFutureBuddiesEnumerationFragment();
@@ -47,7 +49,7 @@ public class MyFutureBuddiesEnumerationFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mFbEnumeration = getArguments().getParcelableArrayList(ARG_PARAM1);
+            this.mFbEnumeration = getArguments().getParcelableArrayList(ARG_PARAM1);
         }
     }
 
@@ -58,12 +60,12 @@ public class MyFutureBuddiesEnumerationFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_my_future_buddies_enumeration, container, false);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
 
-        if (mFbEnumeration.size() == 0)
-            (this.mEmptyTextView).setText("Couldn't find related groups for you. Like and Shortlist colleges.");
+        if (this.mFbEnumeration.size() == 0)
+            this.mEmptyTextView.setText("Couldn't find related groups for you. Like and Shortlist colleges.");
 
         RecyclerView fbEnumerationView = (RecyclerView) rootView.findViewById(R.id.fb_enumeration);
 
-        this.mMyFBEnumerationAdapter = new MyFBEnumerationAdapter(getActivity(), mFbEnumeration);
+        this.mMyFBEnumerationAdapter = new MyFBEnumerationAdapter(getActivity(), this.mFbEnumeration);
         fbEnumerationView.setLayoutManager(new LinearLayoutManager(getActivity()));
         fbEnumerationView.setAdapter(this.mMyFBEnumerationAdapter);
         fbEnumerationView.setItemAnimator(new DefaultItemAnimator());
@@ -71,7 +73,6 @@ public class MyFutureBuddiesEnumerationFragment extends Fragment {
 
         return rootView;
     }
-
 
     @Override
     public void onAttach(Activity activity) {
@@ -84,18 +85,31 @@ public class MyFutureBuddiesEnumerationFragment extends Fragment {
         System.gc();
     }
 
-    public interface OnMyFBSelectedListener {
-        void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position);
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        MainActivity mMainActivity = (MainActivity) this.getActivity();
+        //mark it current fragment here
+        this.mMainActivity = (MainActivity) this.getActivity();
 
-        if (mMainActivity != null)
-            mMainActivity.currentFragment = this;
+        if (this.mMainActivity != null)
+            this.mMainActivity.currentFragment = this;
     }
 
+    public interface OnMyFBSelectedListener {
+        void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position, int commentsCount);
+    }
+
+    public void updateEnumerationList(int commentsSetSize, int myFbEnumerationIndex)
+    {
+        (this.mFbEnumeration.get(myFbEnumerationIndex)).setComments_count((this.mFbEnumeration.get(myFbEnumerationIndex)).getComments_count() + commentsSetSize);
+
+        this.mMyFBEnumerationAdapter.notifyItemChanged(myFbEnumerationIndex);
+        this.mMyFBEnumerationAdapter.notifyDataSetChanged();
+    }
 }

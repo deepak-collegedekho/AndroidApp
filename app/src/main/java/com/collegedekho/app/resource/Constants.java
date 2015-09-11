@@ -94,7 +94,7 @@ public class Constants
     public static final int SECONDARY_ANIMATION_TIME = 2000;
     public static final String SELECTED_FILTERS = "selected_filters";
     public static volatile boolean IS_CONNECTED_TO_INTERNET;
-    public static final int MY_FB_REFRESH_RATE = 5000;
+    public static final int MY_FB_REFRESH_RATE = 10000;
     public static final int TYPE_WIFI = 1;
     public static final int TYPE_MOBILE = 2;
     public static final int TYPE_NOT_CONNECTED = 0;
@@ -104,7 +104,6 @@ public class Constants
     public static final int FILTER_CATEGORY_LOCATION = 1;
     public static final int FILTER_CATEGORY_TYPE_AND_SUPPORT_SERVICES = 2;
     public static final int FILTER_CATEGORY_CAMPUS_AND_HOUSING = 3;
-
 
     public static final HashMap<Integer, Integer> FilterCategoryMap = new HashMap<Integer, Integer>();
 
@@ -124,4 +123,7 @@ public class Constants
     public static final int ID_STATE = 6;
     public static final int ID_INSTITUTE_TYPE = 4;
     public static final int ID_HOSTEL = 8;
+
+    public static final int NUMBER_OF_COMMENTS_IN_ONE_GO = 100;
+
 }

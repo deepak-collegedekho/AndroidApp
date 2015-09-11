@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -30,7 +31,7 @@
             android:maxLines="2"
             android:paddingBottom="3dp"
             android:paddingTop="3dp"
-            android:text="This is a Question Title."
+            android:text="CollegeDekho Demo Institute"
             android:textColor="@color/text_head_blue"
             android:textSize="18sp"
             android:gravity="center_vertical"
@@ -43,15 +44,29 @@
             android:textColor="@color/text_light_grey"
             android:layout_below="@id/fb_institute_name"
             android:layout_alignParentLeft="true"
+            android:visibility="gone"
+            />
+        <TextView
+            android:id="@+id/fb_institute_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fb_institute_name"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
+            android:text="Manipal, Karnataka | Established in: 1957"
+            android:textColor="@color/text_lightest_grey"
+            android:textSize="10sp"
             />
         <TextView android:id="@+id/fb_members_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="10sp"
-            android:text="10"
-            android:textColor="@color/text_light_grey"
             android:layout_below="@id/fb_institute_name"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
+            android:text="10"
             android:layout_alignParentRight="true"
+            android:textColor="@color/text_lightest_grey"
+            android:textSize="10sp"
             />
     </RelativeLayout>
     </android.support.v7.widget.CardView>

@@ -51,6 +51,9 @@ public class HomeFragment extends Fragment {
         ViewGroup parent = ((ViewGroup) rootView.findViewById(R.id.home_frame));
         for (int i = 0; i < parent.getChildCount(); i += 2) {
             View v = parent.getChildAt(i);
+            //TODO: remove this condition to see the step-by-step option
+            if (i == 0)
+                v.setVisibility(View.GONE);
             v.setTag(User.Prefs.values()[i / 2]);
             v.setOnClickListener(new View.OnClickListener() {
                 @Override

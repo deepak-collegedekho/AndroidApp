@@ -48,6 +48,7 @@ public class InstituteListFragment extends Fragment {
     private int filterCount;
     private boolean loading = false;
     private MainActivity mMainActivity;
+    private TextView mEmptyTextView;
 
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -109,8 +110,12 @@ public class InstituteListFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new InstituteListAdapter(getActivity(), mInstitutes);
+
+        this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
+
         if (mInstitutes.size() == 0)
-            ((TextView) rootView.findViewById(android.R.id.empty)).setText("No Institutes");
+            this.mEmptyTextView.setText("No Institutes");
+
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.setHasFixedSize(true);
@@ -160,6 +165,17 @@ public class InstituteListFragment extends Fragment {
 
         if (this.mMainActivity != null)
             this.mMainActivity.currentFragment = this;
+
+        if (mInstitutes.size() == 0)
+        {
+            this.mEmptyTextView.setText("No Institutes");
+            this.mEmptyTextView.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            this.mEmptyTextView.setText("");
+            this.mEmptyTextView.setVisibility(View.GONE);
+        }
     }
 
     public void clearList() {

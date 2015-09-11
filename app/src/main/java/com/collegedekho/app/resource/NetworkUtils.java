@@ -174,9 +174,11 @@ public class NetworkUtils {
             public Map<String, String> getHeaders() throws AuthFailureError
             {
                 Map<String, String> params = new HashMap<>();
+
                 params.put("Authorization", "Token " + mtoken);
                 params.put("Content-Type", "application/form-data");
                 params.put("Accept", "application/json");
+
                 return params;
             }
         };

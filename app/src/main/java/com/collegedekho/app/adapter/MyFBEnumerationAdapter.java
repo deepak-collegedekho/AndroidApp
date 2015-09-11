@@ -24,17 +24,17 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
     private Context mContext;
 
     public MyFBEnumerationAdapter(Context context, ArrayList<MyFutureBuddiesEnumeration> fbEnumeration) {
-        mMyFBEnumeration = fbEnumeration;
-        mContext = context;
+        this.mMyFBEnumeration = fbEnumeration;
+        this.mContext = context;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(mContext).inflate(R.layout.card_my_fb_enumeration, parent, false);
+        View rootView = LayoutInflater.from(this.mContext).inflate(R.layout.card_my_fb_enumeration, parent, false);
         try {
             return new MyFBEnumerationHolder(rootView, (MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener) mContext);
         } catch (ClassCastException e) {
-            throw new ClassCastException(mContext.toString()
+            throw new ClassCastException(this.mContext.toString()
                     + " must implement OnMyFBSelectedListener");
         }
     }
@@ -46,20 +46,27 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
 
         MyFBEnumerationHolder myFBEnumerationHolder = (MyFBEnumerationHolder) holder;
 
+        String text = "";
+        if (myFBEnumeration.getCity_name() != null)
+            text += myFBEnumeration.getCity_name() + ", ";
+        if (myFBEnumeration.getState_name() != null)
+            text += myFBEnumeration.getState_name();
+
         myFBEnumerationHolder.instituteName.setText(myFBEnumeration.getInstitute_name());
-        myFBEnumerationHolder.commentsCount.setText(String.valueOf(myFBEnumeration.getComments_count()) + " chats");
+        myFBEnumerationHolder.instituteLocation.setText(text);
+        //myFBEnumerationHolder.commentsCount.setText(String.valueOf(myFBEnumeration.getComments_count()) + " chats");
         myFBEnumerationHolder.membersCount.setText(String.valueOf(myFBEnumeration.getMembers_count()) + " friends");
     }
 
     @Override
     public int getItemCount() {
-        return mMyFBEnumeration.size();
+        return this.mMyFBEnumeration.size();
     }
 
     private class MyFBEnumerationHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
         TextView instituteName;
-        TextView commentsCount;
+        TextView instituteLocation;
+        //TextView commentsCount;
         TextView membersCount;
 
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener mListener;
@@ -67,18 +74,19 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
         public MyFBEnumerationHolder(View itemView, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener listener) {
             super(itemView);
 
-            instituteName = (TextView) itemView.findViewById(R.id.fb_institute_name);
-            commentsCount = (TextView) itemView.findViewById(R.id.fb_comments_count);
-            membersCount = (TextView) itemView.findViewById(R.id.fb_members_count);
+            this.instituteName = (TextView) itemView.findViewById(R.id.fb_institute_name);
+            this.instituteLocation = (TextView) itemView.findViewById(R.id.fb_institute_location);
+            //this.commentsCount = (TextView) itemView.findViewById(R.id.fb_comments_count);
+            this.membersCount = (TextView) itemView.findViewById(R.id.fb_members_count);
 
-            mListener = listener;
+            this.mListener = listener;
 
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            mListener.onMyFBSelected(mMyFBEnumeration.get(getAdapterPosition()), getAdapterPosition());
+            this.mListener.onMyFBSelected(mMyFBEnumeration.get(this.getAdapterPosition()), this.getAdapterPosition(), mMyFBEnumeration.get(this.getAdapterPosition()).getComments_count());
         }
     }
 }

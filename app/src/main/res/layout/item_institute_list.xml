@@ -29,7 +29,6 @@
         android:text="Manipal, Karnataka | Established in: 1957"
         android:textColor="@color/text_lightest_grey"
         android:textSize="13sp" />
-
     <TextView
         android:id="@+id/textview_college_courses"
         android:layout_width="match_parent"

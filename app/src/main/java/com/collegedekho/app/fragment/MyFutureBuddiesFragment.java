@@ -29,20 +29,26 @@ import java.util.TimerTask;
 
 public class MyFutureBuddiesFragment extends Fragment{
     private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
     private MyFutureBuddy mMyFutureBuddies;
     private ArrayList<MyFutureBuddyComment> mMyFBCommentsSet;
     private OnMyFBInteractionListener mListener;
     private MyFBCommentsListAdapter mMyFBCommentsListAdapter;
-    private EditText mchatText;
+    private EditText mChatText;
     private RecyclerView mCommentsListView;
     private TextView mEmptyTextView;
     private Timer mMyFbRefreshTimer;
     private MainActivity mMainActivity;
+    private volatile boolean mSubmittingState = false;
+    private static final Object mSubmitLock = new Object();
+    private int mInitialCount;
+    private int mIncrement;
 
-    public static MyFutureBuddiesFragment newInstance(MyFutureBuddy myFutureBuddies) {
+    public static MyFutureBuddiesFragment newInstance(MyFutureBuddy myFutureBuddies, int commentsCount) {
         MyFutureBuddiesFragment fragment = new MyFutureBuddiesFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_PARAM1, myFutureBuddies);
+        args.putInt(ARG_PARAM2, commentsCount);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,7 +62,8 @@ public class MyFutureBuddiesFragment extends Fragment{
         super.onCreate(savedInstanceState);
         if (getArguments() != null)
         {
-            this.mMyFutureBuddies = getArguments().getParcelable(ARG_PARAM1);
+            this.mMyFutureBuddies = this.getArguments().getParcelable(ARG_PARAM1);
+            this.mInitialCount = this.getArguments().getInt(ARG_PARAM2);
             this.mMyFBCommentsSet = this.mMyFutureBuddies.getFutureBuddiesCommentsSet();
         }
     }
@@ -68,20 +75,41 @@ public class MyFutureBuddiesFragment extends Fragment{
         final View rootView = inflater.inflate(R.layout.fragment_my_fb, container, false);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
         ((TextView) rootView.findViewById(R.id.fb_title)).setText(this.mMyFutureBuddies.getInstitute_name());
-        this.mchatText = (EditText) rootView.findViewById(R.id.fb_chat_input);
+        this.mChatText = (EditText) rootView.findViewById(R.id.fb_chat_input);
 
         ((FloatingActionButton) rootView.findViewById(R.id.fb_push_chat)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String value = mchatText.getText().toString();
+                String value = mChatText.getText().toString();
+
                 if (value.equals("") || value.equals(" "))
                 {
-                    Toast.makeText(getActivity(),"Please enter your message", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Please enter your message", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
+                    setmSubmittingState(true);
+
+                    if (mEmptyTextView.getVisibility() == View.VISIBLE)
+                        mEmptyTextView.setVisibility(View.GONE);
+
+                    MyFutureBuddyComment fbComment = new MyFutureBuddyComment();
+
+                    fbComment.setComment(value);
+                    fbComment.setToken(MainActivity.user.getToken());
+                    fbComment.setIndex(mMyFBCommentsSet.size());
+                    fbComment.setFbIndex(mMyFutureBuddies.getIndex());
+                    fbComment.setCommentSent(false);
+
+                    mMyFBCommentsSet.add(mMyFBCommentsSet.size(), fbComment);
+
+                    mMyFBCommentsListAdapter.notifyItemInserted(mMyFBCommentsSet.size() - 1);
+                    mMyFBCommentsListAdapter.notifyDataSetChanged();
+
+                    mCommentsListView.scrollToPosition(mMyFBCommentsSet.size() - 1);
+
                     mListener.onMyFBCommentSubmitted(mMyFutureBuddies.getResource_uri(), value, mMyFutureBuddies.getIndex(), mMyFBCommentsSet.size());
-                    mchatText.setText("");
+                    mChatText.setText("");
                 }
             }
         });
@@ -114,6 +142,17 @@ public class MyFutureBuddiesFragment extends Fragment{
     @Override
     public void onDetach() {
         super.onDetach();
+
+        //If number of comments received in the comments set is more than received in one
+        // go then call the function to update the comments count value
+        // TODO: track number of times next page is called (say N) and multiply Constants.NUMBER_OF_COMMENTS_IN_ONE_GO with the N, once next page provision is there
+        if (this.mMyFBCommentsSet.size() > Constants.NUMBER_OF_COMMENTS_IN_ONE_GO)
+        {
+            int increment = this.mMyFBCommentsSet.size() - Constants.NUMBER_OF_COMMENTS_IN_ONE_GO;
+
+            this.mListener.onMyFBUpdated(increment, this.mMyFutureBuddies.getIndex());
+        }
+
         this.mListener = null;
 
         System.gc();
@@ -164,7 +203,6 @@ public class MyFutureBuddiesFragment extends Fragment{
 
             this.mMyFbRefreshTimer = null;
         }
-
     }
 
     public void commentAdded(MyFutureBuddyComment comment)
@@ -172,15 +210,22 @@ public class MyFutureBuddiesFragment extends Fragment{
         if (this.mEmptyTextView.getVisibility() == View.VISIBLE)
             this.mEmptyTextView.setVisibility(View.GONE);
 
-        this.mMyFBCommentsSet.add(this.mMyFBCommentsSet.size(), comment);
-        this.mMyFBCommentsListAdapter.notifyItemInserted(this.mMyFBCommentsSet.size() - 1);
+        this.mMyFBCommentsSet.set(this.mMyFBCommentsSet.size() - 1, comment);
+
+        this.mMyFBCommentsListAdapter.notifyItemChanged(this.mMyFBCommentsSet.size() - 1);
+        //this.mMyFBCommentsListAdapter.notifyItemInserted(this.mMyFBCommentsSet.size() - 1);
         this.mMyFBCommentsListAdapter.notifyDataSetChanged();
 
         this.mCommentsListView.scrollToPosition(this.mMyFBCommentsSet.size() - 1);
+
+        this.setmSubmittingState(false);
     }
 
     public void updateChatPings(List<MyFutureBuddyComment> chatPings)
     {
+        if (mSubmittingState)
+            return;
+
         this.mMyFBCommentsSet.clear();
 
         if (this.mEmptyTextView.getVisibility() == View.VISIBLE)
@@ -192,7 +237,14 @@ public class MyFutureBuddiesFragment extends Fragment{
         this.mCommentsListView.scrollToPosition(this.mMyFBCommentsSet.size() - 1);
     }
 
+    public void setmSubmittingState(boolean val) {
+        synchronized (this.mSubmitLock) {
+            this.mSubmittingState = val;
+        }
+    }
+
     public interface OnMyFBInteractionListener {
         void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex);
+        void onMyFBUpdated(int commentsSize, int myFbIndex);
     }
 }

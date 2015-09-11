@@ -1,6 +1,7 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
+import android.media.Image;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -35,10 +37,10 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
     private volatile SimpleDateFormat mSDF;
 
     public MyFBCommentsListAdapter(Context context, ArrayList<MyFutureBuddyComment> myFBCommentList) {
-        mMyFBCommentList = myFBCommentList;
-        mContext = context;
-        mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-        mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
+        this.mMyFBCommentList = myFBCommentList;
+        this.mContext = context;
+        this.mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        this.mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     @Override
@@ -57,11 +59,15 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         MyFutureBuddyComment myFBComment = mMyFBCommentList.get(position);
         MyFBCommentsHolder qnaAnswerHolder = (MyFBCommentsHolder) holder;
         String simpleDate = "";
-        try {
-            mSDF.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
-            Date date = mSDF.parse(myFBComment.getAdded_on());
-            mSDF.applyPattern("MMMM d, yyyy KK:mm a");
-            simpleDate = mSDF.format(date);
+        try
+        {
+            if (myFBComment.getAdded_on() != null)
+            {
+                mSDF.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
+                Date date = mSDF.parse(myFBComment.getAdded_on());
+                mSDF.applyPattern("MMMM d, yyyy KK:mm a");
+                simpleDate = mSDF.format(date);
+            }
         } catch (ParseException e) {
             Log.e(TAG, "Date format unknown: " + myFBComment.getAdded_on());
         }
@@ -80,7 +86,10 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
             qnaAnswerHolder.myFbCardLayout.setLayoutParams(params);*/
 
             qnaAnswerHolder.myFbCardLayout.setGravity(Gravity.RIGHT);
-            qnaAnswerHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.self_comment_card_background));
+            qnaAnswerHolder.myFbCard.setCardBackgroundColor(this.mContext.getResources().getColor(R.color.self_comment_card_background));
+
+            if (myFBComment.isCommentSent())
+                qnaAnswerHolder.mSentNotifier.setVisibility(View.VISIBLE);
 
             qnaAnswerHolder.userName.setVisibility(View.GONE);
             qnaAnswerHolder.setIsRecyclable(false);
@@ -105,19 +114,22 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         TextView dateAddedOn;
         LinearLayout myFbCardLayout;
         CardView myFbCard;
+        ImageView mSentNotifier;
+
         MyFutureBuddiesFragment.OnMyFBInteractionListener mListener;
 
         public MyFBCommentsHolder(View itemView, MyFutureBuddiesFragment.OnMyFBInteractionListener listener)
         {
             super(itemView);
 
-            commentText = (TextView) itemView.findViewById(R.id.my_fb_comment_text);
-            userName = (TextView) itemView.findViewById(R.id.my_fb_comment_user_name);
-            dateAddedOn = (TextView) itemView.findViewById(R.id.my_fb_comment_date_added_on);
-            myFbCardLayout = (LinearLayout) itemView.findViewById(R.id.my_fb_card_layout);
-            myFbCard = (CardView) itemView.findViewById(R.id.my_fb_card);
+            this.commentText = (TextView) itemView.findViewById(R.id.my_fb_comment_text);
+            this.userName = (TextView) itemView.findViewById(R.id.my_fb_comment_user_name);
+            this.dateAddedOn = (TextView) itemView.findViewById(R.id.my_fb_comment_date_added_on);
+            this.myFbCardLayout = (LinearLayout) itemView.findViewById(R.id.my_fb_card_layout);
+            this.myFbCard = (CardView) itemView.findViewById(R.id.my_fb_card);
+            this.mSentNotifier = (ImageView) itemView.findViewById(R.id.my_fb_comment_sent_notifier);
 
-            mListener = listener;
+            this.mListener = listener;
         }
     }
 }

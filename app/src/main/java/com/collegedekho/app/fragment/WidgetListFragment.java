@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -59,10 +60,16 @@ public class WidgetListFragment extends Fragment implements AdapterView.OnItemCl
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        GridView grid = (GridView) inflater.inflate(R.layout.fragment_home, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        GridView grid = (GridView) rootView.findViewById(R.id.home_page_body);
+        TextView streamTextView = (TextView) rootView.findViewById(R.id.home_page_stream_label);
+
+        streamTextView.setText(MainActivity.user.getStream_name());
+
         grid.setAdapter(new WidgetAdapter(getActivity(), widgets));
         grid.setOnItemClickListener(this);
-        return grid;
+
+        return rootView;
     }
 
     public void onWidgetSelected(Widget widget) {

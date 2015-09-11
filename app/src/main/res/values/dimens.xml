@@ -13,7 +13,8 @@
          https://developer.android.com/design/patterns/navigation-drawer.html -->
     <dimen name="navigation_drawer_width">240dp</dimen>
     <dimen name="corner_radius">3dp</dimen>
-    <dimen name="widget_image_height">120dp</dimen>
+    <dimen name="widget_image_height">100dp</dimen>
+    <dimen name="widget_image_width">100dp</dimen>
     <dimen name="like_dislike_size">35dp</dimen>
     <dimen name="course_label_horizontal_margin">10dp</dimen>
     <dimen name="gradient_radius">5dp</dimen>

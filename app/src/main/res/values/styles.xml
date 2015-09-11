@@ -21,6 +21,18 @@
         <item name="android:background">@drawable/bg_button_blue</item>
     </style>
 
+    <style name="AppTheme.HeadingTextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/primary_color</item>
+    </style>
+
+
     <style name="AppTheme.GreyButton" parent="AppTheme.BlueButton">
         <item name="android:background">@drawable/bg_button_grey</item>
     </style>
