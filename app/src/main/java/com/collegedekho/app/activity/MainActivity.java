@@ -88,11 +88,9 @@ public class MainActivity extends AppCompatActivity
         QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener,
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleListFragment.OnArticleSelectedListener,
-        ProfileFragment.onProfileUpdateListener
-        {
+        ProfileFragment.onProfileUpdateListener {
 
-    static
-    {
+    static {
         Constants.FilterCategoryMap.put(Constants.ID_HOSTEL, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
         Constants.FilterCategoryMap.put(Constants.ID_FACILITIES, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
 
@@ -128,10 +126,10 @@ public class MainActivity extends AppCompatActivity
     Map<String, String> mFilterKeywords = new HashMap<>();
     Toolbar toolbar;
     private ArrayList<Folder> mFolderList;
-    private  List<News> newsList;
-    private  List<Articles> articlesList;
+    private List<News> newsList;
+    private List<Articles> articlesList;
     private Institute mInstitute;
-    String instituteCourseId ="";
+    String instituteCourseId = "";
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -158,12 +156,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void restoreActionBar()
-    {
+    public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
 
-        if (actionBar != null)
-        {
+        if (actionBar != null) {
             actionBar.setTitle(mTitle);
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
             actionBar.setDisplayShowTitleEnabled(true);
@@ -238,31 +234,25 @@ public class MainActivity extends AppCompatActivity
         AppEventsLogger.deactivateApp(this);
     }
 
-    private void init()
-    {
+    private void init() {
         networkUtils = new NetworkUtils(this, this);
 
         SharedPreferences sp = getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
 
-        try
-        {
-            if (sp.contains(Constants.KEY_USER))
-            {
+        try {
+            if (sp.contains(Constants.KEY_USER)) {
                 user = JSON.std.beanFrom(User.class, sp.getString(Constants.KEY_USER, null));
                 networkUtils.setToken(user.getToken());
             }
 
             completedStage2 = sp.getBoolean(Constants.COMPLETED_SECOND_STAGE, false);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(int position)
-    {
+    public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = null;
@@ -295,56 +285,57 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-     if(currentFragment instanceof ProfileFragment || currentFragment instanceof StreamFragment) {
-          menu.getItem(0).setTitle("Home");
-          }
-          else {
-              menu.getItem(0).setTitle("Profile");
-          }
-          return super.onPrepareOptionsMenu(menu);
-     }
+        if (currentFragment instanceof ProfileFragment || currentFragment instanceof StreamFragment) {
+            menu.getItem(0).setVisible(true);
+            menu.getItem(1).setVisible(false);
+        } else if(currentFragment instanceof  WidgetListFragment) {
+            menu.getItem(0).setVisible(false);
+            menu.getItem(1).setVisible(true);
+        }
+        else {
+            menu.getItem(0).setVisible(true);
+            menu.getItem(1).setVisible(true);//Title("Profile");
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
 
-            @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if(id== R.id.action_profile)
-        {
+        if (id == R.id.action_profile) {
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
-            if(fragment == null) {
+            if (fragment == null) {
                 mDisplayFragment(ProfileFragment.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
-            }
-            else {
+            } else {
 
                 int count = getSupportFragmentManager().getBackStackEntryCount();
                 for (int i = 0; i < count; i++) {
                     getSupportFragmentManager().popBackStack();
                 }
-                /*getSupportFragmentManager().popBackStack();
-                if(currentFragment instanceof StreamFragment)
-                {
-                    getSupportFragmentManager().popBackStack();
-                }*/
-               // mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
-            }
 
+            }
+            return true;
+        }
+        else if(id == R.id.action_home) {
+                int count = getSupportFragmentManager().getBackStackEntryCount();
+                for (int i = 0; i < count; i++) {
+                    getSupportFragmentManager().popBackStack();
+                }
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onHomeItemSelected(User.Prefs preference)
-    {
+    public void onHomeItemSelected(User.Prefs preference) {
         userPref = preference;
         requestUserCreation();
     }
 
-    private void requestUserCreation()
-    {
+    private void requestUserCreation() {
         if (user == null)
             this.mMakeNetworkCall(Constants.TAG_CREATE_USER, Constants.BASE_URL + "users/anonymous/", new HashMap<String, String>());
         else {
@@ -353,10 +344,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void mSetUser(String json)
-    {
-        try
-        {
+    private void mSetUser(String json) {
+        try {
             user = JSON.std.beanFrom(User.class, json);
             user.setPref(userPref);
 
@@ -366,17 +355,13 @@ public class MainActivity extends AppCompatActivity
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
 
             this.mSetUserPref();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    private void mSetUserPref()
-    {
-        switch (user.getPref())
-        {
+    private void mSetUserPref() {
+        switch (user.getPref()) {
             case NOT_SURE:
                 this.mMakeNetworkCall(Constants.TAG_LOAD_PYSCHOMETRIC_TEST, Constants.BASE_URL + "psychometrictests/", null);
                 break;
@@ -387,8 +372,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public String extractResults(String response) {
-        try
-        {
+        try {
             Map<String, Object> map = JSON.std.mapFrom(response);
             if (map.get("next") != null)
                 next = map.get("next").toString();
@@ -399,50 +383,37 @@ public class MainActivity extends AppCompatActivity
                 this.mFilters = JSON.std.asString(map.get("filters"));
 
             return JSON.std.asString(map.get("results"));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
 
         return null;
     }
 
-    private void displayStreams(String response,boolean addToBackstack)
-    {
-        try
-        {
+    private void displayStreams(String response, boolean addToBackstack) {
+        try {
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, extractResults(response));
             mDisplayFragment(StreamFragment.newInstance(new ArrayList<>(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    private void updateInstituteList(String response)
-    {
-        try
-        {
+    private void updateInstituteList(String response) {
+        try {
             List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
             this.institutes.addAll(institutes);
 
-            if (currentFragment instanceof InstituteListFragment)
-            {
+            if (currentFragment instanceof InstituteListFragment) {
                 ((InstituteListFragment) currentFragment).updateList(institutes, next);
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    private void mDisplayInstituteList(String response, boolean filterAllowed)
-    {
-        try
-        {
+    private void mDisplayInstituteList(String response, boolean filterAllowed) {
+        try {
             institutes = JSON.std.listOfFrom(Institute.class, this.extractResults(response));
 
             if (this.mFilterKeywords.size() > 0)
@@ -452,77 +423,58 @@ public class MainActivity extends AppCompatActivity
             Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
             if (fragment == null)
                 this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(institutes), currentTitle, next, filterAllowed, this.filterCount), true, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
-            else
-            {
-                if (fragment instanceof InstituteListFragment)
-                {
+            else {
+                if (fragment instanceof InstituteListFragment) {
                     ((InstituteListFragment) fragment).clearList();
                     ((InstituteListFragment) fragment).updateList(institutes, next);
                 }
 
                 this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    private void mShowMyFBEnumeration(String response)
-    {
-        try
-        {
+    private void mShowMyFBEnumeration(String response) {
+        try {
             this.mFbEnumeration = JSON.std.listOfFrom(MyFutureBuddiesEnumeration.class, this.extractResults(response));
 
             this.mDisplayFragment(MyFutureBuddiesEnumerationFragment.newInstance(new ArrayList<>(this.mFbEnumeration)), true, Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    private void mShowMyFB(String response, int index, int commentsCount)
-    {
-        try
-        {
+    private void mShowMyFB(String response, int index, int commentsCount) {
+        try {
             this.mFB = this.mParseAndPopulateMyFB(response, index);
             this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), true, Constants.TAG_FRAGMENT_MY_FB);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    private void mUpdateMyFB(String response, int index, int oldCount)
-    {
-        try
-        {
+    private void mUpdateMyFB(String response, int index, int oldCount) {
+        try {
             this.mFB = this.mParseAndPopulateMyFB(response, index);
 
             //if number of comments have increased
-            if (this.mFB.getComments_count() > oldCount)
-            {
+            if (this.mFB.getComments_count() > oldCount) {
                 ArrayList<MyFutureBuddyComment> myFbComments = this.mFB.getFutureBuddiesCommentsSet();
 
                 if (currentFragment instanceof MyFutureBuddiesFragment)
                     ((MyFutureBuddiesFragment) currentFragment).updateChatPings(myFbComments);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    private MyFutureBuddy mParseAndPopulateMyFB(String response, int index)
-    {
+    private MyFutureBuddy mParseAndPopulateMyFB(String response, int index) {
         MyFutureBuddy myFB = new MyFutureBuddy();
 
-        try
-        {
+        try {
             ArrayList<MyFutureBuddyComment> myFBCommentsSet = new ArrayList<>();
 
             JSONObject fb = new JSONObject(response);
@@ -535,8 +487,7 @@ public class MainActivity extends AppCompatActivity
 
             JSONArray commentsSet = fb.getJSONArray("instituteforumcomment_set");
 
-            for (int i = 0; i < commentsSet.length(); i++)
-            {
+            for (int i = 0; i < commentsSet.length(); i++) {
                 JSONObject comment = new JSONObject();
                 MyFutureBuddyComment myFBComment = new MyFutureBuddyComment();
 
@@ -554,18 +505,15 @@ public class MainActivity extends AppCompatActivity
             }
 
             myFB.setFutureBuddiesCommentsSet(myFBCommentsSet);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
 
         return myFB;
     }
 
-    private void mDisplayInstitute(int position)
-    {
-        mInstitute  = institutes.get(position);
+    private void mDisplayInstitute(int position) {
+        mInstitute = institutes.get(position);
 
         this.mDisplayFragment(InstituteDetailFragment.newInstance(mInstitute), true, Constants.TAG_FRAGMENT_INSTITUTE);
 
@@ -573,8 +521,7 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS, mInstitute.getResource_uri() + "qna/", null, Request.Method.GET);
     }
 
-    private void loadPyschometricTest(String response)
-    {
+    private void loadPyschometricTest(String response) {
         Bundle bundle = new Bundle();
         bundle.putString(MainActivity.PSYCHOMETRIC_RESULTS, response);
 
@@ -585,33 +532,25 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if (requestCode == MainActivity.GET_PSYCHOMETRIC_RESULTS)
-        {
+        if (requestCode == MainActivity.GET_PSYCHOMETRIC_RESULTS) {
             // Make sure the request was successful
-            if (resultCode == RESULT_OK)
-            {
-                if (PsychometricQuestionFragment.getAnswers() != null)
-                {
+            if (resultCode == RESULT_OK) {
+                if (PsychometricQuestionFragment.getAnswers() != null) {
                     //Bundle bundle = data.getExtras();
                     //HashMap<String, String> hashMap = (HashMap<String, String>) bundle.getSerializable(MainActivity.PSYCHOMETRIC_RESULTS);
                     JSONObject answersObject = PsychometricQuestionFragment.getAnswers();
 
                     //TODO: Shim to adhere to server's compliance; removing "[" and  "]" from college_types.
-                    if ( answersObject.has("college_types") )
-                    {
+                    if (answersObject.has("college_types")) {
                         String str = null;
-                        try
-                        {
+                        try {
                             str = (String) answersObject.get("college_types");
-                            str = str.replaceAll("\\[", "").replaceAll("\\]","").replaceAll("\\s", "");
+                            str = str.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "");
 
                             answersObject.put("college_types", str);
-                        }
-                        catch (JSONException e)
-                        {
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
@@ -622,10 +561,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void mDisplayFragment(Fragment fragment, boolean addToBackstack, String tag)
-    {
-        try
-        {
+    private void mDisplayFragment(Fragment fragment, boolean addToBackstack, String tag) {
+        try {
             currentFragment = fragment;
 
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -640,23 +577,19 @@ public class MainActivity extends AppCompatActivity
 
             fragmentTransaction.commit();
 
-            if (currentFragment instanceof HomeFragment)
-            {
+            if (currentFragment instanceof HomeFragment) {
                 //Show toolbar
                 toolbar = (Toolbar) findViewById(R.id.app_toolbar);
                 toolbar.setVisibility(View.VISIBLE);
 
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
         }
     }
 
     @Override
-    public void onDataLoaded(String tag, String response)
-    {
+    public void onDataLoaded(String tag, String response) {
         String extraTag = null;
         String childIndex = null;
         String parentIndex = null;
@@ -664,8 +597,7 @@ public class MainActivity extends AppCompatActivity
         String[] tags = tag.split("#");
         int voteType = 0;
 
-        switch (tags[0])
-        {
+        switch (tags[0]) {
             case Constants.TAG_CREATE_USER:
                 mSetUser(response);
                 break;
@@ -673,7 +605,7 @@ public class MainActivity extends AppCompatActivity
                 displayStreams(response, false);
                 break;
             case Constants.TAG_UPDATE_STREAM:
-                displayStreams(response ,true);
+                displayStreams(response, true);
                 break;
             case Constants.WIDGET_SHORTLIST:
                 mDisplayInstituteList(response, false);
@@ -692,7 +624,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_LOAD_COURSES:
 
-                this.mUpdateCourses(response );
+                this.mUpdateCourses(response);
                 break;
             case Constants.TAG_APPLIED_COURSE:
                 String tabposition = null;
@@ -700,8 +632,8 @@ public class MainActivity extends AppCompatActivity
                     extraTag = tags[1];
                     tabposition = tags[2];
                 }
-                getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(instituteCourseId,instituteCourseId ).commit();
-                this.mUpdateAppliedCourses(response, extraTag , tabposition);
+                getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(instituteCourseId, instituteCourseId).commit();
+                this.mUpdateAppliedCourses(response, extraTag, tabposition);
 
                 break;
             case Constants.TAG_LOAD_HOME:
@@ -733,8 +665,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LIKE_DISLIKE:
                 if (tags.length == 2)
                     extraTag = tags[1];
-                if (tags.length == 3)
-                {
+                if (tags.length == 3) {
                     extraTag = tags[1];
                     like = tags[2];
                 }
@@ -751,26 +682,23 @@ public class MainActivity extends AppCompatActivity
                 mShowMyFBEnumeration(response);
                 break;
             case Constants.TAG_VOTE_QNA_QUESTION_ENTITY:
-                if (tags.length == 3)
-                {
+                if (tags.length == 3) {
                     parentIndex = tags[1];
                     voteType = Integer.parseInt(tags[2]);
                     this.mQnAQuestionVoteUpdated(Integer.parseInt(parentIndex), voteType);
                 }
                 break;
             case Constants.TAG_VOTE_QNA_ANSWER_ENTITY:
-                if (tags.length > 3)
-                {
+                if (tags.length > 3) {
                     parentIndex = tags[1];
-                    childIndex  = tags[2];
+                    childIndex = tags[2];
                     voteType = Integer.parseInt(tags[3]);
 
                     this.mQnAAnswerVoteUpdated(Integer.parseInt(parentIndex), Integer.parseInt(childIndex), voteType);
                 }
                 break;
             case Constants.TAG_LOAD_MY_FB:
-                if (tags.length > 1)
-                {
+                if (tags.length > 1) {
                     parentIndex = tags[1];
                     childIndex = tags[2];
 
@@ -778,28 +706,25 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case Constants.TAG_REFRESH_MY_FB:
-                if (tags.length > 1)
-                {
+                if (tags.length > 1) {
                     parentIndex = tags[1];
-                    childIndex  = tags[2];
+                    childIndex = tags[2];
 
                     this.mUpdateMyFB(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
                 }
                 break;
             case Constants.TAG_QNA_ANSWER_SUBMITTED:
-                if (tags.length > 1)
-                {
+                if (tags.length > 1) {
                     parentIndex = tags[1];
-                    childIndex  = tags[2];
+                    childIndex = tags[2];
 
                     this.mOnAnswerAdded(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
                 }
                 break;
             case Constants.TAG_MY_FB_COMMENT_SUBMITTED:
-                if (tags.length > 1)
-                {
+                if (tags.length > 1) {
                     parentIndex = tags[1];
-                    childIndex  = tags[2];
+                    childIndex = tags[2];
 
                     this.mOnMyFBCommentAdded(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
                 }
@@ -812,10 +737,9 @@ public class MainActivity extends AppCompatActivity
                 this.mUpdateUserPref(response);
                 break;
             case Constants.TAG_SUBMIT_PREFRENCES:
-                if (tags.length > 1)
-                {
+                if (tags.length > 1) {
                     parentIndex = tags[1];
-                    childIndex  = tags[2];
+                    childIndex = tags[2];
 
                     this.mStreamAndCourseSelected(response, parentIndex, childIndex);
                 }
@@ -827,16 +751,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     //Saved on DB, now save it in shared preferences.
-    private void mStreamAndCourseSelected(String response, String levelURI, String streamURI)
-    {
+    private void mStreamAndCourseSelected(String response, String levelURI, String streamURI) {
         //Retrieve token from pref to save it across the pref updates
         String token = user.getToken();
-       // String streamName = user.getStream_name();
-       // String levelName = user.getLevel_name();
+        // String streamName = user.getStream_name();
+        // String levelName = user.getLevel_name();
 
         //TODO: May be we can make a new pref entry for token
-        try
-        {
+        try {
             user = JSON.std.beanFrom(User.class, response);
         } catch (IOException e) {
             e.printStackTrace();
@@ -849,24 +771,19 @@ public class MainActivity extends AppCompatActivity
         user.setToken(token);
 
         String u = null;
-        try
-        {
+        try {
             u = JSON.std.asString(user);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
     }
 
-    private void mUpdateUserPref(String response)
-    {
+    private void mUpdateUserPref(String response) {
         JSONObject psychometricResult;
 
-        try
-        {
+        try {
             String stream = "";
             String level = "";
 
@@ -874,26 +791,22 @@ public class MainActivity extends AppCompatActivity
 
             HashMap<String, String> hashMap = new HashMap<>();
 
-            if (psychometricResult.has("stream") && ! psychometricResult.isNull("stream"))
-            {
+            if (psychometricResult.has("stream") && !psychometricResult.isNull("stream")) {
                 stream = psychometricResult.getString("stream");
 
                 user.setPref(User.Prefs.STREAMKNOWN);
                 user.setStream(Constants.BASE_URL + "streams/" + stream + "/");
             }
-            if (psychometricResult.has("course_levels") && ! psychometricResult.isNull("course_levels"))
-            {
+            if (psychometricResult.has("course_levels") && !psychometricResult.isNull("course_levels")) {
                 level = psychometricResult.getString("course_levels");
 
                 user.setLevel(Constants.BASE_URL + "level/" + level + "/");
             }
 
-            if (stream != "" && level != "")
-            {
+            if (stream != "" && level != "") {
                 this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
 
-                try
-                {
+                try {
                     String u = JSON.std.asString(user);
                     this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
 
@@ -901,84 +814,61 @@ public class MainActivity extends AppCompatActivity
                     hashMap.put("stream", user.getStream());
                     hashMap.put("level", user.getLevel());
 
-                    this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + user.getLevel() +  "#" + user.getStream(), Constants.BASE_URL + "preferences/", hashMap);
+                    this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + user.getLevel() + "#" + user.getStream(), Constants.BASE_URL + "preferences/", hashMap);
                     this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     Log.e(TAG, e.getMessage());
                 }
-            }
-            else if (stream != "" && level == "")
-            {
+            } else if (stream != "" && level == "") {
                 this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
 
-                try
-                {
+                try {
                     String u = JSON.std.asString(user);
                     getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
 
                     hashMap.put("status", user.getPref().name().toLowerCase());
                     hashMap.put("stream", user.getStream());
 
-                    this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + user.getLevel() +  "#" + user.getStream(), Constants.BASE_URL + "preferences/", hashMap);
+                    this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + user.getLevel() + "#" + user.getStream(), Constants.BASE_URL + "preferences/", hashMap);
                     this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     Log.e(TAG, e.getMessage());
                 }
             }
-        }
-        catch (JSONException e)
-        {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     private void updateLikeButton(String response, String extraTag, int like) {
         Institute i = institutes.get(Integer.parseInt(extraTag));
-        if (like == Constants.NEITHER_LIKE_NOR_DISLIKE)
-        {
+        if (like == Constants.NEITHER_LIKE_NOR_DISLIKE) {
             i.setCurrent_user_vote_type(Constants.NEITHER_LIKE_NOR_DISLIKE);
             i.setCurrent_user_vote_url(null);
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 i.setCurrent_user_vote_type(like);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
         }
-        if (currentFragment instanceof InstituteListFragment)
-        {
+        if (currentFragment instanceof InstituteListFragment) {
             ((InstituteListFragment) currentFragment).updateButtons(Integer.parseInt(extraTag));
         }
     }
 
-    private void updateShortlistInstitute(String response, String extraTag)
-    {
+    private void updateShortlistInstitute(String response, String extraTag) {
         Institute i = institutes.get(Integer.parseInt(extraTag));
         String message = null;
 
-        if (response == null)
-        {
+        if (response == null) {
             i.setIs_shortlisted(Constants.SHORTLISTED_NO);
             message = " removed from your shortlist";
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 i.setIs_shortlisted(Constants.SHORTLISTED_YES);
                 message = " added to your shortlist";
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
         }
@@ -1007,8 +897,7 @@ public class MainActivity extends AppCompatActivity
 
     private void parseSimilarNews(List newsList) {
 
-        if(newsList == null)
-        {
+        if (newsList == null) {
             return;
         }
         for (int i = 0; i < newsList.size(); i++) {
@@ -1016,22 +905,22 @@ public class MainActivity extends AppCompatActivity
             News news = (News) newsList.get(i);
             String tempId = news.getSimilar_news();
             tempId = tempId.replaceAll("L", "");
-            ArrayList<String> similarNewsIds  = new ArrayList<String>();
+            ArrayList<String> similarNewsIds = new ArrayList<String>();
             try {
 
                 JSONArray strArray = new JSONArray(tempId);
-                for (int j = 0; j <strArray.length() ; j++) {
+                for (int j = 0; j < strArray.length(); j++) {
 
                     String id = strArray.getString(j);
                     similarNewsIds.add(id);
                 }
             } catch (JSONException e) {
 
-               Log.e(MainActivity.class.getSimpleName(), e.getMessage() + e.getCause());
+                Log.e(MainActivity.class.getSimpleName(), e.getMessage() + e.getCause());
 
             }
             news.setSimilarNewsIds(similarNewsIds);
-            }
+        }
     }
 
 
@@ -1045,10 +934,10 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
+
     private void parseSimilarArticle(List articleList) {
 
-        if(articleList == null)
-        {
+        if (articleList == null) {
             return;
         }
         for (int i = 0; i < articleList.size(); i++) {
@@ -1056,11 +945,11 @@ public class MainActivity extends AppCompatActivity
             Articles article = (Articles) articleList.get(i);
             String tempId = article.getSimilar_articles();
             tempId = tempId.replaceAll("L", "");
-            ArrayList<String> similarArticlesIds  = new ArrayList<String>();
+            ArrayList<String> similarArticlesIds = new ArrayList<String>();
             try {
 
                 JSONArray strArray = new JSONArray(tempId);
-                for (int j = 0; j <strArray.length() ; j++) {
+                for (int j = 0; j < strArray.length(); j++) {
 
                     String id = strArray.getString(j);
                     similarArticlesIds.add(id);
@@ -1073,9 +962,9 @@ public class MainActivity extends AppCompatActivity
             article.setSimilarArticlesIds(similarArticlesIds);
         }
     }
+
     public static String GetPersonalizedMessage(String tag) {
-        switch (tag)
-        {
+        switch (tag) {
             case Constants.TAG_CREATE_USER:
                 return "Creating a user...";
             case Constants.TAG_LOAD_STREAM:
@@ -1117,15 +1006,11 @@ public class MainActivity extends AppCompatActivity
         return null;
     }
 
-    private void mUpdateHome(String response)
-    {
-        try
-        {
+    private void mUpdateHome(String response) {
+        try {
             List<Widget> widgets = JSON.std.listOfFrom(Widget.class, extractResults(response));
             mDisplayFragment(WidgetListFragment.newInstance(new ArrayList<>(widgets)), false, Constants.TAG_FRAGMENT_WIDGET_LIST);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
@@ -1146,12 +1031,13 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
-    private void mUpdateAppliedCourses(String response , String extraTag, String tabPosition) {
-         if(extraTag == null ||tabPosition == null) return;
+
+    private void mUpdateAppliedCourses(String response, String extraTag, String tabPosition) {
+        if (extraTag == null || tabPosition == null) return;
 
         try {
             if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
-                ((InstituteDetailFragment) currentFragment).updateAppliedCourses(response, Integer.parseInt(extraTag),Integer.parseInt(tabPosition));
+                ((InstituteDetailFragment) currentFragment).updateAppliedCourses(response, Integer.parseInt(extraTag), Integer.parseInt(tabPosition));
             }
 
         } catch (Exception e) {
@@ -1220,12 +1106,13 @@ public class MainActivity extends AppCompatActivity
                 .setCancelable(false)
                 .show();
     }
+
     @Override
-    public void onStreamUpdated(String uri , String streamName) {
+    public void onStreamUpdated(String uri, String streamName) {
 
         getSupportFragmentManager().popBackStack();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
-        if(fragment == null)
+        if (fragment == null)
             mDisplayFragment(ProfileFragment.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
         else {
             if (fragment instanceof ProfileFragment) {
@@ -1237,8 +1124,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void mOnCourseLevelSelected(int level, String streamUri)
-    {
+    private void mOnCourseLevelSelected(int level, String streamUri) {
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
 
         String levelURI = Constants.BASE_URL + "level/" + (level + 1) + "/";
@@ -1249,9 +1135,9 @@ public class MainActivity extends AppCompatActivity
         hashMap.put("status", user.getPref().name().toLowerCase());
         hashMap.put("stream", streamUri);
         hashMap.put("user", user.getResource_uri());
-        hashMap.put("level",levelURI);
+        hashMap.put("level", levelURI);
 
-        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + levelURI +  "#" + streamUri, Constants.BASE_URL + "preferences/", hashMap);
+        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + levelURI + "#" + streamUri, Constants.BASE_URL + "preferences/", hashMap);
 
         this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
     }
@@ -1263,19 +1149,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onInstituteLikedDisliked(int position, int liked)
-    {
+    public void onInstituteLikedDisliked(int position, int liked) {
         Institute institute = institutes.get(position);
-        if (institute.getCurrent_user_vote_type() == Constants.NEITHER_LIKE_NOR_DISLIKE)
-        {
+        if (institute.getCurrent_user_vote_type() == Constants.NEITHER_LIKE_NOR_DISLIKE) {
             //neither liked nor disliked case
             if (liked == Constants.LIKE_THING)
                 this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getResource_uri() + "upvote/", null, Request.Method.POST);
             else
                 this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getResource_uri() + "downvote/", null, Request.Method.POST);
-        }
-        else if (institute.getCurrent_user_vote_type() != Constants.NEITHER_LIKE_NOR_DISLIKE && liked != Constants.NEITHER_LIKE_NOR_DISLIKE)
-        {
+        } else if (institute.getCurrent_user_vote_type() != Constants.NEITHER_LIKE_NOR_DISLIKE && liked != Constants.NEITHER_LIKE_NOR_DISLIKE) {
             //either already liked or disliked case
             if (liked == Constants.LIKE_THING)
                 this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, institute.getResource_uri() + "upvote/", null, Request.Method.POST);
@@ -1285,10 +1167,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFilterButtonClicked()
-    {
-        if (this.mFilters != "")
-        {
+    public void onFilterButtonClicked() {
+        if (this.mFilters != "") {
             updateFilterList(this.mFilters);
 
             //mDisplayFragment(FilterFragment.newInstance(mFolderList), false);
@@ -1319,7 +1199,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onCourseApplied(int position ,int tabPosition ,InstituteCourse instituteCourse) {
+    public void onCourseApplied(int position, int tabPosition, InstituteCourse instituteCourse) {
 
         HashMap<String, String> map = new HashMap<>();
         /*SharedPreferences sp = getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
@@ -1329,39 +1209,35 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }*/
-        if(user != null)
-        {
+        if (user != null) {
             map.put("name", user.getName());
             map.put("email", user.getEmail());
         }
 
-        TelephonyManager tMgr = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String mPhoneNumber = tMgr.getLine1Number();
-        if(mPhoneNumber != null) {
+        if (mPhoneNumber != null) {
             map.put("phone_no", mPhoneNumber);
         }
 
-        map.put("institute_course", ""+instituteCourse.getId());
-        if(mInstitute != null)
-        {
-            map.put("institute",""+mInstitute.getId());
+        map.put("institute_course", "" + instituteCourse.getId());
+        if (mInstitute != null) {
+            map.put("institute", "" + mInstitute.getId());
         }
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
-        map.put("year_of_admission",""+year);
+        map.put("year_of_admission", "" + year);
 
         String URL = Constants.BASE_URL + "lms/";
-        instituteCourseId = ""+instituteCourse.getId();
-        this.mMakeNetworkCall(Constants.TAG_APPLIED_COURSE+"#" + position + "#" + tabPosition, URL, map, Request.Method.POST);
+        instituteCourseId = "" + instituteCourse.getId();
+        this.mMakeNetworkCall(Constants.TAG_APPLIED_COURSE + "#" + position + "#" + tabPosition, URL, map, Request.Method.POST);
     }
 
     @Override
-    public void onWidgetSelected(Widget widget)
-    {
+    public void onWidgetSelected(Widget widget) {
         currentTitle = widget.getTitle();
 
-        if (widget.getType().equals(Constants.WIDGET_INSTITUTES))
-        {
+        if (widget.getType().equals(Constants.WIDGET_INSTITUTES)) {
             this.mFilterKeywords = this.mGetTheFilters();
 
             this.mMakeNetworkCall(widget.getType(), widget.getAction_url(), this.mFilterKeywords);
@@ -1369,8 +1245,7 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        switch (widget.getAction_method())
-        {
+        switch (widget.getAction_method()) {
             case Constants.METHOD_GET:
                 this.mMakeNetworkCall(widget.getType(), widget.getAction_url(), null);
                 break;
@@ -1380,24 +1255,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private Map mGetTheFilters()
-    {
-        Map<String,String> map = new HashMap<>();
+    private Map mGetTheFilters() {
+        Map<String, String> map = new HashMap<>();
 
         SharedPreferences sp = getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
 
         String value = sp.getString(Constants.SELECTED_FILTERS, null);
 
-        if (value != null && value != "")
-        {
+        if (value != null && value != "") {
             //split the string to create key-value pairs
-            String[] keyValuePairs = value.replaceAll("\\{", "").replaceAll("\\}","").split(",");
+            String[] keyValuePairs = value.replaceAll("\\{", "").replaceAll("\\}", "").split(",");
 
             //iterate over the pairs
-            for(String pair : keyValuePairs)
-            {
-                if (pair != "" && pair != null)
-                {
+            for (String pair : keyValuePairs) {
+                if (pair != "" && pair != null) {
                     //split the pairs to get key and value
                     String[] entry = pair.split("=");
                     //add them to the hashmap and trim whitespaces
@@ -1422,19 +1293,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onNewsSelected(News news , boolean addToBackstack) {
+    public void onNewsSelected(News news, boolean addToBackstack) {
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_NEWS);
-            if (fragment == null)
-                mDisplayFragment(NewsDetailFragment.newInstance(news, newsList), addToBackstack, Constants.TAG_FRAGMENT_NEWS);
-            else {
-                if (fragment instanceof NewsDetailFragment) {
-                    ((NewsDetailFragment) fragment).updateNews(news);
-                }
-
-                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_NEWS);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_NEWS);
+        if (fragment == null)
+            mDisplayFragment(NewsDetailFragment.newInstance(news, newsList), addToBackstack, Constants.TAG_FRAGMENT_NEWS);
+        else {
+            if (fragment instanceof NewsDetailFragment) {
+                ((NewsDetailFragment) fragment).updateNews(news);
             }
+
+            this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_NEWS);
+        }
     }
 
     @Override
@@ -1467,12 +1338,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFilterApplied()
-    {
+    public void onFilterApplied() {
         int count = 0;
 
-        for (Folder f : this.mFolderList)
-        {
+        for (Folder f : this.mFolderList) {
             for (Facet ft : f.getFacets())
                 if (ft.isSelected() == 1)
                     this.mFilterKeywords.put("tag_uris[" + (count++) + "]", ft.getTag());
@@ -1501,14 +1370,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFilterCanceled(boolean clearAll)
-    {
+    public void onFilterCanceled(boolean clearAll) {
         onBackPressed();
 
-        if (clearAll)
-        {
-            for (Folder f : this.mFolderList)
-            {
+        if (clearAll) {
+            for (Folder f : this.mFolderList) {
                 for (Facet ft : f.getFacets())
                     ft.deselect();
             }
@@ -1521,12 +1387,9 @@ public class MainActivity extends AppCompatActivity
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
 
             this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", null);
-        }
-        else
-        {
+        } else {
             filterCount = 0;
-            for (Folder f : this.mFolderList)
-            {
+            for (Folder f : this.mFolderList) {
                 for (Facet ft : f.getFacets())
                     if (ft.isSelected() == 1)
                         filterCount++;
@@ -1561,42 +1424,36 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void mMakeNetworkCall(String tag, String url, Map<String, String> params, int method)
-    {
+    private void mMakeNetworkCall(String tag, String url, Map<String, String> params, int method) {
         this.showProgress(tag);
         this.networkUtils.networkData(tag, url, params, method);
     }
 
-    private void mMakeNetworkCall(String tag, String url, Map<String, String> params)
-    {
+    private void mMakeNetworkCall(String tag, String url, Map<String, String> params) {
         this.showProgress(tag);
         this.networkUtils.networkData(tag, url, params);
     }
 
-    private void mMakeJsonObjectNetworkCall(String tag, String url, JSONObject params, int method)
-    {
+    private void mMakeJsonObjectNetworkCall(String tag, String url, JSONObject params, int method) {
         this.showProgress(tag);
         this.networkUtils.networkDataWithObjectParam(tag, url, params, method);
     }
 
-    private void showProgress(String tag)
-    {
+    private void showProgress(String tag) {
         String[] tags = tag.split("#");
 
         String message = MainActivity.GetPersonalizedMessage(tags[0]);
-        if (message != null && ! (this.currentFragment instanceof SplashFragment))
+        if (message != null && !(this.currentFragment instanceof SplashFragment))
             showProgressDialog(message);
     }
 
     @Override
-    public void onQnAQuestionSelected(QnAQuestions qnaQuestion)
-    {
+    public void onQnAQuestionSelected(QnAQuestions qnaQuestion) {
         this.mDisplayFragment(new QnAQuestionsAndAnswersFragment().newInstance(qnaQuestion), true, Constants.TAG_FRAGMENT_QNA_ANSWERS_LIST);
     }
 
     @Override
-    public void onQnAQuestionVote(String resourceURI, int voteType, int position)
-    {
+    public void onQnAQuestionVote(String resourceURI, int voteType, int position) {
         Toast.makeText(MainActivity.this, resourceURI + " " + voteType, Toast.LENGTH_SHORT).show();
         if (voteType == Constants.LIKE_THING)
             this.mMakeNetworkCall(Constants.TAG_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
@@ -1605,8 +1462,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onQnAAnswerVote(String resourceURI, int voteType, int answerPosition, int questionPosition)
-    {
+    public void onQnAAnswerVote(String resourceURI, int voteType, int answerPosition, int questionPosition) {
         if (voteType == Constants.LIKE_THING)
             this.mMakeNetworkCall(Constants.TAG_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
         else
@@ -1614,27 +1470,22 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onQnAAnswerSubmitted(String questionURI, String answerText, int questionIndex, int answerIndex)
-    {
+    public void onQnAAnswerSubmitted(String questionURI, String answerText, int questionIndex, int answerIndex) {
         HashMap<String, String> params = new HashMap<>();
         params.put("answer_text", answerText);
         this.mMakeNetworkCall(Constants.TAG_QNA_ANSWER_SUBMITTED + "#" + String.valueOf(questionIndex) + "#" + String.valueOf(answerIndex), questionURI + "answer/", params, Request.Method.POST);
     }
 
-    private void mQnAQuestionVoteUpdated(int questionIndex, int voteType)
-    {
+    private void mQnAQuestionVoteUpdated(int questionIndex, int voteType) {
         ((QnAQuestionsAndAnswersFragment) currentFragment).onVotingFeedback(questionIndex, -1, voteType);
     }
 
-    private void mQnAAnswerVoteUpdated(int questionIndex, int answerIndex, int voteType)
-    {
+    private void mQnAAnswerVoteUpdated(int questionIndex, int answerIndex, int voteType) {
         ((QnAQuestionsAndAnswersFragment) currentFragment).onVotingFeedback(questionIndex, answerIndex, voteType);
     }
 
-    private void mOnAnswerAdded(String response, int questionIndex, int index)
-    {
-        try
-        {
+    private void mOnAnswerAdded(String response, int questionIndex, int index) {
+        try {
             JSONObject ans = new JSONObject(response);
 
             QnAAnswers qnaAnswer = new QnAAnswers();
@@ -1655,39 +1506,31 @@ public class MainActivity extends AppCompatActivity
                 ((QnAQuestionsAndAnswersFragment) currentFragment).answerAdded(qnaAnswer);
             else if (currentFragment instanceof InstituteQnAFragment)
                 ((InstituteQnAFragment) currentFragment).instituteQnAAnswerUpdated(qnaAnswer);
-        }
-
-        catch (JSONException e)
-        {
+        } catch (JSONException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
     @Override
-    public void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position, int commentsCount)
-    {
+    public void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position, int commentsCount) {
         this.mMakeNetworkCall(Constants.TAG_LOAD_MY_FB + "#" + String.valueOf(position) + "#" + String.valueOf(commentsCount), myFutureBuddiesEnumeration.getResource_uri(), null, Request.Method.GET);
     }
 
     @Override
-    public void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex)
-    {
+    public void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex) {
         HashMap<String, String> params = new HashMap<>();
         params.put("comment", commentText);
         this.mMakeNetworkCall(Constants.TAG_MY_FB_COMMENT_SUBMITTED + "#" + String.valueOf(myFbIndex) + "#" + String.valueOf(myFbCommentIndex), myFbURI + "comment/", params, Request.Method.POST);
     }
 
     @Override
-    public void onMyFBUpdated(int commentsSize, int myFbIndex)
-    {
+    public void onMyFBUpdated(int commentsSize, int myFbIndex) {
         if (currentFragment instanceof MyFutureBuddiesEnumerationFragment)
             ((MyFutureBuddiesEnumerationFragment) currentFragment).updateEnumerationList(commentsSize, myFbIndex);
     }
 
-    private void mOnMyFBCommentAdded(String response, int fbIndex, int index)
-    {
-        try
-        {
+    private void mOnMyFBCommentAdded(String response, int fbIndex, int index) {
+        try {
             JSONObject comment = new JSONObject(response);
 
             MyFutureBuddyComment fbComment = new MyFutureBuddyComment();
@@ -1702,18 +1545,13 @@ public class MainActivity extends AppCompatActivity
 
             if (currentFragment instanceof MyFutureBuddiesFragment)
                 ((MyFutureBuddiesFragment) currentFragment).commentAdded(fbComment);
-        }
-
-        catch (JSONException e)
-        {
+        } catch (JSONException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    private void mInstituteQnAQuestionAdded(String response)
-    {
-        try
-        {
+    private void mInstituteQnAQuestionAdded(String response) {
+        try {
             ArrayList<String> tagArrayList = new ArrayList<>();
             ArrayList<QnAAnswers> qnaAnswers = new ArrayList<>();
 
@@ -1735,8 +1573,7 @@ public class MainActivity extends AppCompatActivity
 
             JSONArray answerList = qns.getJSONArray("answer_set");
 
-            for (int j = 0; j < answerList.length(); j++)
-            {
+            for (int j = 0; j < answerList.length(); j++) {
                 JSONObject ans = answerList.getJSONObject(j);
 
                 QnAAnswers qnaAnswer = new QnAAnswers();
@@ -1758,8 +1595,7 @@ public class MainActivity extends AppCompatActivity
 
             JSONArray tagsList = qns.getJSONArray("tags");
 
-            for(int k = 0; k < tagsList.length(); k++)
-            {
+            for (int k = 0; k < tagsList.length(); k++) {
                 tagArrayList.add(tagsList.getString(k));
             }
 
@@ -1770,23 +1606,18 @@ public class MainActivity extends AppCompatActivity
             if (currentFragment instanceof InstituteDetailFragment)
                 ((InstituteDetailFragment) currentFragment).instituteQnAQuestionAdded(qnaQuestion);
 
-        }
-        catch (JSONException e)
-        {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void mInstituteQnAUpdated(String response)
-    {
+    private void mInstituteQnAUpdated(String response) {
         if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
             ((InstituteDetailFragment) currentFragment).updateInstituteQnAQuestions(response);
     }
 
-    public ArrayList<QnAQuestions> parseAndReturnQnAList(String qnaString)
-    {
-        try
-        {
+    public ArrayList<QnAQuestions> parseAndReturnQnAList(String qnaString) {
+        try {
             mQnAQuestions.clear();
 
             QnAQuestions qnaQuestion;
@@ -1795,8 +1626,7 @@ public class MainActivity extends AppCompatActivity
             JSONObject qnaResult = new JSONObject(qnaString);
             JSONArray resultArray = qnaResult.getJSONArray("results");
 
-            for(int i = 0; i < resultArray.length(); i++)
-            {
+            for (int i = 0; i < resultArray.length(); i++) {
                 qnaQuestion = new QnAQuestions();
                 ArrayList<QnAAnswers> qnaAnswers = new ArrayList<>();
 
@@ -1816,8 +1646,7 @@ public class MainActivity extends AppCompatActivity
 
                 JSONArray answerList = qns.getJSONArray("answer_set");
 
-                for (int j = 0; j < answerList.length(); j++)
-                {
+                for (int j = 0; j < answerList.length(); j++) {
                     JSONObject ans = answerList.getJSONObject(j);
 
                     QnAAnswers qnaAnswer = new QnAAnswers();
@@ -1839,8 +1668,7 @@ public class MainActivity extends AppCompatActivity
 
                 JSONArray tagsList = qns.getJSONArray("tags");
 
-                for(int k = 0; k < tagsList.length(); k++)
-                {
+                for (int k = 0; k < tagsList.length(); k++) {
                     tagArrayList.add(tagsList.getString(k));
                 }
 
@@ -1849,32 +1677,38 @@ public class MainActivity extends AppCompatActivity
 
                 mQnAQuestions.add(qnaQuestion);
             }
-        }
-        catch(JSONException e)
-        {
+        } catch (JSONException e) {
             Log.e(MainActivity.class.getSimpleName(), e.getMessage() + e.getCause());
-        }
-        finally
-        {
+        } finally {
             return mQnAQuestions;
         }
     }
+
     @Override
-     public void onProfileUpdated(  HashMap<String, String> hashMap) {
+    public void onProfileUpdated(HashMap<String, String> hashMap) {
 
         int count = getSupportFragmentManager().getBackStackEntryCount();
         for (int i = 0; i < count; i++) {
             getSupportFragmentManager().popBackStack();
         }
-        if(hashMap == null)return;
-        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + hashMap.get("level") +  "#" + hashMap.get("stream"), Constants.BASE_URL + "preferences/", hashMap);
+        if (hashMap == null) return;
+        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + hashMap.get("level") + "#" + hashMap.get("stream"), Constants.BASE_URL + "preferences/", hashMap);
 
-     }
+    }
 
-     @Override
-     public void onStreamClicked() {
+    @Override
+    public void onStreamClicked() {
 
-         this.mMakeNetworkCall(Constants.TAG_UPDATE_STREAM, Constants.BASE_URL + "streams/", null);
-     }
+        this.mMakeNetworkCall(Constants.TAG_UPDATE_STREAM, Constants.BASE_URL + "streams/", null);
+    }
 
+   /* @Override
+    public void onBackPressed() {
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        if (count < 1) {
+            finish();
+        }
+        getFragmentManager().popBackStack();
+
+    }*/
 }
