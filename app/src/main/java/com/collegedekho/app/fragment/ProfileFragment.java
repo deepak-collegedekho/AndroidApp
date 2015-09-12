@@ -24,15 +24,19 @@ import java.util.HashMap;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
 
-    private static final String ARG_NAME = "name";
-    private static final String ARG_EMAIL = "email";
-    private static final String ARG_STREAM = "stream";
-    private static final String ARG_LEVEL = "level";
+    private static final String ARG_NAME        = "name";
+    private static final String ARG_EMAIL       = "email";
+    private static final String ARG_STREAM_URI  = "stream_uri";
+    private static final String ARG_LEVEL_URI   = "level_uri";
+    private static final String ARG_STREAM_NAME = "stream";
+    private static final String ARG_LEVEL_NAME  = "level";
 
     private String mName;
     private String mEmail;
     private String mStreamURI;
     private String mLevelURI;
+    private String mStreamName;
+    private String mLevelName;
 
     private EditText mNameET;
     private EditText mEmailET;
@@ -50,8 +54,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         Bundle args = new Bundle();
         args.putString(ARG_NAME, user.getName());
         args.putString(ARG_EMAIL, user.getEmail());
-        args.putString(ARG_STREAM, user.getStream());
-        args.putString(ARG_LEVEL, user.getLevel());
+        args.putString(ARG_STREAM_URI, user.getStream());
+        args.putString(ARG_LEVEL_URI, user.getLevel());
+        args.putString(ARG_STREAM_NAME , user.getStream_name());
+        args.putString(ARG_LEVEL_NAME, user.getLevel_name());
         fragment.setArguments(args);
         return fragment;
 
@@ -61,10 +67,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.mName = getArguments().getString(ARG_NAME);
+            this.mName  = getArguments().getString(ARG_NAME);
             this.mEmail = getArguments().getString(ARG_EMAIL);
-            this.mStreamURI = getArguments().getString(ARG_STREAM);
-            this.mLevelURI = getArguments().getString(ARG_LEVEL);
+            this.mStreamURI     = getArguments().getString(ARG_STREAM_URI);
+            this.mLevelURI      = getArguments().getString(ARG_LEVEL_URI);
+            this.mStreamName    = getArguments().getString(ARG_STREAM_NAME);
+            this.mLevelName     = getArguments().getString(ARG_LEVEL_NAME);
         }
     }
 
@@ -79,8 +87,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         this.mNameET.setText(mName);
         this.mEmailET.setText(mEmail);
-        this.mStreamTV.setText(mStreamURI);
-        this.mLevelTV.setText(mLevelURI);
+        this.mStreamTV.setText(mStreamName);
+        this.mLevelTV.setText(mLevelName);
         TelephonyManager tMgr = (TelephonyManager)getActivity().getSystemService(Context.TELEPHONY_SERVICE);
         String mPhoneNumber = tMgr.getLine1Number();
         if(mPhoneNumber != null) {
@@ -135,7 +143,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             mLevelURI = Constants.BASE_URL + "level/" + (which + 1) + "/";
-                            mLevelTV.setText(mLevelURI);
+                            mLevelTV.setText(InstituteCourse.CourseLevel.getName(which));
                             dialog.dismiss();
                         }
                     })
@@ -155,10 +163,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void updateStream(String streamUri)
+    public void updateStream(String streamUri , String streamName)
     {
         this.mStreamURI = streamUri;
-        mStreamTV.setText(mStreamURI);
+        this.mStreamName = streamName;
+        mStreamTV.setText(mStreamName);
     }
 
     public interface  onProfileUpdateListener

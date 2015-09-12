@@ -831,6 +831,8 @@ public class MainActivity extends AppCompatActivity
     {
         //Retrieve token from pref to save it across the pref updates
         String token = user.getToken();
+       // String streamName = user.getStream_name();
+       // String levelName = user.getLevel_name();
 
         //TODO: May be we can make a new pref entry for token
         try
@@ -1219,7 +1221,7 @@ public class MainActivity extends AppCompatActivity
                 .show();
     }
     @Override
-    public void onStreamUpdated(String uri) {
+    public void onStreamUpdated(String uri , String streamName) {
 
         getSupportFragmentManager().popBackStack();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
@@ -1227,7 +1229,7 @@ public class MainActivity extends AppCompatActivity
             mDisplayFragment(ProfileFragment.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
         else {
             if (fragment instanceof ProfileFragment) {
-                ((ProfileFragment) fragment).updateStream(uri);
+                ((ProfileFragment) fragment).updateStream(uri, streamName);
             }
             mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
         }

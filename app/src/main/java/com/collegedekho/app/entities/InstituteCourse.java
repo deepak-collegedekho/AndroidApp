@@ -121,12 +121,18 @@ public class InstituteCourse implements Parcelable {
     public enum CourseLevel {
         UNDER_GRADUATE, POST_GRADUATE, DIPLOMA, PHD, OTHERS;
 
-        public static String[] getValues() {
+        public static String[] getValues()
+        {
             String[] x = new String[values().length];
+
             for (int i = 0; i < x.length; i++) {
                 x[i] = values()[i].name().replace("_", " ");
             }
             return x;
+        }
+        public static String getName(int index)
+        {
+            return  values()[index].name().replace("_", " ");
         }
     }
 }

@@ -55,9 +55,9 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
         return rootView;
     }
 
-    public void onStreamUpdated(String uri) {
+    public void onStreamUpdated(String uri , String name) {
         if (mListener != null) {
-            mListener.onStreamUpdated(uri);
+            mListener.onStreamUpdated(uri, name);
         }
     }
     public void onStreamSelected(String uri) {
@@ -85,8 +85,10 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if(isStreamUpdate)
-            onStreamUpdated(streams.get(position).resourceUri);
+        if(isStreamUpdate) {
+            Stream streamObj =  streams.get(position);
+            onStreamUpdated(streamObj.resourceUri, streamObj.getName() );
+        }
         else
         onStreamSelected(streams.get(position).resourceUri);
     }
@@ -95,7 +97,7 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
     public interface OnStreamInteractionListener {
         void onStreamSelected(String uri);
 
-        void onStreamUpdated(String uri);
+        void onStreamUpdated(String uri , String streamName);
     }
 
 
