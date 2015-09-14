@@ -61,7 +61,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         args.putString(ARG_EMAIL, user.getEmail());
         args.putString(ARG_STREAM_URI, user.getStream());
         args.putString(ARG_LEVEL_URI, user.getLevel());
-        args.putString(ARG_STREAM_NAME , user.getStream_name());
+        args.putString(ARG_STREAM_NAME, user.getStream_name());
         args.putString(ARG_LEVEL_NAME, user.getLevel_name());
         args.putString(ARG_PHONE, user.getPhone());
         fragment.setArguments(args);
@@ -130,7 +130,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private void mProfileUpdate(HashMap<String, String> hashMap , String streamName, String levelName) {
                  if(mListener!=null) {
-                     this.mListener.onProfileUpdated(hashMap , streamName, levelName);
+                     this.mListener.onProfileUpdated(hashMap, streamName, levelName);
              }
     }
 
@@ -154,7 +154,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             mLevelURI = Constants.BASE_URL + "level/" + (which + 1) + "/";
-                            mLevelTV.setText(InstituteCourse.CourseLevel.getName(which)+" (Change)");
+                            mLevelName = InstituteCourse.CourseLevel.getName(which);
+                            mLevelTV.setText(mLevelName+" (Change)");
                             dialog.dismiss();
                         }
                     })
@@ -171,7 +172,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             hashMap.put("phone_no", mPhoneET.getText().toString());
             hashMap.put("stream", mStreamURI);
             hashMap.put("level",mLevelURI);
-            mProfileUpdate(hashMap, mStreamTV.getText().toString(), mLevelTV.getText().toString());
+            mProfileUpdate(hashMap, mStreamName, mLevelName);
         }
     }
 
