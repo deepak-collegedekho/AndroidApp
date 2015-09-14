@@ -91,18 +91,15 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         this.mPhoneET =  (EditText) rootView.findViewById(R.id.profile_contact);
         this.mStreamTV = (TextView) rootView.findViewById(R.id.profile_streams);
         this.mLevelTV = (TextView) rootView.findViewById(R.id.profile_level);
-
-        this.mNameET.setText(mName);
+        if(mName.equalsIgnoreCase("Anonymous User"))
+        {
+            this.mNameET.setText("");
+        }else {
+            this.mNameET.setText(mName);
+        }
         this.mEmailET.setText(mEmail);
         this.mStreamTV.setText(mStreamName + " (Change)");
         this.mLevelTV.setText(mLevelName + " (Change)");
-
-       /* TelephonyManager tMgr = (TelephonyManager)getActivity().getSystemService(Context.TELEPHONY_SERVICE);
-        String mPhoneNumber = tMgr.getLine1Number();
-        if(mPhoneNumber != null) {
-         this.mPhoneET.setText(mPhoneNumber);
-        }*/
-
         this.mPhoneET.setText(mPhone);
 
         this.mStreamTV.setOnClickListener(this);
