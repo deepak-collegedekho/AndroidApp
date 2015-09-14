@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 public class StreamFragment extends Fragment implements AdapterView.OnItemClickListener {
     private static final String ARG_STREAMS = "streams";
+    private static final String ARG_STREAM_UPDATE = "stream_update";
 
     private ArrayList<Stream> streams;
 
@@ -32,8 +33,8 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
         StreamFragment streamFragment = new StreamFragment();
         Bundle b = new Bundle();
         b.putParcelableArrayList(ARG_STREAMS, streams);
+        b.putBoolean(ARG_STREAM_UPDATE, isForUpdate);
         streamFragment.setArguments(b);
-        isStreamUpdate = isForUpdate;
         return streamFragment;
     }
 
@@ -42,6 +43,7 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             streams = getArguments().getParcelableArrayList(ARG_STREAMS);
+            isStreamUpdate = getArguments().getBoolean(ARG_STREAM_UPDATE);
         }
     }
 
@@ -109,5 +111,10 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
 
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
+
+        if(mMainActivity.toolbar != null && !isStreamUpdate) {
+           mMainActivity.toolbar.setNavigationIcon(null);
+           mMainActivity.toolbar.setNavigationOnClickListener(null);
+        }
     }
 }

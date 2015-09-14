@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
 import android.util.Patterns;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,6 +92,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         this.mPhoneET =  (EditText) rootView.findViewById(R.id.profile_contact);
         this.mStreamTV = (TextView) rootView.findViewById(R.id.profile_streams);
         this.mLevelTV = (TextView) rootView.findViewById(R.id.profile_level);
+        mSetEnterKeyListener(mPhoneET);
         if(mName.equalsIgnoreCase("Anonymous User"))
         {
             this.mNameET.setText("");
@@ -125,9 +127,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
-    private void mProfileUpdate(HashMap<String, String> hashMap , String streamName, String levelName) {
+    private void mProfileUpdate() {
+        HashMap<String, String> hashMap = new HashMap<>();
+
+        hashMap.put("name", mNameET.getText().toString());
+        hashMap.put("email",mEmailET.getText().toString());
+        hashMap.put("phone_no", mPhoneET.getText().toString());
+        hashMap.put("stream", mStreamURI);
+        hashMap.put("level",mLevelURI);
                  if(mListener!=null) {
-                     this.mListener.onProfileUpdated(hashMap, streamName, levelName);
+                     this.mListener.onProfileUpdated(hashMap, mStreamName, mLevelName);
              }
     }
 
@@ -161,15 +170,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         }
         else if(view.getId() == R.id.profile_update)
         {
-
-            HashMap<String, String> hashMap = new HashMap<>();
-
-            hashMap.put("name", mNameET.getText().toString());
-            hashMap.put("email",mEmailET.getText().toString());
-            hashMap.put("phone_no", mPhoneET.getText().toString());
-            hashMap.put("stream", mStreamURI);
-            hashMap.put("level",mLevelURI);
-            mProfileUpdate(hashMap, mStreamName, mLevelName);
+            mProfileUpdate();
         }
     }
 
@@ -195,7 +196,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
     }
-
+    private void mSetEnterKeyListener(EditText editText)
+    {
+        editText.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    mProfileUpdate();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
    /* private static boolean isValidEmail(CharSequence target) {
         return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }

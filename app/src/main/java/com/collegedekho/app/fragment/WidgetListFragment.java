@@ -104,6 +104,11 @@ public class WidgetListFragment extends Fragment implements AdapterView.OnItemCl
 
         if (this.mMainActivity != null)
             this.mMainActivity.currentFragment = this;
+
+        if(this.mMainActivity.toolbar != null) {
+            this.mMainActivity.toolbar.setNavigationIcon(null);
+            this.mMainActivity.toolbar.setNavigationOnClickListener(null);
+        }
     }
 
 

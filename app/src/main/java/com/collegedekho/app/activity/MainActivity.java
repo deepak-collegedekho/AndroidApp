@@ -19,6 +19,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -124,7 +126,7 @@ public class MainActivity extends AppCompatActivity
     int filterCount = 0;
     String mFilters = "";
     Map<String, String> mFilterKeywords = new HashMap<>();
-    Toolbar toolbar;
+    public Toolbar toolbar;
     private ArrayList<Folder> mFolderList;
     private List<News> newsList;
     private List<Articles> articlesList;
@@ -285,6 +287,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        // to hide the keyboard if visible
+        if(this.getCurrentFocus() != null && this.getCurrentFocus() instanceof EditText){
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+        }
+
         if (currentFragment instanceof ProfileFragment || currentFragment instanceof StreamFragment) {
             menu.getItem(0).setVisible(true);
             menu.getItem(1).setVisible(false);
@@ -300,11 +309,13 @@ public class MainActivity extends AppCompatActivity
         return super.onPrepareOptionsMenu(menu);
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
         if (id == R.id.action_profile) {
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
@@ -316,7 +327,7 @@ public class MainActivity extends AppCompatActivity
             }
             return true;
         }
-        else if(id == R.id.action_home) {
+        else if (id == R.id.action_home) {
                 int count = getSupportFragmentManager().getBackStackEntryCount();
                 for (int i = 0; i < count; i++) {
                     getSupportFragmentManager().popBackStack();
@@ -581,6 +592,15 @@ public class MainActivity extends AppCompatActivity
                 toolbar.setVisibility(View.VISIBLE);
 
             }
+            if(currentFragment instanceof  WidgetListFragment || currentFragment instanceof  HomeFragment)
+            {
+                toolbar.setNavigationIcon(0);
+                toolbar.setNavigationOnClickListener(null);
+            }
+            else
+            {
+                mShowNavigationBackListener();
+            }
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
         }
@@ -641,7 +661,6 @@ public class MainActivity extends AppCompatActivity
                 toolbar.setVisibility(View.VISIBLE);
                 // show menu items and navigation back
                 setSupportActionBar(toolbar);
-
                 break;
             case Constants.TAG_POST_QUESTION:
                 this.mInstituteQnAQuestionAdded(response);
@@ -1742,6 +1761,21 @@ public class MainActivity extends AppCompatActivity
     public void onStreamClicked() {
 
         this.mMakeNetworkCall(Constants.TAG_UPDATE_STREAM, Constants.BASE_URL + "streams/", null);
+    }
+
+    private void mShowNavigationBackListener()
+    {
+        toolbar.setNavigationIcon(R.drawable.back);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int count = getSupportFragmentManager().getBackStackEntryCount();
+                if (count >= 1) {
+                    getSupportFragmentManager().popBackStack();
+                }
+
+            }
+        });
     }
 
 }
