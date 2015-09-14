@@ -7,15 +7,18 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.InstituteCourse;
+import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.Constants;
 
@@ -30,6 +33,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private static final String ARG_LEVEL_URI   = "level_uri";
     private static final String ARG_STREAM_NAME = "stream";
     private static final String ARG_LEVEL_NAME  = "level";
+    private static final String ARG_PHONE  = "phone";
 
     private String mName;
     private String mEmail;
@@ -37,6 +41,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private String mLevelURI;
     private String mStreamName;
     private String mLevelName;
+    private String mPhone;
 
     private EditText mNameET;
     private EditText mEmailET;
@@ -58,6 +63,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         args.putString(ARG_LEVEL_URI, user.getLevel());
         args.putString(ARG_STREAM_NAME , user.getStream_name());
         args.putString(ARG_LEVEL_NAME, user.getLevel_name());
+        args.putString(ARG_PHONE, user.getPhone());
         fragment.setArguments(args);
         return fragment;
 
@@ -73,6 +79,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             this.mLevelURI      = getArguments().getString(ARG_LEVEL_URI);
             this.mStreamName    = getArguments().getString(ARG_STREAM_NAME);
             this.mLevelName     = getArguments().getString(ARG_LEVEL_NAME);
+            this.mPhone     = getArguments().getString(ARG_PHONE);
         }
     }
 
@@ -87,13 +94,17 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         this.mNameET.setText(mName);
         this.mEmailET.setText(mEmail);
-        this.mStreamTV.setText(mStreamName);
-        this.mLevelTV.setText(mLevelName);
-        TelephonyManager tMgr = (TelephonyManager)getActivity().getSystemService(Context.TELEPHONY_SERVICE);
+        this.mStreamTV.setText(mStreamName + " (Change)");
+        this.mLevelTV.setText(mLevelName + " (Change)");
+
+       /* TelephonyManager tMgr = (TelephonyManager)getActivity().getSystemService(Context.TELEPHONY_SERVICE);
         String mPhoneNumber = tMgr.getLine1Number();
         if(mPhoneNumber != null) {
          this.mPhoneET.setText(mPhoneNumber);
-        }
+        }*/
+
+        this.mPhoneET.setText(mPhone);
+
         this.mStreamTV.setOnClickListener(this);
         this.mLevelTV.setOnClickListener(this);
         ((TextView)rootView.findViewById(R.id.profile_update)).setOnClickListener(this);
@@ -117,9 +128,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
-    private void mProfileUpdate(HashMap<String, String> hashMap) {
+    private void mProfileUpdate(HashMap<String, String> hashMap , String streamName, String levelName) {
                  if(mListener!=null) {
-                     this.mListener.onProfileUpdated(hashMap);
+                     this.mListener.onProfileUpdated(hashMap , streamName, levelName);
              }
     }
 
@@ -143,7 +154,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             mLevelURI = Constants.BASE_URL + "level/" + (which + 1) + "/";
-                            mLevelTV.setText(InstituteCourse.CourseLevel.getName(which));
+                            mLevelTV.setText(InstituteCourse.CourseLevel.getName(which)+" (Change)");
                             dialog.dismiss();
                         }
                     })
@@ -152,27 +163,28 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         }
         else if(view.getId() == R.id.profile_update)
         {
+
             HashMap<String, String> hashMap = new HashMap<>();
 
             hashMap.put("name", mNameET.getText().toString());
             hashMap.put("email",mEmailET.getText().toString());
-            hashMap.put("phone", mPhoneET.getText().toString());
+            hashMap.put("phone_no", mPhoneET.getText().toString());
             hashMap.put("stream", mStreamURI);
             hashMap.put("level",mLevelURI);
-            mProfileUpdate(hashMap);
+            mProfileUpdate(hashMap, mStreamTV.getText().toString(), mLevelTV.getText().toString());
         }
     }
 
-    public void updateStream(String streamUri , String streamName)
+    public void updateStream(String streamUri , String streamName )
     {
         this.mStreamURI = streamUri;
         this.mStreamName = streamName;
-        mStreamTV.setText(mStreamName);
+        mStreamTV.setText(mStreamName+" (Change)");
     }
 
     public interface  onProfileUpdateListener
     {
-       void  onProfileUpdated(  HashMap<String, String> hashMap);
+       void  onProfileUpdated(  HashMap<String, String> hashMap, String streamName, String levelName);
        void  onStreamClicked();
     }
 
@@ -186,4 +198,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             mMainActivity.currentFragment = this;
     }
 
+   /* private static boolean isValidEmail(CharSequence target) {
+        return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+
+    private static boolean isValidPhone(CharSequence target) {
+        return target != null && Patterns.PHONE.matcher(target).matches();
+    }*/
 }

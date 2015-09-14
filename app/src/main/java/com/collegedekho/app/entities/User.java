@@ -18,6 +18,7 @@ public class User
     private Prefs pref;
     private String stream;
     private String level;
+    private String phone;
     private String stream_name;
     private String level_name;
 
@@ -139,5 +140,13 @@ public class User
 
     public void setLevel_name(String level_name) {
         this.level_name = level_name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

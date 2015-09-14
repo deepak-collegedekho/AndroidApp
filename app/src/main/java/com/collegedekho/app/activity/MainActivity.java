@@ -288,13 +288,14 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment instanceof ProfileFragment || currentFragment instanceof StreamFragment) {
             menu.getItem(0).setVisible(true);
             menu.getItem(1).setVisible(false);
+
         } else if(currentFragment instanceof  WidgetListFragment) {
             menu.getItem(0).setVisible(false);
             menu.getItem(1).setVisible(true);
         }
         else {
             menu.getItem(0).setVisible(true);
-            menu.getItem(1).setVisible(true);//Title("Profile");
+            menu.getItem(1).setVisible(true);
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -307,15 +308,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.action_profile) {
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
-            if (fragment == null) {
+
+            if (fragment == null)
                 mDisplayFragment(ProfileFragment.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
-            } else {
-
-                int count = getSupportFragmentManager().getBackStackEntryCount();
-                for (int i = 0; i < count; i++) {
-                    getSupportFragmentManager().popBackStack();
-                }
-
+            else {
+                mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
             }
             return true;
         }
@@ -328,6 +325,7 @@ public class MainActivity extends AppCompatActivity
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     public void onHomeItemSelected(User.Prefs preference) {
@@ -641,7 +639,9 @@ public class MainActivity extends AppCompatActivity
                 //Show toolbar
                 toolbar = (Toolbar) findViewById(R.id.app_toolbar);
                 toolbar.setVisibility(View.VISIBLE);
+                // show menu items and navigation back
                 setSupportActionBar(toolbar);
+
                 break;
             case Constants.TAG_POST_QUESTION:
                 this.mInstituteQnAQuestionAdded(response);
@@ -744,18 +744,58 @@ public class MainActivity extends AppCompatActivity
                     this.mStreamAndCourseSelected(response, parentIndex, childIndex);
                 }
                 break;
+            case Constants.TAG_UPDATE_PREFRENCES:
+                if (tags.length > 4) {
+                    parentIndex = tags[1];
+                    childIndex = tags[2];
+                    String stremName = tags[3];
+                    String levelName = tags[4];
+                    String phone = tags[5];
+
+                    this.mStreamAndLevelUpdated(response, parentIndex, childIndex, stremName, levelName, phone);
+                }
+                break;
         }
 
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
     }
+    private void mStreamAndLevelUpdated(String response, String levelURI, String streamURI, String streamName, String levelName, String phone) {
 
+        String token = user.getToken();
+        //TODO: May be we can make a new pref entry for token
+        try {
+            user = JSON.std.beanFrom(User.class, response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //save the preferences locally
+        user.setPref(User.Prefs.STREAMKNOWN);
+        user.setLevel(levelURI);
+        user.setStream(streamURI);
+        user.setToken(token);
+        user.setPhone(phone);
+        user.setLevel_name(levelName);
+        user.setStream_name(streamName);
+
+        String u = null;
+        try {
+            u = JSON.std.asString(user);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        for (int i = 0; i < count; i++) {
+            getSupportFragmentManager().popBackStack();
+        }
+    }
     //Saved on DB, now save it in shared preferences.
     private void mStreamAndCourseSelected(String response, String levelURI, String streamURI) {
         //Retrieve token from pref to save it across the pref updates
         String token = user.getToken();
-        // String streamName = user.getStream_name();
-        // String levelName = user.getLevel_name();
 
         //TODO: May be we can make a new pref entry for token
         try {
@@ -970,7 +1010,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_STREAM:
                 return "Loading Streams...";
             case Constants.TAG_UPDATE_STREAM:
-                return "Loading Streams...";
+                return "Updating Streams...";
+            case Constants.TAG_UPDATE_PREFRENCES:
+                return "Updating Profile...";
             case Constants.WIDGET_INSTITUTES:
                 return "Loading Institutes...";
             case Constants.WIDGET_NEWS:
@@ -1010,6 +1052,7 @@ public class MainActivity extends AppCompatActivity
         try {
             List<Widget> widgets = JSON.std.listOfFrom(Widget.class, extractResults(response));
             mDisplayFragment(WidgetListFragment.newInstance(new ArrayList<>(widgets)), false, Constants.TAG_FRAGMENT_WIDGET_LIST);
+
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1218,6 +1261,9 @@ public class MainActivity extends AppCompatActivity
         String mPhoneNumber = tMgr.getLine1Number();
         if (mPhoneNumber != null) {
             map.put("phone_no", mPhoneNumber);
+        }
+        else {
+            if(user != null)map.put("phone_no",user.getPhone());
         }
 
         map.put("institute_course", "" + instituteCourse.getId());
@@ -1685,14 +1731,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onProfileUpdated(HashMap<String, String> hashMap) {
+    public void onProfileUpdated(HashMap<String, String> hashMap, String streamName, String levelName) {
 
-        int count = getSupportFragmentManager().getBackStackEntryCount();
-        for (int i = 0; i < count; i++) {
-            getSupportFragmentManager().popBackStack();
-        }
         if (hashMap == null) return;
-        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + hashMap.get("level") + "#" + hashMap.get("stream"), Constants.BASE_URL + "preferences/", hashMap);
+        this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES + "#" + hashMap.get("level") + "#" + hashMap.get("stream")+ "#" + streamName + "#" + levelName+ "#" + hashMap.get("phone_no") , Constants.BASE_URL + "preferences/", hashMap);
 
     }
 
@@ -1702,13 +1744,4 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_UPDATE_STREAM, Constants.BASE_URL + "streams/", null);
     }
 
-   /* @Override
-    public void onBackPressed() {
-        int count = getSupportFragmentManager().getBackStackEntryCount();
-        if (count < 1) {
-            finish();
-        }
-        getFragmentManager().popBackStack();
-
-    }*/
 }

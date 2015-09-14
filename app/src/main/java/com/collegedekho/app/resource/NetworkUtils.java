@@ -135,8 +135,7 @@ public class NetworkUtils {
 
     public void postOrPutData(final String tag, final String url, final Map<String, String> params, final int method)
     {
-        StringRequest request = new StringRequest(method, url,
-                new Response.Listener<String>()
+        StringRequest request = new StringRequest(method, url, new Response.Listener<String>()
         {
             @Override
             public void onResponse(String response)
