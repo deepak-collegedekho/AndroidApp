@@ -1769,6 +1769,12 @@ public class MainActivity extends AppCompatActivity
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(getCurrentFocus() != null && getCurrentFocus() instanceof EditText){
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+                }
                 int count = getSupportFragmentManager().getBackStackEntryCount();
                 if (count >= 1) {
                     getSupportFragmentManager().popBackStack();
