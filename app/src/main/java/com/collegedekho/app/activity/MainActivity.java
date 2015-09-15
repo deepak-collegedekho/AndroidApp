@@ -622,9 +622,6 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_STREAM:
                 displayStreams(response, false);
                 break;
-            case Constants.TAG_UPDATE_STREAM:
-                displayStreams(response, true);
-                break;
             case Constants.WIDGET_SHORTLIST:
                 mDisplayInstituteList(response, false);
                 break;
@@ -769,16 +766,27 @@ public class MainActivity extends AppCompatActivity
                     childIndex = tags[2];
                     String stremName = tags[3];
                     String levelName = tags[4];
-                    String phone = tags[5];
+                    String phone = null;
+                    if(tags.length >5)
+                        phone = tags[5];
 
                     this.mStreamAndLevelUpdated(response, parentIndex, childIndex, stremName, levelName, phone);
                 }
+                break;
+            case Constants.TAG_UPDATE_STREAM:
+                displayStreams(response, true);
+                break;
+            case Constants.TAG_UPDATE_INSTITUTES:
+                mUpdateInstituteList(response);
                 break;
         }
 
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
     }
+
+
+
     private void mStreamAndLevelUpdated(String response, String levelURI, String streamURI, String streamName, String levelName, String phone) {
 
         String token = user.getToken();
@@ -1030,6 +1038,8 @@ public class MainActivity extends AppCompatActivity
                 return "Loading Streams...";
             case Constants.TAG_UPDATE_STREAM:
                 return "Updating Streams...";
+            case Constants.TAG_UPDATE_INSTITUTES:
+                return "Updating Institues...";
             case Constants.TAG_UPDATE_PREFRENCES:
                 return "Updating Profile...";
             case Constants.WIDGET_INSTITUTES:
@@ -1752,7 +1762,21 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onProfileUpdated(HashMap<String, String> hashMap, String streamName, String levelName) {
 
-        if (hashMap == null) return;
+        //reset the filters in preferences and update institueLists
+        if(this.mFolderList != null) {
+            for (Folder f : this.mFolderList) {
+                for (Facet ft : f.getFacets())
+                    ft.deselect();
+            }
+
+            filterCount = 0;
+            this.mFilterKeywords = new HashMap<>();
+
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
+            this.mMakeNetworkCall(Constants.TAG_UPDATE_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", null);
+        }
+
+         if (hashMap == null) return;
         this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES + "#" + hashMap.get("level") + "#" + hashMap.get("stream")+ "#" + streamName + "#" + levelName+ "#" + hashMap.get("phone_no") , Constants.BASE_URL + "preferences/", hashMap);
 
     }
@@ -1770,8 +1794,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-                if(getCurrentFocus() != null && getCurrentFocus() instanceof EditText){
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (getCurrentFocus() != null && getCurrentFocus() instanceof EditText) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
                 }
@@ -1782,6 +1806,14 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+    }
+
+    private void mUpdateInstituteList(String response) {
+        try {
+            institutes = JSON.std.listOfFrom(Institute.class, this.extractResults(response));
+        } catch (IOException e) {
+            Log.e(TAG,e.getMessage());
+        }
     }
 
 }

@@ -75,6 +75,7 @@ public class Constants
     public static final String TAG_SUBMIT_PSYCHOMETRIC_TEST = "submit_psychometric_test";
     public static final String TAG_SUBMIT_PREFRENCES = "submit_prefrences";
     public static final String TAG_UPDATE_PREFRENCES = "update_prefrences";
+    public static final String TAG_UPDATE_INSTITUTES = "update_institutes";
     public static final String TAG_FRAGMENT_FILTER_LIST = "fragment_filter_list";
     public static final String TAG_FRAGMENT_QNA_QUESTION_LIST = "fragment_qna_questions_list";
     public static final String TAG_FRAGMENT_WIDGET_LIST = "fragment_widget_list";
