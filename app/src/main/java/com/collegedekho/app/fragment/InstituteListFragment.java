@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -49,6 +50,7 @@ public class InstituteListFragment extends Fragment {
     private boolean loading = false;
     private MainActivity mMainActivity;
     private TextView mEmptyTextView;
+    private LinearLayout mProgressBarLL;
 
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -62,13 +64,19 @@ public class InstituteListFragment extends Fragment {
             totalItemCount = mLayoutManager.getItemCount();
             pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
 
-            if (!loading) {
-                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+            if ((!loading) && ((visibleItemCount + pastVisiblesItems) >= totalItemCount)) {
                     loading = true;
+                    if(next != null) {
+                        mProgressBarLL.setVisibility(View.VISIBLE);
+                    }
                     mListener.onEndReached(next);
                 }
+            /*if(dy < 0)
+            {
+                mProgressBarLL.setVisibility(View.GONE);
+            }*/
             }
-        }
+
     };
 
     public InstituteListFragment() {
@@ -106,6 +114,7 @@ public class InstituteListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_institute_listing, container, false);
         ((TextView) rootView.findViewById(R.id.textview_page_title)).setText(mTitle);
+        this.mProgressBarLL     =   (LinearLayout)rootView.findViewById(R.id.progressBarLL);
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_list);
         mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -184,6 +193,7 @@ public class InstituteListFragment extends Fragment {
     }
 
     public void updateList(List<Institute> institutes, String next) {
+        mProgressBarLL.setVisibility(View.GONE);
         mInstitutes.addAll(institutes);
         mAdapter.notifyDataSetChanged();
         loading = false;

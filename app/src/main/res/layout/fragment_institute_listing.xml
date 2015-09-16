@@ -31,4 +31,19 @@
         android:layout_centerInParent="true"
         android:gravity="center"
         android:textSize="16dp" />
+
+    <LinearLayout
+        android:id="@+id/progressBarLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:orientation="horizontal">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@android:style/Widget.DeviceDefault.Light.ProgressBar"/>
+    </LinearLayout>
 </RelativeLayout>

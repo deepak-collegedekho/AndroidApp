@@ -653,10 +653,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_LOAD_HOME:
                 this.mUpdateHome(response);
-                //Show toolbar
+                //Show toolbar and set ActionBar
                 toolbar = (Toolbar) findViewById(R.id.app_toolbar);
                 toolbar.setVisibility(View.VISIBLE);
-                // show menu items and navigation back
                 setSupportActionBar(toolbar);
                 break;
             case Constants.TAG_POST_QUESTION:
@@ -1165,13 +1164,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onStreamSelected(final String streamUri) {
+    public void onStreamSelected(final String streamUri, final String streamName) {
         new AlertDialog.Builder(this)
                 .setTitle("Please select a level")
                 .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mOnCourseLevelSelected(which, streamUri);
+                        mOnCourseLevelSelected(which, streamUri, streamName);
                         dialog.dismiss();
                     }
                 })
@@ -1196,7 +1195,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void mOnCourseLevelSelected(int level, String streamUri) {
+    private void mOnCourseLevelSelected(int level, String streamUri, String streamName) {
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
 
         String levelURI = Constants.BASE_URL + "level/" + (level + 1) + "/";
@@ -1208,6 +1207,7 @@ public class MainActivity extends AppCompatActivity
         hashMap.put("stream", streamUri);
         hashMap.put("user", user.getResource_uri());
         hashMap.put("level", levelURI);
+        hashMap.put("stream_name", streamName);
 
         this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + levelURI + "#" + streamUri, Constants.BASE_URL + "preferences/", hashMap);
 
@@ -1763,7 +1763,7 @@ public class MainActivity extends AppCompatActivity
     public void onProfileUpdated(HashMap<String, String> hashMap, String streamName, String levelName) {
 
         //reset the filters in preferences and update institueLists
-        if(this.mFolderList != null) {
+        if(this.mFolderList != null && !this.mFolderList.isEmpty()) {
             for (Folder f : this.mFolderList) {
                 for (Facet ft : f.getFacets())
                     ft.deselect();
