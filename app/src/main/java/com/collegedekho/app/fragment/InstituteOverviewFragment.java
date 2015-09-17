@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -26,11 +27,13 @@ import java.util.ArrayList;
  * Use the {@link InstituteOverviewFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class InstituteOverviewFragment extends Fragment {
+public class InstituteOverviewFragment extends BaseFragment {
     private static final String ARG_INSTITUTE = "param1";
     String[] titles = {"Achievements", "Infrastucture", "Placement", "Nearby Joints"};
     private Institute mInstitute;
     private OnInstituteShortlistedListener mListener;
+    private TextView mShortListTV;
+    private ProgressBar mProgressBar;
 
     public InstituteOverviewFragment() {
         // Required empty public constructor
@@ -77,24 +80,29 @@ public class InstituteOverviewFragment extends Fragment {
         setupFacilities(inflater, layout, mInstitute.getFacilities());
         ((TextView) rootView.findViewById(R.id.textview_college_location)).setText(text);
         ((TextView) rootView.findViewById(R.id.textview_why_join)).setText("Why join " + mInstitute.getShort_name());
-        TextView t = ((TextView) rootView.findViewById(R.id.shortlist_college));
+        this.mShortListTV  = ((TextView) rootView.findViewById(R.id.shortlist_college));
+        this.mProgressBar = ((ProgressBar) rootView.findViewById(R.id.shortList_college_progressBar));
 
         if (mInstitute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
         {
-            t.setText("Shortlist " + mInstitute.getShort_name());
-            t.setBackgroundResource(R.drawable.bg_button_blue);
+            this.mShortListTV.setText("Shortlist " + mInstitute.getShort_name());
+            this.mShortListTV.setBackgroundResource(R.drawable.bg_button_blue);
         }
         else
         {
-            t.setText("Delete " + mInstitute.getShort_name() + " from your shortlist");
-            t.setBackgroundResource(R.drawable.bg_button_grey);
+            this.mShortListTV.setText("Delete " + mInstitute.getShort_name() + " from your shortlist");
+            this.mShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
         }
-        t.setOnClickListener(new View.OnClickListener() {
+        this.mShortListTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.setEnabled(false);
-                if (mListener != null)
+
+                if (mListener != null) {
+                    v.setEnabled(false);
+                    mShortListTV.setVisibility(View.GONE);
+                    mProgressBar.setVisibility(View.VISIBLE);
                     mListener.onInstituteShortlisted();
+                }
 
             }
         });
@@ -226,18 +234,18 @@ public class InstituteOverviewFragment extends Fragment {
     }*/
 
     public void updateShortListButton() {
-        View rootView = getView();
-        if (rootView != null) {
-            TextView t = (TextView) rootView.findViewById(R.id.shortlist_college);
+
+        this.mShortListTV.setEnabled(true);
+        this.mShortListTV.setVisibility(View.VISIBLE);
+        this.mProgressBar.setVisibility(View.GONE);
             if (mInstitute.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
-                t.setText("Shortlist " + mInstitute.getShort_name());
-                t.setBackgroundResource(R.drawable.bg_button_blue);
+                this.mShortListTV.setText("Shortlist " + mInstitute.getShort_name());
+                this.mShortListTV.setBackgroundResource(R.drawable.bg_button_blue);
             } else {
-                t.setText("Delete " + mInstitute.getShort_name() + " from your shortlist");
-                t.setBackgroundResource(R.drawable.bg_button_grey);
+                this.mShortListTV.setText("Delete " + mInstitute.getShort_name() + " from your shortlist");
+                this.mShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
             }
-            t.setEnabled(true);
-        }
+
     }
 
 

@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -19,6 +20,7 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -29,23 +31,24 @@ import java.util.ArrayList;
  * Use the {@link NewsListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewsListFragment extends Fragment {
+public class NewsListFragment extends BaseFragment {
     private static final String ARG_NEWS = "news";
-    private static final String ARG_TITLE = "title";
 
+    public static final String TITLE = "News";
     private ArrayList<News> mNews;
-    private ArrayList<News> similarNews;
     private String mTitle;
+    private NewsListAdapter mAdapter;
 
     public NewsListFragment() {
         // Required empty public constructor
     }
 
-    public static NewsListFragment newInstance(ArrayList<News> news, String title) {
+    public static NewsListFragment newInstance(ArrayList<News> news, String title, String next) {
         NewsListFragment fragment = new NewsListFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(ARG_NEWS, news);
         args.putString(ARG_TITLE, title);
+        args.putString(ARG_NEXT, next);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,8 +57,10 @@ public class NewsListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mNews = getArguments().getParcelableArrayList(ARG_NEWS);
+            this.mNews = getArguments().getParcelableArrayList(ARG_NEWS);
             mTitle = getArguments().getString(ARG_TITLE);
+            nextUrl  = getArguments().getString(ARG_NEXT);
+            listType = Constants.NEWS_TYPE;
         }
     }
 
@@ -64,30 +69,38 @@ public class NewsListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_news_list, container, false);
         ((TextView) rootView.findViewById(R.id.textview_page_title)).setText(mTitle);
+        progressBarLL     =   (LinearLayout)rootView.findViewById(R.id.progressBarLL);
         if (mNews.size() == 0)
             ((TextView) rootView.findViewById(android.R.id.empty)).setText("This list is empty.");
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new NewsListAdapter(getActivity(), mNews , Constants.TYPE_NEWS));
+        layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        mAdapter = new NewsListAdapter(getActivity(), mNews, Constants.TYPE_NEWS);
+        recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addOnScrollListener(scrollListener);
         return rootView;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        try {
+            listener = (OnNewsSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnNewsSelectedListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        listener = null;
     }
 
-    public interface OnNewsSelectedListener {
-        void onNewsSelected(News news ,boolean flag);
-    }
     @Override
     public void onResume() {
         super.onResume();
@@ -97,5 +110,18 @@ public class NewsListFragment extends Fragment {
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
     }
+    public void updateList(List<News> news, String next) {
+        progressBarLL.setVisibility(View.GONE);
+        this.mNews.addAll(news);
+        mAdapter.notifyDataSetChanged();
+        loading = false;
+        nextUrl = next;
+    }
+    public interface OnNewsSelectedListener extends  BaseListener{
 
+        void onNewsSelected(News news ,boolean flag);
+
+        @Override
+        void onEndReached(String next, int type);
+    }
 }

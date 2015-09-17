@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.resource.Constants;
 
-public class SplashFragment extends Fragment {
+public class SplashFragment extends BaseFragment {
 
     private ImageView mLogoView;
     private TextView noInternetMessage;

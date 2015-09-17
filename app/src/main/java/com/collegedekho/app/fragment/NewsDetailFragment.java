@@ -36,7 +36,7 @@ import java.util.TimeZone;
  * Use the {@link NewsDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewsDetailFragment extends Fragment {
+public class NewsDetailFragment extends BaseFragment {
     private static final String ARG_NEWS = "short_name";
     private static final String TAG = "NewsDetailFragment";
     private static final String ARG_NEWSLIST = "similar_news";

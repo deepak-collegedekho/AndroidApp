@@ -17,7 +17,7 @@ import com.collegedekho.app.activity.MainActivity;
  * Use the {@link InstituteAboutFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class InstituteAboutFragment extends Fragment {
+public class InstituteAboutFragment extends BaseFragment {
     private static final String ARG_SHORT_NAME = "short_name";
     private static final String ARG_ABOUT = "about";
 

@@ -30,7 +30,7 @@ import java.util.ArrayList;
  * Use the {@link FilterFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FilterFragment extends Fragment implements View.OnClickListener {
+public class FilterFragment extends BaseFragment implements View.OnClickListener {
     private static final String ARG_FOLDER_LIST = "param1";
 
     private ArrayList<Folder> mFolderList;

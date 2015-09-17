@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -20,6 +21,7 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,15 +31,14 @@ import java.util.ArrayList;
  * Use the {@link ArticleListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ArticleListFragment extends Fragment {
+public class ArticleListFragment extends BaseFragment {
 
     private static final String ARG_ARTICLE = "article";
-    private static final String ARG_TITLE = "title";
+    public static final String TITLE = "Articles";
 
     private ArrayList<Articles> mArticles;
-    private ArrayList<Articles> similarArticles;
     private String mTitle;
-
+    private ArticleListAdapter mAdapter;
     public ArticleListFragment() {
         // Required empty public constructor
     }
@@ -65,29 +66,35 @@ public class ArticleListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_articles_list, container, false);
         ((TextView) rootView.findViewById(R.id.textview_page_title)).setText(mTitle);
+        progressBarLL     =   (LinearLayout)rootView.findViewById(R.id.progressBarLL);
         if (mArticles.size() == 0)
             ((TextView) rootView.findViewById(android.R.id.empty)).setText("This list is empty.");
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.articles_list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new ArticleListAdapter(getActivity(), mArticles , Constants.TYPE_ARTCLES));
+        layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        mAdapter = new ArticleListAdapter(getActivity(), mArticles , Constants.TYPE_ARTCLES);
+        recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addOnScrollListener(scrollListener);
         return rootView;
     }
 
-    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        try {
+            listener = (OnArticleSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnArticleSelectedListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-    }
-
-    public interface OnArticleSelectedListener {
-        void onArticleSelected(Articles article ,boolean flag);
+        listener = null;
     }
 
 
@@ -100,4 +107,18 @@ public class ArticleListFragment extends Fragment {
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
     }
+    public void updateList(List<Articles> articles, String next) {
+        progressBarLL.setVisibility(View.GONE);
+        this.mArticles.addAll(articles);
+        mAdapter.notifyDataSetChanged();
+        loading = false;
+        nextUrl = next;
+    }
+
+    public interface OnArticleSelectedListener extends BaseListener{
+        void onArticleSelected(Articles article ,boolean flag);
+    }
+
+
+
 }

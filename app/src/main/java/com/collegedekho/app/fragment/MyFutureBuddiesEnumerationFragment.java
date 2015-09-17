@@ -23,7 +23,7 @@ import com.collegedekho.app.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
 
-public class MyFutureBuddiesEnumerationFragment extends Fragment {
+public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
     public static final String TITLE = "Forums";
 
     private static final String ARG_PARAM1 = "param1";

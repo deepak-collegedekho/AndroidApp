@@ -100,9 +100,9 @@ public class HomeFragment extends Fragment {
         if (this.mMainActivity != null)
             this.mMainActivity.currentFragment = this;
 
-        if(this.mMainActivity.toolbar != null) {
-            this.mMainActivity.toolbar.setNavigationIcon(null);
-            this.mMainActivity.toolbar.setNavigationOnClickListener(null);
+        if(this.mMainActivity.mToolbar != null) {
+            this.mMainActivity.mToolbar.setNavigationIcon(null);
+            this.mMainActivity.mToolbar.setNavigationOnClickListener(null);
         }
     }
 

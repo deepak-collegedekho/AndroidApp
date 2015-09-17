@@ -5,6 +5,12 @@
 
     <dimen name="m6dp">6dp</dimen>
     <dimen name="m8dp">8dp</dimen>
+    <dimen name="m10dp">10dp</dimen>
+    <dimen name="m15dp">15dp</dimen>
+    <dimen name="m20dp">20dp</dimen>
+    <dimen name="m30dp">30dp</dimen>
+    <dimen name="m40dp">40dp</dimen>
+    <dimen name="m60dp">60dp</dimen>
 
     <dimen name="activity_horizontal_margin_small">10dp</dimen>
     <dimen name="activity_vertical_margin_small">10dp</dimen>

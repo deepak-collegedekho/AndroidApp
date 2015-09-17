@@ -17,6 +17,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.InstituteListAdapter;
 import com.collegedekho.app.entities.Institute;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
@@ -31,53 +32,20 @@ import java.util.List;
  * Use the {@link InstituteListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class InstituteListFragment extends Fragment {
+public class InstituteListFragment extends BaseFragment {
     public static final String TITLE = "Institutes";
     private static final String ARG_INSTITUTE = "institute";
-    private static final String ARG_TITLE = "title";
-    private static final String ARG_NEXT = "next";
     private static final String ARG_FILTER_ALLOWED = "filter_allowed";
     private static final String ARG_FILTER_COUNT = "filter_count";
-    int pastVisiblesItems, visibleItemCount, totalItemCount;
     private ArrayList<Institute> mInstitutes;
     private String mTitle;
-    private OnInstituteSelectedListener mListener;
-    private LinearLayoutManager mLayoutManager;
     private InstituteListAdapter mAdapter;
-    private String next;
     private boolean filterAllowed;
     private int filterCount;
-    private boolean loading = false;
     private MainActivity mMainActivity;
     private TextView mEmptyTextView;
-    private LinearLayout mProgressBarLL;
 
-    RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-        }
 
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            visibleItemCount = mLayoutManager.getChildCount();
-            totalItemCount = mLayoutManager.getItemCount();
-            pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
-
-            if ((!loading) && ((visibleItemCount + pastVisiblesItems) >= totalItemCount)) {
-                    loading = true;
-                    if(next != null) {
-                        mProgressBarLL.setVisibility(View.VISIBLE);
-                    }
-                    mListener.onEndReached(next);
-                }
-            /*if(dy < 0)
-            {
-                mProgressBarLL.setVisibility(View.GONE);
-            }*/
-            }
-
-    };
 
     public InstituteListFragment() {
         // Required empty public constructor
@@ -103,9 +71,10 @@ public class InstituteListFragment extends Fragment {
         if (getArguments() != null) {
             mInstitutes = getArguments().getParcelableArrayList(ARG_INSTITUTE);
             mTitle = getArguments().getString(ARG_TITLE);
-            next = getArguments().getString(ARG_NEXT);
+            nextUrl = getArguments().getString(ARG_NEXT);
             filterAllowed = getArguments().getBoolean(ARG_FILTER_ALLOWED);
             filterCount = getArguments().getInt(ARG_FILTER_COUNT);
+            listType = Constants.INSTITUTE_TYPE;
         }
     }
 
@@ -114,10 +83,10 @@ public class InstituteListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_institute_listing, container, false);
         ((TextView) rootView.findViewById(R.id.textview_page_title)).setText(mTitle);
-        this.mProgressBarLL     =   (LinearLayout)rootView.findViewById(R.id.progressBarLL);
+        progressBarLL     =   (LinearLayout)rootView.findViewById(R.id.progressBarLL);
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_list);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(mLayoutManager);
+        layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
         mAdapter = new InstituteListAdapter(getActivity(), mInstitutes);
 
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
@@ -134,8 +103,8 @@ public class InstituteListFragment extends Fragment {
             rootView.findViewById(R.id.button_filter).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mListener != null)
-                        mListener.onFilterButtonClicked();
+                    if (listener != null)
+                        listener.onFilterButtonClicked();
                 }
             });
         } else
@@ -153,7 +122,7 @@ public class InstituteListFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnInstituteSelectedListener) activity;
+            listener = (OnInstituteSelectedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnInstituteSelectedListener");
@@ -163,7 +132,7 @@ public class InstituteListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        listener = null;
     }
 
     @Override
@@ -193,11 +162,11 @@ public class InstituteListFragment extends Fragment {
     }
 
     public void updateList(List<Institute> institutes, String next) {
-        mProgressBarLL.setVisibility(View.GONE);
+        progressBarLL.setVisibility(View.GONE);
         mInstitutes.addAll(institutes);
         mAdapter.notifyDataSetChanged();
         loading = false;
-        this.next = next;
+        nextUrl = next;
     }
 
     public void updateButtons(int position) {
@@ -213,14 +182,15 @@ public class InstituteListFragment extends Fragment {
                 ((ImageView) v.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter);
         }
     }
-    public interface OnInstituteSelectedListener {
+    public interface OnInstituteSelectedListener extends BaseListener {
         void onInstituteSelected(int position);
 
         void onInstituteLikedDisliked(int position, int liked);
 
         void onFilterButtonClicked();
 
-        void onEndReached(String next);
+        @Override
+        void onEndReached(String next, int type);
     }
 
 }

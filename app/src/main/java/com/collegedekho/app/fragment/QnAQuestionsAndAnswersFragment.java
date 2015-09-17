@@ -27,7 +27,7 @@ import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class QnAQuestionsAndAnswersFragment extends Fragment{
+public class QnAQuestionsAndAnswersFragment extends BaseFragment{
     private static final String ARG_PARAM1 = "param1";
     private QnAQuestions mQnAQuestion;
     private ArrayList<QnAAnswers> mQnAAnswersSet;

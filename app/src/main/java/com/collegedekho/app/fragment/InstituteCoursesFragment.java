@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * Use the {@link InstituteCoursesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class InstituteCoursesFragment extends Fragment {
+public class InstituteCoursesFragment extends BaseFragment {
     private static final String ARG_COURSES = "courses";
     private static final String ARG_COURSE_COUNT = "course_count";
 
@@ -111,8 +111,6 @@ public class InstituteCoursesFragment extends Fragment {
     }
     public void updateAdapter(int position ,int tabPosition)
     {
-       // tabPosition = mTabLayout.getSelectedTabPosition();
-       // int pagerPosition = mPager.getCurrentItem();
         mAdapter.updateAdapter(position , tabPosition);
     }
     public static int getTabposition()

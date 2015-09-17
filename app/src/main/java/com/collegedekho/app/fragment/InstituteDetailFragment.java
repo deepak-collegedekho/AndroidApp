@@ -34,7 +34,7 @@ import java.util.List;
  * Use the {@link InstituteDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class InstituteDetailFragment extends Fragment {
+public class InstituteDetailFragment extends BaseFragment {
     private static final String ARG_INSTITUTE = "param1";
     ArrayList<ArrayList<InstituteCourse>> courses;
     private Institute mInstitute;

@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,7 +56,8 @@ public class CourseListAdapter extends RecyclerView.Adapter {
         TextView cDuration;
         TextView cLevel;
         TextView cApplyBtn;
-        OnApplyClickedListener mListener;
+        ProgressBar cProgressBar;
+        OnApplyClickedListener cListener;
 
         public CourseHolder(View itemView, OnApplyClickedListener listener) {
             super(itemView);
@@ -65,8 +67,9 @@ public class CourseListAdapter extends RecyclerView.Adapter {
             cDuration = (TextView) itemView.findViewById(R.id.text_course_duration);
             cLevel = (TextView) itemView.findViewById(R.id.text_course_level);
             cApplyBtn = (TextView) itemView.findViewById(R.id.button_apply);
+            cProgressBar = (ProgressBar) itemView.findViewById(R.id.course_apply_progressBar);
             cApplyBtn.setOnClickListener(this);
-            mListener = listener;
+            cListener = listener;
         }
 
         public void setCourse(InstituteCourse c) {
@@ -77,6 +80,9 @@ public class CourseListAdapter extends RecyclerView.Adapter {
             cLevel.setText(":  " + InstituteCourse.CourseLevel.values()[c.getLevel()].name());
             itemView.setTag(c);
             if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
+
+                cApplyBtn.setVisibility(View.VISIBLE);
+                cProgressBar.setVisibility(View.GONE);
                 cApplyBtn.setText("Applied");
                 cApplyBtn.setBackgroundResource(R.drawable.bg_button_grey);
             } else {
@@ -92,14 +98,21 @@ public class CourseListAdapter extends RecyclerView.Adapter {
         public void onClick(View v) {
             if (v.getId() == R.id.button_apply) {
                 InstituteCourse c = (InstituteCourse) itemView.getTag();
-                if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId()))
-                {
-                    Toast.makeText(mContext,"Already Applied", Toast.LENGTH_SHORT).show();
+                if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
+                    Toast.makeText(mContext, "Already Applied", Toast.LENGTH_SHORT).show();
                 } else {
-                    mListener.onCourseApplied(getAdapterPosition(), InstituteCoursesFragment.getTabposition(), c);
+                    cApplyBtn.setVisibility(View.INVISIBLE);
+                    cProgressBar.setVisibility(View.VISIBLE);
+                    cListener.onCourseApplied(getAdapterPosition(), InstituteCoursesFragment.getTabposition(), c);
 
                 }
             }
         }
+    }
+
+    public void updateAdapter(int position) {
+
+       this.notifyItemChanged(position);
+       this.notifyDataSetChanged();
     }
 }

@@ -50,6 +50,8 @@ public class Constants
     public static final String TAG_ID = "id";
     public static final String TAG_SELECTED = "is_selected";
     public static final String TAG_NEXT_INSTITUTE = "next_institutes";
+    public static final String TAG_NEXT_NEWS = "next_news";
+    public static final String TAG_NEXT_ARTICLES = "next_articles";
     public static final String TAG_LIKE_DISLIKE = "like_dislike";
     public static final String TAG_SHORTLIST_INSTITUTE = "shortlist";
     public static final String TAG_DELETESHORTLIST_INSTITUTE = "delete";
@@ -127,5 +129,8 @@ public class Constants
     public static final int ID_HOSTEL = 8;
 
     public static final int NUMBER_OF_COMMENTS_IN_ONE_GO = 100;
+
+    public static final int INSTITUTE_TYPE   = 1;
+    public static final int NEWS_TYPE        = 2;
 
 }

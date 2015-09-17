@@ -26,7 +26,7 @@ import com.collegedekho.app.resource.Constants;
 import java.util.HashMap;
 
 
-public class ProfileFragment extends Fragment implements View.OnClickListener {
+public class ProfileFragment extends BaseFragment implements View.OnClickListener {
 
     private static final String ARG_NAME        = "name";
     private static final String ARG_EMAIL       = "email";

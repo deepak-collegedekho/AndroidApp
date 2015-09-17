@@ -26,7 +26,7 @@ import com.collegedekho.app.entities.QnAQuestions;
 import java.util.ArrayList;
 
 
-public class InstituteQnAFragment extends Fragment implements TextWatcher, AdapterView.OnItemClickListener {
+public class InstituteQnAFragment extends BaseFragment implements TextWatcher, AdapterView.OnItemClickListener {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 

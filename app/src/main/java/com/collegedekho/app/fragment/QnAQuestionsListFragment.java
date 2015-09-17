@@ -20,7 +20,7 @@ import com.collegedekho.app.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
 
-public class QnAQuestionsListFragment extends Fragment {
+public class QnAQuestionsListFragment extends BaseFragment {
     public static final String TITLE = "QnA";
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

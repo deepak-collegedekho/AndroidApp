@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * Use the {@link CourseFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CourseFragment extends Fragment {
+public class CourseFragment extends BaseFragment {
     private static final String ARG_PARAM1 = "param1";
 
     private ArrayList<InstituteCourse> courses;
@@ -53,21 +53,15 @@ public class CourseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         RecyclerView rview = (RecyclerView) inflater.inflate(R.layout.fragment_course, container, false);
-        mAdapter = new CourseListAdapter(getActivity(), courses);
+        this.mAdapter = new CourseListAdapter(getActivity(), courses);
         rview.setAdapter(mAdapter);
         rview.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        rview.setHasFixedSize(true);
         return rview;
     }
 
-    public void updateAdapter(final int position)
-    {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.notifyItemChanged(position);
-                mAdapter.notifyDataSetChanged();
-            }
-        });
+    public void updateAdapter(int position) {
+        this.mAdapter.updateAdapter(position);
 
     }
 

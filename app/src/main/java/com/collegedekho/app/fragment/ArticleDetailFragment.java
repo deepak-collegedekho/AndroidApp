@@ -32,7 +32,7 @@ import java.util.TimeZone;
 /**
  * Created by root on 10/9/15.
  */
-public class ArticleDetailFragment extends Fragment {
+public class ArticleDetailFragment extends BaseFragment {
     private static final String ARG_ARTICLE = "short_name";
     private static final String TAG = "ArticleDetailFragment";
     private static final String ARG_ARTICLELIST = "similar_articles";

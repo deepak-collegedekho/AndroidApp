@@ -18,7 +18,7 @@ import com.collegedekho.app.entities.Placements;
  * Use the {@link InstitutePlacementFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class InstitutePlacementFragment extends Fragment {
+public class InstitutePlacementFragment extends BaseFragment {
     private static final String ARG_PLACEMENT = "placement";
 
     private Placements mPlacement;

@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * Use the {@link WidgetListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WidgetListFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class WidgetListFragment extends BaseFragment implements AdapterView.OnItemClickListener {
     public static final String TITLE = "Widgets";
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -105,9 +105,9 @@ public class WidgetListFragment extends Fragment implements AdapterView.OnItemCl
         if (this.mMainActivity != null)
             this.mMainActivity.currentFragment = this;
 
-        if(this.mMainActivity.toolbar != null) {
-            this.mMainActivity.toolbar.setNavigationIcon(null);
-            this.mMainActivity.toolbar.setNavigationOnClickListener(null);
+        if(this.mMainActivity.mToolbar != null) {
+            this.mMainActivity.mToolbar.setNavigationIcon(null);
+            this.mMainActivity.mToolbar.setNavigationOnClickListener(null);
         }
     }
 

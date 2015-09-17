@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MyFutureBuddiesFragment extends Fragment{
+public class MyFutureBuddiesFragment extends BaseFragment{
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private MyFutureBuddy mMyFutureBuddies;

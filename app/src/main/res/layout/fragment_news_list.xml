@@ -23,4 +23,6 @@
         android:layout_height="match_parent"
         android:layout_below="@id/textview_page_title" />
 
+    <include layout="@layout/progressbar"/>
+
 </RelativeLayout>
