@@ -2,7 +2,6 @@ package com.collegedekho.app.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -223,7 +222,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
     public void updateChatPings(List<MyFutureBuddyComment> chatPings)
     {
-        if (mSubmittingState)
+        if (this.mSubmittingState)
             return;
 
         this.mMyFBCommentsSet.clear();
@@ -234,7 +233,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         this.mMyFBCommentsSet.addAll(chatPings);
         this.mMyFBCommentsListAdapter.notifyDataSetChanged();
 
-        this.mCommentsListView.scrollToPosition(this.mMyFBCommentsSet.size() - 1);
+        //this.mCommentsListView.scrollToPosition(this.mMyFBCommentsSet.size() - 1);
     }
 
     public void setmSubmittingState(boolean val) {

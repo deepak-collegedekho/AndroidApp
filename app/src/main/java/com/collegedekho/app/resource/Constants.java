@@ -98,7 +98,7 @@ public class Constants
     public static final int SECONDARY_ANIMATION_TIME = 2000;
     public static final String SELECTED_FILTERS = "selected_filters";
     public static volatile boolean IS_CONNECTED_TO_INTERNET;
-    public static final int MY_FB_REFRESH_RATE = 10000;
+    public static final int MY_FB_REFRESH_RATE = 5000;
     public static final int TYPE_WIFI = 1;
     public static final int TYPE_MOBILE = 2;
     public static final int TYPE_NOT_CONNECTED = 0;

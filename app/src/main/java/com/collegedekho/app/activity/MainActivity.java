@@ -10,8 +10,6 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -43,7 +41,6 @@ import com.collegedekho.app.entities.User;
 import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleListFragment;
-import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.fragment.FilterFragment;
 import com.collegedekho.app.fragment.HomeFragment;
 import com.collegedekho.app.fragment.InstituteDetailFragment;
@@ -66,9 +63,13 @@ import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.NetworkUtils;
+import com.crashlytics.android.Crashlytics;
 import com.facebook.appevents.AppEventsLogger;
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 
+import io.fabric.sdk.android.Fabric;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -114,6 +115,10 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "MainActivity";
     public static final int GET_PSYCHOMETRIC_RESULTS = 1;
     public static final String PSYCHOMETRIC_RESULTS = "psychometric_results";
+    private final static String TRACKER_ID = "UA-67752258-1";
+
+    public static GoogleAnalytics analytics;
+    public static Tracker tracker;
 
     public NetworkUtils networkUtils;
     List<Institute> institutes;
@@ -135,7 +140,8 @@ public class MainActivity extends AppCompatActivity
     private List<Articles> articlesList;
     private Institute mInstitute;
     private String instituteCourseId = "";
-    private List<Widget> widgets;
+    private List<Widget> mWidgets;
+
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -176,7 +182,19 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Fabric.with(this, new Crashlytics());
+
+        analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
+        analytics.setLocalDispatchPeriod(1800);
+
+        tracker = analytics.newTracker(TRACKER_ID);
+        tracker.enableExceptionReporting(true);
+        tracker.enableAdvertisingIdCollection(true);
+        tracker.enableAutoActivityTracking(true);
+
         this.setContentView(R.layout.activity_main);
+
+        this.mToolbar = (Toolbar) findViewById(R.id.app_toolbar);
 
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
@@ -208,7 +226,6 @@ public class MainActivity extends AppCompatActivity
                 } else if (currentFragment instanceof SplashFragment)
                     ((SplashFragment) currentFragment).noInternetFound();
 
-                mToolbar = (Toolbar) findViewById(R.id.app_toolbar);
                 setSupportActionBar(mToolbar);
 
                /* mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -255,28 +272,28 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        if(widgets == null || widgets.size() <= 0) return;
+        if(this.mWidgets == null || this.mWidgets.size() <= 0) return;
         switch (position) {
             case 0:
-                //onWidgetSelected(widgets.get(0));
+                //onWidgetSelected(mWidgets.get(0));
                 break;
             case 1:
-                //onWidgetSelected(widgets.get(1));
+                //onWidgetSelected(mWidgets.get(1));
                 break;
             case 2:
-               // onWidgetSelected(widgets.get(2));
+               // onWidgetSelected(mWidgets.get(2));
                 break;
             case 3:
-               // onWidgetSelected(widgets.get(3));
+               // onWidgetSelected(mWidgets.get(3));
                 break;
             case 4:
-                //onWidgetSelected(widgets.get(4));
+                //onWidgetSelected(mWidgets.get(4));
                 break;
             case 5:
-                //onWidgetSelected(widgets.get(5));
+                //onWidgetSelected(mWidgets.get(5));
                 break;
             case 6:
-               // onWidgetSelected(widgets.get(6));
+               // onWidgetSelected(mWidgets.get(6));
                 break;
         }
 
@@ -465,7 +482,6 @@ public class MainActivity extends AppCompatActivity
             if (this.mFilterKeywords.size() > 0)
                 this.filterCount = this.mFilterKeywords.size();
 
-            //mClearBackStack();
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
             if (fragment == null)
                 this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(institutes), currentTitle, next, filterAllowed, this.filterCount), true, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
@@ -485,8 +501,6 @@ public class MainActivity extends AppCompatActivity
     private void mShowMyFBEnumeration(String response) {
         try {
             this.mFbEnumeration = JSON.std.listOfFrom(MyFutureBuddiesEnumeration.class, this.extractResults(response));
-
-           // mClearBackStack();
             this.mDisplayFragment(MyFutureBuddiesEnumerationFragment.newInstance(new ArrayList<>(this.mFbEnumeration)), true, Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -624,13 +638,20 @@ public class MainActivity extends AppCompatActivity
 
             fragmentTransaction.commit();
 
-            if (currentFragment instanceof HomeFragment) {
+            if (mToolbar == null)
+            {
+                mToolbar = (Toolbar) findViewById(R.id.app_toolbar);
+                setSupportActionBar(mToolbar);
+            }
+
+
+            if (currentFragment instanceof WidgetListFragment && this.mToolbar.getVisibility() != View.VISIBLE) {
                 //Show toolbar
                 mToolbar.setVisibility(View.VISIBLE);
 
             }
-            if (currentFragment instanceof WidgetListFragment || currentFragment instanceof HomeFragment) {
-                mToolbar.setNavigationIcon(0);
+            if (currentFragment instanceof WidgetListFragment || currentFragment instanceof HomeFragment || currentFragment instanceof SplashFragment) {
+                mToolbar.setNavigationIcon(null);
                 mToolbar.setNavigationOnClickListener(null);
             } else {
                 mShowNavigationBackListener();
@@ -687,8 +708,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_LOAD_HOME:
                 this.mUpdateHome(response);
-                //Show toolbar
-                mToolbar.setVisibility(View.VISIBLE);
                 break;
             case Constants.TAG_POST_QUESTION:
                 this.mInstituteQnAQuestionAdded(response);
@@ -708,12 +727,12 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_SHORTLIST_INSTITUTE:
                 if (tags.length == 2)
                     extraTag = tags[1];
-                updateShortlistInstitute(response, extraTag);
+                this.updateShortlistInstitute(response, extraTag);
                 break;
             case Constants.TAG_DELETESHORTLIST_INSTITUTE:
                 if (tags.length == 2)
                     extraTag = tags[1];
-                updateShortlistInstitute(null, extraTag);
+                this.updateShortlistInstitute(null, extraTag);
                 break;
             case Constants.TAG_LIKE_DISLIKE:
                 if (tags.length == 2)
@@ -794,7 +813,13 @@ public class MainActivity extends AppCompatActivity
                     parentIndex = tags[1];
                     childIndex = tags[2];
 
-                    this.mStreamAndCourseSelected(response, parentIndex, childIndex);
+                    if (tags.length > 3)
+                    {
+                        extraTag = tags[3];
+                        this.mStreamAndCourseSelected(response, parentIndex, childIndex, extraTag);
+                    }
+
+                    this.mStreamAndCourseSelected(response, parentIndex, childIndex, null);
                 }
                 break;
             case Constants.TAG_UPDATE_PREFRENCES:
@@ -857,7 +882,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     //Saved on DB, now save it in shared preferences.
-    private void mStreamAndCourseSelected(String response, String levelURI, String streamURI) {
+    private void mStreamAndCourseSelected(String response, String levelURI, String streamURI, String streamName) {
         //Retrieve token from pref to save it across the pref updates
         String token = user.getToken();
 
@@ -873,6 +898,9 @@ public class MainActivity extends AppCompatActivity
         user.setLevel(levelURI);
         user.setStream(streamURI);
         user.setToken(token);
+
+        if (streamName != "" && streamName != null)
+            user.setStream_name(streamName);
 
         String u = null;
         try {
@@ -1118,9 +1146,8 @@ public class MainActivity extends AppCompatActivity
 
     private void mUpdateHome(String response) {
         try {
-            widgets = JSON.std.listOfFrom(Widget.class, extractResults(response));
-            mDisplayFragment(WidgetListFragment.newInstance(new ArrayList<>(widgets)), false, Constants.TAG_FRAGMENT_WIDGET_LIST);
-
+            this.mWidgets = JSON.std.listOfFrom(Widget.class, extractResults(response));
+            this.mDisplayFragment(WidgetListFragment.newInstance(new ArrayList<>(this.mWidgets)), false, Constants.TAG_FRAGMENT_WIDGET_LIST);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1128,7 +1155,8 @@ public class MainActivity extends AppCompatActivity
 
     private void mShowQnAQuestions(String response) {
        // mClearBackStack();
-        mDisplayFragment(QnAQuestionsListFragment.newInstance((this.parseAndReturnQnAList(response))), true, Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
+        this.mDisplayFragment(QnAQuestionsListFragment.newInstance((this.parseAndReturnQnAList(response))), true, Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
+
     }
 
 
@@ -1250,7 +1278,10 @@ public class MainActivity extends AppCompatActivity
         hashMap.put("level", levelURI);
         hashMap.put("stream_name", streamName);
 
-        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + levelURI + "#" + streamUri, Constants.BASE_URL + "preferences/", hashMap);
+        if (streamName != null || streamName != "")
+            MainActivity.user.setStream_name(streamName);
+
+        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + levelURI + "#" + streamUri + "#" + streamName, Constants.BASE_URL + "preferences/", hashMap);
 
         this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
     }
@@ -1513,6 +1544,9 @@ public class MainActivity extends AppCompatActivity
                     if (ft.isSelected() == 1)
                         filterCount++;
             }
+
+            if (filterCount == 2)
+                filterCount = 0;
         }
 
         this.mUpdateFilterButton();
@@ -1840,7 +1874,6 @@ public class MainActivity extends AppCompatActivity
                 if (getCurrentFocus() != null && getCurrentFocus() instanceof EditText) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
                 }
                 int count = getSupportFragmentManager().getBackStackEntryCount();
                 if (count >= 1) {
