@@ -132,5 +132,6 @@ public class Constants
 
     public static final int INSTITUTE_TYPE   = 1;
     public static final int NEWS_TYPE        = 2;
+    public static final int ARTICLES_TYPE    = 3;
 
 }

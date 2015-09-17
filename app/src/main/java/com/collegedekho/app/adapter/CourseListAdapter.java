@@ -25,6 +25,7 @@ import java.util.ArrayList;
 public class CourseListAdapter extends RecyclerView.Adapter {
     private ArrayList<InstituteCourse> mCourses;
     private static Context mContext;
+    private static boolean mIsAppliedResponse = false; // required  not to update  view  till response doesn't come
 
     public CourseListAdapter(Context activity, ArrayList<InstituteCourse> courses) {
         this.mCourses = courses;
@@ -80,16 +81,17 @@ public class CourseListAdapter extends RecyclerView.Adapter {
             cLevel.setText(":  " + InstituteCourse.CourseLevel.values()[c.getLevel()].name());
             itemView.setTag(c);
             if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
-
-                cApplyBtn.setVisibility(View.VISIBLE);
-                cProgressBar.setVisibility(View.GONE);
                 cApplyBtn.setText("Applied");
                 cApplyBtn.setBackgroundResource(R.drawable.bg_button_grey);
             } else {
                 cApplyBtn.setText("Apply Now");
                 cApplyBtn.setBackgroundResource(R.drawable.bg_button_blue);
             }
-
+            if(!mIsAppliedResponse)
+            {
+                cApplyBtn.setVisibility(View.VISIBLE);
+                cProgressBar.setVisibility(View.GONE);
+            }
 
         }
 
@@ -101,6 +103,7 @@ public class CourseListAdapter extends RecyclerView.Adapter {
                 if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
                     Toast.makeText(mContext, "Already Applied", Toast.LENGTH_SHORT).show();
                 } else {
+                    mIsAppliedResponse = true;
                     cApplyBtn.setVisibility(View.INVISIBLE);
                     cProgressBar.setVisibility(View.VISIBLE);
                     cListener.onCourseApplied(getAdapterPosition(), InstituteCoursesFragment.getTabposition(), c);
@@ -112,6 +115,7 @@ public class CourseListAdapter extends RecyclerView.Adapter {
 
     public void updateAdapter(int position) {
 
+        this.mIsAppliedResponse = false;
        this.notifyItemChanged(position);
        this.notifyDataSetChanged();
     }

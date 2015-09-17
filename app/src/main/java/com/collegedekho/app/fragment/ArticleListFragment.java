@@ -43,11 +43,12 @@ public class ArticleListFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    public static ArticleListFragment newInstance(ArrayList<Articles> articles, String title) {
+    public static ArticleListFragment newInstance(ArrayList<Articles> articles, String title, String next) {
         ArticleListFragment fragment = new ArticleListFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(ARG_ARTICLE, articles);
         args.putString(ARG_TITLE, title);
+        args.putString(ARG_NEXT, next);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,6 +59,8 @@ public class ArticleListFragment extends BaseFragment {
         if (getArguments() != null) {
             mArticles = getArguments().getParcelableArrayList(ARG_ARTICLE);
             mTitle = getArguments().getString(ARG_TITLE);
+            nextUrl  = getArguments().getString(ARG_NEXT);
+            listType = Constants.ARTICLES_TYPE;
         }
     }
 

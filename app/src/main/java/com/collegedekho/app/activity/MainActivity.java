@@ -196,6 +196,7 @@ public class MainActivity extends AppCompatActivity
 
         this.mToolbar = (Toolbar) findViewById(R.id.app_toolbar);
 
+
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
         new Handler().postDelayed(new Runnable() {
@@ -623,7 +624,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mDisplayFragment(Fragment fragment, boolean addToBackstack, String tag) {
-        try {
+       try {
             currentFragment = fragment;
 
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -638,21 +639,15 @@ public class MainActivity extends AppCompatActivity
 
             fragmentTransaction.commit();
 
-            if (mToolbar == null)
-            {
-                mToolbar = (Toolbar) findViewById(R.id.app_toolbar);
-                setSupportActionBar(mToolbar);
-            }
+            if (currentFragment instanceof WidgetListFragment
+                    && mToolbar.getVisibility() != View.VISIBLE)
+                               mToolbar.setVisibility(View.VISIBLE);
 
 
-            if (currentFragment instanceof WidgetListFragment && this.mToolbar.getVisibility() != View.VISIBLE) {
-                //Show toolbar
-                mToolbar.setVisibility(View.VISIBLE);
-
-            }
             if (currentFragment instanceof WidgetListFragment || currentFragment instanceof HomeFragment || currentFragment instanceof SplashFragment) {
                 mToolbar.setNavigationIcon(null);
-                mToolbar.setNavigationOnClickListener(null);
+                mToolbar.setOnClickListener(null);
+
             } else {
                 mShowNavigationBackListener();
             }
@@ -1062,7 +1057,7 @@ public class MainActivity extends AppCompatActivity
             parseSimilarArticle(articlesList);
 
            // mClearBackStack();
-            mDisplayFragment(ArticleListFragment.newInstance(new ArrayList<>(articlesList), currentTitle), true, Constants.TAG_FRAGMENT_ARTICLES_LIST);
+            mDisplayFragment(ArticleListFragment.newInstance(new ArrayList<>(articlesList), currentTitle, next), true, Constants.TAG_FRAGMENT_ARTICLES_LIST);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1191,7 +1186,7 @@ public class MainActivity extends AppCompatActivity
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
 
-        new AlertDialog.Builder(this)
+       new AlertDialog.Builder(this)
                 .setMessage(response)
                 .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                     @Override
@@ -1203,12 +1198,40 @@ public class MainActivity extends AppCompatActivity
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        mHandleErrorResponse(tag);
                         dialog.dismiss();
                     }
                 })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        mHandleErrorResponse(tag);
+                    }
+                })
                 .show();
-    }
 
+
+    }
+    private void mHandleErrorResponse(String tag)
+    {
+        String extraTag = null;
+        String childIndex = null;
+        String parentIndex = null;
+        String like = null;
+        String[] tags = tag.split("#");
+        int voteType = 0;
+
+        switch (tags[0]) {
+            case Constants.TAG_APPLIED_COURSE:
+                String tabposition = null;
+                if (tags.length == 3) {
+                    extraTag = tags[1];
+                    tabposition = tags[2];
+                }
+                this.mUpdateAppliedCourses(null, extraTag, tabposition);
+                break;
+        }
+    }
     @Override
     public void onJsonObjectRequestError(final String tag, final String response, final String url, final JSONObject params, final int method) {
         if (progressDialog.isShowing())
@@ -1333,6 +1356,8 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_NEXT_INSTITUTE, next, this.mFilterKeywords);
         else if (listType == Constants.NEWS_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_NEWS, next, null);
+        else if (listType == Constants.ARTICLES_TYPE)
+            this.mMakeNetworkCall(Constants.TAG_NEXT_ARTICLES, next, null);
 
     }
 
