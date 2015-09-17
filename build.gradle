@@ -14,8 +14,6 @@ buildscript {
     }
 }
 
-apply plugin: 'crashlytics'
-
 allprojects {
     repositories {
         maven { url "http://dl.bintray.com/populov/maven" }
