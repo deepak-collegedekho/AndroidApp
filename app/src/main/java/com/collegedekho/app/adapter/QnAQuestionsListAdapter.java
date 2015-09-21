@@ -25,7 +25,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
     private Context mContext;
 
     public QnAQuestionsListAdapter(Context context, ArrayList<QnAQuestions> qnaQuestions) {
-        mQnAQuestions = qnaQuestions;
+        this.mQnAQuestions = qnaQuestions;
         mContext = context;
     }
 

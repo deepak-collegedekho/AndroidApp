@@ -60,8 +60,6 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_my_future_buddies_enumeration, container, false);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
 
-        if (this.mFbEnumeration.size() == 0)
-            this.mEmptyTextView.setText("Couldn't find related groups for you. Like and Shortlist colleges.");
 
         RecyclerView fbEnumerationView = (RecyclerView) rootView.findViewById(R.id.fb_enumeration);
 
@@ -70,6 +68,18 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
         fbEnumerationView.setAdapter(this.mMyFBEnumerationAdapter);
         fbEnumerationView.setItemAnimator(new DefaultItemAnimator());
         //fbEnumerationView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
+        if (this.mFbEnumeration.size() == 0)
+        {
+            this.mEmptyTextView.setVisibility(View.VISIBLE);
+            this.mEmptyTextView.setText("Couldn't find related groups for you. Like and Shortlist colleges.");
+            fbEnumerationView.setVisibility(View.GONE);
+        }
+        else
+        {
+            this.mEmptyTextView.setVisibility(View.GONE);
+            fbEnumerationView.setVisibility(View.VISIBLE);
+        }
 
         return rootView;
     }

@@ -58,8 +58,6 @@ public class QnAQuestionsListFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_qna_questions_list, container, false);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
 
-        if (mQnAQuestions.size() == 0)
-            (this.mEmptyTextView).setText("Couldn't find related questions for you. Like and Shortlist college");
 
         RecyclerView questionsListView = (RecyclerView) rootView.findViewById(R.id.institute_questions_list);
 
@@ -67,6 +65,18 @@ public class QnAQuestionsListFragment extends BaseFragment {
         questionsListView.setAdapter(new QnAQuestionsListAdapter(getActivity(), mQnAQuestions));
         questionsListView.setItemAnimator(new DefaultItemAnimator());
         //questionsListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
+        if (mQnAQuestions.size() == 0)
+        {
+            this.mEmptyTextView.setVisibility(View.VISIBLE);
+            this.mEmptyTextView.setText("Couldn't find related questions for you. Like and Shortlist college");
+            questionsListView.setVisibility(View.GONE);
+        }
+        else
+        {
+            this.mEmptyTextView.setVisibility(View.GONE);
+            questionsListView.setVisibility(View.VISIBLE);
+        }
 
         return rootView;
     }

@@ -13,7 +13,8 @@
     android:layout_gravity="center"
     android:weightSum="1"
     >
-        <TextView
+    <include layout="@layout/item_home_tut" />
+    <TextView
             android:id="@+id/home_page_stream_label"
             style="@style/AppTheme.HeadingTextView"
             android:layout_width="match_parent"
@@ -38,4 +39,4 @@
             tools:listitem="@layout/card_home_widget"
             android:scrollbars="none"
         />
-    </LinearLayout>
+</LinearLayout>

@@ -92,6 +92,7 @@ public class Constants
     public static final String TAG_FRAGMENT_HOME = "fragment_home";
     public static final String TAG_FRAGMENT_PROFILE = "fragment_profile";
     public static final String TAG_FRAGMENT_QNA_ANSWERS_LIST = "fragment_qna_answers_list";
+    public static final String KEY_USER_LEARNED_TOUCH = "user_touch";
     public static final int SHORTLISTED_YES = 1;
     public static final int SHORTLISTED_NO = 0;
     public static final int MAIN_ANIMATION_TIME = 6500;

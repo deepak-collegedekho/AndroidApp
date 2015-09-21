@@ -5,12 +5,13 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:weightSum="1"
     >
     <LinearLayout
         android:id="@+id/qna_header_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".08"
+        android:layout_weight=".13"
         android:layout_gravity="top"
         android:orientation="horizontal"
         android:textSize="14sp"
@@ -62,15 +63,16 @@
     <LinearLayout
         android:id="@+id/qna_question_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".2"
+        android:layout_height="wrap_content"
+        android:layout_weight=".1"
         android:orientation="vertical"
         android:background="@color/primary_color_dark"
         android:textColor="@color/white"
+        android:weightSum="1"
         >
         <TextView
             android:id="@+id/qna_title"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:layout_weight=".4"
             android:text="Question Title"
@@ -80,6 +82,7 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:textColor="@color/white"
+            android:elevation="@dimen/m10dp"
             />
         <View
             style="@style/AppTheme.Divider1"
@@ -87,9 +90,9 @@
             android:layout_marginRight="0dp" />
         <TextView
             android:id="@+id/qna_description"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_weight=".5"
+            android:layout_weight=".6"
             android:text="Question Decription"
             android:textSize="15sp"
             android:paddingBottom="@dimen/activity_vertical_margin"
@@ -108,8 +111,7 @@
         android:id="@+id/qna_answers_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".5"
-        android:orientation="vertical"
+        android:layout_weight=".78"
         >
         <TextView
             android:id="@android:id/empty"
@@ -117,7 +119,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            />
         <android.support.v7.widget.RecyclerView
             android:id="@+id/qna_answers_list"
             android:layout_width="match_parent"
@@ -134,7 +137,7 @@
             android:layout_alignParentRight="true"
             fab:fab_type="normal"
             android:layout_marginBottom="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
             fab:fab_colorNormal="@color/primary_orange"
             fab:fab_colorPressed="@color/primaryColorDark"
             />

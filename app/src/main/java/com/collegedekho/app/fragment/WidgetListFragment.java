@@ -1,6 +1,8 @@
 package com.collegedekho.app.fragment;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,6 +17,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.WidgetAdapter;
 import com.collegedekho.app.entities.Widget;
+import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
 
@@ -38,6 +41,8 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
 
     private MainActivity mMainActivity;
 
+    public boolean mUserLearnedTouch = false;
+
     public WidgetListFragment() {
         // Required empty public constructor
     }
@@ -58,6 +63,17 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
         }
     }
 
+    private void touchLearned() {
+        if (!mUserLearnedTouch) {
+            // The user manually opened the drawer; store this flag to prevent auto-showing
+            // the navigation drawer automatically in the future.
+            mUserLearnedTouch = true;
+            SharedPreferences sp = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
+            sp.edit().putBoolean(Constants.KEY_USER_LEARNED_TOUCH, true).apply();
+        }
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,10 +81,30 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
         GridView grid = (GridView) rootView.findViewById(R.id.home_page_body);
         TextView streamTextView = (TextView) rootView.findViewById(R.id.home_page_stream_label);
 
+        this.mUserLearnedTouch = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.KEY_USER_LEARNED_TOUCH, false);
+
         streamTextView.setText(MainActivity.user.getStream_name());
 
         grid.setAdapter(new WidgetAdapter(getActivity(), widgets));
         grid.setOnItemClickListener(this);
+
+        if (!this.mUserLearnedTouch) {
+            rootView.setPadding(0, 0, 0, 0);
+            rootView.findViewById(R.id.widget_touch_tutorial_layout).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.widget_touch_tutorial_layout).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    v.setVisibility(View.GONE);
+                    int verticalPadding = mMainActivity.getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin);
+                    int horizontalPadding = mMainActivity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
+                    ((View) v.getParent()).setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
+                    touchLearned();
+                    v.setOnClickListener(null);
+                }
+            });
+        }
+        else
+            rootView.findViewById(R.id.widget_touch_tutorial_layout).setVisibility(View.GONE);
 
         return rootView;
     }
