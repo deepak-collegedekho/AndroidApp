@@ -80,7 +80,7 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         // Select either the default item (0) or the last selected item.
-        selectItem(mCurrentSelectedPosition);
+        //selectItem(mCurrentSelectedPosition);
     }
 
     @Override
@@ -103,8 +103,8 @@ public class NavigationDrawerFragment extends Fragment {
         });
         mDrawerListView.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                new String[]{"",""}));//InstituteListFragment.TITLE, NewsListFragment.TITLE, ArticleListFragment.TITLE ,"MyShortList",
-                        //QnAQuestionsListFragment.TITLE, MyFutureBuddiesEnumerationFragment.TITLE}));
+                new String[]{HomeFragment.TITLE, InstituteListFragment.TITLE, NewsListFragment.TITLE, ArticleListFragment.TITLE, "MyShortList",
+                        QnAQuestionsListFragment.TITLE, MyFutureBuddiesEnumerationFragment.TITLE}));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
     }
@@ -184,16 +184,24 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     private void selectItem(int position) {
-        mCurrentSelectedPosition = position;
-        if (mDrawerListView != null) {
-            mDrawerListView.setItemChecked(position, true);
-        }
+
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {
-            mCallbacks.onNavigationDrawerItemSelected(position);
+            mCallbacks.onNavigationDrawerItemSelected(position,mCurrentSelectedPosition);
+
+
+
         }
+    }
+    public void updateNavigationItem(int position)
+    {
+        mCurrentSelectedPosition = position;
+        if (mDrawerListView != null) {
+            mDrawerListView.setItemChecked(position, true);
+        }
+
     }
 
     @Override
@@ -267,7 +275,7 @@ public class NavigationDrawerFragment extends Fragment {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onNavigationDrawerItemSelected(int position);
+        void onNavigationDrawerItemSelected(int position, int CurrentPosition);
     }
 
 }

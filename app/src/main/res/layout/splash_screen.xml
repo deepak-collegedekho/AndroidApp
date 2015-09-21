@@ -7,20 +7,29 @@
     android:background="@drawable/bg_image"
     android:gravity="center_horizontal"
     >
-    <ImageView
-        android:id="@+id/splash_logo_view"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/splash_logoLL"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:layout_marginTop="100dp"
-        />
+        android:orientation="vertical"
+        android:gravity="center|bottom">
+
+        <ImageView
+            android:id="@+id/splash_logo_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center"
+            android:background="@drawable/file69"
+            android:layout_marginTop="100dp"
+            />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/splash_no_internet_info_layout"
-        android:layout_below="@id/splash_logo_view"
+        android:layout_below="@id/splash_logoLL"
         android:layout_width="match_parent"
         android:layout_margin="@dimen/activity_vertical_margin"
         android:layout_height="100dp"
-        android:orientation="vertical"
         android:textSize="20sp"
         android:textColor="@color/primary_color"
         android:textStyle="bold"
@@ -28,4 +37,5 @@
         android:text="You Are Not Connected To Internet. Please connect and come back."
         android:visibility="gone"
         />
+
 </RelativeLayout>

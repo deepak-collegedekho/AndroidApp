@@ -109,6 +109,7 @@ public class NewsListFragment extends BaseFragment {
 
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
+
     }
     public void updateList(List<News> news, String next) {
         progressBarLL.setVisibility(View.GONE);

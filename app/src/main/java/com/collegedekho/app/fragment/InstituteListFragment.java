@@ -154,6 +154,7 @@ public class InstituteListFragment extends BaseFragment {
             this.mEmptyTextView.setText("");
             this.mEmptyTextView.setVisibility(View.GONE);
         }
+
     }
 
     public void clearList() {
@@ -193,4 +194,8 @@ public class InstituteListFragment extends BaseFragment {
         void onEndReached(String next, int type);
     }
 
+    public boolean getFilterAllowed()
+    {
+        return filterAllowed;
+    }
 }

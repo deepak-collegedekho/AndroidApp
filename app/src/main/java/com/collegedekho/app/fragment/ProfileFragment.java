@@ -154,6 +154,12 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
            mStreamClicked();
         }
         else if(view.getId() == R.id.profile_level) {
+
+            // make selected to last level
+           /* int length = mLevelURI.length();
+            String c = mLevelURI.substring(length-2, length-1);
+            int i = Integer.parseInt(c);*/
+
             new AlertDialog.Builder(getActivity())
                     .setTitle("Please select a level")
                     .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
@@ -165,7 +171,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
                             dialog.dismiss();
                         }
                     })
-                    .setCancelable(false)
                     .show();
         }
         else if(view.getId() == R.id.profile_update)

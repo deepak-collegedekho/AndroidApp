@@ -22,7 +22,7 @@ public class BaseFragment extends Fragment {
     protected BaseListener listener;
     protected  int listType;
     protected RecyclerView.Adapter adapter;
-    public static boolean sDisableExitAnimation = false;
+   // public static boolean sDisableExitAnimation = false;
 
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -54,7 +54,7 @@ public class BaseFragment extends Fragment {
         void onEndReached(String next, int type);
         void onFilterButtonClicked();
     }
-    @Override
+   /* @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
         if (sDisableExitAnimation) {
             Animation a = new Animation() {};
@@ -62,5 +62,5 @@ public class BaseFragment extends Fragment {
             return a;
         }
         return super.onCreateAnimation(transit, enter, nextAnim);
-    }
+    }*/
 }

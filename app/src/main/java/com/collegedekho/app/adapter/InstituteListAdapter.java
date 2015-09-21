@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,6 +68,14 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         instituteHolder.addFacilities(i.getFacilities());
         instituteHolder.likeButton.setSelected(i.getCurrent_user_vote_type() == 0);
         instituteHolder.dislikeButton.setSelected(i.getCurrent_user_vote_type() == 1);
+
+
+        instituteHolder.likeButton.setClickable(true);
+        instituteHolder.dislikeButton.setClickable(true);
+        instituteHolder.likeButton.setVisibility(View.VISIBLE);
+        instituteHolder.dislikeButton.setVisibility(View.VISIBLE);
+        instituteHolder.likeProgressBar.setVisibility(View.GONE);
+        instituteHolder.dislikeProgressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -86,6 +95,8 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         ImageView likeButton;
         ImageView dislikeButton;
         LinearLayout instiFaciltyList;
+        ProgressBar likeProgressBar;
+        ProgressBar dislikeProgressBar;
         InstituteListFragment.OnInstituteSelectedListener mListener;
 
         public InstituteHolder(View itemView, InstituteListFragment.OnInstituteSelectedListener listener) {
@@ -97,6 +108,9 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             mListener = listener;
             likeButton = (ImageView) itemView.findViewById(R.id.button_like_college);
             dislikeButton = (ImageView) itemView.findViewById(R.id.button_dislike_college);
+            likeProgressBar = (ProgressBar) itemView.findViewById(R.id.like_progressBar);
+            dislikeProgressBar = (ProgressBar) itemView.findViewById(R.id.dislike_progressBar);
+
             likeButton.setOnClickListener(this);
             dislikeButton.setOnClickListener(this);
             itemView.setOnClickListener(this);
@@ -129,15 +143,26 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.button_like_college:
-                    if (!v.isSelected())
+                    if (!v.isSelected()) {
+                        likeButton.setVisibility(View.INVISIBLE);
+                        likeProgressBar.setVisibility(View.VISIBLE);
+                        likeButton.setClickable(false);
+                        dislikeButton.setClickable(false);
                         mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.LIKE_THING);
+
+                    }
                     else
                         Toast.makeText(mContext, "Already liked..", Toast.LENGTH_SHORT).show();
                         //mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DELETE_LIKE);
                     break;
                 case R.id.button_dislike_college:
-                    if (!v.isSelected())
+                    if (!v.isSelected()) {
+                        dislikeButton.setVisibility(View.INVISIBLE);
+                        dislikeProgressBar.setVisibility(View.VISIBLE);
+                        likeButton.setClickable(false);
+                        dislikeButton.setClickable(false);
                         mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_THING);
+                    }
                     else
                         Toast.makeText(mContext, "Already disliked. You really hate this one..", Toast.LENGTH_SHORT).show();
                     //mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DELETE_LIKE);

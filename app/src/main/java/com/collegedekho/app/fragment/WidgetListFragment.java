@@ -73,9 +73,9 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
         return rootView;
     }
 
-    public void onWidgetSelected(Widget widget) {
+    public void onWidgetSelected(Widget widget, int position) {
         if (mListener != null) {
-            mListener.onWidgetSelected(widget);
+            mListener.onWidgetSelected(widget, position);
         }
     }
 
@@ -102,8 +102,10 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
 
         this.mMainActivity = (MainActivity) getActivity();
 
-        if (this.mMainActivity != null)
+        if (this.mMainActivity != null) {
             this.mMainActivity.currentFragment = this;
+            this.mMainActivity.mUpdateNavigationItem(0);
+        }
 
         if(this.mMainActivity.mToolbar != null) {
             this.mMainActivity.mToolbar.setNavigationIcon(null);
@@ -114,7 +116,7 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        onWidgetSelected(widgets.get(position));
+        onWidgetSelected(widgets.get(position), position+1);
     }
 
     /**
@@ -128,7 +130,7 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnWidgetInteractionListener {
-        void onWidgetSelected(Widget widget);
+        void onWidgetSelected(Widget widget, int position);
     }
 
 

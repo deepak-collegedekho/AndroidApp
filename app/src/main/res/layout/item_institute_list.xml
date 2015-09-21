@@ -71,9 +71,19 @@
         android:layout_height="@dimen/like_dislike_size"
         android:layout_alignParentRight="true"
         android:layout_below="@id/textview_college_courses"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="@dimen/m10dp"
         android:background="@drawable/bg_like"
         android:src="@drawable/ic_like" />
+
+    <ProgressBar
+        android:id="@+id/like_progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/textview_college_courses"
+        android:visibility="gone"
+        android:layout_margin="@dimen/m10dp"
+        style="@android:style/Widget.ProgressBar.Small"/>
 
     <ImageView
         android:id="@+id/button_dislike_college"
@@ -83,5 +93,14 @@
         android:layout_toLeftOf="@id/button_like_college"
         android:background="@drawable/bg_dislike"
         android:src="@drawable/ic_dislike" />
+    <ProgressBar
+        android:id="@+id/dislike_progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textview_college_courses"
+        android:layout_toLeftOf="@id/button_like_college"
+        android:visibility="gone"
+        android:layout_margin="@dimen/m10dp"
+        style="@android:style/Widget.ProgressBar.Small"/>
 
 </RelativeLayout>

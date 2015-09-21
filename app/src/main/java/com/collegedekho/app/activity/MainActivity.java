@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +42,7 @@ import com.collegedekho.app.entities.User;
 import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleListFragment;
+import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.fragment.FilterFragment;
 import com.collegedekho.app.fragment.HomeFragment;
 import com.collegedekho.app.fragment.InstituteDetailFragment;
@@ -121,7 +123,7 @@ public class MainActivity extends AppCompatActivity
     public static Tracker tracker;
 
     public NetworkUtils networkUtils;
-    List<Institute> institutes;
+    List<Institute> mInstituteList;
     int currentInstitute;
     ProgressDialog progressDialog;
     String currentTitle;
@@ -145,7 +147,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
-   // private NavigationDrawerFragment mNavigationDrawerFragment;
+   private NavigationDrawerFragment mNavigationDrawerFragment;
     /*
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
@@ -195,6 +197,7 @@ public class MainActivity extends AppCompatActivity
         this.setContentView(R.layout.activity_main);
 
         this.mToolbar = (Toolbar) findViewById(R.id.app_toolbar);
+        this.mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 
 
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
@@ -221,18 +224,16 @@ public class MainActivity extends AppCompatActivity
                         else
                             mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
                     } else {
-                        //onNavigationDrawerItemSelected(0);
+
                         mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
                     }
                 } else if (currentFragment instanceof SplashFragment)
                     ((SplashFragment) currentFragment).noInternetFound();
 
                 setSupportActionBar(mToolbar);
-
-               /* mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
                 mTitle = getTitle().toString();
                 mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
-             */
+
             }
         }, Constants.MAIN_ANIMATION_TIME);
     }
@@ -269,34 +270,62 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
+    public  void mUpdateNavigationItem(int position)
+    {
+        if (mNavigationDrawerFragment != null) {
+            mNavigationDrawerFragment.updateNavigationItem(position);
+        }
 
+    }
     @Override
-    public void onNavigationDrawerItemSelected(int position) {
+    public void onNavigationDrawerItemSelected(int position , int currentposition) {
         // update the main content by replacing fragments
-        if(this.mWidgets == null || this.mWidgets.size() <= 0) return;
+        Fragment fragment = null;
+        if(position ==  0) {
+            mUpdateNavigationItem(position);
+            mClearBackStack();
+            return;
+        }
+
         switch (position) {
-            case 0:
-                //onWidgetSelected(mWidgets.get(0));
-                break;
             case 1:
-                //onWidgetSelected(mWidgets.get(1));
+                if(currentposition == 1)
+                    fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
                 break;
             case 2:
-               // onWidgetSelected(mWidgets.get(2));
+                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_NEWS_LIST);
                 break;
             case 3:
-               // onWidgetSelected(mWidgets.get(3));
+                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_ARTICLES_LIST);
                 break;
             case 4:
-                //onWidgetSelected(mWidgets.get(4));
+                if(currentposition == 4)
+                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
                 break;
             case 5:
-                //onWidgetSelected(mWidgets.get(5));
+                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
                 break;
             case 6:
-               // onWidgetSelected(mWidgets.get(6));
+                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
                 break;
+
         }
+        if(fragment != null)
+        {
+
+            mUpdateNavigationItem(position);
+            int count = getSupportFragmentManager().getBackStackEntryCount();
+            for (int i = 0; i < count-1; i++) {
+                getSupportFragmentManager().popBackStack();
+            }
+            return;
+
+        }
+
+        if(this.mWidgets == null || this.mWidgets.size() <= position-1)
+            return;
+
+        onWidgetSelected(mWidgets.get(position - 1), position);
 
     }
 
@@ -348,7 +377,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.action_profile) {
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
-
             if (fragment == null)
                 mDisplayFragment(ProfileFragment.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
             else {
@@ -356,10 +384,7 @@ public class MainActivity extends AppCompatActivity
             }
             return true;
         } else if (id == R.id.action_home) {
-            int count = getSupportFragmentManager().getBackStackEntryCount();
-            for (int i = 0; i < count; i++) {
-                getSupportFragmentManager().popBackStack();
-            }
+            this.mClearBackStack();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -439,7 +464,7 @@ public class MainActivity extends AppCompatActivity
     private void updateInstituteList(String response) {
         try {
             List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
-            this.institutes.addAll(institutes);
+            this.mInstituteList.addAll(institutes);
 
             if (currentFragment instanceof InstituteListFragment) {
                 ((InstituteListFragment) currentFragment).updateList(institutes, next);
@@ -478,18 +503,28 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplayInstituteList(String response, boolean filterAllowed) {
         try {
-            institutes = JSON.std.listOfFrom(Institute.class, this.extractResults(response));
+            this.mInstituteList = JSON.std.listOfFrom(Institute.class, this.extractResults(response));
 
             if (this.mFilterKeywords.size() > 0)
                 this.filterCount = this.mFilterKeywords.size();
 
+
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+
+
+            if (fragment instanceof InstituteListFragment)
+            {
+                if(((InstituteListFragment) fragment).getFilterAllowed() != filterAllowed);
+                fragment = null;
+            }
+
+
             if (fragment == null)
-                this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(institutes), currentTitle, next, filterAllowed, this.filterCount), true, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+                this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), currentTitle, next, filterAllowed, this.filterCount), true, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
             else {
                 if (fragment instanceof InstituteListFragment) {
                     ((InstituteListFragment) fragment).clearList();
-                    ((InstituteListFragment) fragment).updateList(institutes, next);
+                    ((InstituteListFragment) fragment).updateList(this.mInstituteList, next);
                 }
 
                 this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
@@ -575,11 +610,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mDisplayInstitute(int position) {
-        mInstitute = institutes.get(position);
+        mInstitute = this.mInstituteList.get(position);
 
-        this.mDisplayFragment(InstituteDetailFragment.newInstance(mInstitute), true, Constants.TAG_FRAGMENT_INSTITUTE);
+        this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute), true, Constants.TAG_FRAGMENT_INSTITUTE);
 
-        this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + institutes.get(position).getId(), null);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + this.mInstituteList.get(position).getId(), null);
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS, mInstitute.getResource_uri() + "qna/", null, Request.Method.GET);
     }
 
@@ -870,10 +905,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
-        int count = getSupportFragmentManager().getBackStackEntryCount();
-        for (int i = 0; i < count; i++) {
-            getSupportFragmentManager().popBackStack();
-        }
+       this.mClearBackStack();
     }
 
     //Saved on DB, now save it in shared preferences.
@@ -968,7 +1000,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void updateLikeButton(String response, String extraTag, int like) {
-        Institute i = institutes.get(Integer.parseInt(extraTag));
+        Institute i = this.mInstituteList.get(Integer.parseInt(extraTag));
         if (like == Constants.NEITHER_LIKE_NOR_DISLIKE) {
             i.setCurrent_user_vote_type(Constants.NEITHER_LIKE_NOR_DISLIKE);
             i.setCurrent_user_vote_url(null);
@@ -985,7 +1017,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void updateShortlistInstitute(String response, String extraTag) {
-        Institute i = institutes.get(Integer.parseInt(extraTag));
+        Institute i = this.mInstituteList.get(Integer.parseInt(extraTag));
         String message = null;
 
         if (response == null) {
@@ -1014,7 +1046,6 @@ public class MainActivity extends AppCompatActivity
         try {
             newsList = JSON.std.listOfFrom(News.class, extractResults(response));
             parseSimilarNews(newsList);
-           // mClearBackStack();
             mDisplayFragment(NewsListFragment.newInstance(new ArrayList<>(newsList), currentTitle, next), true, Constants.TAG_FRAGMENT_NEWS_LIST);
 
         } catch (IOException e) {
@@ -1056,7 +1087,6 @@ public class MainActivity extends AppCompatActivity
             articlesList = JSON.std.listOfFrom(Articles.class, extractResults(response));
             parseSimilarArticle(articlesList);
 
-           // mClearBackStack();
             mDisplayFragment(ArticleListFragment.newInstance(new ArrayList<>(articlesList), currentTitle, next), true, Constants.TAG_FRAGMENT_ARTICLES_LIST);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -1149,7 +1179,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mShowQnAQuestions(String response) {
-       // mClearBackStack();
         this.mDisplayFragment(QnAQuestionsListFragment.newInstance((this.parseAndReturnQnAList(response))), true, Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
 
     }
@@ -1219,7 +1248,6 @@ public class MainActivity extends AppCompatActivity
         String parentIndex = null;
         String like = null;
         String[] tags = tag.split("#");
-        int voteType = 0;
 
         switch (tags[0]) {
             case Constants.TAG_APPLIED_COURSE:
@@ -1229,6 +1257,21 @@ public class MainActivity extends AppCompatActivity
                     tabposition = tags[2];
                 }
                 this.mUpdateAppliedCourses(null, extraTag, tabposition);
+                break;
+            case Constants.TAG_SHORTLIST_INSTITUTE:
+            case Constants.TAG_DELETESHORTLIST_INSTITUTE:
+                if (tags.length == 2)
+                    extraTag = tags[1];
+            if (Integer.parseInt(extraTag) == currentInstitute)
+                if (currentFragment instanceof InstituteDetailFragment)
+                    ((InstituteDetailFragment) currentFragment).updateInstituteShortlist();
+                break;
+            case Constants.TAG_LIKE_DISLIKE:
+                if (tags.length >= 2)
+                    extraTag = tags[1];
+                if (currentFragment instanceof InstituteListFragment) {
+                    ((InstituteListFragment) currentFragment).updateButtons(Integer.parseInt(extraTag));
+                }
                 break;
         }
     }
@@ -1317,7 +1360,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onInstituteLikedDisliked(int position, int liked) {
-        Institute institute = institutes.get(position);
+        Institute institute = this.mInstituteList.get(position);
         if (institute.getCurrent_user_vote_type() == Constants.NEITHER_LIKE_NOR_DISLIKE) {
             //neither liked nor disliked case
             if (liked == Constants.LIKE_THING)
@@ -1409,8 +1452,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onWidgetSelected(Widget widget) {
+    public void onWidgetSelected(Widget widget, int position) {
         currentTitle = widget.getTitle();
+
+       mUpdateNavigationItem(position);
 
         if (widget.getType().equals(Constants.WIDGET_INSTITUTES)) {
             this.mFilterKeywords = this.mGetTheFilters();
@@ -1504,7 +1549,7 @@ public class MainActivity extends AppCompatActivity
         HashMap<String, String> map = new HashMap<>();
         map.put("title", question.getTitle());
         map.put("desc", question.getDesc());
-        map.put("institute", "" + institutes.get(currentInstitute).getResource_uri());
+        map.put("institute", "" + this.mInstituteList.get(currentInstitute).getResource_uri());
         //map.put("stream", Constants.BASE_URL + "streams/1/");
         /*map.put("user", user.getResource_uri());
         //:TODO remove hard coding of streams/1
@@ -1594,7 +1639,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onInstituteShortlisted() {
-        Institute i = institutes.get(currentInstitute);
+        Institute i = mInstituteList.get(currentInstitute);
         if (i.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
             this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + currentInstitute, i.getResource_uri() + "shortlist/", null, Request.Method.POST);
         } else {
@@ -1900,9 +1945,15 @@ public class MainActivity extends AppCompatActivity
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
-                int count = getSupportFragmentManager().getBackStackEntryCount();
-                if (count >= 1) {
-                    getSupportFragmentManager().popBackStack();
+                if(isLastFragment())
+                {
+                    mClearBackStack();
+                }
+                else {
+                    int count = getSupportFragmentManager().getBackStackEntryCount();
+                    if (count >= 1) {
+                        getSupportFragmentManager().popBackStack();
+                    }
                 }
 
             }
@@ -1911,23 +1962,43 @@ public class MainActivity extends AppCompatActivity
 
     private void mUpdateInstituteList(String response) {
         try {
-            institutes = JSON.std.listOfFrom(Institute.class, this.extractResults(response));
+            this.mInstituteList = JSON.std.listOfFrom(Institute.class, this.extractResults(response));
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
-    /*@Override
+    @Override
     public void onBackPressed() {
-        if(mNavigationDrawerFragment !=  null && mNavigationDrawerFragment.isDrawerOpen())
-                mNavigationDrawerFragment.closeDrawer();
+        if(this.mNavigationDrawerFragment !=  null && this.mNavigationDrawerFragment.isDrawerOpen())
+                this.mNavigationDrawerFragment.closeDrawer();
+        else if(isLastFragment())
+        {
+            mClearBackStack();
+        }
         else
             super.onBackPressed();
     }
 
-    private  void mClearBackStack() {
-        BaseFragment.sDisableExitAnimation = true;
-        getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        BaseFragment.sDisableExitAnimation = false;
-    }*/
+
+   private  void mClearBackStack() {
+       int count = getSupportFragmentManager().getBackStackEntryCount();
+       for (int i = 0; i < count ; i++) {
+           getSupportFragmentManager().popBackStack();
+       }
+    }
+
+    /**
+     * This method is used to check about fragment is last in back stack
+     * @return
+     */
+    private boolean isLastFragment()
+    {
+        if(currentFragment instanceof  InstituteListFragment || currentFragment instanceof  NewsListFragment
+                || currentFragment instanceof  ArticleListFragment || currentFragment instanceof QnAQuestionsListFragment
+                || currentFragment instanceof  MyFutureBuddiesEnumerationFragment)
+            return true;
+        else
+            return false;
+    }
 }
