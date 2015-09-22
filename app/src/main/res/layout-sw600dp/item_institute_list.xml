@@ -3,10 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:paddingLeft="@dimen/m20dp"
+    android:paddingRight="@dimen/m20dp"
+    android:paddingBottom="@dimen/m15dp"
+    android:paddingTop="@dimen/m20dp">
 
     <TextView
         android:id="@+id/textview_college_name"
@@ -56,8 +56,8 @@
         <include layout="@layout/item_facility" />
 
         <TextView
-            android:layout_width="@dimen/m35dp"
-            android:layout_height="@dimen/m35dp"
+            android:layout_width="@dimen/m40dp"
+            android:layout_height="@dimen/m40dp"
             android:background="@drawable/bg_grey_circle"
             android:gravity="center"
             android:text="+15"
@@ -67,8 +67,8 @@
 
     <ImageView
         android:id="@+id/button_like_college"
-        android:layout_width="@dimen/m35dp"
-        android:layout_height="@dimen/m35dp"
+        android:layout_width="@dimen/m40dp"
+        android:layout_height="@dimen/m40dp"
         android:layout_alignParentRight="true"
         android:layout_below="@id/textview_college_courses"
         android:layout_marginLeft="@dimen/m10dp"
@@ -87,8 +87,8 @@
 
     <ImageView
         android:id="@+id/button_dislike_college"
-        android:layout_width="@dimen/m35dp"
-        android:layout_height="@dimen/m35dp"
+        android:layout_width="@dimen/m40dp"
+        android:layout_height="@dimen/m40dp"
         android:layout_below="@id/textview_college_courses"
         android:layout_toLeftOf="@id/button_like_college"
         android:background="@drawable/bg_dislike"

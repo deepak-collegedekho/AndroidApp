@@ -31,7 +31,7 @@
             />
         <ImageView
             android:id="@+id/qna_button_upvote"
-            android:layout_width="@dimen/like_dislike_size"
+            android:layout_width="@dimen/m35dp"
             android:layout_height="match_parent"
             android:src="@drawable/ic_keyboard_arrow_up_white_24dp"
             android:background="@drawable/bg_upvote"
@@ -50,7 +50,7 @@
             />
         <ImageView
             android:id="@+id/qna_button_downvote"
-            android:layout_width="@dimen/like_dislike_size"
+            android:layout_width="@dimen/m35dp"
             android:layout_height="match_parent"
             android:src="@drawable/ic_keyboard_arrow_down_white_24dp"
             android:background="@drawable/bg_upvote"

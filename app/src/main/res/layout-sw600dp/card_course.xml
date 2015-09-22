@@ -110,7 +110,7 @@
             android:gravity="center"
             android:layout_height="wrap_content"
             android:layout_below="@id/label4"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="15dp"
             android:layout_marginLeft="@dimen/course_label_horizontal_margin"
             android:layout_marginTop="5dp"
             android:text="Apply Now"

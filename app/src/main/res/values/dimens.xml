@@ -9,8 +9,13 @@
     <dimen name="m15dp">15dp</dimen>
     <dimen name="m20dp">20dp</dimen>
     <dimen name="m30dp">30dp</dimen>
+    <dimen name="m35dp">35dp</dimen>
     <dimen name="m40dp">40dp</dimen>
+    <dimen name="m45dp">45dp</dimen>
+    <dimen name="m50dp">50dp</dimen>
     <dimen name="m60dp">60dp</dimen>
+    <dimen name="m65dp">65dp</dimen>
+    <dimen name="m170dp">170dp</dimen>
 
     <dimen name="activity_horizontal_margin_small">10dp</dimen>
     <dimen name="activity_vertical_margin_small">10dp</dimen>
@@ -21,7 +26,6 @@
     <dimen name="corner_radius">3dp</dimen>
     <dimen name="widget_image_height">100dp</dimen>
     <dimen name="widget_image_width">100dp</dimen>
-    <dimen name="like_dislike_size">35dp</dimen>
     <dimen name="course_label_horizontal_margin">10dp</dimen>
     <dimen name="gradient_radius">5dp</dimen>
     <dimen name="fb_card_width">230dp</dimen>

@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -43,7 +42,6 @@ import com.collegedekho.app.entities.User;
 import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleListFragment;
-import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.fragment.FilterFragment;
 import com.collegedekho.app.fragment.HomeFragment;
 import com.collegedekho.app.fragment.InstituteDetailFragment;
@@ -157,7 +155,7 @@ public class MainActivity extends AppCompatActivity
     private User.Prefs userPref;
     private boolean completedStage2;
 
-    public void onSectionAttached(int number) {
+   /*public void onSectionAttached(int number) {
         switch (number) {
             case 1:
                 mTitle = HomeFragment.TITLE;
@@ -179,7 +177,7 @@ public class MainActivity extends AppCompatActivity
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
             actionBar.setDisplayShowTitleEnabled(true);
         }
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,7 +197,9 @@ public class MainActivity extends AppCompatActivity
 
         this.mToolbar = (Toolbar) findViewById(R.id.app_toolbar);
         this.mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-
+        setSupportActionBar(mToolbar);
+        this.mTitle = getTitle().toString();
+        this.mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
@@ -231,9 +231,7 @@ public class MainActivity extends AppCompatActivity
                 } else if (currentFragment instanceof SplashFragment)
                     ((SplashFragment) currentFragment).noInternetFound();
 
-                setSupportActionBar(mToolbar);
-                mTitle = getTitle().toString();
-                mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+
             }
         }, Constants.MAIN_ANIMATION_TIME);
     }
@@ -673,9 +671,11 @@ public class MainActivity extends AppCompatActivity
 
             fragmentTransaction.commit();
 
-            if (currentFragment instanceof WidgetListFragment
-                    && mToolbar.getVisibility() != View.VISIBLE)
-                               mToolbar.setVisibility(View.VISIBLE);
+            if (currentFragment instanceof WidgetListFragment) {
+                if (mToolbar.getVisibility() != View.VISIBLE)
+                    mToolbar.setVisibility(View.VISIBLE);
+
+            }
 
 
             if (currentFragment instanceof WidgetListFragment || currentFragment instanceof HomeFragment || currentFragment instanceof SplashFragment) {
@@ -735,6 +735,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_LOAD_HOME:
                 this.mUpdateHome(response);
+                this.mNavigationDrawerFragment.setDrawerState(true);
                 break;
             case Constants.TAG_POST_QUESTION:
                 this.mInstituteQnAQuestionAdded(response);
@@ -1929,7 +1930,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mShowNavigationBackListener() {
-        mToolbar.setNavigationIcon(R.drawable.back);
+        mToolbar.setNavigationIcon(R.drawable.arrow_back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1982,7 +1983,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is used to check about fragment is last in back stack
+     * This method is used to check about fragment is last in arrow_back stack
      * @return
      */
     private boolean isLastFragment()

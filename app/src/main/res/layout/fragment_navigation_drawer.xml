@@ -1,10 +1,76 @@
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#cccc"
-    android:choiceMode="singleChoice"
-    android:divider="@android:color/transparent"
-    android:dividerHeight="0dp"
-    android:layout_gravity="center"
-    tools:context=".NavigationDrawerFragment" />
+    android:layout_width="match_parent"
+    android:id="@+id/navigation_drawer_fragment"
+    android:clickable="true"
+    tools:context=".NavigationDrawerFragment">
+
+    <RelativeLayout
+        android:id="@+id/navigationHeader"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/m170dp"
+        android:paddingLeft="@dimen/m15dp"
+        android:background="@color/white"
+        android:paddingTop="@dimen/m20dp">
+
+        <ImageView
+            android:id="@+id/profileImage"
+            android:layout_width="@dimen/m65dp"
+            android:layout_height="@dimen/m65dp"
+            android:layout_marginTop="@dimen/m15dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_default_image"
+            android:layout_alignParentStart="true"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="@dimen/m10dp"
+            android:layout_marginBottom="@dimen/m10dp"
+            android:layout_marginRight="@dimen/m10dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/profileImage">
+
+            <TextView
+                android:id="@+id/userName"
+                style="@style/AppTheme.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:text="suresh"/>
+
+            <TextView
+                android:id="@+id/userStream"
+                style="@style/AppTheme.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="Engineering"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/devider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        android:layout_below="@+id/navigationHeader"/>
+
+
+    <ListView
+        android:id="@+id/navigationItemList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#cccc"
+        android:layout_below="@id/devider"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:layout_gravity="center" />
+
+</RelativeLayout>
