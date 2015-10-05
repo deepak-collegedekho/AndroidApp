@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--–Required, your Connecto project write key-->
+    <string name="connecto_write_key">W73WD2N2CRKC84PY</string>
+    <string name="push_icon">ic_default_image.png</string>
+</resources>
