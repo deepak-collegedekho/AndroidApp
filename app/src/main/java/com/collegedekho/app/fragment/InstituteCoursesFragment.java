@@ -1,18 +1,16 @@
 package com.collegedekho.app.fragment;
 
-
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.CoursePagerAdapter;
 import com.collegedekho.app.entities.InstituteCourse;
 
@@ -30,7 +28,7 @@ public class InstituteCoursesFragment extends BaseFragment {
     private ArrayList<ArrayList<InstituteCourse>> mCourses;
     private CoursePagerAdapter mAdapter;
     private int mCourseCount;
-    private static TabLayout  mTabLayout;
+    private static TabLayout mTabLayout;
 
     public InstituteCoursesFragment() {
         // Required empty public constructor

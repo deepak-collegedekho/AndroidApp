@@ -15,7 +15,6 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.MySingleton;
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.Constants;
@@ -68,22 +67,22 @@ public class InstituteOverviewFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_institute_overview, container, false);
         ((TextView) rootView.findViewById(R.id.textview_college_name)).setText(mInstitute.getName());
         String text = "";
-        if (mInstitute.getCity_name() != null)
-            text += mInstitute.getCity_name() + ", ";
-        if (mInstitute.getState_name() != null)
-            text += mInstitute.getState_name();
-        if ((mInstitute.getState_name() != null || mInstitute.getCity_name() != null) && mInstitute.getEstb_date() != null)
+        if (this.mInstitute.getCity_name() != null)
+            text += this.mInstitute.getCity_name() + ", ";
+        if (this.mInstitute.getState_name() != null)
+            text += this.mInstitute.getState_name();
+        if ((this.mInstitute.getState_name() != null || this.mInstitute.getCity_name() != null) && this.mInstitute.getEstb_date() != null)
             text += " | ";
-        if (mInstitute.getEstb_date() != null)
-            text += "Established in: " + mInstitute.getEstb_date().substring(0, 4);
+        if (this.mInstitute.getEstb_date() != null)
+            text += "Established in: " + this.mInstitute.getEstb_date().substring(0, 4);
         LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.college_facility_list);
-        setupFacilities(inflater, layout, mInstitute.getFacilities());
+        setupFacilities(inflater, layout, this.mInstitute.getFacilities());
         ((TextView) rootView.findViewById(R.id.textview_college_location)).setText(text);
         ((TextView) rootView.findViewById(R.id.textview_why_join)).setText("Why join " + mInstitute.getShort_name());
         this.mShortListTV  = ((TextView) rootView.findViewById(R.id.shortlist_college));
         this.mProgressBar = ((ProgressBar) rootView.findViewById(R.id.shortList_college_progressBar));
 
-        if (mInstitute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
+        if (this.mInstitute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
         {
             this.mShortListTV.setText("Shortlist " + mInstitute.getShort_name());
             this.mShortListTV.setBackgroundResource(R.drawable.bg_button_blue);
@@ -106,7 +105,7 @@ public class InstituteOverviewFragment extends BaseFragment {
 
             }
         });
-        setupInfo((LinearLayout) rootView.findViewById(R.id.college_info_ll1)
+        this.setupInfo((LinearLayout) rootView.findViewById(R.id.college_info_ll1)
                 , (LinearLayout) rootView.findViewById(R.id.college_info_ll2));
         //getInfo(heads, details);
         //GridView grid = (GridView) rootView.findViewById(R.id.grid_why_join);
@@ -245,7 +244,6 @@ public class InstituteOverviewFragment extends BaseFragment {
                 this.mShortListTV.setText("Delete " + mInstitute.getShort_name() + " from your shortlist");
                 this.mShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
             }
-
     }
 
 

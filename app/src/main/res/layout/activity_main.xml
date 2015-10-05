@@ -36,7 +36,8 @@
                     android:paddingRight="8dp"
                     android:paddingTop="8dp"
                     android:src="@drawable/ic_logo_small"
-                    android:tint="#ff8d00" />
+                    android:tint="#ffffff"
+                    android:visibility="gone"/>
 
                 <TextView
                     style="@style/Base.TextAppearance.AppCompat.Widget.ActionBar.Title"

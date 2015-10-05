@@ -76,8 +76,12 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import io.connecto.android.sdk.Connecto;
+import io.connecto.android.sdk.Properties;
+import io.connecto.android.sdk.Traits;
 import io.fabric.sdk.android.Fabric;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -154,6 +158,10 @@ public class MainActivity extends AppCompatActivity
     private List<Widget> mWidgets;
     public static CallbackManager callbackManager;
 
+    private Connecto connecto = null;
+    // Get SENDER_ID fom GCM.
+    private String SENDER_ID = "244741229152";
+
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -199,10 +207,16 @@ public class MainActivity extends AppCompatActivity
         analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
         analytics.setLocalDispatchPeriod(1800);
 
-        tracker = analytics.newTracker(TRACKER_ID);
-        tracker.enableExceptionReporting(true);
-        tracker.enableAdvertisingIdCollection(true);
-        tracker.enableAutoActivityTracking(true);
+        connecto = Connecto.with(MainActivity.this);
+        connecto.identify("RandomUser", new Traits().putValue("name", "Harsh"));
+        //You can also track any event if you want
+        connecto.track("Session Started", new Properties().putValue("value", 800));
+        connecto.registerWithGCM(MainActivity.this, SENDER_ID);
+
+        MainActivity.tracker = analytics.newTracker(TRACKER_ID);
+        MainActivity.tracker.enableExceptionReporting(true);
+        MainActivity.tracker.enableAdvertisingIdCollection(true);
+        MainActivity.tracker.enableAutoActivityTracking(true);
 
         mRegisterFacebookSdk();
 
@@ -436,13 +450,11 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_CREATE_USER, Constants.BASE_URL + "users/anonymous/", new HashMap<String, String>());
         else {
             user.setPref(userPref);
-            mSetUserPref();
+            this.mSetUserPref();
         }
     }
 
-
-
-    private void mSetUser(String json) {
+    private void mUserCreated(String json) {
         try {
             user = JSON.std.beanFrom(User.class, json);
             user.setPref(userPref);
@@ -751,7 +763,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (tags[0]) {
             case Constants.TAG_CREATE_USER:
-                this.mSetUser(response);
+                this.mUserCreated(response);
                 break;
             case Constants.TAG_LOAD_STREAM:
                 this.mDisplayStreams(response, false);
@@ -1244,7 +1256,7 @@ public class MainActivity extends AppCompatActivity
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
 
-        if (!((Activity) getBaseContext()).isFinishing())
+        if (!MainActivity.this.isFinishing())
         {
             //show dialog
             new AlertDialog.Builder(this)
@@ -1307,7 +1319,7 @@ public class MainActivity extends AppCompatActivity
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
 
-        if (!((Activity) getBaseContext()).isFinishing())
+        if (!MainActivity.this.isFinishing())
         {
             //show dialog
             new AlertDialog.Builder(this)
@@ -2055,7 +2067,6 @@ public class MainActivity extends AppCompatActivity
             return false;
     }
 
-
     @Override
     public void onUserSignUp(String value) {
 
@@ -2095,6 +2106,18 @@ public class MainActivity extends AppCompatActivity
             {
                 ((MyFutureBuddiesFragment)fragment).sendChatRequest(msg);
             }
+        }
+    }
+
+    public static void SendEvent(String category, String action, String label)
+    {
+        if(MainActivity.tracker!=null)
+        {
+            MainActivity.tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(category)
+                .setAction(action)
+                .setLabel(label)
+                .build());
         }
     }
 }
