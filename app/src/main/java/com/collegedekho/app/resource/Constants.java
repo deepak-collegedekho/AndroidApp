@@ -93,6 +93,8 @@ public class Constants
     public static final String TAG_FRAGMENT_PROFILE = "fragment_profile";
     public static final String TAG_FRAGMENT_QNA_ANSWERS_LIST = "fragment_qna_answers_list";
     public static final String KEY_USER_LEARNED_TOUCH = "user_touch";
+    public static final String TAG_FRAGMENT_SIGNUP = "fragment_signup";
+    public static final String TAG_USER_SIGNUP = "user_signup";
     public static final int SHORTLISTED_YES = 1;
     public static final int SHORTLISTED_NO = 0;
     public static final int MAIN_ANIMATION_TIME = 6500;
@@ -134,5 +136,16 @@ public class Constants
     public static final int INSTITUTE_TYPE   = 1;
     public static final int NEWS_TYPE        = 2;
     public static final int ARTICLES_TYPE    = 3;
+
+    // user attributes
+    public static final String USER_NAME = "name";
+    public static final String USER_STREAM = "stream";
+    public static final String USER_LEVEL = "level";
+    public static final String USER_STREAM_NAME = "stream_name";
+    public static final String USER_LEVEL_NAME = "level_name";
+    public static final String USER_RESOURCE_URI = "user";
+    public static final String USER_PHONE = "phone_no";
+    public static final String USER_EMAIL = "email";
+    public static final String USER_IMAGE = "user_image";
 
 }

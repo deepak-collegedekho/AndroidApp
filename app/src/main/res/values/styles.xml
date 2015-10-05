@@ -59,6 +59,11 @@
         <item name="android:layout_marginRight">10dp</item>
         <item name="android:background">@color/bg_divider</item>
     </style>
+    <style name="AppTheme.Divider2">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/white</item>
+    </style>
 
     <style name="AppTheme.CardView">
 
@@ -217,4 +222,34 @@
         <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
     </style>
 
+      <style name="AppTheme.TextView.WhiteTextView" parent="AppTheme.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_marginTop">15dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+          <item name="android:textSize">16sp</item>
+          <item name="android:gravity">center</item>
+    </style>
+
+    <style name="AppTheme.TextView.BlackTextView" parent="AppTheme.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/background_dark</item>
+        <item name="android:layout_marginTop">15dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="AppTheme.EditText">
+        <item name="android:layout_height">@dimen/m45dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_weight">6</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:inputType">textPersonName</item>
+        <item name="android:layout_marginTop">@dimen/m30dp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
 </resources>

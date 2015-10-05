@@ -21,7 +21,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
+import com.collegedekho.app.MySingleton;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
@@ -57,6 +60,9 @@ public class NavigationDrawerFragment extends Fragment {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
+    private TextView mProfileName;
+    private TextView mStreamName;
+    NetworkImageView mProfileImage;
 
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
@@ -95,7 +101,12 @@ public class NavigationDrawerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         mDrawerListView = (ListView) rootView.findViewById(R.id.navigationItemList);
-                //inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        mProfileName    =   (TextView)rootView.findViewById(R.id.nav_profile_name);
+        mStreamName    =   (TextView)rootView.findViewById(R.id.nav_profile_stream);
+        mProfileImage = (NetworkImageView) rootView.findViewById(R.id.nav_profile_image);
+        mProfileImage.setDefaultImageResId(R.drawable.ic_default_image);
+        mProfileImage.setErrorImageResId(R.drawable.ic_default_image);
+
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -163,6 +174,21 @@ public class NavigationDrawerFragment extends Fragment {
                     SharedPreferences sp = PreferenceManager
                             .getDefaultSharedPreferences(getActivity());
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
+                }
+                if(MainActivity.user  != null)
+                {
+                    String name  = MainActivity.user.getName();
+                    if(name.equalsIgnoreCase("Anonymous User"))
+                    {
+                        mProfileName.setText("");
+                    }else {
+                        mProfileName.setText(name);
+                    }
+                    mStreamName.setText(MainActivity.user.getStream_name());
+
+                    String image = MainActivity.user.getImage();
+                    if (image != null && ! image.isEmpty())
+                        mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
                 }
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }

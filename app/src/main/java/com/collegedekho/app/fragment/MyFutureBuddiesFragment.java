@@ -1,6 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +20,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.MyFBCommentsListAdapter;
 import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
+import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.Constants;
 import com.melnykov.fab.FloatingActionButton;
 
@@ -79,36 +82,26 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         ((FloatingActionButton) rootView.findViewById(R.id.fb_push_chat)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String value = mChatText.getText().toString();
 
+                String value = mChatText.getText().toString();
                 if (value.equals("") || value.equals(" "))
                 {
                     Toast.makeText(getActivity(), "Please enter your message", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
-                    setmSubmittingState(true);
+                    User user =MainActivity.user;
+                    if(user != null)
+                    {
+                        if(user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous User"))
+                        {
+                            mChatText.setText("");
+                            mOnUserSignUp(value);
+                            return;
+                        }
+                    }
 
-                    if (mEmptyTextView.getVisibility() == View.VISIBLE)
-                        mEmptyTextView.setVisibility(View.GONE);
-
-                    MyFutureBuddyComment fbComment = new MyFutureBuddyComment();
-
-                    fbComment.setComment(value);
-                    fbComment.setToken(MainActivity.user.getToken());
-                    fbComment.setIndex(mMyFBCommentsSet.size());
-                    fbComment.setFbIndex(mMyFutureBuddies.getIndex());
-                    fbComment.setCommentSent(false);
-
-                    mMyFBCommentsSet.add(mMyFBCommentsSet.size(), fbComment);
-
-                    mMyFBCommentsListAdapter.notifyItemInserted(mMyFBCommentsSet.size() - 1);
-                    mMyFBCommentsListAdapter.notifyDataSetChanged();
-
-                    mCommentsListView.scrollToPosition(mMyFBCommentsSet.size() - 1);
-
-                    mListener.onMyFBCommentSubmitted(mMyFutureBuddies.getResource_uri(), value, mMyFutureBuddies.getIndex(), mMyFBCommentsSet.size());
-                    mChatText.setText("");
+                    mSubmittedChat(value);
                 }
             }
         });
@@ -125,6 +118,31 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         //mCommentsListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
         return rootView;
+    }
+    private void mSubmittedChat(String value)
+    {
+        setmSubmittingState(true);
+
+        if (mEmptyTextView.getVisibility() == View.VISIBLE)
+            mEmptyTextView.setVisibility(View.GONE);
+
+        MyFutureBuddyComment fbComment = new MyFutureBuddyComment();
+
+        fbComment.setComment(value);
+        fbComment.setToken(MainActivity.user.getToken());
+        fbComment.setIndex(mMyFBCommentsSet.size());
+        fbComment.setFbIndex(mMyFutureBuddies.getIndex());
+        fbComment.setCommentSent(false);
+
+        mMyFBCommentsSet.add(mMyFBCommentsSet.size(), fbComment);
+
+        mMyFBCommentsListAdapter.notifyItemInserted(mMyFBCommentsSet.size() - 1);
+        mMyFBCommentsListAdapter.notifyDataSetChanged();
+
+        mCommentsListView.scrollToPosition(mMyFBCommentsSet.size() - 1);
+
+        mListener.onMyFBCommentSubmitted(mMyFutureBuddies.getResource_uri(), value, mMyFutureBuddies.getIndex(), mMyFBCommentsSet.size());
+        mChatText.setText("");
     }
 
     @Override
@@ -194,7 +212,10 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     public void onPause()
     {
         super.onPause();
-
+        /*// hide keyboard
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(this.mChatText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+*/
         if (this.mMyFbRefreshTimer != null)
         {
             this.mMyFbRefreshTimer.cancel();
@@ -219,6 +240,10 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
         this.setmSubmittingState(false);
     }
+    public void sendChatRequest(String value)
+    {
+        mSubmittedChat(value);
+    }
 
     public void updateChatPings(List<MyFutureBuddyComment> chatPings)
     {
@@ -241,9 +266,14 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             this.mSubmittingState = val;
         }
     }
+    private void mOnUserSignUp(String value) {
+        if (mListener != null)
+            mListener.onUserSignUp(value);
 
+    }
     public interface OnMyFBInteractionListener {
         void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex);
         void onMyFBUpdated(int commentsSize, int myFbIndex);
+        void onUserSignUp(String value);
     }
 }

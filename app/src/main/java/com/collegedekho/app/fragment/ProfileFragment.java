@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -47,8 +48,8 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     private EditText mNameET;
     private EditText mEmailET;
     private EditText mPhoneET;
-    private TextView mStreamTV;
-    private TextView mLevelTV;
+    private EditText mStreamTV;
+    private EditText mLevelTV;
     private onProfileUpdateListener mListener;
 
     public ProfileFragment() {
@@ -86,12 +87,14 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
+        View rootView = inflater.inflate(R.layout.my_profile2, container, false);
         this.mNameET = (EditText) rootView.findViewById(R.id.profile_name);
         this.mEmailET = (EditText) rootView.findViewById(R.id.profile_email);
         this.mPhoneET =  (EditText) rootView.findViewById(R.id.profile_contact);
-        this.mStreamTV = (TextView) rootView.findViewById(R.id.profile_streams);
-        this.mLevelTV = (TextView) rootView.findViewById(R.id.profile_level);
+        this.mStreamTV = (EditText) rootView.findViewById(R.id.profile_stream);
+        this.mLevelTV = (EditText) rootView.findViewById(R.id.profile_level);
+        rootView.findViewById(R.id.stream_edit).setOnClickListener(this);
+        rootView.findViewById(R.id.level_edit).setOnClickListener(this);
         mSetEnterKeyListener(mPhoneET);
         if(mName.equalsIgnoreCase("Anonymous User"))
         {
@@ -100,12 +103,12 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
             this.mNameET.setText(mName);
         }
         this.mEmailET.setText(mEmail);
-        this.mStreamTV.setText(mStreamName + " (Change)");
-        this.mLevelTV.setText(mLevelName + " (Change)");
+        this.mStreamTV.setText(mStreamName );
+        this.mLevelTV.setText(mLevelName );
         this.mPhoneET.setText(mPhone);
 
-        this.mStreamTV.setOnClickListener(this);
-        this.mLevelTV.setOnClickListener(this);
+        //this.mStreamTV.setOnClickListener(this);
+        //this.mLevelTV.setOnClickListener(this);
         ((TextView)rootView.findViewById(R.id.profile_update)).setOnClickListener(this);
         return rootView;
     }
@@ -130,13 +133,16 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     private void mProfileUpdate() {
         HashMap<String, String> hashMap = new HashMap<>();
 
-        hashMap.put("name", mNameET.getText().toString());
-        hashMap.put("email",mEmailET.getText().toString());
-        hashMap.put("phone_no", mPhoneET.getText().toString());
-        hashMap.put("stream", mStreamURI);
-        hashMap.put("level",mLevelURI);
+        hashMap.put(Constants.USER_NAME, mNameET.getText().toString());
+        hashMap.put(Constants.USER_EMAIL,mEmailET.getText().toString());
+        hashMap.put(Constants.USER_PHONE, mPhoneET.getText().toString());
+        hashMap.put(Constants.USER_STREAM, mStreamURI);
+        hashMap.put(Constants.USER_LEVEL,mLevelURI);
+        hashMap.put(Constants.USER_STREAM_NAME, mStreamName);
+        hashMap.put(Constants.USER_LEVEL_NAME,mLevelName);
+
                  if(mListener!=null) {
-                     this.mListener.onProfileUpdated(hashMap, mStreamName, mLevelName);
+                     this.mListener.onProfileUpdated(hashMap);
              }
     }
 
@@ -149,33 +155,29 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
-
-        if(view.getId() == R.id.profile_streams) {
-           mStreamClicked();
-        }
-        else if(view.getId() == R.id.profile_level) {
-
-            // make selected to last level
-           /* int length = mLevelURI.length();
-            String c = mLevelURI.substring(length-2, length-1);
-            int i = Integer.parseInt(c);*/
-
-            new AlertDialog.Builder(getActivity())
-                    .setTitle("Please select a level")
-                    .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mLevelURI = Constants.BASE_URL + "level/" + (which + 1) + "/";
-                            mLevelName = InstituteCourse.CourseLevel.getName(which);
-                            mLevelTV.setText(mLevelName+" (Change)");
-                            dialog.dismiss();
-                        }
-                    })
-                    .show();
-        }
-        else if(view.getId() == R.id.profile_update)
+        switch (view.getId())
         {
-            mProfileUpdate();
+            case R.id.stream_edit:
+                mStreamClicked();
+            break;
+            case R.id.level_edit:
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Please select a level")
+                        .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mLevelURI = Constants.BASE_URL + "level/" + (which + 1) + "/";
+                                mLevelName = InstituteCourse.CourseLevel.getName(which);
+                                mLevelTV.setText(mLevelName);
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            break;
+            case R.id.profile_update:
+                mProfileUpdate();
+            break;
+
         }
     }
 
@@ -183,12 +185,13 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     {
         this.mStreamURI = streamUri;
         this.mStreamName = streamName;
-        mStreamTV.setText(mStreamName+" (Change)");
+        this.mStreamTV.setText(streamName);
+
     }
 
     public interface  onProfileUpdateListener
     {
-       void  onProfileUpdated(  HashMap<String, String> hashMap, String streamName, String levelName);
+       void  onProfileUpdated(  HashMap<String, String> hashMap);
        void  onStreamClicked();
     }
 
@@ -200,6 +203,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
+        this.mStreamTV.setText(this.mStreamName);
     }
     private void mSetEnterKeyListener(EditText editText)
     {

@@ -132,4 +132,5 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
             this.mListener = listener;
         }
     }
+
 }

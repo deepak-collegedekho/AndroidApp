@@ -5,7 +5,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -16,6 +20,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,6 +61,7 @@ import com.collegedekho.app.fragment.NewsListFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
+import com.collegedekho.app.fragment.SignUpFragment;
 import com.collegedekho.app.fragment.SplashFragment;
 import com.collegedekho.app.fragment.StreamFragment;
 import com.collegedekho.app.fragment.WidgetListFragment;
@@ -65,6 +71,8 @@ import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.NetworkUtils;
 import com.crashlytics.android.Crashlytics;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -76,6 +84,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -83,7 +93,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+        implements  NavigationDrawerFragment.NavigationDrawerCallbacks,
         HomeFragment.OnHomeInteractionListener,
         DataLoadListener,
         StreamFragment.OnStreamInteractionListener,
@@ -95,7 +105,7 @@ public class MainActivity extends AppCompatActivity
         QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener,
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleListFragment.OnArticleSelectedListener,
-        ProfileFragment.onProfileUpdateListener {
+        ProfileFragment.onProfileUpdateListener,SignUpFragment.OnSignUpListener {
 
     static {
         Constants.FilterCategoryMap.put(Constants.ID_HOSTEL, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
@@ -142,6 +152,7 @@ public class MainActivity extends AppCompatActivity
     private Institute mInstitute;
     private String instituteCourseId = "";
     private List<Widget> mWidgets;
+    public static CallbackManager callbackManager;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -193,6 +204,8 @@ public class MainActivity extends AppCompatActivity
         tracker.enableAdvertisingIdCollection(true);
         tracker.enableAutoActivityTracking(true);
 
+        mRegisterFacebookSdk();
+
         this.setContentView(R.layout.activity_main);
 
         this.mToolbar = (Toolbar) findViewById(R.id.app_toolbar);
@@ -201,7 +214,10 @@ public class MainActivity extends AppCompatActivity
         this.mTitle = getTitle().toString();
         this.mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
+
+        //this.mDisplayFragment(SignInFragment.newInstance(), false, SignInFragment.class.getName());
+
+       this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -225,7 +241,7 @@ public class MainActivity extends AppCompatActivity
                         else
                             mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
                     } else {
-
+;
                         mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
                     }
                 } else if (currentFragment instanceof SplashFragment)
@@ -236,6 +252,29 @@ public class MainActivity extends AppCompatActivity
         }, Constants.MAIN_ANIMATION_TIME);
     }
 
+    private void mRegisterFacebookSdk()
+    {
+        FacebookSdk.sdkInitialize(this);
+        callbackManager = CallbackManager.Factory.create();
+
+        try
+        {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.collegedekho.app",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                String keyHAsh = Base64.encodeToString(md.digest(), Base64.DEFAULT);
+                Log.d("KeyHash:", keyHAsh);
+            }
+        }
+        catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+        }
+
+    }
 
     @Override
     protected void onResume() {
@@ -373,13 +412,10 @@ public class MainActivity extends AppCompatActivity
 
         int id = item.getItemId();
         if (id == R.id.action_profile) {
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
-            if (fragment == null)
-                mDisplayFragment(ProfileFragment.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
-            else {
-                mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
-            }
+
+            mDisplayPofile();
             return true;
+
         } else if (id == R.id.action_home) {
             this.mClearBackStack();
             return true;
@@ -394,6 +430,7 @@ public class MainActivity extends AppCompatActivity
         requestUserCreation();
     }
 
+
     private void requestUserCreation() {
         if (user == null)
             this.mMakeNetworkCall(Constants.TAG_CREATE_USER, Constants.BASE_URL + "users/anonymous/", new HashMap<String, String>());
@@ -402,6 +439,8 @@ public class MainActivity extends AppCompatActivity
             mSetUserPref();
         }
     }
+
+
 
     private void mSetUser(String json) {
         try {
@@ -449,7 +488,7 @@ public class MainActivity extends AppCompatActivity
         return null;
     }
 
-    private void displayStreams(String response, boolean addToBackstack) {
+    private void mDisplayStreams(String response, boolean addToBackstack) {
         try {
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, extractResults(response));
             mDisplayFragment(StreamFragment.newInstance(new ArrayList<>(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
@@ -625,7 +664,7 @@ public class MainActivity extends AppCompatActivity
         this.startActivityForResult(activityIntent, MainActivity.GET_PSYCHOMETRIC_RESULTS);
     }
 
-    @Override
+  @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if (requestCode == MainActivity.GET_PSYCHOMETRIC_RESULTS) {
@@ -653,10 +692,21 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-    }
+      else
+        {
+            if(currentFragment instanceof SignUpFragment)
+            currentFragment.onActivityResult(requestCode, resultCode, data);
+        }
+  }
 
     private void mDisplayFragment(Fragment fragment, boolean addToBackstack, String tag) {
        try {
+
+           if (this.getCurrentFocus() != null && this.getCurrentFocus() instanceof EditText) {
+               InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+               imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+           }
+
             currentFragment = fragment;
 
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -704,7 +754,7 @@ public class MainActivity extends AppCompatActivity
                 this.mSetUser(response);
                 break;
             case Constants.TAG_LOAD_STREAM:
-                this.displayStreams(response, false);
+                this.mDisplayStreams(response, false);
                 break;
             case Constants.WIDGET_SHORTLIST:
                 this.mDisplayInstituteList(response, false);
@@ -848,23 +898,20 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case Constants.TAG_UPDATE_PREFRENCES:
-                if (tags.length > 4) {
-                    parentIndex = tags[1];
-                    childIndex = tags[2];
-                    String stremName = tags[3];
-                    String levelName = tags[4];
-                    String phone = null;
-                    if (tags.length > 5)
-                        phone = tags[5];
-
-                    this.mStreamAndLevelUpdated(response, parentIndex, childIndex, stremName, levelName, phone);
-                }
+                this.mStreamAndLevelUpdated(response);
+                this.mClearBackStack();
                 break;
             case Constants.TAG_UPDATE_STREAM:
-                this.displayStreams(response, true);
+                this.mDisplayStreams(response, true);
                 break;
             case Constants.TAG_UPDATE_INSTITUTES:
                 this.mUpdateInstituteList(response);
+                break;
+            case Constants.TAG_USER_SIGNUP:
+                if (tags.length > 0) {
+                    parentIndex = tags[1];
+                }
+                    this.onSignUpResponse(response, parentIndex);
                 break;
         }
 
@@ -873,33 +920,25 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void mStreamAndLevelUpdated(String response, String levelURI, String streamURI, String streamName, String levelName, String phone) {
+    private void mStreamAndLevelUpdated(String response){
         String token = user.getToken();
-        //TODO: May be we can make a new pref entry for token
+        String image = user.getImage();
         try {
             user = JSON.std.beanFrom(User.class, response);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         //save the preferences locally
         user.setPref(User.Prefs.STREAMKNOWN);
-        user.setLevel(levelURI);
-        user.setStream(streamURI);
         user.setToken(token);
-        user.setPhone(phone);
-        user.setLevel_name(levelName);
-        user.setStream_name(streamName);
-
+        user.setImage(image);
         String u = null;
         try {
             u = JSON.std.asString(user);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
-        this.mClearBackStack();
     }
 
     //Saved on DB, now save it in shared preferences.
@@ -932,6 +971,7 @@ public class MainActivity extends AppCompatActivity
 
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
     }
+
 
     private void mUpdateUserPref(String response) {
         JSONObject psychometricResult;
@@ -1117,9 +1157,8 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_CREATE_USER:
                 return "Creating a user...";
             case Constants.TAG_LOAD_STREAM:
-                return "Loading Streams...";
             case Constants.TAG_UPDATE_STREAM:
-                return "Updating Streams...";
+                return "Loading Streams...";
             case Constants.TAG_UPDATE_INSTITUTES:
                 return "Updating Institues...";
             case Constants.TAG_UPDATE_PREFRENCES:
@@ -1156,6 +1195,8 @@ public class MainActivity extends AppCompatActivity
                 return "Loading Forums...";
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_TEST:
                 return "Submitting psychometric analysis...";
+            case Constants.TAG_USER_SIGNUP:
+                return "Signing User Please Wait.....";
         }
         return null;
     }
@@ -1304,18 +1345,25 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onStreamUpdated(String uri, String streamName) {
+    public void onStreamUpdated(final String uri, final String streamName) {
         getSupportFragmentManager().popBackStack();
 
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
 
         if (fragment == null)
             mDisplayFragment(ProfileFragment.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
         else {
-            if (fragment instanceof ProfileFragment) {
-                ((ProfileFragment) fragment).updateStream(uri, streamName);
-            }
+
             mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
+            if (fragment instanceof ProfileFragment) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((ProfileFragment) fragment).updateStream(uri, streamName);
+                    }
+                });
+
+            }
         }
 
 
@@ -1491,7 +1539,7 @@ public class MainActivity extends AppCompatActivity
         return map;
     }
 
-    private void showProgressDialog(String message) {
+    public void showProgressDialog(String message) {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
             progressDialog.setCancelable(false);
@@ -1501,6 +1549,13 @@ public class MainActivity extends AppCompatActivity
             progressDialog.setMessage(message);
         }
         progressDialog.show();
+    }
+    public void hideProgressDialog() {
+        if(progressDialog != null && progressDialog.isShowing())
+        {
+            progressDialog.dismiss();
+        }
+
     }
 
     @Override
@@ -1898,8 +1953,19 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void mDisplayPofile()
+    {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
+        if (fragment == null)
+            mDisplayFragment(ProfileFragment.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
+        else
+            mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
+
+    }
+
+
     @Override
-    public void onProfileUpdated(HashMap<String, String> hashMap, String streamName, String levelName) {
+    public void onProfileUpdated(HashMap<String, String> hashMap) {
 
         //reset the filters in preferences and update institueLists
         if (this.mFolderList != null && !this.mFolderList.isEmpty()) {
@@ -1912,14 +1978,9 @@ public class MainActivity extends AppCompatActivity
             this.mFilterKeywords = new HashMap<>();
 
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
-
             this.mMakeNetworkCall(Constants.TAG_UPDATE_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", null);
         }
-
-        if (hashMap == null)
-            return;
-
-        this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES + "#" + hashMap.get("level") + "#" + hashMap.get("stream") + "#" + streamName + "#" + levelName + "#" + hashMap.get("phone_no"), Constants.BASE_URL + "preferences/", hashMap);
+        this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, Constants.BASE_URL + "preferences/", hashMap);
 
     }
 
@@ -1939,11 +2000,9 @@ public class MainActivity extends AppCompatActivity
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
-                if(isLastFragment())
-                {
+                if (isLastFragment()) {
                     mClearBackStack();
-                }
-                else {
+                } else {
                     int count = getSupportFragmentManager().getBackStackEntryCount();
                     if (count >= 1) {
                         getSupportFragmentManager().popBackStack();
@@ -1994,5 +2053,48 @@ public class MainActivity extends AppCompatActivity
             return true;
         else
             return false;
+    }
+
+
+    @Override
+    public void onUserSignUp(String value) {
+
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_SIGNUP);
+        if (fragment == null)
+            mDisplayFragment(SignUpFragment.newInstance(value,true), true, Constants.TAG_FRAGMENT_SIGNUP);
+        else
+            mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_SIGNUP);
+    }
+
+    @Override
+    public void onUserSignedIn(HashMap hashMap, String msg) {
+        if(hashMap == null)return;
+       if(user != null) {
+           hashMap.put(Constants.USER_STREAM, user.getStream());
+           hashMap.put(Constants.USER_RESOURCE_URI, user.getResource_uri());
+           hashMap.put(Constants.USER_LEVEL, user.getLevel());
+           hashMap.put(Constants.USER_STREAM_NAME, user.getStream_name());
+           hashMap.put(Constants.USER_LEVEL_NAME, user.getLevel_name());
+
+           //TODO:: remove when server side is done
+           user.setImage(""+hashMap.get(Constants.USER_IMAGE));
+
+       }
+            this.mMakeNetworkCall(Constants.TAG_USER_SIGNUP+"#"+msg,  Constants.BASE_URL + "preferences/", hashMap);
+
+    }
+
+    private void onSignUpResponse(String response, String msg)
+    {
+        this.mStreamAndLevelUpdated(response);
+        if(msg != null && !msg.isEmpty())
+        {
+            getSupportFragmentManager().popBackStack();
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_MY_FB);
+            if(fragment != null)
+            {
+                ((MyFutureBuddiesFragment)fragment).sendChatRequest(msg);
+            }
+        }
     }
 }

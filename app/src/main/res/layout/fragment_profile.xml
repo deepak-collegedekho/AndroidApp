@@ -28,7 +28,7 @@
                      android:layout_width="0dp"
                      android:layout_height="35dp"
                      android:maxLines="1"
-                     android:inputType="textNoSuggestions"
+                     android:inputType="textCapWords"
                      android:background="@drawable/round_box"
                      android:layout_weight=".6"/>
          </LinearLayout>
@@ -96,7 +96,7 @@
 
             <TextView
                 style="@style/AppTheme.TextHomeSubHead.Medium"
-                android:id="@+id/profile_streams"
+                android:id="@+id/profile_stream"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:maxLines="3"
@@ -132,13 +132,13 @@
             <TextView
                 android:id="@+id/profile_update"
                 style="@style/AppTheme.BlueButton"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:gravity="center"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/label4"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="@dimen/course_label_horizontal_margin"
+                android:layout_marginLeft="@dimen/m35dp"
+                android:layout_marginRight="@dimen/m35dp"
                 android:layout_marginTop="50dp"
-                android:text="Submit"/>
+                android:text="Update"/>
         </LinearLayout>
     </ScrollView>

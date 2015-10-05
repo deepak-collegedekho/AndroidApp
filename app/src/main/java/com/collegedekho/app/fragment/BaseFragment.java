@@ -14,6 +14,7 @@ public class BaseFragment extends Fragment {
 
     protected static final String ARG_TITLE = "title";
     protected static final String ARG_NEXT = "next";
+    protected String TAG ="BaseFragment";
     protected int pastVisiblesItems, visibleItemCount, totalItemCount;
     protected boolean loading = false;
     protected LinearLayout progressBarLL;
@@ -21,8 +22,7 @@ public class BaseFragment extends Fragment {
     protected String nextUrl;
     protected BaseListener listener;
     protected  int listType;
-    protected RecyclerView.Adapter adapter;
-   // public static boolean sDisableExitAnimation = false;
+
 
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override

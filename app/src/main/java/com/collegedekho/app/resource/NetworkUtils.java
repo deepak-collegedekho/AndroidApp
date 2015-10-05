@@ -33,7 +33,7 @@ public class NetworkUtils {
     private RequestQueue mQueue;
     private DataLoadListener mListener;
     private String mtoken;
-    private Context mContext;
+    private static Context mContext;
 
     public NetworkUtils(Context context, DataLoadListener listener) {
         mQueue = MySingleton.getInstance(context.getApplicationContext()).getRequestQueue();
@@ -41,7 +41,7 @@ public class NetworkUtils {
         mContext = context;
     }
 
-    public int getConnectivityStatus()
+    public static int getConnectivityStatus()
     {
         ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
 
