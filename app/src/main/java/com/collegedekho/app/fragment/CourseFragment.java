@@ -60,8 +60,8 @@ public class CourseFragment extends BaseFragment {
         return rview;
     }
 
-    public void updateAdapter(int position) {
-        this.mAdapter.updateAdapter(position);
+    public void updateAdapter() {
+        this.mAdapter.updateAdapter();
 
     }
 

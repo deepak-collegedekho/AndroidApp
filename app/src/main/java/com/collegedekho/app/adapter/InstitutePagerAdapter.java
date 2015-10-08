@@ -128,11 +128,11 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     {
 
     }
-    public void updateCourseFragment(int position , int tabPosition)
+    public void updateCourseFragment()
     {
         if(f!= null)
         {
-            f.updateAdapter(position , tabPosition);
+            f.updateAdapter();
         }
     }
 }

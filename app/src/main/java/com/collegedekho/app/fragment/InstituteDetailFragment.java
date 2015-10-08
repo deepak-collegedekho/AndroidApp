@@ -1,21 +1,18 @@
 package com.collegedekho.app.fragment;
 
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.collegedekho.app.MySingleton;
+import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.InstitutePagerAdapter;
@@ -24,6 +21,9 @@ import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
 import com.fasterxml.jackson.jr.ob.JSON;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -102,8 +102,32 @@ public class InstituteDetailFragment extends BaseFragment {
 
     public void updateCourses(String response ) { new LoadCoursesAsyncTask().execute(response);  }
 
-    public void updateAppliedCourses(String response ,int position, int tabPosition) {
-                   mPagerAdapter.updateCourseFragment(position , tabPosition);
+    public void updateAppliedCourses(String response) {
+      if(response != null) {
+           try {
+               JSONObject responseObj = new JSONObject(response);
+               String instituteId = responseObj.getString(Constants.APPLY_COURSE);
+               for (int i = 0; i < courses.size() ; i++) {
+                   ArrayList<InstituteCourse> instituteCourse = courses.get(i);
+                   int count = instituteCourse.size();
+                   for (int j = 0; j < count; j++) {
+                       long id = instituteCourse.get(j).getId();
+                       long tempId = Long.parseLong(instituteId);
+
+                       if(id ==  tempId)
+                       {
+                           instituteCourse.get(j).setIs_applied(1);
+                           break;
+                       }
+                   }
+               }
+
+           } catch (JSONException e) {
+               e.printStackTrace();
+           }
+       }
+
+               mPagerAdapter.updateCourseFragment();
     }
 
     public void instituteQnAQuestionAdded(QnAQuestions ques)

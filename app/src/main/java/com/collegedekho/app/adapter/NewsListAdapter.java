@@ -1,8 +1,6 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,14 +10,12 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.collegedekho.app.MySingleton;
+import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.News;
-import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsListFragment;
 import com.collegedekho.app.resource.Constants;
 
-import java.lang.Integer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

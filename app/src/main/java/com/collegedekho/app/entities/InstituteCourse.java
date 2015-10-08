@@ -27,6 +27,7 @@ public class InstituteCourse implements Parcelable {
     public int duration;
     public int level;
     public String duration_type_display;
+    public int is_applied;
     public InstituteCourse() {
     }
 
@@ -56,6 +57,14 @@ public class InstituteCourse implements Parcelable {
         dest.writeInt(duration);
         dest.writeInt(level);
         dest.writeString(duration_type_display);
+    }
+
+    public int getIs_applied() {
+        return is_applied;
+    }
+
+    public void setIs_applied(int is_applied) {
+        this.is_applied = is_applied;
     }
 
     public long getId() {

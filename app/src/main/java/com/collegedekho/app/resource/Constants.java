@@ -36,10 +36,6 @@ public class Constants
     public static final String TAG_LOAD_COURSES = "load_courses";
     public static final String TAG_APPLIED_COURSE = "applied_course";
     public static final String TAG_LOAD_HOME = "home";
-    public static final String METHOD_GET = "GET";
-    public static final String METHOD_POST = "POST";
-    public static final int LIKE_THING = 0;
-    public static final int DISLIKE_THING = 1;
     public static final String TAG_POST_QUESTION = "post_question";
     public static final String TAG_LOAD_FILTERS = "load_filters";
     public static final String TAG_RESOURCE_URI = "resource_uri";
@@ -95,6 +91,11 @@ public class Constants
     public static final String KEY_USER_LEARNED_TOUCH = "user_touch";
     public static final String TAG_FRAGMENT_SIGNUP = "fragment_signup";
     public static final String TAG_USER_SIGNUP = "user_signup";
+    public static final String TAG_USER_FACEBOOK_LOGIN = "facebook_login";
+    public static final String METHOD_GET = "GET";
+    public static final String METHOD_POST = "POST";
+    public static final int LIKE_THING = 0;
+    public static final int DISLIKE_THING = 1;
     public static final int SHORTLISTED_YES = 1;
     public static final int SHORTLISTED_NO = 0;
     public static final int MAIN_ANIMATION_TIME = 6500;
@@ -138,14 +139,37 @@ public class Constants
     public static final int ARTICLES_TYPE    = 3;
 
     // user attributes
-    public static final String USER_NAME = "name";
-    public static final String USER_STREAM = "stream";
-    public static final String USER_LEVEL = "level";
+    public static final String USER_FIRST_NAME  = "first_name";
+    public static final String USER_LAST_NAME   = "last_name";
+    public static final String USER_NAME        = "name";
+    public static final String USER_PASSWORD    = "password";
+    public static final String USER_ID          = "id";
+    public static final String USER_TOKEN       = "token";
+    public static final String USER_EMAIL       = "email";
+    public static final String USER_STREAM      = "stream";
+    public static final String USER_LEVEL       = "level";
     public static final String USER_STREAM_NAME = "stream_name";
-    public static final String USER_LEVEL_NAME = "level_name";
+    public static final String USER_LEVEL_NAME  = "level_name";
     public static final String USER_RESOURCE_URI = "user";
-    public static final String USER_PHONE = "phone_no";
-    public static final String USER_EMAIL = "email";
-    public static final String USER_IMAGE = "user_image";
+    public static final String USER_PHONE       = "phone_no";
+    public static final String USER_IMAGE       = "user_image";
+    public static final String USER_VERIFIED= "verified";
+    public static final String USER_LOCALE = "locale";
+    public static final String USER_GENDER = "gender";
+    public static final String USER_TIMEZONE = "timezone";
+    public static final String USER_UPDATED_TIME = "updated_time";
+    public static final String USER_LINK = "link";
+    public static final String USER_EXPIRE_AT = "expires_at";
 
+
+    public static final String APPLY_YEAR = "year_of_admission";
+    public static final String APPLY_COURSE= "institute_course";
+    public static final String APPLY_INSTITUTE = "institute";
+
+
+    public static final int APPLY_COMPLETE  = 0;
+    public static final int APPLY_PENDING   = 1;
+    public static final int APPLY_UPDATING  = 2;
+    public static final String KEY_APPLY_STATUS = "apply_status";
+    public static String INSTITUTE_ID ="institute_id_set";
 }

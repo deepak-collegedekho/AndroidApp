@@ -19,6 +19,7 @@ public class CoursePagerAdapter extends FragmentStatePagerAdapter {
     ArrayList<ArrayList<InstituteCourse>> mCourse;
     private CourseFragment courseFragment[];
     private int count;
+
     public CoursePagerAdapter(FragmentManager fm, ArrayList<ArrayList<InstituteCourse>> course) {
         super(fm);
         mCourse = new ArrayList<>();
@@ -50,11 +51,11 @@ public class CoursePagerAdapter extends FragmentStatePagerAdapter {
         return titles.get(position);
     }
 
-    public void updateAdapter(int position , int tabPosition)
+    public void updateAdapter(int tabPosition)
     {
             if(courseFragment[tabPosition] != null)
             {
-                courseFragment[tabPosition].updateAdapter(position);
+                courseFragment[tabPosition].updateAdapter();
             }
     }
 }

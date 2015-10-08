@@ -8,19 +8,19 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.service.ApplyIntentService;
+import com.collegedekho.app.service.ApplyService;
 
 /**
- * Created by harshvardhan on 08/09/15.
+ * Created by Suresh Kumar on 07/09/15.
  */
-public class ConnectivityReceiver extends BroadcastReceiver {
+public class ApplyReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent)
     {
-        //Constants.IS_CONNECTED_TO_INTERNET = !intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
 
-       /* ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+       // intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+       ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
         if (activeNetwork != null && activeNetwork.isAvailable())
@@ -28,10 +28,11 @@ public class ConnectivityReceiver extends BroadcastReceiver {
             SharedPreferences preferences = context.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
             if(preferences.getInt(Constants.KEY_APPLY_STATUS,Constants.APPLY_COMPLETE)==Constants.APPLY_PENDING)
             {
-                Intent in = new Intent(context, ApplyIntentService.class);
+                Intent in = new Intent(context, ApplyService.class);
                 context.startService(in);
             }
-        }*/
+        }
+
     }
 
 }

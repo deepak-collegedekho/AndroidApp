@@ -26,7 +26,8 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:theme="@style/AppTheme">
-        <receiver android:name=".listener.ConnectivityReceiver">
+
+        <receiver android:name=".listener.ApplyReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
@@ -40,6 +41,7 @@
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
             </intent-filter>
         </receiver>
+
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name"
@@ -63,6 +65,12 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
+
+
+        <service android:name=".service.ApplyIntentService"
+            android:label="@string/application_service"/>
+
+        <service android:name=".service.ApplyService"/>
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id"/>

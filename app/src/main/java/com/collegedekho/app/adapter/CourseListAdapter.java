@@ -80,7 +80,8 @@ public class CourseListAdapter extends RecyclerView.Adapter {
             cDuration.setText(":  " + c.getDuration() + " " + c.duration_type_display);
             cLevel.setText(":  " + InstituteCourse.CourseLevel.values()[c.getLevel()].name());
             itemView.setTag(c);
-            if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
+           // if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
+            if(c.getIs_applied() == 1){
                 cApplyBtn.setText("Applied");
                 cApplyBtn.setBackgroundResource(R.drawable.bg_button_grey);
             } else {
@@ -100,7 +101,8 @@ public class CourseListAdapter extends RecyclerView.Adapter {
         public void onClick(View v) {
             if (v.getId() == R.id.button_apply) {
                 InstituteCourse c = (InstituteCourse) itemView.getTag();
-                if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
+               // if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
+                  if(c.getIs_applied() == 1){
                     Toast.makeText(mContext, "Already Applied", Toast.LENGTH_SHORT).show();
                 } else {
                     mIsAppliedResponse = true;
@@ -113,10 +115,9 @@ public class CourseListAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public void updateAdapter(int position) {
+    public void updateAdapter() {
 
         this.mIsAppliedResponse = false;
-       this.notifyItemChanged(position);
        this.notifyDataSetChanged();
     }
 }

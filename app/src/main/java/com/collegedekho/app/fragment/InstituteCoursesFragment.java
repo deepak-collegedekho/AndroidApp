@@ -13,6 +13,10 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.CoursePagerAdapter;
 import com.collegedekho.app.entities.InstituteCourse;
+import com.collegedekho.app.resource.Constants;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -78,7 +82,7 @@ public class InstituteCoursesFragment extends BaseFragment {
     }
 
     private void init(View rootView) {
-        ViewPager mPager = (ViewPager) rootView.findViewById(R.id.pager_courses);
+        final ViewPager mPager = (ViewPager) rootView.findViewById(R.id.pager_courses);
         this.mAdapter = new CoursePagerAdapter(getChildFragmentManager(), mCourses);
         mPager.setAdapter(mAdapter);
         mTabLayout = (TabLayout) rootView.findViewById(R.id.course_tab_layout);
@@ -86,6 +90,25 @@ public class InstituteCoursesFragment extends BaseFragment {
         mTabLayout.setupWithViewPager(mPager);
         mTabLayout.setVisibility(View.VISIBLE);
         ((TextView) rootView.findViewById(R.id.course_tab_title)).setText("Courses Offered");
+
+        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int tabPosition = getTabposition();
+                mAdapter.updateAdapter(tabPosition);
+                mPager.setCurrentItem(tabPosition);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     @Override
@@ -107,9 +130,10 @@ public class InstituteCoursesFragment extends BaseFragment {
             }
         }
     }
-    public void updateAdapter(int position ,int tabPosition)
+    public void updateAdapter()
     {
-        mAdapter.updateAdapter(position , tabPosition);
+
+        mAdapter.updateAdapter(getTabposition());
     }
     public static int getTabposition()
     {

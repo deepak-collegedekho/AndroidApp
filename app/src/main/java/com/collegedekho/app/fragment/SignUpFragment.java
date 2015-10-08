@@ -4,14 +4,8 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Html;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,18 +16,15 @@ import android.widget.Toast;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.NetworkUtils;
+import com.collegedekho.app.utils.NetworkUtils;
 import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
@@ -45,8 +36,7 @@ import com.google.android.gms.plus.model.people.Person;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -120,7 +110,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
 
          fbLoginutton = (LoginButton) view.findViewById(R.id.facebook_sign_in);
-        fbLoginutton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "email"));
+        fbLoginutton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "email", "user_likes"));
         //fbLoginutton.setOnClickListener(this);
         mFacebookCallbackListener(fbLoginutton);
 
@@ -133,12 +123,13 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             public void onSuccess(LoginResult loginResult) {
                 // App code
                 Log.d("", "on connected");
-                ((MainActivity)getActivity()).showProgressDialog("Signing facebook account");
+                ((MainActivity) getActivity()).showProgressDialog("Signing facebook account");
                 loginResult.getAccessToken();
                 if (AccessToken.getCurrentAccessToken() != null) {
                     RequestData();
                 }
             }
+
             @Override
             public void onCancel() {
                 // App code
@@ -163,15 +154,28 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                 JSONObject json = response.getJSONObject();
                 try {
                     if (json != null) {
-                        HashMap hashMap = new HashMap<String, String>();
-                        hashMap.put(Constants.USER_NAME, json.getString("name"));
+                        // for profile image
                         JSONObject pictureJsonObj = json.getJSONObject("picture");
                         JSONObject data = pictureJsonObj.getJSONObject("data");
                         String image = data.getString("url");
 
+                        HashMap hashMap = new HashMap<String, String>();
+                        hashMap.put(Constants.USER_FIRST_NAME, json.getString("first_name"));
+                        hashMap.put(Constants.USER_LAST_NAME, json.getString("last_name"));
+                        hashMap.put(Constants.USER_VERIFIED, json.getString("verified"));
+                        hashMap.put(Constants.USER_NAME, json.getString("name"));
+                        hashMap.put(Constants.USER_LOCALE, json.getString("locale"));
+                        hashMap.put(Constants.USER_GENDER, json.getString("gender"));
+                        hashMap.put(Constants.USER_UPDATED_TIME, json.getString("updated_time"));
+                        hashMap.put(Constants.USER_LINK, json.getString("link"));
+                        hashMap.put(Constants.USER_ID, json.getString("id"));
+                        hashMap.put(Constants.USER_TIMEZONE, json.getString("timezone"));
+                        hashMap.put(Constants.USER_EMAIL, json.getString("email"));
                         hashMap.put(Constants.USER_IMAGE, image);
-                        // hashMap.put(Constants.USER_EMAIL, json.getString("email"));
-                        mUserSignedIn(hashMap, mMessage);
+                        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+                        hashMap.put(Constants.USER_TOKEN, accessToken.getToken());
+                        hashMap.put(Constants.USER_EXPIRE_AT, new SimpleDateFormat("yyyy-MM-dd").format(accessToken.getExpires()) + "T" + new SimpleDateFormat("HH:mm:ss").format(accessToken.getExpires()));
+                        SignUpFragment.this.mFacebookLogin(hashMap, mMessage);
                     }
 
                 } catch (JSONException e) {
@@ -180,13 +184,42 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             }
         });
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name,link,email,picture");
+        parameters.putString("fields", "first_name,last_name,verified,name,locale,gender,updated_time,link,id,timezone,email,picture");
         request.setParameters(parameters);
         request.executeAsync();
+    }
+
+    private void mFacebookLogin(HashMap hashMap, String msg)
+    {
+        if(mListener != null)
+            mListener.onFacebookLogin(hashMap, msg);
+
+    }
+
+    private void mUserSignedIn(HashMap hashMap, String msg)
+    {
+        if(mListener != null)
+            mListener.onUserSignedIn(hashMap, msg);
+
 
     }
 
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnSignUpListener {
+
+        void onUserSignedIn(HashMap hashMap, String msg);
+        void onFacebookLogin(HashMap hashMap, String msg);
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -205,29 +238,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         mListener = null;
     }
 
-
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnSignUpListener {
-        // TODO: Update argument type and name
-        public void onUserSignedIn(HashMap hashMap, String msg);
-    }
-    private void mUserSignedIn(HashMap hashMap, String msg)
-    {
-        if(mListener != null)
-        mListener.onUserSignedIn(hashMap, msg);
-
-
-    }
     @Override
     public void onResume() {
         super.onResume();
@@ -252,21 +262,38 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             mShouldResolve = true;
             mGoogleApiClient.connect();
         }
-       /* else if(view.getId() == R.id.facebook_sign_in)
-        {
-            // Callback registration
-            mFacebookCallbackListener(fbLoginutton);
-        }*/
         else  if (view.getId() == R.id.signIn_button)
         {
             String name = ((EditText) getView().findViewById(R.id.name)).getText().toString();
-              if (name == null || name.isEmpty()) {
-                    Toast.makeText(getActivity(), "Please enter your name", Toast.LENGTH_SHORT).show();
+            if (name == null || name.isEmpty())
+            {
+                Toast.makeText(getActivity(), "Please enter your name", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            HashMap hashMap = new HashMap<String, String>();
+            hashMap.put(Constants.USER_NAME, name);
+            mUserSignedIn(hashMap, mMessage);
+
+            /*String email = ((EditText) getView().findViewById(R.id.email)).getText().toString();
+            String password = ((EditText) getView().findViewById(R.id.password)).getText().toString();
+            if (email == null || email.isEmpty())
+             {
+                    Toast.makeText(getActivity(), "Please enter your email", Toast.LENGTH_SHORT).show();
                     return;
-                }
-                HashMap hashMap = new HashMap<String, String>();
-                hashMap.put(Constants.USER_NAME, name);
-                mUserSignedIn(hashMap, mMessage);
+             }
+            else if(!isValidEmail(email))
+            {
+                Toast.makeText(getActivity(), "Please enter a valid email", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            else if (password == null || password.isEmpty()) {
+                  Toast.makeText(getActivity(), "Please enter your password", Toast.LENGTH_SHORT).show();
+                  return;
+              }
+            HashMap hashMap = new HashMap<String, String>();
+            hashMap.put(Constants.USER_EMAIL, email);
+            hashMap.put(Constants.USER_PASSWORD, password);
+            mUserSignedIn(hashMap, mMessage);*/
 
         }
     }
@@ -378,5 +405,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         Log.e("", "Connection suspended");
 
     }
-
+    private static boolean isValidEmail(CharSequence target) {
+        return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
 }

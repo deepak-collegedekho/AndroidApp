@@ -1,11 +1,10 @@
 package com.collegedekho.app.activity;
 
-import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -27,6 +26,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -69,7 +71,7 @@ import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragme
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.NetworkUtils;
+import com.collegedekho.app.utils.NetworkUtils;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
@@ -86,6 +88,7 @@ import io.fabric.sdk.android.Fabric;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -135,7 +138,7 @@ public class MainActivity extends AppCompatActivity
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
 
-    public NetworkUtils networkUtils;
+    public static NetworkUtils networkUtils;
     public Toolbar mToolbar;
     public Fragment currentFragment;
     private List<Institute> mInstituteList;
@@ -160,8 +163,7 @@ public class MainActivity extends AppCompatActivity
 
     private Connecto connecto = null;
     // Get SENDER_ID fom GCM.
-    private String SENDER_ID = "244741229152";
-
+    private String SENDER_ID = "collegedekho-5c7e5";
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -296,6 +298,7 @@ public class MainActivity extends AppCompatActivity
 
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
+
     }
 
     @Override
@@ -787,13 +790,12 @@ public class MainActivity extends AppCompatActivity
                 this.mUpdateCourses(response);
                 break;
             case Constants.TAG_APPLIED_COURSE:
-                String tabposition = null;
+                String tabPosition = null;
                 if (tags.length == 3) {
                     extraTag = tags[1];
-                    tabposition = tags[2];
+                    tabPosition = tags[2];
                 }
-                this.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(instituteCourseId, instituteCourseId).commit();
-                this.mUpdateAppliedCourses(response, extraTag, tabposition);
+                this.mUpdateAppliedCourses(response, extraTag, tabPosition);
                 break;
             case Constants.TAG_LOAD_HOME:
                 this.mUpdateHome(response);
@@ -923,7 +925,15 @@ public class MainActivity extends AppCompatActivity
                 if (tags.length > 0) {
                     parentIndex = tags[1];
                 }
-                    this.onSignUpResponse(response, parentIndex);
+
+                this.mStreamAndLevelUpdated(response);
+                    this.showMyFbMessage(parentIndex);
+                break;
+            case Constants.TAG_USER_FACEBOOK_LOGIN:
+                if (tags.length > 0) {
+                    parentIndex = tags[1];
+                }
+                 this.onFacebookandGmailLoginResponse(response, parentIndex);
                 break;
         }
 
@@ -1238,11 +1248,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mUpdateAppliedCourses(String response, String extraTag, String tabPosition) {
-        if (extraTag == null || tabPosition == null) return;
-
         try {
-            if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
-                ((InstituteDetailFragment) currentFragment).updateAppliedCourses(response, Integer.parseInt(extraTag), Integer.parseInt(tabPosition));
+
+                if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
+                ((InstituteDetailFragment) currentFragment).updateAppliedCourses(response);
             }
 
         } catch (Exception e) {
@@ -1271,7 +1280,14 @@ public class MainActivity extends AppCompatActivity
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            mHandleErrorResponse(tag);
                             dialog.dismiss();
+                        }
+                    })
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            mHandleErrorResponse(tag);
                         }
                     })
                     .show();
@@ -1281,35 +1297,36 @@ public class MainActivity extends AppCompatActivity
     private void mHandleErrorResponse(String tag)
     {
         String extraTag = null;
-        String childIndex = null;
-        String parentIndex = null;
-        String like = null;
+        String extraTag2 = null;
         String[] tags = tag.split("#");
 
         switch (tags[0]) {
-            case Constants.TAG_APPLIED_COURSE:
-                String tabposition = null;
+            case Constants.TAG_APPLIED_COURSE: {
+
                 if (tags.length == 3) {
                     extraTag = tags[1];
-                    tabposition = tags[2];
+                    extraTag2 = tags[2];
                 }
-                this.mUpdateAppliedCourses(null, extraTag, tabposition);
+                this.mUpdateAppliedCourses(null, extraTag, extraTag2);
                 break;
+            }
             case Constants.TAG_SHORTLIST_INSTITUTE:
-            case Constants.TAG_DELETESHORTLIST_INSTITUTE:
+            case Constants.TAG_DELETESHORTLIST_INSTITUTE: {
                 if (tags.length == 2)
                     extraTag = tags[1];
-            if (Integer.parseInt(extraTag) == currentInstitute)
-                if (currentFragment instanceof InstituteDetailFragment)
-                    ((InstituteDetailFragment) currentFragment).updateInstituteShortlist();
+                if (Integer.parseInt(extraTag) == currentInstitute)
+                    if (currentFragment instanceof InstituteDetailFragment)
+                        ((InstituteDetailFragment) currentFragment).updateInstituteShortlist();
                 break;
-            case Constants.TAG_LIKE_DISLIKE:
+            }
+            case Constants.TAG_LIKE_DISLIKE: {
                 if (tags.length >= 2)
                     extraTag = tags[1];
                 if (currentFragment instanceof InstituteListFragment) {
                     ((InstituteListFragment) currentFragment).updateButtons(Integer.parseInt(extraTag));
                 }
                 break;
+            }
         }
     }
 
@@ -1469,33 +1486,27 @@ public class MainActivity extends AppCompatActivity
     public void onCourseApplied(int position, int tabPosition, InstituteCourse instituteCourse) {
 
         HashMap<String, String> map = new HashMap<>();
-        /*SharedPreferences sp = getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
-        User  user = null;
-        try {
-            user = JSON.std.beanFrom(User.class, sp.getString(Constants.KEY_USER, null));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
+
         if (user != null) {
-            map.put("name", user.getName());
-            map.put("email", user.getEmail());
+            map.put(Constants.USER_NAME, user.getName());
+            map.put(Constants.USER_EMAIL, user.getEmail());
         }
 
         TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String mPhoneNumber = tMgr.getLine1Number();
         if (mPhoneNumber != null) {
-            map.put("phone_no", mPhoneNumber);
+            map.put(Constants.USER_PHONE, mPhoneNumber);
         } else {
             if (user != null) map.put("phone_no", user.getPhone());
         }
 
-        map.put("institute_course", "" + instituteCourse.getId());
+        map.put(Constants.APPLY_COURSE, "" + instituteCourse.getId());
         if (mInstitute != null) {
             map.put("institute", "" + mInstitute.getId());
         }
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
-        map.put("year_of_admission", "" + year);
+        map.put(Constants.APPLY_YEAR, "" + year);
 
         String URL = Constants.BASE_URL + "lms/";
         instituteCourseId = "" + instituteCourse.getId();
@@ -2088,16 +2099,47 @@ public class MainActivity extends AppCompatActivity
            hashMap.put(Constants.USER_LEVEL_NAME, user.getLevel_name());
 
            //TODO:: remove when server side is done
-           user.setImage(""+hashMap.get(Constants.USER_IMAGE));
+           user.setImage("" + hashMap.get(Constants.USER_IMAGE));
 
        }
             this.mMakeNetworkCall(Constants.TAG_USER_SIGNUP+"#"+msg,  Constants.BASE_URL + "preferences/", hashMap);
 
     }
 
-    private void onSignUpResponse(String response, String msg)
+    @Override
+    public void onFacebookLogin(HashMap hashMap, String msg) {
+            this.mMakeNetworkCall(Constants.TAG_USER_FACEBOOK_LOGIN + "#" + msg, Constants.BASE_URL + "auth/facebook/", hashMap);
+
+    }
+
+    public void onFacebookandGmailLoginResponse(String response, String msg) {
+
+        User tempUser = user;
+        try {
+            user = JSON.std.beanFrom(User.class, response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //save the preferences locally
+        user.setPref(User.Prefs.STREAMKNOWN);
+        user.setImage(tempUser.getImage());/*
+        user.setStream(tempUser.getStream());
+        user.setLevel(tempUser.getLevel());
+        user.setStream_name(tempUser.getLevel_name());
+        user.setLevel_name(tempUser.getLevel_name());*/
+        String u = null;
+        try {
+            u = JSON.std.asString(user);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+        showMyFbMessage(msg);
+
+    }
+
+    private void showMyFbMessage(String msg)
     {
-        this.mStreamAndLevelUpdated(response);
         if(msg != null && !msg.isEmpty())
         {
             getSupportFragmentManager().popBackStack();
@@ -2114,10 +2156,58 @@ public class MainActivity extends AppCompatActivity
         if(MainActivity.tracker!=null)
         {
             MainActivity.tracker.send(new HitBuilders.EventBuilder()
-                .setCategory(category)
-                .setAction(action)
-                .setLabel(label)
-                .build());
+                    .setCategory(category)
+                    .setAction(action)
+                    .setLabel(label)
+                    .build());
         }
     }
+    public void showDialogForStreamLevel(final String tag, JSONObject jsonObj, final Map<String, String> params)
+    {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.stream_dailog);
+        dialog.setTitle("Select Your Stream and Level");
+        RadioGroup streamRadioGroup = (RadioGroup)dialog. findViewById(R.id.stream_radio_group);
+        RadioGroup levelRadioGroup  = (RadioGroup)dialog. findViewById(R.id.level_radio_group);
+        try {
+            final String stream_url = Constants.BASE_URL+"streams/"+jsonObj.getString(Constants.USER_STREAM)+"/";
+            String streamName = jsonObj.getString(Constants.USER_STREAM_NAME);
+           final String  level_url =  Constants.BASE_URL+"level/"+jsonObj.getString(Constants.USER_STREAM)+"/";
+             String levelName = jsonObj.getString(Constants.USER_LEVEL_NAME);
+            if(user.getStream_name().equalsIgnoreCase(streamName))
+                streamRadioGroup.setVisibility(View.GONE);
+            else if(user.getLevel().equalsIgnoreCase(level_url))
+                levelRadioGroup.setVisibility(View.GONE);
+
+            ((RadioButton)dialog.findViewById(R.id.firstStream)).setText(streamName);
+            ((RadioButton)dialog.findViewById(R.id.secondStream)).setText(user.getStream_name());
+
+            ((RadioButton)dialog.findViewById(R.id.firstLevel)).setText(levelName);
+            ((RadioButton)dialog.findViewById(R.id.secondLevel)).setText(user.getLevel_name());
+
+            // if button is clicked, close the custom dialog
+            dialog.findViewById(R.id.ok_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                     dialog.dismiss();
+                    if (((RadioButton)dialog.findViewById(R.id.firstStream)).isChecked())
+                        params.put(Constants.USER_STREAM, stream_url);
+                    if (((RadioButton)dialog.findViewById(R.id.secondStream)).isChecked())
+                        params.put(Constants.USER_STREAM, user.getStream());
+                    if (((RadioButton)dialog.findViewById(R.id.firstLevel)).isChecked())
+                        params.put(Constants.USER_LEVEL, level_url);
+                    if (((RadioButton)dialog.findViewById(R.id.secondLevel)).isChecked())
+                        params.put(Constants.USER_LEVEL,  user.getLevel());
+                    mMakeNetworkCall(tag, Constants.BASE_URL + "auth/facebook/", params);
+                }
+
+
+            });
+            dialog.show();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }
