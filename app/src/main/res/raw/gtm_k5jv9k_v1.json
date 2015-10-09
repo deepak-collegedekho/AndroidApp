@@ -1,0 +1,31 @@
+{
+    "exportFormatVersion": 1.3,
+    "exportTime": "2015-10-06 11:09:49",
+    "containerVersion": {
+        "accountId": "129973582",
+        "containerId": "1604680",
+        "containerVersionId": "0",
+        "deleted": false,
+        "container": {
+            "accountId": "129973582",
+            "containerId": "1604680",
+            "name": "www.collegedekho.com",
+            "publicId": "GTM-K5JV9K",
+            "timeZoneCountryId": "US",
+            "timeZoneId": "America/Los_Angeles",
+            "notes": "",
+            "usageContext": [
+                "ANDROID"
+            ],
+            "fingerprint": "1444125918094",
+            "enabledBuiltInVariable": [
+                "EVENT",
+                "APP_ID",
+                "APP_NAME",
+                "APP_VERSION_CODE",
+                "APP_VERSION_NAME"
+            ]
+        },
+        "fingerprint": "0"
+    }
+}

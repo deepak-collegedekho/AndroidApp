@@ -71,6 +71,8 @@ import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragme
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.resource.Constants;
+
+import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.CallbackManager;
@@ -80,6 +82,11 @@ import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.tagmanager.Container;
+import com.google.android.gms.tagmanager.ContainerHolder;
+import com.google.android.gms.tagmanager.TagManager;
 
 import io.connecto.android.sdk.Connecto;
 import io.connecto.android.sdk.Properties;
@@ -98,6 +105,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationDrawerFragment.NavigationDrawerCallbacks,
@@ -161,9 +169,11 @@ public class MainActivity extends AppCompatActivity
     private List<Widget> mWidgets;
     public static CallbackManager callbackManager;
 
+    private String mGTMContainerId = "www.collegedekho.com";
     private Connecto connecto = null;
     // Get SENDER_ID fom GCM.
-    private String SENDER_ID = "collegedekho-5c7e5";
+    String SENDER_ID = "1012922632838";
+
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -203,26 +213,27 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.setContentView(R.layout.activity_main);
+
+        this.connecto = Connecto.with(MainActivity.this);
+        this.connecto.identify("RandomUser", new Traits().putValue("name", "Harsh"));
+        //You can also track any event if you want
+        this.connecto.track("Session Started", new Properties().putValue("value", 800));
+        this.connecto.registerWithGCM(MainActivity.this, this.SENDER_ID);
 
         Fabric.with(this, new Crashlytics());
 
-        analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
-        analytics.setLocalDispatchPeriod(1800);
+        this.analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
+        this.analytics.setLocalDispatchPeriod(1800);
 
-        connecto = Connecto.with(MainActivity.this);
-        connecto.identify("RandomUser", new Traits().putValue("name", "Harsh"));
-        //You can also track any event if you want
-        connecto.track("Session Started", new Properties().putValue("value", 800));
-        connecto.registerWithGCM(MainActivity.this, SENDER_ID);
+        MainActivity.tracker = this.analytics.newTracker(TRACKER_ID);
 
-        MainActivity.tracker = analytics.newTracker(TRACKER_ID);
         MainActivity.tracker.enableExceptionReporting(true);
         MainActivity.tracker.enableAdvertisingIdCollection(true);
         MainActivity.tracker.enableAutoActivityTracking(true);
 
-        mRegisterFacebookSdk();
-
-        this.setContentView(R.layout.activity_main);
+        this.mRegisterFacebookSdk();
+        this.mSetupGTM();
 
         this.mToolbar = (Toolbar) findViewById(R.id.app_toolbar);
         this.mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -286,10 +297,42 @@ public class MainActivity extends AppCompatActivity
             }
         }
         catch (PackageManager.NameNotFoundException e) {
-
-        } catch (NoSuchAlgorithmException e) {
         }
+        catch (NoSuchAlgorithmException e) {
+        }
+    }
 
+    private void mSetupGTM()
+    {
+        TagManager tagManager = TagManager.getInstance(this);
+
+        // Modify the log level of the logger to print out not only
+        // warning and error messages, but also verbose, debug, info messages.
+        tagManager.setVerboseLoggingEnabled(true);
+
+        PendingResult<ContainerHolder> pending =
+                tagManager.loadContainerPreferNonDefault(this.mGTMContainerId,
+                        R.raw.gtm_analytics);
+
+        // The onResult method will be called as soon as one of the following happens:
+        //     1. a saved container is loaded
+        //     2. if there is no saved container, a network container is loaded
+        //     3. the request times out. The example below uses a constant to manage the timeout period.
+        pending.setResultCallback(new ResultCallback<ContainerHolder>() {
+            @Override
+            public void onResult(ContainerHolder containerHolder) {
+                ContainerHolderSingleton.setContainerHolder(containerHolder);
+                Container container = containerHolder.getContainer();
+                if (!containerHolder.getStatus().isSuccess()) {
+                    Log.e("CuteAnimals", "failure loading container");
+                    //displayErrorToUser(R.string.load_error);
+                    return;
+                }
+                ContainerHolderSingleton.setContainerHolder(containerHolder);
+                ContainerLoadedCallback.registerCallbacksForContainer(container);
+                containerHolder.setContainerAvailableListener(new ContainerLoadedCallback());
+            }
+        }, 2, TimeUnit.SECONDS);
     }
 
     @Override
@@ -543,7 +586,7 @@ public class MainActivity extends AppCompatActivity
             List<Articles> articles = JSON.std.listOfFrom(Articles.class, extractResults(response));
             this.mArticlesList.addAll(articles);
 
-            mParseSimilarArticle(this.mArticlesList);
+            this.mParseSimilarArticle(this.mArticlesList);
             if (currentFragment instanceof ArticleListFragment) {
                 ((ArticleListFragment) currentFragment).updateList(articles, next);
             }
@@ -559,16 +602,13 @@ public class MainActivity extends AppCompatActivity
             if (this.mFilterKeywords.size() > 0)
                 this.mFilterCount = this.mFilterKeywords.size();
 
-
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
-
 
             if (fragment instanceof InstituteListFragment)
             {
                 if(((InstituteListFragment) fragment).getFilterAllowed() != filterAllowed);
                 fragment = null;
             }
-
 
             if (fragment == null)
                 this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount), true, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
@@ -753,6 +793,10 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
         }
+        finally {
+           //Send GA Session
+           MainActivity.GASessionEvent(tag);
+       }
     }
 
     @Override
@@ -845,20 +889,28 @@ public class MainActivity extends AppCompatActivity
             case Constants.WIDGET_FORUMS:
                 this.mShowMyFBEnumeration(response);
                 break;
-            case Constants.TAG_VOTE_QNA_QUESTION_ENTITY:
+            case Constants.ACTION_VOTE_QNA_QUESTION_ENTITY:
                 if (tags.length == 3) {
                     parentIndex = tags[1];
                     voteType = Integer.parseInt(tags[2]);
+
                     this.mQnAQuestionVoteUpdated(Integer.parseInt(parentIndex), voteType);
+
+                    //GA Event for question vote
+                    MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, "Question Voted : " + String.valueOf(voteType));
                 }
                 break;
-            case Constants.TAG_VOTE_QNA_ANSWER_ENTITY:
+            case Constants.ACTION_VOTE_QNA_ANSWER_ENTITY:
                 if (tags.length > 3) {
                     parentIndex = tags[1];
                     childIndex = tags[2];
                     voteType = Integer.parseInt(tags[3]);
 
                     this.mQnAAnswerVoteUpdated(Integer.parseInt(parentIndex), Integer.parseInt(childIndex), voteType);
+
+                    //GA Event for answer vote
+                    MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, "Answer Voted : " + String.valueOf(voteType));
+
                 }
                 break;
             case Constants.TAG_LOAD_MY_FB:
@@ -877,7 +929,7 @@ public class MainActivity extends AppCompatActivity
                     this.mUpdateMyFB(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
                 }
                 break;
-            case Constants.TAG_QNA_ANSWER_SUBMITTED:
+            case Constants.ACTION_QNA_ANSWER_SUBMITTED:
                 if (tags.length > 1) {
                     parentIndex = tags[1];
                     childIndex = tags[2];
@@ -885,7 +937,7 @@ public class MainActivity extends AppCompatActivity
                     this.mOnAnswerAdded(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
                 }
                 break;
-            case Constants.TAG_MY_FB_COMMENT_SUBMITTED:
+            case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
                 if (tags.length > 1) {
                     parentIndex = tags[1];
                     childIndex = tags[2];
@@ -961,6 +1013,10 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+
+        //GA Event for Stream Change
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_STREAM_CHANGED, "Stream Changed");
+
     }
 
     //Saved on DB, now save it in shared preferences.
@@ -1079,10 +1135,15 @@ public class MainActivity extends AppCompatActivity
         if (response == null) {
             i.setIs_shortlisted(Constants.SHORTLISTED_NO);
             message = " removed from your shortlist";
+            //GA Event for institute shortlisting removed
+            MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_SHORTLISTED_REMOVED, "Institute Shortlisting Removed : " + String.valueOf(i.getId()) + " Institute Name: " + i.getName() + " Institute City: " + i.getCity_name());
+
         } else {
             try {
                 i.setIs_shortlisted(Constants.SHORTLISTED_YES);
                 message = " added to your shortlist";
+                //GA Event for institute shortlisted
+                MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_SHORTLISTED, "Institute Shortlisted : " + String.valueOf(i.getId()) + " Institute Name: " + i.getName() + " Institute City: " + i.getCity_name());
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -1206,12 +1267,12 @@ public class MainActivity extends AppCompatActivity
                 return "Loading Questions...";
             case Constants.TAG_LOAD_MY_FB:
                 return "Loading your Forums chat...";
-            /*case Constants.TAG_MY_FB_COMMENT_SUBMITTED:
+            /*case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
                 return "Submitting Comment...";*/
-            case Constants.TAG_QNA_ANSWER_SUBMITTED:
+            case Constants.ACTION_QNA_ANSWER_SUBMITTED:
                 return "Submitting Answer...";
-            case Constants.TAG_VOTE_QNA_QUESTION_ENTITY:
-            case Constants.TAG_VOTE_QNA_ANSWER_ENTITY:
+            case Constants.ACTION_VOTE_QNA_QUESTION_ENTITY:
+            case Constants.ACTION_VOTE_QNA_ANSWER_ENTITY:
                 return "Processing Vote...";
             case Constants.WIDGET_FORUMS:
                 return "Loading Forums...";
@@ -1394,8 +1455,6 @@ public class MainActivity extends AppCompatActivity
 
             }
         }
-
-
     }
 
     private void mOnCourseLevelSelected(int level, String streamUri, String streamName) {
@@ -1422,7 +1481,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onInstituteSelected(int position) {
-        currentInstitute = position;
+        this.currentInstitute = position;
         this.mDisplayInstitute(position);
     }
 
@@ -1442,6 +1501,12 @@ public class MainActivity extends AppCompatActivity
             else
                 this.mMakeNetworkCall(Constants.TAG_LIKE_DISLIKE + "#" + position + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, institute.getResource_uri() + "downvote/", null, Request.Method.POST);
         }
+
+        //GA Event for institute Liked or Disliked
+        MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.TAG_LIKE_DISLIKE,
+                "Institute ID: " + String.valueOf(institute.getId()) +
+                        "Institute Name: " + institute.getName() +
+        "Disliked institute: " + String.valueOf(liked));
     }
 
     @Override
@@ -1449,14 +1514,12 @@ public class MainActivity extends AppCompatActivity
         if (this.mFilters != "") {
             updateFilterList(this.mFilters);
 
-            //mDisplayFragment(FilterFragment.newInstance(mFolderList), false);
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentManager fragmentManager = this.getSupportFragmentManager();
             Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_FILTER_LIST);
             if (fragment == null)
-                mDisplayFragment(FilterFragment.newInstance(mFolderList), true, Constants.TAG_FRAGMENT_FILTER_LIST);
+                this.mDisplayFragment(FilterFragment.newInstance(this.mFolderList), true, Constants.TAG_FRAGMENT_FILTER_LIST);
             else
-                mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_FILTER_LIST);
+                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_FILTER_LIST);
         }
     }
 
@@ -1511,6 +1574,13 @@ public class MainActivity extends AppCompatActivity
         String URL = Constants.BASE_URL + "lms/";
         instituteCourseId = "" + instituteCourse.getId();
         this.mMakeNetworkCall(Constants.TAG_APPLIED_COURSE + "#" + position + "#" + tabPosition, URL, map, Request.Method.POST);
+
+        //GA Event for course applied
+        MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_COURSE_APPLIED,
+                "CourseID: " + String.valueOf(instituteCourse.getId()) +
+                        "Course Name: " + instituteCourse.getName() +
+                        "Institute ID: " + String.valueOf(mInstitute.getId()) +
+                        "Institute Name: " + mInstitute.getName());
     }
 
     @Override
@@ -1624,6 +1694,12 @@ public class MainActivity extends AppCompatActivity
         //:TODO remove hard coding of streams/1
         map.put("stream", Constants.BASE_URL + "streams/1/");*/
         this.mMakeNetworkCall(Constants.TAG_POST_QUESTION, Constants.BASE_URL + "personalize/qna/", map, Request.Method.POST);
+
+        //GA Event for Question asked
+        MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_QNA_QUESTION_ASKED,
+                "Institute ID: " + String.valueOf(this.mInstituteList.get(currentInstitute).getId()) +
+                        "Institute Name: " + this.mInstituteList.get(currentInstitute).getName());
+
     }
 
     @Override
@@ -1636,7 +1712,7 @@ public class MainActivity extends AppCompatActivity
                     this.mFilterKeywords.put("tag_uris[" + (count++) + "]", ft.getTag());
         }
 
-        mFilterCount = this.mFilterKeywords.size();
+        this.mFilterCount = this.mFilterKeywords.size();
 
         this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mFilterKeywords);
 
@@ -1708,12 +1784,24 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onInstituteShortlisted() {
-        Institute i = mInstituteList.get(currentInstitute);
-        if (i.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
-            this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + currentInstitute, i.getResource_uri() + "shortlist/", null, Request.Method.POST);
-        } else {
-            this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + currentInstitute, i.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
+        boolean shortlisted;
+        Institute institute = mInstituteList.get(currentInstitute);
+        if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
+        {
+            this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
+            shortlisted = true;
         }
+        else
+        {
+            this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
+            shortlisted = false;
+        }
+
+        //GA Event for institute shortlisted
+        MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.TAG_LIKE_DISLIKE,
+                "Institute ID: " + String.valueOf(institute.getId()) +
+                        "Institute Name: " + institute.getName() +
+                        "Shortlisted: " + String.valueOf(shortlisted));
     }
 
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params, int method) {
@@ -1748,24 +1836,24 @@ public class MainActivity extends AppCompatActivity
     public void onQnAQuestionVote(String resourceURI, int voteType, int position) {
         Toast.makeText(MainActivity.this, resourceURI + " " + voteType, Toast.LENGTH_SHORT).show();
         if (voteType == Constants.LIKE_THING)
-            this.mMakeNetworkCall(Constants.TAG_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
+            this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
         else
-            this.mMakeNetworkCall(Constants.TAG_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
+            this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
     }
 
     @Override
     public void onQnAAnswerVote(String resourceURI, int voteType, int answerPosition, int questionPosition) {
         if (voteType == Constants.LIKE_THING)
-            this.mMakeNetworkCall(Constants.TAG_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
+            this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
         else
-            this.mMakeNetworkCall(Constants.TAG_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
+            this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
     }
 
     @Override
     public void onQnAAnswerSubmitted(String questionURI, String answerText, int questionIndex, int answerIndex) {
         HashMap<String, String> params = new HashMap<>();
         params.put("answer_text", answerText);
-        this.mMakeNetworkCall(Constants.TAG_QNA_ANSWER_SUBMITTED + "#" + String.valueOf(questionIndex) + "#" + String.valueOf(answerIndex), questionURI + "answer/", params, Request.Method.POST);
+        this.mMakeNetworkCall(Constants.ACTION_QNA_ANSWER_SUBMITTED + "#" + String.valueOf(questionIndex) + "#" + String.valueOf(answerIndex), questionURI + "answer/", params, Request.Method.POST);
     }
 
     private void mQnAQuestionVoteUpdated(int questionIndex, int voteType) {
@@ -1777,10 +1865,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mOnAnswerAdded(String response, int questionIndex, int index) {
+        QnAAnswers qnaAnswer = new QnAAnswers();
         try {
-            JSONObject ans = new JSONObject(response);
 
-            QnAAnswers qnaAnswer = new QnAAnswers();
+            JSONObject ans = new JSONObject(response);
 
             qnaAnswer.setUser(ans.getString("user"));
             qnaAnswer.setDownvotes(ans.getInt("downvotes"));
@@ -1801,18 +1889,26 @@ public class MainActivity extends AppCompatActivity
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage());
         }
+        finally {
+            //GA Event for answer added
+            MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_QNA_ANSWER_SUBMITTED,
+                    "ID: " + String.valueOf(qnaAnswer.getId()));
+        }
     }
 
     @Override
     public void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position, int commentsCount) {
         this.mMakeNetworkCall(Constants.TAG_LOAD_MY_FB + "#" + String.valueOf(position) + "#" + String.valueOf(commentsCount), myFutureBuddiesEnumeration.getResource_uri(), null, Request.Method.GET);
+        //GA Event for FB selection
+        MainActivity.GATrackerEvent(Constants.CATEGORY_MY_FB, Constants.ACTION_MY_FB_SELECTED, "FB selected: " + myFutureBuddiesEnumeration.getInstitute_name());
     }
 
     @Override
     public void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex) {
         HashMap<String, String> params = new HashMap<>();
         params.put("comment", commentText);
-        this.mMakeNetworkCall(Constants.TAG_MY_FB_COMMENT_SUBMITTED + "#" + String.valueOf(myFbIndex) + "#" + String.valueOf(myFbCommentIndex), myFbURI + "comment/", params, Request.Method.POST);
+
+        this.mMakeNetworkCall(Constants.ACTION_MY_FB_COMMENT_SUBMITTED + "#" + String.valueOf(myFbIndex) + "#" + String.valueOf(myFbCommentIndex), myFbURI + "comment/", params, Request.Method.POST);
     }
 
     @Override
@@ -1837,6 +1933,10 @@ public class MainActivity extends AppCompatActivity
 
             if (currentFragment instanceof MyFutureBuddiesFragment)
                 ((MyFutureBuddiesFragment) currentFragment).commentAdded(fbComment);
+
+            //GA Event for MY FB comment added
+            MainActivity.GATrackerEvent(Constants.CATEGORY_MY_FB, Constants.ACTION_MY_FB_COMMENT_SUBMITTED, "Comment Added");
+
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -2151,7 +2251,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public static void SendEvent(String category, String action, String label)
+    public static void GATrackerEvent(String category, String action, String label)
     {
         if(MainActivity.tracker!=null)
         {
@@ -2162,6 +2262,7 @@ public class MainActivity extends AppCompatActivity
                     .build());
         }
     }
+
     public void showDialogForStreamLevel(final String tag, JSONObject jsonObj, final Map<String, String> params)
     {
         final Dialog dialog = new Dialog(this);
@@ -2210,4 +2311,56 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public static void GASessionEvent(String screenName)
+    {
+        if(MainActivity.tracker!=null)
+        {
+            MainActivity.tracker.setScreenName(screenName);
+
+            // Start a new session with the hit.
+            MainActivity.tracker.send(new HitBuilders.ScreenViewBuilder()
+                .setNewSession()
+                .build());
+        }
+    }
+
+    private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
+        @Override
+        public void onContainerAvailable(ContainerHolder containerHolder, String containerVersion) {
+            // We load each container when it becomes available.
+            Container container = containerHolder.getContainer();
+            registerCallbacksForContainer(container);
+        }
+
+        public static void registerCallbacksForContainer(Container container) {
+            // Register two custom function call macros to the container.
+            container.registerFunctionCallMacroCallback("increment", new CustomMacroCallback());
+            container.registerFunctionCallMacroCallback("mod", new CustomMacroCallback());
+            // Register a custom function call tag to the container.
+            container.registerFunctionCallTagCallback("custom_tag", new CustomTagCallback());
+        }
+    }
+
+    private static class CustomMacroCallback implements Container.FunctionCallMacroCallback {
+        private int numCalls;
+
+        @Override
+        public Object getValue(String name, Map<String, Object> parameters) {
+            if ("increment".equals(name)) {
+                return ++numCalls;
+            } else if ("mod".equals(name)) {
+                return (Long) parameters.get("key1") % Integer.valueOf((String) parameters.get("key2"));
+            } else {
+                throw new IllegalArgumentException("Custom macro name: " + name + " is not supported.");
+            }
+        }
+    }
+
+    private static class CustomTagCallback implements Container.FunctionCallTagCallback {
+        @Override
+        public void execute(String tagName, Map<String, Object> parameters) {
+            // The code for firing this custom tag.
+            Log.i("CuteAnimals", "Custom function call tag :" + tagName + " is fired.");
+        }
+    }
 }

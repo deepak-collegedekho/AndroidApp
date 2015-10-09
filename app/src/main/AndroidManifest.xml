@@ -2,21 +2,25 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.collegedekho.app">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <!--connecto permissions-->
+    <permission android:name="com.collegedekho.app.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- To check if this device has access to internet -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- To retrieve the account name (email) as part of sign-in -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <!-- To retrieve OAuth 2.0 tokens or invalidate tokens to disconnect a user's Google account from an app -->
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <!-- To retrieve user  phone number -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
-    <!--connecto permissions-->
-    <permission android:name="com.collegedekho.app.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+    <!-- To retrieve user  phone number -->
     <uses-permission android:name="com.collegedekho.app.permission.C2D_MESSAGE" />
+    <!-- To register application for C2D messages -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <!-- To receive C2D messages -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- To keep phone awake -->
 
     <application
         android:name="android.support.multidex.MultiDexApplication"
@@ -32,16 +36,6 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
-        <receiver android:name="io.connecto.android.sdk.ConnectoGCMReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <!-- Receives the actual messages. -->
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <!-- Receives the registration id. -->
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-            </intent-filter>
-        </receiver>
-
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name"
@@ -49,7 +43,6 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -77,5 +70,13 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="e1dd370529095b9153aed4f44952512fc61ad3bf" />
+        <receiver
+            android:name="io.connecto.android.sdk.ConnectoGCMReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

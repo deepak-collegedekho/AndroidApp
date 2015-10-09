@@ -64,10 +64,6 @@ public class Constants
     public static final String QTYPE_INPUT = "input";
     public static final String QTYPE_RANGE = "range";
     public static final String TAG_LOAD_MY_FUTURE_BUDDIES = "my_fb";
-    public static final String TAG_VOTE_QNA_QUESTION_ENTITY = "qna_question_entity_vote";
-    public static final String TAG_VOTE_QNA_ANSWER_ENTITY = "qna_answer_entity_vote";
-    public static final String TAG_QNA_ANSWER_SUBMITTED = "qna_answer_submitted";
-    public static final String TAG_MY_FB_COMMENT_SUBMITTED = "my_fb_comment_submitted";
     public static final String TAG_LOAD_MY_FB = "load_my_fb";
     public static final String TAG_REFRESH_MY_FB = "refresh_my_fb";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_TEST = "submit_psychometric_test";
@@ -138,16 +134,16 @@ public class Constants
     public static final int NEWS_TYPE        = 2;
     public static final int ARTICLES_TYPE    = 3;
 
-    // user attributes
+    //User Attributes
+    public static final String USER_NAME = "name";
     public static final String USER_FIRST_NAME  = "first_name";
     public static final String USER_LAST_NAME   = "last_name";
-    public static final String USER_NAME        = "name";
     public static final String USER_PASSWORD    = "password";
     public static final String USER_ID          = "id";
     public static final String USER_TOKEN       = "token";
     public static final String USER_EMAIL       = "email";
-    public static final String USER_STREAM      = "stream";
-    public static final String USER_LEVEL       = "level";
+    public static final String USER_STREAM = "stream";
+    public static final String USER_LEVEL = "level";
     public static final String USER_STREAM_NAME = "stream_name";
     public static final String USER_LEVEL_NAME  = "level_name";
     public static final String USER_RESOURCE_URI = "user";
@@ -172,4 +168,24 @@ public class Constants
     public static final int APPLY_UPDATING  = 2;
     public static final String KEY_APPLY_STATUS = "apply_status";
     public static String INSTITUTE_ID ="institute_id_set";
+
+    //GA Categories
+    public static final String CATEGORY_PREFERENCE = "category_preference";
+    public static final String CATEGORY_QNA = "category_qna";
+    public static final String CATEGORY_MY_FB = "category_my_fb";
+    public static final String CATEGORY_INSTITUTES = "category_institutes";
+
+    //Actions
+    public static final String ACTION_STREAM_CHANGED = "action_stream_changed";
+    public static final String ACTION_MY_FB_SELECTED = "action_my_fb_selected";
+    public static final String ACTION_QNA_QUESTION_ASKED = "action_qna_question_asked";
+    public static final String ACTION_COURSE_APPLIED = "action_course_applied";
+    public static final String ACTION_VOTE_QNA_QUESTION_ENTITY = "action_qna_question_entity_vote";
+    public static final String ACTION_VOTE_QNA_ANSWER_ENTITY = "action_qna_answer_entity_vote";
+    public static final String ACTION_QNA_ANSWER_SUBMITTED = "action_qna_answer_submitted";
+    public static final String ACTION_MY_FB_COMMENT_SUBMITTED = "action_my_fb_comment_submitted";
+    public static final String ACTION_INSTITUTE_SHORTLISTED = "action_institute_shortlisted";
+    public static final String ACTION_INSTITUTE_SHORTLISTED_REMOVED = "action_institute_shortlisting_removed";
+
+
 }

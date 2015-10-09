@@ -168,13 +168,13 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
         System.gc();
     }
 
-    //Called on when response is received from server on Vote up or down
+    //Called on when response is received from server on vote up or down for either question or answer
     public void onVotingFeedback(int questionIndex, int answerIndex, int voteType)
     {
         if(answerIndex < 0)
         {
             //update question vote
-            Log.e(QnAQuestionsAndAnswersFragment.class.getName(), String.valueOf(questionIndex));
+            //Log.e(QnAQuestionsAndAnswersFragment.class.getName(), String.valueOf(questionIndex));
             int totalVotes = Integer.parseInt(this.mVoteCounts.getText().toString());
 
             if (voteType == Constants.LIKE_THING)
@@ -195,7 +195,7 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
         else
         {
             //update answer vote
-            Log.e(QnAQuestionsAndAnswersFragment.class.getName(), String.valueOf(questionIndex) + " and " + String.valueOf(answerIndex));
+            //Log.e(QnAQuestionsAndAnswersFragment.class.getName(), String.valueOf(questionIndex) + " and " + String.valueOf(answerIndex));
             QnAAnswers qnaAns = mQnAAnswersSet.get(answerIndex);
 
             if (voteType == Constants.LIKE_THING)

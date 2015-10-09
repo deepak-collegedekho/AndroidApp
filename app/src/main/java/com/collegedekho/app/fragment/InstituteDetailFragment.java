@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -19,7 +20,6 @@ import com.collegedekho.app.adapter.InstitutePagerAdapter;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.entities.QnAQuestions;
-import com.collegedekho.app.resource.Constants;
 import com.fasterxml.jackson.jr.ob.JSON;
 
 import org.json.JSONException;
