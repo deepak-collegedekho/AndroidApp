@@ -63,7 +63,7 @@ public class ApplyIntentService extends IntentService {
             if (mPhoneNumber != null) {
                 map.put(Constants.USER_PHONE, mPhoneNumber);
             } else {
-                if (MainActivity.user != null) map.put(Constants.USER_PHONE, MainActivity.user.getPhone());
+                if (MainActivity.user != null) map.put(Constants.USER_PHONE, MainActivity.user.getPhone_no());
             }
         }
         map.put(Constants.APPLY_COURSE,instituteCourseID);

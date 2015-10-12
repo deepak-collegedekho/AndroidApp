@@ -16,6 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.ErrorCode;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.listener.DataLoadListener;
@@ -28,6 +29,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import io.fabric.sdk.android.services.concurrency.AsyncTask;
 
 /**
  * @author Mayank Gautam
@@ -162,14 +165,20 @@ public class NetworkUtils {
 
                     }
                     String[] tags = tag.split("#");
-                    if(tags[0].equalsIgnoreCase(Constants.TAG_USER_FACEBOOK_LOGIN))
+                    if(tags[0].equalsIgnoreCase(Constants.TAG_USER_LOGIN))
                     {
                         if(json != null) {
                             try {
                                 JSONObject jsonObj = new JSONObject(json);
                                 String code = jsonObj.getString("Code");
                                 if(Integer.parseInt(code) == ErrorCode.LOGIN_PREFERENCE_CONFLICT) {
-                                    mListener.showDialogForStreamLevel(tag, jsonObj, params);
+                                    mListener.showDialogForStreamLevel(tag, url, jsonObj, params);
+                                    return;
+                                }
+                                else if(Integer.parseInt(code) == ErrorCode.LOGIN_PASSWORD_INCORRECT)
+                                {
+                                    ((MainActivity)mContext).hideProgressDialog();
+                                    Toast.makeText(mContext, Constants.EMAIL_PASSOWRD_NOT_EXISTS,Toast.LENGTH_LONG).show();
                                     return;
                                 }
                             } catch (JSONException e) {
@@ -177,12 +186,33 @@ public class NetworkUtils {
                             }
                         }
                     }
+                    else  if(tags[0].equalsIgnoreCase(Constants.TAG_USER_REGISTRATION))
+                    {
+                        if(json != null) {
+                            try {
+                                JSONObject jsonObj = new JSONObject(json);
+                                String code = jsonObj.getString("Code");
+                                if(Integer.parseInt(code) == ErrorCode.LOGIN_EMAIL_ALREADY_EXISTS) {
+                                    ((MainActivity) mContext).hideProgressDialog();
+                                    Toast.makeText(mContext, Constants.EMAIL_PASSOWRD_ALREADY_EXISTS, Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    else if(tags[0].equalsIgnoreCase(Constants.TAG_APPLIED_COURSE))
+                    {
+                        saveToSharedPref(params);
+                    }
                     json = trimMessage(json, "detail");
                     if (json != null)
                         mListener.onError(tag, Constants.SERVER_FAULT, url, params, method);
                     else
                         mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, params, method);
-                    saveToSharedPref(tag, params);
+
                 }
             })
         {
@@ -315,12 +345,9 @@ public class NetworkUtils {
             networkData(tag, url, null, Request.Method.GET);
     }
 
-    private void saveToSharedPref(String tag ,  Map<String , String> params)
+    private void saveToSharedPref(Map<String , String> params)
     {
-        String[] tags = tag.split("#");
-        switch (tags[0])
-        {
-            case Constants.TAG_APPLIED_COURSE:
+
                 SharedPreferences preferences = mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
                 String instituteId  = params.get(Constants.APPLY_INSTITUTE);
 
@@ -330,12 +357,10 @@ public class NetworkUtils {
                 preferences.edit().putString(Constants.INSTITUTE_ID, instituteId)
                 .putStringSet(instituteId, idList)
                 .putInt(Constants.KEY_APPLY_STATUS, Constants.APPLY_PENDING)
-                .apply();
-                //Toast.makeText(mContext,"Failed to apply the course, will retry after sometime.",Toast.LENGTH_LONG).show();
-              break;
-        }
-    }
+                        .apply();
+                Toast.makeText(mContext, "Failed to apply the course, will retry after sometime.", Toast.LENGTH_LONG).show();
 
+    }
 
 
 }

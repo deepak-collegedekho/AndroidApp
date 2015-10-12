@@ -28,7 +28,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -55,6 +54,7 @@ import com.collegedekho.app.fragment.InstituteDetailFragment;
 import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
+import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.NavigationDrawerFragment;
@@ -63,7 +63,6 @@ import com.collegedekho.app.fragment.NewsListFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
-import com.collegedekho.app.fragment.SignUpFragment;
 import com.collegedekho.app.fragment.SplashFragment;
 import com.collegedekho.app.fragment.StreamFragment;
 import com.collegedekho.app.fragment.WidgetListFragment;
@@ -74,6 +73,7 @@ import com.collegedekho.app.resource.Constants;
 
 import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.utils.Utils;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
@@ -95,7 +95,6 @@ import io.fabric.sdk.android.Fabric;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -120,7 +119,7 @@ public class MainActivity extends AppCompatActivity
         QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener,
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleListFragment.OnArticleSelectedListener,
-        ProfileFragment.onProfileUpdateListener,SignUpFragment.OnSignUpListener {
+        ProfileFragment.onProfileUpdateListener,LoginFragment.OnSignUpListener {
 
     static {
         Constants.FilterCategoryMap.put(Constants.ID_HOSTEL, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
@@ -242,7 +241,7 @@ public class MainActivity extends AppCompatActivity
         this.mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
 
-        //this.mDisplayFragment(SignInFragment.newInstance(), false, SignInFragment.class.getName());
+       // this.mDisplayFragment(LoginFragment.newInstance("hi"), false, LoginFragment.class.getName());
 
        this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
@@ -279,6 +278,9 @@ public class MainActivity extends AppCompatActivity
         }, Constants.MAIN_ANIMATION_TIME);
     }
 
+    /**
+     * This method is used to register and initialize facebook sdk
+     */
     private void mRegisterFacebookSdk()
     {
         FacebookSdk.sdkInitialize(this);
@@ -374,6 +376,12 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
+
+    /**
+     * This method is called when Navigation drawer item is selected
+     * @param position  selected position of navigation drawer item
+     * @param currentposition last selected position of navigation item
+     */
     @Override
     public void onNavigationDrawerItemSelected(int position , int currentposition) {
         // update the main content by replacing fragments
@@ -504,7 +512,6 @@ public class MainActivity extends AppCompatActivity
         try {
             user = JSON.std.beanFrom(User.class, json);
             user.setPref(userPref);
-
             networkUtils.setToken(user.getToken());
 
             String u = JSON.std.asString(user);
@@ -749,7 +756,7 @@ public class MainActivity extends AppCompatActivity
         }
       else
         {
-            if(currentFragment instanceof SignUpFragment)
+            if(currentFragment instanceof LoginFragment)
             currentFragment.onActivityResult(requestCode, resultCode, data);
         }
   }
@@ -973,19 +980,17 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_UPDATE_INSTITUTES:
                 this.mUpdateInstituteList(response);
                 break;
-            case Constants.TAG_USER_SIGNUP:
+            case Constants.TAG_USER_REGISTRATION:
                 if (tags.length > 0) {
                     parentIndex = tags[1];
                 }
-
-                this.mStreamAndLevelUpdated(response);
-                    this.showMyFbMessage(parentIndex);
+                this.onUserSignUpResponse(response, parentIndex);
                 break;
-            case Constants.TAG_USER_FACEBOOK_LOGIN:
+            case Constants.TAG_USER_LOGIN:
                 if (tags.length > 0) {
                     parentIndex = tags[1];
                 }
-                 this.onFacebookandGmailLoginResponse(response, parentIndex);
+                 this.onUserSignInResponse(response, parentIndex);
                 break;
         }
 
@@ -1020,21 +1025,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     //Saved on DB, now save it in shared preferences.
-    private void mStreamAndCourseSelected(String response, String levelURI, String streamURI, String streamName) {
+    private void mStreamAndCourseSelected(String response, String level, String stream, String streamName) {
         //Retrieve token from pref to save it across the pref updates
         String token = user.getToken();
-
         //TODO: May be we can make a new pref entry for token
         try {
             user = JSON.std.beanFrom(User.class, response);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         //save the preferences locally
         user.setPref(User.Prefs.STREAMKNOWN);
-        user.setLevel(levelURI);
-        user.setStream(streamURI);
         user.setToken(token);
 
         if (streamName != "" && streamName != null)
@@ -1066,12 +1067,12 @@ public class MainActivity extends AppCompatActivity
                 stream = psychometricResult.getString("stream");
 
                 user.setPref(User.Prefs.STREAMKNOWN);
-                user.setStream(Constants.BASE_URL + "streams/" + stream + "/");
+                user.setStream(stream);
             }
             if (psychometricResult.has("course_levels") && !psychometricResult.isNull("course_levels")) {
                 level = psychometricResult.getString("course_levels");
 
-                user.setLevel(Constants.BASE_URL + "level/" + level + "/");
+                user.setLevel(level);
             }
 
             if (stream != "" && level != "") {
@@ -1082,8 +1083,8 @@ public class MainActivity extends AppCompatActivity
                     this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
 
                     hashMap.put("status", user.getPref().name().toLowerCase());
-                    hashMap.put("stream", user.getStream());
-                    hashMap.put("level", user.getLevel());
+                    hashMap.put("stream", Constants.BASE_URL + "streams/" + user.getStream() + "/");
+                    hashMap.put("level", Constants.BASE_URL + "level/" + user.getLevel() + "/");
 
                     this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + user.getLevel() + "#" + user.getStream(), Constants.BASE_URL + "preferences/", hashMap);
                     this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
@@ -1098,7 +1099,7 @@ public class MainActivity extends AppCompatActivity
                     getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
 
                     hashMap.put("status", user.getPref().name().toLowerCase());
-                    hashMap.put("stream", user.getStream());
+                    hashMap.put("stream",Constants.BASE_URL + "streams/" + user.getStream() + "/");
 
                     this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + user.getLevel() + "#" + user.getStream(), Constants.BASE_URL + "preferences/", hashMap);
                     this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
@@ -1278,7 +1279,7 @@ public class MainActivity extends AppCompatActivity
                 return "Loading Forums...";
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_TEST:
                 return "Submitting psychometric analysis...";
-            case Constants.TAG_USER_SIGNUP:
+            case Constants.TAG_USER_LOGIN:
                 return "Signing User Please Wait.....";
         }
         return null;
@@ -1420,18 +1421,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onStreamSelected(final String streamUri, final String streamName) {
+    public void onStreamSelected(final String stream, final String streamName) {
         new AlertDialog.Builder(this)
                 .setTitle("Please select a level")
                 .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mOnCourseLevelSelected(which, streamUri, streamName);
+                        mOnCourseLevelSelected(which, stream, streamName);
                         dialog.dismiss();
                     }
                 })
                 .setCancelable(false)
                 .show();
+    }
+
+    @Override
+    public void onStreamClicked() {
+        this.mMakeNetworkCall(Constants.TAG_UPDATE_STREAM, Constants.BASE_URL + "streams/", null);
     }
 
     @Override
@@ -1452,30 +1458,24 @@ public class MainActivity extends AppCompatActivity
                         ((ProfileFragment) fragment).updateStream(uri, streamName);
                     }
                 });
-
             }
         }
     }
 
-    private void mOnCourseLevelSelected(int level, String streamUri, String streamName) {
+    private void mOnCourseLevelSelected(int level, String streamURI, String streamName) {
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
 
-        String levelURI = Constants.BASE_URL + "level/" + (level + 1) + "/";
-
-        //send them to DB
         HashMap<String, String> hashMap = new HashMap<>();
-
         hashMap.put("status", user.getPref().name().toLowerCase());
-        hashMap.put("stream", streamUri);
         hashMap.put("user", user.getResource_uri());
-        hashMap.put("level", levelURI);
-        hashMap.put("stream_name", streamName);
+        hashMap.put(Constants.USER_STREAM, streamURI);
+        hashMap.put(Constants.USER_LEVEL, Constants.BASE_URL + "level/" + (level + 1) + "/");
+        hashMap.put(Constants.USER_STREAM_NAME, streamName);
 
         if (streamName != null || streamName != "")
             MainActivity.user.setStream_name(streamName);
 
-        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + levelURI + "#" + streamUri + "#" + streamName, Constants.BASE_URL + "preferences/", hashMap);
-
+        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, Constants.BASE_URL + "preferences/", hashMap);
         this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
     }
 
@@ -1506,7 +1506,7 @@ public class MainActivity extends AppCompatActivity
         MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.TAG_LIKE_DISLIKE,
                 "Institute ID: " + String.valueOf(institute.getId()) +
                         "Institute Name: " + institute.getName() +
-        "Disliked institute: " + String.valueOf(liked));
+                        "Disliked institute: " + String.valueOf(liked));
     }
 
     @Override
@@ -1560,7 +1560,7 @@ public class MainActivity extends AppCompatActivity
         if (mPhoneNumber != null) {
             map.put(Constants.USER_PHONE, mPhoneNumber);
         } else {
-            if (user != null) map.put("phone_no", user.getPhone());
+            if (user != null) map.put("phone_no", user.getPhone_no());
         }
 
         map.put(Constants.APPLY_COURSE, "" + instituteCourse.getId());
@@ -1834,7 +1834,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onQnAQuestionVote(String resourceURI, int voteType, int position) {
-        Toast.makeText(MainActivity.this, resourceURI + " " + voteType, Toast.LENGTH_SHORT).show();
+        Utils.displayToast(this,"Thanks for your vote");
         if (voteType == Constants.LIKE_THING)
             this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
         else
@@ -2076,6 +2076,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * This mthod used to show user profile fragment UI
+     */
     private void mDisplayPofile()
     {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
@@ -2086,6 +2089,10 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     * This method is used to update User Profile
+     * @param hashMap user request data
+     */
 
     @Override
     public void onProfileUpdated(HashMap<String, String> hashMap) {
@@ -2107,11 +2114,10 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void onStreamClicked() {
-
-        this.mMakeNetworkCall(Constants.TAG_UPDATE_STREAM, Constants.BASE_URL + "streams/", null);
-    }
+    /**
+     * This method is called when user press navigation back arrow
+     *  present on the toolbar
+     */
 
     private void mShowNavigationBackListener() {
         mToolbar.setNavigationIcon(R.drawable.arrow_back);
@@ -2136,6 +2142,10 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    /**
+     * This method is called when user change anything in Institute List
+     * @param response server response
+     */
     private void mUpdateInstituteList(String response) {
         try {
             this.mInstituteList = JSON.std.listOfFrom(Institute.class, this.extractResults(response));
@@ -2144,6 +2154,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * This method is called when user press device back button
+     * Do these task
+     * 1- If navigation drawer is open then close it
+     * 2- If last fragment clear back stack FragmentManager
+     * 3- If user wants to close app then show a message to press device back button again
+     */
     @Override
     public void onBackPressed() {
         if(this.mNavigationDrawerFragment !=  null && this.mNavigationDrawerFragment.isDrawerOpen())
@@ -2152,11 +2169,18 @@ public class MainActivity extends AppCompatActivity
         {
             mClearBackStack();
         }
-        else
+        else if(!WidgetListFragment.READY_TO_CLOSE) {
+            WidgetListFragment.READY_TO_CLOSE = true;
+            Utils.displayToast(getApplicationContext(),"Press again to close CollegeDekho");
+        }
+        else {
             super.onBackPressed();
+        }
     }
 
-
+    /**
+     * This method is used to clear back stack of FragmentManager
+     */
    private  void mClearBackStack() {
        int count = getSupportFragmentManager().getBackStackEntryCount();
        for (int i = 0; i < count ; i++) {
@@ -2165,8 +2189,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is used to check about fragment is last in arrow_back stack
-     * @return
+     * This method is used to check about fragment is second last
+     * in  back stack fragmentManager
+     * @return boolean
      */
     private boolean isLastFragment()
     {
@@ -2178,55 +2203,91 @@ public class MainActivity extends AppCompatActivity
             return false;
     }
 
+    /**
+     * This method is called when user  is not login and want to do something
+     * like comment in myFb which required user login
+     * @param value MyFb comment message
+     */
     @Override
-    public void onUserSignUp(String value) {
+    public void onUserLoginRequired(String value) {
 
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_SIGNUP);
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_LOGIN);
         if (fragment == null)
-            mDisplayFragment(SignUpFragment.newInstance(value,true), true, Constants.TAG_FRAGMENT_SIGNUP);
+            mDisplayFragment(LoginFragment.newInstance(value), true, Constants.TAG_FRAGMENT_LOGIN);
         else
-            mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_SIGNUP);
+            mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_LOGIN);
     }
-
+    /**
+     * This method is used to sign Up
+     * @param url social site url
+     * @param hashMap request data
+     * @param msg myFb comment
+     */
     @Override
-    public void onUserSignedIn(HashMap hashMap, String msg) {
-        if(hashMap == null)return;
-       if(user != null) {
-           hashMap.put(Constants.USER_STREAM, user.getStream());
-           hashMap.put(Constants.USER_RESOURCE_URI, user.getResource_uri());
-           hashMap.put(Constants.USER_LEVEL, user.getLevel());
-           hashMap.put(Constants.USER_STREAM_NAME, user.getStream_name());
-           hashMap.put(Constants.USER_LEVEL_NAME, user.getLevel_name());
-
-           //TODO:: remove when server side is done
-           user.setImage("" + hashMap.get(Constants.USER_IMAGE));
-
-       }
-            this.mMakeNetworkCall(Constants.TAG_USER_SIGNUP+"#"+msg,  Constants.BASE_URL + "preferences/", hashMap);
-
+    public void onUserSignUp(String url, HashMap hashMap, String msg) {
+                    this.mMakeNetworkCall(Constants.TAG_USER_REGISTRATION+ "#" + msg, url, hashMap);
     }
-
+    /**
+     * This method is used to sign in with any social site
+     * @param url social site url
+     * @param hashMap request data
+     * @param msg myFb comment
+     */
     @Override
-    public void onFacebookLogin(HashMap hashMap, String msg) {
-            this.mMakeNetworkCall(Constants.TAG_USER_FACEBOOK_LOGIN + "#" + msg, Constants.BASE_URL + "auth/facebook/", hashMap);
-
+    public void onUserSignIn(String url, HashMap hashMap, String msg) {
+                  this.mMakeNetworkCall(Constants.TAG_USER_LOGIN +"#"+msg, url, hashMap);
     }
 
-    public void onFacebookandGmailLoginResponse(String response, String msg) {
+
+    /***
+     * This method is called when user sign Up successfully
+     * @param response response json send  by server
+     * @param msg MyFb comment message
+     */
+    public void onUserSignUpResponse(String response, String msg) {
 
         User tempUser = user;
         try {
             user = JSON.std.beanFrom(User.class, response);
+            this.networkUtils.setToken(user.getToken());
         } catch (IOException e) {
             e.printStackTrace();
         }
         //save the preferences locally
         user.setPref(User.Prefs.STREAMKNOWN);
-        user.setImage(tempUser.getImage());/*
         user.setStream(tempUser.getStream());
         user.setLevel(tempUser.getLevel());
-        user.setStream_name(tempUser.getLevel_name());
-        user.setLevel_name(tempUser.getLevel_name());*/
+        user.setStream_name(tempUser.getStream_name());
+        user.setLevel_name(tempUser.getLevel_name());
+        String u = null;
+        try {
+            u = JSON.std.asString(user);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+        showMyFbMessage(msg);
+
+    }
+
+    /***
+     * This method is called when user sign in successfully
+     * @param response response json send  by server
+     * @param msg MyFb comment message
+     */
+
+    public void onUserSignInResponse(String response, String msg) {
+
+        User tempUser = user;
+        try {
+            user = JSON.std.beanFrom(User.class, response);
+            this.networkUtils.setToken(user.getToken());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //save the preferences locally
+        user.setPref(User.Prefs.STREAMKNOWN);
+        user.setImage(tempUser.getImage());
         String u = null;
         try {
             u = JSON.std.asString(user);
@@ -2263,7 +2324,16 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void showDialogForStreamLevel(final String tag, JSONObject jsonObj, final Map<String, String> params)
+    /**
+     *  If user login with any social site like facebook and stream and level has conflict
+     *  it shows a dialog to choose stream and level.
+     * @param tag Tag
+     * @param URL Api Url according to login
+     * @param jsonObj response json
+     * @param params request data send to api
+     */
+
+    public void showDialogForStreamLevel(final String tag, final String URL, JSONObject jsonObj, final Map<String, String> params)
     {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.stream_dailog);
@@ -2271,14 +2341,16 @@ public class MainActivity extends AppCompatActivity
         RadioGroup streamRadioGroup = (RadioGroup)dialog. findViewById(R.id.stream_radio_group);
         RadioGroup levelRadioGroup  = (RadioGroup)dialog. findViewById(R.id.level_radio_group);
         try {
-            final String stream_url = Constants.BASE_URL+"streams/"+jsonObj.getString(Constants.USER_STREAM)+"/";
+            final String stream_id = jsonObj.getString(Constants.USER_STREAM);
+            final String level_id  = jsonObj.getString(Constants.USER_LEVEL);
             String streamName = jsonObj.getString(Constants.USER_STREAM_NAME);
-           final String  level_url =  Constants.BASE_URL+"level/"+jsonObj.getString(Constants.USER_STREAM)+"/";
-             String levelName = jsonObj.getString(Constants.USER_LEVEL_NAME);
-            if(user.getStream_name().equalsIgnoreCase(streamName))
+            String levelName = jsonObj.getString(Constants.USER_LEVEL_NAME);
+            if(user.getStream().equalsIgnoreCase(stream_id))
                 streamRadioGroup.setVisibility(View.GONE);
-            else if(user.getLevel().equalsIgnoreCase(level_url))
+            else if(user.getLevel().equalsIgnoreCase(level_id)) {
                 levelRadioGroup.setVisibility(View.GONE);
+                dialog.findViewById(R.id.select_level_text).setVisibility(View.GONE);
+            }
 
             ((RadioButton)dialog.findViewById(R.id.firstStream)).setText(streamName);
             ((RadioButton)dialog.findViewById(R.id.secondStream)).setText(user.getStream_name());
@@ -2292,14 +2364,14 @@ public class MainActivity extends AppCompatActivity
                 public void onClick(View v) {
                      dialog.dismiss();
                     if (((RadioButton)dialog.findViewById(R.id.firstStream)).isChecked())
-                        params.put(Constants.USER_STREAM, stream_url);
+                        params.put(Constants.USER_STREAM, stream_id);
                     if (((RadioButton)dialog.findViewById(R.id.secondStream)).isChecked())
                         params.put(Constants.USER_STREAM, user.getStream());
                     if (((RadioButton)dialog.findViewById(R.id.firstLevel)).isChecked())
-                        params.put(Constants.USER_LEVEL, level_url);
+                        params.put(Constants.USER_LEVEL, level_id);
                     if (((RadioButton)dialog.findViewById(R.id.secondLevel)).isChecked())
                         params.put(Constants.USER_LEVEL,  user.getLevel());
-                    mMakeNetworkCall(tag, Constants.BASE_URL + "auth/facebook/", params);
+                    mMakeNetworkCall(tag, URL, params);
                 }
 
 
@@ -2316,7 +2388,6 @@ public class MainActivity extends AppCompatActivity
         if(MainActivity.tracker!=null)
         {
             MainActivity.tracker.setScreenName(screenName);
-
             // Start a new session with the hit.
             MainActivity.tracker.send(new HitBuilders.ScreenViewBuilder()
                 .setNewSession()

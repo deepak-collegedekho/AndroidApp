@@ -97,9 +97,9 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
 
 
     public interface OnStreamInteractionListener {
-        void onStreamSelected(String uri, String streamName);
+        void onStreamSelected(String stream, String streamName);
 
-        void onStreamUpdated(String uri, String streamName);
+        void onStreamUpdated(String stream, String streamName);
     }
 
 

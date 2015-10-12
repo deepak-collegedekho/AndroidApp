@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/m30dp"
+    android:paddingRight="@dimen/m30dp">
+
+    <EditText
+        android:layout_marginTop="@dimen/m50dp"
+        android:id="@+id/email"
+        style="@style/AppTheme.EditText"
+        android:background="@color/wallet_dim_foreground_holo_dark"
+        android:layout_centerHorizontal="true"
+        android:inputType="textEmailAddress"
+        android:hint="Email"
+        />
+
+    <EditText
+        android:id="@+id/password"
+        style="@style/AppTheme.EditText"
+        android:layout_below="@id/email"
+        android:layout_centerHorizontal="true"
+        android:hint="Password"
+        android:background="@color/wallet_dim_foreground_holo_dark"
+        android:inputType="textPassword"
+        />
+
+
+
+    <LinearLayout
+        android:id="@+id/signin_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/password"
+        android:layout_marginTop="@dimen/m60dp"
+        android:gravity="center"
+        android:visibility="visible"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/signIn_button"
+            style="@style/AppTheme.BlueButton"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:background="?attr/colorPrimary"
+            android:text="SIGN IN"
+            />
+
+
+    <TextView
+        style="@style/AppTheme.TextView.WhiteTextView"
+        android:textStyle="bold"
+        android:background="@drawable/bg_black_circle"
+        android:text="OR"
+        />
+
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/google_sign_in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/facebook_sign_in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/m20dp"
+            android:paddingBottom="@dimen/m10dp"
+            android:paddingTop="@dimen/m10dp"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
+</RelativeLayout>

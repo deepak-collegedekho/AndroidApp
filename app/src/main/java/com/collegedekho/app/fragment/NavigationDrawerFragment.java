@@ -1,6 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -60,7 +61,8 @@ public class NavigationDrawerFragment extends Fragment {
     private View mFragmentContainerView;
     private TextView mProfileName;
     private TextView mStreamName;
-    NetworkImageView mProfileImage;
+    private NetworkImageView mProfileImage;
+    private MyArrayAdapter mAdapter;
 
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
@@ -111,10 +113,10 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
-        mDrawerListView.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
+        mAdapter = new MyArrayAdapter(getActivity(), android.R.layout.simple_list_item_activated_1,
                 new String[]{HomeFragment.TITLE, InstituteListFragment.TITLE, NewsListFragment.TITLE, ArticleListFragment.TITLE, "MyShortList",
-                        QnAQuestionsListFragment.TITLE, MyFutureBuddiesEnumerationFragment.TITLE}));
+                        QnAQuestionsListFragment.TITLE, MyFutureBuddiesEnumerationFragment.TITLE});
+        mDrawerListView.setAdapter(mAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return rootView;
     }
@@ -179,14 +181,20 @@ public class NavigationDrawerFragment extends Fragment {
                     if(name.equalsIgnoreCase("Anonymous User"))
                     {
                         mProfileName.setText("");
+                        mProfileName.setVisibility(View.INVISIBLE);
                     }else {
                         mProfileName.setText(name);
+                        mProfileName.setVisibility(View.VISIBLE);
                     }
                     mStreamName.setText(MainActivity.user.getStream_name());
 
                     String image = MainActivity.user.getImage();
-                    if (image != null && ! image.isEmpty())
+                    if (image != null && ! image.isEmpty()) {
                         mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+                        mProfileImage.setVisibility(View.VISIBLE);
+                    }
+                    else
+                        mProfileImage.setVisibility(View.GONE);
                 }
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }
@@ -213,23 +221,25 @@ public class NavigationDrawerFragment extends Fragment {
 
     private void selectItem(int position) {
 
+
+        if (mCallbacks != null) {
+            mCallbacks.onNavigationDrawerItemSelected(position, mCurrentSelectedPosition);
+        }
+
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
-        }
-        if (mCallbacks != null) {
-            mCallbacks.onNavigationDrawerItemSelected(position,mCurrentSelectedPosition);
-
-
-
         }
     }
     public void updateNavigationItem(int position)
     {
+
+        if(mAdapter != null)
+            mAdapter.selectItem(position);
+
         mCurrentSelectedPosition = position;
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
         }
-
     }
 
     @Override
@@ -314,6 +324,32 @@ public class NavigationDrawerFragment extends Fragment {
          * Called when an item in the navigation drawer is selected.
          */
         void onNavigationDrawerItemSelected(int position, int CurrentPosition);
+    }
+    public class MyArrayAdapter extends ArrayAdapter<String>{
+
+        private int selectedItem;
+
+        public MyArrayAdapter(Context context, int resource, String[] objects) {
+            super(context, resource, objects);
+        }
+
+        public void selectItem(int selectedItem){
+            this.selectedItem = selectedItem;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            convertView = super.getView(position, convertView, parent);
+             if(position == selectedItem){
+                    ((TextView)convertView).setTextColor(getResources().getColor(R.color.white));
+               }
+            else {
+                 ((TextView) convertView).setTextColor(getResources().getColor(R.color.black));
+             }
+
+            return convertView;
+        }
     }
 
 }

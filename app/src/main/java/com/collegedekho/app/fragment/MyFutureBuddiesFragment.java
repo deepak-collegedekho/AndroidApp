@@ -1,7 +1,6 @@
 package com.collegedekho.app.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -96,7 +94,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                         if(user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous User"))
                         {
                             mChatText.setText("");
-                            mOnUserSignUp(value);
+                            mUserLoginRequired(value);
                             return;
                         }
                     }
@@ -266,14 +264,14 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             this.mSubmittingState = val;
         }
     }
-    private void mOnUserSignUp(String value) {
+    private void mUserLoginRequired(String value) {
         if (mListener != null)
-            mListener.onUserSignUp(value);
+            mListener.onUserLoginRequired(value);
 
     }
     public interface OnMyFBInteractionListener {
         void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex);
         void onMyFBUpdated(int commentsSize, int myFbIndex);
-        void onUserSignUp(String value);
+        void onUserLoginRequired(String value);
     }
 }

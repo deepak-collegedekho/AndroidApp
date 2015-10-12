@@ -1,30 +1,27 @@
 package com.collegedekho.app.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.InstituteCourse;
-import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.Utils;
 
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class ProfileFragment extends BaseFragment implements View.OnClickListener {
@@ -32,7 +29,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     private static final String ARG_NAME        = "name";
     private static final String ARG_EMAIL       = "email";
     private static final String ARG_STREAM_URI  = "stream_uri";
-    private static final String ARG_LEVEL_URI   = "level_uri";
+    private static final String ARG_LEVEL_ID = "level_uri";
     private static final String ARG_STREAM_NAME = "stream";
     private static final String ARG_LEVEL_NAME  = "level";
     private static final String ARG_PHONE  = "phone";
@@ -40,7 +37,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     private String mName;
     private String mEmail;
     private String mStreamURI;
-    private String mLevelURI;
+    private String mLevelID;
     private String mStreamName;
     private String mLevelName;
     private String mPhone;
@@ -61,11 +58,11 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         Bundle args = new Bundle();
         args.putString(ARG_NAME, user.getName());
         args.putString(ARG_EMAIL, user.getEmail());
-        args.putString(ARG_STREAM_URI, user.getStream());
-        args.putString(ARG_LEVEL_URI, user.getLevel());
+        args.putString(ARG_STREAM_URI,  Constants.BASE_URL + "streams/" + user.getStream() + "/");
+        args.putString(ARG_LEVEL_ID, user.getLevel());
         args.putString(ARG_STREAM_NAME, user.getStream_name());
         args.putString(ARG_LEVEL_NAME, user.getLevel_name());
-        args.putString(ARG_PHONE, user.getPhone());
+        args.putString(ARG_PHONE, user.getPhone_no());
         fragment.setArguments(args);
         return fragment;
 
@@ -77,8 +74,8 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         if (getArguments() != null) {
             this.mName  = getArguments().getString(ARG_NAME);
             this.mEmail = getArguments().getString(ARG_EMAIL);
-            this.mStreamURI     = getArguments().getString(ARG_STREAM_URI);
-            this.mLevelURI      = getArguments().getString(ARG_LEVEL_URI);
+            this.mStreamURI = getArguments().getString(ARG_STREAM_URI);
+            this.mLevelID = getArguments().getString(ARG_LEVEL_ID);
             this.mStreamName    = getArguments().getString(ARG_STREAM_NAME);
             this.mLevelName     = getArguments().getString(ARG_LEVEL_NAME);
             this.mPhone     = getArguments().getString(ARG_PHONE);
@@ -131,13 +128,32 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     }
 
     private void mProfileUpdate() {
-        HashMap<String, String> hashMap = new HashMap<>();
 
-        hashMap.put(Constants.USER_NAME, mNameET.getText().toString());
-        hashMap.put(Constants.USER_EMAIL,mEmailET.getText().toString());
-        hashMap.put(Constants.USER_PHONE, mPhoneET.getText().toString());
+        String name     = mNameET.getText().toString();
+        String phone    = mPhoneET.getText().toString();
+        if (name == null || name.isEmpty())
+        {
+            Utils.displayToast(getActivity(), Constants.NAME_EMPTY);
+            return;
+        }
+        else if(!isValidName(name)){
+            Utils.displayToast(getActivity(), Constants.NAME_INVALID);
+            return;
+        }
+        else if(phone == null || phone.isEmpty()) {
+            Utils.displayToast(getActivity(), Constants.PHONE_EMPTY);
+            return;
+        }
+        else if(phone.length() <= 9 ||!isValidPhone(phone)){
+            Utils.displayToast(getActivity(),Constants.PHONE_INVALID);
+            return;
+        }
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put(Constants.USER_NAME, name);
+        hashMap.put(Constants.USER_PHONE, phone);
+       // hashMap.put(Constants.USER_EMAIL,mEmailET.getText().toString());
         hashMap.put(Constants.USER_STREAM, mStreamURI);
-        hashMap.put(Constants.USER_LEVEL,mLevelURI);
+        hashMap.put(Constants.USER_LEVEL, Constants.BASE_URL + "level/" + mLevelID + "/");
         hashMap.put(Constants.USER_STREAM_NAME, mStreamName);
         hashMap.put(Constants.USER_LEVEL_NAME,mLevelName);
 
@@ -166,7 +182,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
                         .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mLevelURI = Constants.BASE_URL + "level/" + (which + 1) + "/";
+                                mLevelID = ""+(which + 1);
                                 mLevelName = InstituteCourse.CourseLevel.getName(which);
                                 mLevelTV.setText(mLevelName);
                                 dialog.dismiss();
@@ -217,11 +233,17 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
             }
         });
     }
-   /* private static boolean isValidEmail(CharSequence target) {
+
+    private static boolean isValidEmail(CharSequence target) {
         return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
     private static boolean isValidPhone(CharSequence target) {
         return target != null && Patterns.PHONE.matcher(target).matches();
-    }*/
+    }
+    private static boolean isValidName(CharSequence target) {
+        Pattern ps = Pattern.compile("^[a-zA-Z ]+$");
+        Matcher ms = ps.matcher(target);
+        return ms.matches();
+    }
 }

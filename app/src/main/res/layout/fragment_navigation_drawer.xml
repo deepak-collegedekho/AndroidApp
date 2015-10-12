@@ -9,7 +9,7 @@
     <RelativeLayout
         android:id="@+id/navigationHeader"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/m170dp"
+        android:layout_height="wrap_content"
         android:paddingLeft="@dimen/m15dp"
         android:background="@color/white"
         android:paddingTop="@dimen/m20dp">
@@ -22,6 +22,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:src="@drawable/ic_default_image"
+            android:visibility="gone"
             android:layout_alignParentStart="true"/>
 
         <LinearLayout

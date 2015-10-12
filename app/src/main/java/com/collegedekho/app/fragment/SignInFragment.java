@@ -6,22 +6,39 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.NetworkUtils;
+import com.facebook.AccessToken;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.HashMap;
 
 
 /**
@@ -29,28 +46,30 @@ import com.google.android.gms.plus.model.people.Person;
  */
 public class SignInFragment extends  BaseFragment implements View.OnClickListener,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener
-{
+        GoogleApiClient.OnConnectionFailedListener{
 
-    /* Keys for persisting instance variables in savedInstanceState */
-    private static final String KEY_IS_RESOLVING = "is_resolving";
-    private static final String KEY_SHOULD_RESOLVE = "should_resolve";
+    private static final String TAG ="SignUpFragment";
+    private static final String MSG ="chat_msg";
+    private LoginFragment.OnSignUpListener mListener;
 
     public GoogleApiClient mGoogleApiClient;
+
     /* Is there a ConnectionResult resolution in progress? */
     private boolean mIsResolving = false;
 
     /* Request code used to invoke sign in user interactions. */
+    private static final int RC_SIGN_IN = 0;
 
-    private static final int RC_SIGN_IN = 9001;
-    //private static final int RC_SIGN_IN = 0;
     /* Should we automatically resolve ConnectionResults when possible? */
     private boolean mShouldResolve = false;
 
-    public static SignInFragment newInstance()
-    {
+    private String mMessage;
+    private LoginButton fbLoginutton;
+
+    public static SignInFragment newInstance(String value) {
         SignInFragment fragment = new SignInFragment();
-        Bundle args= new Bundle();
+        Bundle args = new Bundle();
+        args.putString(MSG, value);
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,20 +81,18 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Restore from saved instance state
-        // [START restore_saved_instance_state]
-        if (savedInstanceState != null) {
-            mIsResolving = savedInstanceState.getBoolean(KEY_IS_RESOLVING);
-            mShouldResolve = savedInstanceState.getBoolean(KEY_SHOULD_RESOLVE);
-        }
+        mMessage = getArguments().getString(MSG);
+
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_signup, container, false);
-        rootView.findViewById(R.id.google_sign_in).setOnClickListener(this);
-
-        ((SignInButton) rootView.findViewById(R.id.google_sign_in)).setSize(SignInButton.SIZE_WIDE);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceISState) {
+        View view = inflater.inflate(R.layout.fragment_signin, container, false);
+        view.findViewById(R.id.signIn_button).setOnClickListener(this);
+        SignInButton googleSignIn = (SignInButton) view.findViewById(R.id.google_sign_in);
+        googleSignIn.setOnClickListener(this);
+        googleSignIn.setSize(SignInButton.SIZE_WIDE);
 
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
@@ -86,29 +103,186 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .build();
-        return rootView;
+
+
+        fbLoginutton = (LoginButton) view.findViewById(R.id.facebook_sign_in);
+        fbLoginutton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "email"));
+        mFacebookCallbackListener(fbLoginutton);
+
+        return view;
+    }
+    private  void mFacebookCallbackListener(LoginButton loginButton)
+    {
+        loginButton.registerCallback(MainActivity.callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                // App code
+                Log.d("", "on connected");
+                ((MainActivity) getActivity()).showProgressDialog("Signing with facebook account");
+                loginResult.getAccessToken();
+                if (AccessToken.getCurrentAccessToken() != null) {
+                    RequestData();
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                // App code
+                Log.e("", "on cancel");
+                Toast.makeText(getActivity(), "Facebook SignIn is failed", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(FacebookException e) {
+
+                Log.e("", "on error");
+                Toast.makeText(getActivity(), "Facebook SignIn has some error", Toast.LENGTH_LONG).show();
+
+            }
+        });
+    }
+
+    public void RequestData(){
+        GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+            @Override
+            public void onCompleted(JSONObject object, GraphResponse response) {
+                JSONObject json = response.getJSONObject();
+                try {
+                    if (json != null) {
+                        // for profile image
+                        JSONObject pictureJsonObj = json.getJSONObject("picture");
+                        JSONObject data = pictureJsonObj.getJSONObject("data");
+                        String image = data.getString("url");
+                        if(MainActivity.user != null)
+                            MainActivity.user.setImage(image);
+
+                        HashMap hashMap = new HashMap<String, String>();
+                        hashMap.put(Constants.USER_FIRST_NAME, json.getString("first_name"));
+                        hashMap.put(Constants.USER_LAST_NAME, json.getString("last_name"));
+                        hashMap.put(Constants.USER_VERIFIED, json.getString("verified"));
+                        hashMap.put(Constants.USER_NAME, json.getString("name"));
+                        hashMap.put(Constants.USER_LOCALE, json.getString("locale"));
+                        hashMap.put(Constants.USER_GENDER, json.getString("gender"));
+                        hashMap.put(Constants.USER_UPDATED_TIME, json.getString("updated_time"));
+                        hashMap.put(Constants.USER_LINK, json.getString("link"));
+                        hashMap.put(Constants.USER_ID, json.getString("id"));
+                        hashMap.put(Constants.USER_TIMEZONE, json.getString("timezone"));
+                        hashMap.put(Constants.USER_EMAIL, json.getString("email"));
+                        hashMap.put(Constants.USER_IMAGE, image);
+                        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+                        hashMap.put(Constants.USER_TOKEN, accessToken.getToken());
+                        hashMap.put(Constants.USER_EXPIRE_AT, new SimpleDateFormat("yyyy-MM-dd").format(accessToken.getExpires()) + "T" + new SimpleDateFormat("HH:mm:ss").format(accessToken.getExpires()));
+                        SignInFragment.this.mFacebookLogin(hashMap, mMessage);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "first_name,last_name,verified,name,locale,gender,updated_time,link,id,timezone,email,picture");
+        request.setParameters(parameters);
+        request.executeAsync();
     }
 
 
-    /*@Override
-    public void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }*/
+    private void mUserSignedIn(HashMap params, String msg)
+    {
+        if(mListener != null)
+            mListener.onUserSignIn(Constants.BASE_URL + "auth/login/", params, msg);
 
-    /*@Override
-    public void onStop() {
-        super.onStop();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
+    }
+    private void mFacebookLogin(HashMap params, String msg)
+    {
+        if(mListener != null)
+            mListener.onUserSignIn(Constants.BASE_URL + "auth/facebook/", params, msg);
+
+    }
+    private void mGooglePlusLogin(HashMap params, String msg)
+    {
+        if(mListener != null)
+            mListener.onUserSignIn(Constants.BASE_URL + "auth/google/", params, msg);
+
+    }
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            this.mListener = (LoginFragment.OnSignUpListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnSignUpListener");
         }
-    }*/
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
     @Override
     public void onClick(View view) {
-        if(view.getId() ==R.id.google_sign_in)
+        if( new NetworkUtils(getActivity(),null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED)
         {
+            Toast.makeText(getActivity(), "Internet connection not found.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if(view.getId() == R.id.google_sign_in)
+        {
+            ((MainActivity)getActivity()).showProgressDialog("Synchronizing with Google Account");
             mShouldResolve = true;
-         mGoogleApiClient.connect();
+            mGoogleApiClient.connect();
+        }
+        else  if (view.getId() == R.id.signIn_button)
+        {
+
+            String email = ((EditText) getView().findViewById(R.id.email)).getText().toString();
+            String password = ((EditText) getView().findViewById(R.id.password)).getText().toString();
+            if (email == null || email.isEmpty())
+            {
+                Toast.makeText(getActivity(), "Please enter your email", Toast.LENGTH_LONG).show();
+                return;
+            }
+            else if(!isValidEmail(email))
+            {
+                Toast.makeText(getActivity(), "Please enter a valid email", Toast.LENGTH_LONG).show();
+                return;
+            }
+            else if (password == null || password.isEmpty()) {
+                Toast.makeText(getActivity(), "Please enter your password", Toast.LENGTH_LONG).show();
+                return;
+            }
+            HashMap hashMap = new HashMap<String, String>();
+            hashMap.put(Constants.USER_EMAIL, email);
+            hashMap.put(Constants.USER_PASSWORD, password);
+            mUserSignedIn(hashMap, mMessage);
+
+        }
+
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == RC_SIGN_IN) {
+            // If the error resolution was not successful we should not resolve further.
+            if (resultCode != getActivity().RESULT_OK) {
+                mShouldResolve = false;
+                ((MainActivity)getActivity()).hideProgressDialog();
+            }
+
+            mIsResolving = false;
+            if(!mGoogleApiClient.isConnecting())
+                mGoogleApiClient.connect();
+        }
+        else {
+            MainActivity.callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -129,82 +303,22 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
                         }
                     }).show();
         } else {
+
+            ((MainActivity)getActivity()).hideProgressDialog();
             // No default Google Play Services error, display a message to the user.
-            String errorString = getString(R.string.play_services_error_fmt, errorCode);
-            Toast.makeText(getActivity(), errorString, Toast.LENGTH_SHORT).show();
+            //  String errorString = GoogleApiAvailability.getInstance().getErrorString(errorCode);
+            Toast.makeText(getActivity(), "Google SignIn is failed", Toast.LENGTH_LONG).show();
 
             mShouldResolve = false;
-           // updateUI(false);
         }
     }
-
-
-
-    // [START on_save_instance_state]
-    /*@Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(KEY_IS_RESOLVING, mIsResolving);
-        outState.putBoolean(KEY_SHOULD_RESOLVE, mShouldResolve);
-    }*/
-    // [END on_save_instance_state]
-
-    // [START on_activity_result]
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
-
-        if (requestCode == RC_SIGN_IN) {
-            // If the error resolution was not successful we should not resolve further errors.
-            if (resultCode != getActivity().RESULT_OK) {
-                mShouldResolve = false;
-            }
-
-            mIsResolving = false;
-            mGoogleApiClient.connect();
-        }
-        else
-        {
-
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-    // [END on_activity_result]
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        // onConnected indicates that an account was selected on the device, that the selected
-        // account has granted any requested permissions to our app and that we were able to
-        // establish a service connection to Google Play services.
-        Log.d(TAG, "onConnected:" + bundle);
-        //Plus.PeopleApi.loadVisible(mGoogleApiClient, null).setResultCallback((ResultCallback<People.LoadPeopleResult>) this);
-
-        Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-        if(currentPerson != null)
-        {
-            String name = currentPerson.getDisplayName();
-            String profilePic = currentPerson.getImage().getUrl();
-            String personGooglePlusProfile = currentPerson.getUrl();
-        }
-        String email =  Plus.AccountApi.getAccountName(mGoogleApiClient);
-        Log.e("", "email is " + email);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        // The connection to Google Play services was lost. The GoogleApiClient will automatically
-        // attempt to re-connect. Any UI elements that depend on connection to Google APIs should
-        // be hidden or disabled until onConnected is called again.
-        Log.w(TAG, "onConnectionSuspended:" + i);
-    }
-
-    // [START on_connection_failed]
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        // Could not connect to Google Play Services.  The user needs to select an account,
+
+// Could not connect to Google Play Services.  The user needs to select an account,
         // grant permissions or resolve an error in order to sign in. Refer to the javadoc for
         // ConnectionResult to see possible error codes.
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        Log.d("", "onConnectionFailed:" + connectionResult);
 
         if (!mIsResolving && mShouldResolve) {
             if (connectionResult.hasResolution()) {
@@ -212,7 +326,7 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
                     connectionResult.startResolutionForResult(getActivity(), RC_SIGN_IN);
                     mIsResolving = true;
                 } catch (IntentSender.SendIntentException e) {
-                    Log.e(TAG, "Could not resolve ConnectionResult.", e);
+                    Log.e("", "Could not resolve ConnectionResult.", e);
                     mIsResolving = false;
                     mGoogleApiClient.connect();
                 }
@@ -223,10 +337,48 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
             }
         } else {
             // Show the signed-out UI
+            Log.e("","");
             //updateUI(false);
         }
     }
 
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.e("","connected");
+        Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+        HashMap params =  new HashMap<String, String>();
+        if(currentPerson != null)
+        {
+            // params.put(Constants.USER_FAMILY_NAME, currentPerson.getDisplayName());
+            params.put(Constants.USER_NAME, currentPerson.getDisplayName());
+            params.put("picture", currentPerson.getImage().getUrl());
+            params.put(Constants.USER_IMAGE,currentPerson.getImage().getUrl());// for local save
+            params.put(Constants.USER_LOCALE, currentPerson.getLanguage());
+            params.put(Constants.USER_GENDER, currentPerson.getGender());
+            params.put(Constants.USER_ID, currentPerson.getId());
+            params.put(Constants.USER_LINK, currentPerson.getUrl());
+            // params.put(Constants.USER_VERIFIED_EMAIL, currentPerson.getLanguage());
+            //  params.put(Constants.USER_TOKEN, GoogleAuthUtil.getToken());
+            // params.put(Constants.USER_EXPIRE_AT, currentPerson.getLanguage());
+        }
+        String email =  Plus.AccountApi.getAccountName(mGoogleApiClient);
+        Log.e("", "email is " + email);
 
+        // hashMap.put(Constants.USER_EMAIL, email);
+        mGooglePlusLogin(params, mMessage);
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.e("", "Connection suspended");
+
+    }
+    private static boolean isValidEmail(CharSequence target) {
+        return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+    private static boolean isValidPhone(CharSequence target) {
+        return target != null && Patterns.PHONE.matcher(target).matches();
+    }
 
 }

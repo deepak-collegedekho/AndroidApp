@@ -41,6 +41,7 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
     private MainActivity mMainActivity;
 
     public boolean mUserLearnedTouch = false;
+    public static boolean READY_TO_CLOSE = false;
 
     public WidgetListFragment() {
         // Required empty public constructor
@@ -134,7 +135,7 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     public void onResume() {
         super.onResume();
-
+        READY_TO_CLOSE = false;
         this.mMainActivity = (MainActivity) getActivity();
 
         if (this.mMainActivity != null) {
@@ -148,6 +149,11 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        READY_TO_CLOSE = true;
+    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

@@ -28,7 +28,7 @@
                 android:hint="Name"
                 android:textColor="@color/white"
                 android:textColorHint="@color/textSecondary"
-                android:maxLength="25"/>
+                android:maxLength="35"/>
 
             <EditText
                 style="@style/AppTheme.EditText"

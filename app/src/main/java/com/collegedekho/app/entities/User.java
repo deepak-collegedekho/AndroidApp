@@ -18,7 +18,7 @@ public class User
     private Prefs pref;
     private String stream;
     private String level;
-    private String phone;
+    private String phone_no;
     private String stream_name;
     private String level_name;
 
@@ -142,11 +142,11 @@ public class User
         this.level_name = level_name;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getPhone_no() {
+        return phone_no;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhone_no(String phone_no) {
+        this.phone_no = phone_no;
     }
 }

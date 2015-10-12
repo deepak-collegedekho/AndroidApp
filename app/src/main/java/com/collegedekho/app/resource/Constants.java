@@ -10,6 +10,7 @@ import java.util.HashMap;
  */
 public class Constants
 {
+
     public static final int[] headImages = {R.drawable.ic_question, 0, R.drawable.ic_cap};
     public static final String[] headLabels = {"I am not sure where to start", "",
             "College majors are my top priority"};
@@ -85,9 +86,9 @@ public class Constants
     public static final String TAG_FRAGMENT_PROFILE = "fragment_profile";
     public static final String TAG_FRAGMENT_QNA_ANSWERS_LIST = "fragment_qna_answers_list";
     public static final String KEY_USER_LEARNED_TOUCH = "user_touch";
-    public static final String TAG_FRAGMENT_SIGNUP = "fragment_signup";
-    public static final String TAG_USER_SIGNUP = "user_signup";
-    public static final String TAG_USER_FACEBOOK_LOGIN = "facebook_login";
+    public static final String TAG_FRAGMENT_LOGIN      = "fragment_signin";
+    public static final String TAG_USER_LOGIN           = "user_login";
+    public static final String TAG_USER_REGISTRATION    = "user_registeration";
     public static final String METHOD_GET = "GET";
     public static final String METHOD_POST = "POST";
     public static final int LIKE_THING = 0;
@@ -135,15 +136,17 @@ public class Constants
     public static final int ARTICLES_TYPE    = 3;
 
     //User Attributes
-    public static final String USER_NAME = "name";
+    public static final String USER_NAME        = "name";
     public static final String USER_FIRST_NAME  = "first_name";
     public static final String USER_LAST_NAME   = "last_name";
+    public static final String USER_FAMILY_NAME = "family_name";
     public static final String USER_PASSWORD    = "password";
     public static final String USER_ID          = "id";
     public static final String USER_TOKEN       = "token";
     public static final String USER_EMAIL       = "email";
-    public static final String USER_STREAM = "stream";
-    public static final String USER_LEVEL = "level";
+    public static final String USER_VERIFIED_EMAIL = "verified_email";
+    public static final String USER_STREAM      = "stream";
+    public static final String USER_LEVEL       = "level";
     public static final String USER_STREAM_NAME = "stream_name";
     public static final String USER_LEVEL_NAME  = "level_name";
     public static final String USER_RESOURCE_URI = "user";
@@ -187,5 +190,16 @@ public class Constants
     public static final String ACTION_INSTITUTE_SHORTLISTED = "action_institute_shortlisted";
     public static final String ACTION_INSTITUTE_SHORTLISTED_REMOVED = "action_institute_shortlisting_removed";
 
+    //String Msg
+
+    public static final String EMAIL_PASSOWRD_NOT_EXISTS ="The e-mail address and/or password you specified are not correct.";
+    public static final String EMAIL_PASSOWRD_ALREADY_EXISTS = "A user is already registered with this e-mail address.";
+    public static final String NAME_EMPTY       = "Please enter your name";
+    public static final String NAME_INVALID     = "Please enter a valid name";
+    public static final String PHONE_EMPTY      = "Please enter your phone number";
+    public static final String PHONE_INVALID    = "Please enter a valid phone number";
+    public static final String EMAIL_EMPTY      = "Please enter your email";
+    public static final String EMAIL_INVALID    = "Please enter a valid email";
+    public static final String PASSWORD_EMPTY   = "Please enter a password";
 
 }

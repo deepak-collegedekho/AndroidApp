@@ -8,6 +8,7 @@
         <item name="android:colorPrimaryDark" tools:ignore="NewApi">@color/primary_color_dark</item>
         <item name="colorAccent">@color/text_subhead_blue</item>
         <item name="android:scrollbars">none</item>
+        <item name="android:activatedBackgroundIndicator">@drawable/bg_navigation_activated</item>
     </style>
 
     <style name="AppTheme.BlueButton">
@@ -249,7 +250,7 @@
         <item name="android:inputType">textPersonName</item>
         <item name="android:layout_marginTop">@dimen/m30dp</item>
         <item name="android:paddingLeft">5dp</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">17sp</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
 </resources>

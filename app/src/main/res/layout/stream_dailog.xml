@@ -4,13 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        style="@style/AppTheme.TextView.BlackTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/m15dp"
-        android:paddingRight="@dimen/m15dp"
-        android:text="Select Your Stream"/>
 
     <RadioGroup
         android:id="@+id/stream_radio_group"
@@ -19,25 +12,37 @@
         android:paddingRight="@dimen/m15dp"
         android:layout_gravity="center|left"
         android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/AppTheme.TextView.BlackTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/m15dp"
+            android:paddingRight="@dimen/m15dp"
+            android:text="Select Your Stream"/>
+
         <RadioButton
             android:id="@+id/firstStream"
             android:checked="true"
+            android:layout_marginTop="@dimen/m5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <RadioButton
             android:id="@+id/secondStream"
             android:layout_width="wrap_content"
+            android:layout_marginTop="@dimen/m10dp"
             android:layout_height="wrap_content" />
     </RadioGroup>
 
     <TextView
+        android:id="@+id/select_level_text"
         style="@style/AppTheme.TextView.BlackTextView"
         android:layout_width="wrap_content"
         android:paddingLeft="@dimen/m15dp"
         android:paddingRight="@dimen/m15dp"
         android:layout_height="wrap_content"
-        android:text="Select Your Stream"/>
+        android:text="Select Your Level"/>
 
     <RadioGroup
         android:id="@+id/level_radio_group"
@@ -46,6 +51,7 @@
         android:layout_gravity="center|left"
         android:paddingLeft="@dimen/m15dp"
         android:paddingRight="@dimen/m15dp"
+        android:layout_marginTop="@dimen/m5dp"
         android:layout_height="wrap_content"
         android:weightSum="1"
         >
@@ -65,6 +71,7 @@
     <TextView
         style="@style/AppTheme.BlueButton"
         android:text="OK"
+        android:layout_marginTop="@dimen/m15dp"
         android:id="@+id/ok_button"
         android:gravity="center"
         android:background="@color/primary_color_90"
