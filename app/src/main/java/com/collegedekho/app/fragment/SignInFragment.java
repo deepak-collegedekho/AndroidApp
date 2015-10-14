@@ -91,8 +91,7 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
                              Bundle savedInstanceISState) {
         View view = inflater.inflate(R.layout.fragment_signin, container, false);
         view.findViewById(R.id.signIn_button).setOnClickListener(this);
-        TextInputLayout tv = (TextInputLayout)view.findViewById(R.id.email);
-        tv.setHint("email");
+
         SignInButton googleSignIn = (SignInButton) view.findViewById(R.id.google_sign_in);
         googleSignIn.setOnClickListener(this);
         googleSignIn.setSize(SignInButton.SIZE_WIDE);

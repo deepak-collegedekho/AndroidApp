@@ -36,6 +36,7 @@ import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 
+import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.resource.Constants;
 
 import java.io.Serializable;
@@ -102,6 +103,7 @@ public abstract class TokenCompleteTextView<T> extends MultiAutoCompleteTextView
     private boolean allowCollapse = true;
 
     private int tokenLimit = -1;
+
 
     /**
      * Add the TextChangedListeners
@@ -196,6 +198,7 @@ public abstract class TokenCompleteTextView<T> extends MultiAutoCompleteTextView
     }
 
     public TokenCompleteTextView(Context context, AttributeSet attrs) {
+
         super(context, attrs);
         init();
     }
@@ -818,6 +821,16 @@ public abstract class TokenCompleteTextView<T> extends MultiAutoCompleteTextView
         });
     }
 
+/*
+public void callbackFragment()
+{
+    if(listener != null)
+    {
+      InstituteListFragment intitueListFargment = ((InstituteListFragment)listener);
+        intitueListFargment.callbackFragment();
+
+    }
+}*/
     /**
      * Shorthand for addObject(object, "")
      *
@@ -1139,8 +1152,9 @@ public abstract class TokenCompleteTextView<T> extends MultiAutoCompleteTextView
                     objects.remove(token.getToken());
                 }
 
-                if (listener != null)
+                if (listener != null) {
                     listener.onTokenRemoved(token.getToken());
+                }
             }
         }
 

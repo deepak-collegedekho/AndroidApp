@@ -97,6 +97,14 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_institute_listing, container, false);
+
+        mCompletionView = (ContactsCompletionView)rootView.findViewById(R.id.searchView);
+        mCompletionView.setAdapter(tolenAdapter);
+        mCompletionView.setTokenListener(this);
+        mCompletionView.setInputType(InputType.TYPE_NULL);
+        mCompletionView.allowDuplicates(false);
+        mCompletionView.setTokenClickStyle(TokenCompleteTextView.TokenClickStyle.Delete);
+
         ((TextView) rootView.findViewById(R.id.textview_page_title)).setText(mTitle);
         progressBarLL     =   (LinearLayout)rootView.findViewById(R.id.progressBarLL);
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_list);
@@ -115,6 +123,8 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(scrollListener);
         if (filterAllowed) {
+
+            setFilterList();
             rootView.findViewById(R.id.button_filter).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -123,8 +133,9 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                 }
             });
         } else {
+
             rootView.findViewById(R.id.button_filter).setVisibility(View.GONE);
-            rootView.findViewById(R.id.searchLL).setVisibility(View.GONE);
+            rootView.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
         }
 
         if (filterCount > 0)
@@ -148,24 +159,24 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                 return convertView;
             }
         };
-        mCompletionView = (ContactsCompletionView)rootView.findViewById(R.id.searchView);
-        mCompletionView.setAdapter(tolenAdapter);
-        mCompletionView.setTokenListener(this);
-        mCompletionView.setInputType(InputType.TYPE_NULL);
-        mCompletionView.allowDuplicates(false);
-        mCompletionView.setTokenClickStyle(TokenCompleteTextView.TokenClickStyle.Delete);
 
-        setFilterList();
-       /* int count = mCompletionView.getObjects().size();
-        if(count <= 0)
+
+        return rootView;
+    }
+
+    public void callbackFragment()
+    {
+        int count = mCompletionView.getObjects().size();
+        if(count <= 0 )
         {
-            rootView.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
+            updateFilterButton(0);
+            getView().findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
         }
         else
         {
-            rootView.findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
-        }*/
-        return rootView;
+            updateFilterButton(1);
+            getView().findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -218,19 +229,13 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         mAdapter.notifyDataSetChanged();
         loading = false;
         nextUrl = next;
-        if(mCompletionView != null && mCompletionView.getObjects().size() > 0) {
-            mCompletionView.clear();
+        if(filterAllowed) {
+            if (mCompletionView != null && mCompletionView.getObjects().size() > 0) {
+                mCompletionView.clear();
+            }
+            setFilterList();
         }
-        setFilterList();
-       /* int count = mCompletionView.getObjects().size();
-        if(count <= 0)
-        {
-            getView().findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
-        }
-        else
-        {
-            getView().findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
-        }*/
+
     }
 
     public void updateButtons(int position) {
@@ -282,7 +287,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
     @Override
     public void onTokenAdded(Object token) {
-       // updateFilterTokenConfirmation();
+        callbackFragment();
     }
 
     @Override
@@ -290,6 +295,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     {
         if(!Constants.SEND_REQUEST)return;
         updateFilterTokenConfirmation(token);
+        callbackFragment();
     }
 
 

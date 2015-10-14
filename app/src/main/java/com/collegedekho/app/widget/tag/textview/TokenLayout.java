@@ -29,10 +29,10 @@ public class TokenLayout extends LinearLayout {
         super.setSelected(selected);
 
         TextView v = (TextView)findViewById(R.id.name);
-        if (selected) {
+       // if (selected) {
             v.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.cancel, 0);
-        } else {
+        /*} else {
             v.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
-        }
+        }*/
     }
 }
