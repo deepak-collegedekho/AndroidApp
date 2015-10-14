@@ -22,6 +22,7 @@
     <string name="which_locations">Which Locations</string>
     <string name="type_and_support_services">Type &amp; Support Services</string>
     <string name="campus_and_housing">Campus &amp; Housing</string>
+    <string name="search_view_hint">"eg. IIT, Computers, B.tech"</string>
 
 
     <string name="play_services_error_fmt">Google Play Services Error: %i</string>

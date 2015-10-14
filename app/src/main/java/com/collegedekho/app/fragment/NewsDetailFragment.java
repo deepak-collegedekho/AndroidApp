@@ -15,8 +15,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
-import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.R;
+import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.NewsListAdapter;
 import com.collegedekho.app.entities.News;

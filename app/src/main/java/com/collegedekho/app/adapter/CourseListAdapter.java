@@ -1,7 +1,6 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,6 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.fragment.InstituteCoursesFragment;
 import com.collegedekho.app.listener.OnApplyClickedListener;
-import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
 

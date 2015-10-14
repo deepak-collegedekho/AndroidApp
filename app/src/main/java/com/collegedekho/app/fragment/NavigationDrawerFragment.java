@@ -24,8 +24,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
-import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.R;
+import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.activity.MainActivity;
 
 /**

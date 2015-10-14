@@ -1,9 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,11 +13,7 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.MyFBEnumerationAdapter;
-import com.collegedekho.app.adapter.QnAQuestionsListAdapter;
 import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
-import com.collegedekho.app.entities.MyFutureBuddy;
-import com.collegedekho.app.entities.QnAQuestions;
-import com.collegedekho.app.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
 

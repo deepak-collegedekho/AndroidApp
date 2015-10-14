@@ -13,10 +13,6 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.CoursePagerAdapter;
 import com.collegedekho.app.entities.InstituteCourse;
-import com.collegedekho.app.resource.Constants;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 

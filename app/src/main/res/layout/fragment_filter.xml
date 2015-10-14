@@ -5,6 +5,8 @@
     android:orientation="horizontal"
     tools:context="com.collegedekho.app.fragment.FilterFragment">
 
+
+
     <TextView
         android:id="@+id/textview_page_title"
         style="@style/AppTheme.TextView.page_title"

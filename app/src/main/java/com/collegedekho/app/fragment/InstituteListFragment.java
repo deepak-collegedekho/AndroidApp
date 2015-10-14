@@ -1,14 +1,20 @@
 package com.collegedekho.app.fragment;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,12 +22,19 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.InstituteListAdapter;
+import com.collegedekho.app.entities.Facet;
+import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.DividerItemDecoration;
+import com.collegedekho.app.widget.tag.textview.ContactsCompletionView;
+import com.collegedekho.app.widget.tag.textview.FilteredArrayAdapter;
+import com.collegedekho.app.widget.tag.textview.TokenCompleteTextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -32,7 +45,7 @@ import java.util.List;
  * Use the {@link InstituteListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class InstituteListFragment extends BaseFragment {
+public class InstituteListFragment extends BaseFragment implements TokenCompleteTextView.TokenListener {
     public static final String TITLE = "Institutes";
     private static final String ARG_INSTITUTE = "institute";
     private static final String ARG_FILTER_ALLOWED = "filter_allowed";
@@ -45,6 +58,8 @@ public class InstituteListFragment extends BaseFragment {
     private MainActivity mMainActivity;
     private TextView mEmptyTextView;
 
+    private ContactsCompletionView mCompletionView;
+    private ArrayAdapter<String> tolenAdapter;
 
 
     public InstituteListFragment() {
@@ -107,14 +122,49 @@ public class InstituteListFragment extends BaseFragment {
                         listener.onFilterButtonClicked();
                 }
             });
-        } else
+        } else {
             rootView.findViewById(R.id.button_filter).setVisibility(View.GONE);
+            rootView.findViewById(R.id.searchLL).setVisibility(View.GONE);
+        }
 
         if (filterCount > 0)
             ((ImageView) rootView.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter_selected);
         else
             ((ImageView) rootView.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter);
 
+       // final EditText sv = (EditText)rootView.findViewById(R.id.search_view);
+        tolenAdapter = new FilteredArrayAdapter<String>(getActivity(), R.layout.contact_token, new String[]{}) {
+            @Override
+            protected boolean keepObject(String obj, String mask) {
+                Log.e("", "");
+                return false;
+            }
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                if (convertView == null) {
+                    LayoutInflater l = (LayoutInflater)getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+                    convertView = l.inflate(R.layout.contact_token, parent, false);
+                }
+                return convertView;
+            }
+        };
+        mCompletionView = (ContactsCompletionView)rootView.findViewById(R.id.searchView);
+        mCompletionView.setAdapter(tolenAdapter);
+        mCompletionView.setTokenListener(this);
+        mCompletionView.setInputType(InputType.TYPE_NULL);
+        mCompletionView.allowDuplicates(false);
+        mCompletionView.setTokenClickStyle(TokenCompleteTextView.TokenClickStyle.Delete);
+
+        setFilterList();
+       /* int count = mCompletionView.getObjects().size();
+        if(count <= 0)
+        {
+            rootView.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
+        }
+        else
+        {
+            rootView.findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
+        }*/
         return rootView;
     }
 
@@ -168,6 +218,19 @@ public class InstituteListFragment extends BaseFragment {
         mAdapter.notifyDataSetChanged();
         loading = false;
         nextUrl = next;
+        if(mCompletionView != null && mCompletionView.getObjects().size() > 0) {
+            mCompletionView.clear();
+        }
+        setFilterList();
+       /* int count = mCompletionView.getObjects().size();
+        if(count <= 0)
+        {
+            getView().findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
+        }
+        else
+        {
+            getView().findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
+        }*/
     }
 
     public void updateButtons(int position) {
@@ -177,18 +240,67 @@ public class InstituteListFragment extends BaseFragment {
     public void updateFilterButton(int filterCount) {
         View v = getView();
         if (v != null) {
-            if (filterCount > 0)
+            if (filterCount > 0) {
                 ((ImageView) v.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter_selected);
+            }
             else
                 ((ImageView) v.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter);
         }
+
     }
+
+    private void updateFilterTokenConfirmation(Object token) {
+
+        ArrayList<Folder> folderList = ((MainActivity) getActivity()).getFilterList();
+        for (Folder f : folderList) {
+            for (Facet ft : f.getFacets())
+                if(ft.getTag().equalsIgnoreCase(token.toString())) {
+                    ft.deselect();
+                    break;
+                }
+        }
+
+        if(listener != null)
+            listener.onFilterTagRemoved();
+
+    }
+
+    private void setFilterList()
+    {
+        ArrayList<Folder> folderList = ((MainActivity) getActivity()).getFilterList();
+        for (Folder f : folderList) {
+            if(f.getLabel().equalsIgnoreCase("stream") || f.getLabel().equalsIgnoreCase("level"))
+                continue;
+
+            for (Facet ft : f.getFacets())
+                if (ft.isSelected() == 1)
+                    mCompletionView.addObject(ft.getTag());
+        }
+
+    }
+
+
+    @Override
+    public void onTokenAdded(Object token) {
+       // updateFilterTokenConfirmation();
+    }
+
+    @Override
+    public void onTokenRemoved(Object token)
+    {
+        if(!Constants.SEND_REQUEST)return;
+        updateFilterTokenConfirmation(token);
+    }
+
+
     public interface OnInstituteSelectedListener extends BaseListener {
         void onInstituteSelected(int position);
 
         void onInstituteLikedDisliked(int position, int liked);
 
         void onFilterButtonClicked();
+
+        void onFilterTagRemoved();
 
         @Override
         void onEndReached(String next, int type);

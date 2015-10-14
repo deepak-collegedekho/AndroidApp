@@ -74,7 +74,6 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
-import com.crashlytics.android.Crashlytics;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -91,7 +90,7 @@ import com.google.android.gms.tagmanager.TagManager;
 import io.connecto.android.sdk.Connecto;
 import io.connecto.android.sdk.Properties;
 import io.connecto.android.sdk.Traits;
-import io.fabric.sdk.android.Fabric;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -131,7 +130,7 @@ public class MainActivity extends AppCompatActivity
         Constants.FilterCategoryMap.put(Constants.ID_CITY, Constants.FILTER_CATEGORY_LOCATION);
         Constants.FilterCategoryMap.put(Constants.ID_STATE, Constants.FILTER_CATEGORY_LOCATION);
 
-        Constants.FilterCategoryMap.put(Constants.ID_LEVEL, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
+       // Constants.FilterCategoryMap.put(Constants.ID_LEVEL, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
         Constants.FilterCategoryMap.put(Constants.ID_SPECIALIZATION, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
         Constants.FilterCategoryMap.put(Constants.ID_DEGREE, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
         Constants.FilterCategoryMap.put(Constants.ID_EXAM, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
@@ -220,7 +219,7 @@ public class MainActivity extends AppCompatActivity
         this.connecto.track("Session Started", new Properties().putValue("value", 800));
         this.connecto.registerWithGCM(MainActivity.this, this.SENDER_ID);
 
-        Fabric.with(this, new Crashlytics());
+      //  Fabric.with(this, new Crashlytics());
 
         this.analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
         this.analytics.setLocalDispatchPeriod(1800);
@@ -240,8 +239,6 @@ public class MainActivity extends AppCompatActivity
         this.mTitle = getTitle().toString();
         this.mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
-
-       // this.mDisplayFragment(LoginFragment.newInstance("hi"), false, LoginFragment.class.getName());
 
        this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
@@ -277,6 +274,8 @@ public class MainActivity extends AppCompatActivity
             }
         }, Constants.MAIN_ANIMATION_TIME);
     }
+
+
 
     /**
      * This method is used to register and initialize facebook sdk
@@ -562,7 +561,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void updateInstituteList(String response) {
+    private void updateNextInstituteList(String response) {
         try {
             List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
             this.mInstituteList.addAll(institutes);
@@ -611,10 +610,12 @@ public class MainActivity extends AppCompatActivity
 
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
 
-            if (fragment instanceof InstituteListFragment)
+            // used to create new fragment if shortlist institute fragment
+            // is clicked in navigation drawer
+            if (fragment != null && fragment instanceof InstituteListFragment)
             {
-                if(((InstituteListFragment) fragment).getFilterAllowed() != filterAllowed);
-                fragment = null;
+                if(((InstituteListFragment) fragment).getFilterAllowed() != filterAllowed)
+                    fragment = null;
             }
 
             if (fragment == null)
@@ -859,7 +860,7 @@ public class MainActivity extends AppCompatActivity
                 this.updateFilterList(response);
                 break;
             case Constants.TAG_NEXT_INSTITUTE:
-                this.updateInstituteList(response);
+                this.updateNextInstituteList(response);
                 break;
             case Constants.TAG_NEXT_NEWS:
                 this.updateNewsList(response);
@@ -991,6 +992,9 @@ public class MainActivity extends AppCompatActivity
                     parentIndex = tags[1];
                 }
                  this.onUserSignInResponse(response, parentIndex);
+                break;
+            case Constants.SEARCHED_INSTITUTES:
+                this.mDisplayInstituteList(response , true);
                 break;
         }
 
@@ -1281,6 +1285,9 @@ public class MainActivity extends AppCompatActivity
                 return "Submitting psychometric analysis...";
             case Constants.TAG_USER_LOGIN:
                 return "Signing User Please Wait.....";
+            case Constants.SEARCHED_INSTITUTES:
+                return "Loading...";
+
         }
         return null;
     }
@@ -1523,6 +1530,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     @Override
     public void onEndReached(String next, int listType) {
         if (next == null) return;
@@ -1628,7 +1636,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-
         return map;
     }
 
@@ -1705,7 +1712,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFilterApplied() {
         int count = 0;
-
         for (Folder f : this.mFolderList) {
             for (Facet ft : f.getFacets())
                 if (ft.isSelected() == 1)
@@ -1716,22 +1722,29 @@ public class MainActivity extends AppCompatActivity
 
         this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mFilterKeywords);
 
-        onBackPressed();
-
         this.mUpdateFilterButton();
-
         //save preferences.
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
 
-       /* try
-        {
-            //Filters filters = JSON.std.beanFrom(Filters.class, this.mFilterKeywords.toString());
-
-            //String f = JSON.std.asString(filters);
+    }
+    @Override
+    public void onFilterTagRemoved() {
+        int count = 0;
+        Map<String, String> mFilterKeywords = new HashMap<>();
+        for (Folder f : this.mFolderList) {
+            for (Facet ft : f.getFacets())
+                if (ft.isSelected() == 1)
+                    mFilterKeywords.put("tag_uris[" + (count++) + "]", ft.getTag());
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }*/
+        this.mFilterKeywords = mFilterKeywords;
+        this.mFilterCount = this.mFilterKeywords.size();
+
+        this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mFilterKeywords);
+
+        this.mUpdateFilterButton();
+        //save preferences.
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
+
     }
 
     @Override
@@ -1767,13 +1780,17 @@ public class MainActivity extends AppCompatActivity
         this.mUpdateFilterButton();
     }
 
+
+
     private void mUpdateFilterButton() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
         if (fragment instanceof InstituteListFragment) {
             ((InstituteListFragment) fragment).updateFilterButton(mFilterCount);
+
         }
     }
+
 
     @Override
     public void onFilterTypeChanged(int position) {
@@ -2381,6 +2398,13 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
+    }
+    public ArrayList<Folder> getFilterList()
+    {
+        if (this.mFilters != "") {
+            updateFilterList(this.mFilters);
+        }
+        return this.mFolderList;
     }
 
     public static void GASessionEvent(String screenName)

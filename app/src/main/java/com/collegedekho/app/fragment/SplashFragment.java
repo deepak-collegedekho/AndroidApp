@@ -2,19 +2,14 @@ package com.collegedekho.app.fragment;
 
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.os.Trace;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.resource.Constants;
 
 public class SplashFragment extends BaseFragment {
 

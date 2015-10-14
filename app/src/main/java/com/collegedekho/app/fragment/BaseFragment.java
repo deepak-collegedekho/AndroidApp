@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.widget.LinearLayout;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by root on 16/9/15.
  */
@@ -53,14 +56,7 @@ public class BaseFragment extends Fragment {
     public interface BaseListener{
         void onEndReached(String next, int type);
         void onFilterButtonClicked();
+        void onFilterTagRemoved();
     }
-   /* @Override
-    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-        if (sDisableExitAnimation) {
-            Animation a = new Animation() {};
-            a.setDuration(0);
-            return a;
-        }
-        return super.onCreateAnimation(transit, enter, nextAnim);
-    }*/
+
 }

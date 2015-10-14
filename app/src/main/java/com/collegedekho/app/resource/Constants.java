@@ -23,6 +23,7 @@ public class Constants
     public static final String KEY_STREAMS = "streams";
     public static final String COMPLETED_SECOND_STAGE = "second_stage";
     public static final String WIDGET_INSTITUTES = "institutes";
+    public static final String SEARCHED_INSTITUTES = "searched_institutes";
     public static final String WIDGET_COURSES = "courses";
     public static final String WIDGET_NEWS = "news";
     public static final String WIDGET_ARTICES = "articles";
@@ -98,6 +99,7 @@ public class Constants
     public static final int MAIN_ANIMATION_TIME = 6500;
     public static final int SECONDARY_ANIMATION_TIME = 2000;
     public static final String SELECTED_FILTERS = "selected_filters";
+    public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET;
     public static final int MY_FB_REFRESH_RATE = 5000;
     public static final int TYPE_WIFI = 1;
@@ -201,5 +203,6 @@ public class Constants
     public static final String EMAIL_EMPTY      = "Please enter your email";
     public static final String EMAIL_INVALID    = "Please enter a valid email";
     public static final String PASSWORD_EMPTY   = "Please enter a password";
+    public static final String PASSWORD_INVALID   = "Minimum password length is 6";
 
 }

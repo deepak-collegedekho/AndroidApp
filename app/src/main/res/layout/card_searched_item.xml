@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/AppTheme.StreamsCardView"
+    >
+    <LinearLayout
+        android:id="@+id/home_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:id="@+id/searched_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:padding="5dp"
+            android:scaleType="centerCrop"
+            />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/searched_list_recycerView"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/searched_title"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"/>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

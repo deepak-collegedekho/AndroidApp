@@ -1,0 +1,45 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/searchLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/m15dp"
+        android:paddingTop="@dimen/m15dp"
+        android:paddingBottom="@dimen/m15dp"
+        android:layout_alignParentTop="true"
+        android:background="#ff444444"
+        android:paddingRight="@dimen/m5dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/search_view"
+            android:layout_weight=".7"
+            android:layout_width="0dp"
+            android:paddingLeft="@dimen/m5dp"
+            android:background="@drawable/round_box"
+            android:textColorHint="@color/dislike_red"
+            android:hint="@string/search_view_hint"
+            android:layout_height="match_parent"></EditText>
+
+        <TextView
+            android:id="@+id/button_search"
+            style="@style/AppTheme.BlueButton"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="@dimen/m5dp"
+            android:layout_height="wrap_content"
+            android:text="Search"/>
+    </LinearLayout>
+
+     <android.support.v7.widget.RecyclerView
+         android:id="@+id/search_recycerView"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@id/searchLL"
+         android:paddingLeft="@dimen/activity_horizontal_margin"
+         android:paddingRight="@dimen/activity_horizontal_margin"/>
+
+</RelativeLayout>

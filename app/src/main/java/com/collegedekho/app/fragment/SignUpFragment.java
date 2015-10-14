@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
@@ -131,6 +130,10 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             }
             else if (password == null || password.isEmpty()){
                 Utils.displayToast(getActivity(), Constants.PASSWORD_EMPTY);
+                return;
+            }
+            else if (password.length() < 6 ){
+                Utils.displayToast(getActivity(), Constants.PASSWORD_INVALID);
                 return;
             }
 
