@@ -169,7 +169,7 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
     //Called on when response is received from server on vote up or down for either question or answer
     public void onVotingFeedback(int questionIndex, int answerIndex, int voteType)
     {
-        if(answerIndex < 0)
+        if (answerIndex < 0)
         {
             //update question vote
             //Log.e(QnAQuestionsAndAnswersFragment.class.getName(), String.valueOf(questionIndex));
@@ -213,11 +213,11 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
                 qnaAns.setDownvotes(qnaAns.getDownvotes() + 1);
             }
 
-            mQnAAnswersSet.remove(answerIndex);
-            mQnAAnswersSet.add(answerIndex, qnaAns);
+            this.mQnAAnswersSet.remove(answerIndex);
+            this.mQnAAnswersSet.add(answerIndex, qnaAns);
 
-            mQnAAnswersListAdapter.notifyItemChanged(answerIndex);
-            mQnAAnswersListAdapter.notifyDataSetChanged();
+            this.mQnAAnswersListAdapter.notifyItemChanged(answerIndex);
+            this.mQnAAnswersListAdapter.notifyDataSetChanged();
         }
     }
 
@@ -226,11 +226,11 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
         if (this.mEmptyTextView.getVisibility() == View.VISIBLE)
             this.mEmptyTextView.setVisibility(View.GONE);
 
-        mQnAAnswersSet.add(mQnAAnswersSet.size(), answer);
-        mQnAAnswersListAdapter.notifyItemInserted(mQnAAnswersSet.size() - 1);
-        mQnAAnswersListAdapter.notifyDataSetChanged();
+        this.mQnAAnswersSet.add(this.mQnAAnswersSet.size(), answer);
+        this.mQnAAnswersListAdapter.notifyItemInserted(this.mQnAAnswersSet.size() - 1);
+        this.mQnAAnswersListAdapter.notifyDataSetChanged();
 
-        this.mAnswersListView.scrollToPosition(mQnAAnswersSet.size() - 1);
+        this.mAnswersListView.scrollToPosition(this.mQnAAnswersSet.size() - 1);
     }
 
     public interface OnQnAAnswerInteractionListener {
@@ -243,9 +243,9 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
     public void onResume() {
         super.onResume();
 
-        MainActivity mMainActivity = (MainActivity) this.getActivity();
+        MainActivity mainActivity = (MainActivity) this.getActivity();
 
-        if (mMainActivity != null)
-            mMainActivity.currentFragment = this;
+        if (mainActivity != null)
+            mainActivity.currentFragment = this;
     }
 }

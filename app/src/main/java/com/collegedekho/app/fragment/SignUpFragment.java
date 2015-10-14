@@ -105,35 +105,35 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             String phone    = ((EditText) getView().findViewById(R.id.phone)).getText().toString();
             if (name == null || name.isEmpty())
             {
-                Utils.displayToast(getActivity(), Constants.NAME_EMPTY);
+                Utils.DisplayToast(getActivity(), Constants.NAME_EMPTY);
                 return;
             }
             else if(!isValidName(name)){
-                Utils.displayToast(getActivity(), Constants.NAME_INVALID);
+                Utils.DisplayToast(getActivity(), Constants.NAME_INVALID);
                 return;
             }
             else if(phone == null || phone.isEmpty()) {
-                Utils.displayToast(getActivity(), Constants.PHONE_EMPTY);
+                Utils.DisplayToast(getActivity(), Constants.PHONE_EMPTY);
                 return;
             }
             else if(phone.length() <= 9 ||!isValidPhone(phone)){
-                Utils.displayToast(getActivity(),Constants.PHONE_INVALID);
+                Utils.DisplayToast(getActivity(), Constants.PHONE_INVALID);
                 return;
             }
             else if (email == null || email.isEmpty()){
-                Utils.displayToast(getActivity(), Constants.EMAIL_EMPTY);
+                Utils.DisplayToast(getActivity(), Constants.EMAIL_EMPTY);
                 return;
             }
             else if(!isValidEmail(email)){
-                Utils.displayToast(getActivity(), Constants.EMAIL_INVALID);
+                Utils.DisplayToast(getActivity(), Constants.EMAIL_INVALID);
                 return;
             }
             else if (password == null || password.isEmpty()){
-                Utils.displayToast(getActivity(), Constants.PASSWORD_EMPTY);
+                Utils.DisplayToast(getActivity(), Constants.PASSWORD_EMPTY);
                 return;
             }
             else if (password.length() < 6 ){
-                Utils.displayToast(getActivity(), Constants.PASSWORD_INVALID);
+                Utils.DisplayToast(getActivity(), Constants.PASSWORD_INVALID);
                 return;
             }
 
@@ -144,10 +144,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             hashMap.put(Constants.USER_PHONE, phone);
             mUserRegisteration(hashMap, mMessage);
         }
-
     }
-
-
 
     private static boolean isValidEmail(CharSequence target) {
         return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();

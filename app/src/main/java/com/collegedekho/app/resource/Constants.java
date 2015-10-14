@@ -50,7 +50,7 @@ public class Constants
     public static final String TAG_NEXT_INSTITUTE = "next_institutes";
     public static final String TAG_NEXT_NEWS = "next_news";
     public static final String TAG_NEXT_ARTICLES = "next_articles";
-    public static final String TAG_LIKE_DISLIKE = "like_dislike";
+    public static final String TAG_INSTITUTE_LIKE_DISLIKE = "institute_like_dislike";
     public static final String TAG_SHORTLIST_INSTITUTE = "shortlist";
     public static final String TAG_DELETESHORTLIST_INSTITUTE = "delete";
     public static final int NEITHER_LIKE_NOR_DISLIKE = -1;
@@ -164,7 +164,8 @@ public class Constants
 
 
     public static final String APPLY_YEAR = "year_of_admission";
-    public static final String APPLY_COURSE= "institute_course";
+    public static final String APPLY_COURSE = "institute_course";
+    public static final String APPLY_COURSE_ID = "institute_course_id";
     public static final String APPLY_INSTITUTE = "institute";
 
 
@@ -179,21 +180,38 @@ public class Constants
     public static final String CATEGORY_QNA = "category_qna";
     public static final String CATEGORY_MY_FB = "category_my_fb";
     public static final String CATEGORY_INSTITUTES = "category_institutes";
+    public static final String CATEGORY_ARTICLE = "category_article";
+    public static final String CATEGORY_NEWS = "category_news";
 
     //Actions
-    public static final String ACTION_STREAM_CHANGED = "action_stream_changed";
+    public static final String ACTION_STREAM_UPDATED = "action_stream_updated";
+    public static final String ACTION_LEVEL_UPDATED = "action_level_updated";
     public static final String ACTION_MY_FB_SELECTED = "action_my_fb_selected";
     public static final String ACTION_QNA_QUESTION_ASKED = "action_qna_question_asked";
+    public static final String QNA_QUESTION_RESOURCE_URI = "qna_question_resource_uri";
     public static final String ACTION_COURSE_APPLIED = "action_course_applied";
     public static final String ACTION_VOTE_QNA_QUESTION_ENTITY = "action_qna_question_entity_vote";
     public static final String ACTION_VOTE_QNA_ANSWER_ENTITY = "action_qna_answer_entity_vote";
     public static final String ACTION_QNA_ANSWER_SUBMITTED = "action_qna_answer_submitted";
+    public static final String QNA_ANSWER_RESOURCE_URI = "qna_answer_resource_uri";
     public static final String ACTION_MY_FB_COMMENT_SUBMITTED = "action_my_fb_comment_submitted";
+    public static final String MY_FB_URI = "action_my_fb_comment_uri";
     public static final String ACTION_INSTITUTE_SHORTLISTED = "action_institute_shortlisted";
     public static final String ACTION_INSTITUTE_SHORTLISTED_REMOVED = "action_institute_shortlisting_removed";
+    public static final String ACTION_INSTITUTE_LIKED = "action_institute_like";
+    public static final String ACTION_INSTITUTE_DISLIKED = "action_institute_disliked";
+    public static final String ACTION_INSTITUTE_LIKING_UNBIASED = "action_institute_liking_unbiased";
+    public static final String ACTION_VOTE_QNA_QUESTION_UPVOTED = "action_qna_question_entity_upvoted";
+    public static final String ACTION_VOTE_QNA_QUESTION_DOWNVOTED = "action_qna_question_entity_downvoted";
+    public static final String ACTION_VOTE_QNA_ANSWER_UPVOTED = "action_qna_answer_entity_upvoted";
+    public static final String ACTION_VOTE_QNA_ANSWER_DOWNVOTED = "action_qna_answer_entity_downvoted";
+    public static final String ACTION_FILTER_APPLIED = "action_filter_applied";
+    public static final String ACTION_ARTICLE_SELECTED = "action_article_selected";
+    public static final String ACTION_NEWS_SELECTED = "action_news_selected";
 
-    //String Msg
 
+
+    //String messages
     public static final String EMAIL_PASSOWRD_NOT_EXISTS ="The e-mail address and/or password you specified are not correct.";
     public static final String EMAIL_PASSOWRD_ALREADY_EXISTS = "A user is already registered with this e-mail address.";
     public static final String NAME_EMPTY       = "Please enter your name";
@@ -204,5 +222,13 @@ public class Constants
     public static final String EMAIL_INVALID    = "Please enter a valid email";
     public static final String PASSWORD_EMPTY   = "Please enter a password";
     public static final String PASSWORD_INVALID   = "Minimum password length is 6";
+
+    //Connecto Events
+    public static final String CONNECTO_SESSION_STARTED = "session_started";
+    public static final String CONNECTO_SESSION_ENDED = "session_ended";
+    public static final String CONNECTO_STREAM_SELECTED = "stream_selected";
+    public static final String CONNECTO_LEVEL_SELECTED = "level_selected";
+    public static final String CONNECTO_STREAM_UPDATED = "stream_updated";
+    public static final String CONNECTO_LEVEL_UPDATED = "level_updated";
 
 }

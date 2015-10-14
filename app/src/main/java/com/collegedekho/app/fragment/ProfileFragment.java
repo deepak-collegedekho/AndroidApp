@@ -133,19 +133,19 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         String phone    = mPhoneET.getText().toString();
         if (name == null || name.isEmpty())
         {
-            Utils.displayToast(getActivity(), Constants.NAME_EMPTY);
+            Utils.DisplayToast(getActivity(), Constants.NAME_EMPTY);
             return;
         }
         else if(!isValidName(name)){
-            Utils.displayToast(getActivity(), Constants.NAME_INVALID);
+            Utils.DisplayToast(getActivity(), Constants.NAME_INVALID);
             return;
         }
         else if(phone == null || phone.isEmpty()) {
-            Utils.displayToast(getActivity(), Constants.PHONE_EMPTY);
+            Utils.DisplayToast(getActivity(), Constants.PHONE_EMPTY);
             return;
         }
         else if(phone.length() <= 9 ||!isValidPhone(phone)){
-            Utils.displayToast(getActivity(),Constants.PHONE_INVALID);
+            Utils.DisplayToast(getActivity(), Constants.PHONE_INVALID);
             return;
         }
         HashMap<String, String> hashMap = new HashMap<>();
