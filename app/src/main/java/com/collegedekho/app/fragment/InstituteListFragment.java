@@ -138,12 +138,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             rootView.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
         }
 
-        if (filterCount > 0)
-            ((ImageView) rootView.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter_selected);
-        else
-            ((ImageView) rootView.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter);
 
-       // final EditText sv = (EditText)rootView.findViewById(R.id.search_view);
         tolenAdapter = new FilteredArrayAdapter<String>(getActivity(), R.layout.contact_token, new String[]{}) {
             @Override
             protected boolean keepObject(String obj, String mask) {
@@ -163,23 +158,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
         return rootView;
     }
-
-    public void callbackFragment()
-    {
-        int count = mCompletionView.getObjects().size();
-        if(count <= 0 )
-        {
-            updateFilterButton(0);
-            getView().findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
-        }
-        else
-        {
-            updateFilterButton(1);
-            getView().findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
+  @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
@@ -215,6 +194,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             this.mEmptyTextView.setText("");
             this.mEmptyTextView.setVisibility(View.GONE);
         }
+        updateFilterButton(filterCount);
 
     }
 
@@ -242,16 +222,20 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         mAdapter.updateLikeButtons(position);
     }
 
-    public void updateFilterButton(int filterCount) {
+    public void updateFilterButton(int filterCount)
+    {
+        if(!filterAllowed) return;// do not need on my shortlist page
         View v = getView();
         if (v != null) {
-            if (filterCount > 0) {
+            if (filterCount <= 2) {
+                getView().findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
+                ((ImageView) v.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter);
+            }
+            else {
+                getView().findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
                 ((ImageView) v.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter_selected);
             }
-            else
-                ((ImageView) v.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter);
-        }
-
+       }
     }
 
     private void updateFilterTokenConfirmation(Object token) {
@@ -266,7 +250,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         }
 
         if(listener != null)
-            listener.onFilterTagRemoved();
+            listener.onFilterApplied();
 
     }
 
@@ -287,7 +271,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
     @Override
     public void onTokenAdded(Object token) {
-        callbackFragment();
     }
 
     @Override
@@ -295,7 +278,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     {
         if(!Constants.SEND_REQUEST)return;
         updateFilterTokenConfirmation(token);
-        callbackFragment();
     }
 
 
@@ -306,7 +288,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
         void onFilterButtonClicked();
 
-        void onFilterTagRemoved();
+        void onFilterApplied();
 
         @Override
         void onEndReached(String next, int type);

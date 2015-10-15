@@ -56,7 +56,7 @@ public class BaseFragment extends Fragment {
     public interface BaseListener{
         void onEndReached(String next, int type);
         void onFilterButtonClicked();
-        void onFilterTagRemoved();
+        void onFilterApplied();
     }
 
 }

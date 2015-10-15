@@ -629,6 +629,7 @@ public class MainActivity extends AppCompatActivity
                 if (fragment instanceof InstituteListFragment) {
                     ((InstituteListFragment) fragment).clearList();
                     ((InstituteListFragment) fragment).updateList(this.mInstituteList, next);
+                    ((InstituteListFragment) fragment).updateFilterButton(this.mFilterCount);
                 }
 
                 this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
@@ -1758,30 +1759,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFilterApplied() {
-        int count = 0;
-        for (Folder f : this.mFolderList) {
-            for (Facet ft : f.getFacets())
-                if (ft.isSelected() == 1)
-                    this.mFilterKeywords.put("tag_uris[" + (count++) + "]", ft.getTag());
-        }
 
-        this.mFilterCount = this.mFilterKeywords.size();
-
-        this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mFilterKeywords);
-
-        this.mUpdateFilterButton();
-        //save preferences.
-        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
-
-        //send GA and connecto event for filter applied
-        MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_FILTER_APPLIED, "");
-
-        for (String key : this.mFilterKeywords.keySet())
-            this.connecto.track(Constants.ACTION_FILTER_APPLIED, new Properties().putValue(Constants.SELECTED_FILTERS, this.mFilterKeywords.get(key)));
-    }
-
-    @Override
-    public void onFilterTagRemoved() {
         int count = 0;
         Map<String, String> mFilterKeywords = new HashMap<>();
         for (Folder f : this.mFolderList) {
@@ -1797,7 +1775,15 @@ public class MainActivity extends AppCompatActivity
         this.mUpdateFilterButton();
         //save preferences.
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
+
+        //send GA and connecto event for filter applied
+        MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_FILTER_APPLIED, "");
+
+        for (String key : this.mFilterKeywords.keySet())
+            this.connecto.track(Constants.ACTION_FILTER_APPLIED, new Properties().putValue(Constants.SELECTED_FILTERS, this.mFilterKeywords.get(key)));
     }
+
+
 
     @Override
     public void onFilterCanceled(boolean clearAll) {

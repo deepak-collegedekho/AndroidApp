@@ -30,6 +30,7 @@
         android:paddingBottom="@dimen/m5dp"
         android:background="#ff444444"
         android:paddingRight="@dimen/m2dp"
+        android:visibility="gone"
         android:orientation="horizontal">
 
         <com.collegedekho.app.widget.tag.textview.ContactsCompletionView
