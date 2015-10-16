@@ -28,7 +28,7 @@
         android:paddingLeft="@dimen/m2dp"
         android:paddingTop="@dimen/m5dp"
         android:paddingBottom="@dimen/m5dp"
-        android:background="#ff444444"
+        android:background="?attr/colorPrimary"
         android:paddingRight="@dimen/m2dp"
         android:visibility="gone"
         android:orientation="horizontal">

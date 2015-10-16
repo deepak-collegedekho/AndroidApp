@@ -60,6 +60,7 @@
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/google_sign_in"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
