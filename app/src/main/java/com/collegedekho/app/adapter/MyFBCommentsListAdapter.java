@@ -74,7 +74,7 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         qnaAnswerHolder.commentText.setText(myFBComment.getComment());
         qnaAnswerHolder.dateAddedOn.setText(simpleDate);
 
-        if ((myFBComment.getToken()).equals(MainActivity.user.getToken()))
+        if (MainActivity.user.getToken() != null && (myFBComment.getToken()).equals(MainActivity.user.getToken()))
         {
             //if it is my comment
             /*LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);

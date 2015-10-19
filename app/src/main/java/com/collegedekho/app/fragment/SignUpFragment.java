@@ -99,10 +99,10 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
         if(view.getId() == R.id.signUp_button)
         {
-            String email    = ((EditText) getView().findViewById(R.id.email)).getText().toString();
-            String password = ((EditText) getView().findViewById(R.id.password)).getText().toString();
-            String name     = ((EditText) getView().findViewById(R.id.name)).getText().toString();
-            String phone    = ((EditText) getView().findViewById(R.id.phone)).getText().toString();
+            String email    = ((EditText) getView().findViewById(R.id.signup_email)).getText().toString();
+            String password = ((EditText) getView().findViewById(R.id.signup_password)).getText().toString();
+            String name     = ((EditText) getView().findViewById(R.id.signup_name)).getText().toString();
+            String phone    = ((EditText) getView().findViewById(R.id.signup_phone)).getText().toString();
             if (name == null || name.isEmpty())
             {
                 Utils.DisplayToast(getActivity(), Constants.NAME_EMPTY);

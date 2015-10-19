@@ -20,6 +20,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.QnAQuestionsListAdapter;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
+import com.collegedekho.app.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -139,30 +140,38 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
         return rootView;
     }
 
-    public QnAQuestions validateData(View rootView) {
-        View check = rootView.findViewById(R.id.institute_qna_question_title);
-        QnAQuestions q = new QnAQuestions();
-        q.setInstitute(this.mInstitute);
-        q.setTitle(((EditText) check).getText().toString());
-        boolean valid = q.getTitle().length() > 0;
-        ((EditText) check).addTextChangedListener(this);
+    public QnAQuestions validateData(View rootView)
+    {
+        EditText check = (EditText)rootView.findViewById(R.id.institute_qna_question_title);
         til1 = (TextInputLayout) check.getParent();
-        if (!valid)
+        String title =  check.getText().toString();
+        if (title == null || title.length() <= 0) {
+            Utils.DisplayToast(getActivity(),"Question title cannot be empty.");
             til1.setError("Question title cannot be empty.");
+            return null;
+        }
         else
             til1.setErrorEnabled(false);
-        check = rootView.findViewById(R.id.institute_qna_question_desc);
-        ((EditText) check).addTextChangedListener(this);
-        til2 = (TextInputLayout) check.getParent();
-        q.setDesc(((EditText) check).getText().toString());
-        valid &= q.getDesc().length() > 0;
-        if (!valid)
-            til2.setError("Question text cannot be empty.");
+
+        EditText check1 = (EditText)rootView.findViewById(R.id.institute_qna_question_desc);
+        til2 = (TextInputLayout) check1.getParent();
+        String desc =  check1.getText().toString();
+        if (desc == null || desc.length() <= 0) {
+            Utils.DisplayToast(getActivity(), "Question text cannot be empty.");
+                     til2.setError("Question text cannot be empty.");
+            return null;
+        }
         else
             til2.setErrorEnabled(false);
-        if (valid)
-            return q;
-        return null;
+
+        QnAQuestions q = new QnAQuestions();
+        q.setInstitute(this.mInstitute);
+        q.setTitle(title);
+        q.setDesc(desc);
+        check.addTextChangedListener(this);
+        check1.addTextChangedListener(this);
+
+        return q;
     }
 
     public void onAskExpertCancelButtonPressed()
@@ -183,16 +192,20 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
         View rootView = getView();
         if (rootView != null) {
             QnAQuestions q = validateData(rootView);
-            if (q != null) {
+            if (q != null)
+            {
                 mListener.onQuestionAsked(q);
+
+                this.mInstituteQnAAskContainer.setVisibility(View.GONE);
+                this.mInstituteQnAQuestionListContainer.setVisibility(View.VISIBLE);
+
+                this.mAskExpertButton.setVisibility(View.VISIBLE);
+                this.mAskExpertButton.setEnabled(true);
             }
+
         }
 
-        this.mInstituteQnAAskContainer.setVisibility(View.GONE);
-        this.mInstituteQnAQuestionListContainer.setVisibility(View.VISIBLE);
 
-        this.mAskExpertButton.setVisibility(View.VISIBLE);
-        this.mAskExpertButton.setEnabled(true);
     }
 
     public void onAskExpertButtonPressed()
@@ -207,6 +220,11 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
 
             this.mAskExpertButton.setVisibility(View.GONE);
             this.mAskExpertButton.setEnabled(false);
+            /* View view =getView();
+            if(view != null) {
+                ((EditText)view.findViewById(R.id.institute_qna_question_title)).setHint("");
+                ((EditText)view.findViewById(R.id.institute_qna_question_desc)).setHint("");
+            }*/
         }
     }
 
@@ -241,6 +259,8 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
     public void afterTextChanged(Editable s) {
         if (til1 != null) {
             til1.setErrorEnabled(false);
+        }
+        if (til2 != null) {
             til2.setErrorEnabled(false);
         }
     }

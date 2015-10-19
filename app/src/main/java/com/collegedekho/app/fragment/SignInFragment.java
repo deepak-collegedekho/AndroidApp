@@ -243,8 +243,8 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
         else  if (view.getId() == R.id.signIn_button)
         {
 
-            String email = ((EditText) getView().findViewById(R.id.email)).getText().toString();
-            String password = ((EditText) getView().findViewById(R.id.password)).getText().toString();
+            String email = ((EditText) getView().findViewById(R.id.signin_email)).getText().toString();
+            String password = ((EditText) getView().findViewById(R.id.signin_password)).getText().toString();
             if (email == null || email.isEmpty())
             {
                 Toast.makeText(getActivity(), "Please enter your email", Toast.LENGTH_LONG).show();

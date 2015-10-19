@@ -88,9 +88,9 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
                 Log.e(TAG, "Date format unknown: " + a.published_on);
             }
             articleHolder.articlePubDate.setText(d);
+            this.setAnimation(articleHolder.container, position);
         }
 
-        this.setAnimation(articleHolder.container, position);
     }
 
     @Override

@@ -298,14 +298,14 @@ public class MainActivity extends AppCompatActivity
                 this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, MainActivity.resource_uri, null);
                 break;
             }
-            case Constants.TAG_FRAGMENT_ARTICLES_LIST:
-            {
-                this.mMakeNetworkCall(Constants.WIDGET_ARTICES, MainActivity.resource_uri, null);
-                break;
-            }
             case Constants.TAG_FRAGMENT_NEWS_LIST:
             {
                 this.mMakeNetworkCall(Constants.WIDGET_NEWS, MainActivity.resource_uri, null);
+                break;
+            }
+            case Constants.TAG_FRAGMENT_ARTICLES_LIST:
+            {
+                this.mMakeNetworkCall(Constants.WIDGET_ARTICES, MainActivity.resource_uri, null);
                 break;
             }
             case Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE:
@@ -1380,6 +1380,8 @@ public class MainActivity extends AppCompatActivity
                 return "Submitting psychometric analysis...";
             case Constants.TAG_USER_LOGIN:
                 return "Signing User Please Wait.....";
+           case Constants.TAG_USER_REGISTRATION :
+                return "Creating User Please Wait";
             case Constants.SEARCHED_INSTITUTES:
                 return "Loading...";
 
@@ -1391,7 +1393,7 @@ public class MainActivity extends AppCompatActivity
         try {
             this.mWidgets = JSON.std.listOfFrom(Widget.class, extractResults(response));
             this.mDisplayFragment(WidgetListFragment.newInstance(new ArrayList<>(this.mWidgets)), false, Constants.TAG_FRAGMENT_WIDGET_LIST);
-            if ("" != MainActivity.type)
+            if (MainActivity.type != null && MainActivity.type.length() > 0)
             {
                 MainActivity.this.mhandleNotifications();
                 MainActivity.type = "";
@@ -2421,7 +2423,6 @@ public class MainActivity extends AppCompatActivity
         User tempUser = user;
         try {
             user = JSON.std.beanFrom(User.class, response);
-            this.networkUtils.setToken(user.getToken());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -2431,6 +2432,8 @@ public class MainActivity extends AppCompatActivity
         user.setLevel(tempUser.getLevel());
         user.setStream_name(tempUser.getStream_name());
         user.setLevel_name(tempUser.getLevel_name());
+        user.setToken(tempUser.getToken());
+        this.networkUtils.setToken(user.getToken());
         String u = null;
         try {
             u = JSON.std.asString(user);

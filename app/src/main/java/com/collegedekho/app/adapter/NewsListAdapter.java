@@ -42,8 +42,8 @@ public class NewsListAdapter extends RecyclerView.Adapter {
     public int lastPosition = -1;
 
     public NewsListAdapter(Context context, ArrayList<News> news , int type) {
-        mNews = news;
-        mContext = context;
+        this.mNews = news;
+        this.mContext = context;
         this.type = type;
         imageLoader = MySingleton.getInstance(context).getImageLoader();
         sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
@@ -90,8 +90,8 @@ public class NewsListAdapter extends RecyclerView.Adapter {
                 Log.e(TAG, "Date format unknown: " + n.published_on);
             }
             newsHolder.newsPubDate.setText(d);
+            this.setAnimation(newsHolder.container, position);
         }
-        this.setAnimation(newsHolder.container, position);
     }
 
     @Override
@@ -136,7 +136,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
             if(type == Constants.TYPE_NEWS) {
                 newsPubDate = (TextView) itemView.findViewById(R.id.textview_news_pubdate);
                 newsContent = (TextView) itemView.findViewById(R.id.textview_news_content);
-                container = (RelativeLayout) itemView.findViewById(R.id.card_article_container);
+                container = (RelativeLayout) itemView.findViewById(R.id.card_news_container);
             }
             newsTitle = (TextView) itemView.findViewById(R.id.textview_news_title);
             newsImage = (NetworkImageView) itemView.findViewById(R.id.image_news_collapsed);

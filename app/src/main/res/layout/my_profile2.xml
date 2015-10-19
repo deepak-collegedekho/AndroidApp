@@ -21,33 +21,28 @@
             android:orientation="vertical">
 
             <EditText
-                style="@style/AppTheme.EditText"
+                style="@style/AppTheme.EditText.Profile"
                 android:id="@+id/profile_name"
-                android:maxLines="1"
                 android:inputType="textCapWords"
+                android:layout_marginTop="@dimen/m20dp"
                 android:hint="Name"
-                android:textColor="@color/white"
                 android:textColorHint="@color/textSecondary"
                 android:maxLength="35"/>
 
             <EditText
-                style="@style/AppTheme.EditText"
+                style="@style/AppTheme.EditText.Profile"
                 android:id="@+id/profile_email"
                 android:inputType="textEmailAddress"
-                android:maxLines="1"
-                android:textColor="@color/white"
                 android:textColorHint="@color/textSecondary"
                 android:hint="Email"
                 android:visibility="gone"/>
 
             <EditText
-                style="@style/AppTheme.EditText"
+                style="@style/AppTheme.EditText.Profile"
                 android:id="@+id/profile_contact"
                 android:hint="Phone"
-                android:textColor="@color/white"
                 android:textColorHint="@color/textSecondary"
                 android:inputType="phone"
-                android:maxLines="1"
                 android:maxLength="10"/>
 
             <LinearLayout
@@ -59,10 +54,9 @@
 
 
                 <EditText
-                    style="@style/AppTheme.EditText"
+                    style="@style/AppTheme.EditText.Profile"
                     android:id="@+id/profile_stream"
                     android:focusable="false"
-                    android:textColor="@color/white"
                     android:layout_width="0dp"
                     android:layout_weight=".9"/>
 
@@ -89,12 +83,11 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    style="@style/AppTheme.EditText"
+                    style="@style/AppTheme.EditText.Profile"
                     android:id="@+id/profile_level"
                     android:layout_weight=".9"
                     android:layout_width="0dp"
                     android:editable="false"
-                    android:textColor="@color/white"
                     android:focusable="false"/>
                 <LinearLayout
                     android:id="@+id/level_edit"
