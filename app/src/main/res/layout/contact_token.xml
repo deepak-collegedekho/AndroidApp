@@ -11,6 +11,7 @@
         android:background="@drawable/token_background"
         android:textColor="@android:color/white"
         android:textSize="14sp"
+        android:text="dhjqgwdiqwbndjwn"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
         android:paddingTop="2dp"

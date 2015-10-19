@@ -44,7 +44,7 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
     public static boolean READY_TO_CLOSE = false;
 
     public WidgetListFragment() {
-        // Required empty public constructor
+        //Required empty public constructor
     }
 
     public static WidgetListFragment newInstance(ArrayList<Widget> widgets) {
@@ -52,6 +52,7 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
         Bundle b = new Bundle();
         b.putParcelableArrayList(ARG_PARAM1, widgets);
         streamFragment.setArguments(b);
+
         return streamFragment;
     }
 
@@ -59,20 +60,19 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            widgets = getArguments().getParcelableArrayList(ARG_PARAM1);
+            this.widgets = getArguments().getParcelableArrayList(ARG_PARAM1);
         }
     }
 
     private void touchLearned() {
-        if (!mUserLearnedTouch) {
+        if (!this.mUserLearnedTouch) {
             // The user manually opened the drawer; store this flag to prevent auto-showing
             // the navigation drawer automatically in the future.
-            mUserLearnedTouch = true;
-            SharedPreferences sp = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
+            this.mUserLearnedTouch = true;
+            SharedPreferences sp = this.getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
             sp.edit().putBoolean(Constants.KEY_USER_LEARNED_TOUCH, true).apply();
         }
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

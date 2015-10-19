@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
     <string name="connecto_write_key">YH29KED7XE5DU1HP</string>
-    <string name="push_icon">ic_default_image</string>
+    <string name="push_icon">ic_logo_small</string>
 </resources>

@@ -6,6 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -35,6 +38,8 @@ public class NewsListAdapter extends RecyclerView.Adapter {
     private Context mContext;
     private ImageLoader imageLoader;
     private int type;
+    // Allows to remember the last item shown on screen
+    public int lastPosition = -1;
 
     public NewsListAdapter(Context context, ArrayList<News> news , int type) {
         mNews = news;
@@ -85,10 +90,30 @@ public class NewsListAdapter extends RecyclerView.Adapter {
                 Log.e(TAG, "Date format unknown: " + n.published_on);
             }
             newsHolder.newsPubDate.setText(d);
-
         }
-
+        this.setAnimation(newsHolder.container, position);
     }
+
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        holder.itemView.clearAnimation();
+        super.onViewDetachedFromWindow(holder);
+    }
+
+    /**
+     * Here is the key method to apply the animation
+     */
+    private void setAnimation(View viewToAnimate, int position)
+    {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            Animation animation = AnimationUtils.loadAnimation(this.mContext, android.R.anim.slide_in_left);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
+    }
+
 
     @Override
     public int getItemCount() {
@@ -103,6 +128,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
         NetworkImageView newsImage;
         NewsListFragment.OnNewsSelectedListener mListener;
       //  ArrayList<News> relatedNews;
+        RelativeLayout container;
 
         public NewsHolder(View itemView, NewsListFragment.OnNewsSelectedListener listener) {
             super(itemView);
@@ -110,6 +136,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
             if(type == Constants.TYPE_NEWS) {
                 newsPubDate = (TextView) itemView.findViewById(R.id.textview_news_pubdate);
                 newsContent = (TextView) itemView.findViewById(R.id.textview_news_content);
+                container = (RelativeLayout) itemView.findViewById(R.id.card_article_container);
             }
             newsTitle = (TextView) itemView.findViewById(R.id.textview_news_title);
             newsImage = (NetworkImageView) itemView.findViewById(R.id.image_news_collapsed);

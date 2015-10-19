@@ -119,28 +119,28 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     }
     private void mSubmittedChat(String value)
     {
-        setmSubmittingState(true);
+        this.setmSubmittingState(true);
 
-        if (mEmptyTextView.getVisibility() == View.VISIBLE)
-            mEmptyTextView.setVisibility(View.GONE);
+        if (this.mEmptyTextView.getVisibility() == View.VISIBLE)
+            this.mEmptyTextView.setVisibility(View.GONE);
 
         MyFutureBuddyComment fbComment = new MyFutureBuddyComment();
 
         fbComment.setComment(value);
         fbComment.setToken(MainActivity.user.getToken());
-        fbComment.setIndex(mMyFBCommentsSet.size());
-        fbComment.setFbIndex(mMyFutureBuddies.getIndex());
+        fbComment.setIndex(this.mMyFBCommentsSet.size());
+        fbComment.setFbIndex(this.mMyFutureBuddies.getIndex());
         fbComment.setCommentSent(false);
 
-        mMyFBCommentsSet.add(mMyFBCommentsSet.size(), fbComment);
+        this.mMyFBCommentsSet.add(this.mMyFBCommentsSet.size(), fbComment);
 
-        mMyFBCommentsListAdapter.notifyItemInserted(mMyFBCommentsSet.size() - 1);
-        mMyFBCommentsListAdapter.notifyDataSetChanged();
+        this.mMyFBCommentsListAdapter.notifyItemInserted(this.mMyFBCommentsSet.size() - 1);
+        this.mMyFBCommentsListAdapter.notifyDataSetChanged();
 
-        mCommentsListView.scrollToPosition(mMyFBCommentsSet.size() - 1);
+        this.mCommentsListView.scrollToPosition(this.mMyFBCommentsSet.size() - 1);
 
-        mListener.onMyFBCommentSubmitted(mMyFutureBuddies.getResource_uri(), value, mMyFutureBuddies.getIndex(), mMyFBCommentsSet.size());
-        mChatText.setText("");
+        this.mListener.onMyFBCommentSubmitted(this.mMyFutureBuddies.getResource_uri(), value, this.mMyFutureBuddies.getIndex(), this.mMyFBCommentsSet.size());
+        this.mChatText.setText("");
     }
 
     @Override
@@ -240,7 +240,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     }
     public void sendChatRequest(String value)
     {
-        mSubmittedChat(value);
+        this.mSubmittedChat(value);
     }
 
     public void updateChatPings(List<MyFutureBuddyComment> chatPings)
@@ -255,8 +255,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
         this.mMyFBCommentsSet.addAll(chatPings);
         this.mMyFBCommentsListAdapter.notifyDataSetChanged();
-
-        //this.mCommentsListView.scrollToPosition(this.mMyFBCommentsSet.size() - 1);
     }
 
     public void setmSubmittingState(boolean val) {

@@ -205,6 +205,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
     public void updateList(List<Institute> institutes, String next) {
         progressBarLL.setVisibility(View.GONE);
+        mAdapter.lastPosition = this.mInstitutes.size() - 1;
         mInstitutes.addAll(institutes);
         mAdapter.notifyDataSetChanged();
         loading = false;
@@ -215,7 +216,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             }
             setFilterList();
         }
-
     }
 
     public void updateButtons(int position) {

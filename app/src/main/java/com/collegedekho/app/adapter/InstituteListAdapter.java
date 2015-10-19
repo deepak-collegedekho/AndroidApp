@@ -5,9 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,44 +34,45 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
     private final ImageLoader mImageLoader;
     private ArrayList<Institute> mInstitutes;
     private Context mContext;
+    // Allows to remember the last item shown on screen
+    public int lastPosition = -1;
 
     public InstituteListAdapter(Context context, ArrayList<Institute> institutes) {
-        mInstitutes = institutes;
-        mContext = context;
-        mImageLoader = MySingleton.getInstance(context).getImageLoader();
+        this.mInstitutes = institutes;
+        this.mContext = context;
+        this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(mContext).inflate(R.layout.item_institute_list, parent, false);
+        View rootView = LayoutInflater.from(this.mContext).inflate(R.layout.item_institute_list, parent, false);
         try {
-            return new InstituteHolder(rootView, (InstituteListFragment.OnInstituteSelectedListener) mContext);
+            return new InstituteHolder(rootView, (InstituteListFragment.OnInstituteSelectedListener) this.mContext);
         } catch (ClassCastException e) {
-            throw new ClassCastException(mContext.toString()
+            throw new ClassCastException(this.mContext.toString()
                     + " must implement OnInstituteSelectedListener");
         }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Institute i = mInstitutes.get(position);
+        Institute institute = this.mInstitutes.get(position);
         InstituteHolder instituteHolder = (InstituteHolder) holder;
-        instituteHolder.instiName.setText(i.getName());
-        instituteHolder.instiCourses.setText(i.getCourse_count() + " Courses Available");
+        instituteHolder.instiName.setText(institute.getName());
+        instituteHolder.instiCourses.setText(institute.getCourse_count() + " Courses Available");
         String text = "";
-        if (i.getCity_name() != null)
-            text += i.getCity_name() + ", ";
-        if (i.getState_name() != null)
-            text += i.getState_name();
-        if ((i.getState_name() != null || i.getCity_name() != null) && i.getEstb_date() != null)
+        if (institute.getCity_name() != null)
+            text += institute.getCity_name() + ", ";
+        if (institute.getState_name() != null)
+            text += institute.getState_name();
+        if ((institute.getState_name() != null || institute.getCity_name() != null) && institute.getEstb_date() != null)
             text += " | ";
-        if (i.getEstb_date() != null)
-            text += "Established in: " + i.getEstb_date().substring(0, 4);
+        if (institute.getEstb_date() != null)
+            text += "Established in: " + institute.getEstb_date().substring(0, 4);
         instituteHolder.instiLocation.setText(text);
-        instituteHolder.addFacilities(i.getFacilities());
-        instituteHolder.likeButton.setSelected(i.getCurrent_user_vote_type() == 0);
-        instituteHolder.dislikeButton.setSelected(i.getCurrent_user_vote_type() == 1);
-
+        instituteHolder.addFacilities(institute.getFacilities());
+        instituteHolder.likeButton.setSelected(institute.getCurrent_user_vote_type() == 0);
+        instituteHolder.dislikeButton.setSelected(institute.getCurrent_user_vote_type() == 1);
 
         instituteHolder.likeButton.setClickable(true);
         instituteHolder.dislikeButton.setClickable(true);
@@ -76,6 +80,28 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         instituteHolder.dislikeButton.setVisibility(View.VISIBLE);
         instituteHolder.likeProgressBar.setVisibility(View.GONE);
         instituteHolder.dislikeProgressBar.setVisibility(View.GONE);
+
+        this.setAnimation(instituteHolder.container, position);
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        holder.itemView.clearAnimation();
+        super.onViewDetachedFromWindow(holder);
+    }
+
+    /**
+     * Here is the key method to apply the animation
+     */
+    private void setAnimation(View viewToAnimate, int position)
+    {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            Animation animation = AnimationUtils.loadAnimation(this.mContext, android.R.anim.slide_in_left);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
     }
 
     @Override
@@ -98,6 +124,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         ProgressBar likeProgressBar;
         ProgressBar dislikeProgressBar;
         InstituteListFragment.OnInstituteSelectedListener mListener;
+        RelativeLayout container;
 
         public InstituteHolder(View itemView, InstituteListFragment.OnInstituteSelectedListener listener) {
             super(itemView);
@@ -110,6 +137,8 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             dislikeButton = (ImageView) itemView.findViewById(R.id.button_dislike_college);
             likeProgressBar = (ProgressBar) itemView.findViewById(R.id.like_progressBar);
             dislikeProgressBar = (ProgressBar) itemView.findViewById(R.id.dislike_progressBar);
+            container = (RelativeLayout) itemView.findViewById(R.id.item_institute_container);
+
 
             likeButton.setOnClickListener(this);
             dislikeButton.setOnClickListener(this);

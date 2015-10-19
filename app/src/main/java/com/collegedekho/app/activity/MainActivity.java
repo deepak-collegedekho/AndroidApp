@@ -76,6 +76,7 @@ import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 
+import com.crashlytics.android.Crashlytics;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -92,14 +93,13 @@ import com.google.android.gms.tagmanager.TagManager;
 import io.connecto.android.sdk.Connecto;
 import io.connecto.android.sdk.Properties;
 import io.connecto.android.sdk.Traits;
+import io.fabric.sdk.android.Fabric;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -188,6 +188,8 @@ public class MainActivity extends AppCompatActivity
     public static User user;
     private User.Prefs userPref;
     private boolean completedStage2;
+    static String type = "";
+    static String resource_uri = "";
 
    /*public void onSectionAttached(int number) {
         switch (number) {
@@ -217,6 +219,15 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null)
+        {
+            MainActivity.type = extras.getString("screen");
+            MainActivity.resource_uri = extras.getString("resource_uri");
+
+            //Toast.makeText(MainActivity.this, type + " " + resource_uri, Toast.LENGTH_LONG).show();
+        }
+
         this.setContentView(R.layout.activity_main);
 
         this.connecto = Connecto.with(MainActivity.this);
@@ -225,7 +236,7 @@ public class MainActivity extends AppCompatActivity
         //this.connecto.track("Session Started", new Properties().putValue("value", 800));
         this.connecto.registerWithGCM(MainActivity.this, this.SENDER_ID);
 
-        //Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
 
         this.analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
         this.analytics.setLocalDispatchPeriod(1800);
@@ -275,6 +286,46 @@ public class MainActivity extends AppCompatActivity
                     ((SplashFragment) currentFragment).noInternetFound();
             }
         }, Constants.MAIN_ANIMATION_TIME);
+    }
+
+    private void mhandleNotifications()
+    {
+        //Toast.makeText(MainActivity.this, type + " " + resource_uri, Toast.LENGTH_LONG).show();
+        switch (MainActivity.type)
+        {
+            case Constants.TAG_FRAGMENT_INSTITUTE_LIST:
+            {
+                this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, MainActivity.resource_uri, null);
+                break;
+            }
+            case Constants.TAG_FRAGMENT_ARTICLES_LIST:
+            {
+                this.mMakeNetworkCall(Constants.WIDGET_ARTICES, MainActivity.resource_uri, null);
+                break;
+            }
+            case Constants.TAG_FRAGMENT_NEWS_LIST:
+            {
+                this.mMakeNetworkCall(Constants.WIDGET_NEWS, MainActivity.resource_uri, null);
+                break;
+            }
+            case Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE:
+            {
+                this.mMakeNetworkCall(Constants.WIDGET_SHORTLIST, MainActivity.resource_uri, null);
+                break;
+            }
+            case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST:
+            {
+                this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL + "personalize/shortlistedinstitutes/", null);
+                break;
+            }
+            case Constants.TAG_FRAGMENT_MY_FB_ENUMERATION:
+            {
+                this.mMakeNetworkCall(Constants.WIDGET_FORUMS, Constants.BASE_URL + "personalize/shortlistedinstitutes/", null);
+                break;
+            }
+            default:
+                break;
+        }
     }
 
     /**
@@ -918,7 +969,6 @@ public class MainActivity extends AppCompatActivity
 
                     //GA Event for answer vote
                     MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, "Answer Voted : " + String.valueOf(voteType));
-
                 }
                 break;
             case Constants.TAG_LOAD_MY_FB:
@@ -1341,6 +1391,11 @@ public class MainActivity extends AppCompatActivity
         try {
             this.mWidgets = JSON.std.listOfFrom(Widget.class, extractResults(response));
             this.mDisplayFragment(WidgetListFragment.newInstance(new ArrayList<>(this.mWidgets)), false, Constants.TAG_FRAGMENT_WIDGET_LIST);
+            if ("" != MainActivity.type)
+            {
+                MainActivity.this.mhandleNotifications();
+                MainActivity.type = "";
+            }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1363,10 +1418,8 @@ public class MainActivity extends AppCompatActivity
 
     private void mUpdateAppliedCourses(String response, String extraTag, String tabPosition) {
         try {
-
-                if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
-                ((InstituteDetailFragment) currentFragment).updateAppliedCourses(response);
-            }
+                if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
+                    ((InstituteDetailFragment) currentFragment).updateAppliedCourses(response);
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -1842,10 +1895,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onInstituteShortlisted() {
         boolean shortlisted;
-        Institute institute = mInstituteList.get(currentInstitute);
+        Institute institute = this.mInstituteList.get(this.currentInstitute);
         if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
         {
-            this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
+            this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + this.currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
             shortlisted = true;
             //GA Event for institute shortlisted
             MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_LIKED,

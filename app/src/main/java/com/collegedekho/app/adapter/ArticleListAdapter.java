@@ -6,6 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -34,6 +37,8 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
     private Context mContext;
     private ImageLoader imageLoader;
     private int type;
+    // Allows to remember the last item shown on screen
+    public int lastPosition = -1;
 
     public ArticleListAdapter(Context context, ArrayList<Articles> articles, int type) {
         mArticles = articles;
@@ -78,14 +83,36 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
                 Date date = sdf.parse(a.published_on);
                 sdf.applyPattern("MMMM d, yyyy KK:mm a");
                 d = sdf.format(date);
+                this.setAnimation(articleHolder.container, position);
             } catch (ParseException e) {
                 Log.e(TAG, "Date format unknown: " + a.published_on);
             }
             articleHolder.articlePubDate.setText(d);
-
         }
 
+        this.setAnimation(articleHolder.container, position);
     }
+
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        holder.itemView.clearAnimation();
+        super.onViewDetachedFromWindow(holder);
+    }
+
+    /**
+     * Here is the key method to apply the animation
+     */
+    private void setAnimation(View viewToAnimate, int position)
+    {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            Animation animation = AnimationUtils.loadAnimation(this.mContext, android.R.anim.slide_in_left);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
+    }
+
 
     @Override
     public int getItemCount() {
@@ -99,6 +126,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
         TextView articleContent;
         NetworkImageView articleImage;
         ArticleListFragment.OnArticleSelectedListener mListener;
+        RelativeLayout container;
 
         public ArticleHolder(View itemView, ArticleListFragment.OnArticleSelectedListener listener) {
             super(itemView);
@@ -106,6 +134,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
             if (type == Constants.TYPE_ARTCLES) {
                 articlePubDate = (TextView) itemView.findViewById(R.id.textview_article_pubdate);
                 articleContent = (TextView) itemView.findViewById(R.id.textview_article_content);
+                container = (RelativeLayout) itemView.findViewById(R.id.card_article_container);
             }
             articleTitle = (TextView) itemView.findViewById(R.id.textview_article_title);
             articleImage = (NetworkImageView) itemView.findViewById(R.id.image_article_collapsed);

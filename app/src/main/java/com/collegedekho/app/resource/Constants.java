@@ -111,6 +111,7 @@ public class Constants
     public static final int FILTER_CATEGORY_LOCATION = 1;
     public static final int FILTER_CATEGORY_TYPE_AND_SUPPORT_SERVICES = 2;
     public static final int FILTER_CATEGORY_CAMPUS_AND_HOUSING = 3;
+    public static final String TAG_FRAGMENT_SHORTLISTED_INSTITUTE = "fragment_shortlisted_institute";
 
     public static final HashMap<Integer, Integer> FilterCategoryMap = new HashMap<Integer, Integer>();
 
@@ -208,8 +209,6 @@ public class Constants
     public static final String ACTION_FILTER_APPLIED = "action_filter_applied";
     public static final String ACTION_ARTICLE_SELECTED = "action_article_selected";
     public static final String ACTION_NEWS_SELECTED = "action_news_selected";
-
-
 
     //String messages
     public static final String EMAIL_PASSOWRD_NOT_EXISTS ="The e-mail address and/or password you specified are not correct.";
