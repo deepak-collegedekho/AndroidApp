@@ -315,12 +315,12 @@ public class MainActivity extends AppCompatActivity
             }
             case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST:
             {
-                this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL + "personalize/shortlistedinstitutes/", null);
+                this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, MainActivity.resource_uri, null);
                 break;
             }
             case Constants.TAG_FRAGMENT_MY_FB_ENUMERATION:
             {
-                this.mMakeNetworkCall(Constants.WIDGET_FORUMS, Constants.BASE_URL + "personalize/shortlistedinstitutes/", null);
+                this.mMakeNetworkCall(Constants.WIDGET_FORUMS, MainActivity.resource_uri, null);
                 break;
             }
             default:
