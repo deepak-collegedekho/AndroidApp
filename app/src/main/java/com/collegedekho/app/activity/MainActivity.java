@@ -646,7 +646,7 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayStreams(String response, boolean addToBackstack) {
         try {
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, extractResults(response));
-            this.mDisplayFragment(StreamFragment.newInstance(new ArrayList<>(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
+            this.mDisplayFragment(StreamFragment.newInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
