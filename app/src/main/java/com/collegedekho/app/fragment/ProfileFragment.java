@@ -158,24 +158,23 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 
     private void mProfileUpdate() {
 
-        String name     = mNameET.getText().toString();
-        String phone    = mPhoneET.getText().toString();
-        if (name == null || name.isEmpty())
-        {
-            Utils.DisplayToast(getActivity(), Constants.NAME_EMPTY);
-            return;
-        }
-        else if(!isValidName(name)){
-            Utils.DisplayToast(getActivity(), Constants.NAME_INVALID);
-            return;
-        }
-        else if(phone == null || phone.isEmpty()) {
-            Utils.DisplayToast(getActivity(), Constants.PHONE_EMPTY);
-            return;
-        }
-        else if(phone.length() <= 9 ||!isValidPhone(phone)){
-            Utils.DisplayToast(getActivity(), Constants.PHONE_INVALID);
-            return;
+        String name = mNameET.getText().toString();
+        String phone = mPhoneET.getText().toString();
+        View view = getView();
+        if(MainActivity.user != null && !MainActivity.user.is_anony()) {
+            if (name == null || name.isEmpty()) {
+                Utils.DisplayToast(getActivity(), Constants.NAME_EMPTY);
+                return;
+            } else if (!isValidName(name)) {
+                Utils.DisplayToast(getActivity(), Constants.NAME_INVALID);
+                return;
+            } else if (phone == null || phone.isEmpty()) {
+                Utils.DisplayToast(getActivity(), Constants.PHONE_EMPTY);
+                return;
+            } else if (phone.length() <= 9 || !isValidPhone(phone)) {
+                Utils.DisplayToast(getActivity(), Constants.PHONE_INVALID);
+                return;
+            }
         }
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put(Constants.USER_NAME, name);
@@ -185,9 +184,9 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         hashMap.put(Constants.USER_STREAM_NAME, mStreamName);
         hashMap.put(Constants.USER_LEVEL_NAME,mLevelName);
 
-                 if(mListener!=null) {
-                     this.mListener.onProfileUpdated(hashMap);
-             }
+        if(mListener!=null) {
+            this.mListener.onProfileUpdated(hashMap);
+        }
     }
 
     private void mStreamClicked() {

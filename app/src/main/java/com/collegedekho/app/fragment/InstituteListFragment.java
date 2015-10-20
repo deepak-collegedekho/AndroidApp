@@ -263,11 +263,10 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
             for (Facet ft : f.getFacets())
                 if (ft.isSelected() == 1)
-                    mCompletionView.addObject(ft.getTag());
+                    mCompletionView.addObject(ft.getLabel());
         }
 
     }
-
 
     @Override
     public void onTokenAdded(Object token) {

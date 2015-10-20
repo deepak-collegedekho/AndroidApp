@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity
         //this.connecto.track("Session Started", new Properties().putValue("value", 800));
         this.connecto.registerWithGCM(MainActivity.this, this.SENDER_ID);
 
-        //Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
 
         this.analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
         this.analytics.setLocalDispatchPeriod(1800);
@@ -1416,7 +1416,6 @@ public class MainActivity extends AppCompatActivity
                 return "Creating User Please Wait";
             case Constants.SEARCHED_INSTITUTES:
                 return "Loading...";
-
         }
         return null;
     }
@@ -1456,7 +1455,6 @@ public class MainActivity extends AppCompatActivity
         try {
                 if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
                     ((InstituteDetailFragment) currentFragment).updateAppliedCourses(response);
-
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
