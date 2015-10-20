@@ -224,8 +224,6 @@ public class MainActivity extends AppCompatActivity
         {
             MainActivity.type = extras.getString("screen");
             MainActivity.resource_uri = extras.getString("resource_uri");
-
-            //Toast.makeText(MainActivity.this, type + " " + resource_uri, Toast.LENGTH_LONG).show();
         }
 
         this.setContentView(R.layout.activity_main);
@@ -295,31 +293,43 @@ public class MainActivity extends AppCompatActivity
         {
             case Constants.TAG_FRAGMENT_INSTITUTE_LIST:
             {
+                this.mCurrentTitle = "Institute List";
+
                 this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, MainActivity.resource_uri, null);
                 break;
             }
             case Constants.TAG_FRAGMENT_NEWS_LIST:
             {
+                this.mCurrentTitle = "News";
+
                 this.mMakeNetworkCall(Constants.WIDGET_NEWS, MainActivity.resource_uri, null);
                 break;
             }
             case Constants.TAG_FRAGMENT_ARTICLES_LIST:
             {
+                this.mCurrentTitle = "Articles";
+
                 this.mMakeNetworkCall(Constants.WIDGET_ARTICES, MainActivity.resource_uri, null);
                 break;
             }
             case Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE:
             {
+                this.mCurrentTitle = "My Shortlist";
+
                 this.mMakeNetworkCall(Constants.WIDGET_SHORTLIST, MainActivity.resource_uri, null);
                 break;
             }
             case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST:
             {
+                this.mCurrentTitle = "QnA";
+
                 this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, MainActivity.resource_uri, null);
                 break;
             }
             case Constants.TAG_FRAGMENT_MY_FB_ENUMERATION:
             {
+                this.mCurrentTitle = "My Future Buddies";
+
                 this.mMakeNetworkCall(Constants.WIDGET_FORUMS, MainActivity.resource_uri, null);
                 break;
             }
@@ -397,10 +407,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override
@@ -472,8 +492,7 @@ public class MainActivity extends AppCompatActivity
                 fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
                 break;
         }
-        if(fragment != null)
-        {
+        if(fragment != null) {
 
             mUpdateNavigationItem(position);
             int count = getSupportFragmentManager().getBackStackEntryCount();
@@ -832,7 +851,6 @@ public class MainActivity extends AppCompatActivity
             this.currentFragment = fragment;
 
             FragmentManager fragmentManager = getSupportFragmentManager();
-
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
@@ -1392,12 +1410,14 @@ public class MainActivity extends AppCompatActivity
     private void mUpdateHome(String response) {
         try {
             this.mWidgets = JSON.std.listOfFrom(Widget.class, extractResults(response));
-            this.mDisplayFragment(WidgetListFragment.newInstance(new ArrayList<>(this.mWidgets)), false, Constants.TAG_FRAGMENT_WIDGET_LIST);
+            Fragment widgetListFragment = WidgetListFragment.newInstance(new ArrayList<>(this.mWidgets));
             if (MainActivity.type != null && MainActivity.type.length() > 0)
             {
+                //add to backstack without displaying
                 MainActivity.this.mhandleNotifications();
                 MainActivity.type = "";
             }
+            this.mDisplayFragment(widgetListFragment, false, Constants.TAG_FRAGMENT_WIDGET_LIST);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }

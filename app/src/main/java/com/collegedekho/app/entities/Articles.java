@@ -27,6 +27,7 @@ public class Articles implements Parcelable{
     public String published_on;
     public String similar_articles;
     public int id;
+    public String stream;
     private ArrayList<String> similarArticlesIds ;
 
      public  Articles() {
@@ -39,6 +40,7 @@ public class Articles implements Parcelable{
         template_type = source.readLong();
         published_on = source.readString();
         similar_articles = source.readString();
+        stream = source.readString();
         id  =   source.readInt();
     }
     @Override
@@ -52,6 +54,7 @@ public class Articles implements Parcelable{
         dest.writeLong(template_type);
         dest.writeString(published_on);
         dest.writeString(similar_articles);
+        dest.writeString(stream);
         dest.writeInt(id);
     }
 
@@ -85,5 +88,13 @@ public class Articles implements Parcelable{
     public ArrayList<String> getSimilarArticlesIds() {      return similarArticlesIds;   }
 
     public void setSimilarArticlesIds(ArrayList<String> similarArticlesIds) {  this.similarArticlesIds = similarArticlesIds;
+    }
+
+    public String getStream() {
+        return stream;
+    }
+
+    public void setStream(String stream) {
+        this.stream = stream;
     }
 }

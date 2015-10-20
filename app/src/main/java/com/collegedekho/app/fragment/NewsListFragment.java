@@ -58,9 +58,9 @@ public class NewsListFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mNews = getArguments().getParcelableArrayList(ARG_NEWS);
-            mTitle = getArguments().getString(ARG_TITLE);
-            nextUrl  = getArguments().getString(ARG_NEXT);
-            listType = Constants.NEWS_TYPE;
+            this.mTitle = getArguments().getString(ARG_TITLE);
+            this.nextUrl  = getArguments().getString(ARG_NEXT);
+            this.listType = Constants.NEWS_TYPE;
         }
     }
 
