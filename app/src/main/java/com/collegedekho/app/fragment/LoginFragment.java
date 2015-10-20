@@ -25,7 +25,7 @@ public class LoginFragment extends BaseFragment {
     private static final int SIGNIN = 0;
     private String mMessage;
     private static final String MSG ="chat_msg";
-private SignInFragment signInFragment;
+    private SignInFragment signInFragment;
    public LoginFragment(){
        // required empty constructor
     }

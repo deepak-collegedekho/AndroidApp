@@ -2,6 +2,7 @@ package com.collegedekho.app.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,6 +74,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
+
         Articles articles = mArticles.get(position);
         ArticleHolder articleHolder = (ArticleHolder) holder;
         articleHolder.articleTitle.setText(articles.title);
@@ -81,16 +83,18 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
             articleHolder.articleImage.setImageUrl(articles.image, imageLoader);
 
         if (type == Constants.TYPE_ARTCLES) {
-            articleHolder.articleContent.setText(articles.content);
+            articleHolder.articleContent.setText(Html.fromHtml(articles.content));
             String d = "";
             try {
                 sdf.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
                 Date date = sdf.parse(articles.published_on);
                 sdf.applyPattern("MMMM d, yyyy KK:mm a");
                 d = sdf.format(date);
-                this.setAnimation(articleHolder.container, position);
+               // this.setAnimation(articleHolder.container, position);
             } catch (ParseException e) {
+
                 Log.e(TAG, "Date format unknown: " + articles.published_on);
+
             }
             articleHolder.articlePubDate.setText(d);
 

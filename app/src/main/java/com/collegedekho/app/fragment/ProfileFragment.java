@@ -2,7 +2,13 @@ package com.collegedekho.app.fragment;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.util.Patterns;
 import android.view.KeyEvent;
@@ -10,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -33,9 +38,10 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     private static final String ARG_STREAM_NAME = "stream";
     private static final String ARG_LEVEL_NAME  = "level";
     private static final String ARG_PHONE  = "phone";
+    private static final int SIGNUP = 1;
+    private static final int SIGNIN = 0;
 
     private String mName;
-    private String mEmail;
     private String mStreamURI;
     private String mLevelID;
     private String mStreamName;
@@ -43,11 +49,11 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     private String mPhone;
 
     private EditText mNameET;
-    private EditText mEmailET;
     private EditText mPhoneET;
     private EditText mStreamTV;
     private EditText mLevelTV;
     private onProfileUpdateListener mListener;
+    private SignInFragment signInFragment;
 
     public ProfileFragment() {
 
@@ -73,7 +79,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mName  = getArguments().getString(ARG_NAME);
-            this.mEmail = getArguments().getString(ARG_EMAIL);
             this.mStreamURI = getArguments().getString(ARG_STREAM_URI);
             this.mLevelID = getArguments().getString(ARG_LEVEL_ID);
             this.mStreamName    = getArguments().getString(ARG_STREAM_NAME);
@@ -84,29 +89,45 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.my_profile2, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         this.mNameET = (EditText) rootView.findViewById(R.id.profile_name);
-        this.mEmailET = (EditText) rootView.findViewById(R.id.profile_email);
         this.mPhoneET =  (EditText) rootView.findViewById(R.id.profile_contact);
         this.mStreamTV = (EditText) rootView.findViewById(R.id.profile_stream);
         this.mLevelTV = (EditText) rootView.findViewById(R.id.profile_level);
+        mSetEnterKeyListener(mPhoneET);
+
+        this.mStreamTV.setText(mStreamName);
+        this.mLevelTV.setText(mLevelName);
+
+        if(MainActivity.user != null && MainActivity.user.getIs_anony())
+        {
+            LoginPagerAdapter adapter = new LoginPagerAdapter(getChildFragmentManager());
+            ViewPager mPager = (ViewPager) rootView.findViewById(R.id.profile_login_pager);
+            mPager.setAdapter(adapter);
+            mPager.setOffscreenPageLimit(2);
+
+            TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.profile_login_tabs_layout);
+            tabLayout.setTabTextColors(getResources().getColor(R.color.white), getResources().getColor(R.color.text_subhead_blue));
+            tabLayout.setupWithViewPager(mPager);
+            mPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+            rootView.findViewById(R.id.profile_login_pager).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.profile_login_tabs_layout).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.profile_name).setVisibility(View.GONE);
+            rootView.findViewById(R.id.profile_contact).setVisibility(View.GONE);
+        }
+        else
+        {
+            rootView.findViewById(R.id.profile_login_pager).setVisibility(View.GONE);
+            rootView.findViewById(R.id.profile_login_tabs_layout).setVisibility(View.GONE);
+            rootView.findViewById(R.id.profile_name).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.profile_contact).setVisibility(View.VISIBLE);
+        }
+
+
         rootView.findViewById(R.id.stream_edit).setOnClickListener(this);
         rootView.findViewById(R.id.level_edit).setOnClickListener(this);
-        mSetEnterKeyListener(mPhoneET);
-        if(mName.equalsIgnoreCase("Anonymous User"))
-        {
-            this.mNameET.setText("");
-        }else {
-            this.mNameET.setText(mName);
-        }
-        this.mEmailET.setText(mEmail);
-        this.mStreamTV.setText(mStreamName );
-        this.mLevelTV.setText(mLevelName );
-        this.mPhoneET.setText(mPhone);
-
-        //this.mStreamTV.setOnClickListener(this);
-        //this.mLevelTV.setOnClickListener(this);
-        ((TextView)rootView.findViewById(R.id.profile_update)).setOnClickListener(this);
+        rootView.findViewById(R.id.profile_update).setOnClickListener(this);
         return rootView;
     }
 
@@ -120,7 +141,15 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
                     + " must implement onProfileUpdateListener");
         }
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        if(signInFragment != null)
+        {
+            signInFragment.onActivityResult(requestCode,resultCode,data);
+        }
+
+    }
     @Override
     public void onDetach() {
         super.onDetach();
@@ -151,7 +180,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put(Constants.USER_NAME, name);
         hashMap.put(Constants.USER_PHONE, phone);
-       // hashMap.put(Constants.USER_EMAIL,mEmailET.getText().toString());
         hashMap.put(Constants.USER_STREAM, mStreamURI);
         hashMap.put(Constants.USER_LEVEL, Constants.BASE_URL + "level/" + mLevelID + "/");
         hashMap.put(Constants.USER_STREAM_NAME, mStreamName);
@@ -220,6 +248,14 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
         this.mStreamTV.setText(this.mStreamName);
+        if(this.mName.equalsIgnoreCase("Anonymous User"))
+        {
+            this.mNameET.setText("");
+        }else {
+            this.mNameET.setText(this.mName);
+        }
+        if(this.mPhone != null)
+        this.mPhoneET.setText(this.mPhone);
     }
     private void mSetEnterKeyListener(EditText editText)
     {
@@ -245,5 +281,68 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         Pattern ps = Pattern.compile("^[a-zA-Z ]+$");
         Matcher ms = ps.matcher(target);
         return ms.matches();
+    }
+    public void updateUI(User user)
+    {
+        View view = getView();
+        if(view != null)
+        {
+            view.findViewById(R.id.profile_login_pager).setVisibility(View.GONE);
+            view.findViewById(R.id.profile_login_tabs_layout).setVisibility(View.GONE);
+            view.findViewById(R.id.profile_name).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.profile_contact).setVisibility(View.VISIBLE);
+            if(user != null)
+            {
+                this.mName = user.getName();
+                this.mPhone = user.getPhone_no();
+                this.mStreamTV.setText(this.mStreamName);
+                if(this.mName.equalsIgnoreCase("Anonymous User"))
+                {
+                    this.mNameET.setText("");
+                }else {
+                    this.mNameET.setText(this.mName);
+                }
+                if(this.mPhone != null)
+                    this.mPhoneET.setText(this.mPhone);
+
+            }
+        }
+    }
+
+    class LoginPagerAdapter extends FragmentPagerAdapter
+    {
+
+        public LoginPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            switch (i)
+            {
+                case SIGNIN:
+                    return signInFragment = SignInFragment.newInstance("");
+                case SIGNUP:
+                    return SignUpFragment.newInstance("");
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position)
+            {
+                case SIGNIN:
+                    return "SIGN IN";
+                case SIGNUP:
+                    return "SIGN UP";
+            }
+            return super.getPageTitle(position);
+        }
     }
 }

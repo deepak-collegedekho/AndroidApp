@@ -22,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -109,6 +110,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationDrawerFragment.NavigationDrawerCallbacks,
@@ -234,7 +236,7 @@ public class MainActivity extends AppCompatActivity
         //this.connecto.track("Session Started", new Properties().putValue("value", 800));
         this.connecto.registerWithGCM(MainActivity.this, this.SENDER_ID);
 
-        Fabric.with(this, new Crashlytics());
+        //Fabric.with(this, new Crashlytics());
 
         this.analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
         this.analytics.setLocalDispatchPeriod(1800);
@@ -432,7 +434,6 @@ public class MainActivity extends AppCompatActivity
 
     private void init() {
         this.networkUtils = new NetworkUtils(this, this);
-
         SharedPreferences sp = this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
 
         try {
@@ -441,6 +442,19 @@ public class MainActivity extends AppCompatActivity
                 this.networkUtils.setToken(user.getToken());
                 this.connecto.identify(user.getId(), new Traits().putValue(Constants.USER_NAME, user.getName()));
                 this.connecto.track("Session Started", new Properties().putValue("value", new Date().toString()));
+
+                // this code for backward compatibility because in first release user stream and level
+                // were saved in uri form instead of IDs.
+                if(Patterns.WEB_URL.matcher(user.getStream()).matches())
+                {
+                    String streamId[] = user.getStream().split("/");
+                    user.setStream(streamId[streamId.length-1]);
+                }
+                if(Patterns.WEB_URL.matcher(user.getLevel()).matches())
+                {
+                    String  levelId[] = user.getLevel().split("/");
+                    user.setLevel(levelId[levelId.length-1]);
+                }
             }
 
             this.completedStage2 = sp.getBoolean(Constants.COMPLETED_SECOND_STAGE, false);
@@ -835,7 +849,7 @@ public class MainActivity extends AppCompatActivity
         }
       else
         {
-            if(currentFragment instanceof LoginFragment)
+            if(currentFragment instanceof LoginFragment || currentFragment instanceof  ProfileFragment)
             currentFragment.onActivityResult(requestCode, resultCode, data);
         }
   }
@@ -1050,13 +1064,13 @@ public class MainActivity extends AppCompatActivity
                 this.mUpdateInstituteList(response);
                 break;
             case Constants.TAG_USER_REGISTRATION:
-                if (tags.length > 0) {
+                if (tags.length > 1) {
                     parentIndex = tags[1];
                 }
                 this.onUserSignUpResponse(response, parentIndex);
                 break;
             case Constants.TAG_USER_LOGIN:
-                if (tags.length > 0) {
+                if (tags.length > 1) {
                     parentIndex = tags[1];
                 }
                  this.onUserSignInResponse(response, parentIndex);
@@ -2503,6 +2517,13 @@ public class MainActivity extends AppCompatActivity
             if(fragment != null)
             {
                 ((MyFutureBuddiesFragment)fragment).sendChatRequest(msg);
+            }
+        }
+        else {
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
+            if(fragment != null)
+            {
+                ((ProfileFragment)fragment).updateUI(MainActivity.user);
             }
         }
     }

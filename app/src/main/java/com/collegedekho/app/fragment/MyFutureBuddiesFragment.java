@@ -89,14 +89,12 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                 else
                 {
                     User user =MainActivity.user;
-                    if(user != null)
+                    if(user != null && user.is_anony())
                     {
-                        if(user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous User"))
-                        {
-                            mChatText.setText("");
-                            mUserLoginRequired(value);
-                            return;
-                        }
+                           mChatText.setText("");
+                           mUserLoginRequired(value);
+                           return;
+
                     }
 
                     mSubmittedChat(value);
