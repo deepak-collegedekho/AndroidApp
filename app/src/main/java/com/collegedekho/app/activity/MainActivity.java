@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -91,6 +92,7 @@ import com.google.android.gms.tagmanager.Container;
 import com.google.android.gms.tagmanager.ContainerHolder;
 import com.google.android.gms.tagmanager.TagManager;
 
+import bolts.AppLinks;
 import io.connecto.android.sdk.Connecto;
 import io.connecto.android.sdk.Properties;
 import io.connecto.android.sdk.Traits;
@@ -226,6 +228,12 @@ public class MainActivity extends AppCompatActivity
         {
             MainActivity.type = extras.getString("screen");
             MainActivity.resource_uri = extras.getString("resource_uri");
+        }
+
+        Uri targetUrl =
+                AppLinks.getTargetUrlFromInboundIntent(this, getIntent());
+        if (targetUrl != null) {
+            Log.i(TAG, "App Link Target URL: " + targetUrl.toString());
         }
 
         this.setContentView(R.layout.activity_main);
