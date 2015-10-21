@@ -32,7 +32,7 @@
                 android:id="@+id/profile_login_pager"
                 android:layout_width="match_parent"
                 android:layout_below="@id/login_tabs_layout"
-                android:layout_height="450dp"
+                android:layout_height="420dp"
                 android:visibility="gone"/>
 
             <android.support.design.widget.TextInputLayout
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content">
 
             <EditText
-                style="@style/AppTheme.EditText.Profile"
+                style="@style/AppTheme.EditText"
                 android:id="@+id/profile_name"
                 android:inputType="textCapWords|textNoSuggestions"
                 android:hint="Name"
@@ -60,7 +60,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_height="wrap_content">
              <EditText
-                style="@style/AppTheme.EditText.Profile"
+                style="@style/AppTheme.EditText"
                 android:id="@+id/profile_contact"
                 android:hint="Phone"
                 android:textColorHint="@color/textSecondary"
@@ -148,7 +148,9 @@
                 android:layout_marginRight="@dimen/m30dp"
                 android:layout_marginLeft="@dimen/m30dp"
                 android:layout_marginTop="@dimen/m30dp"
+                android:layout_marginBottom="@dimen/m30dp"
                 android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
                 android:text="Update"
                 android:textSize="16sp"/>
     </RelativeLayout>

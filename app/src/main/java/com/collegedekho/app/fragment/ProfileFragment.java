@@ -160,7 +160,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 
         String name = mNameET.getText().toString();
         String phone = mPhoneET.getText().toString();
-        View view = getView();
+
         if(MainActivity.user != null && !MainActivity.user.is_anony()) {
             if (name == null || name.isEmpty()) {
                 Utils.DisplayToast(getActivity(), Constants.NAME_EMPTY);

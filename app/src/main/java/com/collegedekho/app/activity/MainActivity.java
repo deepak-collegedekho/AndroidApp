@@ -405,6 +405,7 @@ public class MainActivity extends AppCompatActivity
 
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
+        System.gc();
 
     }
 
@@ -2518,11 +2519,12 @@ public class MainActivity extends AppCompatActivity
             }
         }
         else {
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
+            this.mClearBackStack();
+           /* Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
             if(fragment != null)
             {
                 ((ProfileFragment)fragment).updateUI(MainActivity.user);
-            }
+            }*/
         }
     }
 

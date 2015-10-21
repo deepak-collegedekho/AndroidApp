@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -25,18 +25,21 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,7 +52,7 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener{
 
-    private static final String TAG ="SignUpFragment";
+    private static final String TAG ="SignInFragment";
     private static final String MSG ="chat_msg";
     private LoginFragment.OnSignUpListener mListener;
 
@@ -65,7 +68,6 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
     private boolean mShouldResolve = false;
 
     private String mMessage;
-    private LoginButton fbLoginutton;
 
     public static SignInFragment newInstance(String value) {
         SignInFragment fragment = new SignInFragment();
@@ -100,26 +102,30 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API)
-                .addScope(new Scope(Scopes.PROFILE))
-                .addScope(new Scope(Scopes.EMAIL))
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .build();
 
 
-        fbLoginutton = (LoginButton) view.findViewById(R.id.facebook_sign_in);
+
+        LoginButton fbLoginutton = (LoginButton) view.findViewById(R.id.facebook_sign_in);
         fbLoginutton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "email"));
         mFacebookCallbackListener(fbLoginutton);
 
         return view;
     }
+
+    /**
+     * This method is used to register this fragment with  facebook login account
+     *  and callback methods call when  try to login with facebook
+      */
     private  void mFacebookCallbackListener(LoginButton loginButton)
     {
         loginButton.registerCallback(MainActivity.callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
-                Log.d("", "on connected");
+                Log.d(TAG, "facebook login successfully connected");
                 ((MainActivity) getActivity()).showProgressDialog("Signing with facebook account");
                 loginResult.getAccessToken();
                 if (AccessToken.getCurrentAccessToken() != null) {
@@ -130,20 +136,24 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
             @Override
             public void onCancel() {
                 // App code
-                Log.e("", "on cancel");
+                Log.e(TAG, "facebook login canceled");
                 Toast.makeText(getActivity(), "Facebook SignIn is failed", Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onError(FacebookException e) {
 
-                Log.e("", "on error");
+                Log.e(TAG, "facebook login on error");
                 Toast.makeText(getActivity(), "Facebook SignIn has some error", Toast.LENGTH_LONG).show();
 
             }
         });
     }
 
+    /**
+     *  This method request user profile info after successfully
+     *  login with facebook account
+     */
     public void RequestData(){
         GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
             @Override
@@ -151,14 +161,14 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
                 JSONObject json = response.getJSONObject();
                 try {
                     if (json != null) {
-                        // for profile image
+                        // get user profile info
                         JSONObject pictureJsonObj = json.getJSONObject("picture");
                         JSONObject data = pictureJsonObj.getJSONObject("data");
                         String image = data.getString("url");
                         if(MainActivity.user != null)
                             MainActivity.user.setImage(image);
 
-                        HashMap hashMap = new HashMap<String, String>();
+                        HashMap hashMap = new HashMap<>();
                         hashMap.put(Constants.USER_FIRST_NAME, json.getString("first_name"));
                         hashMap.put(Constants.USER_LAST_NAME, json.getString("last_name"));
                         hashMap.put(Constants.USER_VERIFIED, json.getString("verified"));
@@ -259,7 +269,7 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
                 Toast.makeText(getActivity(), "Please enter your password", Toast.LENGTH_LONG).show();
                 return;
             }
-            HashMap hashMap = new HashMap<String, String>();
+            HashMap hashMap = new HashMap<>();
             hashMap.put(Constants.USER_EMAIL, email);
             hashMap.put(Constants.USER_PASSWORD, password);
             mUserSignedIn(hashMap, mMessage);
@@ -328,7 +338,7 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
                     connectionResult.startResolutionForResult(getActivity(), RC_SIGN_IN);
                     mIsResolving = true;
                 } catch (IntentSender.SendIntentException e) {
-                    Log.e("", "Could not resolve ConnectionResult.", e);
+                    Log.e(TAG, "Could not resolve ConnectionResult.", e);
                     mIsResolving = false;
                     mGoogleApiClient.connect();
                 }
@@ -346,34 +356,82 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.e("","connected");
+        Log.e(TAG, "Google sign in connected");
+
+        //Plus.PeopleApi.loadVisible(mGoogleApiClient, null).setResultCallback(getActivity());
+
         Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-        HashMap params =  new HashMap<String, String>();
+        final HashMap params =  new HashMap<>();
         if(currentPerson != null)
         {
-            // params.put(Constants.USER_FAMILY_NAME, currentPerson.getDisplayName());
+            // get google user account info
             params.put(Constants.USER_NAME, currentPerson.getDisplayName());
             params.put("picture", currentPerson.getImage().getUrl());
             params.put(Constants.USER_IMAGE,currentPerson.getImage().getUrl());// for local save
             params.put(Constants.USER_LOCALE, currentPerson.getLanguage());
-            params.put(Constants.USER_GENDER, currentPerson.getGender());
             params.put(Constants.USER_ID, currentPerson.getId());
             params.put(Constants.USER_LINK, currentPerson.getUrl());
-            // params.put(Constants.USER_VERIFIED_EMAIL, currentPerson.getLanguage());
-            //  params.put(Constants.USER_TOKEN, GoogleAuthUtil.getToken());
-            // params.put(Constants.USER_EXPIRE_AT, currentPerson.getLanguage());
+            params.put(Constants.USER_VERIFIED_EMAIL, currentPerson.isVerified());
+
+            Person.Name personName =  currentPerson.getName();
+            if(personName != null) {
+                params.put(Constants.USER_GIVEN_NAME, personName.getGivenName());
+                params.put(Constants.USER_FAMILY_NAME, personName.getFamilyName());
+            }
+             // get gender info of google user
+            int personGender =  currentPerson.getGender();
+            if(personGender == 0){
+                params.put(Constants.USER_GENDER, "Male");
+            }
+            else if(personGender == 1){
+                params.put(Constants.USER_GENDER, "Female");
+            }
+            else if(personGender == 2){
+                params.put(Constants.USER_GENDER, "Other");
+            }
+
+            //params.put(Constants.USER_EXPIRE_AT, currentPerson.getLanguage());
         }
-        String email =  Plus.AccountApi.getAccountName(mGoogleApiClient);
-        Log.e("", "email is " + email);
+        // get user email id
+        final String email =  Plus.AccountApi.getAccountName(mGoogleApiClient);
+        params.put(Constants.USER_EMAIL, email);
 
-        // hashMap.put(Constants.USER_EMAIL, email);
-        mGooglePlusLogin(params, mMessage);
+        // request to get token of google plus user
+        AsyncTask task = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object... param1) {
+               try {
+                    // We can retrieve the token to check via
+                    // tokeninfo or to pass to a service-side
+                    // application.
+                    String token = GoogleAuthUtil.getToken(getActivity(),
+                            email, "oauth2:" + Scopes.PLUS_LOGIN);
+                   params.put(Constants.USER_TOKEN,token);
+                } catch (UserRecoverableAuthException e) {
+                    // This error is recoverable, so we could fix this
+                    // by displaying the intent to the user.
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (GoogleAuthException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
 
+            @Override
+            protected void onPostExecute(Object o) {
+               // super.onPostExecute(o);
+                Log.e(TAG,"");
+               // mGooglePlusLogin(params, mMessage);
+            }
+        };
+        task.execute((Void) null);
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.e("", "Connection suspended");
+        Log.e(TAG, "Connection suspended");
 
     }
     private static boolean isValidEmail(CharSequence target) {

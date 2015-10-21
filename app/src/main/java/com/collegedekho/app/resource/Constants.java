@@ -143,6 +143,7 @@ public class Constants
     public static final String USER_FIRST_NAME  = "first_name";
     public static final String USER_LAST_NAME   = "last_name";
     public static final String USER_FAMILY_NAME = "family_name";
+    public static final String USER_GIVEN_NAME  = "given_name";
     public static final String USER_PASSWORD    = "password";
     public static final String USER_ID          = "id";
     public static final String USER_TOKEN       = "token";

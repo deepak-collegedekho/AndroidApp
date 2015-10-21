@@ -243,7 +243,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         ArrayList<Folder> folderList = ((MainActivity) getActivity()).getFilterList();
         for (Folder f : folderList) {
             for (Facet ft : f.getFacets())
-                if(ft.getTag().equalsIgnoreCase(token.toString())) {
+                if(ft.getLabel().equalsIgnoreCase(token.toString())) {
                     ft.deselect();
                     break;
                 }
