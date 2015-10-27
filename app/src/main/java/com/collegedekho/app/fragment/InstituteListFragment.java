@@ -124,7 +124,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         recyclerView.addOnScrollListener(scrollListener);
         if (filterAllowed) {
 
-            setFilterList();
+            this.mSetFilterList();
             rootView.findViewById(R.id.button_filter).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -158,6 +158,8 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
         return rootView;
     }
+
+
   @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -214,7 +216,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             if (mCompletionView != null && mCompletionView.getObjects().size() > 0) {
                 mCompletionView.clear();
             }
-            setFilterList();
+            this.mSetFilterList();
         }
     }
 
@@ -255,7 +257,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
     }
 
-    private void setFilterList()
+    private void mSetFilterList()
     {
         ArrayList<Folder> folderList = ((MainActivity) getActivity()).getFilterList();
         for (Folder f : folderList) {

@@ -77,7 +77,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
 
         Articles articles = mArticles.get(position);
         ArticleHolder articleHolder = (ArticleHolder) holder;
-        articleHolder.articleTitle.setText(articles.title);
+        articleHolder.articleTitle.setText(Html.fromHtml(articles.title));
 
         if (articles.image != null && !articles.image.isEmpty())
             articleHolder.articleImage.setImageUrl(articles.image, imageLoader);

@@ -112,9 +112,9 @@ public class StreamFragment extends Fragment implements AdapterView.OnItemClickL
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
 
-        if(mMainActivity.mToolbar != null && !isStreamUpdate) {
+       /* if(mMainActivity.mToolbar != null && !isStreamUpdate) {
            mMainActivity.mToolbar.setNavigationIcon(null);
            mMainActivity.mToolbar.setNavigationOnClickListener(null);
-        }
+        }*/
     }
 }

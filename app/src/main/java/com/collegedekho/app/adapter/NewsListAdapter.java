@@ -79,7 +79,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
     {
         News news = mNews.get(position);
         NewsHolder newsHolder = (NewsHolder) holder;
-        newsHolder.newsTitle.setText(news.title);
+        newsHolder.newsTitle.setText(Html.fromHtml(news.title));
 
         if (news.image != null && !news.image.isEmpty())
             newsHolder.newsImage.setImageUrl(news.image, imageLoader);

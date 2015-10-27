@@ -146,13 +146,10 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
 
         if (this.mMainActivity != null) {
             this.mMainActivity.currentFragment = this;
-            this.mMainActivity.mUpdateNavigationItem(0);
+            this.mMainActivity.mShouldDisplayHomeUp();
+            this.mMainActivity.mUpdateNavigationMenuItem(0);
         }
 
-        if(this.mMainActivity.mToolbar != null) {
-            this.mMainActivity.mToolbar.setNavigationIcon(null);
-            this.mMainActivity.mToolbar.setNavigationOnClickListener(null);
-        }
     }
 
     @Override

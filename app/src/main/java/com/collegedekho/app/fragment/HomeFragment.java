@@ -100,10 +100,11 @@ public class HomeFragment extends Fragment {
         if (this.mMainActivity != null)
             this.mMainActivity.currentFragment = this;
 
+       /*
         if(this.mMainActivity.mToolbar != null) {
             this.mMainActivity.mToolbar.setNavigationIcon(null);
             this.mMainActivity.mToolbar.setNavigationOnClickListener(null);
-        }
+        }*/
     }
 
 

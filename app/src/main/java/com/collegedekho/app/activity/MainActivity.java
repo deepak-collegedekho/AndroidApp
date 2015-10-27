@@ -13,10 +13,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.WindowInsetsCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,16 +30,21 @@ import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Facet;
@@ -60,7 +71,6 @@ import com.collegedekho.app.fragment.InstituteQnAFragment;
 import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
-import com.collegedekho.app.fragment.NavigationDrawerFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsListFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
@@ -75,9 +85,11 @@ import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.resource.Constants;
 
 import com.collegedekho.app.resource.ContainerHolderSingleton;
+import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 
+import com.collegedekho.app.widget.CircleImageView;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
@@ -115,7 +127,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity
-        implements  NavigationDrawerFragment.NavigationDrawerCallbacks,
+        implements  NavigationView.OnNavigationItemSelectedListener,
         HomeFragment.OnHomeInteractionListener,
         DataLoadListener,
         StreamFragment.OnStreamInteractionListener,
@@ -154,8 +166,9 @@ public class MainActivity extends AppCompatActivity
     public static Tracker tracker;
 
     public static NetworkUtils networkUtils;
-    public Toolbar mToolbar;
-    public Fragment currentFragment;
+    private Toolbar mToolbar;
+    private ActionBarDrawerToggle mToggle;
+            public Fragment currentFragment;
     private List<Institute> mInstituteList;
     private int currentInstitute;
     private ProgressDialog progressDialog;
@@ -184,7 +197,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
-   private NavigationDrawerFragment mNavigationDrawerFragment;
+   //private NavigationDrawerFragment mNavigationDrawerFragment;
     /*
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
@@ -194,30 +207,6 @@ public class MainActivity extends AppCompatActivity
     private boolean completedStage2;
     static String type = "";
     static String resource_uri = "";
-
-   /*public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = HomeFragment.TITLE;
-                break;
-            case 2:
-                mTitle = getString(R.string.title_section2);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
-                break;
-        }
-    }
-
-    public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-
-        if (actionBar != null) {
-            actionBar.setTitle(mTitle);
-            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-            actionBar.setDisplayShowTitleEnabled(true);
-        }
-    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,7 +233,7 @@ public class MainActivity extends AppCompatActivity
         //this.connecto.track("Session Started", new Properties().putValue("value", 800));
         this.connecto.registerWithGCM(MainActivity.this, this.SENDER_ID);
 
-        Fabric.with(this, new Crashlytics());
+       // Fabric.with(this, new Crashlytics());
 
         this.analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
         this.analytics.setLocalDispatchPeriod(1800);
@@ -258,11 +247,12 @@ public class MainActivity extends AppCompatActivity
         this.mRegisterFacebookSdk();
         this.mSetupGTM();
 
-        this.mToolbar = (Toolbar) findViewById(R.id.app_toolbar);
-        this.mNavigationDrawerFragment = (NavigationDrawerFragment) this.getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        this.setSupportActionBar(this.mToolbar);
-        this.mTitle = this.getTitle().toString();
-        this.mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) this.findViewById(R.id.drawer_layout));
+        this.mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(this.mToolbar);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        mSetNavigationListener();
 
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
@@ -466,19 +456,18 @@ public class MainActivity extends AppCompatActivity
                 this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()));
                 this.connecto.track("Session Started", new Properties().putValue("value", new Date().toString()));
 
-                if (MainActivity.user != null && MainActivity.user.getStream() != null && MainActivity.user.getLevel() != null)
-                {
+                // this code for backward compatibility because in first release user stream and level
+                // were saved in uri form instead of IDs. it can be remove after some releases
+                if (MainActivity.user != null && MainActivity.user.getStream() != null && MainActivity.user.getLevel() != null) {
                     // this code for backward compatibility because in first release user stream and level
                     // were saved in uri form instead of IDs.
-                    if(MainActivity.user.getStream().length() > 0 && Patterns.WEB_URL.matcher(MainActivity.user.getStream()).matches())
-                    {
+                    if (MainActivity.user.getStream().length() > 0 && Patterns.WEB_URL.matcher(MainActivity.user.getStream()).matches()) {
                         String streamId[] = MainActivity.user.getStream().split("/");
                         MainActivity.user.setStream(streamId[streamId.length - 1]);
                     }
-                    if(MainActivity.user.getLevel().length() > 0 && Patterns.WEB_URL.matcher(MainActivity.user.getLevel()).matches())
-                    {
+                    if (MainActivity.user.getLevel().length() > 0 && Patterns.WEB_URL.matcher(MainActivity.user.getLevel()).matches()) {
                         String levelId[] = MainActivity.user.getLevel().split("/");
-                        MainActivity.user.setLevel(levelId[levelId.length-1]);
+                        MainActivity.user.setLevel(levelId[levelId.length - 1]);
                     }
                 }
             }
@@ -488,24 +477,87 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
-    public  void mUpdateNavigationItem(int position)
-    {
-        if (mNavigationDrawerFragment != null) {
-            mNavigationDrawerFragment.updateNavigationItem(position);
-        }
-    }
+
 
     /**
      * This method is called when Navigation drawer item is selected
-     * @param position  selected position of navigation drawer item
-     * @param currentposition last selected position of navigation item
+     * @param item  selected position of navigation drawer item
      */
+
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        int id = item.getItemId();
+        Fragment fragment = null;
+        int position=0;
+        switch (id) {
+            case R.id.nav_home:
+                mClearBackStack();
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            case R.id.nav_institutes:
+                  fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+                 position =1;
+                  break;
+            case R.id.nav_news:
+                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_NEWS_LIST);
+                position =2;
+                break;
+            case R.id.nav_atricles:
+                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_ARTICLES_LIST);
+                position =3;
+                break;
+            case R.id.nav_my_shortlists:
+                    fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+                position = 4;
+                break;
+            case R.id.nav_my_qna:
+                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
+                position = 5;
+                break;
+            case R.id.nav_future_buddies:
+                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
+                position = 6;
+                break;
+        }
+
+        drawer.closeDrawer(GravityCompat.START);
+        if(fragment != null) {
+
+            this.mUpdateNavigationMenuItem(position);
+            int count = getSupportFragmentManager().getBackStackEntryCount();
+            for (int i = 0; i < count-1; i++) {
+                getSupportFragmentManager().popBackStack();
+            }
+            return true;
+
+        }
+
+        if(this.mWidgets == null || this.mWidgets.size() <= position-1)
+            return true;
+
+        onWidgetSelected(mWidgets.get(position - 1), position);
+        return true;
+    }
+
+    /**
+     * This method is used to update menu item on navigation drawer
+     * @param position
+     */
+    public void mUpdateNavigationMenuItem(int position) {
+        ((NavigationView) findViewById(R.id.nav_view)).getMenu().getItem(position).setChecked(true);
+
+    }
+
+
+
     public void onNavigationDrawerItemSelected(int position , int currentposition) {
         // update the main content by replacing fragments
         Fragment fragment = null;
         if(position ==  0) {
-            mUpdateNavigationItem(position);
+            //mUpdateNavigationItem(position);
             mClearBackStack();
             return;
         }
@@ -534,7 +586,7 @@ public class MainActivity extends AppCompatActivity
         }
         if(fragment != null) {
 
-            mUpdateNavigationItem(position);
+           // mUpdateNavigationItem(position);
             int count = getSupportFragmentManager().getBackStackEntryCount();
             for (int i = 0; i < count-1; i++) {
                 getSupportFragmentManager().popBackStack();
@@ -901,17 +953,11 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.commit();
 
             if (this.currentFragment instanceof WidgetListFragment) {
-                if (this.mToolbar.getVisibility() != View.VISIBLE)
-                    this.mToolbar.setVisibility(View.VISIBLE);
+                if (findViewById(R.id.app_bar_layout).getVisibility() != View.VISIBLE)
+                    findViewById(R.id.app_bar_layout).setVisibility(View.VISIBLE);
             }
+           mShouldDisplayHomeUp();
 
-            if (this.currentFragment instanceof WidgetListFragment || this.currentFragment instanceof HomeFragment || this.currentFragment instanceof SplashFragment) {
-                this.mToolbar.setNavigationIcon(null);
-                this.mToolbar.setOnClickListener(null);
-
-            } else {
-                mShowNavigationBackListener();
-            }
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
         }
@@ -962,7 +1008,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_LOAD_HOME:
                 this.mUpdateHome(response);
-                this.mNavigationDrawerFragment.setDrawerState(true);
                 break;
             case Constants.TAG_POST_QUESTION:
                 this.mInstituteQnAQuestionAdded(response);
@@ -1445,8 +1490,19 @@ public class MainActivity extends AppCompatActivity
         return null;
     }
 
+    /**
+     * This method is used to load Home screen of this application
+     * @param response
+     */
     private void mUpdateHome(String response) {
         try {
+            // unlock navigation drawer when home screen come
+            ((DrawerLayout)findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+            FrameLayout layout =(FrameLayout)findViewById(R.id.container);
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) layout.getLayoutParams();
+             params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+
             this.mWidgets = JSON.std.listOfFrom(Widget.class, extractResults(response));
             Fragment widgetListFragment = WidgetListFragment.newInstance(new ArrayList<>(this.mWidgets));
             if (MainActivity.type != null && MainActivity.type.length() > 0)
@@ -1754,9 +1810,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onWidgetSelected(Widget widget, int position) {
         this.mCurrentTitle = widget.getTitle();
-
-        this.mUpdateNavigationItem(position);
-
+        this.mUpdateNavigationMenuItem(position);
         if (widget.getType().equals(Constants.WIDGET_INSTITUTES)) {
             this.mFilterKeywords = this.mGetTheFilters();
 
@@ -1775,6 +1829,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * This method returns
+     * @return
+     */
     private Map mGetTheFilters() {
         Map<String, String> map = new HashMap<>();
 
@@ -2347,32 +2405,17 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    /**
-     * This method is called when user press navigation back arrow
-     *  present on the toolbar
-     */
 
-    private void mShowNavigationBackListener() {
-        mToolbar.setNavigationIcon(R.drawable.arrow_back);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                if (getCurrentFocus() != null && getCurrentFocus() instanceof EditText) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                }
-                if (isLastFragment()) {
-                    mClearBackStack();
-                } else {
-                    int count = getSupportFragmentManager().getBackStackEntryCount();
-                    if (count >= 1) {
-                        getSupportFragmentManager().popBackStack();
-                    }
-                }
+    public void mShouldDisplayHomeUp(){
 
-            }
-        });
+        if (this.currentFragment instanceof WidgetListFragment || this.currentFragment instanceof HomeFragment || this.currentFragment instanceof SplashFragment) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            this.mToggle.syncState();
+
+        } else {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     /**
@@ -2388,6 +2431,71 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
+     * This method is called when user press navigation back arrow
+     *  present on the toolbar
+     */
+    private void mSetNavigationListener() {
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        this.mToggle = new ActionBarDrawerToggle(
+                this, drawer, this.mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                String name  = MainActivity.user.getName();
+                TextView mProfileName    =   (TextView)findViewById(R.id.nav_header_name);
+                TextView mStreamName    =   (TextView)findViewById(R.id.nav_header_stream);
+                CircleImageView mProfileImage = (CircleImageView)findViewById(R.id.nav_header_profile_image);
+                mProfileImage.setDefaultImageResId(R.drawable.ic_default_image);
+                mProfileImage.setErrorImageResId(R.drawable.ic_default_image);
+                if(name.equalsIgnoreCase("Anonymous User"))
+                {
+                    mProfileName.setText("");
+                    mProfileName.setVisibility(View.INVISIBLE);
+                }else {
+                    mProfileName.setText(name);
+                    mProfileName.setVisibility(View.VISIBLE);
+                }
+                mStreamName.setText(MainActivity.user.getStream_name());
+
+                String image = MainActivity.user.getImage();
+                if (image != null && ! image.isEmpty()) {
+                    mProfileImage.setImageUrl(image, MySingleton.getInstance(getApplicationContext()).getImageLoader());
+                    mProfileImage.setVisibility(View.VISIBLE);
+                }
+                else
+                    mProfileImage.setVisibility(View.GONE);
+            }
+        };
+        drawer.setDrawerListener(this.mToggle);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        this.mToggle.syncState();
+        this.mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (getCurrentFocus() != null && getCurrentFocus() instanceof EditText) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                int count = getSupportFragmentManager().getBackStackEntryCount();
+                if (count >= 1) {
+                    if (isLastFragment())
+                        mClearBackStack();
+                    else
+                        getSupportFragmentManager().popBackStack();
+                } else {
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    drawer.openDrawer(R.id.nav_view);
+                }
+            }
+        });
+
+
+
+    }
+    /**
      * This method is called when user press device back button
      * Do these task
      * 1- If navigation drawer is open then close it
@@ -2396,9 +2504,10 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
-        if(this.mNavigationDrawerFragment !=  null && this.mNavigationDrawerFragment.isDrawerOpen())
-                this.mNavigationDrawerFragment.closeDrawer();
-        else if(this.isLastFragment())
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else if(this.isLastFragment())
         {
             this.mClearBackStack();
         }
@@ -2648,6 +2757,9 @@ public class MainActivity extends AppCompatActivity
                 .build());
         }
     }
+
+
+
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override
