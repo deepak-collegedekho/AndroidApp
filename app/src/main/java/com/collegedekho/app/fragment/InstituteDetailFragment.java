@@ -157,22 +157,24 @@ public class InstituteDetailFragment extends BaseFragment {
                 MainActivity ma = (MainActivity) getActivity();
 
                 if (ma != null)
+                {
                     mCourses = JSON.std.listOfFrom(InstituteCourse.class, ma.extractResults(response));
+
+                    courses = new ArrayList<>();
+                    for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++)
+                    {
+                        courses.add(new ArrayList<InstituteCourse>());
+                    }
+                    if(mCourses != null && !mCourses.isEmpty()) {
+                        for (InstituteCourse course : mCourses) {
+                            courses.get(course.level).add(course);
+                        }
+                    }
+                }
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 e.printStackTrace();
-            }
-
-            courses = new ArrayList<>();
-            for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++)
-            {
-                courses.add(new ArrayList<InstituteCourse>());
-            }
-            if(mCourses != null && !mCourses.isEmpty()) {
-                for (InstituteCourse course : mCourses) {
-                    courses.get(course.level).add(course);
-                }
             }
 
             return null;

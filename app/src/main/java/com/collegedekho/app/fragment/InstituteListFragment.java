@@ -227,6 +227,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         if(!filterAllowed) return;// do not need on my shortlist page
         View v = getView();
         if (v != null) {
+            this.filterCount = filterCount;
             if (filterCount <= 2) {
                 getView().findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
                 ((ImageView) v.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter);

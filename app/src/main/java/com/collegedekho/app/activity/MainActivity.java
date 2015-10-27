@@ -294,6 +294,20 @@ public class MainActivity extends AppCompatActivity
                     ((SplashFragment) currentFragment).noInternetFound();
             }
         }, Constants.MAIN_ANIMATION_TIME);
+
+        // TODO: Move this to where you establish a user session
+        logUser();
+    }
+
+    private void logUser() {
+        // TODO: Use the current user's information
+        // You can call any combination of these three methods
+        if (MainActivity.user != null)
+        {
+            Crashlytics.setUserIdentifier(MainActivity.user.getToken());
+            Crashlytics.setUserEmail(MainActivity.user.getEmail());
+            Crashlytics.setUserName(MainActivity.user.getName());
+        }
     }
 
     private void mhandleNotifications()
@@ -447,27 +461,30 @@ public class MainActivity extends AppCompatActivity
 
         try {
             if (sp.contains(Constants.KEY_USER)) {
-                user = JSON.std.beanFrom(User.class, sp.getString(Constants.KEY_USER, null));
-                this.networkUtils.setToken(user.getToken());
-                this.connecto.identify(user.getId(), new Traits().putValue(Constants.USER_NAME, user.getName()));
+                MainActivity.user = JSON.std.beanFrom(User.class, sp.getString(Constants.KEY_USER, null));
+                this.networkUtils.setToken(MainActivity.user.getToken());
+                this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()));
                 this.connecto.track("Session Started", new Properties().putValue("value", new Date().toString()));
 
-                // this code for backward compatibility because in first release user stream and level
-                // were saved in uri form instead of IDs.
-                if(Patterns.WEB_URL.matcher(user.getStream()).matches())
+                if (MainActivity.user != null && MainActivity.user.getStream() != null && MainActivity.user.getLevel() != null)
                 {
-                    String streamId[] = user.getStream().split("/");
-                    user.setStream(streamId[streamId.length-1]);
-                }
-                if(Patterns.WEB_URL.matcher(user.getLevel()).matches())
-                {
-                    String  levelId[] = user.getLevel().split("/");
-                    user.setLevel(levelId[levelId.length-1]);
+                    // this code for backward compatibility because in first release user stream and level
+                    // were saved in uri form instead of IDs.
+                    if(MainActivity.user.getStream().length() > 0 && Patterns.WEB_URL.matcher(MainActivity.user.getStream()).matches())
+                    {
+                        String streamId[] = MainActivity.user.getStream().split("/");
+                        MainActivity.user.setStream(streamId[streamId.length - 1]);
+                    }
+                    if(MainActivity.user.getLevel().length() > 0 && Patterns.WEB_URL.matcher(MainActivity.user.getLevel()).matches())
+                    {
+                        String levelId[] = MainActivity.user.getLevel().split("/");
+                        MainActivity.user.setLevel(levelId[levelId.length-1]);
+                    }
                 }
             }
 
             this.completedStage2 = sp.getBoolean(Constants.COMPLETED_SECOND_STAGE, false);
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
     }
@@ -529,8 +546,7 @@ public class MainActivity extends AppCompatActivity
         if(this.mWidgets == null || this.mWidgets.size() <= position-1)
             return;
 
-        onWidgetSelected(mWidgets.get(position - 1), position);
-
+        this.onWidgetSelected(mWidgets.get(position - 1), position);
     }
 
     @Override
@@ -2014,10 +2030,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mQnAQuestionVoteUpdated(int questionIndex, int voteType) {
-        ((QnAQuestionsAndAnswersFragment) currentFragment).onVotingFeedback(questionIndex, -1, voteType);
-
         try
         {
+            if (currentFragment instanceof QnAQuestionsAndAnswersFragment)
+                ((QnAQuestionsAndAnswersFragment) currentFragment).onVotingFeedback(questionIndex, -1, voteType);
+
             QnAQuestions question = this.mQnAQuestions.get(questionIndex);
 
             if (voteType == Constants.LIKE_THING)
@@ -2398,9 +2415,15 @@ public class MainActivity extends AppCompatActivity
      * This method is used to clear back stack of FragmentManager
      */
    private  void mClearBackStack() {
-       int count = getSupportFragmentManager().getBackStackEntryCount();
-       for (int i = 0; i < count ; i++) {
-           getSupportFragmentManager().popBackStack();
+       try{
+           int count = getSupportFragmentManager().getBackStackEntryCount();
+           for (int i = 0; i < count ; i++) {
+               getSupportFragmentManager().popBackStack();
+           }
+       }
+       catch (Exception e)
+       {
+           Log.e(TAG, e.getMessage());
        }
     }
 

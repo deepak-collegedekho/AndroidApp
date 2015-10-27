@@ -83,7 +83,13 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
 
         this.mUserLearnedTouch = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.KEY_USER_LEARNED_TOUCH, false);
 
-        streamTextView.setText(MainActivity.user.getStream_name());
+        if (MainActivity.user != null && MainActivity.user.getStream_name() != null)
+        {
+            streamTextView.setVisibility(View.VISIBLE);
+            streamTextView.setText(MainActivity.user.getStream_name());
+        }
+        else
+            streamTextView.setVisibility(View.GONE);
 
         grid.setAdapter(new WidgetAdapter(getActivity(), widgets));
         grid.setOnItemClickListener(this);
@@ -110,8 +116,8 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     public void onWidgetSelected(Widget widget, int position) {
-        if (mListener != null) {
-            mListener.onWidgetSelected(widget, position);
+        if (this.mListener != null) {
+            this.mListener.onWidgetSelected(widget, position);
         }
     }
 
@@ -119,7 +125,7 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnWidgetInteractionListener) activity;
+            this.mListener = (OnWidgetInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnWidgetInteractionListener");
@@ -129,7 +135,7 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        this.mListener = null;
     }
 
     @Override
