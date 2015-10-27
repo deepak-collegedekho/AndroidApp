@@ -4,11 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.LinearLayout;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by root on 16/9/15.
@@ -22,7 +18,7 @@ public class BaseFragment extends Fragment {
     protected boolean loading = false;
     protected LinearLayout progressBarLL;
     protected LinearLayoutManager layoutManager;
-    protected String nextUrl;
+    protected String mNextUrl;
     protected BaseListener listener;
     protected  int listType;
 
@@ -41,10 +37,10 @@ public class BaseFragment extends Fragment {
 
             if ((!loading) && ((visibleItemCount + pastVisiblesItems) >= totalItemCount)) {
                 loading = true;
-                if(nextUrl != null) {
+                if(mNextUrl != null) {
                     progressBarLL.setVisibility(View.VISIBLE);
                 }
-                listener.onEndReached(nextUrl,listType);
+                listener.onEndReached(mNextUrl,listType);
             }
             /*if(dy < 0)
             {

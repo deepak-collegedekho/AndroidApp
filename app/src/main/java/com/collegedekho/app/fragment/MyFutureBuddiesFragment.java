@@ -1,6 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -142,14 +143,22 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            this.mListener = (OnMyFBInteractionListener) activity;
+            if(context instanceof  MainActivity)
+            this.mListener = (OnMyFBInteractionListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnMyFBInteractionListener");
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(ARG_PARAM1, this.mMyFutureBuddies);
+        outState.putInt(ARG_PARAM2, this.mInitialCount);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.collegedekho.app.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -58,7 +58,7 @@ public class ArticleListFragment extends BaseFragment {
         if (getArguments() != null) {
             mArticles = getArguments().getParcelableArrayList(ARG_ARTICLE);
             mTitle = getArguments().getString(ARG_TITLE);
-            nextUrl  = getArguments().getString(ARG_NEXT);
+            mNextUrl = getArguments().getString(ARG_NEXT);
             listType = Constants.ARTICLES_TYPE;
         }
     }
@@ -83,14 +83,23 @@ public class ArticleListFragment extends BaseFragment {
         return rootView;
     }
 
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            listener = (OnArticleSelectedListener) activity;
+            if(context instanceof  MainActivity)
+            listener = (OnArticleSelectedListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnArticleSelectedListener");
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(ARG_ARTICLE, this.mArticles);
+        outState.putString(ARG_TITLE, this.mTitle);
+        outState.putString(ARG_NEXT, this.mNextUrl);
     }
 
     @Override
@@ -114,7 +123,7 @@ public class ArticleListFragment extends BaseFragment {
         this.mArticles.addAll(articles);
         mAdapter.notifyDataSetChanged();
         loading = false;
-        nextUrl = next;
+        mNextUrl = next;
     }
 
     public interface OnArticleSelectedListener extends BaseListener{

@@ -1,6 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,8 +30,13 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * Created by root on 10/9/15.
- */
+ * Created by Suresh Saini on 10/9/15.
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment
+ * Use the {@link ArticleDetailFragment#newInstance} factory method to
+ * create an instance of this fragment.
+*/
+
 public class ArticleDetailFragment extends BaseFragment {
     private static final String ARG_ARTICLE = "short_name";
     private static final String TAG = "ArticleDetailFragment";

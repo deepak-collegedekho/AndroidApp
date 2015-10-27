@@ -2,7 +2,6 @@ package com.collegedekho.app.fragment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -14,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,9 +30,7 @@ import com.collegedekho.app.widget.tag.textview.FilteredArrayAdapter;
 import com.collegedekho.app.widget.tag.textview.TokenCompleteTextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -86,7 +82,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         if (getArguments() != null) {
             mInstitutes = getArguments().getParcelableArrayList(ARG_INSTITUTE);
             mTitle = getArguments().getString(ARG_TITLE);
-            nextUrl = getArguments().getString(ARG_NEXT);
+            mNextUrl = getArguments().getString(ARG_NEXT);
             filterAllowed = getArguments().getBoolean(ARG_FILTER_ALLOWED);
             filterCount = getArguments().getInt(ARG_FILTER_COUNT);
             listType = Constants.INSTITUTE_TYPE;
@@ -161,14 +157,25 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
 
   @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            listener = (OnInstituteSelectedListener) activity;
+            if(context instanceof  MainActivity)
+            listener = (OnInstituteSelectedListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnInstituteSelectedListener");
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(ARG_INSTITUTE, this.mInstitutes);
+        outState.putString(ARG_TITLE, this.mTitle);
+        outState.putString(ARG_NEXT, this.mNextUrl);
+        outState.putBoolean(ARG_FILTER_ALLOWED, this.filterAllowed);
+        outState.putInt(ARG_FILTER_COUNT, this.filterCount);
     }
 
     @Override
@@ -211,7 +218,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         mInstitutes.addAll(institutes);
         mAdapter.notifyDataSetChanged();
         loading = false;
-        nextUrl = next;
+        mNextUrl = next;
         if(filterAllowed) {
             if (mCompletionView != null && mCompletionView.getObjects().size() > 0) {
                 mCompletionView.clear();

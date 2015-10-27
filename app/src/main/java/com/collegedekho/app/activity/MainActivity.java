@@ -2487,13 +2487,11 @@ public class MainActivity extends AppCompatActivity
                         getSupportFragmentManager().popBackStack();
                 } else {
                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                    drawer.openDrawer(R.id.nav_view);
+                    if(!drawer.isDrawerOpen(Gravity.START))
+                        drawer.openDrawer(Gravity.START);
                 }
             }
         });
-
-
-
     }
     /**
      * This method is called when user press device back button

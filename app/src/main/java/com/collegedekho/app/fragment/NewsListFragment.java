@@ -1,6 +1,6 @@
 package com.collegedekho.app.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -59,7 +59,7 @@ public class NewsListFragment extends BaseFragment {
         if (getArguments() != null) {
             this.mNews = getArguments().getParcelableArrayList(ARG_NEWS);
             this.mTitle = getArguments().getString(ARG_TITLE);
-            this.nextUrl  = getArguments().getString(ARG_NEXT);
+            this.mNextUrl = getArguments().getString(ARG_NEXT);
             this.listType = Constants.NEWS_TYPE;
         }
     }
@@ -85,14 +85,23 @@ public class NewsListFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            listener = (OnNewsSelectedListener) activity;
+            if(context instanceof  MainActivity)
+            listener = (OnNewsSelectedListener)context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnNewsSelectedListener");
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(ARG_NEWS, this.mNews);
+        outState.putString(ARG_TITLE, this.mTitle);
+        outState.putString(ARG_NEXT, this.mNextUrl);
     }
 
     @Override
@@ -116,7 +125,7 @@ public class NewsListFragment extends BaseFragment {
         this.mNews.addAll(news);
         mAdapter.notifyDataSetChanged();
         loading = false;
-        nextUrl = next;
+        mNextUrl = next;
     }
     public interface OnNewsSelectedListener extends  BaseListener{
 
