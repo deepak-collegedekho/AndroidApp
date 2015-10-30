@@ -16,7 +16,6 @@ public class SplashFragment extends BaseFragment {
     private ImageView mLogoView;
     private TextView noInternetMessage;
     private AnimationDrawable mFrameAnimation;
-    private Animation mAnimation;
 
     public static SplashFragment newInstance() {
         SplashFragment fragment = new SplashFragment();

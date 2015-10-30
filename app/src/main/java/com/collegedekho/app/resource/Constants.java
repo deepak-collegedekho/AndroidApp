@@ -59,6 +59,7 @@ public class Constants
     public static final String TAG_LOAD_QNA_QUESTIONS = "qna";
     public static final String TAG_LOAD_INSTITUTE_QNA_QUESTIONS = "institute_qna";
     public static final String TAG_FRAGMENT_INSTITUTE_LIST = "fragment_institute_list";
+    public static final String TAG_FRAGMENT_SHORTLISTED_INSTITUTE_LIST = "fragment_shortlisted_institute_list";
     public static final String TAG_FRAGMENT_PYSCHOMETRIC_TEST_QUESTION_LIST = "fragment_pyschometric_test_question_list";
     public static final String QTYPE_SINGLE = "single";
     public static final String QTYPE_MULTIPLE = "multiple";
@@ -87,9 +88,9 @@ public class Constants
     public static final String TAG_FRAGMENT_PROFILE = "fragment_profile";
     public static final String TAG_FRAGMENT_QNA_ANSWERS_LIST = "fragment_qna_answers_list";
     public static final String KEY_USER_LEARNED_TOUCH = "user_touch";
-    public static final String TAG_FRAGMENT_LOGIN      = "fragment_signin";
-    public static final String TAG_USER_LOGIN           = "user_login";
-    public static final String TAG_USER_REGISTRATION    = "user_registeration";
+    public static final String TAG_FRAGMENT_LOGIN = "fragment_signin";
+    public static final String TAG_USER_LOGIN = "user_login";
+    public static final String TAG_USER_REGISTRATION = "user_registeration";
     public static final String METHOD_GET = "GET";
     public static final String METHOD_POST = "POST";
     public static final int LIKE_THING = 0;
@@ -163,7 +164,7 @@ public class Constants
     public static final String USER_UPDATED_TIME = "updated_time";
     public static final String USER_LINK = "link";
     public static final String USER_EXPIRE_AT = "expires_at";
-
+    public static final String USER_DEVICE_ID = "device_id";
 
     public static final String APPLY_YEAR = "year_of_admission";
     public static final String APPLY_COURSE = "institute_course";
@@ -210,6 +211,7 @@ public class Constants
     public static final String ACTION_FILTER_APPLIED = "action_filter_applied";
     public static final String ACTION_ARTICLE_SELECTED = "action_article_selected";
     public static final String ACTION_NEWS_SELECTED = "action_news_selected";
+    public static final String INSTITUTE_RESOURCE_URI = "institute_resource_uri";
 
     //String messages
     public static final String EMAIL_PASSOWRD_NOT_EXISTS ="The e-mail address and/or password you specified are not correct.";

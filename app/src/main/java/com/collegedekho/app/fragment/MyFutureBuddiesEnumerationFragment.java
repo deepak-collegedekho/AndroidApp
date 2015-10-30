@@ -61,7 +61,6 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
         fbEnumerationView.setLayoutManager(new LinearLayoutManager(getActivity()));
         fbEnumerationView.setAdapter(this.mMyFBEnumerationAdapter);
         fbEnumerationView.setItemAnimator(new DefaultItemAnimator());
-        //fbEnumerationView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
         if (this.mFbEnumeration.size() == 0)
         {
