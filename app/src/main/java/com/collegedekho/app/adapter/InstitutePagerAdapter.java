@@ -2,8 +2,8 @@ package com.collegedekho.app.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
@@ -29,12 +29,12 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     private static final int PLACEMENT_POSITION = 3;
     private static final int QNA_POSITION = 4;
 
-    Institute mInstitute;
-    Placements p;
-    int count = 5;
-    InstituteCoursesFragment f;
-    InstituteOverviewFragment o;
-    InstituteQnAFragment q;
+    private Institute mInstitute;
+    private Placements p;
+    private int count = 5;
+    private InstituteCoursesFragment f;
+    private InstituteOverviewFragment o;
+    private InstituteQnAFragment q;
     private ArrayList<ArrayList<InstituteCourse>> mCourses;
     private ArrayList<QnAQuestions> mQnAQuestions;
 
@@ -58,12 +58,14 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
                 o = InstituteOverviewFragment.newInstance(mInstitute);
                 return o;
             case ABOUT_POSITION:
-                return InstituteAboutFragment.newInstance(mInstitute.getShort_name(), mInstitute.getDescription());
+                InstituteAboutFragment fragment = InstituteAboutFragment.newInstance(mInstitute.getShort_name(), mInstitute.getDescription());
+                return fragment;
             case COURSES_POSITION:
                 f = InstituteCoursesFragment.newInstance(mCourses);
                 return f;
             case PLACEMENT_POSITION:
-                return InstitutePlacementFragment.newInstance(p);
+                InstitutePlacementFragment frag = InstitutePlacementFragment.newInstance(p);
+                return frag;
             case QNA_POSITION:
                 q = InstituteQnAFragment.newInstance(mQnAQuestions, mInstitute.getName());
                 return q;

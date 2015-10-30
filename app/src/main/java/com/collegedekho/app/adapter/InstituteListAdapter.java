@@ -30,6 +30,7 @@ import java.util.ArrayList;
  *         Created: 07/07/15
  */
 public class InstituteListAdapter extends RecyclerView.Adapter {
+
     private final ImageLoader mImageLoader;
     private ArrayList<Institute> mInstitutes;
     private Context mContext;
@@ -138,6 +139,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             dislikeProgressBar = (ProgressBar) itemView.findViewById(R.id.dislike_progressBar);
             container = (RelativeLayout) itemView.findViewById(R.id.item_institute_container);
 
+
             likeButton.setOnClickListener(this);
             dislikeButton.setOnClickListener(this);
             itemView.setOnClickListener(this);
@@ -180,7 +182,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                     }
                     else
                         Toast.makeText(mContext, "Already liked..", Toast.LENGTH_SHORT).show();
-                        //mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DELETE_LIKE);
+                    //mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DELETE_LIKE);
                     break;
                 case R.id.button_dislike_college:
                     if (!v.isSelected()) {

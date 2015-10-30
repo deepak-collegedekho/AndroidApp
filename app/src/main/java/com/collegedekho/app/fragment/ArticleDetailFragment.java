@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.fragment;
 
 import android.os.Bundle;
@@ -29,13 +30,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+*/
 /**
  * Created by Suresh Saini on 10/9/15.
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment
  * Use the {@link ArticleDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
-*/
+*//*
+
 
 public class ArticleDetailFragment extends BaseFragment {
     private static final String ARG_ARTICLE = "short_name";
@@ -52,13 +55,15 @@ public class ArticleDetailFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    /**
+    */
+/**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      * @param article A Article object to be displayed.
      * @return A new instance of fragment ArticleFragment.
-     */
+     *//*
+
     public static ArticleDetailFragment newInstance(Articles article , List<Articles> articlesList) {
         ArticleDetailFragment fragment = new ArticleDetailFragment();
         Bundle args = new Bundle();
@@ -80,7 +85,7 @@ public class ArticleDetailFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_article, container, false);
+        rootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
         showArticleUpdate();
         return rootView;
     }
@@ -161,3 +166,4 @@ public class ArticleDetailFragment extends BaseFragment {
             mMainActivity.currentFragment = this;
     }
 }
+*/

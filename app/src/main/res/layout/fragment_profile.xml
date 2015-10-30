@@ -80,7 +80,7 @@
             android:layout_height="wrap_content">
 
             <EditText
-                style="@style/AppTheme.EditText.Profile"
+                style="@style/AppTheme.EditText.TransParent"
                 android:id="@+id/profile_stream"
                 android:focusable="false"
                 android:hint="Stream"
@@ -114,7 +114,7 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    style="@style/AppTheme.EditText.Profile"
+                    style="@style/AppTheme.EditText.TransParent"
                     android:id="@+id/profile_level"
                     android:layout_weight=".9"
                     android:layout_width="0dp"

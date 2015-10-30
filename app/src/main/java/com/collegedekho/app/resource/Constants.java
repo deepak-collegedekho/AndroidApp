@@ -77,9 +77,9 @@ public class Constants
     public static final String TAG_FRAGMENT_QNA_QUESTION_LIST = "fragment_qna_questions_list";
     public static final String TAG_FRAGMENT_WIDGET_LIST = "fragment_widget_list";
     public static final String TAG_FRAGMENT_NEWS_LIST = "fragment_news_list";
-    public static final String TAG_FRAGMENT_NEWS = "fragment_news";
+    public static final String TAG_FRAGMENT_NEWS = "fragment_news_detail";
     public static final String TAG_FRAGMENT_ARTICLES_LIST = "fragment_articles_list";
-    public static final String TAG_FRAGMENT_ARTICLE = "fragment_article";
+    public static final String TAG_FRAGMENT_ARTICLE = "fragment_article_detail";
     public static final String TAG_FRAGMENT_INSTITUTE = "fragment_institute";
     public static final String TAG_FRAGMENT_MY_FB = "fragment_my_fb";
     public static final String TAG_FRAGMENT_MY_FB_ENUMERATION = "fragment_my_fb_enumeration";

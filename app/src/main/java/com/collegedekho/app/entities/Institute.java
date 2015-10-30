@@ -53,6 +53,7 @@ public class Institute implements Parcelable {
     private String current_user_shortlist_url;
     private String current_user_vote_url;
     private int is_shortlisted;
+    private boolean isSelected = false;
 
 
     public Institute() {
@@ -348,6 +349,14 @@ public class Institute implements Parcelable {
 
     public ArrayList<Facility> getFacilities() {
         return facilities;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setIsSelected(boolean isSelected) {
+        this.isSelected = isSelected;
     }
 
     public void setFacilities(ArrayList facilities) {

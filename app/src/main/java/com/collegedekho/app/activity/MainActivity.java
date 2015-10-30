@@ -57,8 +57,7 @@ import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.entities.Widget;
-import com.collegedekho.app.fragment.ArticleDetailFragment;
-import com.collegedekho.app.fragment.ArticleListFragment;
+import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.FilterFragment;
 import com.collegedekho.app.fragment.HomeFragment;
 import com.collegedekho.app.fragment.InstituteDetailFragment;
@@ -69,8 +68,7 @@ import com.collegedekho.app.fragment.InstituteShortlistFragment;
 import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
-import com.collegedekho.app.fragment.NewsDetailFragment;
-import com.collegedekho.app.fragment.NewsListFragment;
+import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
@@ -130,12 +128,12 @@ public class MainActivity extends AppCompatActivity
         StreamFragment.OnStreamInteractionListener,
         InstituteListFragment.OnInstituteSelectedListener,
         OnApplyClickedListener, WidgetListFragment.OnWidgetInteractionListener,
-        NewsListFragment.OnNewsSelectedListener, InstituteQnAFragment.OnQuestionAskedListener,
+        NewsFragment.OnNewsSelectedListener, InstituteQnAFragment.OnQuestionAskedListener,
         FilterFragment.OnFilterInteractionListener, InstituteOverviewFragment.OnInstituteShortlistedListener,
         QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener,
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
-        MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleListFragment.OnArticleSelectedListener,
+        MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleFragment.OnArticleSelectedListener,
         ProfileFragment.onProfileUpdateListener,LoginFragment.OnSignUpListener {
 
     static {
@@ -259,7 +257,7 @@ public class MainActivity extends AppCompatActivity
             public void run() {
                 //Stop the Main Animation and Start Secondary
                 if (currentFragment instanceof SplashFragment)
-                    ((SplashFragment) currentFragment).stopMainAnimation();
+                  ((SplashFragment) currentFragment).stopMainAnimation();
 
                 //Initialize the app
                 init();
@@ -507,7 +505,7 @@ public class MainActivity extends AppCompatActivity
                 position =3;
                 break;
             case R.id.nav_my_shortlists:
-                    fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+                    fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE_LIST);
                 position = 4;
                 break;
             case R.id.nav_my_qna:
@@ -529,7 +527,6 @@ public class MainActivity extends AppCompatActivity
                 getSupportFragmentManager().popBackStack();
             }
             return true;
-
         }
 
         if(this.mWidgets == null || this.mWidgets.size() <= position-1)
@@ -744,8 +741,8 @@ public class MainActivity extends AppCompatActivity
             List<News> news = JSON.std.listOfFrom(News.class, extractResults(response));
             this.mNewsList.addAll(news);
             this.mParseSimilarNews(this.mNewsList);
-            if (currentFragment instanceof NewsListFragment) {
-                ((NewsListFragment) currentFragment).updateList(news, this.next);
+            if (currentFragment instanceof NewsFragment) {
+                ((NewsFragment) currentFragment).updateList(news, this.next);
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -758,8 +755,8 @@ public class MainActivity extends AppCompatActivity
             this.mArticlesList.addAll(articles);
 
             this.mParseSimilarArticle(this.mArticlesList);
-            if (currentFragment instanceof ArticleListFragment) {
-                ((ArticleListFragment) currentFragment).updateList(articles, next);
+            if (currentFragment instanceof ArticleFragment) {
+                ((ArticleFragment) currentFragment).updateList(articles, next);
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -912,11 +909,12 @@ public class MainActivity extends AppCompatActivity
 
         Intent activityIntent = new Intent(MainActivity.this, PsychometricAnalysisActivity.class);
         activityIntent.putExtras(bundle);
-
         this.startActivityForResult(activityIntent, MainActivity.GET_PSYCHOMETRIC_RESULTS);
     }
 
-  @Override
+
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if (requestCode == MainActivity.GET_PSYCHOMETRIC_RESULTS) {
@@ -1385,7 +1383,7 @@ public class MainActivity extends AppCompatActivity
         try {
             this.mNewsList = JSON.std.listOfFrom(News.class, extractResults(response));
             this.mParseSimilarNews(this.mNewsList);
-            this.mDisplayFragment(NewsListFragment.newInstance(new ArrayList<>(this.mNewsList), this.mCurrentTitle, this.next), true, Constants.TAG_FRAGMENT_NEWS_LIST);
+            this.mDisplayFragment(NewsFragment.newInstance(new ArrayList<>(this.mNewsList), this.mCurrentTitle, this.next), true, Constants.TAG_FRAGMENT_NEWS_LIST);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1424,7 +1422,7 @@ public class MainActivity extends AppCompatActivity
         try {
             this.mArticlesList = JSON.std.listOfFrom(Articles.class, extractResults(response));
             this.mParseSimilarArticle(mArticlesList);
-            this.mDisplayFragment(ArticleListFragment.newInstance(new ArrayList<>(this.mArticlesList), this.mCurrentTitle, this.next), true, Constants.TAG_FRAGMENT_ARTICLES_LIST);
+            this.mDisplayFragment(ArticleFragment.newInstance(new ArrayList<>(this.mArticlesList), this.mCurrentTitle, this.next), true, Constants.TAG_FRAGMENT_ARTICLES_LIST);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1894,9 +1892,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onNewsSelected(News news, boolean addToBackstack) {
+    public void onNewsSelected(News news) {
+        if (currentFragment instanceof NewsFragment) {
+            ((NewsFragment) currentFragment).updateNews(news);
+        }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+       /* FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_NEWS);
         if (fragment == null)
             this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackstack, Constants.TAG_FRAGMENT_NEWS);
@@ -1912,12 +1913,14 @@ public class MainActivity extends AppCompatActivity
         MainActivity.GATrackerEvent(Constants.CATEGORY_NEWS, Constants.ACTION_NEWS_SELECTED, String.valueOf(Constants.BASE_URL + "/personalize/" + Constants.WIDGET_NEWS + "/" + news.getId()));
 
         this.connecto.track(Constants.ACTION_NEWS_SELECTED, new Properties().putValue(Constants.ACTION_NEWS_SELECTED, news.getId()));
-    }
+   */ }
 
     @Override
-    public void onArticleSelected(Articles article, boolean addToBackstack) {
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
+    public void onArticleSelected(Articles article) {
+        if (currentFragment instanceof ArticleFragment) {
+            ((ArticleFragment) currentFragment).updateArticle(article);
+        }
+      /*  FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_ARTICLE);
         if (fragment == null)
             this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE);
@@ -1933,7 +1936,7 @@ public class MainActivity extends AppCompatActivity
         MainActivity.GATrackerEvent(Constants.CATEGORY_ARTICLE, Constants.ACTION_ARTICLE_SELECTED, String.valueOf(Constants.BASE_URL + "/personalize/" + Constants.WIDGET_ARTICES + "/" + article.getId()));
 
         this.connecto.track(Constants.ACTION_ARTICLE_SELECTED, new Properties().putValue(Constants.ACTION_ARTICLE_SELECTED, article.getId()));
-    }
+    */}
 
     @Override
     public void onQuestionAsked(QnAQuestions question) {
@@ -2490,8 +2493,8 @@ public class MainActivity extends AppCompatActivity
                         getSupportFragmentManager().popBackStack();
                 } else {
                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                    if(!drawer.isDrawerOpen(Gravity.START))
-                        drawer.openDrawer(Gravity.START);
+                    if(!drawer.isDrawerOpen(GravityCompat.START))
+                        drawer.openDrawer(GravityCompat.START);
                 }
             }
         });
@@ -2544,8 +2547,8 @@ public class MainActivity extends AppCompatActivity
      */
     private boolean isLastFragment()
     {
-        if(currentFragment instanceof  InstituteListFragment || currentFragment instanceof  NewsListFragment
-                || currentFragment instanceof  ArticleListFragment || currentFragment instanceof QnAQuestionsListFragment
+        if(currentFragment instanceof  InstituteListFragment || currentFragment instanceof  NewsFragment
+                || currentFragment instanceof  ArticleFragment || currentFragment instanceof QnAQuestionsListFragment
                 || currentFragment instanceof  MyFutureBuddiesEnumerationFragment)
             return true;
         else

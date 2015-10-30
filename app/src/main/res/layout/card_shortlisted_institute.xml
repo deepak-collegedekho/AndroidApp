@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/AppTheme.StreamsCardView"
-    >
+    style="@style/AppTheme.StreamsCardView">
+
     <LinearLayout
         android:id="@+id/home_frame"
         android:layout_width="match_parent"
@@ -12,14 +12,11 @@
         >
         <com.collegedekho.app.widget.FadeInImageView
             android:id="@+id/shortlisted_institute_image"
-            android:layout_width="match_parent"
+            style="@style/AppTheme.ImageView.FadeInImage"
             android:layout_height="0dp"
             android:layout_weight=".8"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:padding="5dp"
-            android:scaleType="centerCrop"
             />
+
         <TextView
             android:id="@+id/shortlisted_institute_name"
             android:layout_width="match_parent"

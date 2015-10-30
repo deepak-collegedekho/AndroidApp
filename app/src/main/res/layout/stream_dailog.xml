@@ -14,11 +14,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            style="@style/AppTheme.TextView.BlackTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/m15dp"
-            android:paddingRight="@dimen/m15dp"
+            style="@style/AppTheme.TextView.AppTextView"
             android:text="Select Your Stream"/>
 
         <RadioButton
@@ -37,11 +33,8 @@
 
     <TextView
         android:id="@+id/select_level_text"
-        style="@style/AppTheme.TextView.BlackTextView"
-        android:layout_width="wrap_content"
-        android:paddingLeft="@dimen/m15dp"
-        android:paddingRight="@dimen/m15dp"
-        android:layout_height="wrap_content"
+        style="@style/AppTheme.TextView.AppTextView"
+        android:paddingLeft="@dimen/m10dp"
         android:text="Select Your Level"/>
 
     <RadioGroup

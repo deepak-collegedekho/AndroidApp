@@ -16,9 +16,9 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.entities.Articles;
-import com.collegedekho.app.fragment.ArticleListFragment;
 import com.collegedekho.app.resource.Constants;
 
 import java.text.ParseException;
@@ -58,13 +58,14 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rootView = null;
+
         if (type == Constants.TYPE_ARTCLES) {
             rootView = LayoutInflater.from(this.mContext).inflate(R.layout.card_article, parent, false);
         } else if (type == Constants.TYPE_SIMILARLAR_ARTICLES) {
-            rootView = LayoutInflater.from(mContext).inflate(R.layout.card_similar_article, parent, false);
+            rootView = LayoutInflater.from(mContext).inflate(R.layout.card_grid_acrticle, parent, false);
         }
         try {
-            return new ArticleHolder(rootView, (ArticleListFragment.OnArticleSelectedListener) mContext);
+            return new ArticleHolder(rootView, (ArticleFragment.OnArticleSelectedListener) mContext);
         } catch (ClassCastException e) {
             throw new ClassCastException(mContext.toString()
                     + " must implement OnArticleSelectedListener");
@@ -146,6 +147,11 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
     public int getItemCount() {
         return mArticles.size();
     }
+    public void updateArticleAdapter(ArrayList<Articles> articleList){
+        mArticles.clear();
+        mArticles.addAll(articleList);
+        notifyDataSetChanged();;
+    }
 
     class ArticleHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -153,11 +159,11 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
         TextView articlePubDate;
         TextView articleContent;
         NetworkImageView articleImage;
-        ArticleListFragment.OnArticleSelectedListener mListener;
+        ArticleFragment.OnArticleSelectedListener mListener;
         RelativeLayout container;
         TextView streamTypeHeader;
 
-        public ArticleHolder(View itemView, ArticleListFragment.OnArticleSelectedListener listener) {
+        public ArticleHolder(View itemView, ArticleFragment.OnArticleSelectedListener listener) {
             super(itemView);
 
             if (type == Constants.TYPE_ARTCLES) {
@@ -177,7 +183,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-            mListener.onArticleSelected(mArticles.get(getAdapterPosition()), true);
+            mListener.onArticleSelected(mArticles.get(getAdapterPosition()));
         }
     }
 }

@@ -1,64 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/parentScrollView">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <include layout="@layout/fragment_empty"/>
+
+    <RelativeLayout
+        android:id="@+id/news_detail_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin">
+        android:background="@color/light_grey_background"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/view_into_list"
+            style="@style/AppTheme.TextView.AppTextView"
+            android:text="LIST"
+            android:drawableLeft="@drawable/ic_view_list"
+            android:textSize="18sp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/view_into_grid"
+            android:layout_toEndOf="@+id/view_into_grid" />
+
+        <TextView
+            android:id="@+id/view_into_grid"
+            style="@style/AppTheme.TextView.AppTextView"
+            android:text="GRID"
+            android:textSize="18sp"
+            android:drawableLeft="@drawable/ic_view_grid"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <ScrollView
+            android:id="@+id/news_detail_scrollView"
+            android:layout_width="match_parent"
+            android:layout_below="@id/view_into_grid"
+            android:scrollbars="none"
+            android:scrollbarStyle="insideOverlay"
+            android:layout_height="300dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
             <com.collegedekho.app.widget.FadeInImageView
-                android:id="@+id/image_news_expanded"
-                android:layout_width="match_parent"
-                android:layout_height="150dp" />
+                android:id="@+id/news_college_banner"
+                style="@style/AppTheme.ImageView.FadeInImage"
+                android:layout_height="200dp"/>
 
             <TextView
-                android:id="@+id/textview_news_title"
+                android:id="@+id/news_title"
                 style="@style/AppTheme.TextHomeSubHead.Medium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:paddingLeft="@dimen/m16dp"
+                android:paddingRight="@dimen/m16dp"
+                android:textSize="16sp"/>
 
             <TextView
-                android:id="@+id/textview_news_pubdate"
-                style="@style/AppTheme.TextView.style1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="0dp"
+                android:id="@+id/news_pubdate"
+                style="@style/AppTheme.TextView.style3"
                 android:text="July 13, 2015 06:45 PM"
-                android:textSize="14sp" />
+                android:textSize="11sp" />
 
 
             <TextView
-                android:id="@+id/textview_news_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="12sp" />
+                android:id="@+id/news_content"
+                style="@style/AppTheme.TextView.style3"
+                />
+            </LinearLayout>
+        </ScrollView>
 
-        <View
-            style="@style/AppTheme.Divider1"
-            android:id="@+id/divider_similar_news"
-            android:layout_marginTop="2dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp" />
+    </RelativeLayout>
 
-          <TextView
-              style="@style/AppTheme.TextHomeSubHead.Medium"
-              android:id="@+id/similar_newsTV"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:text="Similar News"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/news_list_recyclerView"
+        style="@style/AppTheme.RecyclerView"
+        android:layout_below="@id/news_detail_layout"
+        android:layout_alignParentBottom="true"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/related_news_list"
-                android:scrollbars="none"
-                android:layout_width="match_parent"
-                android:layout_height="100dp" />
-
-    </LinearLayout>
-   </ScrollView>
+</RelativeLayout>

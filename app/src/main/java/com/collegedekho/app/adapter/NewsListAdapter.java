@@ -16,9 +16,9 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.entities.News;
-import com.collegedekho.app.fragment.NewsListFragment;
 import com.collegedekho.app.resource.Constants;
 
 import java.text.ParseException;
@@ -64,10 +64,10 @@ public class NewsListAdapter extends RecyclerView.Adapter {
         }
         else if(type == Constants.TYPE_SIMILARLAR_NEWS)
         {
-            rootView = LayoutInflater.from(this.mContext).inflate(R.layout.card_related_news, parent, false);
+            rootView = LayoutInflater.from(this.mContext).inflate(R.layout.card_grid_news, parent, false);
         }
         try {
-            return new NewsHolder(rootView, (NewsListFragment.OnNewsSelectedListener) mContext);
+            return new NewsHolder(rootView, (NewsFragment.OnNewsSelectedListener) mContext);
         } catch (ClassCastException e) {
             throw new ClassCastException(mContext.toString()
                     + " must implement OnNewsSelectedListener");
@@ -146,18 +146,23 @@ public class NewsListAdapter extends RecyclerView.Adapter {
         return mNews.size();
     }
 
+    public void updateNewsAdapter(ArrayList<News> newsList){
+        mNews.clear();
+        mNews.addAll(newsList);
+        notifyDataSetChanged();;
+    }
+
     class NewsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView newsTitle;
         TextView newsPubDate;
         TextView newsContent;
         NetworkImageView newsImage;
-        NewsListFragment.OnNewsSelectedListener mListener;
-      //  ArrayList<News> relatedNews;
+        NewsFragment.OnNewsSelectedListener mListener;
         RelativeLayout container;
         TextView streamTypeHeader;
 
-        public NewsHolder(View itemView, NewsListFragment.OnNewsSelectedListener listener) {
+        public NewsHolder(View itemView, NewsFragment.OnNewsSelectedListener listener) {
             super(itemView);
 
             if(type == Constants.TYPE_NEWS) {
@@ -176,7 +181,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-                mListener.onNewsSelected(mNews.get(getAdapterPosition()), true);
+                mListener.onNewsSelected(mNews.get(getAdapterPosition()));
         }
     }
 }

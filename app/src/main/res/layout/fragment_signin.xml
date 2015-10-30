@@ -58,9 +58,10 @@
 
 
     <TextView
-        style="@style/AppTheme.TextView.WhiteTextView"
+        style="@style/AppTheme.TextView.AppTextView"
         android:textStyle="bold"
         android:background="@drawable/bg_black_circle"
+        android:textColor="@color/white"
         android:text="OR"
         />
 

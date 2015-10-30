@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
@@ -22,6 +23,7 @@ import com.collegedekho.app.widget.DividerItemDecoration;
 import java.util.ArrayList;
 import java.util.List;
 
+*/
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -29,7 +31,8 @@ import java.util.List;
  * to handle interaction events.
  * Use the {@link ArticleListFragment#newInstance} factory method to
  * create an instance of this fragment.
- */
+ *//*
+
 public class ArticleListFragment extends BaseFragment {
 
     private static final String ARG_ARTICLE = "article";
@@ -133,3 +136,4 @@ public class ArticleListFragment extends BaseFragment {
 
 
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.fragment;
 
 
@@ -30,11 +31,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+*/
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link NewsDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
- */
+ *//*
+
 public class NewsDetailFragment extends BaseFragment {
     private static final String ARG_NEWS = "short_name";
     private static final String TAG = "NewsDetailFragment";
@@ -50,13 +53,15 @@ public class NewsDetailFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    /**
+    */
+/**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      * @param news A News object to be displayed.
      * @return A new instance of fragment InstituteOverviewFragment.
-     */
+     *//*
+
     public static NewsDetailFragment newInstance(News news , List<News> newsList) {
         NewsDetailFragment fragment = new NewsDetailFragment();
         Bundle args = new Bundle();
@@ -78,7 +83,7 @@ public class NewsDetailFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_news, container, false);
+        rootView = inflater.inflate(R.layout.fragment_news_detail, container, false);
         showNewsUpdate();
         return rootView;
     }
@@ -160,3 +165,4 @@ public class NewsDetailFragment extends BaseFragment {
             mMainActivity.currentFragment = this;
     }
 }
+*/

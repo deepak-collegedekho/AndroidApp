@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+*/
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -30,7 +32,8 @@ import java.util.List;
  * to handle interaction events.
  * Use the {@link NewsListFragment#newInstance} factory method to
  * create an instance of this fragment.
- */
+ *//*
+
 public class NewsListFragment extends BaseFragment {
     private static final String ARG_NEWS = "news";
 
@@ -135,3 +138,4 @@ public class NewsListFragment extends BaseFragment {
         void onEndReached(String next, int type);
     }
 }
+*/
