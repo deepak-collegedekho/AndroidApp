@@ -60,9 +60,9 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
         View rootView = null;
 
         if (type == Constants.TYPE_ARTCLES) {
-            rootView = LayoutInflater.from(this.mContext).inflate(R.layout.card_article, parent, false);
+            rootView = LayoutInflater.from(this.mContext).inflate(R.layout.card_article_list_view, parent, false);
         } else if (type == Constants.TYPE_SIMILARLAR_ARTICLES) {
-            rootView = LayoutInflater.from(mContext).inflate(R.layout.card_grid_acrticle, parent, false);
+            rootView = LayoutInflater.from(mContext).inflate(R.layout.card_article_grid_view, parent, false);
         }
         try {
             return new ArticleHolder(rootView, (ArticleFragment.OnArticleSelectedListener) mContext);

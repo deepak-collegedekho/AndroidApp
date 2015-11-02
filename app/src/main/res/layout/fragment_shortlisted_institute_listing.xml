@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,26 +14,12 @@
         android:text="My Wishlist"
         />
 
-    <GridView
-        android:id="@+id/shortlist_container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:horizontalSpacing="@dimen/activity_horizontal_margin"
-        android:numColumns="2"
-        android:verticalSpacing="6dp"
-        android:orientation="vertical"
-        tools:listitem="@layout/card_shortlisted_institute"
-        android:scrollbars="none"
-        />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView_shortList_institute"
+        android:layout_margin="0dp"
+        style="@style/AppTheme.RecyclerView"/>
 
-    <TextView
-        android:id="@android:id/empty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:textSize="16dp" />
+    <include layout="@layout/layout_empty"/>
 
     <include layout="@layout/progressbar"/>
 </LinearLayout>

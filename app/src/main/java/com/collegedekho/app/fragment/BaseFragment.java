@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 /**
  * Created by root on 16/9/15.
  */
-public class BaseFragment extends Fragment {
+public class BaseFragment extends Fragment implements View.OnClickListener{
 
     protected static final String ARG_TITLE = "title";
     protected static final String ARG_NEXT = "next";
@@ -49,6 +49,12 @@ public class BaseFragment extends Fragment {
         }
 
     };
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
     public interface BaseListener{
         void onEndReached(String next, int type);
         void onFilterButtonClicked();

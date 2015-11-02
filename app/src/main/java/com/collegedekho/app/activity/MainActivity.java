@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity
         DataLoadListener,
         StreamFragment.OnStreamInteractionListener,
         InstituteListFragment.OnInstituteSelectedListener,
+        InstituteShortlistFragment.OnShortlistedInstituteSelectedListener,
         OnApplyClickedListener, WidgetListFragment.OnWidgetInteractionListener,
         NewsFragment.OnNewsSelectedListener, InstituteQnAFragment.OnQuestionAskedListener,
         FilterFragment.OnFilterInteractionListener, InstituteOverviewFragment.OnInstituteShortlistedListener,
@@ -134,7 +135,8 @@ public class MainActivity extends AppCompatActivity
         QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener,
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleFragment.OnArticleSelectedListener,
-        ProfileFragment.onProfileUpdateListener,LoginFragment.OnSignUpListener {
+        ProfileFragment.onProfileUpdateListener,LoginFragment.OnSignUpListener
+      {
 
     static {
         Constants.FilterCategoryMap.put(Constants.ID_HOSTEL, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
@@ -222,6 +224,13 @@ public class MainActivity extends AppCompatActivity
         }
 
         this.setContentView(R.layout.activity_main);
+
+        //  hide appBarLayout and toolBar till home screen comes to front
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
+        params.setBehavior(null);
+
+
+
 
         this.connecto = Connecto.with(MainActivity.this);
         //this.connecto.identify("Harsh1234Vardhan", new Traits().putValue("name", "HarshVardhan"));
@@ -547,54 +556,6 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    public void onNavigationDrawerItemSelected(int position , int currentposition) {
-        // update the main content by replacing fragments
-        Fragment fragment = null;
-        if(position ==  0) {
-            //mUpdateNavigationItem(position);
-            mClearBackStack();
-            return;
-        }
-
-        switch (position) {
-            case 1:
-                if(currentposition == 1)
-                    fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
-                break;
-            case 2:
-                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_NEWS_LIST);
-                break;
-            case 3:
-                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_ARTICLES_LIST);
-                break;
-            case 4:
-                if(currentposition == 4)
-                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
-                break;
-            case 5:
-                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
-                break;
-            case 6:
-                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
-                break;
-        }
-        if(fragment != null) {
-
-           // mUpdateNavigationItem(position);
-            int count = getSupportFragmentManager().getBackStackEntryCount();
-            for (int i = 0; i < count-1; i++) {
-                getSupportFragmentManager().popBackStack();
-            }
-            return;
-
-        }
-
-        if(this.mWidgets == null || this.mWidgets.size() <= position-1)
-            return;
-
-        this.onWidgetSelected(mWidgets.get(position - 1), position);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         /*if (!mNavigationDrawerFragment.isDrawerOpen()) {
@@ -798,12 +759,13 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplayShortlistedInstituteList(String response) {
         try {
+
             this.mShortlistedInstituteList = JSON.std.listOfFrom(Institute.class, this.extractResults(response));
 
             Fragment fragment = this.getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE_LIST);
 
             if (fragment == null)
-                this.mDisplayFragment(InstituteShortlistFragment.newInstance(new ArrayList<>(this.mShortlistedInstituteList), this.mCurrentTitle, next), true, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+                this.mDisplayFragment(InstituteShortlistFragment.newInstance(new ArrayList<>(this.mShortlistedInstituteList), this.mCurrentTitle, next), true, Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE_LIST);
             else
             {
                 if (fragment instanceof InstituteShortlistFragment) {
@@ -1517,9 +1479,9 @@ public class MainActivity extends AppCompatActivity
             // unlock navigation drawer when home screen come
             ((DrawerLayout)findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
-            FrameLayout layout =(FrameLayout)findViewById(R.id.container);
-            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) layout.getLayoutParams();
-             params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+            //  show appBarLayout and toolBar
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
+            params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
 
             this.mWidgets = JSON.std.listOfFrom(Widget.class, extractResults(response));
             Fragment widgetListFragment = WidgetListFragment.newInstance(new ArrayList<>(this.mWidgets));

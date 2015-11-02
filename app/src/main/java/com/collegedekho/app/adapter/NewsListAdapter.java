@@ -36,20 +36,20 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
     private static final String TAG = "NewsListAdapter";
     private final SimpleDateFormat sdf;
-    private ArrayList<News> mNews;
+    private ArrayList<News> mNewsList;
     private Context mContext;
     private ImageLoader imageLoader;
-    private int type;
+    private int mViewType;
     // Allows to remember the last item shown on screen
     public int lastPosition = -1;
     private int mNewsChangedPosition = -1;
     private String mNewsStream = "";
     private boolean mNewsStreamChanged;
 
-    public NewsListAdapter(Context context, ArrayList<News> news , int type) {
-        this.mNews = news;
+    public NewsListAdapter(Context context, ArrayList<News> news , int viewType) {
+        this.mNewsList = news;
         this.mContext = context;
-        this.type = type;
+        this.mViewType = viewType;
         this.imageLoader = MySingleton.getInstance(context).getImageLoader();
         this.sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
         this.sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -59,13 +59,12 @@ public class NewsListAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rootView = null;
-        if(type == Constants.TYPE_NEWS) {
-             rootView = LayoutInflater.from(this.mContext).inflate(R.layout.card_news, parent, false);
-        }
-        else if(type == Constants.TYPE_SIMILARLAR_NEWS)
-        {
-            rootView = LayoutInflater.from(this.mContext).inflate(R.layout.card_grid_news, parent, false);
-        }
+        int layoutID = R.layout.card_news_grid_view;
+
+        if(this.mViewType == Constants.VIEW_INTO_LIST)
+            layoutID = R.layout.card_news_list_view;
+
+        rootView = LayoutInflater.from(this.mContext).inflate( layoutID,parent, false);
         try {
             return new NewsHolder(rootView, (NewsFragment.OnNewsSelectedListener) mContext);
         } catch (ClassCastException e) {
@@ -77,14 +76,14 @@ public class NewsListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position)
     {
-        News news = mNews.get(position);
+        News news = this.mNewsList.get(position);
         NewsHolder newsHolder = (NewsHolder) holder;
         newsHolder.newsTitle.setText(Html.fromHtml(news.title));
 
         if (news.image != null && !news.image.isEmpty())
             newsHolder.newsImage.setImageUrl(news.image, imageLoader);
 
-        if(type == Constants.TYPE_NEWS) {
+        if(this.mViewType == Constants.VIEW_INTO_LIST) {
             newsHolder.newsContent.setText(Html.fromHtml(news.content));
             String d = "";
             try {
@@ -97,7 +96,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
             }
             newsHolder.newsPubDate.setText(d);
 
-            if (position == 0 || this.mNewsChangedPosition == position)
+           /* if (position == 0 || this.mNewsChangedPosition == position)
             {
                 if (position == 0)
                     newsHolder.streamTypeHeader.setText(MainActivity.user.getStream_name() + " News");
@@ -114,9 +113,9 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
                 this.mNewsStreamChanged = true;
                 this.mNewsChangedPosition = position;
-            }
+            }*/
 
-            this.setAnimation(newsHolder.container, position);
+            // this.setAnimation(newsHolder.container, position);
         }
     }
 
@@ -143,13 +142,13 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return mNews.size();
+        return this.mNewsList.size();
     }
 
     public void updateNewsAdapter(ArrayList<News> newsList){
-        mNews.clear();
-        mNews.addAll(newsList);
-        notifyDataSetChanged();;
+        this.mNewsList.clear();
+        this.mNewsList.addAll(newsList);
+        notifyDataSetChanged();
     }
 
     class NewsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -165,7 +164,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
         public NewsHolder(View itemView, NewsFragment.OnNewsSelectedListener listener) {
             super(itemView);
 
-            if(type == Constants.TYPE_NEWS) {
+            if(mViewType == Constants.VIEW_INTO_LIST) {
                 newsPubDate = (TextView) itemView.findViewById(R.id.textview_news_pubdate);
                 newsContent = (TextView) itemView.findViewById(R.id.textview_news_content);
                 streamTypeHeader = (TextView) itemView.findViewById(R.id.card_news_heading);
@@ -181,7 +180,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-                mListener.onNewsSelected(mNews.get(getAdapterPosition()));
+            mListener.onNewsSelected(mNewsList.get(getAdapterPosition()));
         }
     }
 }

@@ -1,12 +1,10 @@
-/*
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -17,52 +15,46 @@ import com.collegedekho.app.resource.MySingleton;
 
 import java.util.ArrayList;
 
-public class InstituteShortlistAdapter extends BaseAdapter {
-    private final ImageLoader mImageLoader;
-    private ArrayList<Institute> mInstitutes;
-    private Context mContext;
+/**
+ * Created by sureshsaini on 30/10/15.
+ */
+public class InstituteShortListAdapter1 extends RecyclerView.Adapter {
 
-    public InstituteShortlistAdapter(Context context, ArrayList<Institute> institutes) {
-        this.mInstitutes = institutes;
+    private ArrayList<Institute> mInstitueList;
+    private Context mContext;
+    private ImageLoader mImageLoader;
+
+    public InstituteShortListAdapter1(Context context, ArrayList<Institute> instituteList) {
         this.mContext = context;
+        this.mInstitueList = instituteList;
         this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
     }
 
     @Override
-    public int getCount() {
-        return this.mInstitutes.size();
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.card_shortlisted_institute, parent, false);
+
+        return new ShortlistedInstituteHolder(view);
     }
 
     @Override
-    public Institute getItem(int position) {
-        return this.mInstitutes.get(position);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+        ShortlistedInstituteHolder listHolder=(ShortlistedInstituteHolder)holder;
+        listHolder.setUp(mInstitueList.get(position), mImageLoader);
     }
 
     @Override
-    public long getItemId(int position) {
-        return 0;
+    public int getItemCount() {
+        return mInstitueList.size();
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ShortlistedInstituteHolder holder;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.card_shortlisted_institute, parent, false);
-            holder = new ShortlistedInstituteHolder(convertView);
-            ((CardView) convertView).setPreventCornerOverlap(false);
-            convertView.setTag(holder);
-        } else {
-            holder = (ShortlistedInstituteHolder) convertView.getTag();
-        }
-        holder.setUp(getItem(position), mImageLoader);
-        return convertView;
-    }
-
-    static class ShortlistedInstituteHolder {
+    static class ShortlistedInstituteHolder extends RecyclerView.ViewHolder {
         TextView siName;
         NetworkImageView siImage;
 
         ShortlistedInstituteHolder(View itemView) {
+            super(itemView);
             this.siName = (TextView) itemView.findViewById(R.id.shortlisted_institute_name);
             this.siImage = (NetworkImageView) itemView.findViewById(R.id.shortlisted_institute_image);
             this.siImage.setDefaultImageResId(R.drawable.default_banner);
@@ -78,6 +70,4 @@ public class InstituteShortlistAdapter extends BaseAdapter {
             this.siName.setText(institute.getShort_name());
         }
     }
-
 }
-*/

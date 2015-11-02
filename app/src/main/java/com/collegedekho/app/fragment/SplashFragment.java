@@ -38,9 +38,8 @@ public class SplashFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.splash_screen, container, false);
-        //((WebView)rootView.findViewById(R.id.spalsh_logo_animation)).loadUrl("../assets/splash_animation.html");
 
-         this.mLogoView = (ImageView) rootView.findViewById(R.id.splash_logo_view);
+        this.mLogoView = (ImageView) rootView.findViewById(R.id.splash_logo_view);
         this.noInternetMessage = (TextView) rootView.findViewById(R.id.splash_no_internet_info_layout);
 
         // Load the ImageView that will host the animation and
@@ -50,9 +49,13 @@ public class SplashFragment extends BaseFragment {
         // Get the background, which has been compiled to an AnimationDrawable object.
        this.mFrameAnimation = (AnimationDrawable) this.mLogoView.getBackground();
 
-
         // Start the main animation (looped playback by default).
         this.mFrameAnimation.start();
+
+       // WebView wv = (WebView)rootView.findViewById(R.id.spalsh_logo_animation);
+       // wv.loadUrl("../assets/splash_animation.html");
+
+
 
         return rootView;
     }
@@ -64,7 +67,7 @@ public class SplashFragment extends BaseFragment {
 
     public void stopMainAnimation()
     {
-        this.mFrameAnimation.stop();
+       this.mFrameAnimation.stop();
 
         //Start the secondary animation
         //this.mLogoView.startAnimation(AnimationUtils.loadAnimation(getActivity().getBaseContext(), R.anim.bounce_slow));

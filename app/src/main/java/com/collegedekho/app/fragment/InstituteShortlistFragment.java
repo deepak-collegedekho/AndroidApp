@@ -4,26 +4,20 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.adapter.InstituteShortlistAdapter;
-import com.collegedekho.app.entities.Facet;
-import com.collegedekho.app.entities.Folder;
+import com.collegedekho.app.adapter.InstituteShortListAdapter1;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.widget.tag.textview.ContactsCompletionView;
-import com.collegedekho.app.widget.tag.textview.FilteredArrayAdapter;
-import com.collegedekho.app.widget.tag.textview.TokenCompleteTextView;
+import com.collegedekho.app.widget.GridSpacingItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,11 +38,8 @@ public class InstituteShortlistFragment extends BaseFragment {
     private static final String ARG_FILTER_COUNT = "filter_count";
     private ArrayList<Institute> mShortlistedInstitutes;
     private String mTitle;
-    private InstituteShortlistAdapter mAdapter;
-    private boolean filterAllowed;
-    private int filterCount;
+    private InstituteShortListAdapter1 mAdapter;
     private MainActivity mMainActivity;
-    private TextView mEmptyTextView;
 
     public InstituteShortlistFragment() {
         // Required empty public constructor
@@ -57,11 +48,9 @@ public class InstituteShortlistFragment extends BaseFragment {
     public static InstituteShortlistFragment newInstance(ArrayList<Institute> institutes, String title, String next) {
         InstituteShortlistFragment fragment = new InstituteShortlistFragment();
         Bundle args = new Bundle();
-
         args.putParcelableArrayList(ARG_INSTITUTE, institutes);
         args.putString(ARG_TITLE, title);
         args.putString(ARG_NEXT, next);
-
         fragment.setArguments(args);
         return fragment;
     }
@@ -84,16 +73,14 @@ public class InstituteShortlistFragment extends BaseFragment {
 
         ((TextView) rootView.findViewById(R.id.shortlist_title)).setText(this.mTitle);
         this.progressBarLL = (LinearLayout) rootView.findViewById(R.id.progressBarLL);
-        GridView grid = (GridView) rootView.findViewById(R.id.shortlist_container);
 
-        this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
-
-        if (this.mShortlistedInstitutes.size() == 0)
-            this.mEmptyTextView.setText("No Shortlisted Institutes");
-
-        this.mAdapter = new InstituteShortlistAdapter(getActivity(), this.mShortlistedInstitutes);
-        grid.setAdapter(this.mAdapter);
-
+        RecyclerView recyclerView  = (RecyclerView)rootView.findViewById(R.id.recyclerView_shortList_institute);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        this.mAdapter = new InstituteShortListAdapter1(getActivity(), this.mShortlistedInstitutes);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2,10,true));
+        recyclerView.setAdapter(mAdapter);
+        // recyclerView.addOnScrollListener(scrollListener);
         return rootView;
     }
 
@@ -101,13 +88,13 @@ public class InstituteShortlistFragment extends BaseFragment {
   @Override
     public void onAttach(Context context) {
       super.onAttach(context);
-/*      try {
+     try {
           if(context instanceof  MainActivity)
               listener = (OnShortlistedInstituteSelectedListener) context;
       } catch (ClassCastException e) {
           throw new ClassCastException(context.toString()
                   + " must implement OnInstituteSelectedListener");
-      }*/
+      }
   }
 
     @Override
@@ -116,8 +103,6 @@ public class InstituteShortlistFragment extends BaseFragment {
         outState.putParcelableArrayList(ARG_INSTITUTE, this.mShortlistedInstitutes);
         outState.putString(ARG_TITLE, this.mTitle);
         outState.putString(ARG_NEXT, this.mNextUrl);
-        outState.putBoolean(ARG_FILTER_ALLOWED, this.filterAllowed);
-        outState.putInt(ARG_FILTER_COUNT, this.filterCount);
     }
 
     @Override
@@ -134,17 +119,14 @@ public class InstituteShortlistFragment extends BaseFragment {
 
         if (this.mMainActivity != null)
             this.mMainActivity.currentFragment = this;
+        View view = getView();
+          if(view != null) {
+              if (this.mShortlistedInstitutes.size() == 0)
+                  (view.findViewById(android.R.id.empty)).setVisibility(View.VISIBLE);
+               else
+                  (view.findViewById(android.R.id.empty)).setVisibility(View.GONE);
 
-        if (this.mShortlistedInstitutes.size() == 0)
-        {
-            this.mEmptyTextView.setText("No Shortlisted Institutes");
-            this.mEmptyTextView.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            this.mEmptyTextView.setText("");
-            this.mEmptyTextView.setVisibility(View.GONE);
-        }
+          }
     }
 
     public void clearList() {
@@ -161,13 +143,6 @@ public class InstituteShortlistFragment extends BaseFragment {
     }
 
     public interface OnShortlistedInstituteSelectedListener extends BaseListener {
-        void onInstituteSelected(int position);
-
-        void onInstituteLikedDisliked(int position, int liked);
-
-        void onFilterButtonClicked();
-
-        void onFilterApplied();
 
         @Override
         void onEndReached(String next, int type);

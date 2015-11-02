@@ -3,40 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/fragment_empty"/>
+    <include layout="@layout/layout_empty"/>
 
-    <RelativeLayout
-        android:id="@+id/news_detail_layout"
-        android:layout_width="match_parent"
-        android:background="@color/light_grey_background"
-        android:layout_height="wrap_content">
+    <include
+       android:id="@+id/view_into_grid_list"
+       layout="@layout/layout_grid_list"/>
 
-        <TextView
-            android:id="@+id/view_into_list"
-            style="@style/AppTheme.TextView.AppTextView"
-            android:text="LIST"
-            android:drawableLeft="@drawable/ic_view_list"
-            android:textSize="18sp"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/view_into_grid"
-            android:layout_toEndOf="@+id/view_into_grid" />
-
-        <TextView
-            android:id="@+id/view_into_grid"
-            style="@style/AppTheme.TextView.AppTextView"
-            android:text="GRID"
-            android:textSize="18sp"
-            android:drawableLeft="@drawable/ic_view_grid"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
-
-        <ScrollView
+    <ScrollView
             android:id="@+id/news_detail_scrollView"
             android:layout_width="match_parent"
-            android:layout_below="@id/view_into_grid"
+            android:layout_below="@id/view_into_grid_list"
             android:scrollbars="none"
+            android:background="@color/light_grey_background"
             android:scrollbarStyle="insideOverlay"
-            android:layout_height="300dp">
+            android:layout_height="250dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -46,7 +26,7 @@
             <com.collegedekho.app.widget.FadeInImageView
                 android:id="@+id/news_college_banner"
                 style="@style/AppTheme.ImageView.FadeInImage"
-                android:layout_height="200dp"/>
+                android:layout_height="180dp"/>
 
             <TextView
                 android:id="@+id/news_title"
@@ -60,21 +40,14 @@
                 style="@style/AppTheme.TextView.style3"
                 android:text="July 13, 2015 06:45 PM"
                 android:textSize="11sp" />
-
-
-            <TextView
-                android:id="@+id/news_content"
-                style="@style/AppTheme.TextView.style3"
-                />
             </LinearLayout>
         </ScrollView>
 
-    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/news_list_recyclerView"
         style="@style/AppTheme.RecyclerView"
-        android:layout_below="@id/news_detail_layout"
+        android:layout_below="@id/news_detail_scrollView"
         android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

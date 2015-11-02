@@ -116,10 +116,13 @@ public class Constants
 
     public static final HashMap<Integer, Integer> FilterCategoryMap = new HashMap<Integer, Integer>();
 
-    public static final int TYPE_SIMILARLAR_NEWS = 2;
     public static final int TYPE_NEWS = 1;
-    public static final int TYPE_SIMILARLAR_ARTICLES = 2;
+    public static final int TYPE_SIMILARLAR_NEWS = 2;
     public static final int TYPE_ARTCLES = 1;
+    public static final int TYPE_SIMILARLAR_ARTICLES = 2;
+
+    public static final int VIEW_INTO_GRID  = 1;
+    public static final int VIEW_INTO_LIST  = 2;
 
     public static final int ID_CITY = 1;
     public static final int ID_EXAM = 11;

@@ -22,7 +22,7 @@
             android:background="@drawable/file69"
             android:layout_marginTop="100dp"
             />
-    <!--    <WebView
+   <!-- <WebView
             android:id="@+id/spalsh_logo_animation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"></WebView>-->

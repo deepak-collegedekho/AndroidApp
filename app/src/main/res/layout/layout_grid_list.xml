@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/light_grey_background"
+    android:paddingLeft="@dimen/m15dp">
+
+    <TextView
+        android:id="@+id/view_into_grid"
+        style="@style/AppTheme.TextView.AppTextView"
+        android:text="GRID"
+        android:textSize="18sp"
+        android:drawableLeft="@drawable/ic_view_grid"/>
+
+    <TextView
+        android:id="@+id/view_into_list"
+        style="@style/AppTheme.TextView.AppTextView"
+        android:text="LIST"
+        android:drawableLeft="@drawable/ic_view_list"
+        android:textSize="18sp" />
+
+
+</LinearLayout>

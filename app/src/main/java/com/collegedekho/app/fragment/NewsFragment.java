@@ -2,7 +2,6 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.UiThread;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,8 +20,7 @@ import com.collegedekho.app.adapter.NewsListAdapter;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.resource.TypeFaceTypes;
-import com.collegedekho.app.utils.Utils;
+import com.collegedekho.app.widget.DividerItemDecoration;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,14 +39,14 @@ import java.util.TimeZone;
  * Use the {@link NewsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewsFragment extends BaseFragment {
+public class NewsFragment extends BaseFragment  {
     private static final String ARG_NEWS = "news";
 
     public static final String TITLE = "News";
-    private ArrayList<News> mNews;
+    private ArrayList<News> mNewsList;
     private String mTitle;
     private NewsListAdapter mAdapter;
-
+    private int mViewType = Constants.VIEW_INTO_GRID;
     public NewsFragment() {
         // Required empty public constructor
     }
@@ -67,7 +65,7 @@ public class NewsFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.mNews = getArguments().getParcelableArrayList(ARG_NEWS);
+            this.mNewsList = getArguments().getParcelableArrayList(ARG_NEWS);
             this.mTitle = getArguments().getString(ARG_TITLE);
             this.mNextUrl = getArguments().getString(ARG_NEXT);
             this.listType = Constants.NEWS_TYPE;
@@ -79,34 +77,119 @@ public class NewsFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_news, container, false);
 
-        if (mNews == null || mNews.size() <= 0) {
+        if (this.mNewsList == null || this.mNewsList.size() <= 0) {
             (rootView.findViewById(android.R.id.empty)).setVisibility(View.VISIBLE);
             return rootView;
         }
 
         (rootView.findViewById(android.R.id.empty)).setVisibility(View.GONE);
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
+        (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
+        (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
+      /*  RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        mAdapter = new NewsListAdapter(getActivity(), new ArrayList<News>(), Constants.TYPE_SIMILARLAR_NEWS);
-        recyclerView.setAdapter(mAdapter);
+        this.mAdapter = new NewsListAdapter(getActivity(), new ArrayList<News>(), Constants.VIEW_INTO_GRID);
+        recyclerView.setAdapter(this.mAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         // recyclerView.addOnScrollListener(scrollListener);
-        mUpdateNewsDetail(rootView, mNews.get(0));
+        mUpdateNewsDetail(rootView, this.mNewsList.get(0));*/
+        rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
+        RecyclerView recyclerView1 = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
+        recyclerView1.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mAdapter = new NewsListAdapter(getActivity(), this.mNewsList, Constants.VIEW_INTO_LIST);
+        recyclerView1.setAdapter(mAdapter);
+        recyclerView1.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        recyclerView1.setHasFixedSize(true);
+        recyclerView1.setItemAnimator(new DefaultItemAnimator());
         return rootView;
     }
 
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            if(context instanceof  MainActivity)
+                listener = (OnNewsSelectedListener)context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnNewsSelectedListener");
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(ARG_NEWS, this.mNewsList);
+        outState.putString(ARG_TITLE, this.mTitle);
+        outState.putString(ARG_NEXT, this.mNextUrl);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        MainActivity mMainActivity = (MainActivity) this.getActivity();
+        if (mMainActivity != null)
+            mMainActivity.currentFragment = this;
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        super.onClick(view);
+        switch (view.getId())
+        {
+            case R.id.view_into_grid:
+                View rootView = getView();
+                if(rootView != null && mViewType != Constants.VIEW_INTO_GRID) {
+                    this.mViewType = Constants.VIEW_INTO_GRID;
+                    rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
+                    RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.news_list_recyclerView);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+                    this.mAdapter = new NewsListAdapter(getActivity(), this.mNewsList, Constants.VIEW_INTO_GRID);
+                    recyclerView.setAdapter(this.mAdapter);
+                    recyclerView.setHasFixedSize(true);
+                    recyclerView.setItemAnimator(new DefaultItemAnimator());
+                    this.mUpdateNewsDetail(rootView, this.mNewsList.get(0));
+                }
+                break;
+            case R.id.view_into_list:
+                View rootView1 = getView();
+                if(rootView1 != null && mViewType != Constants.VIEW_INTO_LIST) {
+                    this.mViewType = Constants.VIEW_INTO_LIST;
+                    rootView1.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
+                    RecyclerView recyclerView1 = (RecyclerView) rootView1.findViewById(R.id.news_list_recyclerView);
+                    recyclerView1.setLayoutManager(new LinearLayoutManager(getActivity()));
+                    mAdapter = new NewsListAdapter(getActivity(), this.mNewsList, Constants.VIEW_INTO_LIST);
+                    recyclerView1.setAdapter(mAdapter);
+                    recyclerView1.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+                    recyclerView1.setHasFixedSize(true);
+                    recyclerView1.setItemAnimator(new DefaultItemAnimator());
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     /**
-     * This method update news details
+     * This method is used to display detail of News
+     * @param view
      * @param news
      */
     private void mUpdateNewsDetail(View view, News news)
     {
-         if(view == null || news == null)return;
+        if(view == null || news == null)return;
 
         ((TextView) view.findViewById(R.id.news_title)).setText(Html.fromHtml(news.title));
         //((TextView) view.findViewById(R.id.news_title)).setTypeface(Utils.getTypeFace(getActivity(), TypeFaceTypes.GOTHAMBOOK));
-        ((TextView) view.findViewById(R.id.news_content)).setText(Html.fromHtml(news.content));
         //((TextView) view.findViewById(R.id.news_content)).setTypeface(Utils.getTypeFace(getActivity(), TypeFaceTypes.DROID_SERIF_BOLD));
 
         if (news.image != null && !news.image.isEmpty())
@@ -126,62 +209,25 @@ public class NewsFragment extends BaseFragment {
         }
         ((TextView) view.findViewById(R.id.news_pubdate)).setText(d);
         ArrayList<News> newList = new ArrayList<>();
-        for (News n :mNews ) {
+        for (News n : this.mNewsList) {
             if(n.getId() == news.getId())continue;
             newList.add(n);
         }
         view.findViewById(R.id.news_detail_scrollView).scrollTo(0, 0);
-         mAdapter.updateNewsAdapter(newList);
+
+        mAdapter.updateNewsAdapter(newList);
 
     }
 
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            if(context instanceof  MainActivity)
-                listener = (OnNewsSelectedListener)context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnNewsSelectedListener");
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(ARG_NEWS, this.mNews);
-        outState.putString(ARG_TITLE, this.mTitle);
-        outState.putString(ARG_NEXT, this.mNextUrl);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        listener = null;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        MainActivity mMainActivity = (MainActivity) this.getActivity();
-
-        if (mMainActivity != null)
-            mMainActivity.currentFragment = this;
-
-    }
     public void updateNews(News news)
     {
-
-        View view = getView();
         mUpdateNewsDetail(getView(), news);
     }
     public void updateList(List<News> news, String next) {
        // progressBarLL.setVisibility(View.GONE);
-        this.mNews.addAll(news);
-        mAdapter.notifyDataSetChanged();
+        this.mNewsList.addAll(news);
+        this.mAdapter.notifyDataSetChanged();
         loading = false;
         mNextUrl = next;
     }
