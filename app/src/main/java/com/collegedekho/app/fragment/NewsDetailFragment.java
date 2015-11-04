@@ -1,6 +1,5 @@
-/*
-package com.collegedekho.app.fragment;
 
+package com.collegedekho.app.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,12 +30,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-*/
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link NewsDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
- *//*
+ */
 
 public class NewsDetailFragment extends BaseFragment {
     private static final String ARG_NEWS = "short_name";
@@ -48,19 +47,17 @@ public class NewsDetailFragment extends BaseFragment {
     private NewsListAdapter mAdapter;
     private View rootView;
 
-
     public NewsDetailFragment() {
         // Required empty public constructor
     }
 
-    */
-/**
+    /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      * @param news A News object to be displayed.
      * @return A new instance of fragment InstituteOverviewFragment.
-     *//*
+     */
 
     public static NewsDetailFragment newInstance(News news , List<News> newsList) {
         NewsDetailFragment fragment = new NewsDetailFragment();
@@ -75,8 +72,8 @@ public class NewsDetailFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mNews = getArguments().getParcelable(ARG_NEWS);
-            mNewsList = getArguments().getParcelableArrayList(ARG_NEWSLIST);
+           this.mNews = getArguments().getParcelable(ARG_NEWS);
+           this.mNewsList = getArguments().getParcelableArrayList(ARG_NEWSLIST);
         }
     }
 
@@ -92,12 +89,11 @@ public class NewsDetailFragment extends BaseFragment {
         this.mNews = news;
         showNewsUpdate();
     }
+
     private void showNewsUpdate()
     {
-        if(rootView == null)
-        {
-            return;
-        }
+        if(rootView == null) return;
+
         ((TextView) rootView.findViewById(R.id.textview_news_title)).setText(mNews.title);
         ((TextView) rootView.findViewById(R.id.textview_news_content)).setText(Html.fromHtml(mNews.content));
         if (mNews.image != null && !mNews.image.isEmpty())
@@ -136,9 +132,9 @@ public class NewsDetailFragment extends BaseFragment {
         if(similarNews.size() <=0)
         {
 
-            ((TextView) rootView.findViewById(R.id.similar_newsTV)).setVisibility(View.GONE);
-            ((View) rootView.findViewById(R.id.divider_similar_news)).setVisibility(View.GONE);
-            ((RecyclerView) rootView.findViewById(R.id.related_news_list)).setVisibility(View.GONE);
+           rootView.findViewById(R.id.similar_newsTV).setVisibility(View.GONE);
+           rootView.findViewById(R.id.divider_similar_news).setVisibility(View.GONE);
+           rootView.findViewById(R.id.related_news_list).setVisibility(View.GONE);
         }
         else {
             ScrollView scrollVIew = (ScrollView) rootView.findViewById(R.id.parentScrollView);
@@ -147,9 +143,8 @@ public class NewsDetailFragment extends BaseFragment {
 
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.related_news_list);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-            mAdapter = new NewsListAdapter(getActivity(), similarNews, Constants.TYPE_SIMILARLAR_NEWS);
+            mAdapter = new NewsListAdapter(getActivity(), similarNews, Constants.VIEW_INTO_GRID);
             recyclerView.setAdapter(mAdapter);
-            //recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.HORIZONTAL_LIST));
             recyclerView.setHasFixedSize(true);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
         }
@@ -158,11 +153,10 @@ public class NewsDetailFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
         MainActivity mMainActivity = (MainActivity) this.getActivity();
 
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
     }
 }
-*/
+

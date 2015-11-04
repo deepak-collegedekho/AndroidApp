@@ -6,6 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.collegedekho.app.entities.Articles;
+import com.collegedekho.app.entities.News;
+
 /**
  * Created by root on 16/9/15.
  */
@@ -52,7 +55,11 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
+    }
 
+    public void updateNews(News news) {
+            }
+    public void updateArticle(Articles article) {
     }
 
     public interface BaseListener{

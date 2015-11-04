@@ -16,7 +16,7 @@ import com.collegedekho.app.entities.Stream;
 
 import java.util.ArrayList;
 
-public class StreamFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class StreamFragment extends BaseFragment implements AdapterView.OnItemClickListener {
     private static final String ARG_STREAMS = "streams";
     private static final String ARG_STREAM_UPDATE = "stream_update";
 

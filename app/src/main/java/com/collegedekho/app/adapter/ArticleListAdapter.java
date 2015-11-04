@@ -38,32 +38,28 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
     private ArrayList<Articles> mArticles;
     private Context mContext;
     private ImageLoader imageLoader;
-    private int type;
+    private int mViewType;
     // Allows to remember the last item shown on screen
-    public int lastPosition = -1;
     private int mArticleChangedPosition = -1;
-    private String mArticleStream = "";
     private boolean mArticleStreamChanged;
 
-    public ArticleListAdapter(Context context, ArrayList<Articles> articles, int type) {
+    public ArticleListAdapter(Context context, ArrayList<Articles> articles, int viewType) {
         this.mArticles = articles;
         this.mContext = context;
-        this.type = type;
+        this.mViewType = viewType;
         this.imageLoader = MySingleton.getInstance(context).getImageLoader();
         this.sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
         this.sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        this.mArticleStream = MainActivity.user.getStream_name();
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = null;
+        int layoutID = R.layout.card_article_grid_view;
 
-        if (type == Constants.TYPE_ARTCLES) {
-            rootView = LayoutInflater.from(this.mContext).inflate(R.layout.card_article_list_view, parent, false);
-        } else if (type == Constants.TYPE_SIMILARLAR_ARTICLES) {
-            rootView = LayoutInflater.from(mContext).inflate(R.layout.card_article_grid_view, parent, false);
-        }
+        if(this.mViewType == Constants.VIEW_INTO_LIST)
+            layoutID = R.layout.card_article_list_view;
+
+        View  rootView = LayoutInflater.from(this.mContext).inflate( layoutID,parent, false);
         try {
             return new ArticleHolder(rootView, (ArticleFragment.OnArticleSelectedListener) mContext);
         } catch (ClassCastException e) {
@@ -83,7 +79,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
         if (articles.image != null && !articles.image.isEmpty())
             articleHolder.articleImage.setImageUrl(articles.image, imageLoader);
 
-        if (type == Constants.TYPE_ARTCLES) {
+        if (mViewType == Constants.VIEW_INTO_LIST) {
             articleHolder.articleContent.setText(Html.fromHtml(articles.content));
             String d = "";
             try {
@@ -91,7 +87,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
                 Date date = sdf.parse(articles.published_on);
                 sdf.applyPattern("MMMM d, yyyy KK:mm a");
                 d = sdf.format(date);
-               // this.setAnimation(articleHolder.container, position);
             } catch (ParseException e) {
 
                 Log.e(TAG, "Date format unknown: " + articles.published_on);
@@ -99,7 +94,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
             }
             articleHolder.articlePubDate.setText(d);
 
-            /*if (position == 0 || this.mArticleChangedPosition == position)
+            if (position == 0 || this.mArticleChangedPosition == position)
             {
                 if (position == 0)
                     articleHolder.streamTypeHeader.setText(articles.getStream() + " Articles");
@@ -116,9 +111,8 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
 
                 this.mArticleStreamChanged = true;
                 this.mArticleChangedPosition = position;
-            }*/
+            }
 
-            this.setAnimation(articleHolder.container, position);
         }
 
     }
@@ -129,19 +123,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
         super.onViewDetachedFromWindow(holder);
     }
 
-    /**
-     * Here is the key method to apply the animation
-     */
-    private void setAnimation(View viewToAnimate, int position)
-    {
-        // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition)
-        {
-            Animation animation = AnimationUtils.loadAnimation(this.mContext, android.R.anim.slide_in_left);
-            viewToAnimate.startAnimation(animation);
-            lastPosition = position;
-        }
-    }
 
     @Override
     public int getItemCount() {
@@ -166,7 +147,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
         public ArticleHolder(View itemView, ArticleFragment.OnArticleSelectedListener listener) {
             super(itemView);
 
-            if (type == Constants.TYPE_ARTCLES) {
+            if (mViewType == Constants.VIEW_INTO_LIST) {
                 articlePubDate = (TextView) itemView.findViewById(R.id.textview_article_pubdate);
                 articleContent = (TextView) itemView.findViewById(R.id.textview_article_content);
                 streamTypeHeader = (TextView) itemView.findViewById(R.id.card_article_heading);
@@ -183,7 +164,11 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-            mListener.onArticleSelected(mArticles.get(getAdapterPosition()));
+            boolean flag = false;
+            if(mViewType == Constants.VIEW_INTO_LIST)
+                flag = true;
+
+            mListener.onArticleSelected(mArticles.get(getAdapterPosition()), flag);
         }
     }
 }

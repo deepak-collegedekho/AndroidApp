@@ -13,11 +13,14 @@
     <dimen name="m8dp">8dp</dimen>
     <dimen name="m9dp">9dp</dimen>
     <dimen name="m10dp">10dp</dimen>
+    <dimen name="m12dp">12dp</dimen>
     <dimen name="m15dp">15dp</dimen>
     <dimen name="m16dp">16dp</dimen>
     <dimen name="m20dp">20dp</dimen>
     <dimen name="m25dp">25dp</dimen>
     <dimen name="m30dp">30dp</dimen>
+    <dimen name="m32dp">32dp</dimen>
+    <dimen name="m33dp">33dp</dimen>
     <dimen name="m35dp">35dp</dimen>
     <dimen name="m40dp">40dp</dimen>
     <dimen name="m45dp">45dp</dimen>

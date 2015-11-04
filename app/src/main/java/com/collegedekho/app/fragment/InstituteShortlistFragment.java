@@ -1,10 +1,11 @@
 package com.collegedekho.app.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.adapter.InstituteShortListAdapter1;
+import com.collegedekho.app.adapter.InstituteShortListAdapter;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
@@ -34,12 +35,11 @@ import java.util.List;
 public class InstituteShortlistFragment extends BaseFragment {
     public static final String TITLE = "ShortlistedInstitutes";
     private static final String ARG_INSTITUTE = "institute";
-    private static final String ARG_FILTER_ALLOWED = "filter_allowed";
-    private static final String ARG_FILTER_COUNT = "filter_count";
     private ArrayList<Institute> mShortlistedInstitutes;
     private String mTitle;
-    private InstituteShortListAdapter1 mAdapter;
+    private InstituteShortListAdapter mAdapter;
     private MainActivity mMainActivity;
+    private int mViewType = Constants.VIEW_INTO_GRID;
 
     public InstituteShortlistFragment() {
         // Required empty public constructor
@@ -71,12 +71,20 @@ public class InstituteShortlistFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_shortlisted_institute_listing, container, false);
 
+
+        (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
+        (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
+
         ((TextView) rootView.findViewById(R.id.shortlist_title)).setText(this.mTitle);
         this.progressBarLL = (LinearLayout) rootView.findViewById(R.id.progressBarLL);
 
         RecyclerView recyclerView  = (RecyclerView)rootView.findViewById(R.id.recyclerView_shortList_institute);
+         if(this.mViewType == Constants.VIEW_INTO_GRID)
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        this.mAdapter = new InstituteShortListAdapter1(getActivity(), this.mShortlistedInstitutes);
+        else
+             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+
+        this.mAdapter = new InstituteShortListAdapter(getActivity(), this.mShortlistedInstitutes, this.mViewType);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2,10,true));
         recyclerView.setAdapter(mAdapter);
@@ -127,6 +135,42 @@ public class InstituteShortlistFragment extends BaseFragment {
                   (view.findViewById(android.R.id.empty)).setVisibility(View.GONE);
 
           }
+    }
+
+    @Override
+    public void onClick(View view) {
+        super.onClick(view);
+        switch (view.getId())
+        {
+            case R.id.view_into_grid:
+                View rootView = getView();
+                if(rootView != null && mViewType != Constants.VIEW_INTO_GRID) {
+                    this.mViewType = Constants.VIEW_INTO_GRID;
+                    RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView_shortList_institute);
+                    recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                    this.mAdapter = new InstituteShortListAdapter(getActivity(), this.mShortlistedInstitutes, Constants.VIEW_INTO_GRID);
+                    recyclerView.setAdapter(this.mAdapter);
+                    recyclerView.setHasFixedSize(true);
+                    recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 10, true));
+                }
+
+                break;
+            case R.id.view_into_list:
+                View rootView1 = getView();
+                if(rootView1 != null && mViewType != Constants.VIEW_INTO_LIST) {
+                    this.mViewType = Constants.VIEW_INTO_LIST;
+                    RecyclerView recyclerView1 = (RecyclerView) rootView1.findViewById(R.id.recyclerView_shortList_institute);
+                    recyclerView1.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+                    this.mAdapter = new InstituteShortListAdapter(getActivity(), this.mShortlistedInstitutes, Constants.VIEW_INTO_LIST);
+                    recyclerView1.setAdapter(this.mAdapter);
+                    recyclerView1.setHasFixedSize(true);
+                    recyclerView1.setItemAnimator(new DefaultItemAnimator());
+                }
+                break;
+            default:
+                break;
+
+        }
     }
 
     public void clearList() {

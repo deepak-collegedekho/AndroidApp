@@ -5,77 +5,58 @@
 
     <include layout="@layout/layout_empty"/>
 
-    <RelativeLayout
-        android:id="@+id/article_detail_layout"
+    <include
+        android:id="@+id/view_into_grid_list"
+        layout="@layout/layout_grid_list"/>
+
+    <ScrollView
+        android:id="@+id/article_detail_scrollView"
         android:layout_width="match_parent"
+        android:layout_below="@id/view_into_grid_list"
+        android:scrollbars="none"
         android:background="@color/light_grey_background"
-        android:layout_height="wrap_content">
+        android:scrollbarStyle="insideOverlay"
+        android:layout_height="260dp">
 
-        <TextView
-            android:id="@+id/view_into_list"
-            style="@style/AppTheme.TextView.AppTextView"
-            android:text="LIST"
-            android:drawableLeft="@drawable/ic_view_list"
-            android:textSize="18sp"
-            android:alpha=".5"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/view_into_grid"
-            android:layout_toEndOf="@+id/view_into_grid" />
-
-        <TextView
-            android:id="@+id/view_into_grid"
-            style="@style/AppTheme.TextView.AppTextView"
-            android:text="GRID"
-            android:textSize="18sp"
-            android:drawableLeft="@drawable/ic_view_grid"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
-
-        <ScrollView
-            android:id="@+id/article_detail_scrollView"
+        <LinearLayout
+            android:id="@+id/article_detail_layout"
             android:layout_width="match_parent"
-            android:layout_below="@id/view_into_grid"
-            android:scrollbars="none"
-            android:scrollbarStyle="insideOverlay"
-            android:layout_height="300dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+            <com.collegedekho.app.widget.FadeInImageView
+                android:id="@+id/article_college_banner"
+                style="@style/AppTheme.ImageView.FadeInImage"
+                android:layout_height="170dp"/>
 
-                <com.collegedekho.app.widget.FadeInImageView
-                    android:id="@+id/article_college_banner"
-                    style="@style/AppTheme.ImageView.FadeInImage"
-                    android:layout_height="200dp"/>
+            <TextView
+                android:id="@+id/article_title"
+                style="@style/AppTheme.TextHomeSubHead.Medium"
+                android:paddingLeft="@dimen/m16dp"
+                android:paddingRight="@dimen/m16dp"
+                android:textSize="16sp"/>
 
-                <TextView
-                    android:id="@+id/article_title"
-                    style="@style/AppTheme.TextHomeSubHead.Medium"
-                    android:paddingLeft="@dimen/m16dp"
-                    android:paddingRight="@dimen/m16dp"
-                    android:textSize="16sp"/>
+            <TextView
+                android:id="@+id/article_pubdate"
+                style="@style/AppTheme.TextView.style3"
+                android:text="July 13, 2015 06:45 PM"
+                android:textSize="11sp" />
 
-                <TextView
-                    android:id="@+id/article_pubdate"
-                    style="@style/AppTheme.TextView.style3"
-                    android:text="July 13, 2015 06:45 PM"
-                    android:textSize="11sp" />
+            <TextView
+                android:id="@+id/article_content"
+                style="@style/AppTheme.TextView.style3"
+                android:maxLines="2"
+                android:ellipsize="end"
+                />
 
+        </LinearLayout>
+    </ScrollView>
 
-                <TextView
-                    android:id="@+id/article_content"
-                    style="@style/AppTheme.TextView.style3"
-                    />
-            </LinearLayout>
-        </ScrollView>
-
-    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/article_list_recyclerView"
         style="@style/AppTheme.RecyclerView"
-        android:layout_below="@id/article_detail_layout"
+        android:layout_below="@id/article_detail_scrollView"
         android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

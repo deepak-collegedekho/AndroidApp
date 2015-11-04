@@ -16,9 +16,10 @@
             android:scrollbars="none"
             android:background="@color/light_grey_background"
             android:scrollbarStyle="insideOverlay"
-            android:layout_height="250dp">
+            android:layout_height="260dp">
 
             <LinearLayout
+                android:id="@+id/news_detail_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -26,7 +27,7 @@
             <com.collegedekho.app.widget.FadeInImageView
                 android:id="@+id/news_college_banner"
                 style="@style/AppTheme.ImageView.FadeInImage"
-                android:layout_height="180dp"/>
+                android:layout_height="170dp"/>
 
             <TextView
                 android:id="@+id/news_title"
@@ -40,6 +41,14 @@
                 style="@style/AppTheme.TextView.style3"
                 android:text="July 13, 2015 06:45 PM"
                 android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/news_content"
+                style="@style/AppTheme.TextView.style3"
+                android:maxLines="2"
+                android:ellipsize="end"
+                />
+
             </LinearLayout>
         </ScrollView>
 

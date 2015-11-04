@@ -29,13 +29,11 @@ import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -57,7 +55,9 @@ import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.entities.Widget;
+import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
+import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.fragment.FilterFragment;
 import com.collegedekho.app.fragment.HomeFragment;
 import com.collegedekho.app.fragment.InstituteDetailFragment;
@@ -68,6 +68,7 @@ import com.collegedekho.app.fragment.InstituteShortlistFragment;
 import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
+import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
@@ -104,7 +105,6 @@ import bolts.AppLinks;
 import io.connecto.android.sdk.Connecto;
 import io.connecto.android.sdk.Properties;
 import io.connecto.android.sdk.Traits;
-import io.fabric.sdk.android.Fabric;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity
     public static NetworkUtils networkUtils;
     private Toolbar mToolbar;
     private ActionBarDrawerToggle mToggle;
-            public Fragment currentFragment;
+    public BaseFragment currentFragment;
     private List<Institute> mInstituteList;
     private List<Institute> mShortlistedInstituteList;
     private int currentInstitute;
@@ -919,7 +919,7 @@ public class MainActivity extends AppCompatActivity
                imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
            }
 
-            this.currentFragment = fragment;
+            this.currentFragment = (BaseFragment)fragment;
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -1854,51 +1854,52 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onNewsSelected(News news) {
-        if (currentFragment instanceof NewsFragment) {
-            ((NewsFragment) currentFragment).updateNews(news);
-        }
+    public void onNewsSelected(News news , boolean addToBackstack) {
 
-       /* FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_NEWS);
-        if (fragment == null)
-            this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackstack, Constants.TAG_FRAGMENT_NEWS);
+        if (!addToBackstack) {
+            this. currentFragment.updateNews(news);
+        }
         else {
-            if (fragment instanceof NewsDetailFragment) {
-                ((NewsDetailFragment) fragment).updateNews(news);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_NEWS_DETAIL);
+            if (fragment == null)
+                this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackstack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
+            else {
+                if (fragment instanceof NewsDetailFragment) {
+                    ((NewsDetailFragment) fragment).updateNews(news);
+                }
+                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_NEWS_DETAIL);
             }
-
-            this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_NEWS);
+            //Send GA and Connecto event for news selected
+            MainActivity.GATrackerEvent(Constants.CATEGORY_NEWS, Constants.ACTION_NEWS_SELECTED, String.valueOf(Constants.BASE_URL + "/personalize/" + Constants.WIDGET_NEWS + "/" + news.getId()));
+            this.connecto.track(Constants.ACTION_NEWS_SELECTED, new Properties().putValue(Constants.ACTION_NEWS_SELECTED, news.getId()));
         }
-
-        //Send GA and Connecto event for news selected
-        MainActivity.GATrackerEvent(Constants.CATEGORY_NEWS, Constants.ACTION_NEWS_SELECTED, String.valueOf(Constants.BASE_URL + "/personalize/" + Constants.WIDGET_NEWS + "/" + news.getId()));
-
-        this.connecto.track(Constants.ACTION_NEWS_SELECTED, new Properties().putValue(Constants.ACTION_NEWS_SELECTED, news.getId()));
-   */ }
+    }
 
     @Override
-    public void onArticleSelected(Articles article) {
-        if (currentFragment instanceof ArticleFragment) {
-            ((ArticleFragment) currentFragment).updateArticle(article);
+    public void onArticleSelected(Articles article, boolean addToBackstack) {
+        if (!addToBackstack) {
+            this. currentFragment.updateArticle(article);
         }
-      /*  FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_ARTICLE);
-        if (fragment == null)
-            this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE);
         else {
-            if (fragment instanceof ArticleDetailFragment) {
-                ((ArticleDetailFragment) fragment).updateArticle(article);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
+            if (fragment == null)
+                this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
+            else {
+                if (fragment instanceof ArticleDetailFragment) {
+                    ((ArticleDetailFragment) fragment).updateArticle(article);
+                }
+
+                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
             }
 
-            this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_ARTICLE);
+            //Send GA and Connecto event for article selected
+            MainActivity.GATrackerEvent(Constants.CATEGORY_ARTICLE, Constants.ACTION_ARTICLE_SELECTED, String.valueOf(Constants.BASE_URL + "/personalize/" + Constants.WIDGET_ARTICES + "/" + article.getId()));
+
+            this.connecto.track(Constants.ACTION_ARTICLE_SELECTED, new Properties().putValue(Constants.ACTION_ARTICLE_SELECTED, article.getId()));
         }
-
-        //Send GA and Connecto event for article selected
-        MainActivity.GATrackerEvent(Constants.CATEGORY_ARTICLE, Constants.ACTION_ARTICLE_SELECTED, String.valueOf(Constants.BASE_URL + "/personalize/" + Constants.WIDGET_ARTICES + "/" + article.getId()));
-
-        this.connecto.track(Constants.ACTION_ARTICLE_SELECTED, new Properties().putValue(Constants.ACTION_ARTICLE_SELECTED, article.getId()));
-    */}
+    }
 
     @Override
     public void onQuestionAsked(QnAQuestions question) {

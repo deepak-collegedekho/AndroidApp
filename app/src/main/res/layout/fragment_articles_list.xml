@@ -1,27 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textview_page_title"
-        style="@style/AppTheme.TextView.page_title"
-        android:text="All Articles" />
+    <include layout="@layout/layout_empty"/>
 
-    <TextView
-        android:id="@android:id/empty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:textSize="16sp" />
+    <include
+        android:id="@+id/view_into_grid_list"
+        layout="@layout/layout_grid_list"/>
+
+    <ScrollView
+        android:id="@+id/article_detail_scrollView"
+        android:layout_width="match_parent"
+        android:layout_below="@id/view_into_grid_list"
+        android:scrollbars="none"
+        android:background="@color/light_grey_background"
+        android:scrollbarStyle="insideOverlay"
+        android:layout_height="250dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.collegedekho.app.widget.FadeInImageView
+                android:id="@+id/article_college_banner"
+                style="@style/AppTheme.ImageView.FadeInImage"
+                android:layout_height="180dp"/>
+
+            <TextView
+                android:id="@+id/article_title"
+                style="@style/AppTheme.TextHomeSubHead.Medium"
+                android:paddingLeft="@dimen/m16dp"
+                android:paddingRight="@dimen/m16dp"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/article_pubdate"
+                style="@style/AppTheme.TextView.style3"
+                android:text="July 13, 2015 06:45 PM"
+                android:textSize="11sp" />
+        </LinearLayout>
+    </ScrollView>
+
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/articles_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/textview_page_title" />
+        android:id="@+id/article_list_recyclerView"
+        style="@style/AppTheme.RecyclerView"
+        android:layout_below="@id/article_detail_scrollView"
+        android:layout_alignParentBottom="true"/>
 
-    <include layout="@layout/progressbar"/>
 </RelativeLayout>

@@ -15,6 +15,7 @@
         android:layout_width="@dimen/m60dp"
         android:layout_height="@dimen/m60dp"
         android:layout_marginTop="@dimen/m20dp"
+        android:visibility="gone"
         android:src="@android:drawable/sym_def_app_icon"
         android:id="@+id/nav_header_profile_image" />
 

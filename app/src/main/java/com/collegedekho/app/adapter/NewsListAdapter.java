@@ -58,13 +58,12 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = null;
         int layoutID = R.layout.card_news_grid_view;
 
         if(this.mViewType == Constants.VIEW_INTO_LIST)
             layoutID = R.layout.card_news_list_view;
 
-        rootView = LayoutInflater.from(this.mContext).inflate( layoutID,parent, false);
+       View  rootView = LayoutInflater.from(this.mContext).inflate( layoutID,parent, false);
         try {
             return new NewsHolder(rootView, (NewsFragment.OnNewsSelectedListener) mContext);
         } catch (ClassCastException e) {
@@ -96,7 +95,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
             }
             newsHolder.newsPubDate.setText(d);
 
-           /* if (position == 0 || this.mNewsChangedPosition == position)
+            if (position == 0 || this.mNewsChangedPosition == position)
             {
                 if (position == 0)
                     newsHolder.streamTypeHeader.setText(MainActivity.user.getStream_name() + " News");
@@ -113,7 +112,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
                 this.mNewsStreamChanged = true;
                 this.mNewsChangedPosition = position;
-            }*/
+            }
 
             // this.setAnimation(newsHolder.container, position);
         }
@@ -123,20 +122,6 @@ public class NewsListAdapter extends RecyclerView.Adapter {
     public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
         holder.itemView.clearAnimation();
         super.onViewDetachedFromWindow(holder);
-    }
-
-    /**
-     * Here is the key method to apply the animation
-     */
-    private void setAnimation(View viewToAnimate, int position)
-    {
-        // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition)
-        {
-            Animation animation = AnimationUtils.loadAnimation(this.mContext, android.R.anim.slide_in_left);
-            viewToAnimate.startAnimation(animation);
-            lastPosition = position;
-        }
     }
 
 
@@ -180,7 +165,10 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-            mListener.onNewsSelected(mNewsList.get(getAdapterPosition()));
+            boolean flag = false;
+            if(mViewType == Constants.VIEW_INTO_LIST)
+                flag = true;
+            mListener.onNewsSelected(mNewsList.get(getAdapterPosition()), flag);
         }
     }
 }

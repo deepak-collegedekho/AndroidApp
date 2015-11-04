@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/AppTheme.StreamsCardView">
+
+    <RelativeLayout
+        android:id="@+id/home_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <TextView
+            android:id="@+id/shortlisted_institute_name"
+            style="@style/AppTheme.TextView.style2"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:paddingBottom="10dp"
+            android:singleLine="true"
+            android:text="Institute Name"
+            android:textSize="16sp"/>
+
+        <com.collegedekho.app.widget.FadeInImageView
+            android:id="@+id/shortlisted_institute_image"
+            style="@style/AppTheme.ImageView.FadeInImage"
+            android:layout_height="120dp"
+            android:layout_below="@id/shortlisted_institute_name" />
+
+
+        <TextView
+            style="@style/AppTheme.TextView.style2"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/m5dp"
+            android:paddingTop="@dimen/m10dp"
+            android:paddingLeft="@dimen/m5dp"
+            android:singleLine="true"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/shortlisted_institute_image"
+            android:text="Facilities"
+            android:textSize="14sp"
+            android:id="@+id/textView2" />
+
+        <TextView
+            android:id="@+id/shortlisted_institute_like_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/m5dp"
+            android:layout_marginRight="@dimen/m5dp"
+            android:layout_below="@+id/shortlisted_institute_image"
+            android:text="3"
+            android:gravity="center"
+            android:drawableRight="@drawable/ic_thumb_like"
+            android:drawableTint="@color/bg_category_background"
+            android:layout_alignTop="@+id/textView2"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+
+        <LinearLayout
+            android:id="@+id/college_facility_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/shortlisted_institute_like_count"
+            android:orientation="horizontal">
+
+            <include layout="@layout/item_shortlist_facility" />
+
+            <include layout="@layout/item_shortlist_facility" />
+
+            <include layout="@layout/item_shortlist_facility" />
+
+            <include layout="@layout/item_shortlist_facility" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

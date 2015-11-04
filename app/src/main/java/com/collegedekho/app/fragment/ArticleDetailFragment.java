@@ -1,4 +1,4 @@
-/*
+
 package com.collegedekho.app.fragment;
 
 import android.os.Bundle;
@@ -30,14 +30,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-*/
+
 /**
  * Created by Suresh Saini on 10/9/15.
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment
  * Use the {@link ArticleDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
-*//*
+*/
 
 
 public class ArticleDetailFragment extends BaseFragment {
@@ -55,14 +55,14 @@ public class ArticleDetailFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    */
+
 /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      * @param article A Article object to be displayed.
      * @return A new instance of fragment ArticleFragment.
-     *//*
+     */
 
     public static ArticleDetailFragment newInstance(Articles article , List<Articles> articlesList) {
         ArticleDetailFragment fragment = new ArticleDetailFragment();
@@ -138,9 +138,9 @@ public class ArticleDetailFragment extends BaseFragment {
         if(similarArticle.size() <=0)
         {
 
-            ((TextView) rootView.findViewById(R.id.similar_articleTV)).setVisibility(View.GONE);
-            ((View) rootView.findViewById(R.id.divider_similar_article)).setVisibility(View.GONE);
-            ((RecyclerView) rootView.findViewById(R.id.related_article_list)).setVisibility(View.GONE);
+             rootView.findViewById(R.id.similar_articleTV).setVisibility(View.GONE);
+             rootView.findViewById(R.id.divider_similar_article).setVisibility(View.GONE);
+             rootView.findViewById(R.id.related_article_list).setVisibility(View.GONE);
         }
         else {
             ScrollView scrollVIew = (ScrollView) rootView.findViewById(R.id.parentScrollView);
@@ -149,7 +149,7 @@ public class ArticleDetailFragment extends BaseFragment {
 
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.related_article_list);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-            mAdapter = new ArticleListAdapter(getActivity(), similarArticle, Constants.TYPE_SIMILARLAR_ARTICLES);
+            mAdapter = new ArticleListAdapter(getActivity(), similarArticle, Constants.VIEW_INTO_GRID);
             recyclerView.setAdapter(mAdapter);
             recyclerView.setHasFixedSize(true);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -166,4 +166,4 @@ public class ArticleDetailFragment extends BaseFragment {
             mMainActivity.currentFragment = this;
     }
 }
-*/
+

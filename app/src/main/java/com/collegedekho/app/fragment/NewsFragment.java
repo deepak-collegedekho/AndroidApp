@@ -47,6 +47,8 @@ public class NewsFragment extends BaseFragment  {
     private String mTitle;
     private NewsListAdapter mAdapter;
     private int mViewType = Constants.VIEW_INTO_GRID;
+    private News mNews;
+
     public NewsFragment() {
         // Required empty public constructor
     }
@@ -68,7 +70,7 @@ public class NewsFragment extends BaseFragment  {
             this.mNewsList = getArguments().getParcelableArrayList(ARG_NEWS);
             this.mTitle = getArguments().getString(ARG_TITLE);
             this.mNextUrl = getArguments().getString(ARG_NEXT);
-            this.listType = Constants.NEWS_TYPE;
+            
         }
     }
 
@@ -85,22 +87,23 @@ public class NewsFragment extends BaseFragment  {
         (rootView.findViewById(android.R.id.empty)).setVisibility(View.GONE);
         (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
         (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
-      /*  RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        this.mAdapter = new NewsListAdapter(getActivity(), new ArrayList<News>(), Constants.VIEW_INTO_GRID);
+        (rootView).findViewById(R.id.news_detail_layout).setOnClickListener(this);
+       RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
+        if(mViewType == Constants.VIEW_INTO_GRID) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+            rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
+        }
+        else {
+
+            rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        }
+        this.mAdapter = new NewsListAdapter(getActivity(), new ArrayList<News>(), mViewType);
         recyclerView.setAdapter(this.mAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        // recyclerView.addOnScrollListener(scrollListener);
-        mUpdateNewsDetail(rootView, this.mNewsList.get(0));*/
-        rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
-        RecyclerView recyclerView1 = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
-        recyclerView1.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mAdapter = new NewsListAdapter(getActivity(), this.mNewsList, Constants.VIEW_INTO_LIST);
-        recyclerView1.setAdapter(mAdapter);
-        recyclerView1.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        recyclerView1.setHasFixedSize(true);
-        recyclerView1.setItemAnimator(new DefaultItemAnimator());
+        mUpdateNewsDetail(rootView, this.mNewsList.get(0));
+
         return rootView;
     }
 
@@ -151,7 +154,7 @@ public class NewsFragment extends BaseFragment  {
                 if(rootView != null && mViewType != Constants.VIEW_INTO_GRID) {
                     this.mViewType = Constants.VIEW_INTO_GRID;
                     rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
-                    RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.news_list_recyclerView);
+                    RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
                     this.mAdapter = new NewsListAdapter(getActivity(), this.mNewsList, Constants.VIEW_INTO_GRID);
                     recyclerView.setAdapter(this.mAdapter);
@@ -166,13 +169,16 @@ public class NewsFragment extends BaseFragment  {
                     this.mViewType = Constants.VIEW_INTO_LIST;
                     rootView1.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
                     RecyclerView recyclerView1 = (RecyclerView) rootView1.findViewById(R.id.news_list_recyclerView);
-                    recyclerView1.setLayoutManager(new LinearLayoutManager(getActivity()));
-                    mAdapter = new NewsListAdapter(getActivity(), this.mNewsList, Constants.VIEW_INTO_LIST);
-                    recyclerView1.setAdapter(mAdapter);
-                    recyclerView1.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+                    recyclerView1.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+                    this.mAdapter = new NewsListAdapter(getActivity(), this.mNewsList, Constants.VIEW_INTO_LIST);
+                    recyclerView1.setAdapter(this.mAdapter);
                     recyclerView1.setHasFixedSize(true);
                     recyclerView1.setItemAnimator(new DefaultItemAnimator());
                 }
+                break;
+            case R.id.news_detail_layout:
+
+                (( MainActivity)getActivity()).onNewsSelected(this.mNews, true);
                 break;
             default:
                 break;
@@ -187,8 +193,9 @@ public class NewsFragment extends BaseFragment  {
     private void mUpdateNewsDetail(View view, News news)
     {
         if(view == null || news == null)return;
-
+        mNews= news;
         ((TextView) view.findViewById(R.id.news_title)).setText(Html.fromHtml(news.title));
+        ((TextView) view.findViewById(R.id.news_content)).setText(Html.fromHtml(news.content));
         //((TextView) view.findViewById(R.id.news_title)).setTypeface(Utils.getTypeFace(getActivity(), TypeFaceTypes.GOTHAMBOOK));
         //((TextView) view.findViewById(R.id.news_content)).setTypeface(Utils.getTypeFace(getActivity(), TypeFaceTypes.DROID_SERIF_BOLD));
 
@@ -232,7 +239,7 @@ public class NewsFragment extends BaseFragment  {
         mNextUrl = next;
     }
     public interface OnNewsSelectedListener extends  BaseListener{
-        void onNewsSelected(News news);
+        void onNewsSelected(News news, boolean flag);
 
         @Override
         void onEndReached(String next, int type);

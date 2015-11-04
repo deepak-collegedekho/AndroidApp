@@ -23,7 +23,7 @@ import com.collegedekho.app.resource.Constants;
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends BaseFragment {
     public static final String TITLE = "Home";
 
 
