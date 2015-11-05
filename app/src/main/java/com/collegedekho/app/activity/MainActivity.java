@@ -229,9 +229,6 @@ public class MainActivity extends AppCompatActivity
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
         params.setBehavior(null);
 
-
-
-
         this.connecto = Connecto.with(MainActivity.this);
         //this.connecto.identify("Harsh1234Vardhan", new Traits().putValue("name", "HarshVardhan"));
         //You can also track any event if you want
@@ -253,7 +250,7 @@ public class MainActivity extends AppCompatActivity
         this.mSetupGTM();
 
         this.mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(this.mToolbar);
+        this.setSupportActionBar(this.mToolbar);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -291,7 +288,7 @@ public class MainActivity extends AppCompatActivity
         }, Constants.MAIN_ANIMATION_TIME);
 
         // TODO: Move this to where you establish a user session
-        logUser();
+        //logUser();
     }
 
     private void logUser() {
@@ -406,7 +403,6 @@ public class MainActivity extends AppCompatActivity
                 Container container = containerHolder.getContainer();
                 if (!containerHolder.getStatus().isSuccess()) {
                     Log.e("CollegeDekho", "failure loading container");
-                    //displayErrorToUser(R.string.load_error);
                     return;
                 }
                 ContainerHolderSingleton.setContainerHolder(containerHolder);
@@ -458,7 +454,7 @@ public class MainActivity extends AppCompatActivity
             if (sp.contains(Constants.KEY_USER)) {
                 MainActivity.user = JSON.std.beanFrom(User.class, sp.getString(Constants.KEY_USER, null));
                 this.networkUtils.setToken(MainActivity.user.getToken());
-                this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()));
+                this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()).putValue(Constants.USER_STREAM_NAME, MainActivity.user.getStream_name()).putValue(Constants.USER_LEVEL_NAME, MainActivity.user.getLevel_name()));
                 this.connecto.track("Session Started", new Properties().putValue("session_start_datetime", new Date().toString()));
 
                 // this code for backward compatibility because in first release user stream and level
@@ -491,8 +487,7 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) this.findViewById(R.id.drawer_layout);
         int id = item.getItemId();
         Fragment fragment = null;
         int position=0;
@@ -874,8 +869,6 @@ public class MainActivity extends AppCompatActivity
         this.startActivityForResult(activityIntent, MainActivity.GET_PSYCHOMETRIC_RESULTS);
     }
 
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
@@ -913,7 +906,6 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplayFragment(Fragment fragment, boolean addToBackstack, String tag) {
        try {
-
            if (this.getCurrentFocus() != null && this.getCurrentFocus() instanceof EditText) {
                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
@@ -936,7 +928,7 @@ public class MainActivity extends AppCompatActivity
                 if (findViewById(R.id.app_bar_layout).getVisibility() != View.VISIBLE)
                     findViewById(R.id.app_bar_layout).setVisibility(View.VISIBLE);
             }
-           mShouldDisplayHomeUp();
+           this.mShouldDisplayHomeUp();
 
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
@@ -1152,21 +1144,21 @@ public class MainActivity extends AppCompatActivity
         user.setToken(token);
         user.setImage(image);
 
-        String u = null;
         try {
+            String u = null;
             u = JSON.std.asString(user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
 
         //GA Event for Stream and Level update
-        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_STREAM_UPDATED, "Stream Updated");
-        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_LEVEL_UPDATED, "Level Updated");
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_STREAM_UPDATED, MainActivity.user.getStream_name());
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_LEVEL_UPDATED, MainActivity.user.getLevel_name());
 
         //Send event to connecto for stream and level update
-        this.connecto.track(Constants.ACTION_STREAM_UPDATED, new Properties().putValue(Constants.USER_STREAM_NAME, user.getStream_name()));
-        this.connecto.track(Constants.ACTION_LEVEL_UPDATED, new Properties().putValue(Constants.USER_LEVEL_NAME, user.getLevel_name()));
+        this.connecto.track(Constants.ACTION_STREAM_UPDATED, new Properties().putValue(Constants.USER_STREAM_NAME, MainActivity.user.getStream_name()));
+        this.connecto.track(Constants.ACTION_LEVEL_UPDATED, new Properties().putValue(Constants.USER_LEVEL_NAME, MainActivity.user.getLevel_name()));
     }
 
     //Saved on DB, now save it in shared preferences.
@@ -1175,25 +1167,30 @@ public class MainActivity extends AppCompatActivity
         String token = user.getToken();
         //TODO: May be we can make a new pref entry for token
         try {
-            user = JSON.std.beanFrom(User.class, response);
+            MainActivity.user = JSON.std.beanFrom(User.class, response);
         } catch (IOException e) {
             e.printStackTrace();
         }
         //save the preferences locally
-        user.setPref(User.Prefs.STREAMKNOWN);
-        user.setToken(token);
+        MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
+        MainActivity.user.setToken(token);
 
         if (streamName != "" && streamName != null)
-            user.setStream_name(streamName);
+            MainActivity.user.setStream_name(streamName);
 
-        String u = null;
-        try {
-            u = JSON.std.asString(user);
+        try
+        {
+            String user = "";
+            user = JSON.std.asString(MainActivity.user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, user).commit();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+        //GA Event for Stream and Level update
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_STREAM_SELECTED, user.getStream_name());
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_LEVEL_SELECTED, user.getLevel_name());
+
         //Send event to connecto for stream and level selection
         this.connecto.track("Stream Selected", new Properties().putValue(Constants.USER_STREAM_NAME, user.getStream_name()));
         this.connecto.track("Level Selected", new Properties().putValue(Constants.USER_LEVEL_NAME, user.getLevel_name()));
@@ -1261,44 +1258,12 @@ public class MainActivity extends AppCompatActivity
 
     private void updateLikeButton(String response, String extraTag, int like) {
         Institute institute = this.mInstituteList.get(Integer.parseInt(extraTag));
-        if (like == Constants.NEITHER_LIKE_NOR_DISLIKE) {
+        if (like == Constants.NEITHER_LIKE_NOR_DISLIKE)
+        {
             institute.setCurrent_user_vote_type(Constants.NEITHER_LIKE_NOR_DISLIKE);
             institute.setCurrent_user_vote_url(null);
-        } else {
-            try {
-                institute.setCurrent_user_vote_type(like);
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-            }
-        }
-        if (currentFragment instanceof InstituteListFragment) {
-            ((InstituteListFragment) currentFragment).updateButtons(Integer.parseInt(extraTag));
-        }
+            institute.setUpvotes(institute.getUpvotes() - 1);
 
-        if (like == Constants.LIKE_THING)
-        {
-            this.connecto.track(Constants.ACTION_INSTITUTE_LIKED, new Properties().putValue(Constants.TAG_INSTITUTE_LIKE_DISLIKE, Constants.LIKE_THING).putValue(institute.getShort_name(), Constants.LIKE_THING).putValue(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri()));
-
-            //GA Event for institute liked
-            MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_LIKED,
-                    "Institute ID: " + String.valueOf(institute.getId()) +
-                            "Institute Name: " + institute.getShort_name() +
-                            "Disliked institute: " + String.valueOf(like));
-
-        }
-        else if (like == Constants.DISLIKE_THING)
-        {
-            this.connecto.track(Constants.ACTION_INSTITUTE_DISLIKED, new Properties().putValue(Constants.TAG_INSTITUTE_LIKE_DISLIKE, Constants.DISLIKE_THING).putValue(institute.getShort_name(), Constants.DISLIKE_THING).putValue(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri()));
-
-            //GA Event for institute disliked
-            MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_DISLIKED,
-                    "Institute ID: " + String.valueOf(institute.getId()) +
-                            "Institute Name: " + institute.getShort_name() +
-                            "Disliked institute: " + String.valueOf(like));
-
-        }
-        else if (like == Constants.NEITHER_LIKE_NOR_DISLIKE)
-        {
             this.connecto.track(Constants.ACTION_INSTITUTE_LIKING_UNBIASED, new Properties().putValue(Constants.TAG_INSTITUTE_LIKE_DISLIKE, Constants.NEITHER_LIKE_NOR_DISLIKE).putValue(institute.getShort_name(), Constants.NEITHER_LIKE_NOR_DISLIKE).putValue(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri()));
 
             //GA Event for institute liked neutralized
@@ -1307,10 +1272,43 @@ public class MainActivity extends AppCompatActivity
                             "Institute Name: " + institute.getShort_name() +
                             "Disliked institute: " + String.valueOf(like));
 
+        } else {
+            try {
+                institute.setCurrent_user_vote_type(like);
+
+                if (like == Constants.LIKE_THING)
+                {
+                    institute.setUpvotes(institute.getUpvotes() + 1);
+
+                    this.connecto.track(Constants.ACTION_INSTITUTE_LIKED, new Properties().putValue(Constants.TAG_INSTITUTE_LIKE_DISLIKE, Constants.LIKE_THING).putValue(institute.getShort_name(), Constants.LIKE_THING).putValue(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri()));
+
+                    //GA Event for institute liked
+                    MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_LIKED,
+                            "Institute ID: " + String.valueOf(institute.getId()) +
+                                    "Institute Name: " + institute.getShort_name() +
+                                    "Disliked institute: " + String.valueOf(like));
+
+                }
+                else if (like == Constants.DISLIKE_THING)
+                {
+                    this.connecto.track(Constants.ACTION_INSTITUTE_DISLIKED, new Properties().putValue(Constants.TAG_INSTITUTE_LIKE_DISLIKE, Constants.DISLIKE_THING).putValue(institute.getShort_name(), Constants.DISLIKE_THING).putValue(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri()));
+
+                    //GA Event for institute disliked
+                    MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_DISLIKED,
+                            "Institute ID: " + String.valueOf(institute.getId()) +
+                                    "Institute Name: " + institute.getShort_name() +
+                                    "Disliked institute: " + String.valueOf(like));
+                }
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
+        }
+        if (currentFragment instanceof InstituteListFragment) {
+            ((InstituteListFragment) currentFragment).updateButtons(Integer.parseInt(extraTag));
         }
     }
 
-    private void updateShortlistInstitute(String response, String extraTag)
+    /*private void updateShortlistInstitute(String response, String extraTag)
     {
         Institute institute = this.mInstituteList.get(Integer.parseInt(extraTag));
         String message = null;
@@ -1339,6 +1337,35 @@ public class MainActivity extends AppCompatActivity
                 ((InstituteDetailFragment) currentFragment).updateInstituteShortlist();
 
         Toast.makeText(this, institute.getShort_name() + message, Toast.LENGTH_SHORT).show();
+    }*/
+
+    private void updateShortlistInstitute(String response, String extraTag)
+    {
+        Institute institute = this.mInstituteList.get(Integer.parseInt(extraTag));
+        String message = null;
+
+        if (response == null) {
+            institute.setIs_shortlisted(Constants.SHORTLISTED_NO);
+            message = " removed from your shortlist";
+            //GA Event for institute shortlisting removed
+            MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_SHORTLISTED_REMOVED, "Institute Shortlisting Removed : " + String.valueOf(institute.getResource_uri()) + " Institute Name: " + institute.getName() + " Institute City: " + institute.getCity_name());
+            //CONNECTO Event for institute shortlisting removed
+            this.connecto.track(Constants.ACTION_INSTITUTE_SHORTLISTED_REMOVED, new Properties().putValue(Constants.ACTION_INSTITUTE_SHORTLISTED, Constants.SHORTLISTED_NO).putValue(institute.getShort_name(), Constants.SHORTLISTED_NO).putValue(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri()));
+        } else {
+            try {
+                institute.setIs_shortlisted(Constants.SHORTLISTED_YES);
+                message = " added to your shortlist";
+                //GA Event for institute shortlisted
+                MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_SHORTLISTED, "Institute Shortlisted : " + String.valueOf(institute.getResource_uri()) + " Institute Name: " + institute.getName() + " Institute City: " + institute.getCity_name());
+                //CONNECTO Event for institute shortlisting removed
+                this.connecto.track(Constants.ACTION_INSTITUTE_SHORTLISTED, new Properties().putValue(Constants.ACTION_INSTITUTE_SHORTLISTED, Constants.SHORTLISTED_YES).putValue(institute.getShort_name(), Constants.SHORTLISTED_YES).putValue(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri()));
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
+        }
+        if (currentFragment instanceof InstituteListFragment)
+            ((InstituteListFragment) currentFragment).updateShortlistButton(Integer.parseInt(extraTag));
+        //Toast.makeText(this, institute.getShort_name() + message, Toast.LENGTH_SHORT).show();
     }
 
     private void mDisplayNews(String response) {
@@ -1352,7 +1379,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mParseSimilarNews(List newsList) {
-
         if (newsList == null) {
             return;
         }
@@ -1481,6 +1507,7 @@ public class MainActivity extends AppCompatActivity
 
             //  show appBarLayout and toolBar
             CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
+
             params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
 
             this.mWidgets = JSON.std.listOfFrom(Widget.class, extractResults(response));
@@ -1941,9 +1968,17 @@ public class MainActivity extends AppCompatActivity
             this.connecto.track(Constants.ACTION_FILTER_APPLIED, new Properties().putValue(Constants.SELECTED_FILTERS, this.mFilterKeywords.get(key)));
     }
 
-
-
     @Override
+    public void onInstituteShortlisted(int position) {
+        Institute institute = this.mInstituteList.get(position);
+        if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
+            this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
+        else
+            this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
+    }
+
+
+          @Override
     public void onFilterCanceled(boolean clearAll) {
         onBackPressed();
 
@@ -1996,7 +2031,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onInstituteShortlisted() {
+    public void onInstituteShortlisted()
+    {
         Institute institute = this.mInstituteList.get(this.currentInstitute);
         if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
             this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + this.currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
@@ -2373,8 +2409,6 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, Constants.BASE_URL + "preferences/", hashMap);
 
     }
-
-
 
     public void mShouldDisplayHomeUp(){
 

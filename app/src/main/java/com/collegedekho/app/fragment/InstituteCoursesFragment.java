@@ -128,7 +128,6 @@ public class InstituteCoursesFragment extends BaseFragment {
     }
     public void updateAdapter()
     {
-
         mAdapter.updateAdapter(getTabposition());
     }
     public static int getTabposition()

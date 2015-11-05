@@ -1,6 +1,9 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,10 +28,6 @@ import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
 
-/**
- * @author Mayank Gautam
- *         Created: 07/07/15
- */
 public class InstituteListAdapter extends RecyclerView.Adapter {
 
     private final ImageLoader mImageLoader;
@@ -45,7 +44,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(this.mContext).inflate(R.layout.item_institute_list, parent, false);
+        View rootView = LayoutInflater.from(this.mContext).inflate(R.layout.item_institute_list_new, parent, false);
         try {
             return new InstituteHolder(rootView, (InstituteListFragment.OnInstituteSelectedListener) this.mContext);
         } catch (ClassCastException e) {
@@ -72,37 +71,31 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         instituteHolder.instiLocation.setText(text);
         instituteHolder.addFacilities(institute.getFacilities());
         instituteHolder.likeButton.setSelected(institute.getCurrent_user_vote_type() == 0);
-        instituteHolder.dislikeButton.setSelected(institute.getCurrent_user_vote_type() == 1);
+        instituteHolder.upvoteCount.setText(String.valueOf(institute.getUpvotes()));
+        //instituteHolder.dislikeButton.setSelected(institute.getCurrent_user_vote_type() == 1);
 
         instituteHolder.likeButton.setClickable(true);
-        instituteHolder.dislikeButton.setClickable(true);
+        //instituteHolder.dislikeButton.setClickable(true);
         instituteHolder.likeButton.setVisibility(View.VISIBLE);
-        instituteHolder.dislikeButton.setVisibility(View.VISIBLE);
+        //instituteHolder.dislikeButton.setVisibility(View.VISIBLE);
         instituteHolder.likeProgressBar.setVisibility(View.GONE);
-        instituteHolder.dislikeProgressBar.setVisibility(View.GONE);
+        //instituteHolder.dislikeProgressBar.setVisibility(View.GONE);
 
-        this.setAnimation(instituteHolder.container, position);
-    }
-
-    @Override
-    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
-        holder.itemView.clearAnimation();
-        super.onViewDetachedFromWindow(holder);
-    }
-
-    /**
-     * Here is the key method to apply the animation
-     */
-    private void setAnimation(View viewToAnimate, int position)
-    {
-        if(viewToAnimate == null)return;
-        // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition)
+        if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
         {
-            Animation animation = AnimationUtils.loadAnimation(this.mContext, android.R.anim.slide_in_left);
-            viewToAnimate.startAnimation(animation);
-            lastPosition = position;
+            instituteHolder.mShortListTV.setText("Shortlist");
+            instituteHolder.mShortListTV.setBackgroundResource(R.drawable.bg_button_blue);
         }
+        else
+        {
+            instituteHolder.mShortListTV.setText("Shortlisted");
+            instituteHolder.mShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
+        }
+
+        if (instituteHolder.likeButton.isSelected())
+            instituteHolder.likeButton.setColorFilter(ContextCompat.getColor(this.mContext, R.color.like_green_selected));
+        else
+            instituteHolder.likeButton.setColorFilter(ContextCompat.getColor(this.mContext, R.color.subheading_color));
     }
 
     @Override
@@ -115,35 +108,57 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         this.notifyDataSetChanged();
     }
 
+    public void updateShortlistStatus(int position)
+    {
+        /*this.mShortListTV.setEnabled(true);
+        this.mShortListTV.setVisibility(View.VISIBLE);
+        this.mProgressBar.setVisibility(View.GONE);
+        if (mInstitute.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
+            this.mShortListTV.setText("Shortlist " + mInstitute.getShort_name());
+            this.mShortListTV.setBackgroundResource(R.drawable.bg_button_blue);
+        } else {
+            this.mShortListTV.setText("Delete " + mInstitute.getShort_name() + " from your shortlist");
+            this.mShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
+        }*/
+
+        this.notifyItemChanged(position);
+        this.notifyDataSetChanged();
+    }
+
     class InstituteHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView instiName;
         TextView instiLocation;
         TextView instiCourses;
         ImageView likeButton;
-        ImageView dislikeButton;
+        //ImageView dislikeButton;
         LinearLayout instiFaciltyList;
         ProgressBar likeProgressBar;
-        ProgressBar dislikeProgressBar;
+        TextView mShortListTV;
+        TextView upvoteCount;
+        ProgressBar mProgressBar;
+        //ProgressBar dislikeProgressBar;
         InstituteListFragment.OnInstituteSelectedListener mListener;
-        RelativeLayout container;
 
         public InstituteHolder(View itemView, InstituteListFragment.OnInstituteSelectedListener listener) {
             super(itemView);
-            instiName = (TextView) itemView.findViewById(R.id.textview_college_name);
-            instiLocation = (TextView) itemView.findViewById(R.id.textview_college_location);
-            instiCourses = (TextView) itemView.findViewById(R.id.textview_college_courses);
-            instiFaciltyList = (LinearLayout) itemView.findViewById(R.id.college_facility_list);
+            instiName = (TextView) itemView.findViewById(R.id.card_institute_name);
+            instiLocation = (TextView) itemView.findViewById(R.id.card_institute_location);
+            instiCourses = (TextView) itemView.findViewById(R.id.card_institute_courses);
+            instiFaciltyList = (LinearLayout) itemView.findViewById(R.id.card_institute_facility_list);
+            mShortListTV  = ((TextView) itemView.findViewById(R.id.card_institute_shortlist_button));
+            upvoteCount  = ((TextView) itemView.findViewById(R.id.card_institute_like_count));
             mListener = listener;
-            likeButton = (ImageView) itemView.findViewById(R.id.button_like_college);
-            dislikeButton = (ImageView) itemView.findViewById(R.id.button_dislike_college);
-            likeProgressBar = (ProgressBar) itemView.findViewById(R.id.like_progressBar);
-            dislikeProgressBar = (ProgressBar) itemView.findViewById(R.id.dislike_progressBar);
-            container = (RelativeLayout) itemView.findViewById(R.id.item_institute_container);
-
+            likeButton = (ImageView) itemView.findViewById(R.id.card_institute_button_like);
+            mProgressBar = ((ProgressBar) itemView.findViewById(R.id.card_institute_like_progressBar));
+            //dislikeButton = (ImageView) itemView.findViewById(R.id.button_dislike_college);
+            likeProgressBar = (ProgressBar) itemView.findViewById(R.id.card_institute_like_progressBar);
+            //dislikeProgressBar = (ProgressBar) itemView.findViewById(R.id.dislike_progressBar);
 
             likeButton.setOnClickListener(this);
-            dislikeButton.setOnClickListener(this);
-            itemView.setOnClickListener(this);
+            (itemView.findViewById(R.id.card_institute_expand_container)).setOnClickListener(this);
+            (itemView.findViewById(R.id.card_institute_shortlist)).setOnClickListener(this);
+            //dislikeButton.setOnClickListener(this);
+            //itemView.setOnClickListener(this);
         }
 
         public void addFacilities(ArrayList<Facility> facilities) {
@@ -165,40 +180,53 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                 for (int j = i; j < 5; j++) {
                     instiFaciltyList.getChildAt(j).setVisibility(View.GONE);
                 }
-
             }
         }
 
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.button_like_college:
+                case R.id.card_institute_button_like:
                     if (!v.isSelected()) {
                         likeButton.setVisibility(View.INVISIBLE);
                         likeProgressBar.setVisibility(View.VISIBLE);
                         likeButton.setClickable(false);
-                        dislikeButton.setClickable(false);
+                        //dislikeButton.setClickable(false);
                         mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.LIKE_THING);
-
                     }
                     else
-                        Toast.makeText(mContext, "Already liked..", Toast.LENGTH_SHORT).show();
-                    //mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DELETE_LIKE);
+                    {
+                        //Toast.makeText(mContext, "Already liked..", Toast.LENGTH_SHORT).show();
+                        likeButton.setVisibility(View.INVISIBLE);
+                        likeProgressBar.setVisibility(View.VISIBLE);
+                        likeButton.setClickable(false);
+                        //dislikeButton.setClickable(false);
+                        mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_THING);
+
+                    }
                     break;
                 case R.id.button_dislike_college:
                     if (!v.isSelected()) {
-                        dislikeButton.setVisibility(View.INVISIBLE);
-                        dislikeProgressBar.setVisibility(View.VISIBLE);
+                        //dislikeButton.setVisibility(View.INVISIBLE);
+                        //dislikeProgressBar.setVisibility(View.VISIBLE);
                         likeButton.setClickable(false);
-                        dislikeButton.setClickable(false);
+                        //dislikeButton.setClickable(false);
                         mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_THING);
                     }
                     else
                         Toast.makeText(mContext, "Already disliked. You really hate this one..", Toast.LENGTH_SHORT).show();
-                    //mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DELETE_LIKE);
+                    break;
+                case R.id.card_institute_expand_container:
+                    this.mListener.onInstituteSelected(getAdapterPosition());
+                    break;
+                case R.id.card_institute_shortlist:
+                    v.setEnabled(false);
+                    //mShortListTV.setVisibility(View.GONE);
+                    //mProgressBar.setVisibility(View.VISIBLE);
+                    this.mListener.onInstituteShortlisted(getAdapterPosition());
                     break;
                 default:
-                    mListener.onInstituteSelected(getAdapterPosition());
+                    //mListener.onInstituteSelected(getAdapterPosition());
                     break;
             }
         }

@@ -6,21 +6,21 @@ package com.collegedekho.app.entities;
  */
 public class User
 {
-    private String id;
-    private String resource_uri;
-    private String email;
-    private String username;
-    private String name;
-    private String added_on;
-    private String image;
-    private String token;
+    private String id = "";
+    private String resource_uri = "";
+    private String email = "";
+    private String username = "";
+    private String name = "";
+    private String added_on = "";
+    private String image = "";
+    private String token = "";
     private boolean is_anony;
     private Prefs pref;
-    private String stream;
-    private String level;
-    private String phone_no;
-    private String stream_name;
-    private String level_name;
+    private String stream = "";
+    private String level = "";
+    private String phone_no = "";
+    private String stream_name = "";
+    private String level_name = "";
 
     public String getId() {
         return id;

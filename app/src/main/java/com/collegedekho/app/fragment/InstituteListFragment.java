@@ -24,7 +24,6 @@ import com.collegedekho.app.entities.Facet;
 import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.widget.DividerItemDecoration;
 import com.collegedekho.app.widget.tag.textview.ContactsCompletionView;
 import com.collegedekho.app.widget.tag.textview.FilteredArrayAdapter;
 import com.collegedekho.app.widget.tag.textview.TokenCompleteTextView;
@@ -114,12 +113,10 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             this.mEmptyTextView.setText("No Institutes");
 
         recyclerView.setAdapter(mAdapter);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(scrollListener);
         if (filterAllowed) {
-
             this.mSetFilterList();
             rootView.findViewById(R.id.button_filter).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -129,11 +126,9 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                 }
             });
         } else {
-
             rootView.findViewById(R.id.button_filter).setVisibility(View.GONE);
             rootView.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
         }
-
 
         tolenAdapter = new FilteredArrayAdapter<String>(getActivity(), R.layout.contact_token, new String[]{}) {
             @Override
@@ -151,7 +146,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             }
         };
 
-
         return rootView;
     }
 
@@ -160,8 +154,8 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            if(context instanceof  MainActivity)
-            listener = (OnInstituteSelectedListener) context;
+            if (context instanceof  MainActivity)
+                listener = (OnInstituteSelectedListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnInstituteSelectedListener");
@@ -170,12 +164,12 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(ARG_INSTITUTE, this.mInstitutes);
         outState.putString(ARG_TITLE, this.mTitle);
         outState.putString(ARG_NEXT, this.mNextUrl);
         outState.putBoolean(ARG_FILTER_ALLOWED, this.filterAllowed);
         outState.putInt(ARG_FILTER_COUNT, this.filterCount);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -204,7 +198,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             this.mEmptyTextView.setVisibility(View.GONE);
         }
         updateFilterButton(filterCount);
-
     }
 
     public void clearList() {
@@ -229,6 +222,11 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
     public void updateButtons(int position) {
         mAdapter.updateLikeButtons(position);
+    }
+
+    public void updateShortlistButton(int position)
+    {
+        mAdapter.updateShortlistStatus(position);
     }
 
     public void updateFilterButton(int filterCount)
@@ -298,6 +296,8 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         void onFilterButtonClicked();
 
         void onFilterApplied();
+
+        void onInstituteShortlisted(int position);
 
         @Override
         void onEndReached(String next, int type);

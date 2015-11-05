@@ -192,6 +192,8 @@ public class Constants
     //Actions
     public static final String ACTION_STREAM_UPDATED = "action_stream_updated";
     public static final String ACTION_LEVEL_UPDATED = "action_level_updated";
+    public static final String ACTION_STREAM_SELECTED = "action_stream_selected";
+    public static final String ACTION_LEVEL_SELECTED = "action_level_selected";
     public static final String ACTION_MY_FB_SELECTED = "action_my_fb_selected";
     public static final String ACTION_QNA_QUESTION_ASKED = "action_qna_question_asked";
     public static final String QNA_QUESTION_RESOURCE_URI = "qna_question_resource_uri";
