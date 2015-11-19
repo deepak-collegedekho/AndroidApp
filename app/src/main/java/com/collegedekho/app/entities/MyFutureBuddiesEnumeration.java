@@ -25,6 +25,7 @@ public class MyFutureBuddiesEnumeration implements Parcelable {
     private String institute_name;
     private int comments_count;
     private int members_count;
+    private int unread_count;
     private int index;
     private String city_name;
     private String state_name;
@@ -56,6 +57,13 @@ public class MyFutureBuddiesEnumeration implements Parcelable {
         dest.writeInt(comments_count);
         dest.writeInt(members_count);
         dest.writeInt(index);
+    }
+
+    public int getUnread_count() {
+        return unread_count;
+    }
+    public void setUnread_count(int unread_count) {
+        this.unread_count = unread_count;
     }
 
     public String getResource_uri() {

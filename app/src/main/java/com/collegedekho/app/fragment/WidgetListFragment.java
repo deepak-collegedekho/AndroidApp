@@ -114,6 +114,17 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
 
         return rootView;
     }
+    public void hideWidgetTutorial()
+    {
+        View view = getView();
+        if(view != null && view.findViewById(R.id.widget_touch_tutorial_layout).getVisibility() == View.VISIBLE) {
+                view.findViewById(R.id.widget_touch_tutorial_layout).setVisibility(View.GONE);
+                int verticalPadding = mMainActivity.getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin);
+                int horizontalPadding = mMainActivity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
+                view.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
+                touchLearned();
+        }
+    }
 
     public void onWidgetSelected(Widget widget, int position) {
         if (this.mListener != null) {

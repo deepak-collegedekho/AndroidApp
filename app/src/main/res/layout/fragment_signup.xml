@@ -14,7 +14,7 @@
 
     <EditText
         android:id="@+id/signup_name"
-        style="@style/AppTheme.EditText"
+        style="@style/AppTheme.EditText.bg_holo_dark"
         android:inputType="textCapWords"
         android:maxLength="35"
         android:hint="Name"
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content">
     <EditText
         android:id="@+id/signup_phone"
-        style="@style/AppTheme.EditText"
+        style="@style/AppTheme.EditText.bg_holo_dark"
         android:hint="Phone"
         android:inputType="phone"
         android:maxLength="10"
@@ -45,7 +45,7 @@
 
     <EditText
     android:id="@+id/signup_email"
-    style="@style/AppTheme.EditText"
+    style="@style/AppTheme.EditText.bg_holo_dark"
     android:inputType="textEmailAddress"
     android:hint="Email"
     />
@@ -59,7 +59,7 @@
         android:layout_height="wrap_content">
     <EditText
         android:id="@+id/signup_password"
-        style="@style/AppTheme.EditText"
+        style="@style/AppTheme.EditText.bg_holo_dark"
         android:hint="Password"
         android:inputType="textPassword"
         />

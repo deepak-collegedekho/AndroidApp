@@ -220,7 +220,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         }
     }
 
-    public void updateButtons(int position) {
+    public void updateLikeButtons(int position) {
         mAdapter.updateLikeButtons(position);
     }
 
@@ -291,6 +291,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     public interface OnInstituteSelectedListener extends BaseListener {
         void onInstituteSelected(int position);
 
+        @Override
         void onInstituteLikedDisliked(int position, int liked);
 
         void onFilterButtonClicked();

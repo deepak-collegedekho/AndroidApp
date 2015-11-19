@@ -1,23 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="50dp"
     android:background="@color/light_grey_background"
     android:paddingLeft="@dimen/m15dp">
 
-    <TextView
+    <LinearLayout
         android:id="@+id/view_into_grid"
-        style="@style/AppTheme.TextView.AppTextView"
-        android:text="GRID"
-        android:textSize="18sp"
-        android:drawableLeft="@drawable/ic_view_grid"/>
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+    <ImageView
+        android:id="@+id/view_into_grid_image"
+        style="@style/AppTheme.ImageView"
+        android:src="@drawable/ic_view_grid" />
 
     <TextView
+        style="@style/AppTheme.TextView.Head2"
+        android:text="GRID"/>
+</LinearLayout>
+    <LinearLayout
         android:id="@+id/view_into_list"
-        style="@style/AppTheme.TextView.AppTextView"
-        android:text="LIST"
-        android:drawableLeft="@drawable/ic_view_list"
-        android:textSize="18sp" />
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/view_into_list_image"
+        style="@style/AppTheme.ImageView"
+        android:paddingLeft="@dimen/m10dp"
+        android:src="@drawable/ic_view_list" />
+
+    <TextView
+        style="@style/AppTheme.TextView.Head2"
+        android:text="LIST"/>
+        </LinearLayout>
 
 
 </LinearLayout>

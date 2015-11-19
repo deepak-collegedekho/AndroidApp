@@ -4,11 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="200dp"
     android:layout_height="match_parent"
-    android:layout_marginLeft="@dimen/m8dp"
+    android:layout_margin="@dimen/m1dp"
     android:orientation="vertical"
     android:elevation="@dimen/m2dp"
     app:cardCornerRadius="@dimen/corner_radius"
-    app:cardElevation="@dimen/cardview_default_elevation"
+    app:cardElevation="@dimen/m2dp"
     app:cardUseCompatPadding="true">
 
     <LinearLayout

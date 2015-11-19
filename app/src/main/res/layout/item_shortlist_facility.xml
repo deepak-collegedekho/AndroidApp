@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.android.volley.toolbox.NetworkImageView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/m33dp"
-    android:layout_height="@dimen/m33dp"
+    android:layout_width="@dimen/m25dp"
+    android:layout_height="@dimen/m25dp"
     android:layout_marginRight="3dp"
-    android:background="@drawable/bg_facility"
+    android:tint="@color/subheading_color"
     />

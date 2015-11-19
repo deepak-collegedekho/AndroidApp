@@ -4,10 +4,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.News;
+import com.collegedekho.app.resource.Constants;
 
 /**
  * Created by root on 16/9/15.
@@ -53,6 +56,21 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
 
     };
 
+    protected void updateViewTypeIcon(View view, int type)
+    {
+        if(view == null)return;
+        if(type == Constants.VIEW_INTO_GRID) {
+            ((ImageView) view.findViewById(R.id.view_into_grid_image)).setColorFilter(getResources().getColor(R.color.primaryColor));
+            ((ImageView) view.findViewById(R.id.view_into_list_image)).setColorFilter(getResources().getColor(R.color.bg_category_item_unselected));
+        }
+        else
+        {
+            ((ImageView) view.findViewById(R.id.view_into_grid_image)).setColorFilter(getResources().getColor(R.color.bg_category_item_unselected));
+            ((ImageView) view.findViewById(R.id.view_into_list_image)).setColorFilter(getResources().getColor(R.color.primary_color));
+        }
+    }
+
+
     @Override
     public void onClick(View v) {
     }
@@ -61,11 +79,19 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
             }
     public void updateArticle(Articles article) {
     }
+    public void updateLikeButtons(int position)
+    {
+
+    }
 
     public interface BaseListener{
         void onEndReached(String next, int type);
+
         void onFilterButtonClicked();
+
         void onFilterApplied();
+
+        void onInstituteLikedDisliked(int position, int liked);
     }
 
 }

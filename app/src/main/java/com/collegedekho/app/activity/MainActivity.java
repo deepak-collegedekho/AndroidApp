@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleFragment.OnArticleSelectedListener,
         ProfileFragment.onProfileUpdateListener,LoginFragment.OnSignUpListener, InstituteDetailFragment.OnInstituteFooterItemSelected
-      {
+{
 
     static {
         Constants.FilterCategoryMap.put(Constants.ID_HOSTEL, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
-   //private NavigationDrawerFragment mNavigationDrawerFragment;
+    //private NavigationDrawerFragment mNavigationDrawerFragment;
     /*
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
@@ -219,10 +219,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         this.setContentView(R.layout.activity_main);
-
-        //  hide appBarLayout and toolBar till home screen comes to front
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
-        params.setBehavior(null);
 
         this.connecto = Connecto.with(MainActivity.this);
         //this.connecto.identify("Harsh1234Vardhan", new Traits().putValue("name", "HarshVardhan"));
@@ -262,7 +258,7 @@ public class MainActivity extends AppCompatActivity
             public void run() {
                 //Stop the Main Animation and Start Secondary
                 if (currentFragment instanceof SplashFragment)
-                  ((SplashFragment) currentFragment).stopMainAnimation();
+                    ((SplashFragment) currentFragment).stopMainAnimation();
 
                 //Initialize the app
                 init();
@@ -486,6 +482,10 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        // hide tutorials
+        if(currentFragment instanceof  WidgetListFragment)
+            ((WidgetListFragment)currentFragment).hideWidgetTutorial();
+
         DrawerLayout drawer = (DrawerLayout) this.findViewById(R.id.drawer_layout);
         int id = item.getItemId();
         Fragment fragment = null;
@@ -496,9 +496,9 @@ public class MainActivity extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
             case R.id.nav_institutes:
-                  fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
-                 position =1;
-                  break;
+                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+                position =1;
+                break;
             case R.id.nav_news:
                 fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_NEWS_LIST);
                 position =2;
@@ -508,7 +508,7 @@ public class MainActivity extends AppCompatActivity
                 position =3;
                 break;
             case R.id.nav_my_shortlists:
-                    fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE_LIST);
+                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE_LIST);
                 position = 4;
                 break;
             case R.id.nav_my_qna:
@@ -567,6 +567,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        // hide tutorials
+        if(currentFragment instanceof  WidgetListFragment)
+            ((WidgetListFragment)currentFragment).hideWidgetTutorial();
+
         // to hide the keyboard if visible
         if (this.getCurrentFocus() != null && this.getCurrentFocus() instanceof EditText) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -897,19 +901,19 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-      else
+        else
         {
             if(currentFragment instanceof LoginFragment || currentFragment instanceof  ProfileFragment)
-            currentFragment.onActivityResult(requestCode, resultCode, data);
+                currentFragment.onActivityResult(requestCode, resultCode, data);
         }
-  }
+    }
 
     private void mDisplayFragment(Fragment fragment, boolean addToBackstack, String tag) {
-       try {
-           if (this.getCurrentFocus() != null && this.getCurrentFocus() instanceof EditText) {
-               InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-               imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-           }
+        try {
+            if (this.getCurrentFocus() != null && this.getCurrentFocus() instanceof EditText) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
 
             this.currentFragment = (BaseFragment)fragment;
 
@@ -928,15 +932,15 @@ public class MainActivity extends AppCompatActivity
                 if (findViewById(R.id.app_bar_layout).getVisibility() != View.VISIBLE)
                     findViewById(R.id.app_bar_layout).setVisibility(View.VISIBLE);
             }
-           this.mShouldDisplayHomeUp();
+            this.mShouldDisplayHomeUp();
 
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
         }
         finally {
-           //Send GA Session
-           MainActivity.GASessionEvent(tag);
-       }
+            //Send GA Session
+            MainActivity.GASessionEvent(tag);
+        }
     }
 
     @Override
@@ -1115,7 +1119,7 @@ public class MainActivity extends AppCompatActivity
                 if (tags.length > 1) {
                     parentIndex = tags[1];
                 }
-                 this.onUserSignInResponse(response, parentIndex);
+                this.onUserSignInResponse(response, parentIndex);
                 break;
             case Constants.SEARCHED_INSTITUTES:
                 this.mDisplayInstituteList(response , true);
@@ -1257,7 +1261,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void updateLikeButton(String response, String extraTag, int like) {
-        Institute institute = this.mInstituteList.get(Integer.parseInt(extraTag));
+        Institute institute = null;
+        if(currentFragment instanceof InstituteShortlistFragment)
+        {
+            institute = this.mShortlistedInstituteList.get(Integer.parseInt(extraTag));
+        }
+        else
+            institute = this.mInstituteList.get(Integer.parseInt(extraTag));
         if (like == Constants.NEITHER_LIKE_NOR_DISLIKE)
         {
             institute.setCurrent_user_vote_type(Constants.NEITHER_LIKE_NOR_DISLIKE);
@@ -1303,8 +1313,8 @@ public class MainActivity extends AppCompatActivity
                 Log.e(TAG, e.getMessage());
             }
         }
-        if (currentFragment instanceof InstituteListFragment) {
-            ((InstituteListFragment) currentFragment).updateButtons(Integer.parseInt(extraTag));
+        if (currentFragment instanceof InstituteListFragment || currentFragment instanceof  InstituteShortlistFragment) {
+            currentFragment.updateLikeButtons(Integer.parseInt(extraTag));
         }
     }
 
@@ -1488,7 +1498,7 @@ public class MainActivity extends AppCompatActivity
                 return "Submitting psychometric analysis...";
             case Constants.TAG_USER_LOGIN:
                 return "Signing User Please Wait.....";
-           case Constants.TAG_USER_REGISTRATION :
+            case Constants.TAG_USER_REGISTRATION :
                 return "Creating User Please Wait";
             case Constants.SEARCHED_INSTITUTES:
                 return "Loading...";
@@ -1507,8 +1517,8 @@ public class MainActivity extends AppCompatActivity
 
             //  show appBarLayout and toolBar
             CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
-
             params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+            findViewById(R.id.container).setLayoutParams(params);
 
             this.mWidgets = JSON.std.listOfFrom(Widget.class, extractResults(response));
             Fragment widgetListFragment = WidgetListFragment.newInstance(new ArrayList<>(this.mWidgets));
@@ -1541,8 +1551,8 @@ public class MainActivity extends AppCompatActivity
 
     private void mUpdateAppliedCourses(String response, String extraTag, String tabPosition) {
         try {
-                if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
-                    ((InstituteDetailFragment) currentFragment).updateAppliedCourses(response);
+            if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
+                ((InstituteDetailFragment) currentFragment).updateAppliedCourses(response);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1612,7 +1622,7 @@ public class MainActivity extends AppCompatActivity
                 if (tags.length >= 2)
                     extraTag = tags[1];
                 if (currentFragment instanceof InstituteListFragment) {
-                    ((InstituteListFragment) currentFragment).updateButtons(Integer.parseInt(extraTag));
+                    currentFragment.updateLikeButtons(Integer.parseInt(extraTag));
                 }
                 break;
             }
@@ -1720,7 +1730,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onInstituteLikedDisliked(int position, int liked) {
-        Institute institute = this.mInstituteList.get(position);
+        Institute institute = null;
+        if(currentFragment instanceof InstituteShortlistFragment)
+            institute = this.mShortlistedInstituteList.get(position);
+        else
+            institute = this.mInstituteList.get(position);
         if (institute.getCurrent_user_vote_type() == Constants.NEITHER_LIKE_NOR_DISLIKE) {
             //neither liked nor disliked case
             if (liked == Constants.LIKE_THING)
@@ -1978,7 +1992,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-          @Override
+    @Override
     public void onFilterCanceled(boolean clearAll) {
         onBackPressed();
 
@@ -2524,17 +2538,17 @@ public class MainActivity extends AppCompatActivity
     /**
      * This method is used to clear back stack of FragmentManager
      */
-   private  void mClearBackStack() {
-       try{
-           int count = getSupportFragmentManager().getBackStackEntryCount();
-           for (int i = 0; i < count ; i++) {
-               getSupportFragmentManager().popBackStack();
-           }
-       }
-       catch (Exception e)
-       {
-           Log.e(TAG, e.getMessage());
-       }
+    private  void mClearBackStack() {
+        try{
+            int count = getSupportFragmentManager().getBackStackEntryCount();
+            for (int i = 0; i < count ; i++) {
+                getSupportFragmentManager().popBackStack();
+            }
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, e.getMessage());
+        }
     }
 
     /**
@@ -2573,7 +2587,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onUserSignUp(String url, HashMap hashMap, String msg) {
-                    this.mMakeNetworkCall(Constants.TAG_USER_REGISTRATION+ "#" + msg, url, hashMap);}
+        this.mMakeNetworkCall(Constants.TAG_USER_REGISTRATION+ "#" + msg, url, hashMap);}
 
     /**
      * This method is used to sign in with any social site
@@ -2583,7 +2597,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onUserSignIn(String url, HashMap hashMap, String msg) {
-                  this.mMakeNetworkCall(Constants.TAG_USER_LOGIN +"#"+msg, url, hashMap);
+        this.mMakeNetworkCall(Constants.TAG_USER_LOGIN +"#"+msg, url, hashMap);
     }
 
 
@@ -2719,7 +2733,7 @@ public class MainActivity extends AppCompatActivity
             dialog.findViewById(R.id.ok_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                     dialog.dismiss();
+                    dialog.dismiss();
                     if (((RadioButton)dialog.findViewById(R.id.firstStream)).isChecked())
                         params.put(Constants.USER_STREAM, stream_id);
                     if (((RadioButton)dialog.findViewById(R.id.secondStream)).isChecked())
@@ -2754,55 +2768,55 @@ public class MainActivity extends AppCompatActivity
             MainActivity.tracker.setScreenName(screenName);
             // Start a new session with the hit.
             MainActivity.tracker.send(new HitBuilders.ScreenViewBuilder()
-                .setNewSession()
-                .build());
+                    .setNewSession()
+                    .build());
         }
     }
 
-        @Override
-        public void onFooterVideosSelected(ArrayList<String> videos) {
+    @Override
+    public void onFooterVideosSelected(ArrayList<String> videos) {
 
-            if (videos == null || videos.size() < 1)
-            {
-                Toast.makeText(MainActivity.this, "No videoes for this college yet", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            Bundle bundle = new Bundle();
-            bundle.putStringArrayList(VideoListActivity.VIDEO_LIST_ACTIVITY, videos);
-
-            Intent activityIntent = new Intent(MainActivity.this, VideoListActivity.class);
-            activityIntent.putExtras(bundle);
-            this.startActivity(activityIntent);
-
+        if (videos == null || videos.size() < 1)
+        {
+            Toast.makeText(MainActivity.this, "No videoes for this college yet", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        @Override
-        public void OnFooterOtherItemsSelected(int type, int instituteID) {
-            switch (type)
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList(VideoListActivity.VIDEO_LIST_ACTIVITY, videos);
+
+        Intent activityIntent = new Intent(MainActivity.this, VideoListActivity.class);
+        activityIntent.putExtras(bundle);
+        this.startActivity(activityIntent);
+
+    }
+
+    @Override
+    public void OnFooterOtherItemsSelected(int type, int instituteID) {
+        switch (type)
+        {
+            case InstituteDetailFragment.QnA:
             {
-                case InstituteDetailFragment.QnA:
-                {
-                    this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL + "personalize/qna/" , null);
-                    break;
-                }
-                case InstituteDetailFragment.News:
-                {
-                    this.mMakeNetworkCall(Constants.WIDGET_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(instituteID) , null);
-                    break;
-                }
-                case InstituteDetailFragment.Articles:
-                {
-                    this.mMakeNetworkCall(Constants.WIDGET_ARTICES, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(instituteID) , null);
-                    break;
-                }
-                default:
-                    break;
-
+                this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL + "personalize/qna/" , null);
+                break;
             }
-        }
+            case InstituteDetailFragment.News:
+            {
+                this.mMakeNetworkCall(Constants.WIDGET_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(instituteID) , null);
+                break;
+            }
+            case InstituteDetailFragment.Articles:
+            {
+                this.mMakeNetworkCall(Constants.WIDGET_ARTICES, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(instituteID) , null);
+                break;
+            }
+            default:
+                break;
 
-        private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
+        }
+    }
+
+    private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override
         public void onContainerAvailable(ContainerHolder containerHolder, String containerVersion) {
             // We load each container when it becomes available.

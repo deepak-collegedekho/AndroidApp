@@ -35,7 +35,7 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(this.mContext).inflate(R.layout.card_my_fb_enumeration, parent, false);
+        View rootView = LayoutInflater.from(this.mContext).inflate(R.layout.my_fb_institute_item, parent, false);
         try {
             return new MyFBEnumerationHolder(rootView, (MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener) mContext);
         } catch (ClassCastException e) {
@@ -56,11 +56,16 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
             text += myFBEnumeration.getCity_name() + ", ";
         if (myFBEnumeration.getState_name() != null)
             text += myFBEnumeration.getState_name();
+        if(myFBEnumeration.getUnread_count() > 0)
+        {
+            myFBEnumerationHolder.unreadCountLayout.setVisibility(View.VISIBLE);
+            myFBEnumerationHolder.unreadCount.setText(""+myFBEnumeration.getUnread_count());
+        }
 
         myFBEnumerationHolder.instituteName.setText(myFBEnumeration.getInstitute_name());
         myFBEnumerationHolder.instituteLocation.setText(text);
         //myFBEnumerationHolder.commentsCount.setText(String.valueOf(myFBEnumeration.getComments_count()) + " chats");
-        myFBEnumerationHolder.membersCount.setText(String.valueOf(myFBEnumeration.getMembers_count()) + " friends");
+        myFBEnumerationHolder.membersCount.setText(String.valueOf(myFBEnumeration.getMembers_count()));
 
         this.setAnimation(myFBEnumerationHolder.container, position);
     }
@@ -96,6 +101,8 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
         TextView instituteLocation;
         //TextView commentsCount;
         TextView membersCount;
+        RelativeLayout unreadCountLayout;
+        TextView unreadCount;
         CardView container;
 
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener mListener;
@@ -107,6 +114,8 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
             this.instituteLocation = (TextView) itemView.findViewById(R.id.fb_institute_location);
             //this.commentsCount = (TextView) itemView.findViewById(R.id.fb_comments_count);
             this.membersCount = (TextView) itemView.findViewById(R.id.fb_members_count);
+            this.unreadCount = (TextView)itemView.findViewById(R.id.unread_count);
+            this.unreadCountLayout= (RelativeLayout)itemView.findViewById(R.id.unread_notify_layout);
             this.container = (CardView) itemView.findViewById(R.id.card_fb_enumeration_container);
 
             this.mListener = listener;

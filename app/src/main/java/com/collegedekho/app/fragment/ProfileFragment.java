@@ -113,15 +113,15 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 
             rootView.findViewById(R.id.profile_login_pager).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.profile_login_tabs_layout).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.profile_name).setVisibility(View.GONE);
-            rootView.findViewById(R.id.profile_contact).setVisibility(View.GONE);
+            rootView.findViewById(R.id.profile_name_title).setVisibility(View.GONE);
+            rootView.findViewById(R.id.profile_contact_title).setVisibility(View.GONE);
         }
         else
         {
             rootView.findViewById(R.id.profile_login_pager).setVisibility(View.GONE);
             rootView.findViewById(R.id.profile_login_tabs_layout).setVisibility(View.GONE);
-            rootView.findViewById(R.id.profile_name).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.profile_contact).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.profile_name_title).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.profile_contact_title).setVisibility(View.VISIBLE);
         }
 
 

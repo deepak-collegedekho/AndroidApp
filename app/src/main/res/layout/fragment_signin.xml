@@ -14,7 +14,7 @@
 
     <EditText
         android:id="@+id/signin_email"
-        style="@style/AppTheme.EditText"
+        style="@style/AppTheme.EditText.bg_holo_dark"
         android:inputType="textEmailAddress"
         android:hint="Email"
         />
@@ -29,7 +29,7 @@
 
     <EditText
         android:id="@+id/signin_password"
-        style="@style/AppTheme.EditText"
+        style="@style/AppTheme.EditText.bg_holo_dark"
         android:hint="Password"
         android:inputType="textPassword"
         />
@@ -60,6 +60,8 @@
     <TextView
         style="@style/AppTheme.TextView.AppTextView"
         android:textStyle="bold"
+        android:layout_marginTop="@dimen/m10dp"
+        android:layout_marginBottom="@dimen/m10dp"
         android:background="@drawable/bg_black_circle"
         android:textColor="@color/white"
         android:text="OR"
@@ -69,7 +71,6 @@
         <com.google.android.gms.common.SignInButton
             android:id="@+id/google_sign_in"
             android:visibility="gone"
-            android:layout_marginTop="@dimen/m10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

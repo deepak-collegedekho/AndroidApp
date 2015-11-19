@@ -89,15 +89,17 @@ public class NewsFragment extends BaseFragment  {
         (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
         (rootView).findViewById(R.id.news_detail_layout).setOnClickListener(this);
        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
-        if(mViewType == Constants.VIEW_INTO_GRID) {
+        if(this.mViewType == Constants.VIEW_INTO_GRID) {
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
             rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
+
         }
         else {
 
             rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         }
+        updateViewTypeIcon(rootView, this.mViewType);
         this.mAdapter = new NewsListAdapter(getActivity(), new ArrayList<News>(), mViewType);
         recyclerView.setAdapter(this.mAdapter);
         recyclerView.setHasFixedSize(true);
@@ -183,6 +185,8 @@ public class NewsFragment extends BaseFragment  {
             default:
                 break;
         }
+
+        updateViewTypeIcon(getView(), this.mViewType);
     }
 
     /**
@@ -193,15 +197,16 @@ public class NewsFragment extends BaseFragment  {
     private void mUpdateNewsDetail(View view, News news)
     {
         if(view == null || news == null)return;
-        mNews= news;
+        this.mNews= news;
         ((TextView) view.findViewById(R.id.news_title)).setText(Html.fromHtml(news.title));
         ((TextView) view.findViewById(R.id.news_content)).setText(Html.fromHtml(news.content));
         //((TextView) view.findViewById(R.id.news_title)).setTypeface(Utils.getTypeFace(getActivity(), TypeFaceTypes.GOTHAMBOOK));
         //((TextView) view.findViewById(R.id.news_content)).setTypeface(Utils.getTypeFace(getActivity(), TypeFaceTypes.DROID_SERIF_BOLD));
 
-        if (news.image != null && !news.image.isEmpty())
+        if (news.image != null && !news.image.isEmpty()) {
             ((NetworkImageView) view.findViewById(R.id.news_college_banner)).setImageUrl(news.image, MySingleton.getInstance(getActivity()).getImageLoader());
-        else
+            view.findViewById(R.id.news_college_banner).setVisibility(View.VISIBLE);
+        }else
             view.findViewById(R.id.news_college_banner).setVisibility(View.GONE);
         String d = "";
         try {
@@ -222,7 +227,7 @@ public class NewsFragment extends BaseFragment  {
         }
         view.findViewById(R.id.news_detail_scrollView).scrollTo(0, 0);
 
-        mAdapter.updateNewsAdapter(newList);
+        this.mAdapter.updateNewsAdapter(newList);
 
     }
 

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    style="@style/AppTheme.CardView.Streams"
+    android:id="@+id/card_fb_enumeration_container"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="right"
+    android:orientation="horizontal">
+
+<include layout="@layout/layout_unread_notify"/>
+
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_my_fb_wishlist"
+    android:padding="@dimen/m10dp">
+
+        <TextView
+            android:id="@+id/fb_members_count"
+            android:layout_width="wrap_content"
+            style="@style/AppTheme.TextView"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:drawableTop="@drawable/ic_add_circle_outline"
+            android:text="1232"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/fb_members_count"
+            android:layout_marginLeft="@dimen/m15dp"
+            android:layout_marginRight="@dimen/m5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/fb_institute_name"
+                android:layout_width="wrap_content"
+                style="@style/AppTheme.TextView"
+                android:layout_height="wrap_content"
+                android:text="Indian Institute of Technology"
+                android:textColor="@color/white"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/fb_institute_location"
+                android:layout_width="wrap_content"
+                style="@style/AppTheme.TextView"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="Delhi"
+                android:textSize="10sp"
+                android:paddingTop="@dimen/m3dp"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

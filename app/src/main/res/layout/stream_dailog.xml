@@ -15,7 +15,8 @@
 
         <TextView
             style="@style/AppTheme.TextView.AppTextView"
-            android:text="Select Your Stream"/>
+            android:text="Select Your Stream"
+            android:layout_gravity="left"/>
 
         <RadioButton
             android:id="@+id/firstStream"
@@ -35,6 +36,7 @@
         android:id="@+id/select_level_text"
         style="@style/AppTheme.TextView.AppTextView"
         android:paddingLeft="@dimen/m10dp"
+        android:layout_gravity="left"
         android:text="Select Your Level"/>
 
     <RadioGroup

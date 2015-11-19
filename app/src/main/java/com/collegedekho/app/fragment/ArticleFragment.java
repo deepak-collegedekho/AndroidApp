@@ -97,6 +97,8 @@ public class ArticleFragment extends BaseFragment {
             rootView.findViewById(R.id.article_detail_scrollView).setVisibility(View.GONE);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         }
+
+        updateViewTypeIcon(rootView, this.mViewType);
         this.mAdapter = new ArticleListAdapter(getActivity(), new ArrayList<Articles>(), mViewType);
         recyclerView.setAdapter(this.mAdapter);
         recyclerView.setHasFixedSize(true);
@@ -116,9 +118,10 @@ public class ArticleFragment extends BaseFragment {
         this.mArticle = article;
         ((TextView) view.findViewById(R.id.article_title)).setText(article.title);
         ((TextView) view.findViewById(R.id.article_content)).setText(Html.fromHtml(article.content));
-        if (article.image != null && !article.image.isEmpty())
+        if (article.image != null && !article.image.isEmpty()) {
             ((NetworkImageView) view.findViewById(R.id.article_college_banner)).setImageUrl(article.image, MySingleton.getInstance(getActivity()).getImageLoader());
-        else
+            view.findViewById(R.id.article_college_banner).setVisibility(View.VISIBLE);
+        }else
             view.findViewById(R.id.article_college_banner).setVisibility(View.GONE);
         String d = "";
         try {
@@ -219,7 +222,9 @@ public class ArticleFragment extends BaseFragment {
                 break;
             default:
                 break;
+
         }
+        updateViewTypeIcon(getView(), this.mViewType);
     }
     public void updateArticle(Articles article)
     {

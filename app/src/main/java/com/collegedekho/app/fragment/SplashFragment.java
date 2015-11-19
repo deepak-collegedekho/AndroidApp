@@ -1,12 +1,15 @@
 package com.collegedekho.app.fragment;
 
+import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +17,7 @@ import com.collegedekho.app.R;
 
 public class SplashFragment extends BaseFragment {
 
+    private CoordinatorLayout.Behavior behavior;
     private ImageView mLogoView;
     private TextView noInternetMessage;
     private AnimationDrawable mFrameAnimation;
@@ -39,7 +43,8 @@ public class SplashFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.splash_screen, container, false);
 
-        this.mLogoView = (ImageView) rootView.findViewById(R.id.splash_logo_view);
+
+       this.mLogoView = (ImageView) rootView.findViewById(R.id.splash_logo_view);
         this.noInternetMessage = (TextView) rootView.findViewById(R.id.splash_no_internet_info_layout);
 
         // Load the ImageView that will host the animation and
@@ -55,8 +60,6 @@ public class SplashFragment extends BaseFragment {
        // WebView wv = (WebView)rootView.findViewById(R.id.spalsh_logo_animation);
        // wv.loadUrl("../assets/splash_animation.html");
 
-
-
         return rootView;
     }
 
@@ -71,6 +74,22 @@ public class SplashFragment extends BaseFragment {
 
         //Start the secondary animation
         //this.mLogoView.startAnimation(AnimationUtils.loadAnimation(getActivity().getBaseContext(), R.anim.bounce_slow));
+    }
+
+
+    @Override
+    public void onAttach(Context activity) {
+        super.onAttach(activity);
+
+        if(behavior != null)
+            return;
+
+        FrameLayout layout =(FrameLayout) getActivity().findViewById(R.id.container);
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) layout.getLayoutParams();
+
+        behavior = params.getBehavior();
+        params.setBehavior(null);
+
     }
 
 

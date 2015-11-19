@@ -1,8 +1,8 @@
 package com.collegedekho.app.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.design.widget.CoordinatorLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,20 +69,22 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mListener = (OnStreamInteractionListener) activity;
+            mListener = (OnStreamInteractionListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnStreamInteractionListener");
         }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+
     }
 
     @Override
@@ -111,10 +113,13 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
 
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
-
-       /* if(mMainActivity.mToolbar != null && !isStreamUpdate) {
-           mMainActivity.mToolbar.setNavigationIcon(null);
-           mMainActivity.mToolbar.setNavigationOnClickListener(null);
-        }*/
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(ARG_STREAMS, streams);
+        outState.putBoolean(ARG_STREAM_UPDATE, this.isStreamUpdate);
+    }
+
 }

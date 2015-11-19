@@ -19,6 +19,7 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         />
+    <include layout="@layout/layout_grid_list"/>
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"

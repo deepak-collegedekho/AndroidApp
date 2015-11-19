@@ -15,9 +15,9 @@
         android:gravity="center_vertical"
         android:text="My Future Buddies"
         android:textSize="14sp"
-        android:background="@color/white"
+        android:background="@color/primary_color"
         android:padding="10dp"
-        android:textColor="@color/primary_color"
+        android:textColor="@color/white"
         />
     <View
         style="@style/AppTheme.Divider1"

@@ -1,0 +1,78 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/AppTheme.LinearLayout.Horizontal"
+    android:layout_width="match_parent"
+    android:weightSum="10">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="8"
+        style="@style/AppTheme.LinearLayout.Vertical">
+
+        <TextView
+            android:id="@+id/card_institute_location"
+            style="@style/AppTheme.TextView.size10sp"
+            android:text="Manipal, Karnataka | Established in: 1957"/>
+
+        <RelativeLayout
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/card_institute_cources"
+                style="@style/AppTheme.TextView.size9sp"
+                android:layout_width="wrap_content"
+                android:text="18 Courses Available"   />
+
+            <TextView
+                style="@style/AppTheme.TextView.style2"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/card_institute_cources"
+                android:ellipsize="end"
+                android:gravity="center|bottom"
+                android:singleLine="true"
+                android:text="Facilities"
+                android:textSize="12sp"
+                android:paddingLeft="0dp"
+                android:paddingTop="0dp"
+                android:id="@+id/textView2" />
+
+            <include layout="@layout/layout_like_button"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:id="@+id/card_college_facility_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView2"
+            android:orientation="horizontal">
+
+            <include layout="@layout/item_facility" />
+
+            <include layout="@layout/item_facility" />
+
+            <include layout="@layout/item_facility" />
+
+            <include layout="@layout/item_facility" />
+
+            <TextView
+                android:layout_width="@dimen/m25dp"
+                android:layout_height="@dimen/m25dp"
+                android:background="@drawable/bg_grey_circle"
+                android:gravity="center"
+                android:text="+15"
+                android:textSize="10sp"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+    </LinearLayout>
+    <include layout="@layout/layout_remove_expand"
+        android:layout_width="0dp"
+        android:layout_weight="2"
+        android:layout_height="match_parent"/>
+</LinearLayout>

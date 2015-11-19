@@ -4,18 +4,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/m5dp"
+    android:layout_margin="@dimen/m1dp"
     android:orientation="vertical"
-    android:elevation="@dimen/m4dp"
+    android:elevation="@dimen/m1dp"
     app:cardCornerRadius="@dimen/corner_radius"
-    app:cardElevation="@dimen/cardview_default_elevation"
+    app:cardElevation="@dimen/m1dp"
     app:cardUseCompatPadding="true">
     <RelativeLayout
         android:id="@+id/card_article_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
+        android:padding="@dimen/m5dp"
+        android:layout_height="wrap_content">
         <TextView
             android:id="@+id/card_article_heading"
             android:layout_alignParentTop="true"
@@ -27,50 +26,35 @@
             />
         <com.collegedekho.app.widget.FadeInImageView
             android:id="@+id/image_article_collapsed"
+            style="@style/AppTheme.ImageView.FadeInImage"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:contentDescription="@string/article_image"
             android:layout_below="@+id/card_article_heading"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
             />
         <TextView
             android:id="@+id/textview_article_title"
             style="@style/AppTheme.TextHomeSubHead.Medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/m10dp"
             android:layout_below="@+id/card_article_heading"
-            android:layout_toRightOf="@id/image_article_collapsed"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            />
+            android:paddingLeft="@dimen/m16dp"
+            android:layout_toRightOf="@id/image_article_collapsed" />
 
         <TextView
             android:id="@+id/textview_article_pubdate"
-            style="@style/AppTheme.TextView.style1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
+            style="@style/AppTheme.TextView.dateFormate"
             android:layout_below="@id/textview_article_title"
             android:layout_toRightOf="@id/image_article_collapsed"
-            android:singleLine="true"
-            android:text="July 13, 2015 06:45 PM"
-            android:textSize="14sp"
             />
 
         <TextView
             android:id="@+id/textview_article_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
+            style="@style/AppTheme.TextView.style3"
             android:layout_below="@id/textview_article_pubdate"
             android:layout_toRightOf="@id/image_article_collapsed"
             android:ellipsize="end"
             android:maxLines="3"
-            android:textSize="12sp"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingBottom="@dimen/activity_vertical_margin"
             />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

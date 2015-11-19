@@ -34,17 +34,23 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
     private ArrayList<MyFutureBuddyComment> mMyFBCommentList;
     private Context mContext;
     private volatile SimpleDateFormat mSDF;
+    private boolean mDateChanged;
+    private String mLastDate;
+    private TextView mLastDateView;
+    public boolean IS_UP_SCROLLING = true;
+
+
 
     public MyFBCommentsListAdapter(Context context, ArrayList<MyFutureBuddyComment> myFBCommentList) {
         this.mMyFBCommentList = myFBCommentList;
         this.mContext = context;
-        this.mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-        this.mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
+        //this.mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        //this.mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(mContext).inflate(R.layout.card_my_fb_comment, parent, false);
+        View rootView = LayoutInflater.from(mContext).inflate(R.layout.my_fb_comment_card, parent, false);
         try {
             return new MyFBCommentsHolder(rootView, (MyFutureBuddiesFragment.OnMyFBInteractionListener) mContext);
         } catch (ClassCastException e) {
@@ -58,31 +64,66 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         MyFutureBuddyComment myFBComment = mMyFBCommentList.get(position);
         MyFBCommentsHolder qnaAnswerHolder = (MyFBCommentsHolder) holder;
         String simpleDate = "";
+        String shortDate = "";
+        String time = "";
+
+        //set date
         try
         {
             if (myFBComment.getAdded_on() != null)
             {
-                mSDF.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
-                Date date = mSDF.parse(myFBComment.getAdded_on());
-                mSDF.applyPattern("MMMM d, yyyy KK:mm a");
-                simpleDate = mSDF.format(date);
+                this.mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+                this.mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                Date date = this.mSDF.parse(myFBComment.getAdded_on());
+
+                //Get Full date
+                this.mSDF.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
+                this.mSDF.applyPattern("MMMM d, yyyy KK:mm a");
+                simpleDate = this.mSDF.format(date);
+
+                //Get Date
+                this.mSDF.applyLocalizedPattern("yyyy-MM-dd");
+                shortDate = this.mSDF.format(date);
+
+                //Get Time
+                this.mSDF.applyLocalizedPattern("HH:mm");
+                time = this.mSDF.format(date);
+
+                qnaAnswerHolder.date.setVisibility(View.VISIBLE);
+                qnaAnswerHolder.date.setText(String.valueOf(shortDate));
+                if (this.mLastDate != null)
+                {
+                    if(!IS_UP_SCROLLING && this.mLastDate.equalsIgnoreCase(shortDate))
+                    {
+                        qnaAnswerHolder.date.setVisibility(View.GONE);
+                    }
+                    else
+                    {
+                        if (this.mLastDateView != null && this.mLastDate.equalsIgnoreCase(shortDate)) {
+                        this.mLastDateView.setVisibility(View.GONE);
+                         }
+                    }
+                }
+                this.mLastDateView = qnaAnswerHolder.date;
+                this.mLastDate = shortDate;
             }
         } catch (ParseException e) {
             Log.e(TAG, "Date format unknown: " + myFBComment.getAdded_on());
         }
 
-        qnaAnswerHolder.commentText.setText(myFBComment.getComment());
         qnaAnswerHolder.dateAddedOn.setText(simpleDate);
+        qnaAnswerHolder.time.setText(String.valueOf(time));
 
-        if (MainActivity.user.getToken() != null && (myFBComment.getToken()).equals(MainActivity.user.getToken()))
+
+
+        //set comment
+        qnaAnswerHolder.commentText.setText(myFBComment.getComment());
+
+        if ((myFBComment.getToken()).equals(MainActivity.user.getToken()))
         {
             //if it is my comment
-            /*LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-            params.weight = 1.0f;
-            params.gravity = Gravity.RIGHT;
-
-            qnaAnswerHolder.myFbCardLayout.setLayoutParams(params);*/
+           // qnaAnswerHolder.time.setGravity(Gravity.LEFT);
 
             qnaAnswerHolder.myFbCardLayout.setGravity(Gravity.RIGHT);
             qnaAnswerHolder.myFbCard.setCardBackgroundColor(this.mContext.getResources().getColor(R.color.self_comment_card_background));
@@ -95,11 +136,11 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         }
         else
         {
-            qnaAnswerHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
+           // qnaAnswerHolder.time.setGravity(Gravity.RIGHT);
 
+            qnaAnswerHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
             qnaAnswerHolder.userName.setText(myFBComment.getUser());
         }
-
     }
 
     @Override
@@ -111,6 +152,8 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         TextView commentText;
         TextView userName;
         TextView dateAddedOn;
+        TextView time;
+        TextView date;
         LinearLayout myFbCardLayout;
         CardView myFbCard;
         ImageView mSentNotifier;
@@ -120,16 +163,16 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         public MyFBCommentsHolder(View itemView, MyFutureBuddiesFragment.OnMyFBInteractionListener listener)
         {
             super(itemView);
-
             this.commentText = (TextView) itemView.findViewById(R.id.my_fb_comment_text);
             this.userName = (TextView) itemView.findViewById(R.id.my_fb_comment_user_name);
             this.dateAddedOn = (TextView) itemView.findViewById(R.id.my_fb_comment_date_added_on);
-            this.myFbCardLayout = (LinearLayout) itemView.findViewById(R.id.my_fb_card_layout);
+            this.myFbCardLayout = (LinearLayout) itemView.findViewById(R.id.my_fb_comment_content);
             this.myFbCard = (CardView) itemView.findViewById(R.id.my_fb_card);
             this.mSentNotifier = (ImageView) itemView.findViewById(R.id.my_fb_comment_sent_notifier);
+            this.time = (TextView) itemView.findViewById(R.id.my_fb_comment_time);
+            this.date = (TextView) itemView.findViewById(R.id.my_fb_comment_date);
 
             this.mListener = listener;
         }
     }
-
 }

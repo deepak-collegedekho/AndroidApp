@@ -41,7 +41,8 @@
     <color name="self_comment_card_background">#DFF3D8</color>
     <color name="light_grey_background">#E8E7EE</color>
 
-    <color name="heading_color">#565749</color>
+    <color name="arrow_color">#7C7C7C</color>
+    <color name="heading_color">#555B4A</color>
     <color name="subheading_color">#56574A</color>
     <color name="like_fill_color">#7D7D7D</color>
 

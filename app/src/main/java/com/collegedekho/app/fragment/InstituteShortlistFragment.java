@@ -79,14 +79,17 @@ public class InstituteShortlistFragment extends BaseFragment {
         this.progressBarLL = (LinearLayout) rootView.findViewById(R.id.progressBarLL);
 
         RecyclerView recyclerView  = (RecyclerView)rootView.findViewById(R.id.recyclerView_shortList_institute);
-         if(this.mViewType == Constants.VIEW_INTO_GRID)
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        else
+         if(this.mViewType == Constants.VIEW_INTO_GRID) {
+             recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+             recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
+         }
+        else {
              recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-
+             recyclerView.setItemAnimator(new DefaultItemAnimator());
+         }
+        updateViewTypeIcon(rootView, this.mViewType);
         this.mAdapter = new InstituteShortListAdapter(getActivity(), this.mShortlistedInstitutes, this.mViewType);
         recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2,10,true));
         recyclerView.setAdapter(mAdapter);
         // recyclerView.addOnScrollListener(scrollListener);
         return rootView;
@@ -169,8 +172,8 @@ public class InstituteShortlistFragment extends BaseFragment {
                 break;
             default:
                 break;
-
         }
+        updateViewTypeIcon(getView(), this.mViewType);
     }
 
     public void clearList() {
@@ -186,9 +189,16 @@ public class InstituteShortlistFragment extends BaseFragment {
         this.mNextUrl = next;
     }
 
+    public void updateLikeButtons(int position) {
+        mAdapter.updateLikeButtons(position);
+    }
+
     public interface OnShortlistedInstituteSelectedListener extends BaseListener {
 
         @Override
         void onEndReached(String next, int type);
+
+        @Override
+        void onInstituteLikedDisliked(int position, int liked);
     }
 }

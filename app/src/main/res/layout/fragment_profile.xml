@@ -26,7 +26,7 @@
                 android:scrollbars="none"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:tabMode="fixed"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/profile_login_pager"
@@ -37,6 +37,7 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
+                android:id="@+id/profile_name_title"
                 android:layout_marginTop="@dimen/m50dp"
                 android:layout_marginLeft="@dimen/m30dp"
                 android:layout_marginRight="@dimen/m30dp"
@@ -54,9 +55,11 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
+                android:id="@+id/profile_contact_title"
                 android:layout_marginLeft="@dimen/m30dp"
                 android:layout_marginRight="@dimen/m30dp"
                 android:layout_marginTop="@dimen/m25dp"
+                android:layout_marginBottom="@dimen/m45dp"
                 android:layout_centerHorizontal="true"
                 android:layout_height="wrap_content">
              <EditText
@@ -92,7 +95,6 @@
                 android:orientation="horizontal"
                 android:layout_width="0dp"
                 android:layout_weight=".1"
-                android:paddingTop="@dimen/m35dp"
                 android:gravity="center"
                 android:layout_height="match_parent">
                 <ImageView
@@ -111,6 +113,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/m30dp"
                 android:paddingRight="@dimen/m30dp"
+                android:layout_marginTop="@dimen/m45dp"
                 android:orientation="horizontal">
 
                 <EditText
@@ -125,7 +128,6 @@
                     android:orientation="horizontal"
                     android:layout_width="0dp"
                     android:layout_weight=".1"
-                    android:paddingTop="@dimen/m35dp"
                     android:gravity="center"
                     android:layout_height="match_parent">
 

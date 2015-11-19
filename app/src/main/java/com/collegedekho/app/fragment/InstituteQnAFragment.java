@@ -20,6 +20,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.QnAQuestionsListAdapter;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
 
 import java.util.ArrayList;
@@ -92,7 +93,7 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
         this.mAskExpertSubmitButton= (TextView) rootView.findViewById(R.id.institute_qna_button_ask_submit);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
 
-        this.mQnAQuestionsListAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestions);
+        this.mQnAQuestionsListAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestions, Constants.VIEW_INTO_LIST);
 
         this.mQuestionsListView = (RecyclerView) rootView.findViewById(R.id.institute_qna_question_recycle_view);
 

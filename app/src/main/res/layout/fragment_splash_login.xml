@@ -1,86 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/m30dp"
-    android:paddingRight="@dimen/m30dp">
+    android:orientation="vertical"
+    android:background="@drawable/bg_splash"
+    android:paddingTop="@dimen/m25dp"
+    android:paddingBottom="@dimen/m10dp"
+    android:paddingLeft="@dimen/m60dp"
+    android:paddingRight="@dimen/m60dp">
+
+
+    <ImageView
+        style="@style/AppTheme.ImageView"
+        android:src="@drawable/file79"/>
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/facebook_sign_in"
+        style="@style/AppTheme.FacebookButton"/>
+
+    <include layout="@layout/layout_or_line"/>
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/signin_email_til"
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/m35dp"
-        android:layout_centerHorizontal="true"
-        android:layout_height="wrap_content">
-
+        style="@style/AppTheme.TextInputLayout">
         <EditText
-            android:id="@+id/signin_email"
-            style="@style/AppTheme.EditText"
-            android:inputType="textEmailAddress"
-            android:hint="Email"
-            />
+            android:id="@+id/splash_login_name"
+            style="@style/AppTheme.EditText.TransParent.name"
+            android:hint="Name" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/signin_password_til"
-        android:layout_width="match_parent"
-        android:layout_below="@id/signin_email_til"
-        android:layout_marginTop="@dimen/m20dp"
-        android:layout_height="wrap_content">
-
+        style="@style/AppTheme.TextInputLayout">
         <EditText
-            android:id="@+id/signin_password"
-            style="@style/AppTheme.EditText"
-            android:hint="Password"
-            android:inputType="textPassword"
-            />
+            android:id="@+id/splash_login_phone"
+            style="@style/AppTheme.EditText.TransParent.phone"
+            android:hint="Phone" />
     </android.support.design.widget.TextInputLayout>
 
+    <android.support.design.widget.TextInputLayout
+        style="@style/AppTheme.TextInputLayout">
+        <EditText
+            android:id="@+id/splash_login_email"
+            style="@style/AppTheme.EditText.TransParent.email"
+            android:hint="Email" />
+    </android.support.design.widget.TextInputLayout>
 
-    <LinearLayout
-        android:id="@+id/signin_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/signin_password_til"
-        android:layout_marginTop="@dimen/m30dp"
-        android:gravity="center"
-        android:visibility="visible"
-        android:orientation="vertical">
+    <android.support.design.widget.TextInputLayout
+        style="@style/AppTheme.TextInputLayout">
+        <EditText
+            android:id="@+id/splash_login_password"
+            style="@style/AppTheme.EditText.TransParent.password"
+            android:hint="Password" />
+    </android.support.design.widget.TextInputLayout>
 
-        <TextView
-            android:id="@+id/signIn_button"
-            style="@style/AppTheme.BlueButton"
-            android:layout_width="match_parent"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:background="?attr/colorPrimary"
-            android:text="SIGN IN"
-            />
+    <TextView
+        android:id="@+id/sign_up_button"
+        style="@style/AppTheme.OrangeButton"
+        android:text="SIGN UP"/>
 
-
-        <TextView
-            style="@style/AppTheme.TextView.AppTextView"
-            android:textStyle="bold"
-            android:background="@drawable/bg_black_circle"
-            android:textColor="@color/white"
-            android:text="OR"
-            />
+    <TextView
+        android:id="@+id/skip"
+        style="@style/AppTheme.TextView.style2"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="20sp"
+        android:textColor="?attr/colorPrimary"
+        android:text="SKIP"/>
 
 
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/google_sign_in"
-            android:visibility="gone"
-            android:layout_marginTop="@dimen/m10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/facebook_sign_in"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/m10dp"
-            android:paddingBottom="@dimen/m10dp"
-            android:paddingTop="@dimen/m10dp"
-            android:textSize="16sp"/>
-
-    </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

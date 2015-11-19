@@ -1,11 +1,14 @@
 package com.collegedekho.app.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -75,20 +78,22 @@ public class HomeFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mListener = (OnHomeInteractionListener) activity;
+            mListener = (OnHomeInteractionListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnHomeInteractionListener");
         }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+
     }
 
     @Override
@@ -100,11 +105,6 @@ public class HomeFragment extends BaseFragment {
         if (this.mMainActivity != null)
             this.mMainActivity.currentFragment = this;
 
-       /*
-        if(this.mMainActivity.mToolbar != null) {
-            this.mMainActivity.mToolbar.setNavigationIcon(null);
-            this.mMainActivity.mToolbar.setNavigationOnClickListener(null);
-        }*/
     }
 
 

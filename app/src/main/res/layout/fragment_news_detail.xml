@@ -22,23 +22,20 @@
                 android:id="@+id/textview_news_title"
                 style="@style/AppTheme.TextHomeSubHead.Medium"
                 android:layout_width="match_parent"
+                android:textStyle="bold"
                 android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/textview_news_pubdate"
-                style="@style/AppTheme.TextView.style1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="0dp"
-                android:text="July 13, 2015 06:45 PM"
-                android:textSize="14sp" />
+        <TextView
+            android:id="@+id/textview_news_pubdate"
+            style="@style/AppTheme.TextView.dateFormate"
+            android:paddingLeft="0dp"
+            android:text="July 13, 2015 06:45 PM" />
 
 
-            <TextView
-                android:id="@+id/textview_news_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="12sp" />
+        <TextView
+            android:id="@+id/textview_news_content"
+            style="@style/AppTheme.TextView.style3"
+            android:paddingLeft="0dp"/>
 
         <View
             style="@style/AppTheme.Divider1"
