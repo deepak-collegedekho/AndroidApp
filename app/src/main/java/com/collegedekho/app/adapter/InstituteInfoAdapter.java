@@ -24,7 +24,7 @@ public class InstituteInfoAdapter extends BaseAdapter {
     public InstituteInfoAdapter(Context context, ArrayList<String> heads, ArrayList<String> details) {
         this.heads = heads;
         this.details = details;
-        mContext = context;
+        this.mContext = context;
     }
 
     @Override
@@ -46,16 +46,18 @@ public class InstituteInfoAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         CollegeHolder collegeHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.card_institute_info, parent, false);
+            convertView = LayoutInflater.from(this.mContext).inflate(R.layout.card_institute_info, parent, false);
             collegeHolder = new CollegeHolder(convertView);
             convertView.setTag(collegeHolder);
         } else
             collegeHolder = (CollegeHolder) convertView.getTag();
-        collegeHolder.setUp(heads.get(position), details.get(position));
+
+        collegeHolder.setUp(this.heads.get(position), this.details.get(position));
+
         return convertView;
     }
 
-    static class CollegeHolder {
+    private static class CollegeHolder {
 
         TextView head;
         TextView detail;

@@ -180,6 +180,7 @@ public class Constants
     public static final int APPLY_UPDATING  = 2;
     public static final String KEY_APPLY_STATUS = "apply_status";
     public static String INSTITUTE_ID ="institute_id_set";
+    public static String YOUTUBE_DEVELOPER_KEY = "AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk";
 
     //GA Categories
     public static final String CATEGORY_PREFERENCE = "category_preference";

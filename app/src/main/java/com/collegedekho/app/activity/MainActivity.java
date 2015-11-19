@@ -87,7 +87,6 @@ import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 
 import com.collegedekho.app.widget.CircleImageView;
-import com.crashlytics.android.Crashlytics;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -135,7 +134,7 @@ public class MainActivity extends AppCompatActivity
         QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener,
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleFragment.OnArticleSelectedListener,
-        ProfileFragment.onProfileUpdateListener,LoginFragment.OnSignUpListener
+        ProfileFragment.onProfileUpdateListener,LoginFragment.OnSignUpListener, InstituteDetailFragment.OnInstituteFooterItemSelected
       {
 
     static {
@@ -148,14 +147,11 @@ public class MainActivity extends AppCompatActivity
         Constants.FilterCategoryMap.put(Constants.ID_CITY, Constants.FILTER_CATEGORY_LOCATION);
         Constants.FilterCategoryMap.put(Constants.ID_STATE, Constants.FILTER_CATEGORY_LOCATION);
 
-       // Constants.FilterCategoryMap.put(Constants.ID_LEVEL, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
         Constants.FilterCategoryMap.put(Constants.ID_SPECIALIZATION, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
         Constants.FilterCategoryMap.put(Constants.ID_DEGREE, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
         Constants.FilterCategoryMap.put(Constants.ID_EXAM, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
     }
 
-    public static final int GET_PSYCHOMETRIC_RESULTS = 1;
-    public static final String PSYCHOMETRIC_RESULTS = "psychometric_results";
     private static final String TAG = "MainActivity";
     private static final String TRACKER_ID = "UA-67752258-1";
 
@@ -172,7 +168,6 @@ public class MainActivity extends AppCompatActivity
     private ProgressDialog progressDialog;
     private String mCurrentTitle;
     private String next;
-    private String mTitle;
     private List<MyFutureBuddiesEnumeration> mFbEnumeration;
     private MyFutureBuddy mFB;
     private ArrayList<QnAQuestions> mQnAQuestions = new ArrayList<>();
@@ -242,8 +237,12 @@ public class MainActivity extends AppCompatActivity
 
         MainActivity.tracker = this.analytics.newTracker(TRACKER_ID);
 
+        // Provide unhandled exceptions reports. Do that first after creating the tracker
         MainActivity.tracker.enableExceptionReporting(true);
+        // Enable Remarketing, Demographics & Interests reports
+        // https://developers.google.com/analytics/devguides/collection/android/display-features
         MainActivity.tracker.enableAdvertisingIdCollection(true);
+        // Enable automatic activity tracking for your app
         MainActivity.tracker.enableAutoActivityTracking(true);
 
         this.mRegisterFacebookSdk();
@@ -291,7 +290,7 @@ public class MainActivity extends AppCompatActivity
         //logUser();
     }
 
-    private void logUser() {
+    /*private void logUser() {
         // TODO: Use the current user's information
         // You can call any combination of these three methods
         if (MainActivity.user != null)
@@ -300,7 +299,7 @@ public class MainActivity extends AppCompatActivity
             Crashlytics.setUserEmail(MainActivity.user.getEmail());
             Crashlytics.setUserName(MainActivity.user.getName());
         }
-    }
+    }*/
 
     private void mhandleNotifications()
     {
@@ -662,7 +661,8 @@ public class MainActivity extends AppCompatActivity
             if (map.containsKey("filters"))
                 this.mFilters = JSON.std.asString(map.get("filters"));
 
-            return JSON.std.asString(map.get("results"));
+            String val = JSON.std.asString(map.get("results"));
+            return val;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -721,7 +721,8 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplayInstituteList(String response, boolean filterAllowed) {
         try {
-            this.mInstituteList = JSON.std.listOfFrom(Institute.class, this.extractResults(response));
+            String val = this.extractResults(response);
+            this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
 
             if (this.mFilterKeywords.size() > 0)
                 this.mFilterCount = this.mFilterKeywords.size();
@@ -754,7 +755,6 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplayShortlistedInstituteList(String response) {
         try {
-
             this.mShortlistedInstituteList = JSON.std.listOfFrom(Institute.class, this.extractResults(response));
 
             Fragment fragment = this.getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE_LIST);
@@ -862,17 +862,17 @@ public class MainActivity extends AppCompatActivity
 
     private void loadPyschometricTest(String response) {
         Bundle bundle = new Bundle();
-        bundle.putString(MainActivity.PSYCHOMETRIC_RESULTS, response);
+        bundle.putString(PsychometricAnalysisActivity.PSYCHOMETRIC_RESULTS, response);
 
         Intent activityIntent = new Intent(MainActivity.this, PsychometricAnalysisActivity.class);
         activityIntent.putExtras(bundle);
-        this.startActivityForResult(activityIntent, MainActivity.GET_PSYCHOMETRIC_RESULTS);
+        this.startActivityForResult(activityIntent, PsychometricAnalysisActivity.GET_PSYCHOMETRIC_RESULTS);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if (requestCode == MainActivity.GET_PSYCHOMETRIC_RESULTS) {
+        if (requestCode == PsychometricAnalysisActivity.GET_PSYCHOMETRIC_RESULTS) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
                 if (PsychometricQuestionFragment.getAnswers() != null) {
@@ -2759,10 +2759,50 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+        @Override
+        public void onFooterVideosSelected(ArrayList<String> videos) {
 
+            if (videos == null || videos.size() < 1)
+            {
+                Toast.makeText(MainActivity.this, "No videoes for this college yet", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList(VideoListActivity.VIDEO_LIST_ACTIVITY, videos);
 
-    private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
+            Intent activityIntent = new Intent(MainActivity.this, VideoListActivity.class);
+            activityIntent.putExtras(bundle);
+            this.startActivity(activityIntent);
+
+        }
+
+        @Override
+        public void OnFooterOtherItemsSelected(int type, int instituteID) {
+            switch (type)
+            {
+                case InstituteDetailFragment.QnA:
+                {
+                    this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL + "personalize/qna/" , null);
+                    break;
+                }
+                case InstituteDetailFragment.News:
+                {
+                    this.mMakeNetworkCall(Constants.WIDGET_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(instituteID) , null);
+                    break;
+                }
+                case InstituteDetailFragment.Articles:
+                {
+                    this.mMakeNetworkCall(Constants.WIDGET_ARTICES, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(instituteID) , null);
+                    break;
+                }
+                default:
+                    break;
+
+            }
+        }
+
+        private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override
         public void onContainerAvailable(ContainerHolder containerHolder, String containerVersion) {
             // We load each container when it becomes available.

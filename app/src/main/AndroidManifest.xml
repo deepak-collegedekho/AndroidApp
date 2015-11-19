@@ -67,6 +67,15 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
+        <activity
+            android:label="@string/videolist_activity"
+            android:name=".activity.VideoListActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="landscape">
+            <meta-data android:name="@string/minVersion" android:value="13"/>
+            <meta-data android:name="@string/isLaunchableActivity" android:value="true"/>
+        </activity>
+
 
 
         <service android:name=".service.ApplyIntentService"

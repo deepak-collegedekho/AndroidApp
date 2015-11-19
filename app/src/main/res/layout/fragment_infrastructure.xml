@@ -1,0 +1,25 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="none">
+    <LinearLayout
+        android:id="@+id/infra_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <com.collegedekho.app.widget.FadeInImageView
+            android:id="@+id/infra_image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/m180dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_banner"
+            />
+        <TextView
+            android:id="@+id/infra_about"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/AppTheme.TextView.AboutTextView"
+            />
+    </LinearLayout>
+</ScrollView>

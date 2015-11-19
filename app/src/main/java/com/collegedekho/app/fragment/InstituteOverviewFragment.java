@@ -4,6 +4,7 @@ package com.collegedekho.app.fragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +58,7 @@ public class InstituteOverviewFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mInstitute = getArguments().getParcelable(ARG_INSTITUTE);
+            this.mInstitute = getArguments().getParcelable(ARG_INSTITUTE);
         }
     }
 
@@ -77,7 +78,17 @@ public class InstituteOverviewFragment extends BaseFragment {
             text += "Established in: " + this.mInstitute.getEstb_date().substring(0, 4);
         LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.college_facility_list);
         setupFacilities(inflater, layout, this.mInstitute.getFacilities());
+
+        NetworkImageView imageView = ((NetworkImageView) rootView.findViewById(R.id.overview_image));
+        imageView.setDefaultImageResId(R.drawable.default_banner);
+        imageView.setErrorImageResId(R.drawable.default_banner);
+        if (this.mInstitute.getImages().get("Banner") != null) {
+            ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
+            imageView.setImageUrl(this.mInstitute.getImages().get("Banner"), imageLoader);
+        }
+
         ((TextView) rootView.findViewById(R.id.textview_college_location)).setText(text);
+        ((TextView) rootView.findViewById(R.id.overview_text)).setText(Html.fromHtml(this.mInstitute.getDescription()));
         ((TextView) rootView.findViewById(R.id.textview_why_join)).setText("Why join " + mInstitute.getShort_name());
         this.mShortListTV  = ((TextView) rootView.findViewById(R.id.shortlist_college));
         this.mProgressBar = ((ProgressBar) rootView.findViewById(R.id.shortList_college_progressBar));
@@ -102,7 +113,6 @@ public class InstituteOverviewFragment extends BaseFragment {
                     mProgressBar.setVisibility(View.VISIBLE);
                     mListener.onInstituteShortlisted();
                 }
-
             }
         });
         this.setupInfo((LinearLayout) rootView.findViewById(R.id.college_info_ll1)
@@ -165,7 +175,6 @@ public class InstituteOverviewFragment extends BaseFragment {
             mListener = (OnInstituteShortlistedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Implement OnInstituteShortlistedListener");
-
         }
     }
 

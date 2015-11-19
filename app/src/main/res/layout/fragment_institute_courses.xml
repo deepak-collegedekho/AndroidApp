@@ -4,11 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
+    <com.collegedekho.app.widget.FadeInImageView
+        android:id="@+id/courses_image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/m180dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/default_banner"
+        />
     <TextView
         android:id="@+id/course_tab_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/m30dp"
         android:padding="@dimen/activity_horizontal_margin"
         android:text="Loading Courses..."
         android:textStyle="bold" />

@@ -6,12 +6,20 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="wrap_content"
+        >
+        <com.collegedekho.app.widget.FadeInImageView
+            android:id="@+id/placement_image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/m180dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_banner"
+            />
         <TextView
             android:id="@+id/subhead_highest_package"
             style="@style/AppTheme.TextView.SubHead"
-            android:text="Highest Package Offered: " />
+            android:text="Highest Package Offered: "
+            android:layout_below="@+id/placement_image"/>
 
         <TextView
             android:id="@+id/subhead_average_package"
@@ -41,6 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/subhead_highest_package"
+            android:layout_below="@+id/placement_image"
             android:text="50%" />
 
         <TextView

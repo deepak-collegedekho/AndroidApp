@@ -27,6 +27,8 @@ import java.util.HashMap;
 
 public class PsychometricAnalysisActivity extends FragmentActivity{
 
+    public static final int GET_PSYCHOMETRIC_RESULTS = 1;
+    public static final String PSYCHOMETRIC_RESULTS = "psychometric_results";
     private static final String TAG = "PsychometricAnalysisActivity";
     private ProgressDialog progressDialog;
     private TextView mPreviousButton;
@@ -42,7 +44,7 @@ public class PsychometricAnalysisActivity extends FragmentActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_psychometric_analysis);
 
-        this.mPsychometricResult = getIntent().getExtras().getString(MainActivity.PSYCHOMETRIC_RESULTS);
+        this.mPsychometricResult = getIntent().getExtras().getString(PsychometricAnalysisActivity.PSYCHOMETRIC_RESULTS);
 
         this.mViewPager = (NonSwipeableViewPager) findViewById(R.id.pager);
         this.mViewPager.setOffscreenPageLimit(0);

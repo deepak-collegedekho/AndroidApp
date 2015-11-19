@@ -38,6 +38,7 @@
     <dimen name="m150dp">150dp</dimen>
     <dimen name="m160dp">160dp</dimen>
     <dimen name="m170dp">170dp</dimen>
+    <dimen name="m180dp">180dp</dimen>
 
     <dimen name="activity_horizontal_margin_small">10dp</dimen>
     <dimen name="activity_vertical_margin_small">10dp</dimen>

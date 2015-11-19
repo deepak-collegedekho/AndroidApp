@@ -1,11 +1,17 @@
 package com.collegedekho.app.entities;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.jr.ob.impl.DeferredMap;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Mayank Gautam
@@ -56,6 +62,8 @@ public class Institute implements Parcelable {
     private boolean isSelected = false;
     private int upvotes;
     private int downvotes;
+    private ArrayList<String> videos;
+    private Map<String, String> images;
 
     public Institute() {
     }
@@ -94,6 +102,8 @@ public class Institute implements Parcelable {
         is_shortlisted = source.readInt();
         upvotes = source.readInt();
         downvotes = source.readInt();
+        videos = source.readArrayList(ArrayList.class.getClassLoader());
+        source.readMap(images, Map.class.getClassLoader());
     }
 
     public String getCurrent_user_vote_url() {
@@ -228,6 +238,10 @@ public class Institute implements Parcelable {
         dest.writeInt(current_user_vote_type);
         dest.writeString(current_user_shortlist_url);
         dest.writeString(current_user_vote_url);
+        dest.writeInt(upvotes);
+        dest.writeInt(downvotes);
+        dest.writeStringList(videos);
+        dest.writeMap(images);
     }
 
     public String getLogo() {
@@ -371,13 +385,11 @@ public class Institute implements Parcelable {
                 Facility f = new Facility();
                 if (fdm.containsKey("name"))
                     f.tag = fdm.get("name").toString();
-                if (fdm.containsKey("image")) {
+                if (fdm.containsKey("image"))
                     f.image = fdm.get("image").toString();
-                }
                 if (f.image != null)
                     this.facilities.add(f);
             }
-
         }
     }
 
@@ -420,6 +432,43 @@ public class Institute implements Parcelable {
 
     public void setDownvotes(int downvotes) {
         this.downvotes = downvotes;
+    }
+
+    /*public void setImages(ArrayList images) {
+        if (this.images == null)
+            this.images = new ArrayList<>();
+        for (Object image : images)
+        {
+            if (image instanceof DeferredMap)
+            {
+                DeferredMap fdm = (DeferredMap) image;
+                Images f = new Images();
+                if (fdm.containsKey("Banner"))
+                    f.setBanner(fdm.get("Banner").toString());
+                if (fdm.containsKey("Primary"))
+                    f.setPrimary(fdm.get("Primary").toString());
+                if (fdm.containsKey("Student"))
+                    f.setPrimary(fdm.get("Student").toString());
+                if (fdm.containsKey("Infra"))
+                    f.setPrimary(fdm.get("Infra").toString());
+            }
+        }
+    }*/
+
+    public Map<String, String> getImages() {
+        return images;
+    }
+
+    public void setImages(Map<String, String> images) {
+        this.images = images;
+    }
+
+    public ArrayList<String> getVideos() {
+        return videos;
+    }
+
+    public void setVideos(ArrayList<String> videos) {
+        this.videos = videos;
     }
 
     @Override

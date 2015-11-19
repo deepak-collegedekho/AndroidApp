@@ -9,8 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
+import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.Placements;
+import com.collegedekho.app.resource.MySingleton;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,8 +23,10 @@ import com.collegedekho.app.entities.Placements;
  */
 public class InstitutePlacementFragment extends BaseFragment {
     private static final String ARG_PLACEMENT = "placement";
+    private static final String ARG_INSTITUTE = "institute";
 
     private Placements mPlacement;
+    private Institute mInstitute;
 
     public InstitutePlacementFragment() {
         // Required empty public constructor
@@ -33,10 +39,11 @@ public class InstitutePlacementFragment extends BaseFragment {
      * @param placement Parameter 1.
      * @return A new instance of fragment InstituteOverviewFragment.
      */
-    public static InstitutePlacementFragment newInstance(Placements placement) {
+    public static InstitutePlacementFragment newInstance(Placements placement, Institute institute) {
         InstitutePlacementFragment fragment = new InstitutePlacementFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_PLACEMENT, placement);
+        args.putParcelable(ARG_INSTITUTE, institute);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,7 +52,8 @@ public class InstitutePlacementFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mPlacement = getArguments().getParcelable(ARG_PLACEMENT);
+            this.mPlacement = getArguments().getParcelable(ARG_PLACEMENT);
+            this.mInstitute = getArguments().getParcelable(ARG_INSTITUTE);
         }
     }
 
@@ -77,6 +85,15 @@ public class InstitutePlacementFragment extends BaseFragment {
             rootView.findViewById(R.id.text_average_package).setVisibility(View.GONE);
             rootView.findViewById(R.id.subhead_average_package).setVisibility(View.GONE);
         }
+
+        NetworkImageView imageView = ((NetworkImageView) rootView.findViewById(R.id.placement_image));
+        imageView.setDefaultImageResId(R.drawable.default_banner);
+        imageView.setErrorImageResId(R.drawable.default_banner);
+        if (this.mInstitute.getImages().get("Primary") != null) {
+            ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
+            imageView.setImageUrl(this.mInstitute.getImages().get("Primary"), imageLoader);
+        }
+
         /*GridLayout gl = (GridLayout) rootView.findViewById(R.id.company_logo_grid);
         for (Media m : mPlacement.companyLogos) {
 

@@ -5,8 +5,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+    >
+    <com.collegedekho.app.widget.FadeInImageView
+        android:id="@+id/overview_image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/m180dp"
+        android:layout_weight=".3"
+        android:scaleType="centerCrop"
+        android:src="@drawable/default_banner"
+        />
     <TextView
         android:id="@+id/textview_college_name"
         android:layout_width="match_parent"
@@ -75,10 +83,21 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="5dp">
-
         </LinearLayout>
 
     </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/overview_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="10dp"
+        android:text="Overview for NIT Trichy?"
+        android:textSize="12sp"
+        />
 
     <TextView
         android:id="@+id/textview_why_join"
