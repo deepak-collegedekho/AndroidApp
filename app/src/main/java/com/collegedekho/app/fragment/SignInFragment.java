@@ -54,7 +54,7 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
 
     private static final String TAG ="SignInFragment";
     private static final String MSG ="chat_msg";
-    private LoginFragment.OnSignUpListener mListener;
+    private LoginFragment1.OnSignUpListener mListener;
 
     public GoogleApiClient mGoogleApiClient;
 
@@ -223,7 +223,7 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            this.mListener = (LoginFragment.OnSignUpListener) activity;
+            this.mListener = (LoginFragment1.OnSignUpListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnSignUpListener");

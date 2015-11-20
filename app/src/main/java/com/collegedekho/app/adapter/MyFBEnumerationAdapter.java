@@ -125,7 +125,9 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-            this.mListener.onMyFBSelected(mMyFBEnumeration.get(this.getAdapterPosition()), this.getAdapterPosition(), mMyFBEnumeration.get(this.getAdapterPosition()).getComments_count());
+            MyFutureBuddiesEnumeration myFbEnumration = mMyFBEnumeration.get(this.getAdapterPosition());
+            myFbEnumration.setUnread_count(0);
+            this.mListener.onMyFBSelected(myFbEnumration, this.getAdapterPosition(), mMyFBEnumeration.get(this.getAdapterPosition()).getComments_count());
         }
     }
 }
