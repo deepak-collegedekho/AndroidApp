@@ -109,8 +109,10 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
 
-        if (mInstitutes.size() == 0)
+        if (mInstitutes.size() == 0) {
+            mEmptyTextView.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setText("No Institutes");
+        }
 
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);

@@ -1,6 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -24,9 +25,11 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
     protected boolean loading = false;
     protected LinearLayout progressBarLL;
     protected LinearLayoutManager layoutManager;
+    RecyclerView.LayoutManager layoutManager1;
     protected String mNextUrl;
     protected BaseListener listener;
     protected  int listType;
+    protected  int mViewType ;
 
 
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {

@@ -72,6 +72,7 @@ import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
 import com.collegedekho.app.fragment.InstituteShortlistFragment;
+import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.LoginFragment1;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
@@ -166,7 +167,9 @@ public class MainActivity extends AppCompatActivity
         QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener,
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleFragment.OnArticleSelectedListener,
-        ProfileFragment.onProfileUpdateListener,LoginFragment1.OnSignUpListener, InstituteDetailFragment.OnInstituteFooterItemSelected
+        ProfileFragment.onProfileUpdateListener,
+        LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener,
+        InstituteDetailFragment.OnInstituteFooterItemSelected
 {
 
     static {
@@ -232,6 +235,7 @@ public class MainActivity extends AppCompatActivity
     private boolean completedStage2;
     static String type = "";
     static String resource_uri = "";
+    private  HashMap<String, String> mUserSignUPParams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -305,7 +309,9 @@ public class MainActivity extends AppCompatActivity
                         else
                             MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
                     } else {
-                        MainActivity.this.mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
+                       MainActivity.this.mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
+                        // MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
+
                     }
                 } else if (currentFragment instanceof SplashFragment)
                     ((SplashFragment) currentFragment).noInternetFound();
@@ -886,16 +892,25 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mDisplayInstitute(int position) {
-        mInstitute = this.mInstituteList.get(position);
+
+        int  id ;
+        if(currentFragment instanceof InstituteShortlistFragment)
+        {
+            this.mInstitute = this.mShortlistedInstituteList.get(position);
+            id = this.mShortlistedInstituteList.get(position).getId();
+        }
+        else {
+            this.mInstitute = this.mInstituteList.get(position);
+            id = this.mInstituteList.get(position).getId();
+        }
 
         final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE);
-
         if (fragment == null)
             this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute), true, Constants.TAG_FRAGMENT_INSTITUTE);
         else
             this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE);
 
-        this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + this.mInstituteList.get(position).getId(), null);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS, mInstitute.getResource_uri() + "qna/", null, Request.Method.GET);
     }
 
@@ -938,7 +953,7 @@ public class MainActivity extends AppCompatActivity
         }
         else
         {
-            if(currentFragment instanceof LoginFragment1 || currentFragment instanceof  ProfileFragment)
+            if(currentFragment instanceof  LoginFragment || currentFragment instanceof LoginFragment1 || currentFragment instanceof  ProfileFragment)
                 currentFragment.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -988,8 +1003,21 @@ public class MainActivity extends AppCompatActivity
         int voteType = 0;
 
         switch (tags[0]) {
+            case Constants.TAG_SKIP_LOGIN:
             case Constants.TAG_CREATE_USER:
                 this.mUserCreated(response);
+                break;
+            case Constants.TAG_CREATE_ANONY_USER:
+                this.mCreatedAnonymousUser(response);
+                break;
+            case Constants.TAG_CREATE_FACEBOOK_ANONY_USER_:
+                this.mCreatedFacebookAnonymousUser(response);
+                break;
+            case Constants.TAG_USER_SIGNUP:
+                this.mUserSignUpResponse(response);
+                break;
+            case Constants.TAG_USER_FACEBOOK_LOGIN:
+                this.mUserFacebookLoginResponse(response);
                 break;
             case Constants.TAG_LOAD_STREAM:
                 this.mDisplayStreams(response, false);
@@ -1148,7 +1176,7 @@ public class MainActivity extends AppCompatActivity
                 if (tags.length > 1) {
                     parentIndex = tags[1];
                 }
-                this.onUserSignUpResponse(response, parentIndex);
+                this.onUserRegisteredResponse(response, parentIndex);
                 break;
             case Constants.TAG_USER_LOGIN:
                 if (tags.length > 1) {
@@ -1491,7 +1519,15 @@ public class MainActivity extends AppCompatActivity
     public static String GetPersonalizedMessage(String tag) {
         switch (tag) {
             case Constants.TAG_CREATE_USER:
+            case Constants.TAG_CREATE_ANONY_USER:
+            case Constants.TAG_USER_SIGNUP:
                 return "Creating a user...";
+            case Constants.TAG_USER_REGISTRATION :
+                return "Creating User Please Wait";
+            case Constants.TAG_USER_LOGIN:
+                return "Signing User Please Wait.....";
+            case Constants.TAG_SKIP_LOGIN:
+                return "Loading Streams.....";
             case Constants.TAG_LOAD_STREAM:
             case Constants.TAG_UPDATE_STREAM:
                 return "Loading Streams...";
@@ -1531,10 +1567,6 @@ public class MainActivity extends AppCompatActivity
                 return "Loading Forums...";
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_TEST:
                 return "Submitting psychometric analysis...";
-            case Constants.TAG_USER_LOGIN:
-                return "Signing User Please Wait.....";
-            case Constants.TAG_USER_REGISTRATION :
-                return "Creating User Please Wait";
             case Constants.SEARCHED_INSTITUTES:
                 return "Loading...";
         }
@@ -1762,7 +1794,11 @@ public class MainActivity extends AppCompatActivity
         this.currentInstitute = position;
         this.mDisplayInstitute(position);
     }
-
+    @Override
+    public void onShortListInstituteSelected(int position) {
+        this.currentInstitute = position;
+        this.mDisplayInstitute(position);
+    }
     @Override
     public void onInstituteLikedDisliked(int position, int liked) {
         Institute institute = null;
@@ -2608,11 +2644,11 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onUserLoginRequired(String value) {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_LOGIN);
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_SIGNIN);
         if (fragment == null)
-            mDisplayFragment(LoginFragment1.newInstance(value), true, Constants.TAG_FRAGMENT_LOGIN);
+            mDisplayFragment(LoginFragment1.newInstance(value), true, Constants.TAG_FRAGMENT_SIGNIN);
         else
-            mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_LOGIN);
+            mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_SIGNIN);
     }
     /**
      * This method is used to sign Up
@@ -2623,6 +2659,94 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onUserSignUp(String url, HashMap hashMap, String msg) {
         this.mMakeNetworkCall(Constants.TAG_USER_REGISTRATION + "#" + msg, url, hashMap);}
+
+    /**
+     * This method is used to sign Up User
+     * @param params request data
+     */
+    @Override
+    public void onSplashUserSignUp(HashMap<String, String> params) {
+        this.userPref = User.Prefs.STREAMKNOWN;
+        this.mMakeNetworkCall(Constants.TAG_CREATE_ANONY_USER, Constants.BASE_URL + "users/anonymous/", params);
+        this.mUserSignUPParams = params;
+
+    }
+    /**
+     * This method is called when user skip
+     *  registration or facebook login
+     */
+    @Override
+    public void onSkipUserLogin() {
+        this.userPref = User.Prefs.STREAMKNOWN;
+        this.mMakeNetworkCall(Constants.TAG_SKIP_LOGIN, Constants.BASE_URL + "users/anonymous/", new HashMap<String, String>());
+    }
+
+
+    /**
+     * This method is used to login with facebook account
+     * @param params request data
+     */
+    @Override
+    public void onFacebookLogin(HashMap<String, String> params) {
+        this.userPref = User.Prefs.STREAMKNOWN;
+        this.mMakeNetworkCall(Constants.TAG_CREATE_FACEBOOK_ANONY_USER_, Constants.BASE_URL + "users/anonymous/", params);
+        this.mUserSignUPParams = params;
+    }
+    private void  mCreatedAnonymousUser(String json)
+   {
+       try {
+             this.user = JSON.std.beanFrom(User.class, json);
+             this.user.setPref(this.userPref);
+             this.networkUtils.setToken(this.user.getToken());
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+       this.mMakeNetworkCall(Constants.TAG_USER_SIGNUP, Constants.BASE_URL + "auth/register/", this.mUserSignUPParams);
+   }
+
+    private void  mCreatedFacebookAnonymousUser(String json)
+    {
+        try {
+            this.user = JSON.std.beanFrom(User.class, json);
+            this.user.setPref(this.userPref);
+            this.networkUtils.setToken(this.user.getToken());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.mMakeNetworkCall(Constants.TAG_USER_FACEBOOK_LOGIN,Constants.BASE_URL + "auth/facebook/", this.mUserSignUPParams);
+    }
+    private void mUserSignUpResponse(String json)
+    {
+        User tempUser = this.user;
+        try {
+            this.user = JSON.std.beanFrom(User.class, json);
+            this.user.setToken(tempUser.getToken());
+            this.user.setPref(this.userPref);
+            String u = JSON.std.asString(this.user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.mSetUserPref();
+    }
+    private void mUserFacebookLoginResponse(String json)
+    {
+        User tempUser = this.user;
+        try {
+            this.user = JSON.std.beanFrom(User.class, json);
+            this.networkUtils.setToken(user.getToken());
+            this.user.setToken(tempUser.getImage());
+            this.user.setPref(this.userPref);
+            String u = JSON.std.asString(this.user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.mSetUserPref();
+    }
+
 
     /**
      * This method is used to sign in with any social site
@@ -2641,21 +2765,21 @@ public class MainActivity extends AppCompatActivity
      * @param response response json send  by server
      * @param msg MyFb comment message
      */
-    public void onUserSignUpResponse(String response, String msg) {
+    public void onUserRegisteredResponse(String response, String msg) {
 
-        User tempUser = user;
+        User tempUser = this.user;
         try {
-            user = JSON.std.beanFrom(User.class, response);
+            this.user = JSON.std.beanFrom(User.class, response);
         } catch (IOException e) {
             e.printStackTrace();
         }
         //save the preferences locally
-        user.setPref(User.Prefs.STREAMKNOWN);
-        user.setStream(tempUser.getStream());
-        user.setLevel(tempUser.getLevel());
-        user.setStream_name(tempUser.getStream_name());
-        user.setLevel_name(tempUser.getLevel_name());
-        user.setToken(tempUser.getToken());
+        this.user.setPref(User.Prefs.STREAMKNOWN);
+        this.user.setStream(tempUser.getStream());
+        this.user.setLevel(tempUser.getLevel());
+        this.user.setStream_name(tempUser.getStream_name());
+        this.user.setLevel_name(tempUser.getLevel_name());
+        this.user.setToken(tempUser.getToken());
         this.networkUtils.setToken(user.getToken());
         String u = null;
         try {
@@ -2863,6 +2987,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {  }
+
 
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {

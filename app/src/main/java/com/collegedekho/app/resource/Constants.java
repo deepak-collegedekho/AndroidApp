@@ -18,6 +18,13 @@ public class Constants
     public static final String PREFS = "sharedprefs";
     public static final String KEY_USER = "user_id";
     public static final String TAG_CREATE_USER = "create_user";
+    public static final String TAG_CREATE_ANONY_USER = "create_anony_user";
+    public static final String TAG_CREATE_FACEBOOK_ANONY_USER_ = "create_facebook_anony_user";
+    public static final String TAG_SKIP_LOGIN = "skip_login";
+    public static final String TAG_USER_SIGNUP = "user_sign_up";
+    public static final String TAG_USER_FACEBOOK_LOGIN = "user_facebook_login";
+    public static final String TAG_USER_LOGIN = "user_login";
+    public static final String TAG_USER_REGISTRATION = "user_registeration";
     public static final String TAG_LOAD_STREAM = "load_stream";
     public static final String TAG_UPDATE_STREAM = "update_stream";
     public static final String KEY_STREAMS = "streams";
@@ -88,9 +95,8 @@ public class Constants
     public static final String TAG_FRAGMENT_PROFILE = "fragment_profile";
     public static final String TAG_FRAGMENT_QNA_ANSWERS_LIST = "fragment_qna_answers_list";
     public static final String KEY_USER_LEARNED_TOUCH = "user_touch";
-    public static final String TAG_FRAGMENT_LOGIN = "fragment_signin";
-    public static final String TAG_USER_LOGIN = "user_login";
-    public static final String TAG_USER_REGISTRATION = "user_registeration";
+    public static final String TAG_FRAGMENT_SIGNIN = "fragment_signin";
+    public static final String TAG_FRAGMENT_LOGIN= "fragment_login";
     public static final String METHOD_GET = "GET";
     public static final String METHOD_POST = "POST";
     public static final int LIKE_THING = 0;

@@ -1,6 +1,6 @@
 package com.collegedekho.app.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Patterns;
@@ -72,12 +72,12 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            this.mListener = (LoginFragment1.OnSignUpListener) activity;
+            this.mListener = (LoginFragment1.OnSignUpListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnSignUpListener");
         }
     }
@@ -96,7 +96,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             Toast.makeText(getActivity(), "Internet connection not found.", Toast.LENGTH_LONG).show();
             return;
         }
-
         if(view.getId() == R.id.signUp_button)
         {
             String email    = ((EditText) getView().findViewById(R.id.signup_email)).getText().toString();

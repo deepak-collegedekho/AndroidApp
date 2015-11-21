@@ -129,9 +129,8 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
         return mArticles.size();
     }
     public void updateArticleAdapter(ArrayList<Articles> articleList){
-        mArticles.clear();
-        mArticles.addAll(articleList);
-        notifyDataSetChanged();;
+        mArticles = articleList;
+        notifyDataSetChanged();
     }
 
     class ArticleHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

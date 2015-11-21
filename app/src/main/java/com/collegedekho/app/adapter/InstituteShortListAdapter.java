@@ -101,6 +101,8 @@ public class InstituteShortListAdapter extends RecyclerView.Adapter {
              this.siItemFacilities = (LinearLayout) itemView.findViewById(R.id.card_college_facility_list);
 
              itemView.findViewById(R.id.card_institute_like).setOnClickListener(this);
+             (itemView.findViewById(R.id.layout_item_expand)).setOnClickListener(this);
+             (itemView.findViewById(R.id.item_institute_container)).setOnClickListener(this);
 
 
          }
@@ -192,7 +194,8 @@ public class InstituteShortListAdapter extends RecyclerView.Adapter {
 
                      break;
                  case R.id.layout_item_expand:
-                     // this.mListener.onInstituteSelected(getAdapterPosition());
+                 case R.id.item_institute_container:
+                     this.mListener.onShortListInstituteSelected(getAdapterPosition());
                      break;
                 /* case R.id.card_institute_shortlist:
                          siShortListTV.setVisibility(View.GONE);

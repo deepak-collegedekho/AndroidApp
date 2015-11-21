@@ -39,7 +39,6 @@ public class InstituteShortlistFragment extends BaseFragment {
     private String mTitle;
     private InstituteShortListAdapter mAdapter;
     private MainActivity mMainActivity;
-    private int mViewType = Constants.VIEW_INTO_GRID;
 
     public InstituteShortlistFragment() {
         // Required empty public constructor
@@ -63,6 +62,8 @@ public class InstituteShortlistFragment extends BaseFragment {
             this.mTitle = getArguments().getString(ARG_TITLE);
             this.mNextUrl = getArguments().getString(ARG_NEXT);
             this.listType = Constants.INSTITUTE_TYPE;
+            mViewType = Constants.VIEW_INTO_GRID;
+
         }
     }
 
@@ -71,6 +72,10 @@ public class InstituteShortlistFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_shortlisted_institute_listing, container, false);
 
+        if (this.mShortlistedInstitutes == null || this.mShortlistedInstitutes.size() <= 0) {
+            (rootView.findViewById(android.R.id.empty)).setVisibility(View.VISIBLE);
+            return rootView;
+        }
 
         (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
         (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
@@ -91,7 +96,7 @@ public class InstituteShortlistFragment extends BaseFragment {
         this.mAdapter = new InstituteShortListAdapter(getActivity(), this.mShortlistedInstitutes, this.mViewType);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(mAdapter);
-        // recyclerView.addOnScrollListener(scrollListener);
+       // recyclerView.addOnScrollListener(scrollListener);
         return rootView;
     }
 
@@ -194,7 +199,7 @@ public class InstituteShortlistFragment extends BaseFragment {
     }
 
     public interface OnShortlistedInstituteSelectedListener extends BaseListener {
-
+        void onShortListInstituteSelected(int position);
         @Override
         void onEndReached(String next, int type);
 

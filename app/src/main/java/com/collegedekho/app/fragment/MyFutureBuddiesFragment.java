@@ -45,20 +45,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     private int mInitialCount;
     private int mIncrement;
 
-    RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener(){
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy){
-            if(dy < 0)
-               mMyFBCommentsListAdapter.IS_UP_SCROLLING = true;
-            else
-                mMyFBCommentsListAdapter.IS_UP_SCROLLING = false;
-            }
-    };
 
     public static MyFutureBuddiesFragment newInstance(MyFutureBuddy myFutureBuddies, int commentsCount) {
         MyFutureBuddiesFragment fragment = new MyFutureBuddiesFragment();
@@ -127,7 +113,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         this.mCommentsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         this.mCommentsListView.setAdapter(this.mMyFBCommentsListAdapter);
         this.mCommentsListView.setItemAnimator(new DefaultItemAnimator());
-        this.mCommentsListView.addOnScrollListener(scrollListener);
+
         //mCommentsListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
         return rootView;
