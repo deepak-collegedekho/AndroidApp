@@ -34,9 +34,6 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
     private ArrayList<MyFutureBuddyComment> mMyFBCommentList;
     private Context mContext;
     private volatile SimpleDateFormat mSDF;
-    private boolean mDateChanged;
-    private String mLastDate;
-    private TextView mLastDateView;
     public boolean IS_UP_SCROLLING = true;
 
 
@@ -82,31 +79,34 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
                 this.mSDF.applyPattern("MMMM d, yyyy KK:mm a");
                 simpleDate = this.mSDF.format(date);
 
-                //Get Date
-                this.mSDF.applyLocalizedPattern("yyyy-MM-dd");
-                shortDate = this.mSDF.format(date);
-
                 //Get Time
                 this.mSDF.applyLocalizedPattern("HH:mm");
                 time = this.mSDF.format(date);
 
-                qnaAnswerHolder.date.setVisibility(View.VISIBLE);
-                qnaAnswerHolder.date.setText(String.valueOf(shortDate));
-                if (this.mLastDate != null)
+                //Get Date
+                this.mSDF.applyLocalizedPattern("yyyy-MM-dd");
+                shortDate = this.mSDF.format(date);
+
+                if(position == 0)
                 {
-                    if(!IS_UP_SCROLLING && this.mLastDate.equalsIgnoreCase(shortDate))
+                    qnaAnswerHolder.date.setVisibility(View.VISIBLE);
+                    qnaAnswerHolder.date.setText(String.valueOf(shortDate));
+                }
+                if(position >0 )
+                {
+                    Date prevDate = this.mSDF.parse(mMyFBCommentList.get(position -1).getAdded_on());
+                    String prevShortDate = this.mSDF.format(prevDate);
+
+                    if(!prevShortDate.equalsIgnoreCase(shortDate))
                     {
-                        qnaAnswerHolder.date.setVisibility(View.GONE);
+                        qnaAnswerHolder.date.setVisibility(View.VISIBLE);
+                        qnaAnswerHolder.date.setText(String.valueOf(shortDate));
                     }
                     else
                     {
-                        if (this.mLastDateView != null && this.mLastDate.equalsIgnoreCase(shortDate)) {
-                        this.mLastDateView.setVisibility(View.GONE);
-                         }
+                        qnaAnswerHolder.date.setVisibility(View.GONE);
                     }
                 }
-                this.mLastDateView = qnaAnswerHolder.date;
-                this.mLastDate = shortDate;
             }
         } catch (ParseException e) {
             Log.e(TAG, "Date format unknown: " + myFBComment.getAdded_on());

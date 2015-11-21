@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link LoginFragment.OnSignUpListener} interface
+ * {@link LoginFragment1.OnSignUpListener} interface
  * to handle interaction events.
  * Use the {@link SignUpFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -32,7 +32,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
     private static final String TAG ="SignUpFragment";
     private static final String MSG ="chat_msg";
-    private LoginFragment.OnSignUpListener mListener;
+    private LoginFragment1.OnSignUpListener mListener;
     private String mMessage;
 
     public static SignUpFragment newInstance(String value) {
@@ -75,7 +75,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            this.mListener = (LoginFragment.OnSignUpListener) activity;
+            this.mListener = (LoginFragment1.OnSignUpListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnSignUpListener");

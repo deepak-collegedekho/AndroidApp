@@ -93,7 +93,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         ((TextView) rootView.findViewById(R.id.fb_title)).setText(this.mMyFutureBuddies.getInstitute_name());
         this.mChatText = (EditText) rootView.findViewById(R.id.fb_chat_input);
 
-        ((FloatingActionButton) rootView.findViewById(R.id.fb_push_chat)).setOnClickListener(new View.OnClickListener() {
+        (rootView.findViewById(R.id.fb_push_chat)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 

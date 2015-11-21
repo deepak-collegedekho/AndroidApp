@@ -1,17 +1,23 @@
 package com.collegedekho.app.activity;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -19,6 +25,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -65,7 +72,7 @@ import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
 import com.collegedekho.app.fragment.InstituteShortlistFragment;
-import com.collegedekho.app.fragment.LoginFragment;
+import com.collegedekho.app.fragment.LoginFragment1;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
@@ -120,6 +127,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 /*
 The MIT License (MIT)
@@ -146,8 +154,8 @@ SOFTWARE.*/
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
-        HomeFragment.OnHomeInteractionListener,
-        DataLoadListener,
+        LoaderManager.LoaderCallbacks<Cursor>,
+        HomeFragment.OnHomeInteractionListener, DataLoadListener,
         StreamFragment.OnStreamInteractionListener,
         InstituteListFragment.OnInstituteSelectedListener,
         InstituteShortlistFragment.OnShortlistedInstituteSelectedListener,
@@ -158,7 +166,7 @@ public class MainActivity extends AppCompatActivity
         QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener,
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleFragment.OnArticleSelectedListener,
-        ProfileFragment.onProfileUpdateListener,LoginFragment.OnSignUpListener, InstituteDetailFragment.OnInstituteFooterItemSelected
+        ProfileFragment.onProfileUpdateListener,LoginFragment1.OnSignUpListener, InstituteDetailFragment.OnInstituteFooterItemSelected
 {
 
     static {
@@ -275,8 +283,7 @@ public class MainActivity extends AppCompatActivity
 
         this.mSetNavigationListener();
 
-        this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
-
+         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -292,7 +299,6 @@ public class MainActivity extends AppCompatActivity
 
                 if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
                     Constants.IS_CONNECTED_TO_INTERNET = true;
-
                     if (user != null && user.getPref() == User.Prefs.STREAMKNOWN) {
                         if (!completedStage2)
                             MainActivity.this.mSetUserPref();
@@ -932,7 +938,7 @@ public class MainActivity extends AppCompatActivity
         }
         else
         {
-            if(currentFragment instanceof LoginFragment || currentFragment instanceof  ProfileFragment)
+            if(currentFragment instanceof LoginFragment1 || currentFragment instanceof  ProfileFragment)
                 currentFragment.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -2604,7 +2610,7 @@ public class MainActivity extends AppCompatActivity
     public void onUserLoginRequired(String value) {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_LOGIN);
         if (fragment == null)
-            mDisplayFragment(LoginFragment.newInstance(value), true, Constants.TAG_FRAGMENT_LOGIN);
+            mDisplayFragment(LoginFragment1.newInstance(value), true, Constants.TAG_FRAGMENT_LOGIN);
         else
             mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_LOGIN);
     }
@@ -2616,7 +2622,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onUserSignUp(String url, HashMap hashMap, String msg) {
-        this.mMakeNetworkCall(Constants.TAG_USER_REGISTRATION+ "#" + msg, url, hashMap);}
+        this.mMakeNetworkCall(Constants.TAG_USER_REGISTRATION + "#" + msg, url, hashMap);}
 
     /**
      * This method is used to sign in with any social site
@@ -2845,6 +2851,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return getProfileLoader();
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {  }
+
+
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override
         public void onContainerAvailable(ContainerHolder containerHolder, String containerVersion) {
@@ -2883,5 +2903,45 @@ public class MainActivity extends AppCompatActivity
             // The code for firing this custom tag.
             Log.i("CollegeDekho", "Custom function call tag :" + tagName + " is fired.");
         }
+    }
+    public CursorLoader getProfileLoader() {
+        return new CursorLoader(this,
+                // Retrieve data rows for the device user's 'profile' contact.
+                Uri.withAppendedPath(
+                        ContactsContract.Profile.CONTENT_URI,
+                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
+                User.ProfileQuery.PROJECTION,
+
+                // Select only email addresses.
+                ContactsContract.Contacts.Data.MIMETYPE + " = ? OR "+ContactsContract.Contacts.Data.MIMETYPE + " = ?",
+                new String[]{ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                        ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE},
+
+                // Show primary email addresses first. Note that there won't be
+                // a primary email address if the user hasn't specified one.
+                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
+    }
+
+
+    private String getDeviceEmail(){
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+        Account[] accounts = AccountManager.get(getApplicationContext()).getAccounts();
+        for (Account account : accounts) {
+            if (emailPattern.matcher(account.name).matches()) {
+                return account.name;
+            }
+        }
+        return null;
+    }
+
+    private String getDevicePhone(){
+        Pattern phonePattern = Patterns.PHONE;
+        Account[] accounts = AccountManager.get(getApplicationContext()).getAccounts();
+        for (Account account : accounts) {
+            if (phonePattern.matcher(account.name).matches()) {
+                return account.name;
+            }
+        }
+        return null;
     }
 }
