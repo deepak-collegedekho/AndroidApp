@@ -52,4 +52,8 @@
     <dimen name="course_label_horizontal_margin">10dp</dimen>
     <dimen name="gradient_radius">5dp</dimen>
     <dimen name="fb_card_width">230dp</dimen>
+
+    <dimen name="cover_width">20dp</dimen>
+    <dimen name="cover_height">30dp</dimen>
+
 </resources>

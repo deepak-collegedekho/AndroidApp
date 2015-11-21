@@ -36,4 +36,8 @@
     <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="videos_title">Videos</string>
+    <string name="qna_title">QnA</string>
+    <string name="news_title">News</string>
+    <string name="article_title">Articles</string>
 </resources>

@@ -91,6 +91,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.fasterxml.jackson.jr.ob.impl.MapBuilder;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -119,6 +120,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 Marco Granatiero
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.*/
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
@@ -249,7 +273,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        mSetNavigationListener();
+        this.mSetNavigationListener();
 
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
@@ -858,7 +882,12 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayInstitute(int position) {
         mInstitute = this.mInstituteList.get(position);
 
-        this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute), true, Constants.TAG_FRAGMENT_INSTITUTE);
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE);
+
+        if (fragment == null)
+            this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute), true, Constants.TAG_FRAGMENT_INSTITUTE);
+        else
+            this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE);
 
         this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + this.mInstituteList.get(position).getId(), null);
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS, mInstitute.getResource_uri() + "qna/", null, Request.Method.GET);
@@ -1684,10 +1713,10 @@ public class MainActivity extends AppCompatActivity
         final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
 
         if (fragment == null)
-            mDisplayFragment(ProfileFragment.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
+            this.mDisplayFragment(ProfileFragment.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
         else {
 
-            mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
+            this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
             if (fragment instanceof ProfileFragment) {
                 runOnUiThread(new Runnable() {
                     @Override
@@ -2558,9 +2587,9 @@ public class MainActivity extends AppCompatActivity
      */
     private boolean isLastFragment()
     {
-        if(currentFragment instanceof  InstituteListFragment || currentFragment instanceof  NewsFragment
+        if (currentFragment instanceof  InstituteListFragment || currentFragment instanceof  NewsFragment
                 || currentFragment instanceof  ArticleFragment || currentFragment instanceof QnAQuestionsListFragment
-                || currentFragment instanceof  MyFutureBuddiesEnumerationFragment)
+                || currentFragment instanceof  MyFutureBuddiesEnumerationFragment || currentFragment instanceof InstituteDetailFragment)
             return true;
         else
             return false;

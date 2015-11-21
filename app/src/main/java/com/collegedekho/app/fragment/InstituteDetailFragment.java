@@ -11,9 +11,17 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.adapter.CoverFlowAdapter;
+import com.collegedekho.app.entities.GameEntity;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.InstitutePagerAdapter;
@@ -28,6 +36,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link InstituteDetailFragment#newInstance} factory method to
@@ -35,7 +45,7 @@ import java.util.List;
  */
 public class InstituteDetailFragment extends BaseFragment {
     private static final String ARG_INSTITUTE = "param1";
-    public static final int Videos = 0;
+    public static final int Videos = 4;
     public static final int QnA = 1;
     public static final int News = 2;
     public static final int Articles = 3;
@@ -47,6 +57,12 @@ public class InstituteDetailFragment extends BaseFragment {
     //private TabLayout tabLayout;
     private ViewPager mDetailsPager;
     private ViewPager mFooterPager;
+    private FeatureCoverFlow mCoverFlow;
+    private CoverFlowAdapter mAdapter;
+    private ArrayList<GameEntity> mData = new ArrayList<>(4);
+    private InstituteDetailFragment.OnInstituteFooterItemSelected mListener;
+
+
 
     public InstituteDetailFragment() {
         // Required empty public constructor
@@ -73,6 +89,7 @@ public class InstituteDetailFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mInstitute = getArguments().getParcelable(ARG_INSTITUTE);
+            this.mListener = (InstituteDetailFragment.OnInstituteFooterItemSelected) this.getActivity();
         }
     }
 
@@ -96,11 +113,52 @@ public class InstituteDetailFragment extends BaseFragment {
         this.mDetailsPager.setAdapter(this.mDetailsAdapter);
         this.mDetailsPager.setOffscreenPageLimit(3);
 
-        this.mFooterAdapter = new FooterPagerAdapter(this.mInstitute, this.getContext());
+        //this.mFooterAdapter = new FooterPagerAdapter(this.mInstitute, this.getContext());
 
-        this.mFooterPager = (ViewPager) rootView.findViewById(R.id.college_extras_pager);
-        this.mFooterPager.setAdapter(this.mFooterAdapter);
-        this.mFooterPager.setPageMargin(this.getResources().getDisplayMetrics().widthPixels /-7);
+        //this.mFooterPager = (ViewPager) rootView.findViewById(R.id.college_extras_pager);
+        //this.mFooterPager.setAdapter(this.mFooterAdapter);
+        //this.mFooterPager.setPageMargin(this.getResources().getDisplayMetrics().widthPixels /-7);
+
+        this.mData.add(new GameEntity(R.drawable.ic_menu_institute, R.string.videos_title));
+        this.mData.add(new GameEntity(R.drawable.ic_menu_qna, R.string.qna_title));
+        this.mData.add(new GameEntity(R.drawable.ic_menu_news, R.string.news_title));
+        this.mData.add(new GameEntity(R.drawable.ic_menu_articles, R.string.article_title));
+
+        this.mAdapter = new CoverFlowAdapter(this.getContext());
+        this.mAdapter.setData(this.mData);
+        this.mCoverFlow = (FeatureCoverFlow) rootView.findViewById(R.id.coverflow);
+        this.mCoverFlow.setAdapter(this.mAdapter);
+
+        this.mCoverFlow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Toast.makeText(InstituteDetailFragment.this.getContext(), "HGcvmnbdjbc", Toast.LENGTH_SHORT).show();
+                switch (position)
+                {
+                    case InstituteDetailFragment.Videos:
+                    {
+                        InstituteDetailFragment.this.mListener.onFooterVideosSelected((InstituteDetailFragment.this.mInstitute.getVideos()));
+                        break;
+                    }
+                    default:
+                    {
+                        InstituteDetailFragment.this.mListener.OnFooterOtherItemsSelected(position, InstituteDetailFragment.this.mInstitute.getId());
+                        break;
+                    }
+                }
+            }
+        });
+
+        this.mCoverFlow.setOnScrollPositionListener(new FeatureCoverFlow.OnScrollPositionListener() {
+            @Override
+            public void onScrolledToPosition(int position) {
+            }
+
+            @Override
+            public void onScrolling() {
+            }
+        });
+
 
         //this.tabLayout = (TabLayout) rootView.findViewById(R.id.college_tabs_layout);
         //this.tabLayout.setTabTextColors(getResources().getColor(R.color.white), getResources().getColor(R.color.light_grey_background));
@@ -195,7 +253,6 @@ public class InstituteDetailFragment extends BaseFragment {
                 //tabLayout.setupWithViewPager(mDetailsPager);
             }
         }
-
     }
 
     /**
