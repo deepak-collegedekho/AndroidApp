@@ -731,6 +731,18 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
+    private void updateNextShortListedInstitutes(String response) {
+        try {
+            List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
+            this.mShortlistedInstituteList.addAll(institutes);
+
+            if (currentFragment instanceof InstituteShortlistFragment) {
+                ((InstituteShortlistFragment) currentFragment).updateList(institutes, next);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
 
     private void updateNewsList(String response) {
         try {
@@ -1056,6 +1068,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_NEXT_INSTITUTE:
                 this.updateNextInstituteList(response);
+                break;
+            case Constants.TAG_NEXT_SHORTLIST_INSTITUTE:
+                this.updateNextShortListedInstitutes(response);
                 break;
             case Constants.TAG_NEXT_NEWS:
                 this.updateNewsList(response);
@@ -1841,6 +1856,8 @@ public class MainActivity extends AppCompatActivity
         if (next == null) return;
         if (listType == Constants.INSTITUTE_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_INSTITUTE, next, this.mFilterKeywords);
+        else if (listType == Constants.SHORTLIST_TYPE)
+            this.mMakeNetworkCall(Constants.TAG_NEXT_SHORTLIST_INSTITUTE, next, null);
         else if (listType == Constants.NEWS_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_NEWS, next, null);
         else if (listType == Constants.ARTICLES_TYPE)

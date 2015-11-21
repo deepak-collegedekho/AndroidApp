@@ -20,11 +20,17 @@
         android:layout_marginRight="10dp"
         android:src="@drawable/ic_filter" />
 
+    <include layout="@layout/layout_grid_list"
+        android:id="@+id/viewType"
+        android:layout_below="@id/textview_page_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <LinearLayout
         android:id="@+id/filter_tokenLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textview_page_title"
+        android:layout_below="@id/viewType"
         android:paddingLeft="@dimen/m2dp"
         android:paddingTop="@dimen/m5dp"
         android:paddingBottom="@dimen/m5dp"
@@ -47,6 +53,7 @@
             android:focusableInTouchMode="true" />
 
     </LinearLayout>
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/institute_list"

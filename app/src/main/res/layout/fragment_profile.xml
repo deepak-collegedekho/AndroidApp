@@ -49,7 +49,8 @@
                 android:id="@+id/profile_name"
                 android:inputType="textCapWords|textNoSuggestions"
                 android:hint="Name"
-                android:textColorHint="@color/textSecondary"
+                android:textColor="@color/white"
+                android:textColorHint="@color/like_green"
                 android:maxLength="35"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -66,7 +67,8 @@
                 style="@style/AppTheme.EditText"
                 android:id="@+id/profile_contact"
                 android:hint="Phone"
-                android:textColorHint="@color/textSecondary"
+                 android:textColor="@color/white"
+                android:textColorHint="@color/like_green"
                 android:inputType="phone"
                 android:maxLength="10"/>
             </android.support.design.widget.TextInputLayout>

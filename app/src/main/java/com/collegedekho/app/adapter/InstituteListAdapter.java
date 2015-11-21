@@ -35,16 +35,21 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
     private Context mContext;
     // Allows to remember the last item shown on screen
     public int lastPosition = -1;
+    private int mViewType;
 
-    public InstituteListAdapter(Context context, ArrayList<Institute> institutes) {
+    public InstituteListAdapter(Context context, ArrayList<Institute> institutes, int viewType) {
         this.mInstitutes = institutes;
         this.mContext = context;
         this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
+        this.mViewType = viewType;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(this.mContext).inflate(R.layout.item_institute_list_new, parent, false);
+        int viewID =  R.layout.card_institute_list_grid_view;
+        if(this.mViewType == Constants.VIEW_INTO_LIST)
+            viewID = R.layout.item_institute_list_new;
+        View rootView = LayoutInflater.from(mContext).inflate(viewID, parent, false);
         try {
             return new InstituteHolder(rootView, (InstituteListFragment.OnInstituteSelectedListener) this.mContext);
         } catch (ClassCastException e) {
@@ -162,7 +167,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         }
 
         public void addFacilities(ArrayList<Facility> facilities) {
-            if (facilities.size() > 4) {
+            if (facilities.size() > 4 && mViewType ==  Constants.VIEW_INTO_LIST) {
                 for (int i = 0; i < 4; i++) {
                     NetworkImageView imgView = (NetworkImageView) instiFaciltyList.getChildAt(i);
                     imgView.setImageUrl(facilities.get(i).image, mImageLoader);
@@ -170,6 +175,19 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                 }
                 ((TextView) instiFaciltyList.getChildAt(4)).setText("+" + (facilities.size() - 4));
                 instiFaciltyList.getChildAt(4).setVisibility(View.VISIBLE);
+            }
+            else if (facilities.size() > 2 && mViewType == Constants.VIEW_INTO_GRID) {
+                int i;
+                for (i = 0; i < 2; i++) {
+                    NetworkImageView imgView = (NetworkImageView) instiFaciltyList.getChildAt(i);
+                    imgView.setImageUrl(facilities.get(i).image, mImageLoader);
+                    imgView.setVisibility(View.VISIBLE);
+                }
+                for (int j = i; j < 4; j++) {
+                    instiFaciltyList.getChildAt(j).setVisibility(View.GONE);
+                }
+                ((TextView) instiFaciltyList.getChildAt(4)).setText("+" + (facilities.size() - 2));
+                this.instiFaciltyList.getChildAt(4).setVisibility(View.VISIBLE);
             } else {
                 int i;
                 for (i = 0; i < facilities.size(); i++) {

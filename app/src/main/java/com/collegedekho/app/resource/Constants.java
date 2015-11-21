@@ -54,6 +54,7 @@ public class Constants
     public static final String TAG_TAGS = "tags";
     public static final String TAG_ID = "id";
     public static final String TAG_SELECTED = "is_selected";
+    public static final String TAG_NEXT_SHORTLIST_INSTITUTE = "next_shortlist_institutes";
     public static final String TAG_NEXT_INSTITUTE = "next_institutes";
     public static final String TAG_NEXT_NEWS = "next_news";
     public static final String TAG_NEXT_ARTICLES = "next_articles";
@@ -147,6 +148,7 @@ public class Constants
     public static final int INSTITUTE_TYPE   = 1;
     public static final int NEWS_TYPE        = 2;
     public static final int ARTICLES_TYPE    = 3;
+    public static final int SHORTLIST_TYPE   = 4;
 
     //User Attributes
     public static final String USER_NAME        = "name";

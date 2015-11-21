@@ -39,6 +39,7 @@ public class InstituteShortlistFragment extends BaseFragment {
     private String mTitle;
     private InstituteShortListAdapter mAdapter;
     private MainActivity mMainActivity;
+    private  int mViewType = Constants.VIEW_INTO_GRID;
 
     public InstituteShortlistFragment() {
         // Required empty public constructor
@@ -60,9 +61,8 @@ public class InstituteShortlistFragment extends BaseFragment {
         if (getArguments() != null) {
             this.mShortlistedInstitutes = getArguments().getParcelableArrayList(ARG_INSTITUTE);
             this.mTitle = getArguments().getString(ARG_TITLE);
-            this.mNextUrl = getArguments().getString(ARG_NEXT);
-            this.listType = Constants.INSTITUTE_TYPE;
-            mViewType = Constants.VIEW_INTO_GRID;
+            mNextUrl = getArguments().getString(ARG_NEXT);
+            listType = Constants.SHORTLIST_TYPE;
 
         }
     }
@@ -85,18 +85,19 @@ public class InstituteShortlistFragment extends BaseFragment {
 
         RecyclerView recyclerView  = (RecyclerView)rootView.findViewById(R.id.recyclerView_shortList_institute);
          if(this.mViewType == Constants.VIEW_INTO_GRID) {
-             recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+             layoutManager = new GridLayoutManager(getActivity(), 2);
              recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
          }
         else {
-             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+             layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
              recyclerView.setItemAnimator(new DefaultItemAnimator());
          }
+        recyclerView.setLayoutManager(layoutManager);
         updateViewTypeIcon(rootView, this.mViewType);
         this.mAdapter = new InstituteShortListAdapter(getActivity(), this.mShortlistedInstitutes, this.mViewType);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(mAdapter);
-       // recyclerView.addOnScrollListener(scrollListener);
+        recyclerView.addOnScrollListener(scrollListener);
         return rootView;
     }
 
@@ -155,11 +156,13 @@ public class InstituteShortlistFragment extends BaseFragment {
                 if(rootView != null && mViewType != Constants.VIEW_INTO_GRID) {
                     this.mViewType = Constants.VIEW_INTO_GRID;
                     RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView_shortList_institute);
-                    recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                    layoutManager = new GridLayoutManager(getActivity(), 2);
+                    recyclerView.setLayoutManager(layoutManager);
                     this.mAdapter = new InstituteShortListAdapter(getActivity(), this.mShortlistedInstitutes, Constants.VIEW_INTO_GRID);
                     recyclerView.setAdapter(this.mAdapter);
                     recyclerView.setHasFixedSize(true);
                     recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 10, true));
+                    recyclerView.addOnScrollListener(scrollListener);
                 }
 
                 break;
@@ -168,11 +171,13 @@ public class InstituteShortlistFragment extends BaseFragment {
                 if(rootView1 != null && mViewType != Constants.VIEW_INTO_LIST) {
                     this.mViewType = Constants.VIEW_INTO_LIST;
                     RecyclerView recyclerView1 = (RecyclerView) rootView1.findViewById(R.id.recyclerView_shortList_institute);
-                    recyclerView1.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+                    layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+                    recyclerView1.setLayoutManager(layoutManager);
                     this.mAdapter = new InstituteShortListAdapter(getActivity(), this.mShortlistedInstitutes, Constants.VIEW_INTO_LIST);
                     recyclerView1.setAdapter(this.mAdapter);
                     recyclerView1.setHasFixedSize(true);
                     recyclerView1.setItemAnimator(new DefaultItemAnimator());
+                    recyclerView1.addOnScrollListener(scrollListener);
                 }
                 break;
             default:

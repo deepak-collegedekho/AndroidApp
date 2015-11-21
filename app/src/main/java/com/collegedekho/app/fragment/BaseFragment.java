@@ -25,11 +25,9 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
     protected boolean loading = false;
     protected LinearLayout progressBarLL;
     protected LinearLayoutManager layoutManager;
-    RecyclerView.LayoutManager layoutManager1;
     protected String mNextUrl;
     protected BaseListener listener;
     protected  int listType;
-    protected  int mViewType ;
 
 
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {

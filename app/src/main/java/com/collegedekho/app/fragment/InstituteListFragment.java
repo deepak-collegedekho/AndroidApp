@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -20,10 +21,12 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.InstituteListAdapter;
+import com.collegedekho.app.adapter.InstituteShortListAdapter;
 import com.collegedekho.app.entities.Facet;
 import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.widget.GridSpacingItemDecoration;
 import com.collegedekho.app.widget.tag.textview.ContactsCompletionView;
 import com.collegedekho.app.widget.tag.textview.FilteredArrayAdapter;
 import com.collegedekho.app.widget.tag.textview.TokenCompleteTextView;
@@ -53,6 +56,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private MainActivity mMainActivity;
     private TextView mEmptyTextView;
 
+    private  int mViewType = Constants.VIEW_INTO_GRID; ;
     private ContactsCompletionView mCompletionView;
     private ArrayAdapter<String> tolenAdapter;
 
@@ -100,13 +104,25 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         mCompletionView.allowDuplicates(false);
         mCompletionView.setTokenClickStyle(TokenCompleteTextView.TokenClickStyle.Delete);
 
+
+        (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
+        (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
+
         ((TextView) rootView.findViewById(R.id.textview_page_title)).setText(mTitle);
         progressBarLL     =   (LinearLayout)rootView.findViewById(R.id.progressBarLL);
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_list);
-        layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new InstituteListAdapter(getActivity(), mInstitutes);
 
+        if(this.mViewType == Constants.VIEW_INTO_GRID) {
+            layoutManager = new GridLayoutManager(getActivity(), 2);
+            recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
+        }
+        else {
+            layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+        }
+        recyclerView.setLayoutManager(layoutManager);
+        updateViewTypeIcon(rootView, this.mViewType);
+        mAdapter = new InstituteListAdapter(getActivity(), mInstitutes, this.mViewType);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
 
         if (mInstitutes.size() == 0) {
@@ -287,6 +303,46 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     {
         if(!Constants.SEND_REQUEST)return;
         updateFilterTokenConfirmation(token);
+    }
+
+    @Override
+    public void onClick(View view) {
+        super.onClick(view);
+        switch (view.getId())
+        {
+            case R.id.view_into_grid:
+                View rootView = getView();
+                if(rootView != null && mViewType != Constants.VIEW_INTO_GRID) {
+                    this.mViewType = Constants.VIEW_INTO_GRID;
+                    RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_list);
+                    layoutManager = new GridLayoutManager(getActivity(), 2);
+                    recyclerView.setLayoutManager(layoutManager);
+                    this.mAdapter = new InstituteListAdapter(getActivity(), this.mInstitutes, Constants.VIEW_INTO_GRID);
+                    recyclerView.setAdapter(this.mAdapter);
+                    recyclerView.setHasFixedSize(true);
+                    recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 10, true));
+                    recyclerView.addOnScrollListener(scrollListener);
+                }
+
+                break;
+            case R.id.view_into_list:
+                View rootView1 = getView();
+                if(rootView1 != null && mViewType != Constants.VIEW_INTO_LIST) {
+                    this.mViewType = Constants.VIEW_INTO_LIST;
+                    RecyclerView recyclerView1 = (RecyclerView) rootView1.findViewById(R.id.institute_list);
+                    layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+                    recyclerView1.setLayoutManager(layoutManager);
+                    this.mAdapter = new InstituteListAdapter(getActivity(), this.mInstitutes, Constants.VIEW_INTO_LIST);
+                    recyclerView1.setAdapter(this.mAdapter);
+                    recyclerView1.setHasFixedSize(true);
+                    recyclerView1.setItemAnimator(new DefaultItemAnimator());
+                    recyclerView1.addOnScrollListener(scrollListener);
+                }
+                break;
+            default:
+                break;
+        }
+        updateViewTypeIcon(getView(), this.mViewType);
     }
 
 

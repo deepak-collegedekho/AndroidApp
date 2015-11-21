@@ -8,9 +8,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -20,6 +22,7 @@ import com.collegedekho.app.adapter.ArticleListAdapter;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -69,6 +72,7 @@ public class ArticleFragment extends BaseFragment {
             this.mArticlesList = getArguments().getParcelableArrayList(ARG_ARCTICLE);
             this.mTitle = getArguments().getString(ARG_TITLE);
             this.mNextUrl = getArguments().getString(ARG_NEXT);
+            listType = Constants.ARTICLES_TYPE;
         }
     }
 
@@ -87,24 +91,30 @@ public class ArticleFragment extends BaseFragment {
         (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
         (rootView).findViewById(R.id.article_detail_layout).setOnClickListener(this);
 
+        progressBarLL = (LinearLayout)rootView.findViewById(R.id.progressBarLL);
+
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.article_list_recyclerView);
         if(mViewType == Constants.VIEW_INTO_GRID) {
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+            layoutManager =new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
             rootView.findViewById(R.id.article_detail_scrollView).setVisibility(View.VISIBLE);
+            progressBarLL.setGravity(Gravity.RIGHT);
+            int padd = Utils.getPadding(getContext(), 60);
+            progressBarLL.setPadding(0,0,0, padd);
         }
         else {
-
             rootView.findViewById(R.id.article_detail_scrollView).setVisibility(View.GONE);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+            layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            progressBarLL.setGravity(Gravity.CENTER);
+            progressBarLL.setPadding(0,0,0, 0);
         }
-
+        recyclerView.setLayoutManager(layoutManager);
         updateViewTypeIcon(rootView, this.mViewType);
         this.mAdapter = new ArticleListAdapter(getActivity(), new ArrayList<Articles>(), mViewType);
         recyclerView.setAdapter(this.mAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         mUpdateArticleDetail(rootView, this.mArticlesList.get(0));
-        // recyclerView.addOnScrollListener(scrollListener);
+        recyclerView.addOnScrollListener(scrollListener);
         return rootView;
     }
 
@@ -195,11 +205,16 @@ public class ArticleFragment extends BaseFragment {
                     this.mViewType = Constants.VIEW_INTO_GRID;
                     rootView.findViewById(R.id.article_detail_scrollView).setVisibility(View.VISIBLE);
                     RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.article_list_recyclerView);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+                    layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+                    recyclerView.setLayoutManager(layoutManager);
                     this.mAdapter = new ArticleListAdapter(getActivity(), this.mArticlesList, Constants.VIEW_INTO_GRID);
                     recyclerView.setAdapter(this.mAdapter);
                     recyclerView.setHasFixedSize(true);
+                    progressBarLL.setGravity(Gravity.RIGHT);
+                    int padd = Utils.getPadding(getContext(), 60);
+                    progressBarLL.setPadding(0, 0, 0, padd);
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
+                    recyclerView.addOnScrollListener(scrollListener);
                     this.mUpdateArticleDetail(rootView, this.mArticlesList.get(0));
                 }
                 break;
@@ -209,10 +224,14 @@ public class ArticleFragment extends BaseFragment {
                     this.mViewType = Constants.VIEW_INTO_LIST;
                     rootView1.findViewById(R.id.article_detail_scrollView).setVisibility(View.GONE);
                     RecyclerView recyclerView1 = (RecyclerView) rootView1.findViewById(R.id.article_list_recyclerView);
-                    recyclerView1.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+                    layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+                    recyclerView1.setLayoutManager(layoutManager);
                     this.mAdapter = new ArticleListAdapter(getActivity(), this.mArticlesList, Constants.VIEW_INTO_LIST);
                     recyclerView1.setAdapter(this.mAdapter);
                     recyclerView1.setHasFixedSize(true);
+                    progressBarLL.setGravity(Gravity.CENTER);
+                    progressBarLL.setPadding(0, 0, 0, 0);
+                    recyclerView1.addOnScrollListener(scrollListener);
                     recyclerView1.setItemAnimator(new DefaultItemAnimator());
                 }
                 break;
@@ -230,9 +249,14 @@ public class ArticleFragment extends BaseFragment {
     {
         mUpdateArticleDetail(getView(), article);
     }
+
     public void updateList(List<Articles> article, String next) {
-        // progressBarLL.setVisibility(View.GONE);
+        progressBarLL.setVisibility(View.GONE);
         this.mArticlesList.addAll(article);
+        if(this.mViewType == Constants.VIEW_INTO_GRID)
+        {
+            mUpdateArticleDetail(getView(), mArticlesList.get(0));
+        }
         mAdapter.notifyDataSetChanged();
         loading = false;
         mNextUrl = next;

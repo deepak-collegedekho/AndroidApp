@@ -42,4 +42,10 @@ public class Utils {
         }
         return mTypeface;
     }
+
+    public static int getPadding(Context context, int value)
+    {
+        float density = context.getResources().getDisplayMetrics().density;
+        return (int)(value * density);
+    }
 }
