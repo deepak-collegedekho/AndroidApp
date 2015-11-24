@@ -119,10 +119,10 @@ public class InstituteDetailFragment extends BaseFragment {
         //this.mFooterPager.setAdapter(this.mFooterAdapter);
         //this.mFooterPager.setPageMargin(this.getResources().getDisplayMetrics().widthPixels /-7);
 
-        this.mData.add(new GameEntity(R.drawable.ic_menu_institute, R.string.videos_title));
-        this.mData.add(new GameEntity(R.drawable.ic_menu_qna, R.string.qna_title));
-        this.mData.add(new GameEntity(R.drawable.ic_menu_news, R.string.news_title));
-        this.mData.add(new GameEntity(R.drawable.ic_menu_articles, R.string.article_title));
+        this.mData.add(new GameEntity(R.drawable.carousel_videos, R.string.videos_title));
+        this.mData.add(new GameEntity(R.drawable.carousel_qna, R.string.qna_title));
+        this.mData.add(new GameEntity(R.drawable.carousel_news, R.string.news_title));
+        this.mData.add(new GameEntity(R.drawable.carousel_articles, R.string.article_title));
 
         this.mAdapter = new CoverFlowAdapter(this.getContext());
         this.mAdapter.setData(this.mData);
@@ -132,7 +132,6 @@ public class InstituteDetailFragment extends BaseFragment {
         this.mCoverFlow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(InstituteDetailFragment.this.getContext(), "HGcvmnbdjbc", Toast.LENGTH_SHORT).show();
                 switch (position)
                 {
                     case InstituteDetailFragment.Videos:
@@ -158,7 +157,6 @@ public class InstituteDetailFragment extends BaseFragment {
             public void onScrolling() {
             }
         });
-
 
         //this.tabLayout = (TabLayout) rootView.findViewById(R.id.college_tabs_layout);
         //this.tabLayout.setTabTextColors(getResources().getColor(R.color.white), getResources().getColor(R.color.light_grey_background));

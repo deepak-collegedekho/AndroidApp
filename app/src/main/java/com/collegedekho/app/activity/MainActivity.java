@@ -241,6 +241,9 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Send GA Session
+        MainActivity.GASessionEvent(MainActivity.TAG);
+
         Bundle extras = getIntent().getExtras();
         if (extras != null)
         {
@@ -393,6 +396,9 @@ public class MainActivity extends AppCompatActivity
         FacebookSdk.sdkInitialize(this);
         callbackManager = CallbackManager.Factory.create();
 
+
+
+        
         try
         {
             PackageInfo info = getPackageManager().getPackageInfo(
@@ -446,11 +452,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
         System.gc();
-
     }
 
     @Override
@@ -463,6 +467,7 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
+        System.gc();
     }
 
     @Override
@@ -1001,7 +1006,7 @@ public class MainActivity extends AppCompatActivity
         }
         finally {
             //Send GA Session
-            MainActivity.GASessionEvent(tag);
+            MainActivity.GAScreenEvent(tag);
         }
     }
 
@@ -1341,9 +1346,7 @@ public class MainActivity extends AppCompatActivity
     private void updateLikeButton(String response, String extraTag, int like) {
         Institute institute = null;
         if(currentFragment instanceof InstituteShortlistFragment)
-        {
             institute = this.mShortlistedInstituteList.get(Integer.parseInt(extraTag));
-        }
         else
             institute = this.mInstituteList.get(Integer.parseInt(extraTag));
         if (like == Constants.NEITHER_LIKE_NOR_DISLIKE)
@@ -2773,7 +2776,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onUserSignIn(String url, HashMap hashMap, String msg) {
-        this.mMakeNetworkCall(Constants.TAG_USER_LOGIN +"#"+msg, url, hashMap);
+        this.mMakeNetworkCall(Constants.TAG_USER_LOGIN + "#" + msg, url, hashMap);
     }
 
 
@@ -2783,7 +2786,6 @@ public class MainActivity extends AppCompatActivity
      * @param msg MyFb comment message
      */
     public void onUserRegisteredResponse(String response, String msg) {
-
         User tempUser = this.user;
         try {
             this.user = JSON.std.beanFrom(User.class, response);
@@ -2806,7 +2808,6 @@ public class MainActivity extends AppCompatActivity
         }
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
         showMyFbMessage(msg);
-
     }
 
     /***
@@ -2939,12 +2940,23 @@ public class MainActivity extends AppCompatActivity
 
     public static void GASessionEvent(String screenName)
     {
-        if(MainActivity.tracker!=null)
+        if (MainActivity.tracker!=null)
         {
             MainActivity.tracker.setScreenName(screenName);
             // Start a new session with the hit.
             MainActivity.tracker.send(new HitBuilders.ScreenViewBuilder()
                     .setNewSession()
+                    .build());
+        }
+    }
+
+    public static void GAScreenEvent(String screenName)
+    {
+        if(MainActivity.tracker!=null)
+        {
+            MainActivity.tracker.setScreenName(screenName);
+            // Start a new session with the hit.
+            MainActivity.tracker.send(new HitBuilders.ScreenViewBuilder()
                     .build());
         }
     }
@@ -2964,7 +2976,6 @@ public class MainActivity extends AppCompatActivity
         Intent activityIntent = new Intent(MainActivity.this, VideoListActivity.class);
         activityIntent.putExtras(bundle);
         this.startActivity(activityIntent);
-
     }
 
     @Override
@@ -2988,7 +2999,6 @@ public class MainActivity extends AppCompatActivity
             }
             default:
                 break;
-
         }
     }
 
@@ -3004,8 +3014,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {  }
-
-
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override
@@ -3046,6 +3054,7 @@ public class MainActivity extends AppCompatActivity
             Log.i("CollegeDekho", "Custom function call tag :" + tagName + " is fired.");
         }
     }
+
     public CursorLoader getProfileLoader() {
         return new CursorLoader(this,
                 // Retrieve data rows for the device user's 'profile' contact.

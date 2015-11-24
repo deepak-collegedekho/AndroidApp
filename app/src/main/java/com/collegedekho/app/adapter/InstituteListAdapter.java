@@ -82,9 +82,13 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         instituteHolder.likeButton.setClickable(true);
         //instituteHolder.dislikeButton.setClickable(true);
         instituteHolder.likeButton.setVisibility(View.VISIBLE);
+        instituteHolder.upvoteCount.setVisibility(View.VISIBLE);
         //instituteHolder.dislikeButton.setVisibility(View.VISIBLE);
         instituteHolder.likeProgressBar.setVisibility(View.GONE);
         //instituteHolder.dislikeProgressBar.setVisibility(View.GONE);
+        instituteHolder.mShortListTV.setEnabled(true);
+        instituteHolder.mShortListTV.setVisibility(View.VISIBLE);
+        instituteHolder.mProgressBar.setVisibility(View.GONE);
 
         if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
         {
@@ -154,7 +158,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             upvoteCount  = ((TextView) itemView.findViewById(R.id.card_institute_like_count));
             mListener = listener;
             likeButton = (ImageView) itemView.findViewById(R.id.card_institute_button_like);
-            mProgressBar = ((ProgressBar) itemView.findViewById(R.id.card_institute_like_progressBar));
+            mProgressBar = ((ProgressBar) itemView.findViewById(R.id.card_institute_shortlist_progressBar));
             //dislikeButton = (ImageView) itemView.findViewById(R.id.button_dislike_college);
             likeProgressBar = (ProgressBar) itemView.findViewById(R.id.card_institute_like_progressBar);
             //dislikeProgressBar = (ProgressBar) itemView.findViewById(R.id.dislike_progressBar);
@@ -207,6 +211,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                 case R.id.card_institute_button_like:
                     if (!v.isSelected()) {
                         likeButton.setVisibility(View.INVISIBLE);
+                        upvoteCount.setVisibility(View.INVISIBLE);
                         likeProgressBar.setVisibility(View.VISIBLE);
                         likeButton.setClickable(false);
                         //dislikeButton.setClickable(false);
@@ -238,9 +243,9 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                     this.mListener.onInstituteSelected(getAdapterPosition());
                     break;
                 case R.id.card_institute_shortlist:
-                    v.setEnabled(false);
-                    //mShortListTV.setVisibility(View.GONE);
-                    //mProgressBar.setVisibility(View.VISIBLE);
+                    mShortListTV.setEnabled(false);
+                    mShortListTV.setVisibility(View.GONE);
+                    mProgressBar.setVisibility(View.VISIBLE);
                     this.mListener.onInstituteShortlisted(getAdapterPosition());
                     break;
                 default:

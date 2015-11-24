@@ -61,7 +61,7 @@ public class LoginFragment extends  BaseFragment{
         rootView.findViewById(R.id.sign_up_skip).setOnClickListener(this);
 
         LoginButton fbLoginutton = (LoginButton) rootView.findViewById(R.id.facebook_sign_in);
-        fbLoginutton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "email"));
+        fbLoginutton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "email", "user_likes", "user_education_history"));
         mFacebookCallbackListener(fbLoginutton);
 
         return rootView;
