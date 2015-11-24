@@ -90,6 +90,7 @@ public class Constants
     public static final String TAG_FRAGMENT_LOGIN      = "fragment_signin";
     public static final String TAG_USER_LOGIN           = "user_login";
     public static final String TAG_USER_REGISTRATION    = "user_registeration";
+    public static final String TAG_NAME_UPDATED    = "name_updated";
     public static final String METHOD_GET = "GET";
     public static final String METHOD_POST = "POST";
     public static final int LIKE_THING = 0;

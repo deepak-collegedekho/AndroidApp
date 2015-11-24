@@ -1,11 +1,23 @@
 package com.collegedekho.app.entities;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.Context;
+import android.database.Cursor;
+import android.provider.ContactsContract;
+import android.util.Patterns;
+
+import java.util.regex.Pattern;
+
 /**
  * @author Mayank Gautam
  *         Created: 04/07/15
  */
 public class User
 {
+
+    public String[] profileData;
+    private String primaryEmail;
     private String id;
     private String resource_uri;
     private String email;
@@ -21,6 +33,18 @@ public class User
     private String phone_no;
     private String stream_name;
     private String level_name;
+
+    public interface ProfileQuery {
+        String[] PROJECTION = {
+                ContactsContract.CommonDataKinds.Identity.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
+        };
+
+        int NAME = 0;
+        int PHONE_NUMBER = 1;
+        int IS_PRIMARY = 2;
+    }
 
     public String getId() {
         return id;
@@ -148,5 +172,57 @@ public class User
 
     public void setPhone_no(String phone_no) {
         this.phone_no = phone_no;
+    }
+
+    public String getPrimaryEmail() {
+        return primaryEmail;
+    }
+
+    public void setPrimaryEmail(String primaryEmail) {
+        this.primaryEmail = primaryEmail;
+    }
+
+    public void processProfileData(Cursor cursor, Context context) {
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+        cursor.moveToFirst();
+        if(profileData==null)
+            profileData = new String[3];
+        profileData[1] = "[";
+        profileData[2] = "[";
+        while (!cursor.isAfterLast()) {
+            profileData[0] = cursor.getString(ProfileQuery.NAME);
+            String data = cursor.getString(ProfileQuery.PHONE_NUMBER);
+            if(emailPattern.matcher(data).matches())
+            {
+                if(cursor.getInt(ProfileQuery.IS_PRIMARY)!=0)
+                    primaryEmail = data;
+                profileData[1]+="\""+data+"\",";
+            }
+            else
+            {
+                if(phone_no==null)
+                    phone_no = data;
+                profileData[2]+="\""+data+"\",";
+            }
+            cursor.moveToNext();
+        }
+        if(primaryEmail==null){
+            primaryEmail = getDeviceEmail(context);
+            if(primaryEmail!=null && !profileData[1].contains(primaryEmail))
+                profileData[1]+="\""+primaryEmail+"\",";
+        }
+        profileData[1]+="]";
+        profileData[2]+="]";
+    }
+
+    private String getDeviceEmail(Context context){
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
+        Account[] accounts = AccountManager.get(context).getAccounts();
+        for (Account account : accounts) {
+            if (emailPattern.matcher(account.name).matches()) {
+                return account.name;
+            }
+        }
+        return null;
     }
 }

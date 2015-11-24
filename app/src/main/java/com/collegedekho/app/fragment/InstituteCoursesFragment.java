@@ -136,4 +136,5 @@ public class InstituteCoursesFragment extends BaseFragment {
         return mTabLayout.getSelectedTabPosition();
     }
 
+
 }

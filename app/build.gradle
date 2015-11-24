@@ -23,8 +23,8 @@ android {
                 applicationId "com.collegedekho.app"
                 minSdkVersion 14
                 targetSdkVersion 22
-                versionCode 3
-                versionName "0.2.1"
+                versionCode 4
+                versionName "0.2.2"
                 multiDexEnabled true
             }
     buildTypes {
@@ -32,6 +32,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    dexOptions {
+        javaMaxHeapSize '4g'
     }
     repositories {
         maven { url 'http://www.connecto.io/maven-repo'}

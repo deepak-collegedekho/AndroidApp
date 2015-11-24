@@ -58,4 +58,5 @@ public class CoursePagerAdapter extends FragmentStatePagerAdapter {
                 courseFragment[tabPosition].updateAdapter();
             }
     }
+
 }

@@ -113,15 +113,15 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 
             rootView.findViewById(R.id.profile_login_pager).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.profile_login_tabs_layout).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.profile_name).setVisibility(View.GONE);
-            rootView.findViewById(R.id.profile_contact).setVisibility(View.GONE);
+            rootView.findViewById(R.id.profile_name_title).setVisibility(View.GONE);
+            rootView.findViewById(R.id.profile_contact_title).setVisibility(View.GONE);
         }
         else
         {
             rootView.findViewById(R.id.profile_login_pager).setVisibility(View.GONE);
             rootView.findViewById(R.id.profile_login_tabs_layout).setVisibility(View.GONE);
-            rootView.findViewById(R.id.profile_name).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.profile_contact).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.profile_name_title).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.profile_contact_title).setVisibility(View.VISIBLE);
         }
 
 
@@ -177,7 +177,16 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
             }
         }
         HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put(Constants.USER_NAME, name);
+        if( name == null || name.isEmpty() || name.equalsIgnoreCase("Anonymous user"))
+        {
+            if(MainActivity.user.profileData[0] != null && !MainActivity.user.profileData[0].isEmpty())
+            {
+                hashMap.put(Constants.USER_NAME, MainActivity.user.profileData[0]);
+            }
+        }
+        else
+            hashMap.put(Constants.USER_NAME, name);
+
         hashMap.put(Constants.USER_PHONE, phone);
         hashMap.put(Constants.USER_STREAM, mStreamURI);
         hashMap.put(Constants.USER_LEVEL, Constants.BASE_URL + "level/" + mLevelID + "/");
@@ -202,7 +211,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         {
             case R.id.stream_edit:
                 mStreamClicked();
-            break;
+                break;
             case R.id.level_edit:
                 new AlertDialog.Builder(getActivity())
                         .setTitle("Please select a level")
@@ -216,10 +225,10 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
                             }
                         })
                         .show();
-            break;
+                break;
             case R.id.profile_update:
                 mProfileUpdate();
-            break;
+                break;
 
         }
     }
@@ -234,8 +243,8 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 
     public interface  onProfileUpdateListener
     {
-       void  onProfileUpdated(  HashMap<String, String> hashMap);
-       void  onStreamClicked();
+        void  onProfileUpdated(  HashMap<String, String> hashMap);
+        void  onStreamClicked();
     }
 
     @Override
@@ -247,6 +256,8 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
         this.mStreamTV.setText(this.mStreamName);
+        if(this.mName == null)
+            this.mName="";
         if(this.mName.equalsIgnoreCase("Anonymous User"))
         {
             this.mNameET.setText("");
@@ -254,7 +265,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
             this.mNameET.setText(this.mName);
         }
         if(this.mPhone != null)
-        this.mPhoneET.setText(this.mPhone);
+            this.mPhoneET.setText(this.mPhone);
     }
     private void mSetEnterKeyListener(EditText editText)
     {

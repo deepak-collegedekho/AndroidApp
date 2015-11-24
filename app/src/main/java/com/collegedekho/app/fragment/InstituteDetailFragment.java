@@ -189,6 +189,10 @@ public class InstituteDetailFragment extends BaseFragment {
         }
 
     }
+    public void cancleAppliedRequest(int position, int tabPosition)
+    {
+        mPagerAdapter.updateCourseFragment();
+    }
 
     public class LoadQnAQuestionAsyncTask extends AsyncTask<String, Void, Void> {
         String mResponse;

@@ -9,9 +9,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -19,6 +21,9 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.WindowInsetsCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -36,10 +41,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -124,12 +132,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
-        HomeFragment.OnHomeInteractionListener,
-        DataLoadListener,
+        HomeFragment.OnHomeInteractionListener,AdapterView.OnItemSelectedListener,
+        DataLoadListener,LoaderManager.LoaderCallbacks<Cursor>,
         StreamFragment.OnStreamInteractionListener,
         InstituteListFragment.OnInstituteSelectedListener,
         OnApplyClickedListener, WidgetListFragment.OnWidgetInteractionListener,
@@ -207,10 +216,14 @@ public class MainActivity extends AppCompatActivity
     private boolean completedStage2;
     static String type = "";
     static String resource_uri = "";
+    private String mYear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Send GA Session
+       MainActivity.GASessionEvent(MainActivity.TAG);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null)
@@ -226,6 +239,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         this.setContentView(R.layout.activity_main);
+        getSupportLoaderManager().initLoader(0, null, this);
 
         this.connecto = Connecto.with(MainActivity.this);
         //this.connecto.identify("Harsh1234Vardhan", new Traits().putValue("name", "HarshVardhan"));
@@ -233,7 +247,7 @@ public class MainActivity extends AppCompatActivity
         //this.connecto.track("Session Started", new Properties().putValue("value", 800));
         this.connecto.registerWithGCM(MainActivity.this, this.SENDER_ID);
 
-       // Fabric.with(this, new Crashlytics());
+       Fabric.with(this, new Crashlytics());
 
         this.analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
         this.analytics.setLocalDispatchPeriod(1800);
@@ -251,8 +265,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(this.mToolbar);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         mSetNavigationListener();
+
 
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
@@ -272,7 +286,9 @@ public class MainActivity extends AppCompatActivity
                 if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
                     Constants.IS_CONNECTED_TO_INTERNET = true;
 
-                    if (user != null && user.getPref() == User.Prefs.STREAMKNOWN) {
+                    if (user != null && user.getPref() == User.Prefs.STREAMKNOWN)
+                    {
+                        checkUserContactInfo();
                         if (!completedStage2)
                             MainActivity.this.mSetUserPref();
                         else
@@ -441,7 +457,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         this.connecto.track("Session Ended", new Properties().putValue("value", new Date().toString()));
-
+        System.gc();
         super.onDestroy();
     }
 
@@ -451,7 +467,13 @@ public class MainActivity extends AppCompatActivity
 
         try {
             if (sp.contains(Constants.KEY_USER)) {
+                User tempuser = MainActivity.user;
                 MainActivity.user = JSON.std.beanFrom(User.class, sp.getString(Constants.KEY_USER, null));
+                if(tempuser != null) {
+                    MainActivity.user.profileData = tempuser.profileData;
+                    MainActivity.user.setPrimaryEmail(tempuser.getPrimaryEmail());
+                    MainActivity.user.setPhone_no(tempuser.getPhone_no());
+                }
                 this.networkUtils.setToken(MainActivity.user.getToken());
                 this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()));
                 this.connecto.track("Session Started", new Properties().putValue("value", new Date().toString()));
@@ -595,7 +617,7 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        if(this.mWidgets == null || this.mWidgets.size() <= position-1)
+        if(this.mWidgets == null || this.mWidgets.size() <= position - 1)
             return;
 
         this.onWidgetSelected(mWidgets.get(position - 1), position);
@@ -665,19 +687,26 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void requestUserCreation() {
-        if (MainActivity.user == null)
+       // if (MainActivity.user == null)
             this.mMakeNetworkCall(Constants.TAG_CREATE_USER, Constants.BASE_URL + "users/anonymous/", new HashMap<String, String>());
-        else {
-            MainActivity.user.setPref(this.userPref);
-            this.mSetUserPref();
-        }
+       // else {
+            //MainActivity.user.setPref(this.userPref);
+          //  this.mSetUserPref();
+        //}
     }
 
     private void mUserCreated(String json) {
         try {
+            User tempUser = MainActivity.user;
             MainActivity.user = JSON.std.beanFrom(User.class, json);
             MainActivity.user.setPref(this.userPref);
             this.networkUtils.setToken(MainActivity.user.getToken());
+            if(tempUser != null)
+            {
+                MainActivity.user.setPhone_no(tempUser.getPhone_no());
+                MainActivity.user.profileData   = tempUser.profileData;
+                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+            }
 
             this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()));
 
@@ -963,7 +992,7 @@ public class MainActivity extends AppCompatActivity
         }
         finally {
            //Send GA Session
-           MainActivity.GASessionEvent(tag);
+           MainActivity.GAScreenEvent(tag);
        }
     }
 
@@ -1145,6 +1174,12 @@ public class MainActivity extends AppCompatActivity
                 }
                  this.onUserSignInResponse(response, parentIndex);
                 break;
+            case Constants.TAG_NAME_UPDATED:
+                if (tags.length > 1) {
+                    parentIndex = tags[1];
+                    this.onNameUpdatedResponse(response, parentIndex);
+                }
+                break;
             case Constants.SEARCHED_INSTITUTES:
                 this.mDisplayInstituteList(response , true);
                 break;
@@ -1157,20 +1192,19 @@ public class MainActivity extends AppCompatActivity
 
     private void mStreamAndLevelUpdated(String response)
     {
-        String token = user.getToken();
-        String image = user.getImage();
-
+        User tempUser = MainActivity.user;
         try {
             user = JSON.std.beanFrom(User.class, response);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
-
         //save the preferences locally
         user.setPref(User.Prefs.STREAMKNOWN);
-        user.setToken(token);
-        user.setImage(image);
+        user.setToken(tempUser.getToken());
+        user.setPrimaryEmail(tempUser.getPrimaryEmail());
+        user.profileData = tempUser.profileData;
+        user.setImage(tempUser.getImage());
 
         String u = null;
         try {
@@ -1192,7 +1226,7 @@ public class MainActivity extends AppCompatActivity
     //Saved on DB, now save it in shared preferences.
     private void mStreamAndLevelSelected(String response, String level, String stream, String streamName) {
         //Retrieve token from pref to save it across the pref updates
-        String token = user.getToken();
+        User tempUser = MainActivity.user;
         //TODO: May be we can make a new pref entry for token
         try {
             user = JSON.std.beanFrom(User.class, response);
@@ -1201,7 +1235,9 @@ public class MainActivity extends AppCompatActivity
         }
         //save the preferences locally
         user.setPref(User.Prefs.STREAMKNOWN);
-        user.setToken(token);
+        user.setToken(tempUser.getToken());
+        user.setPrimaryEmail(tempUser.getPrimaryEmail());
+        user.profileData = tempUser.profileData;
 
         if (streamName != "" && streamName != null)
             user.setStream_name(streamName);
@@ -1696,9 +1732,15 @@ public class MainActivity extends AppCompatActivity
         hashMap.put(Constants.USER_LEVEL, Constants.BASE_URL + "level/" + (level + 1) + "/");
         hashMap.put(Constants.USER_STREAM_NAME, streamName);
         hashMap.put("device_id", deviceId);
+        if(user.getPhone_no() != null)
+       hashMap.put(Constants.USER_PHONE, user.getPhone_no());
+
+        if(user.profileData[0] != null && !user.profileData[0].isEmpty())
+           hashMap.put(Constants.USER_NAME, user.profileData[0]);
 
         if (streamName != null || streamName != "")
             MainActivity.user.setStream_name(streamName);
+
 
         this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, Constants.BASE_URL + "preferences/", hashMap);
 
@@ -1766,34 +1808,103 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onCourseApplied(int position, int tabPosition, InstituteCourse instituteCourse) {
+    public void onCourseApplied(final int position, final int tabPosition, final InstituteCourse instituteCourse) {
 
-        HashMap<String, String> map = new HashMap<>();
+        final HashMap<String, String> params = new HashMap<>();
+        if(user != null) {
+            String name = user.getName();
+            String email = user.getEmail();
+            String phone = user.getPhone_no();
 
-        if (user != null) {
-            map.put(Constants.USER_NAME, user.getName());
-            map.put(Constants.USER_EMAIL, user.getEmail());
+            if(name.equalsIgnoreCase("Anonymous user"))
+                name="";
+
+            if ((user.getName() == null || user.getName().isEmpty() || name.equalsIgnoreCase("Anonymous user")) &&  user.profileData[0] != null)
+                name = user.profileData[0];
+            if (user.getEmail().contains("@anonymouscollegedekho.com"))
+                email = user.getPrimaryEmail();
+
+            if (name== null || name.isEmpty() || name.contains("Anonymous user") ||
+                    phone == null || phone.length() <= 6 ||
+                    email == null || email.contains("@anonymouscollegedekho.com")) {
+                final View view = getLayoutInflater().inflate(R.layout.dialog_apply, null, false);
+                ((TextView) view.findViewById(R.id.apply_name)).setText(name);
+                ((TextView) view.findViewById(R.id.apply_email)).setText(email);
+                ((TextView) view.findViewById(R.id.apply_phone)).setText(phone);
+                Spinner datePicker = (Spinner) view.findViewById(R.id.apply_year);
+                datePicker.setAdapter(new ArrayAdapter<>(this, R.layout.item_spinner, getYears()));
+                datePicker.setOnItemSelectedListener(this);
+                final Dialog apply = new android.app.AlertDialog.Builder(this)
+                        .setView(view)
+                        .create();
+                apply.setCanceledOnTouchOutside(false);
+                apply.show();
+                (view.findViewById(R.id.submit_button)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String name = ((TextView) view.findViewById(R.id.apply_name)).getText().toString();
+                        String email = ((TextView) view.findViewById(R.id.apply_email)).getText().toString();
+                        String phone = ((TextView) view.findViewById(R.id.apply_phone)).getText().toString();
+                        if (name == null || name.isEmpty()) {
+                            Utils.DisplayToast(getApplicationContext(), Constants.NAME_EMPTY);
+                            return;
+                        } else if (!isValidName(name)) {
+                            Utils.DisplayToast(getApplicationContext(), Constants.NAME_INVALID);
+                            return;
+                        } else if (phone == null || phone.isEmpty()) {
+                            Utils.DisplayToast(getApplicationContext(), Constants.PHONE_EMPTY);
+                            return;
+                        } else if (phone.length() <= 9 || phone.length() > 12 || !isValidPhone(phone) ) {
+                            Utils.DisplayToast(getApplicationContext(), Constants.PHONE_INVALID);
+                            return;
+                        } else if (email == null || email.isEmpty()) {
+                            Utils.DisplayToast(getApplicationContext(), Constants.EMAIL_EMPTY);
+                            return;
+                        } else if (!isValidEmail(email)) {
+                            Utils.DisplayToast(getApplicationContext(), Constants.EMAIL_INVALID);
+                            return;
+                        }
+                        apply.dismiss();
+                        params.put(Constants.USER_NAME, name);
+                        params.put(Constants.USER_EMAIL, email);
+                        params.put(Constants.USER_PHONE, phone);
+                        params.put(Constants.APPLY_YEAR, mYear);
+                        appplyCourse(instituteCourse, params, position, tabPosition);
+                    }
+                });
+
+                (view.findViewById(R.id.cancel_button)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        apply.dismiss();
+                        if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
+                            ((InstituteDetailFragment) currentFragment).cancleAppliedRequest(position, tabPosition);
+                    }
+                });
+
+            }
+            else {
+                params.put(Constants.USER_NAME, name);
+                params.put(Constants.USER_EMAIL, email);
+                params.put(Constants.USER_PHONE, phone);
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                params.put(Constants.APPLY_YEAR, "" + year);
+                appplyCourse(instituteCourse, params, position, tabPosition);
+            }
         }
-
-        TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        String mPhoneNumber = tMgr.getLine1Number();
-        if (mPhoneNumber != null) {
-            map.put(Constants.USER_PHONE, mPhoneNumber);
-        } else {
-            if (user != null) map.put("phone_no", user.getPhone_no());
-        }
-
-        map.put(Constants.APPLY_COURSE, "" + instituteCourse.getId());
+    }
+    private void appplyCourse(InstituteCourse instituteCourse, HashMap params , int position, int tabPosition)
+    {
+        params.put(Constants.APPLY_COURSE, "" + instituteCourse.getId());
         if (mInstitute != null) {
-            map.put("institute", "" + mInstitute.getId());
+            params.put("institute", "" + mInstitute.getId());
         }
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        map.put(Constants.APPLY_YEAR, "" + year);
+
 
         String URL = Constants.BASE_URL + "lms/";
         instituteCourseId = "" + instituteCourse.getId();
-        this.mMakeNetworkCall(Constants.TAG_APPLIED_COURSE + "#" + position + "#" + tabPosition, URL, map, Request.Method.POST);
+        this.mMakeNetworkCall(Constants.TAG_APPLIED_COURSE + "#" + position + "#" + tabPosition, URL, params, Request.Method.POST);
 
         //GA Event for course applied
         MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_COURSE_APPLIED,
@@ -1805,6 +1916,16 @@ public class MainActivity extends AppCompatActivity
         this.connecto.track(Constants.CATEGORY_INSTITUTES, new Properties().putValue(Constants.APPLY_COURSE_ID, String.valueOf(instituteCourse.getId())).
                 putValue(Constants.APPLY_COURSE, instituteCourse.getName()).
                 putValue(Constants.APPLY_INSTITUTE, mInstitute.getResource_uri()));
+    }
+
+    public ArrayList<String> getYears(){
+        ArrayList<String> years = new ArrayList<>();
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        for(int i=0; i<5; i++){
+            years.add(""+(year+i));
+        }
+        mYear = years.get(0);
+        return years;
     }
 
     @Override
@@ -2449,7 +2570,7 @@ public class MainActivity extends AppCompatActivity
                 CircleImageView mProfileImage = (CircleImageView)findViewById(R.id.nav_header_profile_image);
                 mProfileImage.setDefaultImageResId(R.drawable.ic_default_image);
                 mProfileImage.setErrorImageResId(R.drawable.ic_default_image);
-                if(name.equalsIgnoreCase("Anonymous User"))
+                if(name == null ||name.equalsIgnoreCase("Anonymous User"))
                 {
                     mProfileName.setText("");
                     mProfileName.setVisibility(View.INVISIBLE);
@@ -2487,8 +2608,8 @@ public class MainActivity extends AppCompatActivity
                         getSupportFragmentManager().popBackStack();
                 } else {
                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                    if(!drawer.isDrawerOpen(Gravity.START))
-                        drawer.openDrawer(Gravity.START);
+                    if(!drawer.isDrawerOpen(GravityCompat.START))
+                        drawer.openDrawer(GravityCompat.START);
                 }
             }
         });
@@ -2562,6 +2683,47 @@ public class MainActivity extends AppCompatActivity
         else
             mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_LOGIN);
     }
+
+    @Override
+    public void onNameUpdated(HashMap params, String msg) {
+
+        this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#"+msg, Constants.BASE_URL + "preferences/", params);
+
+    }
+    private void onNameUpdatedResponse(String response , String msg) {
+        User tempuser = MainActivity.user;
+        try {
+            user = JSON.std.beanFrom(User.class, response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //save the preferences locally
+        user.setPref(User.Prefs.STREAMKNOWN);
+        if (tempuser != null){
+            user.setToken(tempuser.getToken());
+        user.setImage(tempuser.getImage());
+        user.setLevel_name(tempuser.getLevel_name());
+        user.setStream_name(tempuser.getStream_name());
+        user.setStream(tempuser.getStream());
+        user.setLevel(tempuser.getLevel());
+        user.setPrimaryEmail(tempuser.getPrimaryEmail());
+            user.profileData = tempuser.profileData;
+        }
+
+        String u = null;
+        try {
+            u = JSON.std.asString(user);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+
+        if(currentFragment instanceof  MyFutureBuddiesFragment)
+        {
+            ((MyFutureBuddiesFragment)currentFragment).sendChatRequest(msg);
+        }
+    }
+
     /**
      * This method is used to sign Up
      * @param url social site url
@@ -2604,6 +2766,8 @@ public class MainActivity extends AppCompatActivity
         user.setStream_name(tempUser.getStream_name());
         user.setLevel_name(tempUser.getLevel_name());
         user.setToken(tempUser.getToken());
+        user.profileData= tempUser.profileData;
+        user.setPrimaryEmail(tempUser.getPrimaryEmail());
         this.networkUtils.setToken(user.getToken());
         String u = null;
         try {
@@ -2634,6 +2798,8 @@ public class MainActivity extends AppCompatActivity
         //save the preferences locally
         user.setPref(User.Prefs.STREAMKNOWN);
         user.setImage(tempUser.getImage());
+        user.profileData= tempUser.profileData;
+        user.setPrimaryEmail(tempUser.getPrimaryEmail());
         String u = null;
         try {
             u = JSON.std.asString(user);
@@ -2668,8 +2834,7 @@ public class MainActivity extends AppCompatActivity
 
     public static void GATrackerEvent(String category, String action, String label)
     {
-        if(MainActivity.tracker!=null)
-        {
+        if(MainActivity.tracker != null) {
             MainActivity.tracker.send(new HitBuilders.EventBuilder()
                     .setCategory(category)
                     .setAction(action)
@@ -2756,7 +2921,42 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public static void GAScreenEvent(String screenName)
+    {
+        if(MainActivity.tracker!=null)
+        {
+            MainActivity.tracker.setScreenName(screenName);
+            // Start a new session with the hit.
+            MainActivity.tracker.send(new HitBuilders.ScreenViewBuilder()
+                    .build());
+        }
+    }
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
+        return getProfileLoader();
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        MainActivity.user = new User();
+        user.processProfileData(cursor, this);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        mYear = (String)parent.getItemAtPosition(position);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
@@ -2797,5 +2997,50 @@ public class MainActivity extends AppCompatActivity
             // The code for firing this custom tag.
             Log.i("CollegeDekho", "Custom function call tag :" + tagName + " is fired.");
         }
+    }
+
+    private void checkUserContactInfo()
+    {
+        if(MainActivity.user == null) return;
+        if(user.getPhone_no() == null || user.getPhone_no().length() <=6)
+        {
+            TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            String mPhoneNumber = tMgr.getLine1Number();
+            if (mPhoneNumber != null) {
+                MainActivity.user.setPhone_no(mPhoneNumber);
+               return;
+            }
+        }
+    }
+
+    public CursorLoader getProfileLoader() {
+        return new CursorLoader(this,
+                // Retrieve data rows for the device user's 'profile' contact.
+                Uri.withAppendedPath(
+                        ContactsContract.Profile.CONTENT_URI,
+                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
+                User.ProfileQuery.PROJECTION,
+
+                // Select only email addresses.
+                ContactsContract.Contacts.Data.MIMETYPE + " = ? OR "+ContactsContract.Contacts.Data.MIMETYPE + " = ?",
+                new String[]{ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                        ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE},
+
+                // Show primary email addresses first. Note that there won't be
+                // a primary email address if the user hasn't specified one.
+                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
+    }
+
+
+    private static boolean isValidEmail(CharSequence target) {
+        return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+    private static boolean isValidPhone(CharSequence target) {
+        return target != null && Patterns.PHONE.matcher(target).matches();
+    }
+    private static boolean isValidName(CharSequence target) {
+        Pattern ps = Pattern.compile("^[a-zA-Z ]+$");
+        Matcher ms = ps.matcher(target);
+        return ms.matches();
     }
 }

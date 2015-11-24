@@ -135,4 +135,5 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
             f.updateAdapter();
         }
     }
+
 }
