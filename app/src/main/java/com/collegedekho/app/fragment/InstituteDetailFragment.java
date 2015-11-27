@@ -124,6 +124,11 @@ public class InstituteDetailFragment extends BaseFragment {
         this.mData.add(new GameEntity(R.drawable.carousel_news, R.string.news_title));
         this.mData.add(new GameEntity(R.drawable.carousel_articles, R.string.article_title));
 
+        /*this.mData.add(new GameEntity(R.drawable.image_1, R.string.videos_title));
+        this.mData.add(new GameEntity(R.drawable.image_2, R.string.qna_title));
+        this.mData.add(new GameEntity(R.drawable.image_3, R.string.news_title));
+        this.mData.add(new GameEntity(R.drawable.image_4, R.string.article_title));*/
+
         this.mAdapter = new CoverFlowAdapter(this.getContext());
         this.mAdapter.setData(this.mData);
         this.mCoverFlow = (FeatureCoverFlow) rootView.findViewById(R.id.coverflow);

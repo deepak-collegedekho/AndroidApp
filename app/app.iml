@@ -123,8 +123,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="design-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-ads-8.3.0" level="project" />
-    <orderEntry type="library" exported="" name="guava-jdk5-13.0" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-jackson2-1.19.0" level="project" />
+    <orderEntry type="library" exported="" name="guava-jdk5-13.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-base-8.3.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-auth-8.3.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-drive-8.3.0" level="project" />
@@ -175,5 +175,6 @@
     <orderEntry type="library" exported="" name="jsoup-1.8.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-basement-8.3.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="multidex-instrumentation-1.0.1" level="project" />
+    <orderEntry type="module" module-name="garadiLibrary" exported="" />
   </component>
 </module>

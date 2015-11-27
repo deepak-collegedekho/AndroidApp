@@ -26,6 +26,7 @@ public class Constants
     public static final String TAG_USER_LOGIN = "user_login";
     public static final String TAG_USER_REGISTRATION = "user_registeration";
     public static final String TAG_LOAD_STREAM = "load_stream";
+    public static final String TAG_USER_EDUCATION = "load_user_education";
     public static final String TAG_UPDATE_STREAM = "update_stream";
     public static final String KEY_STREAMS = "streams";
     public static final String COMPLETED_SECOND_STAGE = "second_stage";
@@ -36,8 +37,8 @@ public class Constants
     public static final String WIDGET_ARTICES = "articles";
     public static final String WIDGET_FORUMS = "forums";
     //public static final String IP = "http://10.0.3.2";
-    //public static final String IP = "http://www.launch.collegedekho.com";
-    public static final String IP = "http://www.collegedekho.com";
+    public static final String IP = "http://www.launch.collegedekho.com";
+    //public static final String IP = "http://www.collegedekho.com";
     //public static final String IP = "http://192.168.8.101";
     //public static final String IP = "http://192.168.56.1";
     //public static final String BASE_URL = IP + ":8000/api/1/";
@@ -95,6 +96,7 @@ public class Constants
     public static final String TAG_FRAGMENT_HOME = "fragment_home";
     public static final String TAG_FRAGMENT_PROFILE = "fragment_profile";
     public static final String TAG_FRAGMENT_QNA_ANSWERS_LIST = "fragment_qna_answers_list";
+    public static final String TAG_FRAGMENT_USER_EDUCATION = "fragment_user_education";
     public static final String KEY_USER_LEARNED_TOUCH = "user_touch";
     public static final String TAG_FRAGMENT_SIGNIN = "fragment_signin";
     public static final String TAG_FRAGMENT_LOGIN= "fragment_login";

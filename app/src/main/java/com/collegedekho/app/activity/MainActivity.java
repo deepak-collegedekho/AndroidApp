@@ -61,6 +61,7 @@ import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.User;
+import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
@@ -83,6 +84,7 @@ import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.fragment.SplashFragment;
 import com.collegedekho.app.fragment.StreamFragment;
+import com.collegedekho.app.fragment.UserEducationFragment;
 import com.collegedekho.app.fragment.WidgetListFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
 import com.collegedekho.app.listener.DataLoadListener;
@@ -99,7 +101,6 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.fasterxml.jackson.jr.ob.JSON;
-import com.fasterxml.jackson.jr.ob.impl.MapBuilder;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -290,7 +291,7 @@ public class MainActivity extends AppCompatActivity
 
         this.mSetNavigationListener();
 
-         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
+        this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -313,8 +314,7 @@ public class MainActivity extends AppCompatActivity
                             MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
                     } else {
                        MainActivity.this.mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
-                        // MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
-
+                       //MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
                     }
                 } else if (currentFragment instanceof SplashFragment)
                     ((SplashFragment) currentFragment).noInternetFound();
@@ -690,7 +690,8 @@ public class MainActivity extends AppCompatActivity
                 this.mMakeNetworkCall(Constants.TAG_LOAD_PYSCHOMETRIC_TEST, Constants.BASE_URL + "psychometrictests/", null);
                 break;
             case STREAMKNOWN:
-                this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
+                //this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
+                this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION, Constants.BASE_URL + "user-education/", null);
                 break;
         }
     }
@@ -1207,12 +1208,28 @@ public class MainActivity extends AppCompatActivity
             case Constants.SEARCHED_INSTITUTES:
                 this.mDisplayInstituteList(response , true);
                 break;
+            case Constants.TAG_USER_EDUCATION:
+                this.mDisplayUserEducationFragment(response);
+                break;
         }
 
         if (this.progressDialog != null && this.progressDialog.isShowing())
             this.progressDialog.dismiss();
     }
 
+    private void mDisplayUserEducationFragment(String response)
+    {
+        try
+        {
+            response = response.substring(10, response.length() - 1);
+
+            ArrayList<UserEducation> userEducationList = (ArrayList<UserEducation>) JSON.std.listOfFrom(UserEducation.class, response);
+
+            this.mDisplayFragment(UserEducationFragment.newInstance(userEducationList), false, Constants.TAG_FRAGMENT_USER_EDUCATION);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void mStreamAndLevelUpdated(String response)
     {

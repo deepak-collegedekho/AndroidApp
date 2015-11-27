@@ -1,7 +1,7 @@
 package com.collegedekho.app.entities;
 
 /**
- * Created by marco.granatiero on 03/02/2015.
+ * Created by harsh.vardhan on 23/11/2015.
  */
 public class GameEntity {
     public int imageResId;
