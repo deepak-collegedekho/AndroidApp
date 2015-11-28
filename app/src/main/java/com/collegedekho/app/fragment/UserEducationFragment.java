@@ -8,8 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.collegedekho.app.R;
 import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.utils.GaradiWindowHelper;
 
@@ -68,6 +70,8 @@ public class UserEducationFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_user_education, container, false);
+
         RelativeLayout layout = new RelativeLayout(this.getContext());
         //setContentView(layout);
 
@@ -86,8 +90,10 @@ public class UserEducationFragment extends BaseFragment {
             }
         });
 
+        ((LinearLayout) rootView).addView(layout);
+
         // Inflate the layout for this fragment
-        return layout;
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

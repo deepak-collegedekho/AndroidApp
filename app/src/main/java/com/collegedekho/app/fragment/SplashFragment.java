@@ -40,6 +40,7 @@ public class SplashFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((MainActivity)getActivity()).init();
     }
 
     @Override
@@ -68,9 +69,6 @@ public class SplashFragment extends BaseFragment {
             FrameLayout layout =(FrameLayout) getActivity().findViewById(R.id.container);
             CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) layout.getLayoutParams();
             params.setBehavior(null);
-
-
-            ((MainActivity)getActivity()).init();
 
            int splashTime = 6500;
 

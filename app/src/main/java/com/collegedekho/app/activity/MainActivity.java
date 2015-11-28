@@ -296,8 +296,8 @@ public class MainActivity extends AppCompatActivity
 
         this.mSetNavigationListener();
 
-         //this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
-         this.mDisplayFragment(DemoFragment.newInstance(), false, SplashFragment.class.getName());
+         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
+         //this.mDisplayFragment(DemoFragment.newInstance(), false, SplashFragment.class.getName());
         //  show appBarLayout and toolBar
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
         params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
@@ -379,9 +379,6 @@ public class MainActivity extends AppCompatActivity
         FacebookSdk.sdkInitialize(this);
         callbackManager = CallbackManager.Factory.create();
 
-
-
-        
         try
         {
             PackageInfo info = getPackageManager().getPackageInfo(
@@ -501,7 +498,6 @@ public class MainActivity extends AppCompatActivity
     }
     public void loadInItDtata()
     {
-
         if (user != null && user.getPref() == User.Prefs.STREAMKNOWN) {
             // if user is anonymous  then logout social site
             if(user.is_anony())
@@ -512,7 +508,10 @@ public class MainActivity extends AppCompatActivity
                 //else if(user.getStream() == null || user.getLevel() == null || user.getStream().isEmpty() || user.getLevel().isEmpty())
                 //  MainActivity.this.mSetUserPref();
             else
-                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
+            {
+                //MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
+                MainActivity.this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION, Constants.BASE_URL + "user-education/", null);
+            }
         } else {
             disconnectFromFacebook();
             MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
@@ -838,7 +837,6 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
-
 
     private void mShowMyFBEnumeration(String response) {
         try {

@@ -34,7 +34,7 @@ public class EntranceSummeryFragment extends  BaseFragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_entrance_summery, container, false);
 
-        ViewPager pager = (ViewPager)rootView.findViewById(R.id.)
+        //ViewPager pager = (ViewPager)rootView.findViewById(R.id.)
 
         return rootView;
     }
