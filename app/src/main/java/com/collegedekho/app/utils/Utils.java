@@ -2,9 +2,13 @@ package com.collegedekho.app.utils;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.util.Patterns;
 import android.widget.Toast;
 
 import com.collegedekho.app.resource.TypeFaceTypes;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by sureshsaini on 12/10/15.
@@ -47,5 +51,18 @@ public class Utils {
     {
         float density = context.getResources().getDisplayMetrics().density;
         return (int)(value * density);
+    }
+
+    public static boolean isValidEmail(CharSequence target) {
+        return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+
+    public static boolean isValidPhone(CharSequence target) {
+        return target != null && Patterns.PHONE.matcher(target).matches();
+    }
+    public static boolean isValidName(CharSequence target) {
+        Pattern ps = Pattern.compile("^[a-zA-Z ]+$");
+        Matcher ms = ps.matcher(target);
+        return ms.matches();
     }
 }

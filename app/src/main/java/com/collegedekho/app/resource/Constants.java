@@ -62,6 +62,7 @@ public class Constants
     public static final String TAG_INSTITUTE_LIKE_DISLIKE = "institute_like_dislike";
     public static final String TAG_SHORTLIST_INSTITUTE = "shortlist";
     public static final String TAG_DELETESHORTLIST_INSTITUTE = "delete";
+    public static final String TAG_UNSHORTLIST_INSTITUTE = "unshortlist_institute";
     public static final int NEITHER_LIKE_NOR_DISLIKE = -1;
     public static final String WIDGET_SHORTLIST = "shortlistedinstitutes";
     public static final String TAG_LOAD_PYSCHOMETRIC_TEST = "load_pyschometric_test";

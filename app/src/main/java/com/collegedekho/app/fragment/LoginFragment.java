@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
@@ -117,8 +118,10 @@ public class LoginFragment extends  BaseFragment{
                         JSONObject pictureJsonObj = json.getJSONObject("picture");
                         JSONObject data = pictureJsonObj.getJSONObject("data");
                         String image = data.getString("url");
-                        if (MainActivity.user != null)
-                            MainActivity.user.setImage(image);
+                        if (MainActivity.user == null)
+                            MainActivity.user = new User();
+
+                        MainActivity.user.setImage(image);
 
                         HashMap hashMap = new HashMap<>();
                         hashMap.put(Constants.USER_FIRST_NAME, json.getString("first_name"));

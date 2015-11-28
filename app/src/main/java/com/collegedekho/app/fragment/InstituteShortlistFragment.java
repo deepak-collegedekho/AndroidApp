@@ -39,7 +39,7 @@ public class InstituteShortlistFragment extends BaseFragment {
     private String mTitle;
     private InstituteShortListAdapter mAdapter;
     private MainActivity mMainActivity;
-    private  int mViewType = Constants.VIEW_INTO_GRID;
+    private  int mViewType = Constants.VIEW_INTO_LIST;
 
     public InstituteShortlistFragment() {
         // Required empty public constructor
@@ -86,7 +86,7 @@ public class InstituteShortlistFragment extends BaseFragment {
         RecyclerView recyclerView  = (RecyclerView)rootView.findViewById(R.id.recyclerView_shortList_institute);
          if(this.mViewType == Constants.VIEW_INTO_GRID) {
              layoutManager = new GridLayoutManager(getActivity(), 2);
-             recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
+             recyclerView.addItemDecoration(new GridSpacingItemDecoration(1, 3, false));
          }
         else {
              layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -161,7 +161,7 @@ public class InstituteShortlistFragment extends BaseFragment {
                     this.mAdapter = new InstituteShortListAdapter(getActivity(), this.mShortlistedInstitutes, Constants.VIEW_INTO_GRID);
                     recyclerView.setAdapter(this.mAdapter);
                     recyclerView.setHasFixedSize(true);
-                    recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 10, true));
+                    recyclerView.addItemDecoration(new GridSpacingItemDecoration(1, 3, true));
                     recyclerView.addOnScrollListener(scrollListener);
                 }
 
@@ -202,9 +202,15 @@ public class InstituteShortlistFragment extends BaseFragment {
     public void updateLikeButtons(int position) {
         mAdapter.updateLikeButtons(position);
     }
+    public void updateShortlistButton(int position)
+    {
+        mAdapter.updateShortlistStatus(position);
+    }
 
     public interface OnShortlistedInstituteSelectedListener extends BaseListener {
         void onShortListInstituteSelected(int position);
+
+        void onInstituteUnShortlisted(int position);
         @Override
         void onEndReached(String next, int type);
 

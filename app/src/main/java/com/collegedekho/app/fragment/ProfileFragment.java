@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +24,6 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
 
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class ProfileFragment extends BaseFragment implements View.OnClickListener {
@@ -146,7 +143,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 
         if(signInFragment != null)
         {
-            signInFragment.onActivityResult(requestCode,resultCode,data);
+            signInFragment.onActivityResult(requestCode, resultCode, data);
         }
 
     }
@@ -165,13 +162,13 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
             if (name == null || name.isEmpty()) {
                 Utils.DisplayToast(getActivity(), Constants.NAME_EMPTY);
                 return;
-            } else if (!isValidName(name)) {
+            } else if (!Utils.isValidName(name)) {
                 Utils.DisplayToast(getActivity(), Constants.NAME_INVALID);
                 return;
             } else if (phone == null || phone.isEmpty()) {
                 Utils.DisplayToast(getActivity(), Constants.PHONE_EMPTY);
                 return;
-            } else if (phone.length() <= 9 || !isValidPhone(phone)) {
+            } else if (phone.length() <= 9 || !Utils.isValidPhone(phone)) {
                 Utils.DisplayToast(getActivity(), Constants.PHONE_INVALID);
                 return;
             }
@@ -182,7 +179,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         hashMap.put(Constants.USER_STREAM, mStreamURI);
         hashMap.put(Constants.USER_LEVEL, Constants.BASE_URL + "level/" + mLevelID + "/");
         hashMap.put(Constants.USER_STREAM_NAME, mStreamName);
-        hashMap.put(Constants.USER_LEVEL_NAME,mLevelName);
+        hashMap.put(Constants.USER_LEVEL_NAME, mLevelName);
 
         if(mListener!=null) {
             this.mListener.onProfileUpdated(hashMap);
@@ -269,18 +266,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         });
     }
 
-    private static boolean isValidEmail(CharSequence target) {
-        return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
-    }
-
-    private static boolean isValidPhone(CharSequence target) {
-        return target != null && Patterns.PHONE.matcher(target).matches();
-    }
-    private static boolean isValidName(CharSequence target) {
-        Pattern ps = Pattern.compile("^[a-zA-Z ]+$");
-        Matcher ms = ps.matcher(target);
-        return ms.matches();
-    }
     public void updateUI(User user)
     {
         View view = getView();

@@ -63,7 +63,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         Institute institute = this.mInstitutes.get(position);
         InstituteHolder instituteHolder = (InstituteHolder) holder;
         instituteHolder.instiName.setText(institute.getName());
-        instituteHolder.instiCourses.setText(institute.getCourse_count() + " Courses Available");
+        instituteHolder.instiCourses.setText(institute.getCourse_count() + " Courses");
         String text = "";
         if (institute.getCity_name() != null)
             text += institute.getCity_name() + ", ";

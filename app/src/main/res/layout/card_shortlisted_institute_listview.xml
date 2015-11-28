@@ -16,23 +16,10 @@
     android:paddingLeft="5dp"
     android:paddingBottom="5dp">
 
-    <TextView
-        android:id="@+id/card_institute_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:layout_alignParentTop="true"
-        android:text="Manipal Institute of Technology"
-        android:layout_marginTop="@dimen/m5dp"
-        android:textColor="@color/heading_color"
-        android:textSize="14sp"
-        android:textStyle="bold"/>
-
     <include layout="@layout/layout_institute_details_listview"
         android:layout_below="@id/card_institute_name"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"/>
+        android:layout_width="match_parent"/>
 >
 
 </RelativeLayout>

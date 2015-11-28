@@ -66,9 +66,16 @@ public class InstituteShortListAdapter extends RecyclerView.Adapter {
 
     public void updateLikeButtons(int position) {
         this.notifyItemChanged(position);
+        //this.notifyDataSetChanged();
+    }
+    public void updateShortlistStatus(int position)
+    {
+        if(mInstitueList != null && mInstitueList.size() > position)
+        {
+            mInstitueList.remove(position);
+        }
         this.notifyDataSetChanged();
     }
-
      class ShortlistedInstituteHolder extends RecyclerView.ViewHolder implements  View.OnClickListener{
          TextView siName;
          NetworkImageView siImage;
@@ -76,10 +83,10 @@ public class InstituteShortListAdapter extends RecyclerView.Adapter {
          TextView siLocation;
          TextView siCourses;
          ImageView siLikeButton;
-        // TextView siShortListTV;
-         TextView siUpvoteCount;
-         ProgressBar siLikeProgressBar;
-        // ProgressBar siShortListProgressBar;
+         TextView siShortListTV;
+        TextView siUpvoteCount;
+        ProgressBar siLikeProgressBar;
+        ProgressBar siShortListProgressBar;
         InstituteShortlistFragment.OnShortlistedInstituteSelectedListener mListener;
 
          ShortlistedInstituteHolder(View itemView,  InstituteShortlistFragment.OnShortlistedInstituteSelectedListener  listener  ) {
@@ -90,10 +97,10 @@ public class InstituteShortListAdapter extends RecyclerView.Adapter {
              this.siLocation    = (TextView) itemView.findViewById(R.id.card_institute_location);
              this.siCourses     = (TextView) itemView.findViewById(R.id.card_institute_cources);
              this.siLikeButton  = (ImageView) itemView.findViewById(R.id.card_item_button_like);
-             //this.siShortListTV    = (TextView) itemView.findViewById(R.id.card_institute_shortlist_button);
-             this.siUpvoteCount    = (TextView) itemView.findViewById(R.id.card_item_like_count);
+            this.siShortListTV    = (TextView) itemView.findViewById(R.id.card_institute_shortlist_button);
+             this.siUpvoteCount   = (TextView) itemView.findViewById(R.id.card_item_like_count);
              this.siLikeProgressBar = (ProgressBar) itemView.findViewById(R.id.card_item_like_progressBar);
-            // this.siShortListProgressBar = (ProgressBar) itemView.findViewById(R.id.card_institute_shortlist_progressBar);
+             this.siShortListProgressBar = (ProgressBar) itemView.findViewById(R.id.card_institute_shortlist_progressBar);
              if (this.siImage != null) {
                  this.siImage.setDefaultImageResId(R.drawable.default_banner);
                  this.siImage.setErrorImageResId(R.drawable.default_banner);
@@ -101,8 +108,9 @@ public class InstituteShortListAdapter extends RecyclerView.Adapter {
              this.siItemFacilities = (LinearLayout) itemView.findViewById(R.id.card_college_facility_list);
 
              itemView.findViewById(R.id.card_institute_like).setOnClickListener(this);
+             itemView.findViewById(R.id.card_item_button_like).setOnClickListener(this);
+             itemView.findViewById(R.id.card_institute_shortlist).setOnClickListener(this);
              (itemView.findViewById(R.id.layout_item_expand)).setOnClickListener(this);
-             (itemView.findViewById(R.id.item_institute_container)).setOnClickListener(this);
 
 
          }
@@ -153,7 +161,7 @@ public class InstituteShortListAdapter extends RecyclerView.Adapter {
                  this.siName.setText(institute.getName());
 
 
-             this.siCourses.setText(institute.getCourse_count() + " Courses Available");
+             this.siCourses.setText(institute.getCourse_count() + " Courses");// Available");
              String text = "";
              if (institute.getCity_name() != null)
                  text += institute.getCity_name() + ", ";
@@ -171,14 +179,29 @@ public class InstituteShortListAdapter extends RecyclerView.Adapter {
              siLikeButton.setSelected(institute.getCurrent_user_vote_type() == 0);
              siLikeButton.setClickable(true);
 
+             siLikeButton.setVisibility(View.VISIBLE);
+             siLikeProgressBar.setVisibility(View.GONE);
+
              if (siLikeButton.isSelected()) {
 
-                 siLikeButton.setVisibility(View.VISIBLE);
-                 siLikeProgressBar.setVisibility(View.GONE);
                  siLikeButton.setColorFilter(ContextCompat.getColor(mContext, R.color.like_green_selected));
 
              }else {
                  siLikeButton.setColorFilter(ContextCompat.getColor(mContext, R.color.subheading_color));
+             }
+
+             siShortListTV.setEnabled(true);
+             siShortListTV.setVisibility(View.VISIBLE);
+             siShortListProgressBar.setVisibility(View.GONE);
+             if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
+             {
+                 siShortListTV.setText("Shortlist");
+                 siShortListTV.setBackgroundResource(R.drawable.bg_button_blue);
+             }
+             else
+             {
+                 siShortListTV.setText("Shortlisted");
+                 siShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
              }
 
          }
@@ -186,23 +209,31 @@ public class InstituteShortListAdapter extends RecyclerView.Adapter {
          @Override
          public void onClick(View v) {
              switch (v.getId()) {
+                     case R.id.card_institute_like:
                  case R.id.card_item_button_like:
-                         siLikeButton.setVisibility(View.GONE);
-                         siLikeProgressBar.setVisibility(View.VISIBLE);
-                         siLikeButton.setClickable(false);
-                        mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.LIKE_THING);
+                         if (!v.isSelected()) {
+                             siLikeButton.setVisibility(View.GONE);
+                             siLikeProgressBar.setVisibility(View.VISIBLE);
+                             siLikeButton.setClickable(false);
+                             mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.LIKE_THING);
+                         }
+                        else {
+                             siLikeButton.setVisibility(View.GONE);
+                             siLikeProgressBar.setVisibility(View.VISIBLE);
+                             siLikeButton.setClickable(false);
+                             mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_THING);
+                         }
 
                      break;
                  case R.id.layout_item_expand:
-                 case R.id.item_institute_container:
                      this.mListener.onShortListInstituteSelected(getAdapterPosition());
                      break;
-                /* case R.id.card_institute_shortlist:
-                         siShortListTV.setVisibility(View.GONE);
-                         siLikeProgressBar.setVisibility(View.VISIBLE);
-
-                   //  this.mListener.onInstituteShortlisted(getAdapterPosition());
-                     break;*/
+                case R.id.card_institute_shortlist:
+                    siShortListTV.setEnabled(false);
+                    siShortListTV.setVisibility(View.GONE);
+                    siShortListProgressBar.setVisibility(View.VISIBLE);
+                    this.mListener.onInstituteUnShortlisted(getAdapterPosition());
+                     break;
                  default:
                      //mListener.onInstituteSelected(getAdapterPosition());
                      break;

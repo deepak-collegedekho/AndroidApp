@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        style="@style/AppTheme.RelativeLayout.Rounded">
+        <TextView
+            style="@style/AppTheme.TextView"
+            android:id="@+id/first_login"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:paddingRight="@dimen/m30dp"
+            android:paddingLeft="@dimen/m30dp"
+            android:maxLines="3"
+            android:textSize="16sp"
+            android:text="CONGRATULATIONS ON YOUR FIRST LOGIN"/>
+
+        <LinearLayout
+            style="@style/AppTheme.LinearLayout.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/first_login"
+            android:paddingTop="@dimen/m10dp"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight=".2"
+                android:layout_height="wrap_content">
+                <TextView
+                    style="@style/AppTheme.TextView"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:drawablePadding="@dimen/m5dp"
+                    android:drawableBottom="@drawable/ic_treat"
+                    android:text="TREAT 1"/>
+              </LinearLayout>
+
+            <TextView
+                style="@style/AppTheme.TextView"
+                android:layout_height="wrap_content"
+                android:layout_weight=".6"
+                android:layout_width="0dp"
+                android:gravity="center|top"
+                android:textSize="13sp"
+                android:paddingLeft="@dimen/m4dp"
+                android:paddingRight="@dimen/m4dp"
+                android:text="WHILE YOU LOOK FOR COLLEGE BEST FOR YOU CD REWARDS YOU POINTS WHICH CAN BE REDEEMED LATER!"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight=".2"
+                android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/AppTheme.TextView"
+                        android:textStyle="bold"
+                        android:gravity="center|top"
+                        android:textSize="13sp"
+                        android:drawableTop="@drawable/ic_points"
+                        android:text="200 POINTS"/>
+
+                </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</LinearLayout>

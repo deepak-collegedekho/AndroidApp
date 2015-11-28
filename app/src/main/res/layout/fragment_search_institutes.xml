@@ -20,7 +20,7 @@
             android:layout_weight=".7"
             android:layout_width="0dp"
             android:paddingLeft="@dimen/m5dp"
-            android:background="@drawable/round_box"
+            android:background="@drawable/rounded_box_white"
             android:textColorHint="@color/dislike_red"
             android:hint="@string/search_view_hint"
             android:layout_height="match_parent"></EditText>

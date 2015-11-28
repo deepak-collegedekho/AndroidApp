@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        style="@style/AppTheme.RelativeLayout.Rounded"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/m5dp"
+        android:background="@drawable/rounded_box_blue">
+        <TextView
+            style="@style/AppTheme.TextView"
+            android:id="@+id/summery_text"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_alignParentTop="true"
+            android:maxLines="3"
+            android:textSize="16sp"
+            android:text="HERE'S THE SUMMERY OF YOUR ENTRANCES "/>
+        <ScrollView
+            android:id="@+id/entrance_summery_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_below="@id/summery_text"
+            android:layout_marginBottom="@dimen/m70dp"
+            android:layout_height="wrap_content">
+
+               <LinearLayout
+                   android:orientation="vertical"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent">
+
+                    <android.support.design.widget.TabLayout
+                        android:id="@+id/tab"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <android.support.v4.view.ViewPager
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"/>
+                   <ImageView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:src="@drawable/ic_colleges_circles"
+                       />
+                </LinearLayout>/
+        </ScrollView>
+        <TextView
+            style="@style/AppTheme.TextView"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:textSize="14sp"
+            android:paddingLeft="@dimen/m30dp"
+            android:paddingRight="@dimen/m30dp"
+            android:background="@color/dark_blue"
+            android:drawableBottom="@drawable/ic_down_arrow"
+            android:text="COLLEGES THAT ACCEPT THESE EXAMS "/>
+
+    </RelativeLayout>
+      <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/entrance_summery_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_share"
+        android:layout_marginBottom="30dp"
+        android:layout_marginRight="16dp"
+        fab:fab_colorNormal="@color/primary_orange"
+        fab:fab_colorPressed="@color/primary_orange_dark"/>
+</RelativeLayout>

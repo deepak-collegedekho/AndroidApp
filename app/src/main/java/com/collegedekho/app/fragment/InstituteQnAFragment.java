@@ -1,6 +1,6 @@
 package com.collegedekho.app.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -230,7 +230,7 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         try {
             mListener = (OnQuestionAskedListener) activity;
@@ -296,7 +296,7 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
     {
         this.mQnAQuestions = qnaQuestionList;
 
-        if (this.mQnAQuestions.size() == 0)
+        if (this.mQnAQuestions == null || this.mQnAQuestions.size() == 0)
         {
             this.mInstituteQnAAskContainer.setVisibility(View.VISIBLE);
             this.mInstituteQnAQuestionListContainer.setVisibility(View.GONE);
@@ -305,7 +305,6 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
         {
             this.mInstituteQnAAskContainer.setVisibility(View.GONE);
             this.mInstituteQnAQuestionListContainer.setVisibility(View.VISIBLE);
-
             this.mQnAQuestionsListAdapter.notifyDataSetChanged();
         }
         this.mAskExpertButton.setEnabled(true);
@@ -315,8 +314,11 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
 
     public void questionAdded(QnAQuestions ques)
     {
-        if (this.mQnAQuestions.size() == 0)
-            this.mEmptyTextView.setVisibility(View.GONE);
+        if(this.mQnAQuestions == null)
+            this.mQnAQuestions = new ArrayList<>();
+
+       /* if (this.mQnAQuestions.size() == 0)
+            this.mEmptyTextView.setVisibility(View.GONE);*/
 
         if (this.mInstituteQnAAskContainer.getVisibility() == View.VISIBLE)
         {
@@ -326,9 +328,9 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
 
         this.mInstituteQnAQuestionListContainer.requestFocus();
 
-        mQnAQuestions.add(mQnAQuestions.size(), ques);
-        mQnAQuestionsListAdapter.notifyItemInserted(mQnAQuestions.size() - 1);
-        mQnAQuestionsListAdapter.notifyDataSetChanged();
+        this.mQnAQuestions.add(mQnAQuestions.size(), ques);
+        this.mQnAQuestionsListAdapter.notifyItemInserted(mQnAQuestions.size() - 1);
+        this.mQnAQuestionsListAdapter.notifyDataSetChanged();
 
         this.mQuestionsListView.scrollToPosition(mQnAQuestions.size() - 1);
     }

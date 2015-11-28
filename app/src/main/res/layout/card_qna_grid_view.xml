@@ -70,7 +70,7 @@
                 android:text="5  Answer"/>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_toRightOf="@id/card_qna_answer_count">

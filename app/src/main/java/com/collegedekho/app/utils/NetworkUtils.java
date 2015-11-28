@@ -205,12 +205,12 @@ public class NetworkUtils {
                     {
                         saveToSharedPref(params);
                     }
+
                     json = trimMessage(json, "detail");
                     if (json != null)
                         mListener.onError(tag, Constants.SERVER_FAULT, url, params, method);
                     else
                         mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, params, method);
-
                 }
             })
         {

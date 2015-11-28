@@ -16,7 +16,6 @@ import android.content.pm.Signature;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
@@ -67,6 +66,7 @@ import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.fragment.FilterFragment;
+import com.collegedekho.app.fragment.DemoFragment;
 import com.collegedekho.app.fragment.HomeFragment;
 import com.collegedekho.app.fragment.InstituteDetailFragment;
 import com.collegedekho.app.fragment.InstituteListFragment;
@@ -97,9 +97,14 @@ import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 
 import com.collegedekho.app.widget.CircleImageView;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -291,39 +296,17 @@ public class MainActivity extends AppCompatActivity
 
         this.mSetNavigationListener();
 
-        this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Stop the Main Animation and Start Secondary
-                if (currentFragment instanceof SplashFragment)
-                    ((SplashFragment) currentFragment).stopMainAnimation();
-
-                //Initialize the app
-                init();
-
-                //check if this device is connected to internet
-                int amIConnectedToInternet = networkUtils.getConnectivityStatus();
-
-                if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
-                    Constants.IS_CONNECTED_TO_INTERNET = true;
-                    if (user != null && user.getPref() == User.Prefs.STREAMKNOWN) {
-                        if (!completedStage2)
-                            MainActivity.this.mSetUserPref();
-                        else
-                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
-                    } else {
-                       MainActivity.this.mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
-                       //MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
-                    }
-                } else if (currentFragment instanceof SplashFragment)
-                    ((SplashFragment) currentFragment).noInternetFound();
-            }
-        }, Constants.MAIN_ANIMATION_TIME);
+         //this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
+         this.mDisplayFragment(DemoFragment.newInstance(), false, SplashFragment.class.getName());
+        //  show appBarLayout and toolBar
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
+        params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+        findViewById(R.id.container).setLayoutParams(params);
 
         // TODO: Move this to where you establish a user session
         //logUser();
     }
+
 
     /*private void logUser() {
         // TODO: Use the current user's information
@@ -482,14 +465,14 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-    private void init() {
+    public void init() {
         this.networkUtils = new NetworkUtils(this, this);
         SharedPreferences sp = this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
-
         try {
             if (sp.contains(Constants.KEY_USER)) {
                 MainActivity.user = JSON.std.beanFrom(User.class, sp.getString(Constants.KEY_USER, null));
                 this.networkUtils.setToken(MainActivity.user.getToken());
+
                 this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()).putValue(Constants.USER_STREAM_NAME, MainActivity.user.getStream_name()).putValue(Constants.USER_LEVEL_NAME, MainActivity.user.getLevel_name()));
                 this.connecto.track("Session Started", new Properties().putValue("session_start_datetime", new Date().toString()));
 
@@ -507,11 +490,34 @@ public class MainActivity extends AppCompatActivity
                         MainActivity.user.setLevel(levelId[levelId.length - 1]);
                     }
                 }
+
             }
 
             this.completedStage2 = sp.getBoolean(Constants.COMPLETED_SECOND_STAGE, false);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
+        }
+
+    }
+    public void loadInItDtata()
+    {
+
+        if (user != null && user.getPref() == User.Prefs.STREAMKNOWN) {
+            // if user is anonymous  then logout social site
+            if(user.is_anony())
+                disconnectFromFacebook();
+
+            if (!completedStage2)
+                MainActivity.this.mSetUserPref();
+                //else if(user.getStream() == null || user.getLevel() == null || user.getStream().isEmpty() || user.getLevel().isEmpty())
+                //  MainActivity.this.mSetUserPref();
+            else
+                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
+        } else {
+            disconnectFromFacebook();
+            MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
+            // MainActivity.this.mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
+
         }
     }
 
@@ -1094,6 +1100,13 @@ public class MainActivity extends AppCompatActivity
                     extraTag = tags[1];
                 this.updateShortlistInstitute(null, extraTag);
                 break;
+            case Constants.TAG_UNSHORTLIST_INSTITUTE:
+                if (tags.length == 2) {
+                    extraTag = tags[1];
+                    if (currentFragment instanceof InstituteShortlistFragment)
+                        ((InstituteShortlistFragment) currentFragment).updateShortlistButton(Integer.parseInt(extraTag));
+                }
+                break;
             case Constants.TAG_INSTITUTE_LIKE_DISLIKE:
                 if (tags.length == 2)
                     extraTag = tags[1];
@@ -1268,7 +1281,11 @@ public class MainActivity extends AppCompatActivity
     //Saved on DB, now save it in shared preferences.
     private void mStreamAndLevelSelected(String response, String level, String stream, String streamName) {
         //Retrieve token from pref to save it across the pref updates
+
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
+
         String token = user.getToken();
+        String image = user.getImage();
         //TODO: May be we can make a new pref entry for token
         try {
             MainActivity.user = JSON.std.beanFrom(User.class, response);
@@ -1278,6 +1295,7 @@ public class MainActivity extends AppCompatActivity
         //save the preferences locally
         MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
         MainActivity.user.setToken(token);
+        MainActivity.user.setImage(image);
 
         if (streamName != "" && streamName != null)
             MainActivity.user.setStream_name(streamName);
@@ -1447,6 +1465,24 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this, institute.getShort_name() + message, Toast.LENGTH_SHORT).show();
     }*/
 
+    private void updateUnShortlistInstitute(String response, String extraTag)
+    {
+        Institute institute = this.mShortlistedInstituteList.get(Integer.parseInt(extraTag));
+        String message = null;
+                 try {
+                institute.setIs_shortlisted(Constants.SHORTLISTED_YES);
+                message = " added to your shortlist";
+                //GA Event for institute shortlisted
+                MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_SHORTLISTED, "Institute Shortlisted : " + String.valueOf(institute.getResource_uri()) + " Institute Name: " + institute.getName() + " Institute City: " + institute.getCity_name());
+                //CONNECTO Event for institute shortlisting removed
+                this.connecto.track(Constants.ACTION_INSTITUTE_SHORTLISTED, new Properties().putValue(Constants.ACTION_INSTITUTE_SHORTLISTED, Constants.SHORTLISTED_YES).putValue(institute.getShort_name(), Constants.SHORTLISTED_YES).putValue(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri()));
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
+        if (currentFragment instanceof InstituteShortlistFragment)
+            ((InstituteShortlistFragment) currentFragment).updateShortlistButton(Integer.parseInt(extraTag));
+        //Toast.makeText(this, institute.getShort_name() + message, Toast.LENGTH_SHORT).show();
+    }
     private void updateShortlistInstitute(String response, String extraTag)
     {
         Institute institute = this.mInstituteList.get(Integer.parseInt(extraTag));
@@ -1720,10 +1756,17 @@ public class MainActivity extends AppCompatActivity
                         ((InstituteDetailFragment) currentFragment).updateInstituteShortlist();
                 break;
             }
+            case Constants.TAG_UNSHORTLIST_INSTITUTE: {
+                if (tags.length == 2)
+                    extraTag = tags[1];
+                    if (currentFragment instanceof InstituteShortlistFragment)
+                        (currentFragment).updateLikeButtons(Integer.parseInt(extraTag));
+                break;
+            }
             case Constants.TAG_INSTITUTE_LIKE_DISLIKE: {
                 if (tags.length >= 2)
                     extraTag = tags[1];
-                if (currentFragment instanceof InstituteListFragment) {
+                if (currentFragment instanceof InstituteListFragment || currentFragment instanceof  InstituteShortlistFragment) {
                     currentFragment.updateLikeButtons(Integer.parseInt(extraTag));
                 }
                 break;
@@ -1757,6 +1800,17 @@ public class MainActivity extends AppCompatActivity
                     })
                     .show();
         }
+    }
+
+    @Override
+    public void unShortListInstituteFailed(String[] tags) {
+        if(tags != null && tags.length >= 2) {
+            if (currentFragment instanceof InstituteShortlistFragment)
+                ((InstituteShortlistFragment) currentFragment).updateShortlistButton(Integer.parseInt(tags[1]));
+
+
+        }
+
     }
 
     @Override
@@ -1802,7 +1856,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mOnCourseLevelSelected(int level, String streamURI, String streamName) {
-        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
 
         //get device id
         String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -2055,6 +2108,7 @@ public class MainActivity extends AppCompatActivity
         HashMap<String, String> map = new HashMap<>();
         map.put("title", question.getTitle());
         map.put("desc", question.getDesc());
+        if(!(currentFragment instanceof  QnAQuestionsListFragment))
         map.put("institute", "" + this.mInstituteList.get(currentInstitute).getResource_uri());
         //map.put("stream", Constants.BASE_URL + "streams/1/");
         /*map.put("user", user.getResource_uri());
@@ -2092,13 +2146,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onInstituteShortlisted(int position) {
+
         Institute institute = this.mInstituteList.get(position);
         if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
             this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
         else
             this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
     }
+    @Override
+    public void onInstituteUnShortlisted(int position) {
 
+        Institute institute = this.mShortlistedInstituteList.get(position);
+        this.mMakeNetworkCall(Constants.TAG_UNSHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
+    }
 
     @Override
     public void onFilterCanceled(boolean clearAll) {
@@ -2412,8 +2472,8 @@ public class MainActivity extends AppCompatActivity
 
             this.connecto.track(Constants.ACTION_QNA_QUESTION_ASKED, new Properties().putValue(Constants.QNA_QUESTION_RESOURCE_URI, qnaQuestion.getResource_uri()));
 
-            if (currentFragment instanceof InstituteDetailFragment)
-                ((InstituteDetailFragment) currentFragment).instituteQnAQuestionAdded(qnaQuestion);
+            if (currentFragment instanceof InstituteDetailFragment || currentFragment instanceof  QnAQuestionsListFragment)
+                 currentFragment.instituteQnAQuestionAdded(qnaQuestion);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -2718,40 +2778,19 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_SKIP_LOGIN, Constants.BASE_URL + "users/anonymous/", new HashMap<String, String>());
     }
 
-
-    /**
-     * This method is used to login with facebook account
-     * @param params request data
-     */
-    @Override
-    public void onFacebookLogin(HashMap<String, String> params) {
-        this.userPref = User.Prefs.STREAMKNOWN;
-        this.mMakeNetworkCall(Constants.TAG_CREATE_FACEBOOK_ANONY_USER_, Constants.BASE_URL + "users/anonymous/", params);
-        this.mUserSignUPParams = params;
-    }
     private void  mCreatedAnonymousUser(String json)
-   {
-       try {
-             this.user = JSON.std.beanFrom(User.class, json);
-             this.user.setPref(this.userPref);
-             this.networkUtils.setToken(this.user.getToken());
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
-       this.mMakeNetworkCall(Constants.TAG_USER_SIGNUP, Constants.BASE_URL + "auth/register/", this.mUserSignUPParams);
-   }
-
-    private void  mCreatedFacebookAnonymousUser(String json)
     {
         try {
             this.user = JSON.std.beanFrom(User.class, json);
-            this.user.setPref(this.userPref);
+           // this.user.setPref(this.userPref);
             this.networkUtils.setToken(this.user.getToken());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.mMakeNetworkCall(Constants.TAG_USER_FACEBOOK_LOGIN,Constants.BASE_URL + "auth/facebook/", this.mUserSignUPParams);
+        this.mMakeNetworkCall(Constants.TAG_USER_SIGNUP, Constants.BASE_URL + "auth/register/", this.mUserSignUPParams);
     }
+
+
     private void mUserSignUpResponse(String json)
     {
         User tempUser = this.user;
@@ -2767,13 +2806,37 @@ public class MainActivity extends AppCompatActivity
         }
         this.mSetUserPref();
     }
+
+    /**
+     * This method is used to login with facebook account
+     * @param params request data
+     */
+    @Override
+    public void onFacebookLogin(HashMap<String, String> params) {
+        this.userPref = User.Prefs.STREAMKNOWN;
+        this.mMakeNetworkCall(Constants.TAG_CREATE_FACEBOOK_ANONY_USER_, Constants.BASE_URL + "users/anonymous/", params);
+        this.mUserSignUPParams = params;
+    }
+    private void  mCreatedFacebookAnonymousUser(String json)
+    {
+        User tempUser = this.user;
+        try {
+            this.user = JSON.std.beanFrom(User.class, json);
+          //  this.user.setPref(this.userPref);
+            this.networkUtils.setToken(this.user.getToken());
+            this.user.setImage(tempUser.getImage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.mMakeNetworkCall(Constants.TAG_USER_FACEBOOK_LOGIN, Constants.BASE_URL + "auth/facebook/", this.mUserSignUPParams);
+    }
     private void mUserFacebookLoginResponse(String json)
     {
         User tempUser = this.user;
         try {
             this.user = JSON.std.beanFrom(User.class, json);
             this.networkUtils.setToken(user.getToken());
-            this.user.setToken(tempUser.getImage());
+            this.user.setImage(tempUser.getImage());
             this.user.setPref(this.userPref);
             String u = JSON.std.asString(this.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
@@ -2781,8 +2844,33 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.mSetUserPref();
+        if(this.user.getLevel() == null || this.user.getStream() == null )
+            this.mSetUserPref();
+        else
+            this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
+
     }
+
+    /**
+     * This method is used to log out facebook account
+     *  when user wants to login with different account
+     *  or  have not successfully login
+     */
+    private void disconnectFromFacebook() {
+        if (AccessToken.getCurrentAccessToken() == null) {
+            return; // already logged out
+        }
+        new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, new GraphRequest
+                .Callback() {
+            @Override
+            public void onCompleted(GraphResponse graphResponse) {
+                LoginManager.getInstance().logOut();
+
+            }
+        }).executeAsync();
+    }
+
+
 
 
     /**
