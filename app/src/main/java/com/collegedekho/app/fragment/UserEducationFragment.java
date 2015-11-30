@@ -86,8 +86,8 @@ public class UserEducationFragment extends BaseFragment {
 
         pickerView.setOnOptionChangedListener(new CharacterPickerView.OnOptionChangedListener() {
             @Override
-            public void onOptionChanged(CharacterPickerView view, int option1, int option2, int option3) {
-                Log.e("test", option1 + "," + option2 + "," + option3);
+            public void onOptionChanged(CharacterPickerView view, String levelID, String subLevelID, String streamID, String marksID) {
+                Log.e("test", levelID + "," + subLevelID + "," + streamID + "," + marksID);
             }
         });
 
@@ -130,5 +130,9 @@ public class UserEducationFragment extends BaseFragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+
+
+
+
     }
 }

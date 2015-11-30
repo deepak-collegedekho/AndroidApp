@@ -17,7 +17,7 @@ import java.util.List;
 public class CharacterPickerView extends FrameLayout {
 
     public static interface OnOptionChangedListener {
-        public void onOptionChanged(CharacterPickerView view, int option1, int option2, int option3);
+        public void onOptionChanged(CharacterPickerView view, String levelID, String subLevelID, String streamID, String marksID);
     }
 
     private MWheelOptions wheelOptions;

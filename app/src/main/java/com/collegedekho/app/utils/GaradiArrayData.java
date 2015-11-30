@@ -33,7 +33,7 @@ public class GaradiArrayData {
 
         for (int i = 0; i < userEducationList.size(); i++) {
             Map<GaradiItem, List<GaradiItem>> streamAndMarks = new HashMap<>();
-            ArrayList<GaradiItem> sublevels = new ArrayList<>();
+            ArrayList<GaradiItem> subLevelList = new ArrayList<>();
             UserEducation userEducation = userEducationList.get(i);
             ArrayList<UserEducationStreams> streamList = userEducation.getStreams();
             ArrayList<UserEducationSublevels> sublevelsList = userEducation.getSublevels();
@@ -45,10 +45,10 @@ public class GaradiArrayData {
             for (int k = 0; k < sublevelsList.size(); k++) {
                 UserEducationSublevels sublevel = sublevelsList.get(k);
 
-                sublevels.add(new GaradiItem(sublevel.getName(), String.valueOf(sublevel.getId())));
+                subLevelList.add(new GaradiItem(sublevel.getName(), String.valueOf(sublevel.getId())));
+                DATAs.put(new GaradiItem(sublevel.getName(), String.valueOf(sublevel.getId()), String.valueOf(userEducation.getValue())), streamAndMarks);
             }
-            DATAs.put(new GaradiItem(userEducation.getName(), String.valueOf(userEducation.getValue())), streamAndMarks);
-            SUBLEVELS.put(String.valueOf(userEducation.getValue()), sublevels);
+            SUBLEVELS.put(String.valueOf(userEducation.getValue()), subLevelList);
         }
     }
 

@@ -21,8 +21,10 @@
     <!-- To receive C2D messages -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- To keep phone awake -->
-
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <!-- To read contacts list -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- For haptic feedback -->
 
     <application
         android:name="android.support.multidex.MultiDexApplication"
@@ -55,7 +57,6 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="http://www.collegedekho.com" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".activity.PsychometricAnalysisActivity"

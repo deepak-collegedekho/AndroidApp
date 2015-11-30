@@ -7,8 +7,8 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
+import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -33,7 +33,7 @@ public class LoopView extends View {
     int g;
     int h;
     int colorGray;
-    int colorBlack;
+    int colorOrange;
     int colorGrayLight;
     float l;
     boolean isLoop;
@@ -67,9 +67,10 @@ public class LoopView extends View {
     }
 
     private void initLoopView(Context context) {
+        this.setHapticFeedbackEnabled(true);
         textSize = 0;
         colorGray = 0xffafafaf;
-        colorBlack = 0xfff6901e;
+        colorOrange = 0xfff6901e;
         colorGrayLight = 0xffc5c5c5;
         l = 2.0F;
         isLoop = true;
@@ -104,9 +105,9 @@ public class LoopView extends View {
         paintA.setTypeface(Typeface.MONOSPACE);
         paintA.setTextSize(textSize);
         paintB = new Paint();
-        paintB.setColor(colorBlack);
+        paintB.setColor(colorOrange);
         paintB.setAntiAlias(true);
-        paintB.setTextScaleX(1.05F);
+        paintB.setTextScaleX(1.15F);
         paintB.setTypeface(Typeface.MONOSPACE);
         paintB.setTextSize(textSize);
         paintC = new Paint();
@@ -156,6 +157,7 @@ public class LoopView extends View {
     }
 
     private void f() {
+        this.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
         int i1 = (int) ((float) totalScrollY % (l * (float) h));
         Timer timer = new Timer();
         mTimer = timer;
@@ -229,6 +231,7 @@ public class LoopView extends View {
             super.onDraw(canvas);
             return;
         }
+        this.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
         as = new GaradiItem[r];
         w = (int) ((float) totalScrollY / (l * (float) h));
         mCurrentItem = positon + w % arrayList.size();
@@ -383,10 +386,16 @@ public class LoopView extends View {
         }
 
         if (totalScrollY < (int) ((float) (arrayList.size() - 1 - positon) * (l * (float) h))) {
-            invalidate();
+            {
+                invalidate();
+                this.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            }
         } else {
             totalScrollY = (int) ((float) (arrayList.size() - 1 - positon) * (l * (float) h));
-            invalidate();
+            {
+                invalidate();
+                this.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            }
         }
 
         if (!gestureDetector.onTouchEvent(motionevent) && motionevent.getAction() == 1) {

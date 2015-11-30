@@ -55,7 +55,6 @@ final class MWheelOptions {
         //设置是否循环播放
         wv_option1.setNotLoop();
 
-        //滚动监听
         wv_option1.setListener(new LoopListener() {
             @Override
             public void onItemSelect(int item) {
@@ -123,7 +122,14 @@ final class MWheelOptions {
             int option1 = wv_option1.getCurrentItem();
             int option2 = wv_option2.getCurrentItem();
             int option3 = wv_option3.getCurrentItem();
-            mOnOptionChangedListener.onOptionChanged(view, option1, option2, option3);
+
+            String levelID = (mOptions1Items.get(option1)).getLevelID();
+            String subLevelID =(mOptions1Items.get(option1)).getId();
+            String streamID = (mOptions2Items.get(option1)).get(option2).getId();
+            int marks = Integer.parseInt((mOptions3Items.get(option1)).get(option2).get(option3).getId());
+            marks = (((marks - 1) * 10) + 5);//get median of range, for eg. 1-10 return 5.
+
+            mOnOptionChangedListener.onOptionChanged(view, levelID, subLevelID, streamID, String.valueOf(marks));
         }
     }
 
