@@ -85,6 +85,7 @@ import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.fragment.SplashFragment;
 import com.collegedekho.app.fragment.StreamFragment;
 import com.collegedekho.app.fragment.UserEducationFragment;
+import com.collegedekho.app.fragment.UserEntranceFragment;
 import com.collegedekho.app.fragment.WidgetListFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
 import com.collegedekho.app.listener.DataLoadListener;
@@ -297,11 +298,11 @@ public class MainActivity extends AppCompatActivity
         this.mSetNavigationListener();
 
          this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
-         //this.mDisplayFragment(DemoFragment.newInstance(), false, SplashFragment.class.getName());
+        // this.mDisplayFragment(UserEntranceFragment.newInstance(new ArrayList<String>()), false, UserEntranceFragment.class.getName());
         //  show appBarLayout and toolBar
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
-        params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
-        findViewById(R.id.container).setLayoutParams(params);
+       // CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
+       // params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+       // findViewById(R.id.container).setLayoutParams(params);
 
         // TODO: Move this to where you establish a user session
         //logUser();
@@ -1232,8 +1233,15 @@ public class MainActivity extends AppCompatActivity
     {
         try
         {
-            response = response.substring(10, response.length() - 1);
 
+            ((DrawerLayout)findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+            //  show appBarLayout and toolBar
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
+            params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+            findViewById(R.id.container).setLayoutParams(params);
+
+            response = response.substring(10, response.length() - 1);
             ArrayList<UserEducation> userEducationList = (ArrayList<UserEducation>) JSON.std.listOfFrom(UserEducation.class, response);
 
             this.mDisplayFragment(UserEducationFragment.newInstance(userEducationList), false, Constants.TAG_FRAGMENT_USER_EDUCATION);

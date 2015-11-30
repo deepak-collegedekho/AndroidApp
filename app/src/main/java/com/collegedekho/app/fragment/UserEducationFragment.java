@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ToggleButton;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.UserEducation;
@@ -47,7 +48,7 @@ public class UserEducationFragment extends BaseFragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
+     * @param userEducationList Parameter 1.
      * @return A new instance of fragment UserEducationFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -90,7 +91,10 @@ public class UserEducationFragment extends BaseFragment {
             }
         });
 
-        ((LinearLayout) rootView).addView(layout);
+        ((LinearLayout) rootView.findViewById(R.id.user_education_layout)).addView(layout);
+
+        ToggleButton preparingToggle = (ToggleButton)rootView.findViewById(R.id.is_user_preparing);
+        boolean isUserPreparing = preparingToggle.isChecked();
 
         // Inflate the layout for this fragment
         return rootView;

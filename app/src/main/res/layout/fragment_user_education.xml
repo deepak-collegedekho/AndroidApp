@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/user_education_page"
-    android:orientation="vertical"
     android:layout_width="match_parent"
+    android:background="@color/app_background"
     android:layout_height="match_parent">
 
+
     <RelativeLayout
+        android:id="@+id/education_point_layout"
+        android:layout_marginBottom="@dimen/m10dp"
         style="@style/AppTheme.RelativeLayout.Rounded">
         <TextView
             style="@style/AppTheme.TextView"
@@ -19,54 +21,53 @@
             android:textSize="16sp"
             android:text="CONGRATULATIONS ON YOUR FIRST LOGIN"/>
 
-        <LinearLayout
-            style="@style/AppTheme.LinearLayout.Horizontal"
+        <include layout="@layout/layout_points_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/first_login"
-            android:paddingTop="@dimen/m10dp"
-            android:weightSum="1">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight=".2"
-                android:layout_height="wrap_content">
-                <TextView
-                    style="@style/AppTheme.TextView"
-                    android:textStyle="bold"
-                    android:textSize="13sp"
-                    android:drawablePadding="@dimen/m5dp"
-                    android:drawableBottom="@drawable/ic_treat"
-                    android:text="TREAT 1"/>
-              </LinearLayout>
-
-            <TextView
-                style="@style/AppTheme.TextView"
-                android:layout_height="wrap_content"
-                android:layout_weight=".6"
-                android:layout_width="0dp"
-                android:gravity="center|top"
-                android:textSize="13sp"
-                android:paddingLeft="@dimen/m4dp"
-                android:paddingRight="@dimen/m4dp"
-                android:text="WHILE YOU LOOK FOR COLLEGE BEST FOR YOU CD REWARDS YOU POINTS WHICH CAN BE REDEEMED LATER!"/>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight=".2"
-                android:layout_height="wrap_content">
-
-                    <TextView
-                        style="@style/AppTheme.TextView"
-                        android:textStyle="bold"
-                        android:gravity="center|top"
-                        android:textSize="13sp"
-                        android:drawableTop="@drawable/ic_points"
-                        android:text="200 POINTS"/>
-
-                </LinearLayout>
-
-        </LinearLayout>
+            android:paddingTop="@dimen/m12dp"/>
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/step_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:layout_below="@id/education_point_layout"
+        android:textSize="17sp"
+        android:paddingRight="@dimen/m30dp"
+        android:paddingLeft="@dimen/m30dp"
+        android:paddingBottom="@dimen/m15dp"
+        android:text="YOU ARE JUST 3 STEPS AWAY FROM FINDING YOUR COLLEGES"/>
+
+    <LinearLayout
+        android:id="@+id/user_education_layout"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@id/step_textview"
+        android:layout_height="wrap_content"/>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:layout_alignParentBottom="true">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Preparing for Exams"
+        android:paddingRight="@dimen/m10dp"/>
+    <ToggleButton
+        android:id="@+id/is_user_preparing"
+        android:layout_width="wrap_content"
+        android:background="@drawable/bg_toggle_on_off"
+        android:layout_height="wrap_content"
+        android:gravity="center|left"
+        android:paddingLeft="@dimen/m6dp"/>
+
 </LinearLayout>
+
+</RelativeLayout>
