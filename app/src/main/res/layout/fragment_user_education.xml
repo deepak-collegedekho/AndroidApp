@@ -5,7 +5,12 @@
     android:background="@color/app_background"
     android:layout_height="match_parent">
 
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <RelativeLayout
         android:id="@+id/education_point_layout"
         android:layout_marginBottom="@dimen/m10dp"
@@ -48,25 +53,52 @@
         android:orientation="vertical"
         android:layout_below="@id/step_textview"
         android:layout_height="wrap_content"/>
+    </RelativeLayout>
+    </ScrollView>
 
 <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:layout_alignParentBottom="true">
+    android:layout_height="60dp"
+    android:gravity="center|left"
+    android:orientation="horizontal"
+    android:background="@color/white"
+    android:layout_alignParentBottom="true"
+    android:weightSum="1">
+
+    <TextView
+        style="@style/AppTheme.OrangeButton"
+        android:id="@+id/exams_submit_button"
+        android:layout_width="0dp"
+        android:layout_weight=".4"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/m5dp"
+        android:paddingTop="@dimen/m5dp"
+        android:foregroundGravity="center"
+        android:text="SUBMIT"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight=".6"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="left">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="Preparing for Exams"
-        android:paddingRight="@dimen/m10dp"/>
+        android:paddingLeft="@dimen/m5dp"/>
+
     <ToggleButton
         android:id="@+id/is_user_preparing"
-        android:layout_width="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="@drawable/bg_toggle_on_off"
-        android:layout_height="wrap_content"
-        android:gravity="center|left"
-        android:paddingLeft="@dimen/m6dp"/>
+        android:layout_gravity="center"
+        android:textOff=""
+        android:textOn=""
+        android:layout_marginLeft="@dimen/m15dp"/>
+</LinearLayout>
 
 </LinearLayout>
 

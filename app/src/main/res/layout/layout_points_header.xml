@@ -15,7 +15,7 @@
                 style="@style/AppTheme.TextView"
                 android:textStyle="bold"
                 android:textSize="13sp"
-                android:drawablePadding="@dimen/m5dp"
+                android:drawablePadding="@dimen/m4dp"
                 android:drawableBottom="@drawable/ic_treat"
                 android:text="TREAT 1"/>
         </LinearLayout>

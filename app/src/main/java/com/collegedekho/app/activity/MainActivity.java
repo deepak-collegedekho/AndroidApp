@@ -48,6 +48,7 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Articles;
+import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.Facet;
 import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.entities.Institute;
@@ -64,9 +65,10 @@ import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
+import com.collegedekho.app.fragment.AspirationFragment;
 import com.collegedekho.app.fragment.BaseFragment;
+import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FilterFragment;
-import com.collegedekho.app.fragment.DemoFragment;
 import com.collegedekho.app.fragment.HomeFragment;
 import com.collegedekho.app.fragment.InstituteDetailFragment;
 import com.collegedekho.app.fragment.InstituteListFragment;
@@ -84,6 +86,7 @@ import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.fragment.SplashFragment;
 import com.collegedekho.app.fragment.StreamFragment;
+import com.collegedekho.app.fragment.TestFragment;
 import com.collegedekho.app.fragment.UserEducationFragment;
 import com.collegedekho.app.fragment.UserEntranceFragment;
 import com.collegedekho.app.fragment.WidgetListFragment;
@@ -297,8 +300,9 @@ public class MainActivity extends AppCompatActivity
 
         this.mSetNavigationListener();
 
-         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
-        // this.mDisplayFragment(UserEntranceFragment.newInstance(new ArrayList<String>()), false, UserEntranceFragment.class.getName());
+        this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
+
+        //this.mDisplayFragment(AspirationFragment.newInstance(), false, AspirationFragment.class.getName());
         //  show appBarLayout and toolBar
        // CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
        // params.setBehavior(new AppBarLayout.ScrollingViewBehavior());

@@ -31,7 +31,7 @@ public class DemoFragment extends  BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_entrance_summery, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_user_entrances, container, false);
         return rootView;
     }
 

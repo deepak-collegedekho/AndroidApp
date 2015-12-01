@@ -3,11 +3,9 @@ package com.collegedekho.app.fragment;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TableLayout;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.TestPagerAdapter;
@@ -54,13 +52,13 @@ public class UserEntranceFragment extends  BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_entrance_summery, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_user_entrances, container, false);
 
         ViewPager pager = (ViewPager)rootView.findViewById(R.id.user_test_pager);
         TabLayout testTablayout =  (TabLayout)rootView.findViewById(R.id.user_test_tabs);
-        testTablayout.setupWithViewPager(pager);
         TestPagerAdapter mApdter = new TestPagerAdapter(getChildFragmentManager(), this.mTestList);
         pager.setAdapter(mApdter);
+        testTablayout.setupWithViewPager(pager);
 
         return rootView;
     }

@@ -16,6 +16,8 @@
     <dimen name="m12dp">12dp</dimen>
     <dimen name="m15dp">15dp</dimen>
     <dimen name="m16dp">16dp</dimen>
+    <dimen name="m17dp">17dp</dimen>
+    <dimen name="m18dp">18dp</dimen>
     <dimen name="m20dp">20dp</dimen>
     <dimen name="m25dp">25dp</dimen>
     <dimen name="m30dp">30dp</dimen>
