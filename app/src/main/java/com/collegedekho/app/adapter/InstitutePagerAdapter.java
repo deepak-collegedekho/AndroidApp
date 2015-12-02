@@ -94,6 +94,7 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public void setCourses(ArrayList<ArrayList<InstituteCourse>> courses) {
+        if(courses == null)return;
         int count = 0;
         for (int i = 0; i < courses.size(); i++) {
             mCourses.get(i).addAll(courses.get(i));

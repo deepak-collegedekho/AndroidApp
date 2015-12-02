@@ -21,6 +21,7 @@ import com.collegedekho.app.adapter.QnAAnswersListAdapter;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.Utils;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
                         String value = input.getText().toString();
                         if (value.equals("") || value.equals(" "))
                         {
-                            Toast.makeText(getActivity(),"Please enter your answer", Toast.LENGTH_SHORT).show();
+                            Utils.DisplayToast(getActivity(), "Please enter your answer");
                         }
                         else
                         {

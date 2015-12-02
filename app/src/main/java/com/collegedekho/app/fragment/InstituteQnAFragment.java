@@ -1,6 +1,6 @@
 package com.collegedekho.app.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -147,7 +147,7 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
         String title =  check.getText().toString();
         if (title == null || title.length() <= 0) {
             Utils.DisplayToast(getActivity(),"Question title cannot be empty.");
-            til1.setError("Question title cannot be empty.");
+            //til1.setError("Question title cannot be empty.");
             return null;
         }
         else
@@ -158,7 +158,7 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
         String desc =  check1.getText().toString();
         if (desc == null || desc.length() <= 0) {
             Utils.DisplayToast(getActivity(), "Question text cannot be empty.");
-                     til2.setError("Question text cannot be empty.");
+                  //   til2.setError("Question text cannot be empty.");
             return null;
         }
         else
@@ -176,7 +176,7 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
 
     public void onAskExpertCancelButtonPressed()
     {
-        if (this.mQnAQuestions.size() == 0)
+        if ( this.mQnAQuestions == null || this.mQnAQuestions.size() == 0)
             this.mEmptyTextView.setVisibility(View.VISIBLE);
         else
             this.mInstituteQnAQuestionListContainer.setVisibility(View.VISIBLE);
@@ -220,16 +220,16 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
 
             this.mAskExpertButton.setVisibility(View.GONE);
             this.mAskExpertButton.setEnabled(false);
-            /* View view =getView();
+            View view =getView();
             if(view != null) {
-                ((EditText)view.findViewById(R.id.institute_qna_question_title)).setHint("");
-                ((EditText)view.findViewById(R.id.institute_qna_question_desc)).setHint("");
-            }*/
+                ((EditText)view.findViewById(R.id.institute_qna_question_title)).setText("");
+                ((EditText)view.findViewById(R.id.institute_qna_question_desc)).setText("");
+            }
         }
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         try {
             mListener = (OnQuestionAskedListener) activity;
@@ -295,7 +295,7 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
     {
         this.mQnAQuestions = qnaQuestionList;
 
-        if (this.mQnAQuestions.size() == 0)
+        if (this.mQnAQuestions == null || this.mQnAQuestions.size() == 0)
         {
             this.mInstituteQnAAskContainer.setVisibility(View.VISIBLE);
             this.mInstituteQnAQuestionListContainer.setVisibility(View.GONE);
@@ -314,6 +314,9 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
 
     public void questionAdded(QnAQuestions ques)
     {
+         if(this.mQnAQuestions == null)
+             this.mQnAQuestions = new ArrayList<>();
+
         if (this.mQnAQuestions.size() == 0)
             this.mEmptyTextView.setVisibility(View.GONE);
 

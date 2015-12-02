@@ -42,6 +42,7 @@
                 android:layout_marginLeft="@dimen/m30dp"
                 android:layout_marginRight="@dimen/m30dp"
                 android:layout_centerHorizontal="true"
+                android:textColorHint="@color/like_green"
                 android:layout_height="wrap_content">
 
                 <EditText
@@ -62,13 +63,14 @@
                 android:layout_marginTop="@dimen/m25dp"
                 android:layout_marginBottom="@dimen/m45dp"
                 android:layout_centerHorizontal="true"
+                android:textColorHint="@color/like_green"
                 android:layout_height="wrap_content">
                 <EditText
                     style="@style/AppTheme.EditText"
                     android:id="@+id/profile_contact"
                     android:hint="Phone"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/like_green"
+                    android:textColorHint="@color/white"
                     android:inputType="phone"
                     android:maxLength="10"/>
             </android.support.design.widget.TextInputLayout>

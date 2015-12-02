@@ -1,6 +1,6 @@
 package com.collegedekho.app.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -64,7 +64,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         Bundle args = new Bundle();
         args.putString(ARG_NAME, user.getName());
         args.putString(ARG_EMAIL, user.getEmail());
-        args.putString(ARG_STREAM_URI,  Constants.BASE_URL + "streams/" + user.getStream() + "/");
+        args.putString(ARG_STREAM_URI, Constants.BASE_URL + "streams/" + user.getStream() + "/");
         args.putString(ARG_LEVEL_ID, user.getLevel());
         args.putString(ARG_STREAM_NAME, user.getStream_name());
         args.putString(ARG_LEVEL_NAME, user.getLevel_name());
@@ -128,16 +128,28 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         rootView.findViewById(R.id.stream_edit).setOnClickListener(this);
         rootView.findViewById(R.id.level_edit).setOnClickListener(this);
         rootView.findViewById(R.id.profile_update).setOnClickListener(this);
+        if(this.mName == null)
+            this.mName="";
+        if(this.mName.equalsIgnoreCase("Anonymous User"))
+        {
+            this.mNameET.setText("");
+        }else {
+            this.mNameET.setText(this.mName);
+        }
+        if(this.mPhone != null) {
+            this.mPhone = mPhone.replace(" ","");
+            this.mPhoneET.setText(this.mPhone);
+        }
         return rootView;
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            this.mListener = (onProfileUpdateListener) activity;
+            this.mListener = (onProfileUpdateListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement onProfileUpdateListener");
         }
     }
@@ -146,7 +158,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 
         if(signInFragment != null)
         {
-            signInFragment.onActivityResult(requestCode,resultCode,data);
+            signInFragment.onActivityResult(requestCode, resultCode, data);
         }
 
     }
@@ -171,7 +183,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
             } else if (phone == null || phone.isEmpty()) {
                 Utils.DisplayToast(getActivity(), Constants.PHONE_EMPTY);
                 return;
-            } else if (phone.length() <= 9 || !isValidPhone(phone)) {
+            } else if (phone.length() <= 9 || phone.length() >  12  || !isValidPhone(phone)) {
                 Utils.DisplayToast(getActivity(), Constants.PHONE_INVALID);
                 return;
             }
@@ -256,16 +268,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
         this.mStreamTV.setText(this.mStreamName);
-        if(this.mName == null)
-            this.mName="";
-        if(this.mName.equalsIgnoreCase("Anonymous User"))
-        {
-            this.mNameET.setText("");
-        }else {
-            this.mNameET.setText(this.mName);
-        }
-        if(this.mPhone != null)
-            this.mPhoneET.setText(this.mPhone);
+
     }
     private void mSetEnterKeyListener(EditText editText)
     {
@@ -280,8 +283,31 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         });
     }
 
-    private static boolean isValidEmail(CharSequence target) {
-        return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        User user = MainActivity.user;
+        if(user != null) {
+            outState.putString(ARG_NAME, user.getName());
+            outState.putString(ARG_EMAIL, user.getEmail());
+            outState.putString(ARG_STREAM_URI, Constants.BASE_URL + "streams/" + user.getStream() + "/");
+            outState.putString(ARG_LEVEL_ID, user.getLevel());
+            outState.putString(ARG_STREAM_NAME, user.getStream_name());
+            outState.putString(ARG_LEVEL_NAME, user.getLevel_name());
+            outState.putString(ARG_PHONE, user.getPhone_no());
+        }
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Bundle args = getArguments();
+        if(args != null) {
+            args.putString(ARG_NAME, mNameET.getText().toString());
+            args.putString(ARG_PHONE, mPhoneET.getText().toString());
+        }
+
     }
 
     private static boolean isValidPhone(CharSequence target) {
@@ -291,32 +317,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         Pattern ps = Pattern.compile("^[a-zA-Z ]+$");
         Matcher ms = ps.matcher(target);
         return ms.matches();
-    }
-    public void updateUI(User user)
-    {
-        View view = getView();
-        if(view != null)
-        {
-            view.findViewById(R.id.profile_login_pager).setVisibility(View.GONE);
-            view.findViewById(R.id.profile_login_tabs_layout).setVisibility(View.GONE);
-            view.findViewById(R.id.profile_name).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.profile_contact).setVisibility(View.VISIBLE);
-            if(user != null)
-            {
-                this.mName = user.getName();
-                this.mPhone = user.getPhone_no();
-                this.mStreamTV.setText(this.mStreamName);
-                if(this.mName.equalsIgnoreCase("Anonymous User"))
-                {
-                    this.mNameET.setText("");
-                }else {
-                    this.mNameET.setText(this.mName);
-                }
-                if(this.mPhone != null)
-                    this.mPhoneET.setText(this.mPhone);
-
-            }
-        }
     }
 
     class LoginPagerAdapter extends FragmentPagerAdapter

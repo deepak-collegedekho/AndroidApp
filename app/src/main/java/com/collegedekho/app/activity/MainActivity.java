@@ -99,9 +99,14 @@ import com.collegedekho.app.utils.Utils;
 
 import com.collegedekho.app.widget.CircleImageView;
 import com.crashlytics.android.Crashlytics;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -270,39 +275,6 @@ public class MainActivity extends AppCompatActivity
 
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Stop the Main Animation and Start Secondary
-                if (currentFragment instanceof SplashFragment)
-                    ((SplashFragment) currentFragment).stopMainAnimation();
-
-                //Initialize the app
-                init();
-
-                //check if this device is connected to internet
-                int amIConnectedToInternet = networkUtils.getConnectivityStatus();
-
-                if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
-                    Constants.IS_CONNECTED_TO_INTERNET = true;
-
-                    if (user != null && user.getPref() == User.Prefs.STREAMKNOWN)
-                    {
-                        checkUserContactInfo();
-                        if (!completedStage2)
-                            MainActivity.this.mSetUserPref();
-                        else
-                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
-                    } else {
-                        MainActivity.this.mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
-                    }
-                } else if (currentFragment instanceof SplashFragment)
-                    ((SplashFragment) currentFragment).noInternetFound();
-            }
-        }, Constants.MAIN_ANIMATION_TIME);
-
-        // TODO: Move this to where you establish a user session
-        logUser();
     }
 
     private void logUser() {
@@ -461,7 +433,7 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-    private void init() {
+    public void init() {
         this.networkUtils = new NetworkUtils(this, this);
         SharedPreferences sp = this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
 
@@ -472,7 +444,7 @@ public class MainActivity extends AppCompatActivity
                 if(tempuser != null) {
                     MainActivity.user.profileData = tempuser.profileData;
                     MainActivity.user.setPrimaryEmail(tempuser.getPrimaryEmail());
-                    MainActivity.user.setPhone_no(tempuser.getPhone_no());
+                    user.setPrimaryPhone(tempuser.getPrimaryPhone());
                 }
                 this.networkUtils.setToken(MainActivity.user.getToken());
                 this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()));
@@ -498,6 +470,30 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
+    }
+
+    public void loadInItDtata()
+    {
+        if (user != null && user.getPref() == User.Prefs.STREAMKNOWN) {
+            // if user is anonymous  then logout social site
+            if(user.is_anony())
+                disconnectFromFacebook();
+
+            if (!completedStage2)
+                MainActivity.this.mSetUserPref();
+                //else if(user.getStream() == null || user.getLevel() == null || user.getStream().isEmpty() || user.getLevel().isEmpty())
+                //  MainActivity.this.mSetUserPref();
+            else
+            {
+                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
+            }
+        } else {
+            disconnectFromFacebook();
+             MainActivity.this.mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
+
+        }
+        // TODO: Move this to where you establish a user session
+        logUser();
     }
 
 
@@ -573,7 +569,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
+/*
 
     public void onNavigationDrawerItemSelected(int position , int currentposition) {
         // update the main content by replacing fragments
@@ -621,7 +617,7 @@ public class MainActivity extends AppCompatActivity
             return;
 
         this.onWidgetSelected(mWidgets.get(position - 1), position);
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -640,6 +636,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+
+        if(currentFragment instanceof  WidgetListFragment)
+            ((WidgetListFragment)currentFragment).hideWidgetTutorial();
+
         // to hide the keyboard if visible
         if (this.getCurrentFocus() != null && this.getCurrentFocus() instanceof EditText) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -703,9 +703,9 @@ public class MainActivity extends AppCompatActivity
             this.networkUtils.setToken(MainActivity.user.getToken());
             if(tempUser != null)
             {
-                MainActivity.user.setPhone_no(tempUser.getPhone_no());
                 MainActivity.user.profileData   = tempUser.profileData;
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
             }
 
             this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()));
@@ -1203,6 +1203,7 @@ public class MainActivity extends AppCompatActivity
         user.setPref(User.Prefs.STREAMKNOWN);
         user.setToken(tempUser.getToken());
         user.setPrimaryEmail(tempUser.getPrimaryEmail());
+        user.setPrimaryPhone(tempUser.getPrimaryPhone());
         user.profileData = tempUser.profileData;
         user.setImage(tempUser.getImage());
 
@@ -1237,6 +1238,7 @@ public class MainActivity extends AppCompatActivity
         user.setPref(User.Prefs.STREAMKNOWN);
         user.setToken(tempUser.getToken());
         user.setPrimaryEmail(tempUser.getPrimaryEmail());
+        user.setPrimaryPhone(tempUser.getPrimaryPhone());
         user.profileData = tempUser.profileData;
 
         if (streamName != "" && streamName != null)
@@ -1531,14 +1533,14 @@ public class MainActivity extends AppCompatActivity
      * @param response
      */
     private void mUpdateHome(String response) {
-        try {
+
             // unlock navigation drawer when home screen come
             ((DrawerLayout)findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
             FrameLayout layout =(FrameLayout)findViewById(R.id.container);
             CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) layout.getLayoutParams();
              params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
-
+        try {
             this.mWidgets = JSON.std.listOfFrom(Widget.class, extractResults(response));
             Fragment widgetListFragment = WidgetListFragment.newInstance(new ArrayList<>(this.mWidgets));
             if (MainActivity.type != null && MainActivity.type.length() > 0)
@@ -1548,7 +1550,7 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.type = "";
             }
             this.mDisplayFragment(widgetListFragment, false, Constants.TAG_FRAGMENT_WIDGET_LIST);
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
     }
@@ -1821,6 +1823,8 @@ public class MainActivity extends AppCompatActivity
 
             if ((user.getName() == null || user.getName().isEmpty() || name.equalsIgnoreCase("Anonymous user")) &&  user.profileData[0] != null)
                 name = user.profileData[0];
+            if(phone == null || phone.isEmpty())
+                phone = user.getPrimaryPhone();
             if (user.getEmail().contains("@anonymouscollegedekho.com"))
                 email = user.getPrimaryEmail();
 
@@ -1881,12 +1885,12 @@ public class MainActivity extends AppCompatActivity
                             ((InstituteDetailFragment) currentFragment).cancleAppliedRequest(position, tabPosition);
                     }
                 });
-
             }
             else {
                 params.put(Constants.USER_NAME, name);
                 params.put(Constants.USER_EMAIL, email);
                 params.put(Constants.USER_PHONE, phone);
+
                 Calendar calendar = Calendar.getInstance();
                 int year = calendar.get(Calendar.YEAR);
                 params.put(Constants.APPLY_YEAR, "" + year);
@@ -1900,7 +1904,6 @@ public class MainActivity extends AppCompatActivity
         if (mInstitute != null) {
             params.put("institute", "" + mInstitute.getId());
         }
-
 
         String URL = Constants.BASE_URL + "lms/";
         instituteCourseId = "" + instituteCourse.getId();
@@ -1979,6 +1982,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void showProgressDialog(String message) {
+
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
             progressDialog.setCancelable(false);
@@ -1987,7 +1991,8 @@ public class MainActivity extends AppCompatActivity
         } else {
             progressDialog.setMessage(message);
         }
-        progressDialog.show();
+        if (!MainActivity.this.isFinishing())
+                progressDialog.show();
     }
     public void hideProgressDialog() {
         if(progressDialog != null && progressDialog.isShowing())
@@ -2570,7 +2575,7 @@ public class MainActivity extends AppCompatActivity
                 CircleImageView mProfileImage = (CircleImageView)findViewById(R.id.nav_header_profile_image);
                 mProfileImage.setDefaultImageResId(R.drawable.ic_default_image);
                 mProfileImage.setErrorImageResId(R.drawable.ic_default_image);
-                if(name == null ||name.equalsIgnoreCase("Anonymous User"))
+                if(name == null || name.equalsIgnoreCase("Anonymous User"))
                 {
                     mProfileName.setText("");
                     mProfileName.setVisibility(View.INVISIBLE);
@@ -2707,6 +2712,7 @@ public class MainActivity extends AppCompatActivity
         user.setStream(tempuser.getStream());
         user.setLevel(tempuser.getLevel());
         user.setPrimaryEmail(tempuser.getPrimaryEmail());
+            user.setPrimaryPhone(tempuser.getPrimaryPhone());
             user.profileData = tempuser.profileData;
         }
 
@@ -2733,6 +2739,25 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onUserSignUp(String url, HashMap hashMap, String msg) {
                     this.mMakeNetworkCall(Constants.TAG_USER_REGISTRATION+ "#" + msg, url, hashMap);}
+
+    /**
+     * This method is used to log out facebook account
+     *  when user wants to login with different account
+     *  or  have not successfully login
+     */
+    private void disconnectFromFacebook() {
+        if (AccessToken.getCurrentAccessToken() == null) {
+            return; // already logged out
+        }
+        new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, new GraphRequest
+                .Callback() {
+            @Override
+            public void onCompleted(GraphResponse graphResponse) {
+                LoginManager.getInstance().logOut();
+
+            }
+        }).executeAsync();
+    }
 
     /**
      * This method is used to sign in with any social site
@@ -2768,6 +2793,7 @@ public class MainActivity extends AppCompatActivity
         user.setToken(tempUser.getToken());
         user.profileData= tempUser.profileData;
         user.setPrimaryEmail(tempUser.getPrimaryEmail());
+        user.setPrimaryPhone(tempUser.getPrimaryPhone());
         this.networkUtils.setToken(user.getToken());
         String u = null;
         try {
@@ -2800,6 +2826,7 @@ public class MainActivity extends AppCompatActivity
         user.setImage(tempUser.getImage());
         user.profileData= tempUser.profileData;
         user.setPrimaryEmail(tempUser.getPrimaryEmail());
+        user.setPrimaryPhone(tempUser.getPrimaryPhone());
         String u = null;
         try {
             u = JSON.std.asString(user);
@@ -2895,6 +2922,7 @@ public class MainActivity extends AppCompatActivity
 
 
             });
+            dialog.setCancelable(false);
             dialog.show();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -2939,7 +2967,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        MainActivity.user = new User();
+        if(MainActivity.user == null)
+                MainActivity.user = new User();
+
         user.processProfileData(cursor, this);
     }
 
@@ -2968,6 +2998,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         public static void registerCallbacksForContainer(Container container) {
+            if(container == null)return;
             // Register two custom function call macros to the container.
             container.registerFunctionCallMacroCallback("increment", new CustomMacroCallback());
             container.registerFunctionCallMacroCallback("mod", new CustomMacroCallback());

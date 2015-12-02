@@ -160,15 +160,16 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(View view) {
 
         this.mCurrentFolders.clear();
 
         this.mDeselectAll();
+        View  v = view.getRootView().findViewById(view.getId());
+        if(v != null)
+                v.setSelected(true);
 
-        (v.getRootView().findViewById(v.getId())).setSelected(true);
-
-        switch (v.getId())
+        switch (view.getId())
         {
             case R.id.filter_category_c_and_s:
                 this.mCurrentFolders.addAll(this.mGetFolderOfCategory(Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION));

@@ -267,13 +267,15 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private void mSetFilterList()
     {
         ArrayList<Folder> folderList = ((MainActivity) getActivity()).getFilterList();
-        for (Folder f : folderList) {
-            if(f.getLabel().equalsIgnoreCase("stream") || f.getLabel().equalsIgnoreCase("level"))
-                continue;
+        if(folderList != null && !folderList.isEmpty()) {
+            for (Folder f : folderList) {
+                if (f.getLabel().equalsIgnoreCase("stream") || f.getLabel().equalsIgnoreCase("level"))
+                    continue;
 
-            for (Facet ft : f.getFacets())
-                if (ft.isSelected() == 1)
-                    mCompletionView.addObject(ft.getLabel());
+                for (Facet ft : f.getFacets())
+                    if (ft.isSelected() == 1)
+                        mCompletionView.addObject(ft.getLabel());
+            }
         }
 
     }

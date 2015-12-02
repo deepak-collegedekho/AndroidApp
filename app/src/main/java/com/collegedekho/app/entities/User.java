@@ -18,6 +18,7 @@ public class User
 
     public String[] profileData;
     private String primaryEmail;
+    private String primaryPhone;
     private String id;
     private String resource_uri;
     private String email;
@@ -182,34 +183,45 @@ public class User
         this.primaryEmail = primaryEmail;
     }
 
+    public String getPrimaryPhone() {
+        return primaryPhone;
+    }
+
+    public void setPrimaryPhone(String primaryPhone) {
+        this.primaryPhone = primaryPhone;
+    }
+
     public void processProfileData(Cursor cursor, Context context) {
         Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+
+        if(emailPattern == null)return;
+
         cursor.moveToFirst();
-        if(profileData==null)
-            profileData = new String[3];
-        profileData[1] = "[";
-        profileData[2] = "[";
+        if(this.profileData==null)
+            this.profileData = new String[3];
+        this.profileData[1] = "[";
+        this.profileData[2] = "[";
         while (!cursor.isAfterLast()) {
-            profileData[0] = cursor.getString(ProfileQuery.NAME);
+            this.profileData[0] = cursor.getString(ProfileQuery.NAME);
             String data = cursor.getString(ProfileQuery.PHONE_NUMBER);
             if(emailPattern.matcher(data).matches())
             {
                 if(cursor.getInt(ProfileQuery.IS_PRIMARY)!=0)
-                    primaryEmail = data;
-                profileData[1]+="\""+data+"\",";
+                    this.primaryEmail = data;
+                this.profileData[1]+="\""+data+"\",";
             }
             else
             {
-                if(phone_no==null)
-                    phone_no = data;
-                profileData[2]+="\""+data+"\",";
+                if(this.primaryPhone==null)
+                    this.primaryPhone = data;
+                this.profileData[2]+="\""+data+"\",";
             }
             cursor.moveToNext();
         }
-        if(primaryEmail==null){
-            primaryEmail = getDeviceEmail(context);
-            if(primaryEmail!=null && !profileData[1].contains(primaryEmail))
-                profileData[1]+="\""+primaryEmail+"\",";
+        if(this.primaryEmail==null){
+            this.primaryEmail = getDeviceEmail(context);
+            if(this.primaryEmail!=null && !this.profileData[1].contains(this.primaryEmail))
+               this.profileData[1]+="\""+this.primaryEmail+"\",";
         }
         profileData[1]+="]";
         profileData[2]+="]";
