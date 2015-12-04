@@ -70,6 +70,7 @@ import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.AspirationFragment;
 import com.collegedekho.app.fragment.BaseFragment;
+import com.collegedekho.app.fragment.DemoFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FilterFragment;
 import com.collegedekho.app.fragment.HomeFragment;
@@ -141,6 +142,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.ConsoleHandler;
 import java.util.regex.Pattern;
 
 /*
@@ -168,7 +170,7 @@ SOFTWARE.*/
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
-        LoaderManager.LoaderCallbacks<Cursor>,
+        LoaderManager.LoaderCallbacks<Cursor>,ExamsFragment.OnExamsSelectListener,
         HomeFragment.OnHomeInteractionListener, DataLoadListener,
         StreamFragment.OnStreamInteractionListener,
         InstituteListFragment.OnInstituteSelectedListener,
@@ -338,12 +340,12 @@ public class MainActivity extends AppCompatActivity
         this.mSetNavigationListener();
 
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
-
-        //this.mDisplayFragment(AspirationFragment.newInstance(), false, AspirationFragment.class.getName());
-        //  show appBarLayout and toolBar
-       // CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
-       // params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
-       // findViewById(R.id.container).setLayoutParams(params);
+        //init();
+        //this.mDisplayFragment(DemoFragment.newInstance(), false, DemoFragment.class.getName());
+        // show appBarLayout and toolBar
+        // CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
+        // params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+        // findViewById(R.id.container).setLayoutParams(params);
 
         // TODO: Move this to where you establish a user session
         //logUser();
@@ -560,8 +562,8 @@ public class MainActivity extends AppCompatActivity
             }
         } else {
             disconnectFromFacebook();
-            MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
-            // MainActivity.this.mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
+             MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
+            //MainActivity.this.mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
 
         }
     }
@@ -1269,12 +1271,14 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayUserEducationFragment(response);
                 break;
             case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
+                this.mOnUserEducationResponse(response);
                 break;
         }
 
         if (this.progressDialog != null && this.progressDialog.isShowing())
             this.progressDialog.dismiss();
     }
+
 
     private void mDisplayUserEducationFragment(String response)
     {
@@ -2869,6 +2873,12 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_CREATE_FACEBOOK_ANONY_USER_, Constants.BASE_URL + "users/anonymous/", params);
         this.mUserSignUPParams = params;
     }
+
+    /**
+     * This method is used to create anonymous user
+     * while facebook login
+     * @param json
+     */
     private void  mCreatedFacebookAnonymousUser(String json)
     {
         User tempUser = this.user;
@@ -2882,6 +2892,11 @@ public class MainActivity extends AppCompatActivity
         }
         this.mMakeNetworkCall(Constants.TAG_USER_FACEBOOK_LOGIN, Constants.BASE_URL + "auth/facebook/", this.mUserSignUPParams);
     }
+
+    /**
+     * Method is called when user login with facebook successfully
+     * @param json
+     */
     private void mUserFacebookLoginResponse(String json)
     {
         User tempUser = this.user;
@@ -2899,7 +2914,7 @@ public class MainActivity extends AppCompatActivity
         if(this.user.getLevel() == null || this.user.getStream() == null )
             this.mSetUserPref();
         else
-            this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
+            this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION,  Constants.BASE_URL + "user-education/", null);
 
     }
 
@@ -3081,6 +3096,7 @@ public class MainActivity extends AppCompatActivity
 
 
             });
+            dialog.setCanceledOnTouchOutside(false);
             dialog.show();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -3166,15 +3182,53 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {  }
 
+    /**
+     * This method is used to send user's current education
+     * details to server like current level, stream and marks
+     * @param params
+     */
     @Override
-    public void onEducationSelected(HashMap<String, String> map) {
-        this.mMakeNetworkCall(Constants.TAG_EDUCATION_DETAILS_SUBMIT, Constants.BASE_URL + "user-education/", map);
+    public void onEducationSelected(HashMap<String, String> params) {
+        this.mMakeNetworkCall(Constants.TAG_EDUCATION_DETAILS_SUBMIT, Constants.BASE_URL + "user-education/", params);
+    }
+
+    /**
+     * This method is used to handle response having exams list
+     * after user education detail is submitted to server.
+     * @param responseJson
+     */
+    private void mOnUserEducationResponse(String responseJson) {
+        responseJson ="{\"count\": 1, \"next\": null, \"previous\": null, \"results\": [ { \"id\": 90, \"exam_name\": \"Christ University MBA entrance exam\", \"exam_year\": 2016, \"exam_date\": \"2016-01-31T09:00:00\", \"result_out\": false } ] }";
+
+        try {
+            List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
+           this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)),false,ExamsFragment.class.toString() );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This method is used to send exam list to server which are
+     * selected by user
+     * @param params
+     */
+    @Override
+    public void onExamsSelected(HashMap<String, String> params) {
+           mLoadUserProfile("");
+    }
+    /**
+     * This method is load user profile after
+     * @param responseJson
+     */
+    public void mLoadUserProfile(String responseJson) {
+        this.mDisplayFragment(DemoFragment.newInstance(),false,DemoFragment.class.toString() );
+
     }
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {

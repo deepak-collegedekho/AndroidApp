@@ -8,16 +8,23 @@ import android.os.Parcelable;
  */
 public class Exam implements Parcelable{
 
-    private String mExamName;
-    private String mYear;
+    private String id ;
+    private String exam_name;
+    private String exam_year;
+    private String exam_date;
+    private boolean result_out;
+    private boolean isSelected;
 
     public Exam(){
         // required empty constructor
     }
 
     protected Exam(Parcel in) {
-        mExamName = in.readString();
-        mYear = in.readString();
+        id = in.readString();
+        exam_name = in.readString();
+        exam_year = in.readString();
+        exam_date = in.readString();
+        result_out = in.readByte() != 0;
     }
 
     public static final Creator<Exam> CREATOR = new Creator<Exam>() {
@@ -39,23 +46,58 @@ public class Exam implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mExamName);
-        dest.writeString(mYear);
+        dest.writeString(id);
+        dest.writeString(exam_name);
+        dest.writeString(exam_year);
+        dest.writeString(exam_date);
+        dest.writeByte((byte) (result_out ? 1 : 0));
     }
 
-    public String getmYear() {
-        return mYear;
+    public String getId() {
+        return id;
     }
 
-    public void setmYear(String mYear) {
-        this.mYear = mYear;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getmExamName() {
-        return mExamName;
+    public String getExam_name() {
+        return exam_name;
     }
 
-    public void setmExamName(String mExamName) {
-        this.mExamName = mExamName;
+    public void setExam_name(String exam_name) {
+        this.exam_name = exam_name;
+    }
+
+    public String getExam_year() {
+        return exam_year;
+    }
+
+    public void setExam_year(String exam_year) {
+        this.exam_year = exam_year;
+    }
+
+    public String getExam_date() {
+        return exam_date;
+    }
+
+    public void setExam_date(String exam_date) {
+        this.exam_date = exam_date;
+    }
+
+    public boolean isResult_out() {
+        return result_out;
+    }
+
+    public void setResult_out(boolean result_out) {
+        this.result_out = result_out;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

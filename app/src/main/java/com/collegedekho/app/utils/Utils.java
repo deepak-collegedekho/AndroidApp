@@ -53,14 +53,40 @@ public class Utils {
         return (int)(value * density);
     }
 
+    /**
+     * This method is used to chck user's email address
+     * @param target
+     * @return
+     */
     public static boolean isValidEmail(CharSequence target) {
+        if(target == null || target.length() <= 0)
+            return false;
         return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
-    public static boolean isValidPhone(CharSequence target) {
+    /**
+     * This method is used to check user's contact
+     * number is having a valid format
+     * @param target
+     * @return
+     */
+    public static boolean isValidPhone(String target) {
+        if(target == null || target.length() <= 6)
+            return false;
+
+        target = target.replace(" ","");
         return target != null && Patterns.PHONE.matcher(target).matches();
     }
+
+    /**
+     * This metos is used to check user's name is in valid format
+     * @param target
+     * @return
+     */
     public static boolean isValidName(CharSequence target) {
+        if(target == null || target.length() <= 3)
+            return false;
+
         Pattern ps = Pattern.compile("^[a-zA-Z ]+$");
         Matcher ms = ps.matcher(target);
         return ms.matches();

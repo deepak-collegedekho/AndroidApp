@@ -3,6 +3,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="default_stroke_width">7dp</dimen>
+    <dimen name="default_background_stroke_width">3dp</dimen>
+
     <dimen name="m1dp">1dp</dimen>
     <dimen name="m2dp">2dp</dimen>
     <dimen name="m3dp">3dp</dimen>

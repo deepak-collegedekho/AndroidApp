@@ -24,7 +24,8 @@ public class Constants
     public static final String TAG_USER_SIGNUP = "user_sign_up";
     public static final String TAG_USER_FACEBOOK_LOGIN = "user_facebook_login";
     public static final String TAG_USER_LOGIN = "user_login";
-    public static final String TAG_USER_REGISTRATION = "user_registeration";
+    public static final String TAG_USER_REGISTRATION = "user_registration";
+    public static final String TAG_EDUCATION_DETAILS_SUBMIT = "user_education_submit";
     public static final String TAG_LOAD_STREAM = "load_stream";
     public static final String TAG_USER_EDUCATION = "load_user_education";
     public static final String TAG_UPDATE_STREAM = "update_stream";
@@ -79,7 +80,6 @@ public class Constants
     public static final String TAG_LOAD_MY_FUTURE_BUDDIES = "my_fb";
     public static final String TAG_LOAD_MY_FB = "load_my_fb";
     public static final String TAG_REFRESH_MY_FB = "refresh_my_fb";
-    public static final String TAG_EDUCATION_DETAILS_SUBMIT = "user_education_submit";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_TEST = "submit_psychometric_test";
     public static final String TAG_SUBMIT_PREFRENCES = "submit_prefrences";
     public static final String TAG_UPDATE_PREFRENCES = "update_prefrences";

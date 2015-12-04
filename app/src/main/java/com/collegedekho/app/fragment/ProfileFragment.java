@@ -1,6 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -129,7 +130,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         try {
             this.mListener = (onProfileUpdateListener) activity;
@@ -158,21 +159,21 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
         String name = mNameET.getText().toString();
         String phone = mPhoneET.getText().toString();
 
-        if(MainActivity.user != null && !MainActivity.user.is_anony()) {
-            if (name == null || name.isEmpty()) {
+        //if(MainActivity.user != null && !MainActivity.user.is_anony()) {
+           /* if (name == null || name.isEmpty()) {
                 Utils.DisplayToast(getActivity(), Constants.NAME_EMPTY);
                 return;
-            } else if (!Utils.isValidName(name)) {
+            } else*/ if (!Utils.isValidName(name)) {
                 Utils.DisplayToast(getActivity(), Constants.NAME_INVALID);
                 return;
-            } else if (phone == null || phone.isEmpty()) {
+            } /*else if (phone == null || phone.isEmpty()) {
                 Utils.DisplayToast(getActivity(), Constants.PHONE_EMPTY);
                 return;
-            } else if (phone.length() <= 9 || !Utils.isValidPhone(phone)) {
+            }*/ else if (phone.length() <= 9 || !Utils.isValidPhone(phone)) {
                 Utils.DisplayToast(getActivity(), Constants.PHONE_INVALID);
                 return;
             }
-        }
+        //}
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put(Constants.USER_NAME, name);
         hashMap.put(Constants.USER_PHONE, phone);

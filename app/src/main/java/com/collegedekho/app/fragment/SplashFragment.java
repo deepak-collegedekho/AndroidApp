@@ -1,6 +1,5 @@
 package com.collegedekho.app.fragment;
 
-import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,17 +7,12 @@ import android.support.design.widget.CoordinatorLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.NetworkUtils;
 
 public class SplashFragment extends BaseFragment {
 

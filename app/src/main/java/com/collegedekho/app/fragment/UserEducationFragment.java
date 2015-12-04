@@ -1,14 +1,12 @@
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,7 +18,6 @@ import com.collegedekho.app.utils.GaradiWindowHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import cn.jeesoft.widget.pickerview.CharacterPickerView;
 
@@ -43,9 +40,7 @@ public class UserEducationFragment extends BaseFragment {
     private String mStreamID = "";
     private String mMarks = "";
     private boolean isUserPreparing;
-
-
-    private OnUserEducationInteractionListener mListener;
+   private OnUserEducationInteractionListener mListener;
     private RelativeLayout.LayoutParams layoutParams;
     private ArrayList<UserEducation> mUserEducationList;
 
@@ -107,25 +102,9 @@ public class UserEducationFragment extends BaseFragment {
         ((LinearLayout) rootView.findViewById(R.id.user_education_layout)).addView(layout);
 
         ToggleButton preparingToggle = (ToggleButton)rootView.findViewById(R.id.is_user_preparing);
+
         this.isUserPreparing = preparingToggle.isChecked();
-
-        TextView submitButton = (TextView) rootView.findViewById(R.id.exams_submit_button);
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mListener != null) {
-                    HashMap<String, String> map = new HashMap<String, String>();
-
-                    map.put("sublevel", UserEducationFragment.this.mSubLevelID);
-                    map.put("stream", UserEducationFragment.this.mStreamID);
-                    map.put("marks", UserEducationFragment.this.mMarks);
-                    map.put("is_preparing", (UserEducationFragment.this.isUserPreparing ? "1":"0"));
-
-                    mListener.onEducationSelected(map);
-                }
-            }
-        });
-
+        rootView.findViewById(R.id.user_education_submit_button).setOnClickListener(this);
         // Inflate the layout for this fragment
         return rootView;
     }
@@ -140,11 +119,37 @@ public class UserEducationFragment extends BaseFragment {
                     + " must implement OnUserEducationInteractionListener");
         }
     }
+    private void onCurrentEducationSubmitted(HashMap params) {
+        if (this.mListener != null) {
+            HashMap<String, String> map = new HashMap<String, String>();
+
+            map.put("sublevel", UserEducationFragment.this.mSubLevelID);
+            map.put("stream", UserEducationFragment.this.mStreamID);
+            map.put("marks", UserEducationFragment.this.mMarks);
+            map.put("is_preparing", (UserEducationFragment.this.isUserPreparing ? "1":"0"));
+
+            mListener.onEducationSelected(map);
+        }
+    }
+
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        this.mListener = null;
+    }
+
+    @Override
+    public void onClick(View view) {
+        super.onClick(view);
+        switch(view.getId())
+        {
+            case R.id.user_education_submit_button:
+                onCurrentEducationSubmitted(null);
+                break;
+            default:
+                break;
+        }
     }
 
     /**
