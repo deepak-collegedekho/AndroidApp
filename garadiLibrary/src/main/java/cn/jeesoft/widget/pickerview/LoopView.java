@@ -157,7 +157,6 @@ public class LoopView extends View {
     }
 
     private void f() {
-        this.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
         int i1 = (int) ((float) totalScrollY % (l * (float) h));
         Timer timer = new Timer();
         mTimer = timer;
@@ -386,16 +385,10 @@ public class LoopView extends View {
         }
 
         if (totalScrollY < (int) ((float) (arrayList.size() - 1 - positon) * (l * (float) h))) {
-            {
                 invalidate();
-                this.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-            }
         } else {
             totalScrollY = (int) ((float) (arrayList.size() - 1 - positon) * (l * (float) h));
-            {
                 invalidate();
-                this.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-            }
         }
 
         if (!gestureDetector.onTouchEvent(motionevent) && motionevent.getAction() == 1) {

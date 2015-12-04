@@ -46,6 +46,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.appsflyer.AppsFlyerConversionListener;
+import com.appsflyer.AppsFlyerLib;
+import com.appsflyer.DebugLogQueue;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Exam;
@@ -179,7 +182,7 @@ public class MainActivity extends AppCompatActivity
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleFragment.OnArticleSelectedListener,
         ProfileFragment.onProfileUpdateListener,
         LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener,
-        InstituteDetailFragment.OnInstituteFooterItemSelected
+        InstituteDetailFragment.OnInstituteFooterItemSelected, UserEducationFragment.OnUserEducationInteractionListener
 {
 
     static {
@@ -266,6 +269,40 @@ public class MainActivity extends AppCompatActivity
         if (targetUrl != null) {
             Log.i(TAG, "App Link Target URL: " + targetUrl.toString());
         }
+
+        // Set the Currency
+        AppsFlyerLib.setCurrencyCode("INR");
+
+        // The Dev key cab be set here or in the manifest.xml
+        AppsFlyerLib.setAppsFlyerKey("v3bLHGLaEavK2ePfvpj6aA");
+        AppsFlyerLib.sendTracking(this);
+
+        AppsFlyerLib.registerConversionListener(this,new AppsFlyerConversionListener() {
+            public void onInstallConversionDataLoaded(Map<String, String> conversionData) {
+                DebugLogQueue.getInstance().push("\nGot conversion data from server");
+                for (String attrName : conversionData.keySet()){
+                    Log.d(TAG, "attribute: "+attrName+" = "+conversionData.get(attrName));
+                }
+            }
+
+            public void onInstallConversionFailure(String errorMessage) {
+                Log.d(TAG, "error getting conversion data: "+errorMessage);
+            }
+
+            public void onAppOpenAttribution(Map<String, String> attributionData) {
+                printMap(attributionData);
+            }
+
+            public void onAttributionFailure(String errorMessage) {
+                Log.d(TAG, "error onAttributionFailure : "+errorMessage);
+            }
+
+            private void printMap(Map<String,String> map){
+                for (String key : map.keySet()) {
+                    Log.d(TAG, key+"="+map.get(key));
+                }
+            }
+        });
 
         this.setContentView(R.layout.activity_main);
 
@@ -439,12 +476,15 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
+        AppsFlyerLib.onActivityResume(this);
         System.gc();
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
+        AppsFlyerLib.onActivityResume(this);
     }
 
     @Override
@@ -452,12 +492,14 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
+        AppsFlyerLib.onActivityPause(this);
         System.gc();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        AppsFlyerLib.onActivityPause(this);
     }
 
     @Override
@@ -492,7 +534,6 @@ public class MainActivity extends AppCompatActivity
                         MainActivity.user.setLevel(levelId[levelId.length - 1]);
                     }
                 }
-
             }
 
             this.completedStage2 = sp.getBoolean(Constants.COMPLETED_SECOND_STAGE, false);
@@ -700,8 +741,8 @@ public class MainActivity extends AppCompatActivity
                 this.mMakeNetworkCall(Constants.TAG_LOAD_PYSCHOMETRIC_TEST, Constants.BASE_URL + "psychometrictests/", null);
                 break;
             case STREAMKNOWN:
-                //this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
-                this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION, Constants.BASE_URL + "user-education/", null);
+                this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
+                //this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION, Constants.BASE_URL + "user-education/", null);
                 break;
         }
     }
@@ -1222,10 +1263,12 @@ public class MainActivity extends AppCompatActivity
                 this.onUserSignInResponse(response, parentIndex);
                 break;
             case Constants.SEARCHED_INSTITUTES:
-                this.mDisplayInstituteList(response , true);
+                this.mDisplayInstituteList(response, true);
                 break;
             case Constants.TAG_USER_EDUCATION:
                 this.mDisplayUserEducationFragment(response);
+                break;
+            case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
                 break;
         }
 
@@ -1237,7 +1280,6 @@ public class MainActivity extends AppCompatActivity
     {
         try
         {
-
             ((DrawerLayout)findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
             //  show appBarLayout and toolBar
@@ -3129,6 +3171,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {  }
+
+    @Override
+    public void onEducationSelected(HashMap<String, String> map) {
+        this.mMakeNetworkCall(Constants.TAG_EDUCATION_DETAILS_SUBMIT, Constants.BASE_URL + "user-education/", map);
+    }
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override

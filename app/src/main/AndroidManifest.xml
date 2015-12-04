@@ -25,6 +25,8 @@
     <!-- To read contacts list -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- For haptic feedback -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <!-- Get wifi radio state -->
 
     <application
         android:name="android.support.multidex.MultiDexApplication"
@@ -56,6 +58,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="http://www.collegedekho.com" />
+                <data android:scheme="appsflyer" />
             </intent-filter>
         </activity>
         <activity
@@ -78,9 +81,6 @@
             <meta-data android:name="@string/minVersion" android:value="13"/>
             <meta-data android:name="@string/isLaunchableActivity" android:value="true"/>
         </activity>
-
-
-
         <service android:name=".service.ApplyIntentService"
             android:label="@string/application_service"/>
 
@@ -108,5 +108,17 @@
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
+        <receiver android:name="com.appsflyer.MultipleInstallBroadcastReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.appsflyer.AppsFlyerLib">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
+        <meta-data android:name="AppsFlyerDevKey" android:value="v3bLHGLaEavK2ePfvpj6aA"/>
     </application>
 </manifest>

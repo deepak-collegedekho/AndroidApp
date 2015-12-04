@@ -8,8 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.collegedekho.app.R;
@@ -17,13 +19,15 @@ import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.utils.GaradiWindowHelper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import cn.jeesoft.widget.pickerview.CharacterPickerView;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link UserEducationFragment.OnFragmentInteractionListener} interface
+ * {@link UserEducationFragment.OnUserEducationInteractionListener} interface
  * to handle interaction events.
  * Use the {@link UserEducationFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -34,9 +38,14 @@ public class UserEducationFragment extends BaseFragment {
     private static final String USER_EDUCATION_LIST = "user_education_list";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private String mLevelID;
+    private String mSubLevelID = "";
+    private String mStreamID = "";
+    private String mMarks = "";
+    private boolean isUserPreparing;
 
-    private OnFragmentInteractionListener mListener;
+
+    private OnUserEducationInteractionListener mListener;
     private RelativeLayout.LayoutParams layoutParams;
     private ArrayList<UserEducation> mUserEducationList;
 
@@ -88,33 +97,54 @@ public class UserEducationFragment extends BaseFragment {
             @Override
             public void onOptionChanged(CharacterPickerView view, String levelID, String subLevelID, String streamID, String marksID) {
                 Log.e("test", levelID + "," + subLevelID + "," + streamID + "," + marksID);
+                UserEducationFragment.this.mLevelID = levelID;
+                UserEducationFragment.this.mSubLevelID = subLevelID;
+                UserEducationFragment.this.mStreamID = streamID;
+                UserEducationFragment.this.mMarks = marksID;
             }
         });
 
         ((LinearLayout) rootView.findViewById(R.id.user_education_layout)).addView(layout);
 
         ToggleButton preparingToggle = (ToggleButton)rootView.findViewById(R.id.is_user_preparing);
-        boolean isUserPreparing = preparingToggle.isChecked();
+        this.isUserPreparing = preparingToggle.isChecked();
+
+        TextView submitButton = (TextView) rootView.findViewById(R.id.exams_submit_button);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener != null) {
+                    HashMap<String, String> map = new HashMap<String, String>();
+
+                    map.put("sublevel", UserEducationFragment.this.mSubLevelID);
+                    map.put("stream", UserEducationFragment.this.mStreamID);
+                    map.put("marks", UserEducationFragment.this.mMarks);
+                    map.put("is_preparing", (UserEducationFragment.this.isUserPreparing ? "1":"0"));
+
+                    mListener.onEducationSelected(map);
+                }
+            }
+        });
 
         // Inflate the layout for this fragment
         return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        try {
+            mListener = (OnUserEducationInteractionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnUserEducationInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
     }
 
     /**
@@ -127,12 +157,7 @@ public class UserEducationFragment extends BaseFragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-
-
-
-
+    public interface OnUserEducationInteractionListener {
+        void onEducationSelected(HashMap<String, String> map);
     }
 }

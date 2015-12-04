@@ -31,7 +31,6 @@ public class TestFragment extends BaseFragment {
         args.putString(PARAM1, testList);
         fragment.setArguments(args);
         return fragment;
-
     }
 
     @Override
