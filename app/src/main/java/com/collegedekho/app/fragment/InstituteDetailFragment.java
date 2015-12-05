@@ -119,10 +119,10 @@ public class InstituteDetailFragment extends BaseFragment {
         //this.mFooterPager.setAdapter(this.mFooterAdapter);
         //this.mFooterPager.setPageMargin(this.getResources().getDisplayMetrics().widthPixels /-7);
 
-        this.mData.add(new GameEntity(R.drawable.carousel_videos, R.string.videos_title));
-        this.mData.add(new GameEntity(R.drawable.carousel_qna, R.string.qna_title));
-        this.mData.add(new GameEntity(R.drawable.carousel_news, R.string.news_title));
-        this.mData.add(new GameEntity(R.drawable.carousel_articles, R.string.article_title));
+        this.mData.add(new GameEntity(R.drawable.ic_carousel_video, R.string.videos_title));
+        this.mData.add(new GameEntity(R.drawable.ic_carousel_qna, R.string.qna_title));
+        this.mData.add(new GameEntity(R.drawable.ic_carousel_news, R.string.news_title));
+        this.mData.add(new GameEntity(R.drawable.ic_carousel_articles, R.string.article_title));
 
         /*this.mData.add(new GameEntity(R.drawable.image_1, R.string.videos_title));
         this.mData.add(new GameEntity(R.drawable.image_2, R.string.qna_title));

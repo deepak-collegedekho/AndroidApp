@@ -244,8 +244,6 @@ public class NetworkUtils {
         mQueue.add(request);
     }
 
-
-
     private void postOrPutData(final String tag, final String url, final JSONObject params, final int method)
     {
         JsonObjectRequest request = new JsonObjectRequest(method,

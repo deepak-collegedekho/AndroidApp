@@ -40,7 +40,7 @@ public class UserEducationFragment extends BaseFragment {
     private String mStreamID = "";
     private String mMarks = "";
     private boolean isUserPreparing;
-   private OnUserEducationInteractionListener mListener;
+    private OnUserEducationInteractionListener mListener;
     private RelativeLayout.LayoutParams layoutParams;
     private ArrayList<UserEducation> mUserEducationList;
 
