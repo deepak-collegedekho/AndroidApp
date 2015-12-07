@@ -26,6 +26,7 @@ public class Constants
     public static final String TAG_USER_LOGIN = "user_login";
     public static final String TAG_USER_REGISTRATION = "user_registration";
     public static final String TAG_EDUCATION_DETAILS_SUBMIT = "user_education_submit";
+    public static final String TAG_EXAMS_LIST = "exams_list";
     public static final String TAG_LOAD_STREAM = "load_stream";
     public static final String TAG_USER_EDUCATION = "load_user_education";
     public static final String TAG_UPDATE_STREAM = "update_stream";
@@ -96,7 +97,7 @@ public class Constants
     public static final String TAG_FRAGMENT_MY_FB_ENUMERATION = "fragment_my_fb_enumeration";
     public static final String TAG_FRAGMENT_STREAMS = "fragment_streams";
     public static final String TAG_FRAGMENT_HOME = "fragment_home";
-    public static final String TAG_FRAGMENT_PROFILE = "fragment_profile";
+    public static final String TAG_FRAGMENT_PROFILE = "fragment_profile1";
     public static final String TAG_FRAGMENT_QNA_ANSWERS_LIST = "fragment_qna_answers_list";
     public static final String TAG_FRAGMENT_USER_EDUCATION = "fragment_user_education";
     public static final String KEY_USER_LEARNED_TOUCH = "user_touch";

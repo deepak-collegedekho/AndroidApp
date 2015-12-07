@@ -1,5 +1,7 @@
 package com.collegedekho.app.utils;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.Patterns;
@@ -90,5 +92,37 @@ public class Utils {
         Pattern ps = Pattern.compile("^[a-zA-Z ]+$");
         Matcher ms = ps.matcher(target);
         return ms.matches();
+    }
+
+    /**
+     * Method is used to get device email
+     * which is used  by the google account
+     * @return
+     */
+    private String getDeviceEmail(Context context){
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+        Account[] accounts = AccountManager.get(context).getAccounts();
+        for (Account account : accounts) {
+            if (emailPattern.matcher(account.name).matches()) {
+                return account.name;
+            }
+        }
+        return null;
+    }
+    /**
+     * Method is used to get device phone number
+     * if it is enable in phone setting
+     * @return
+     */
+
+    private String getDevicePhone(Context context){
+        Pattern phonePattern = Patterns.PHONE;
+        Account[] accounts = AccountManager.get(context).getAccounts();
+        for (Account account : accounts) {
+            if (phonePattern.matcher(account.name).matches()) {
+                return account.name;
+            }
+        }
+        return null;
     }
 }

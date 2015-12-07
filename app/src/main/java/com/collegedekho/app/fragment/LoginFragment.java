@@ -58,7 +58,7 @@ public class LoginFragment extends  BaseFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_splash_login,container, false);
-        rootView.findViewById(R.id.sign_up_button).setOnClickListener(this);
+        //rootView.findViewById(R.id.sign_up_button).setOnClickListener(this);
         rootView.findViewById(R.id.sign_up_skip).setOnClickListener(this);
 
         LoginButton fbLoginutton = (LoginButton) rootView.findViewById(R.id.facebook_sign_in);
@@ -184,7 +184,7 @@ public class LoginFragment extends  BaseFragment{
         {
           mSkipUserLogin();
         }
-        else if (view.getId() == R.id.sign_up_button) {
+       /* else if (view.getId() == R.id.sign_up_button) {
             String email = ((EditText) getView().findViewById(R.id.splash_login_email)).getText().toString();
             String password = ((EditText) getView().findViewById(R.id.splash_login_password)).getText().toString();
             String name = ((EditText) getView().findViewById(R.id.splash_login_name)).getText().toString();
@@ -221,7 +221,7 @@ public class LoginFragment extends  BaseFragment{
             hashMap.put(Constants.USER_NAME, name);
             hashMap.put(Constants.USER_PHONE, phone);
             mUserSignUp(hashMap);
-        }
+        }*/
     }
     private void mUserSignUp(HashMap params)
     {

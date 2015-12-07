@@ -55,7 +55,4 @@
             android:gravity="center"
             android:scrollbars="none"/>
 
-
-
-
 </RelativeLayout>

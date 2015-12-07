@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
     android:weightSum="1">
 
     <TextView
         android:id="@+id/exam_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_weight=".65"
         android:gravity="center"
-        android:textSize="16sp"
-        android:paddingLeft="@dimen/m5dp"
-        android:paddingRight="@dimen/m5dp"
+        android:textSize="13sp"
+        android:padding="@dimen/m2dp"
         android:layout_marginLeft="@dimen/m5dp"
+        android:maxLines="2"
+        android:ellipsize="end"
         android:background="@drawable/bg_year_spinner"
         android:text="Exams"/>
 
     <Spinner
         android:id="@+id/exam_year_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_width="0dp"
+        android:layout_weight=".35"
+        android:layout_height="match_parent"
+        android:gravity="center"
         android:background="@drawable/bg_year_spinner"
         android:spinnerMode="dropdown" />
 

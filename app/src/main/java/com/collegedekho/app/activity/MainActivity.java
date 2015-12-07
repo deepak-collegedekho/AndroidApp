@@ -1,7 +1,5 @@
 package com.collegedekho.app.activity;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -68,9 +66,8 @@ import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
-import com.collegedekho.app.fragment.AspirationFragment;
 import com.collegedekho.app.fragment.BaseFragment;
-import com.collegedekho.app.fragment.DemoFragment;
+import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FilterFragment;
 import com.collegedekho.app.fragment.HomeFragment;
@@ -85,14 +82,13 @@ import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
-import com.collegedekho.app.fragment.ProfileFragment;
+import com.collegedekho.app.fragment.ProfileFragment1;
 import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.fragment.SplashFragment;
 import com.collegedekho.app.fragment.StreamFragment;
-import com.collegedekho.app.fragment.TestFragment;
+import com.collegedekho.app.fragment.TabFragment;
 import com.collegedekho.app.fragment.UserEducationFragment;
-import com.collegedekho.app.fragment.UserEntranceFragment;
 import com.collegedekho.app.fragment.WidgetListFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
 import com.collegedekho.app.listener.DataLoadListener;
@@ -142,7 +138,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 /*
 The MIT License (MIT)
@@ -170,6 +165,7 @@ SOFTWARE.*/
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
         LoaderManager.LoaderCallbacks<Cursor>,ExamsFragment.OnExamsSelectListener,
+        ProfileFragment.OnTabSelectListener,
         HomeFragment.OnHomeInteractionListener, DataLoadListener,
         StreamFragment.OnStreamInteractionListener,
         InstituteListFragment.OnInstituteSelectedListener,
@@ -181,7 +177,7 @@ public class MainActivity extends AppCompatActivity
         QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener,
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleFragment.OnArticleSelectedListener,
-        ProfileFragment.onProfileUpdateListener,
+        ProfileFragment1.onProfileUpdateListener,
         LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener,
         InstituteDetailFragment.OnInstituteFooterItemSelected, UserEducationFragment.OnUserEducationInteractionListener
 {
@@ -338,9 +334,9 @@ public class MainActivity extends AppCompatActivity
 
         this.mSetNavigationListener();
 
-        this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
+         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
         //init();
-        //this.mDisplayFragment(DemoFragment.newInstance(), false, DemoFragment.class.getName());
+        //this.mDisplayFragment(TabFragment.newInstance(1), false, TabFragment.class.getName());
         // show appBarLayout and toolBar
         // CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
         // params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
@@ -670,7 +666,7 @@ public class MainActivity extends AppCompatActivity
             imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
 
-        if (currentFragment instanceof ProfileFragment || currentFragment instanceof StreamFragment) {
+        if (currentFragment instanceof ProfileFragment1 || currentFragment instanceof StreamFragment) {
             menu.getItem(0).setVisible(true);
             menu.getItem(1).setVisible(false);
         } else if (currentFragment instanceof WidgetListFragment) {
@@ -742,8 +738,8 @@ public class MainActivity extends AppCompatActivity
                 this.mMakeNetworkCall(Constants.TAG_LOAD_PYSCHOMETRIC_TEST, Constants.BASE_URL + "psychometrictests/", null);
                 break;
             case STREAMKNOWN:
-                this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
-                //this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION, Constants.BASE_URL + "user-education/", null);
+                //this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
+                this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION, Constants.BASE_URL + "user-education/", null);
                 break;
         }
     }
@@ -1022,7 +1018,7 @@ public class MainActivity extends AppCompatActivity
         }
         else
         {
-            if(currentFragment instanceof  LoginFragment || currentFragment instanceof LoginFragment1 || currentFragment instanceof  ProfileFragment)
+            if(currentFragment instanceof  LoginFragment || currentFragment instanceof LoginFragment1 || currentFragment instanceof ProfileFragment1)
                 currentFragment.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -1270,7 +1266,10 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayUserEducationFragment(response);
                 break;
             case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
-                this.mOnUserEducationResponse(response);
+                this.mOnUserEducationResponse();
+                break;
+            case Constants.TAG_EXAMS_LIST:
+                this.mOnExamsLoaded(response);
                 break;
         }
 
@@ -1895,15 +1894,15 @@ public class MainActivity extends AppCompatActivity
         final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
 
         if (fragment == null)
-            this.mDisplayFragment(ProfileFragment.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
+            this.mDisplayFragment(ProfileFragment1.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
         else {
 
             this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
-            if (fragment instanceof ProfileFragment) {
+            if (fragment instanceof ProfileFragment1) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ((ProfileFragment) fragment).updateStream(uri, streamName);
+                        ((ProfileFragment1) fragment).updateStream(uri, streamName);
                     }
                 });
             }
@@ -2615,7 +2614,7 @@ public class MainActivity extends AppCompatActivity
     {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
         if (fragment == null)
-            mDisplayFragment(ProfileFragment.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
+            mDisplayFragment(ProfileFragment1.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
         else
             mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
 
@@ -3026,7 +3025,7 @@ public class MainActivity extends AppCompatActivity
            /* Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
             if(fragment != null)
             {
-                ((ProfileFragment)fragment).updateUI(MainActivity.user);
+                ((ProfileFragment1)fragment).updateUI(MainActivity.user);
             }*/
         }
     }
@@ -3193,20 +3192,69 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onEducationSelected(HashMap<String, String> params) {
-        this.mMakeNetworkCall(Constants.TAG_EDUCATION_DETAILS_SUBMIT, Constants.BASE_URL + "user-education/", params);
+       //this.mMakeNetworkCall(Constants.TAG_EDUCATION_DETAILS_SUBMIT, Constants.BASE_URL + "user-education/", params);
+       mOnExamsLoaded("");
     }
 
     /**
      * This method is used to handle response having exams list
      * after user education detail is submitted to server.
+     */
+    private void mOnUserEducationResponse() {
+        this.mMakeNetworkCall(Constants.TAG_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
+
+    }
+    /**
+     * This method is used to handle response having exams list
+     * after user education detail is submitted to server.
      * @param responseJson
      */
-    private void mOnUserEducationResponse(String responseJson) {
-        responseJson ="{\"count\": 1, \"next\": null, \"previous\": null, \"results\": [ { \"id\": 90, \"exam_name\": \"Christ University MBA entrance exam\", \"exam_year\": 2016, \"exam_date\": \"2016-01-31T09:00:00\", \"result_out\": false } ] }";
-
+    private void mOnExamsLoaded(String responseJson) {
+        responseJson = "{\n" +
+                "\t\"results\": [{\n" +
+                "\t\t\"exam_details\": [{\n" +
+                "\t\t\t\"result_out\": 0,\n" +
+                "\t\t\t\"exam_date\": \"2015-06-14T00:00:0\",\n" +
+                "\t\t\t\"id\": 11,\n" +
+                "\t\t\t\"year\": 2015\n" +
+                "\t\t}],\n" +
+                "\t\t\"exam\": \"CAT\"\n" +
+                "\t}, {\n" +
+                "\t\t\"exam_details\": [{\n" +
+                "\t\t\t\"result_out\": 0,\n" +
+                "\t\t\t\"exam_date\": \"2015-06-14T00:00:0\",\n" +
+                "\t\t\t\"id\": 12,\n" +
+                "\t\t\t\"year\": 2017\n" +
+                "\t\t}, {\n" +
+                "\t\t  \t\"result_out\": 0,\n" +
+                "\t\t\t\"exam_date\": \"2015-06-14T00:00:0\",\n" +
+                "\t\t\t\"id\": 15,\n" +
+                "\t\t\t\"year\": 2016\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"result_out\": 1,\n" +
+                "\t\t\t\"exam_date\": \"2015-06-14T00:00:0\",\n" +
+                "\t\t\t\"id\": 16,\n" +
+                "\t\t\t\"year\": 2015\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"result_out\": 1,\n" +
+                "\t\t\t\"exam_date\": \"2014-06-14T00:00:0\",\n" +
+                "\t\t\t\"id\": 17,\n" +
+                "\t\t\t\"year\": 2014\n" +
+                "\t\t}],\n" +
+                "\t\t\"exam\": \"SET - Symbiosis Entrance Test\"\n" +
+                "\t}, {\n" +
+                "\t\t\"exam_details\": [{\n" +
+                "\t\t\t\"result_out\": 1,\n" +
+                "\t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
+                "\t\t\t\"id\": 23,\n" +
+                "\t\t\t\"year\": 2015\n" +
+                "\t\t}],\n" +
+                "\t\t\"exam\": \"JAT - Joint Admission Test\"\n" +
+                "\t}]\n" +
+                "}";
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
-           this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)),false,ExamsFragment.class.toString() );
+            this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)),false,ExamsFragment.class.toString() );
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -3226,8 +3274,14 @@ public class MainActivity extends AppCompatActivity
      * @param responseJson
      */
     public void mLoadUserProfile(String responseJson) {
-        this.mDisplayFragment(DemoFragment.newInstance(),false,DemoFragment.class.toString() );
+        this.mDisplayFragment(ProfileFragment.newInstance(),true,ProfileFragment.class.toString() );
 
+    }
+
+    @Override
+    public void onTabSelected(int tabPosition) {
+
+        this.mDisplayFragment(TabFragment.newInstance(tabPosition),true,TabFragment.class.toString() );
     }
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
@@ -3289,25 +3343,4 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private String getDeviceEmail(){
-        Pattern emailPattern = Patterns.EMAIL_ADDRESS;
-        Account[] accounts = AccountManager.get(getApplicationContext()).getAccounts();
-        for (Account account : accounts) {
-            if (emailPattern.matcher(account.name).matches()) {
-                return account.name;
-            }
-        }
-        return null;
-    }
-
-    private String getDevicePhone(){
-        Pattern phonePattern = Patterns.PHONE;
-        Account[] accounts = AccountManager.get(getApplicationContext()).getAccounts();
-        for (Account account : accounts) {
-            if (phonePattern.matcher(account.name).matches()) {
-                return account.name;
-            }
-        }
-        return null;
-    }
 }

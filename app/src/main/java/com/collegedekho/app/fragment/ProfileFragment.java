@@ -1,333 +1,146 @@
 package com.collegedekho.app.fragment;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.entities.InstituteCourse;
-import com.collegedekho.app.entities.User;
-import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.Utils;
+import com.collegedekho.app.entities.Exam;
+import com.collegedekho.app.entities.ExamDetail;
+import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.widget.CircleImageView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Created by sureshsaini on 27/11/15.
+ */
+public class ProfileFragment extends  BaseFragment {
 
-public class ProfileFragment extends BaseFragment implements View.OnClickListener {
+    private final String TAG = "profile Frgament";
+    private static String PARAM1 = "param1";
 
-    private static final String ARG_NAME        = "name";
-    private static final String ARG_EMAIL       = "email";
-    private static final String ARG_STREAM_URI  = "stream_uri";
-    private static final String ARG_LEVEL_ID = "level_uri";
-    private static final String ARG_STREAM_NAME = "stream";
-    private static final String ARG_LEVEL_NAME  = "level";
-    private static final String ARG_PHONE  = "phone";
-    private static final int SIGNUP = 1;
-    private static final int SIGNIN = 0;
+    private OnTabSelectListener mListener;
 
-    private String mName;
-    private String mStreamURI;
-    private String mLevelID;
-    private String mStreamName;
-    private String mLevelName;
-    private String mPhone;
-
-    private EditText mNameET;
-    private EditText mPhoneET;
-    private EditText mStreamTV;
-    private EditText mLevelTV;
-    private onProfileUpdateListener mListener;
-    private SignInFragment signInFragment;
-
-    public ProfileFragment() {
-
-    }
-
-    public static ProfileFragment newInstance(User user) {
+    public static ProfileFragment newInstance() {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_NAME, user.getName());
-        args.putString(ARG_EMAIL, user.getEmail());
-        args.putString(ARG_STREAM_URI,  Constants.BASE_URL + "streams/" + user.getStream() + "/");
-        args.putString(ARG_LEVEL_ID, user.getLevel());
-        args.putString(ARG_STREAM_NAME, user.getStream_name());
-        args.putString(ARG_LEVEL_NAME, user.getLevel_name());
-        args.putString(ARG_PHONE, user.getPhone_no());
         fragment.setArguments(args);
         return fragment;
+    }
 
+    public ProfileFragment() {
+        // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            this.mName  = getArguments().getString(ARG_NAME);
-            this.mStreamURI = getArguments().getString(ARG_STREAM_URI);
-            this.mLevelID = getArguments().getString(ARG_LEVEL_ID);
-            this.mStreamName    = getArguments().getString(ARG_STREAM_NAME);
-            this.mLevelName     = getArguments().getString(ARG_LEVEL_NAME);
-            this.mPhone     = getArguments().getString(ARG_PHONE);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        this.mNameET = (EditText) rootView.findViewById(R.id.profile_name);
-        this.mPhoneET =  (EditText) rootView.findViewById(R.id.profile_contact);
-        this.mStreamTV = (EditText) rootView.findViewById(R.id.profile_stream);
-        this.mLevelTV = (EditText) rootView.findViewById(R.id.profile_level);
-        mSetEnterKeyListener(mPhoneET);
-
-        this.mStreamTV.setText(mStreamName);
-        this.mLevelTV.setText(mLevelName);
-
-        if(MainActivity.user != null && MainActivity.user.getIs_anony())
+        if(MainActivity.user != null)
         {
-            LoginPagerAdapter adapter = new LoginPagerAdapter(getChildFragmentManager());
-            ViewPager mPager = (ViewPager) rootView.findViewById(R.id.profile_login_pager);
-            mPager.setAdapter(adapter);
-            mPager.setOffscreenPageLimit(2);
-
-            TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.profile_login_tabs_layout);
-            tabLayout.setTabTextColors(getResources().getColor(R.color.white), getResources().getColor(R.color.text_subhead_blue));
-            tabLayout.setupWithViewPager(mPager);
-            mPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-
-            rootView.findViewById(R.id.profile_login_pager).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.profile_login_tabs_layout).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.profile_name_title).setVisibility(View.GONE);
-            rootView.findViewById(R.id.profile_contact_title).setVisibility(View.GONE);
-        }
-        else
-        {
-            rootView.findViewById(R.id.profile_login_pager).setVisibility(View.GONE);
-            rootView.findViewById(R.id.profile_login_tabs_layout).setVisibility(View.GONE);
-            rootView.findViewById(R.id.profile_name_title).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.profile_contact_title).setVisibility(View.VISIBLE);
+            String name = MainActivity.user.getName();
+            TextView mProfileName    =   (TextView)rootView.findViewById(R.id.user_name);
+            CircleImageView mProfileImage = (CircleImageView)rootView.findViewById(R.id.profile_image);
+            mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
+            mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
+            if(name.equalsIgnoreCase("Anonymous User"))
+            {
+                mProfileName.setText("");
+                mProfileName.setVisibility(View.INVISIBLE);
+            }else {
+                mProfileName.setText(name);
+                mProfileName.setVisibility(View.VISIBLE);
+            }
+            String image = MainActivity.user.getImage();
+            if (image != null && ! image.isEmpty()) {
+                mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+                mProfileImage.setVisibility(View.VISIBLE);
+            }
+            else
+                mProfileImage.setVisibility(View.GONE);
         }
 
+        rootView.findViewById(R.id.prep_buddies).setOnClickListener(this);
+        rootView.findViewById(R.id.resources_buddies).setOnClickListener(this);
+        rootView.findViewById(R.id.future_buddies).setOnClickListener(this);
+        rootView.findViewById(R.id.my_alerts).setOnClickListener(this);
 
-        rootView.findViewById(R.id.stream_edit).setOnClickListener(this);
-        rootView.findViewById(R.id.level_edit).setOnClickListener(this);
-        rootView.findViewById(R.id.profile_update).setOnClickListener(this);
         return rootView;
     }
 
+
     @Override
-    public void onAttach(Context activity) {
-        super.onAttach(activity);
-        try {
-            this.mListener = (onProfileUpdateListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement onProfileUpdateListener");
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            if (context instanceof MainActivity)
+                this.mListener = (OnTabSelectListener) context;
+        }
+        catch (ClassCastException e){
+            throw  new ClassCastException(context.toString()
+                    +"must implement OnTabSelectListener");
         }
     }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if(signInFragment != null)
-        {
-            signInFragment.onActivityResult(requestCode, resultCode, data);
-        }
-
-    }
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        this.mListener = null;
     }
-
-    private void mProfileUpdate() {
-
-        String name = mNameET.getText().toString();
-        String phone = mPhoneET.getText().toString();
-
-        //if(MainActivity.user != null && !MainActivity.user.is_anony()) {
-           /* if (name == null || name.isEmpty()) {
-                Utils.DisplayToast(getActivity(), Constants.NAME_EMPTY);
-                return;
-            } else*/ if (!Utils.isValidName(name)) {
-                Utils.DisplayToast(getActivity(), Constants.NAME_INVALID);
-                return;
-            } /*else if (phone == null || phone.isEmpty()) {
-                Utils.DisplayToast(getActivity(), Constants.PHONE_EMPTY);
-                return;
-            }*/ else if (phone.length() <= 9 || !Utils.isValidPhone(phone)) {
-                Utils.DisplayToast(getActivity(), Constants.PHONE_INVALID);
-                return;
-            }
-        //}
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put(Constants.USER_NAME, name);
-        hashMap.put(Constants.USER_PHONE, phone);
-        hashMap.put(Constants.USER_STREAM, mStreamURI);
-        hashMap.put(Constants.USER_LEVEL, Constants.BASE_URL + "level/" + mLevelID + "/");
-        hashMap.put(Constants.USER_STREAM_NAME, mStreamName);
-        hashMap.put(Constants.USER_LEVEL_NAME, mLevelName);
-
-        if(mListener!=null) {
-            this.mListener.onProfileUpdated(hashMap);
-        }
-    }
-
-    private void mStreamClicked() {
-        if(mListener!=null) {
-            this.mListener.onStreamClicked();
-        }
-    }
-
 
     @Override
     public void onClick(View view) {
+        super.onClick(view);
+        int position =0;
         switch (view.getId())
         {
-            case R.id.stream_edit:
-                mStreamClicked();
-            break;
-            case R.id.level_edit:
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Please select a level")
-                        .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                mLevelID = ""+(which + 1);
-                                mLevelName = InstituteCourse.CourseLevel.getName(which);
-                                mLevelTV.setText(mLevelName);
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
-            break;
-            case R.id.profile_update:
-                mProfileUpdate();
-            break;
+            case R.id.prep_buddies:
+                position = 0;
+                break;
+            case R.id.resources_buddies:
+                position = 1;
+                break;
+            case R.id.future_buddies:
+                position = 2;
+                break;
+            case R.id.my_alerts:
+                position = 3;
+                break;
+            default:
+                break;
+        }
+        this.onTabSelected(position);
+    }
 
+    private void onTabSelected(int tabPosition) {
+        if(this.mListener != null) {
+                      this.mListener.onTabSelected(tabPosition);
         }
     }
 
-    public void updateStream(String streamUri , String streamName )
-    {
-        this.mStreamURI = streamUri;
-        this.mStreamName = streamName;
-        this.mStreamTV.setText(streamName);
-
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public  interface OnTabSelectListener {
+        void onTabSelected(int tabPosition);
     }
 
-    public interface  onProfileUpdateListener
-    {
-       void  onProfileUpdated(  HashMap<String, String> hashMap);
-       void  onStreamClicked();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        MainActivity mMainActivity = (MainActivity) this.getActivity();
-
-        if (mMainActivity != null)
-            mMainActivity.currentFragment = this;
-        this.mStreamTV.setText(this.mStreamName);
-        if(this.mName.equalsIgnoreCase("Anonymous User"))
-        {
-            this.mNameET.setText("");
-        }else {
-            this.mNameET.setText(this.mName);
-        }
-        if(this.mPhone != null)
-        this.mPhoneET.setText(this.mPhone);
-    }
-    private void mSetEnterKeyListener(EditText editText)
-    {
-        editText.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    mProfileUpdate();
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-
-    public void updateUI(User user)
-    {
-        View view = getView();
-        if(view != null)
-        {
-            view.findViewById(R.id.profile_login_pager).setVisibility(View.GONE);
-            view.findViewById(R.id.profile_login_tabs_layout).setVisibility(View.GONE);
-            view.findViewById(R.id.profile_name).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.profile_contact).setVisibility(View.VISIBLE);
-            if(user != null)
-            {
-                this.mName = user.getName();
-                this.mPhone = user.getPhone_no();
-                this.mStreamTV.setText(this.mStreamName);
-                if(this.mName.equalsIgnoreCase("Anonymous User"))
-                {
-                    this.mNameET.setText("");
-                }else {
-                    this.mNameET.setText(this.mName);
-                }
-                if(this.mPhone != null)
-                    this.mPhoneET.setText(this.mPhone);
-
-            }
-        }
-    }
-
-    class LoginPagerAdapter extends FragmentPagerAdapter
-    {
-
-        public LoginPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            switch (i)
-            {
-                case SIGNIN:
-                    return signInFragment = SignInFragment.newInstance("");
-                case SIGNUP:
-                    return SignUpFragment.newInstance("");
-            }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position)
-            {
-                case SIGNIN:
-                    return "SIGN IN";
-                case SIGNUP:
-                    return "SIGN UP";
-            }
-            return super.getPageTitle(position);
-        }
-    }
 }

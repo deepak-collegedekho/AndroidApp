@@ -14,6 +14,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamsAdapter;
 import com.collegedekho.app.entities.Exam;
+import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
 
 import java.util.ArrayList;
@@ -51,17 +52,23 @@ public class ExamsFragment extends BaseFragment {
         {
             this.mExamList = args.getParcelableArrayList(PARAM1);
         }
-        // for demo
+      /*  // for demo
         this.mExamList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             Exam obj = new Exam();
-            obj.setExam_name("EXAM "+i);
-            obj.setExam_year("2016");
-            obj.setExam_date("2016-01-31T09:00:00");
-            obj.setResult_out(false);
+            obj.setExam("EXAM "+i);
+            ArrayList<ExamDetail> detailList = new ArrayList<ExamDetail>();
+            for (int j = 0; j <4 ; j++) {
+                ExamDetail detailObj = new ExamDetail();
+                detailObj.setYear("2015+j");
+                detailObj.setExam_date("2015-06-14T00:00:00");
+                if(i%2 ==0)detailObj.setResult_out(true);
+                detailList.add(detailObj);
+            }
+            obj.setExam_details(detailList);
             if(i%2 ==0)obj.setSelected(true);
             this.mExamList.add(obj);
-        }
+        }*/
     }
 
     @Nullable
@@ -107,16 +114,31 @@ public class ExamsFragment extends BaseFragment {
         switch(view.getId())
         {
             case R.id.exams_submit_button:
-                onExamsSelected(null);
+                onExamsSelected();
                 break;
             default:
                 break;
         }
     }
 
-    private void onExamsSelected(HashMap params) {
-        if(this.mListener != null)
+    private void onExamsSelected() {
+        if(this.mListener != null) {
+
+            HashMap<String, String> params = new HashMap<>();
+            if(mExamList != null && !mExamList.isEmpty()) {
+                for (Exam exam:mExamList) {
+                    if(exam == null)continue;
+                   ArrayList<ExamDetail> detailList = exam.getExam_details();
+                    if(detailList != null && !detailList.isEmpty()) {
+                        for (ExamDetail examDetailObj:detailList) {
+
+                        }
+                        }
+
+                }
+            }
             this.mListener.onExamsSelected(params);
+        }
     }
 
     /**

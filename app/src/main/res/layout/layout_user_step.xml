@@ -64,7 +64,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:textSize="14sp"
+                            android:textSize="13sp"
                             android:gravity="center|left"
                             android:text="PREPARE&amp; \nSHORTLIST"/>
 
@@ -100,7 +100,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:textSize="14sp"
+                            android:textSize="13sp"
                             android:gravity="center|left"
                             android:text="GET CD \nRECOMMEDATIONS"/>
 
@@ -126,7 +126,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         android:gravity="center|left"
                         android:text="HELP US \nUNDERSTAND YOU"/>
 

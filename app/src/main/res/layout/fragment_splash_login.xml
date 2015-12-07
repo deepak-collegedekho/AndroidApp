@@ -1,71 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/bg_splash"
-    android:paddingTop="@dimen/m25dp"
+    android:paddingTop="@dimen/m100dp"
     android:paddingBottom="@dimen/m10dp"
-    android:paddingLeft="@dimen/m60dp"
-    android:paddingRight="@dimen/m60dp">
+    android:paddingLeft="@dimen/m50dp"
+    android:paddingRight="@dimen/m50dp">
 
 
     <ImageView
         style="@style/AppTheme.ImageView"
         android:src="@drawable/file79"/>
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/facebook_sign_in"
-        style="@style/AppTheme.FacebookButton"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="@dimen/m10dp"
+        android:weightSum="1">
 
-    <include layout="@layout/layout_or_line"/>
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/facebook_sign_in"
+                android:layout_weight=".7"
+                android:layout_width="0dp"
+                facebook:com_facebook_login_text="FACEBOOK LOGIN"
+                style="@style/AppTheme.FacebookButton"/>
 
-    <android.support.design.widget.TextInputLayout
-        style="@style/AppTheme.TextInputLayout">
-        <EditText
-            android:id="@+id/splash_login_name"
-            style="@style/AppTheme.EditText.TransParent.name"
-            android:hint="Name" />
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        style="@style/AppTheme.TextInputLayout">
-        <EditText
-            android:id="@+id/splash_login_phone"
-            style="@style/AppTheme.EditText.TransParent.phone"
-            android:hint="Phone" />
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        style="@style/AppTheme.TextInputLayout">
-        <EditText
-            android:id="@+id/splash_login_email"
-            style="@style/AppTheme.EditText.TransParent.email"
-            android:hint="Email" />
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        style="@style/AppTheme.TextInputLayout">
-        <EditText
-            android:id="@+id/splash_login_password"
-            style="@style/AppTheme.EditText.TransParent.password"
-            android:hint="Password" />
-    </android.support.design.widget.TextInputLayout>
-
-    <TextView
-        android:id="@+id/sign_up_button"
-        style="@style/AppTheme.OrangeButton"
-        android:text="SIGN UP"/>
-
-    <TextView
-        android:id="@+id/sign_up_skip"
-        style="@style/AppTheme.TextView.style2"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="@dimen/m5dp"
-        android:layout_gravity="center"
-        android:textSize="20sp"
-        android:textColor="?attr/colorPrimary"
-        android:text="SKIP"/>
-
+            <TextView
+                android:id="@+id/sign_up_skip"
+                style="@style/AppTheme.OrangeButton"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight=".3"
+                android:paddingBottom="@dimen/m5dp"
+                android:paddingTop="@dimen/m5dp"
+                android:layout_marginLeft="@dimen/m10dp"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:text="SKIP"/>
+    </LinearLayout>
 
 </LinearLayout>

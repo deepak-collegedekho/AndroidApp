@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_splash"
+    android:paddingTop="@dimen/m25dp"
+    android:paddingBottom="@dimen/m10dp"
+    android:paddingLeft="@dimen/m60dp"
+    android:paddingRight="@dimen/m60dp">
+
+
+    <ImageView
+        style="@style/AppTheme.ImageView"
+        android:src="@drawable/file79"/>
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/facebook_sign_in"
+        style="@style/AppTheme.FacebookButton"/>
+
+    <include layout="@layout/layout_or_line"/>
+
+    <android.support.design.widget.TextInputLayout
+        style="@style/AppTheme.TextInputLayout">
+        <EditText
+            android:id="@+id/splash_login_name"
+            style="@style/AppTheme.EditText.TransParent.name"
+            android:hint="Name" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        style="@style/AppTheme.TextInputLayout">
+        <EditText
+            android:id="@+id/splash_login_phone"
+            style="@style/AppTheme.EditText.TransParent.phone"
+            android:hint="Phone" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        style="@style/AppTheme.TextInputLayout">
+        <EditText
+            android:id="@+id/splash_login_email"
+            style="@style/AppTheme.EditText.TransParent.email"
+            android:hint="Email" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        style="@style/AppTheme.TextInputLayout">
+        <EditText
+            android:id="@+id/splash_login_password"
+            style="@style/AppTheme.EditText.TransParent.password"
+            android:hint="Password" />
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:id="@+id/sign_up_button"
+        style="@style/AppTheme.OrangeButton"
+        android:text="SIGN UP"/>
+
+    <TextView
+        android:id="@+id/sign_up_skip"
+        style="@style/AppTheme.TextView.style2"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/m5dp"
+        android:layout_gravity="center"
+        android:textSize="20sp"
+        android:textColor="?attr/colorPrimary"
+        android:text="SKIP"/>
+
+
+</LinearLayout>

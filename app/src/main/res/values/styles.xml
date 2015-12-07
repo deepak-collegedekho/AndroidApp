@@ -45,7 +45,6 @@
         <item name="android:paddingBottom">@dimen/m2dp</item>
         <item name="android:paddingLeft">@dimen/m2dp</item>
         <item name="android:paddingRight">@dimen/m2dp</item>
-        <item name="android:layout_marginTop">@dimen/m5dp</item>
         <item name="android:textSize">20sp</item>
     </style>
 
@@ -321,10 +320,12 @@
     <style name="AppTheme.FacebookButton">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_marginTop">@dimen/m1dp</item>
-        <item name="android:paddingTop">@dimen/m6dp</item>
-        <item name="android:paddingBottom">@dimen/m6dp</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">@dimen/m5dp</item>
+        <item name="android:paddingBottom">@dimen/m5dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:background">@drawable/rounded_box_blue_20px</item>
     </style>
 
     <style name="AppTheme.EditText">
@@ -455,15 +456,15 @@
     <style name="AppTheme.Bottom_Button">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:paddingBottom">14dp</item>
-        <item name="android:paddingTop">14dp</item>
-        <item name="android:paddingLeft">7dp</item>
-        <item name="android:paddingRight">7dp</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_marginRight">5dp</item>
-        <item name="android:background">@drawable/rounded_box_blue_20px</item>
+        <item name="android:background">@drawable/rounded_bottom_menu_item</item>
 
     </style>
 
