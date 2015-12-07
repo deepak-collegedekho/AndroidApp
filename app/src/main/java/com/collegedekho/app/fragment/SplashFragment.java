@@ -44,16 +44,6 @@ public class SplashFragment extends BaseFragment {
         return rootView;
     }
 
-
-    public void stopMainAnimation()
-    {
-        if(this.mFrameAnimation != null)
-       this.mFrameAnimation.stop();
-
-        //Start the secondary animation
-        //this.mLogoView.startAnimation(AnimationUtils.loadAnimation(getActivity().getBaseContext(), R.anim.bounce_slow));
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -105,5 +95,21 @@ public class SplashFragment extends BaseFragment {
                 }
             }, splashTime);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopMainAnimation();
+    }
+
+
+    public void stopMainAnimation()
+    {
+        if(this.mFrameAnimation != null)
+            this.mFrameAnimation.stop();
+
+        //Start the secondary animation
+        //this.mLogoView.startAnimation(AnimationUtils.loadAnimation(getActivity().getBaseContext(), R.anim.bounce_slow));
     }
 }

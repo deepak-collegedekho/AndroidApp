@@ -11,6 +11,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.widget.CircleImageView;
 
@@ -79,6 +80,18 @@ public class ProfileFragment extends  BaseFragment {
         return rootView;
     }
 
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Constants.READY_TO_CLOSE = true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Constants.READY_TO_CLOSE = false;
+    }
 
     @Override
     public void onAttach(Context context) {

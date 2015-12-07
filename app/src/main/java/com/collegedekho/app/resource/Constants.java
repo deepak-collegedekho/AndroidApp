@@ -252,4 +252,7 @@ public class Constants
     public static final String CONNECTO_STREAM_UPDATED = "stream_updated";
     public static final String CONNECTO_LEVEL_UPDATED = "level_updated";
 
+   // for close app
+    public static boolean READY_TO_CLOSE = false;
+
 }

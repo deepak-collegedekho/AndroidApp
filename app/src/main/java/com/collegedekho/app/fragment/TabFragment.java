@@ -1,5 +1,6 @@
 package com.collegedekho.app.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.widget.CircleImageView;
 
+import java.util.HashMap;
+
 /**
  * Created by sureshsaini on 6/12/15.
  */
@@ -20,6 +23,7 @@ public class TabFragment extends  BaseFragment {
 
     private int selectedTabMenuPosition =0;
     private int selectedSunMenuPosition =0;
+    private  OnHomeItemSelectListener mListener;
 
     public static TabFragment newInstance(int tabPosoition) {
         TabFragment fragment = new TabFragment();
@@ -98,6 +102,26 @@ public class TabFragment extends  BaseFragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+       /* try{
+            if (context instanceof MainActivity)
+                this.mListener = (OnHomeItemSelectListener)context;
+        }
+        catch (ClassCastException e){
+            throw  new ClassCastException(context.toString()
+                    +"must implement OnHomeItemSelectListener");
+        }*/
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.mListener = null;
+    }
+
+
+    @Override
     public void onClick(View view) {
         super.onClick(view);
         switch (view.getId())
@@ -115,20 +139,35 @@ public class TabFragment extends  BaseFragment {
                 this.selectedTabMenuPosition = 3;
                 break;
             case R.id.home_widget_first:
-                this.selectedTabMenuPosition = 0;
+                this.selectedSunMenuPosition = 0;
                 break;
-            case R.id.resources_buddies:
-                this.selectedTabMenuPosition = 1;
+            case R.id.home_widget_second:
+                this.selectedSunMenuPosition = 1;
                 break;
-            case R.id.future_buddies:
-                this.selectedTabMenuPosition = 2;
+            case R.id.home_widget_third:
+                this.selectedSunMenuPosition = 2;
                 break;
-            case R.id.my_alerts:
-                this.selectedTabMenuPosition = 3;
+            case R.id.home_widget_fourth:
+                this.selectedSunMenuPosition = 3;
                 break;
             default:
                 break;
         }
         this.mUpdateSelectedTab();
     }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public  interface OnHomeItemSelectListener {
+        void onHomeItemSelected();
+    }
+
 }

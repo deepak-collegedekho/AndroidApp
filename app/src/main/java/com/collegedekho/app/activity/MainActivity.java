@@ -338,9 +338,6 @@ public class MainActivity extends AppCompatActivity
         //init();
         //this.mDisplayFragment(TabFragment.newInstance(1), false, TabFragment.class.getName());
         // show appBarLayout and toolBar
-        // CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
-        // params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
-        // findViewById(R.id.container).setLayoutParams(params);
 
         // TODO: Move this to where you establish a user session
         //logUser();
@@ -1282,12 +1279,6 @@ public class MainActivity extends AppCompatActivity
     {
         try
         {
-            ((DrawerLayout)findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-
-            //  show appBarLayout and toolBar
-            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
-            params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
-            findViewById(R.id.container).setLayoutParams(params);
 
             response = response.substring(10, response.length() - 1);
             ArrayList<UserEducation> userEducationList = (ArrayList<UserEducation>) JSON.std.listOfFrom(UserEducation.class, response);
@@ -2648,7 +2639,7 @@ public class MainActivity extends AppCompatActivity
 
     public void mShouldDisplayHomeUp(){
 
-        if (this.currentFragment instanceof WidgetListFragment || this.currentFragment instanceof HomeFragment || this.currentFragment instanceof SplashFragment) {
+        if (this.currentFragment instanceof  ProfileFragment || this.currentFragment instanceof WidgetListFragment || this.currentFragment instanceof HomeFragment || this.currentFragment instanceof SplashFragment) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             this.mToggle.syncState();
 
@@ -2748,8 +2739,8 @@ public class MainActivity extends AppCompatActivity
         {
             this.mClearBackStack();
         }
-        else if(!WidgetListFragment.READY_TO_CLOSE) {
-            WidgetListFragment.READY_TO_CLOSE = true;
+        else if(!Constants.READY_TO_CLOSE) {
+            Constants.READY_TO_CLOSE = true;
             Utils.DisplayToast(getApplicationContext(), "Press again to close CollegeDekho");
         }
         else {
@@ -3274,6 +3265,14 @@ public class MainActivity extends AppCompatActivity
      * @param responseJson
      */
     public void mLoadUserProfile(String responseJson) {
+        // unlock navigation drawer when home screen come
+        ((DrawerLayout)findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+        //  show appBarLayout and toolBar
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
+        params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+        findViewById(R.id.container).setLayoutParams(params);
+
         this.mDisplayFragment(ProfileFragment.newInstance(),true,ProfileFragment.class.toString() );
 
     }
