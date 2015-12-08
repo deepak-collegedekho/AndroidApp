@@ -24,6 +24,7 @@ Thumbs.db
 
 #Android Studio Files
 .gradle
+.idea
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
