@@ -107,7 +107,16 @@ public class ExamsFragment extends BaseFragment {
         super.onDetach();
         this.mListener = null;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        MainActivity mainActivity = (MainActivity) getActivity();
+
+        if (mainActivity != null)
+            mainActivity.currentFragment = this;
+
+    }
     @Override
     public void onClick(View view) {
         super.onClick(view);

@@ -11,12 +11,9 @@
         <item android:id="@+id/nav_news"
             android:icon="@drawable/ic_menu_news"
             android:title="News" />
-        <item android:id="@+id/nav_atricles"
+        <item android:id="@+id/nav_articles"
             android:icon="@drawable/ic_menu_articles"
             android:title="Articles" />
-        <item android:id="@+id/nav_my_shortlists"
-            android:icon="@drawable/ic_menu_my_shortlist"
-            android:title="MyShortlist" />
         <item android:id="@+id/nav_my_qna"
             android:icon="@drawable/ic_menu_qna"
             android:title="QnA" />

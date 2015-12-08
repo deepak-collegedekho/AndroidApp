@@ -14,7 +14,7 @@
         android:paddingRight="@dimen/m10dp"
         android:paddingLeft="@dimen/m10dp"
         android:gravity="center"
-        android:background="@drawable/ic_chatbubble_outline"
+        android:background="@drawable/ic_chat_bubble"
         android:drawablePadding="@dimen/m5dp"
         android:text="3"/>
 <RelativeLayout

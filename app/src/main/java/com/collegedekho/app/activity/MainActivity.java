@@ -67,6 +67,7 @@ import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.BaseFragment;
+import com.collegedekho.app.fragment.MyAlertFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FilterFragment;
@@ -165,7 +166,7 @@ SOFTWARE.*/
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
         LoaderManager.LoaderCallbacks<Cursor>,ExamsFragment.OnExamsSelectListener,
-        ProfileFragment.OnTabSelectListener,
+        ProfileFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
         HomeFragment.OnHomeInteractionListener, DataLoadListener,
         StreamFragment.OnStreamInteractionListener,
         InstituteListFragment.OnInstituteSelectedListener,
@@ -336,7 +337,7 @@ public class MainActivity extends AppCompatActivity
 
          this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
         //init();
-        //this.mDisplayFragment(TabFragment.newInstance(1), false, TabFragment.class.getName());
+        //this.mDisplayFragment(MyAlertFragment.newInstance(), false, MyAlertFragment.class.getName());
         // show appBarLayout and toolBar
 
         // TODO: Move this to where you establish a user session
@@ -549,7 +550,7 @@ public class MainActivity extends AppCompatActivity
                 //  MainActivity.this.mSetUserPref();
             else
             {
-                //MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
+               // MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
                 MainActivity.this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION, Constants.BASE_URL + "user-education/", null);
             }
         } else {
@@ -568,9 +569,6 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // hide tutorials
-        if(currentFragment instanceof  WidgetListFragment)
-            ((WidgetListFragment)currentFragment).hideWidgetTutorial();
 
         DrawerLayout drawer = (DrawerLayout) this.findViewById(R.id.drawer_layout);
         int id = item.getItemId();
@@ -583,33 +581,28 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case R.id.nav_institutes:
                 fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
-                position =1;
+                position = 1;
                 break;
             case R.id.nav_news:
                 fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_NEWS_LIST);
-                position =2;
+                position = 2;
                 break;
-            case R.id.nav_atricles:
+            case R.id.nav_articles:
                 fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_ARTICLES_LIST);
-                position =3;
-                break;
-            case R.id.nav_my_shortlists:
-                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE_LIST);
-                position = 4;
+                position = 3;
                 break;
             case R.id.nav_my_qna:
                 fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
-                position = 5;
+                position = 4;
                 break;
             case R.id.nav_future_buddies:
                 fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
-                position = 6;
+                position = 5;
                 break;
         }
 
         drawer.closeDrawer(GravityCompat.START);
         if(fragment != null) {
-
             this.mUpdateNavigationMenuItem(position);
             int count = getSupportFragmentManager().getBackStackEntryCount();
             for (int i = 0; i < count-1; i++) {
@@ -617,11 +610,17 @@ public class MainActivity extends AppCompatActivity
             }
             return true;
         }
-
-        if(this.mWidgets == null || this.mWidgets.size() <= position-1)
-            return true;
-
-        onWidgetSelected(mWidgets.get(position - 1), position);
+        if(position  == 1){
+            onHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes");
+        }else  if(position  == 2){
+            onHomeItemSelected(Constants.WIDGET_NEWS, Constants.BASE_URL+"personalize/news");
+        }else  if(position  == 3){
+            onHomeItemSelected(Constants.WIDGET_ARTICES, Constants.BASE_URL+"personalize/articles");
+        }else  if(position  == 4){
+            onHomeItemSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna");
+        }else  if(position  == 5){
+            onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL+"personalize/forums");
+        }
         return true;
     }
 
@@ -630,11 +629,10 @@ public class MainActivity extends AppCompatActivity
      * @param position
      */
     public void mUpdateNavigationMenuItem(int position) {
+
         ((NavigationView) findViewById(R.id.nav_view)).getMenu().getItem(position).setChecked(true);
 
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -646,6 +644,7 @@ public class MainActivity extends AppCompatActivity
             restoreActionBar();
             return true;
         }*/
+
         getMenuInflater().inflate(R.menu.main, menu);
 
         return super.onCreateOptionsMenu(menu);
@@ -653,26 +652,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // hide tutorials
-        if(currentFragment instanceof  WidgetListFragment)
-            ((WidgetListFragment)currentFragment).hideWidgetTutorial();
-
         // to hide the keyboard if visible
         if (this.getCurrentFocus() != null && this.getCurrentFocus() instanceof EditText) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
 
-        if (currentFragment instanceof ProfileFragment1 || currentFragment instanceof StreamFragment) {
-            menu.getItem(0).setVisible(true);
-            menu.getItem(1).setVisible(false);
-        } else if (currentFragment instanceof WidgetListFragment) {
+        if (currentFragment instanceof ProfileFragment) {
             menu.getItem(0).setVisible(false);
-            menu.getItem(1).setVisible(true);
-        } else {
-            menu.getItem(0).setVisible(true);
-            menu.getItem(1).setVisible(true);
         }
+         else {
+            menu.getItem(0).setVisible(true);
+        }
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -684,12 +676,7 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
 
         int id = item.getItemId();
-        if (id == R.id.action_profile) {
-
-            mDisplayPofile();
-            return true;
-
-        } else if (id == R.id.action_home) {
+        if (id == R.id.action_home) {
             this.mClearBackStack();
             return true;
         }
@@ -1040,7 +1027,7 @@ public class MainActivity extends AppCompatActivity
 
             fragmentTransaction.commit();
 
-            if (this.currentFragment instanceof WidgetListFragment) {
+            if (this.currentFragment instanceof WidgetListFragment || this.currentFragment instanceof  ProfileFragment) {
                 if (findViewById(R.id.app_bar_layout).getVisibility() != View.VISIBLE)
                     findViewById(R.id.app_bar_layout).setVisibility(View.VISIBLE);
             }
@@ -1575,6 +1562,7 @@ public class MainActivity extends AppCompatActivity
 
             News news = (News) newsList.get(i);
             String tempId = news.getSimilar_news();
+            if(tempId == null)continue;;
             tempId = tempId.replaceAll("L", "");
             ArrayList<String> similarNewsIds = new ArrayList<String>();
             try {
@@ -2598,9 +2586,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**
+   /* *//**
      * This mthod used to show user profile fragment UI
-     */
+     *//*
     private void mDisplayPofile()
     {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
@@ -2609,7 +2597,7 @@ public class MainActivity extends AppCompatActivity
         else
             mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
 
-    }
+    }*/
 
     /**
      * This method is used to update User Profile
@@ -2639,7 +2627,9 @@ public class MainActivity extends AppCompatActivity
 
     public void mShouldDisplayHomeUp(){
 
-        if (this.currentFragment instanceof  ProfileFragment || this.currentFragment instanceof WidgetListFragment || this.currentFragment instanceof HomeFragment || this.currentFragment instanceof SplashFragment) {
+        if (this.currentFragment instanceof  ProfileFragment || this.currentFragment instanceof WidgetListFragment ||
+                this.currentFragment instanceof HomeFragment || this.currentFragment instanceof SplashFragment||
+                this.currentFragment instanceof UserEducationFragment || this.currentFragment instanceof ExamsFragment) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             this.mToggle.syncState();
 
@@ -2735,10 +2725,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if(this.isLastFragment())
+        } /*else if(this.isLastFragment())
         {
             this.mClearBackStack();
-        }
+        }*/
         else if(!Constants.READY_TO_CLOSE) {
             Constants.READY_TO_CLOSE = true;
             Utils.DisplayToast(getApplicationContext(), "Press again to close CollegeDekho");
@@ -3201,48 +3191,190 @@ public class MainActivity extends AppCompatActivity
      * @param responseJson
      */
     private void mOnExamsLoaded(String responseJson) {
-        responseJson = "{\n" +
-                "\t\"results\": [{\n" +
-                "\t\t\"exam_details\": [{\n" +
-                "\t\t\t\"result_out\": 0,\n" +
-                "\t\t\t\"exam_date\": \"2015-06-14T00:00:0\",\n" +
-                "\t\t\t\"id\": 11,\n" +
-                "\t\t\t\"year\": 2015\n" +
-                "\t\t}],\n" +
-                "\t\t\"exam\": \"CAT\"\n" +
-                "\t}, {\n" +
-                "\t\t\"exam_details\": [{\n" +
-                "\t\t\t\"result_out\": 0,\n" +
-                "\t\t\t\"exam_date\": \"2015-06-14T00:00:0\",\n" +
-                "\t\t\t\"id\": 12,\n" +
-                "\t\t\t\"year\": 2017\n" +
-                "\t\t}, {\n" +
-                "\t\t  \t\"result_out\": 0,\n" +
-                "\t\t\t\"exam_date\": \"2015-06-14T00:00:0\",\n" +
-                "\t\t\t\"id\": 15,\n" +
-                "\t\t\t\"year\": 2016\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"result_out\": 1,\n" +
-                "\t\t\t\"exam_date\": \"2015-06-14T00:00:0\",\n" +
-                "\t\t\t\"id\": 16,\n" +
-                "\t\t\t\"year\": 2015\n" +
-                "\t\t}, {\n" +
-                "\t\t\t\"result_out\": 1,\n" +
-                "\t\t\t\"exam_date\": \"2014-06-14T00:00:0\",\n" +
-                "\t\t\t\"id\": 17,\n" +
-                "\t\t\t\"year\": 2014\n" +
-                "\t\t}],\n" +
-                "\t\t\"exam\": \"SET - Symbiosis Entrance Test\"\n" +
-                "\t}, {\n" +
-                "\t\t\"exam_details\": [{\n" +
-                "\t\t\t\"result_out\": 1,\n" +
-                "\t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
-                "\t\t\t\"id\": 23,\n" +
-                "\t\t\t\"year\": 2015\n" +
-                "\t\t}],\n" +
-                "\t\t\"exam\": \"JAT - Joint Admission Test\"\n" +
-                "\t}]\n" +
-                "}";
+        responseJson = " {\n" +
+                " \t\"results\": [{\n" +
+                " \t\t\"exam_details\": [{\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 11,\n" +
+                " \t\t\t\"year\": 2015\n" +
+                " \t\t}],\n" +
+                " \t\t\"exam\": \"CAT\"\n" +
+                " \t}, {\n" +
+                " \t\t\"exam_details\": [{\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2013-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 12,\n" +
+                " \t\t\t\"year\": 2013\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 1,\n" +
+                " \t\t\t\"exam_date\": \"2014-05-02T00:00:00\",\n" +
+                " \t\t\t\"id\": 13,\n" +
+                " \t\t\t\"year\": 2014\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 14,\n" +
+                " \t\t\t\"year\": 2015\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2016-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 15,\n" +
+                " \t\t\t\"year\": 2016\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2017-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 16,\n" +
+                " \t\t\t\"year\": 2017\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2018-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 17,\n" +
+                " \t\t\t\"year\": 2018\n" +
+                " \t\t}],\n" +
+                " \t\t\"exam\": \"SET - Symbiosis Entrance Test\"\n" +
+                " \t}, {\n" +
+                " \t\t\"exam_details\": [{\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2013-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 18,\n" +
+                " \t\t\t\"year\": 2013\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 1,\n" +
+                " \t\t\t\"exam_date\": \"2014-05-02T00:00:00\",\n" +
+                " \t\t\t\"id\": 19,\n" +
+                " \t\t\t\"year\": 2014\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 20,\n" +
+                " \t\t\t\"year\": 2015\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2016-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 21,\n" +
+                " \t\t\t\"year\": 2016\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2017-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 22,\n" +
+                " \t\t\t\"year\": 2017\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2018-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 23,\n" +
+                " \t\t\t\"year\": 2018\n" +
+                " \t\t}],\n" +
+                " \t\t\"exam\": \"MAT - Management Aptitute Test\"\n" +
+                " \t}, {\n" +
+                " \t\t\"exam_details\": [{\n" +
+                " \t\t\t\"result_out\": 1,\n" +
+                " \t\t\t\"exam_date\": \"2013-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 24,\n" +
+                " \t\t\t\"year\": 2013\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 1,\n" +
+                " \t\t\t\"exam_date\": \"2014-05-02T00:00:00\",\n" +
+                " \t\t\t\"id\": 25,\n" +
+                " \t\t\t\"year\": 2014\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 1,\n" +
+                " \t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 26,\n" +
+                " \t\t\t\"year\": 2015\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2016-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 27,\n" +
+                " \t\t\t\"year\": 2016\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2017-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 28,\n" +
+                " \t\t\t\"year\": 2017\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2018-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 29,\n" +
+                " \t\t\t\"year\": 2018\n" +
+                " \t\t}],\n" +
+                " \t\t\"exam\": \"AIEEE - Symbiosis Entrance Test\"\n" +
+                " \t}, {\n" +
+                " \t\t\"exam_details\": [{\n" +
+                " \t\t\t\"result_out\": 1,\n" +
+                " \t\t\t\"exam_date\": \"2013-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 30,\n" +
+                " \t\t\t\"year\": 2013\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 1,\n" +
+                " \t\t\t\"exam_date\": \"2014-05-02T00:00:00\",\n" +
+                " \t\t\t\"id\": 31,\n" +
+                " \t\t\t\"year\": 2014\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 1,\n" +
+                " \t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 32,\n" +
+                " \t\t\t\"year\": 2015\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2016-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 33,\n" +
+                " \t\t\t\"year\": 2016\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2017-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 34,\n" +
+                " \t\t\t\"year\": 2017\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2018-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 35,\n" +
+                " \t\t\t\"year\": 2018\n" +
+                " \t\t}],\n" +
+                " \t\t\"exam\": \"JEE- Joint Entrance Exam\"\n" +
+                " \t}, {\n" +
+                " \t\t\"exam_details\": [{\n" +
+                " \t\t\t\"result_out\": 1,\n" +
+                " \t\t\t\"exam_date\": \"2013-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 36,\n" +
+                " \t\t\t\"year\": 2013\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 1,\n" +
+                " \t\t\t\"exam_date\": \"2014-05-02T00:00:00\",\n" +
+                " \t\t\t\"id\": 37,\n" +
+                " \t\t\t\"year\": 2014\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 1,\n" +
+                " \t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 38,\n" +
+                " \t\t\t\"year\": 2015\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2016-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 39,\n" +
+                " \t\t\t\"year\": 2016\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2017-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 40,\n" +
+                " \t\t\t\"year\": 2017\n" +
+                " \t\t}, {\n" +
+                " \t\t\t\"result_out\": 0,\n" +
+                " \t\t\t\"exam_date\": \"2018-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 41,\n" +
+                " \t\t\t\"year\": 2018\n" +
+                " \t\t}],\n" +
+                " \t\t\"exam\": \"GATE - Gratuate Aptitute Test in Engineering\"\n" +
+                " \t}, {\n" +
+                " \t\t\"exam_details\": [{\n" +
+                " \t\t\t\"result_out\": 1,\n" +
+                " \t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
+                " \t\t\t\"id\": 42,\n" +
+                " \t\t\t\"year\": 2015\n" +
+                " \t\t}],\n" +
+                " \t\t\"exam\": \"JAT - Joint Admission Test\"\n" +
+                " \t}]\n" +
+                " }";
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
             this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)),false,ExamsFragment.class.toString() );
@@ -3273,7 +3405,7 @@ public class MainActivity extends AppCompatActivity
         params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
         findViewById(R.id.container).setLayoutParams(params);
 
-        this.mDisplayFragment(ProfileFragment.newInstance(),true,ProfileFragment.class.toString() );
+        this.mDisplayFragment(ProfileFragment.newInstance(),false,ProfileFragment.class.toString() );
 
     }
 
@@ -3281,6 +3413,19 @@ public class MainActivity extends AppCompatActivity
     public void onTabSelected(int tabPosition) {
 
         this.mDisplayFragment(TabFragment.newInstance(tabPosition),true,TabFragment.class.toString() );
+    }
+
+    @Override
+    public void onHomeItemSelected(String requestType, String url) {
+
+        if (requestType.equals(Constants.WIDGET_INSTITUTES)) {
+            this.mFilterKeywords = this.mGetTheFilters();
+            this.mMakeNetworkCall(requestType, url, this.mFilterKeywords);
+            return;
+        }
+
+       this.mMakeNetworkCall(requestType,url, null);
+
     }
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {

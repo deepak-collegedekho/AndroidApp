@@ -5,14 +5,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.widget.CircleImageView;
-
-import java.util.HashMap;
 
 /**
  * Created by sureshsaini on 6/12/15.
@@ -22,7 +22,7 @@ public class TabFragment extends  BaseFragment {
     private static String PARAM1 = "param1";
 
     private int selectedTabMenuPosition =0;
-    private int selectedSunMenuPosition =0;
+    private int selectedSubMenuPosition =0;
     private  OnHomeItemSelectListener mListener;
 
     public static TabFragment newInstance(int tabPosoition) {
@@ -72,29 +72,6 @@ public class TabFragment extends  BaseFragment {
         return rootView;
     }
 
-    private void mUpdateSelectedTab(){
-        View view = getView();
-        if(view ==   null) return;
-        TextView prepBuddies       = (TextView)view.findViewById(R.id.prep_buddies);
-        TextView resourceBuddies   = (TextView)view.findViewById(R.id.resources_buddies);
-        TextView futureBuddies     = (TextView)view.findViewById(R.id.future_buddies);
-        TextView myAlerts          = (TextView)view.findViewById(R.id.my_alerts);
-
-        prepBuddies.setSelected(false);
-        resourceBuddies.setSelected(false);
-        futureBuddies.setSelected(false);
-        myAlerts.setSelected(false);
-        if(this.selectedTabMenuPosition == 0){
-           prepBuddies.setSelected(true);
-        }else   if(this.selectedTabMenuPosition == 1){
-            resourceBuddies.setSelected(true);
-        }else   if(this.selectedTabMenuPosition == 2){
-            futureBuddies.setSelected(true);
-        }else   if(this.selectedTabMenuPosition == 3){
-            myAlerts.setSelected(true);
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -104,14 +81,14 @@ public class TabFragment extends  BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-       /* try{
+       try{
             if (context instanceof MainActivity)
                 this.mListener = (OnHomeItemSelectListener)context;
         }
         catch (ClassCastException e){
             throw  new ClassCastException(context.toString()
                     +"must implement OnHomeItemSelectListener");
-        }*/
+        }
     }
 
     @Override
@@ -139,21 +116,94 @@ public class TabFragment extends  BaseFragment {
                 this.selectedTabMenuPosition = 3;
                 break;
             case R.id.home_widget_first:
-                this.selectedSunMenuPosition = 0;
+                this.selectedSubMenuPosition = 0;
+                this.mUpdateSubMenuItem();
                 break;
             case R.id.home_widget_second:
-                this.selectedSunMenuPosition = 1;
+                this.selectedSubMenuPosition = 1;
+                this.mUpdateSubMenuItem();
                 break;
             case R.id.home_widget_third:
-                this.selectedSunMenuPosition = 2;
+                this.selectedSubMenuPosition = 2;
+                this.mUpdateSubMenuItem();
                 break;
             case R.id.home_widget_fourth:
-                this.selectedSunMenuPosition = 3;
+                this.selectedSubMenuPosition = 3;
+                this.mUpdateSubMenuItem();
                 break;
             default:
                 break;
         }
         this.mUpdateSelectedTab();
+    }
+    private void mUpdateSelectedTab(){
+        View view = getView();
+        if(view ==   null) return;
+        TextView prepBuddies       = (TextView)view.findViewById(R.id.prep_buddies);
+        TextView resourceBuddies   = (TextView)view.findViewById(R.id.resources_buddies);
+        TextView futureBuddies     = (TextView)view.findViewById(R.id.future_buddies);
+        TextView myAlerts          = (TextView)view.findViewById(R.id.my_alerts);
+
+        TextView firstSubMenuTV       = (TextView)view.findViewById(R.id.home_widget_textview_first);
+        TextView secondSubMenuTV   = (TextView)view.findViewById(R.id.home_widget_textview_second);
+        TextView thirdSubMenuTV    = (TextView)view.findViewById(R.id.home_widget_textview_third);
+        TextView fourthSubMenuTV          = (TextView)view.findViewById(R.id.home_widget_textview_fourth);
+
+        ImageView firstSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_first);
+        ImageView secondSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_second);
+        ImageView thirdSubMenuIV      = (ImageView)view.findViewById(R.id.home_widget_image_third);
+        ImageView fourthSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_fourth);
+
+
+        prepBuddies.setSelected(false);
+        resourceBuddies.setSelected(false);
+        futureBuddies.setSelected(false);
+        myAlerts.setSelected(false);
+        if(this.selectedTabMenuPosition == 0){
+            prepBuddies.setSelected(true);
+            firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
+            thirdSubMenuIV.setImageResource(R.drawable.ic_syllabus);
+
+            firstSubMenuTV.setText("Test Calendar");
+            thirdSubMenuTV.setText("Syllabus");
+
+        }else   if(this.selectedTabMenuPosition == 1){
+            resourceBuddies.setSelected(true);
+            firstSubMenuIV.setImageResource(R.drawable.ic_institute);
+            secondSubMenuIV.setImageResource(R.drawable.ic_news);
+            thirdSubMenuIV.setImageResource(R.drawable.ic_article);
+            fourthSubMenuIV.setImageResource(R.drawable.ic_qna);
+
+            firstSubMenuTV.setText("Institutes");
+            thirdSubMenuTV.setText("Article");
+
+        }else   if(this.selectedTabMenuPosition == 2){
+            futureBuddies.setSelected(true);
+            this.mHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL+"personalize/forums");
+
+        }else   if(this.selectedTabMenuPosition == 3){
+            myAlerts.setSelected(true);
+        }
+    }
+
+    private void mUpdateSubMenuItem(){
+        if(selectedTabMenuPosition == 1){
+             if(selectedSubMenuPosition == 0){
+                 this.mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes");
+             }else  if(selectedSubMenuPosition == 1){
+                 this.mHomeItemSelected(Constants.WIDGET_NEWS, Constants.BASE_URL+"personalize/news");
+             }else  if(selectedSubMenuPosition == 2){
+                 this.mHomeItemSelected(Constants.WIDGET_ARTICES, Constants.BASE_URL+"personalize/articles");
+             }else  if(selectedSubMenuPosition == 3){
+                 this.mHomeItemSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna");
+             }
+        }
+    }
+
+    private void mHomeItemSelected(String requestType, String url)
+    {
+      if(mListener != null)
+          mListener.onHomeItemSelected(requestType, url);
     }
 
     /**
@@ -167,7 +217,7 @@ public class TabFragment extends  BaseFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public  interface OnHomeItemSelectListener {
-        void onHomeItemSelected();
+        void onHomeItemSelected(String requestType, String url);
     }
 
 }

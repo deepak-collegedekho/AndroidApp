@@ -3,6 +3,8 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -91,6 +93,13 @@ public class ProfileFragment extends  BaseFragment {
     public void onResume() {
         super.onResume();
         Constants.READY_TO_CLOSE = false;
+
+        MainActivity mainActivity = (MainActivity)getActivity();
+        if (mainActivity != null) {
+            mainActivity.currentFragment = this;
+            mainActivity.mShouldDisplayHomeUp();
+            mainActivity.mUpdateNavigationMenuItem(0);
+        }
     }
 
     @Override
@@ -110,6 +119,11 @@ public class ProfileFragment extends  BaseFragment {
     public void onDetach() {
         super.onDetach();
         this.mListener = null;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+       // super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override

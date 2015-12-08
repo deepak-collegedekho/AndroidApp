@@ -5,9 +5,5 @@
         android:orderInCategory="100"
         app:showAsAction="never"
         android:title="@string/action_home"/>
-    <item
-        android:id="@+id/action_profile"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:title="@string/action_profile"/>
+
 </menu>

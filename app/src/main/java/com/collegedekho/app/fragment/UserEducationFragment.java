@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.utils.GaradiWindowHelper;
 
@@ -139,6 +140,16 @@ public class UserEducationFragment extends BaseFragment {
         this.mListener = null;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        MainActivity mainActivity = (MainActivity) getActivity();
+
+        if (mainActivity != null)
+            mainActivity.currentFragment = this;
+
+    }
     @Override
     public void onClick(View view) {
         super.onClick(view);
