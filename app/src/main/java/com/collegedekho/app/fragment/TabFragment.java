@@ -52,13 +52,15 @@ public class TabFragment extends  BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
 
         CircleImageView mProfileImage = (CircleImageView)rootView.findViewById(R.id.profile_image);
-        String image = MainActivity.user.getImage();
-        if (image != null && ! image.isEmpty()) {
-            mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-            mProfileImage.setVisibility(View.VISIBLE);
+        TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
+        if(MainActivity.user != null) {
+            String image = MainActivity.user.getImage();
+            if (image != null && !image.isEmpty()) {
+                mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+                mProfileImage.setVisibility(View.VISIBLE);
+            }
+            mProfileName.setText(MainActivity.user.getName());
         }
-        else
-            mProfileImage.setVisibility(View.GONE);
 
         rootView.findViewById(R.id.prep_buddies).setOnClickListener(this);
         rootView.findViewById(R.id.resources_buddies).setOnClickListener(this);
@@ -111,6 +113,7 @@ public class TabFragment extends  BaseFragment {
                 break;
             case R.id.future_buddies:
                 this.selectedTabMenuPosition = 2;
+                this.mHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL+"personalize/forums");
                 break;
             case R.id.my_alerts:
                 this.selectedTabMenuPosition = 3;
@@ -179,7 +182,6 @@ public class TabFragment extends  BaseFragment {
 
         }else   if(this.selectedTabMenuPosition == 2){
             futureBuddies.setSelected(true);
-            this.mHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL+"personalize/forums");
 
         }else   if(this.selectedTabMenuPosition == 3){
             myAlerts.setSelected(true);
