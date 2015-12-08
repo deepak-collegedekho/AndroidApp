@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class User
 {
 
-    public String[] profileData;
+    public String[] profileData = new String[3];
     private String primaryEmail;
     private String primaryPhone;
     private String id;

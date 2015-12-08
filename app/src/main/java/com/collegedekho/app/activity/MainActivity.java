@@ -53,6 +53,9 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.NetworkImageView;
+import com.appsflyer.AppsFlyerConversionListener;
+import com.appsflyer.AppsFlyerLib;
+import com.appsflyer.DebugLogQueue;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Facet;
@@ -228,7 +231,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         //Send GA Session
-       MainActivity.GASessionEvent(MainActivity.TAG);
+        MainActivity.GASessionEvent(MainActivity.TAG);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null)
@@ -243,35 +246,69 @@ public class MainActivity extends AppCompatActivity
             Log.i(TAG, "App Link Target URL: " + targetUrl.toString());
         }
 
+        // Set the Currency
+        AppsFlyerLib.setCurrencyCode("INR");
+
+        // The Dev key cab be set here or in the manifest.xml
+        AppsFlyerLib.setAppsFlyerKey("v3bLHGLaEavK2ePfvpj6aA");
+        AppsFlyerLib.sendTracking(this);
+
+        AppsFlyerLib.registerConversionListener(this,new AppsFlyerConversionListener() {
+            public void onInstallConversionDataLoaded(Map<String, String> conversionData) {
+                DebugLogQueue.getInstance().push("\nGot conversion data from server");
+                for (String attrName : conversionData.keySet()){
+                    Log.d(TAG, "attribute: "+attrName+" = "+conversionData.get(attrName));
+                }
+            }
+
+            public void onInstallConversionFailure(String errorMessage) {
+                Log.d(TAG, "error getting conversion data: "+errorMessage);
+            }
+
+            public void onAppOpenAttribution(Map<String, String> attributionData) {
+                printMap(attributionData);
+            }
+
+            public void onAttributionFailure(String errorMessage) {
+                Log.d(TAG, "error onAttributionFailure : "+errorMessage);
+            }
+
+            private void printMap(Map<String,String> map){
+                for (String key : map.keySet()) {
+                    Log.d(TAG, key+"="+map.get(key));
+                }
+            }
+        });
+
         this.setContentView(R.layout.activity_main);
-        getSupportLoaderManager().initLoader(0, null, this);
 
         this.connecto = Connecto.with(MainActivity.this);
-        //this.connecto.identify("Harsh1234Vardhan", new Traits().putValue("name", "HarshVardhan"));
-        //You can also track any event if you want
-        //this.connecto.track("Session Started", new Properties().putValue("value", 800));
         this.connecto.registerWithGCM(MainActivity.this, this.SENDER_ID);
 
-       Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
 
         this.analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
         this.analytics.setLocalDispatchPeriod(1800);
 
         MainActivity.tracker = this.analytics.newTracker(TRACKER_ID);
 
+        // Provide unhandled exceptions reports. Do that first after creating the tracker
         MainActivity.tracker.enableExceptionReporting(true);
+        // Enable Remarketing, Demographics & Interests reports
+        // https://developers.google.com/analytics/devguides/collection/android/display-features
         MainActivity.tracker.enableAdvertisingIdCollection(true);
+        // Enable automatic activity tracking for your app
         MainActivity.tracker.enableAutoActivityTracking(true);
 
         this.mRegisterFacebookSdk();
         this.mSetupGTM();
 
         this.mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(this.mToolbar);
+        this.setSupportActionBar(this.mToolbar);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        mSetNavigationListener();
 
+        this.mSetNavigationListener();
 
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
@@ -398,20 +435,20 @@ public class MainActivity extends AppCompatActivity
             }
         }, 2, TimeUnit.SECONDS);
     }
-
     @Override
     protected void onResume() {
         super.onResume();
-
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
+        AppsFlyerLib.onActivityResume(this);
         System.gc();
-
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
+        AppsFlyerLib.onActivityResume(this);
     }
 
     @Override
@@ -419,18 +456,14 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
+        AppsFlyerLib.onActivityPause(this);
+        System.gc();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        this.connecto.track("Session Ended", new Properties().putValue("value", new Date().toString()));
-        System.gc();
-        super.onDestroy();
+        AppsFlyerLib.onActivityPause(this);
     }
 
     public void init() {
