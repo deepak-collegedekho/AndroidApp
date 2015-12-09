@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/m5dp"
             android:paddingTop="@dimen/m5dp"
+            android:textSize="16sp"
             android:foregroundGravity="center"
             android:text="SUBMIT"/>
 

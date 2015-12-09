@@ -2728,9 +2728,9 @@ public class MainActivity extends AppCompatActivity
                 if (count >= 1) {
                          getSupportFragmentManager().popBackStack();
                 } else {
-                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                     if(!drawer.isDrawerOpen(GravityCompat.START))
-                        drawer.openDrawer(GravityCompat.START);
+                        drawer.openDrawer(GravityCompat.START);*/
                 }
             }
         });
@@ -3236,7 +3236,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onExamsSelected(JSONObject params) {
         this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "yearly-exams/",params,1);
-         //  mLoadUserProfile("");
+
     }
     /**
      * This method is load user profile after
@@ -3244,7 +3244,7 @@ public class MainActivity extends AppCompatActivity
      */
     public void mLoadUserProfile(String responseJson) {
         // unlock navigation drawer when home screen come
-        ((DrawerLayout)findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        //((DrawerLayout)findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
         //  show appBarLayout and toolBar
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
@@ -3257,7 +3257,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onTabSelected(int tabPosition) {
-
+        //TODO::  remove this when future buddies tab are present
+        if(tabPosition == 2){
+            this.onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL+"personalize/forums");
+            return;
+        }
         this.mDisplayFragment(TabFragment.newInstance(tabPosition),true,TabFragment.class.toString() );
     }
 
@@ -3333,6 +3337,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mOnExamsSubmitted(String response){
+        mLoadUserProfile("");
 
     }
 
