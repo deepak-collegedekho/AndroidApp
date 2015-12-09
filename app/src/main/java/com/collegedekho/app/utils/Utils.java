@@ -4,9 +4,13 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.provider.ContactsContract;
+import android.support.v4.content.CursorLoader;
 import android.util.Patterns;
 import android.widget.Toast;
 
+import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.TypeFaceTypes;
 
 import java.util.regex.Matcher;
@@ -99,7 +103,7 @@ public class Utils {
      * which is used  by the google account
      * @return
      */
-    private String getDeviceEmail(Context context){
+    public static String getDeviceEmail(Context context){
         Pattern emailPattern = Patterns.EMAIL_ADDRESS;
         Account[] accounts = AccountManager.get(context).getAccounts();
         for (Account account : accounts) {
@@ -125,4 +129,5 @@ public class Utils {
         }
         return null;
     }
+
 }

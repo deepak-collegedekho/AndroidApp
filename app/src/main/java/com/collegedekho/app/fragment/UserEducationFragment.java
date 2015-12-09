@@ -76,19 +76,16 @@ public class UserEducationFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_user_education, container, false);
-
         RelativeLayout layout = new RelativeLayout(this.getContext());
-        //setContentView(layout);
-
         layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 
         CharacterPickerView pickerView = new CharacterPickerView(this.getContext());
         layout.addView(pickerView, layoutParams);
-
         GaradiWindowHelper.setPickerData(pickerView, this.mUserEducationList);
-
         pickerView.setOnOptionChangedListener(new CharacterPickerView.OnOptionChangedListener() {
             @Override
             public void onOptionChanged(CharacterPickerView view, String levelID, String subLevelID, String streamID, String marksID) {
@@ -100,13 +97,12 @@ public class UserEducationFragment extends BaseFragment {
             }
         });
 
+
+
         ((LinearLayout) rootView.findViewById(R.id.user_education_layout)).addView(layout);
 
-        ToggleButton preparingToggle = (ToggleButton)rootView.findViewById(R.id.is_user_preparing);
-
-        this.isUserPreparing = preparingToggle.isChecked();
-        rootView.findViewById(R.id.user_education_submit_button).setOnClickListener(this);
-        // Inflate the layout for this fragment
+        rootView.findViewById(R.id.is_preparing_for_exam).setOnClickListener(this);
+        rootView.findViewById(R.id.is_not_preparing_for_exam).setOnClickListener(this);
         return rootView;
     }
 
@@ -120,18 +116,6 @@ public class UserEducationFragment extends BaseFragment {
                     + " must implement OnUserEducationInteractionListener");
         }
     }
-    private void onCurrentEducationSubmitted(HashMap params) {
-        if (this.mListener != null) {
-            HashMap<String, String> map = new HashMap<String, String>();
-
-            map.put("sublevel", UserEducationFragment.this.mSubLevelID);
-            map.put("stream", UserEducationFragment.this.mStreamID);
-            map.put("marks", UserEducationFragment.this.mMarks);
-            map.put("is_preparing", (UserEducationFragment.this.isUserPreparing ? "1":"0"));
-
-            mListener.onEducationSelected(map);
-        }
-    }
 
 
     @Override
@@ -143,24 +127,43 @@ public class UserEducationFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
         MainActivity mainActivity = (MainActivity) getActivity();
-
         if (mainActivity != null)
             mainActivity.currentFragment = this;
 
     }
+
     @Override
     public void onClick(View view) {
         super.onClick(view);
         switch(view.getId())
         {
-            case R.id.user_education_submit_button:
-                onCurrentEducationSubmitted(null);
+            case R.id.is_preparing_for_exam:
+                mUserPreparingForExam();
+                break;
+            case R.id.is_not_preparing_for_exam:
+                mUserNotPreparingForExam();
                 break;
             default:
                 break;
         }
+    }
+
+    private void mUserPreparingForExam() {
+        if (this.mListener != null) {
+            HashMap<String, String> map = new HashMap<>();
+
+            map.put("sublevel", UserEducationFragment.this.mSubLevelID);
+            map.put("stream", UserEducationFragment.this.mStreamID);
+            map.put("marks", UserEducationFragment.this.mMarks);
+            map.put("is_preparing","1");
+            mListener.onEducationSelected(map);
+        }
+
+    }
+
+    private void mUserNotPreparingForExam() {
+
     }
 
     /**

@@ -303,6 +303,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         this.setContentView(R.layout.activity_main);
+        getSupportLoaderManager().initLoader(0, null, this);
 
         this.connecto = Connecto.with(MainActivity.this);
         //this.connecto.identify("Harsh1234Vardhan", new Traits().putValue("name", "HarshVardhan"));
@@ -3150,17 +3151,23 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return getProfileLoader();
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if(MainActivity.user == null)
+            MainActivity.user = new User();
+        user.processProfileData(cursor, this);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {  }
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
 
     /**
      * This method is used to send user's current education
@@ -3464,7 +3471,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public CursorLoader getProfileLoader() {
+    private CursorLoader getProfileLoader() {
         return new CursorLoader(this,
                 // Retrieve data rows for the device user's 'profile' contact.
                 Uri.withAppendedPath(

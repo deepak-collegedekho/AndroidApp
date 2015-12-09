@@ -25,7 +25,7 @@
             style="@style/AppTheme.TextView"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:drawableTop="@drawable/ic_add_circle_outline"
+            android:drawableTop="@drawable/ic_add_inline_white"
             android:text="1232"/>
 
         <LinearLayout

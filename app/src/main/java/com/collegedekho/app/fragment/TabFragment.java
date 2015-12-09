@@ -51,15 +51,34 @@ public class TabFragment extends  BaseFragment {
 
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
 
-        CircleImageView mProfileImage = (CircleImageView)rootView.findViewById(R.id.profile_image);
         TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
+        CircleImageView mProfileImage = (CircleImageView)rootView.findViewById(R.id.profile_image);
+
+        mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
+        mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
         if(MainActivity.user != null) {
+
+            String name = MainActivity.user.getName();
+            if(name.contains("Anonymous User"))
+            {
+                if(MainActivity.user.profileData[0] != null)
+                {
+                    mProfileName.setText(MainActivity.user.profileData[0]);
+                    mProfileName.setVisibility(View.VISIBLE);
+                }else {
+                    mProfileName.setText("");
+                    mProfileName.setVisibility(View.GONE);
+                }
+            }else {
+                mProfileName.setText(name);
+                mProfileName.setVisibility(View.VISIBLE);
+            }
             String image = MainActivity.user.getImage();
-            if (image != null && !image.isEmpty()) {
+            if (image != null && ! image.isEmpty()) {
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
                 mProfileImage.setVisibility(View.VISIBLE);
             }
-            mProfileName.setText(MainActivity.user.getName());
+
         }
 
         rootView.findViewById(R.id.prep_buddies).setOnClickListener(this);

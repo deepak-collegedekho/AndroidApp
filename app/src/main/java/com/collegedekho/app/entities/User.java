@@ -1,6 +1,13 @@
 package com.collegedekho.app.entities;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.util.Patterns;
+
+import com.collegedekho.app.utils.Utils;
+
+import java.util.regex.Pattern;
 
 /**
  * @author Mayank Gautam
@@ -24,6 +31,10 @@ public class User
     private String stream_name = "";
     private String level_name = "";
 
+    private String primaryEmail;
+    private String primaryPhone;
+    public String[] profileData = new String[3];
+
     public interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Identity.DISPLAY_NAME,
@@ -35,6 +46,7 @@ public class User
         int PHONE_NUMBER = 1;
         int IS_PRIMARY = 2;
     }
+
 
     public String getId() {
         return id;
@@ -164,6 +176,40 @@ public class User
         this.phone_no = phone_no;
     }
 
+    public void processProfileData(Cursor cursor, Context context) {
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS;
 
+        if(emailPattern == null)return;
+
+        cursor.moveToFirst();
+        if(this.profileData==null)
+            this.profileData = new String[3];
+        this.profileData[1] = "[";
+        this.profileData[2] = "[";
+        while (!cursor.isAfterLast()) {
+            this.profileData[0] = cursor.getString(ProfileQuery.NAME);
+            String data = cursor.getString(ProfileQuery.PHONE_NUMBER);
+            if(emailPattern.matcher(data).matches())
+            {
+                if(cursor.getInt(ProfileQuery.IS_PRIMARY)!=0)
+                    this.primaryEmail = data;
+                this.profileData[1]+="\""+data+"\",";
+            }
+            else
+            {
+                if(this.primaryPhone==null)
+                    this.primaryPhone = data;
+                this.profileData[2]+="\""+data+"\",";
+            }
+            cursor.moveToNext();
+        }
+        if(this.primaryEmail==null){
+            this.primaryEmail = Utils.getDeviceEmail(context);
+            if(this.primaryEmail!=null && !this.profileData[1].contains(this.primaryEmail))
+                this.profileData[1]+="\""+this.primaryEmail+"\",";
+        }
+        profileData[1]+="]";
+        profileData[2]+="]";
+    }
 
 }

@@ -21,12 +21,15 @@
     <!-- To receive C2D messages -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- To keep phone awake -->
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <!-- To read contacts list -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- For haptic feedback -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <!-- Get wifi radio state -->
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <!-- To read contacts list -->
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <!-- read profile -->
+
 
     <application
         android:name="android.support.multidex.MultiDexApplication"

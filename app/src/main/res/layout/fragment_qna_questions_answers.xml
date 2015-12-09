@@ -52,7 +52,7 @@
             android:id="@+id/qna_button_downvote"
             android:layout_width="@dimen/m35dp"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_keyboard_arrow_down_white_24dp"
+            android:src="@drawable/ic_down_arrow"
             android:background="@drawable/bg_upvote"
             />
     </LinearLayout>

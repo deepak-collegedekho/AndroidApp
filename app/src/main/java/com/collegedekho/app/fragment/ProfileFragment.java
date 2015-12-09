@@ -50,17 +50,24 @@ public class ProfileFragment extends  BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        if(MainActivity.user != null)
-        {
-            String name = MainActivity.user.getName();
+
             TextView mProfileName    =   (TextView)rootView.findViewById(R.id.user_name);
             CircleImageView mProfileImage = (CircleImageView)rootView.findViewById(R.id.profile_image);
             mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
             mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
-            if(name.equalsIgnoreCase("Anonymous User"))
+        if(MainActivity.user != null)
+        {
+            String name = MainActivity.user.getName();
+            if(name.contains("Anonymous User"))
             {
-                mProfileName.setText("");
-                mProfileName.setVisibility(View.INVISIBLE);
+                if(MainActivity.user.profileData[0] != null)
+                {
+                    mProfileName.setText(MainActivity.user.profileData[0]);
+                    mProfileName.setVisibility(View.VISIBLE);
+                }else {
+                    mProfileName.setText("");
+                    mProfileName.setVisibility(View.GONE);
+                }
             }else {
                 mProfileName.setText(name);
                 mProfileName.setVisibility(View.VISIBLE);
@@ -70,8 +77,6 @@ public class ProfileFragment extends  BaseFragment {
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
                 mProfileImage.setVisibility(View.VISIBLE);
             }
-            else
-                mProfileImage.setVisibility(View.GONE);
         }
 
         rootView.findViewById(R.id.prep_buddies).setOnClickListener(this);

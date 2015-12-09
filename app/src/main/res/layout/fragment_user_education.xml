@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"/>
     </RelativeLayout>
     </ScrollView>
-
+``
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -76,36 +76,27 @@
 
     <TextView
         style="@style/AppTheme.OrangeButton"
-        android:id="@+id/user_education_submit_button"
+        android:id="@+id/is_preparing_for_exam"
         android:layout_width="0dp"
-        android:layout_weight=".4"
-        android:layout_marginTop="0dp"
+        android:layout_weight=".5"
+        android:background="@color/primary_orange"
         android:layout_height="match_parent"
-        android:text="SUBMIT"/>
+        android:textSize="16sp"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:text="Preparing for exam"/>
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight=".6"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_gravity="center"
-        android:gravity="left">
     <TextView
-        android:layout_width="wrap_content"
+        style="@style/AppTheme.OrangeButton"
+        android:id="@+id/is_not_preparing_for_exam"
+        android:layout_width="0dp"
+        android:layout_weight=".5"
+        android:layout_marginLeft="@dimen/m1dp"
+        android:background="@color/primary_orange"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:text="Preparing for Exams"
-        android:paddingLeft="@dimen/m5dp"/>
-
-    <ToggleButton
-        android:id="@+id/is_user_preparing"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/bg_toggle_on_off"
-        android:textOff=""
-        android:textOn=""
-        android:layout_marginLeft="@dimen/m15dp"/>
-</LinearLayout>
+        android:textSize="16sp"
+        android:text="Not Preparing"
+        />
 
 </LinearLayout>
 
