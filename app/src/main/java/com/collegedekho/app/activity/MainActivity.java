@@ -668,7 +668,6 @@ public class MainActivity extends AppCompatActivity
         return super.onPrepareOptionsMenu(menu);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -3374,7 +3373,7 @@ public class MainActivity extends AppCompatActivity
                 " }";
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
-            this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)),false,ExamsFragment.class.toString() );
+            this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)),false,ExamsFragment.class.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

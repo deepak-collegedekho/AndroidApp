@@ -32,9 +32,8 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
 
     @Override
     public ExamHolderView onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
+        LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
         View convertView = inflater.inflate(R.layout.layout_exam_drop_down, parent, false);
-
         return new ExamHolderView(convertView);
     }
 
@@ -57,9 +56,18 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                 holder.mYearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        exam.setSelected(true);
-                        holder.mExamName.setBackground(mContext.getResources().getDrawable(R.drawable.bg_exam_border_orange));
-
+                        //exam.setSelected(true);
+                        holder.mYearSpinner.setSelected(!holder.mYearSpinner.isSelected());
+                        /*if (holder.mYearSpinner.isSelected())
+                        {
+                            holder.mExamName.setSelected(false);
+                            holder.mYearSpinner.setSelected(false);
+                        }
+                        else
+                        {
+                            holder.mExamName.setSelected(true);
+                            holder.mYearSpinner.setSelected(true);
+                        }*/
                     }
 
                     @Override
@@ -67,14 +75,23 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
 
                     }
                 });
+
+                holder.mExamName.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        if (holder.mExamName.isSelected())
+                        {
+                            holder.mExamName.setSelected(false);
+                            holder.mYearSpinner.setSelected(false);
+                        }
+                        else{
+                            holder.mExamName.setSelected(true);
+                            if(!holder.mYearSpinner.isSelected())
+                                holder.mYearSpinner.performClick();
+                        }
+                    }
+                });
             }
-
-            if (exam.isSelected())
-                 holder.mExamName.setBackground(mContext.getResources().getDrawable(R.drawable.bg_exam_border_orange));
-            else
-                holder.mExamName.setBackground(mContext.getResources().getDrawable(R.drawable.bg_exam_border));
-
-
         }
     }
 

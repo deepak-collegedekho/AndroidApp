@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:gravity="center"
+    android:background="@color/app_background"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/layout_profile_image"
+        android:id="@+id/profile_image_layout"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"/>
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profile_image_layout"
+        android:text="Sashi Negi"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:padding="10dp"
+        android:textSize="18sp"/>
+
+    <RelativeLayout
+        android:id="@+id/profile_progressRL"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/user_name"
+        android:layout_marginLeft="@dimen/m100dp"
+        android:padding="10dp"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/profile_progressLL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="@color/primary_orange"
+                android:text="PROGRESS"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:text="LAST SEVEN DAYS"/>
+        </LinearLayout>
+        <TextView
+            android:layout_toRightOf="@id/profile_progressLL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:paddingLeft="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:text="24%"
+            />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/login_countRL"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/profile_progressRL"
+        android:layout_marginLeft="@dimen/m100dp"
+        android:padding="@dimen/m10dp"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/login_countLL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="@color/primary_orange"
+                android:text="LOGINS"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:text="LAST SEVEN DAYS"/>
+        </LinearLayout>
+        <TextView
+            android:layout_toRightOf="@id/login_countLL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:paddingLeft="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:text="24%"/>
+
+    </RelativeLayout>
+
+    <include layout="@layout/layout_bottom_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

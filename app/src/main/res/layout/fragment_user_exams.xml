@@ -5,14 +5,6 @@
     android:paddingTop="50dp"
     android:layout_height="match_parent">
 
-    <include layout="@layout/layout_points_header"
-        android:id="@+id/points_layout"
-        android:layout_width="wrap_content"
-        android:layout_marginRight="@dimen/m30dp"
-        android:layout_marginLeft="@dimen/m30dp"
-        android:layout_marginBottom="@dimen/m10dp"
-        android:layout_height="wrap_content"/>
-
     <TextView
         android:id="@+id/exam_textview"
         android:layout_width="match_parent"
@@ -47,13 +39,14 @@
        <android.support.v7.widget.RecyclerView
             android:id="@+id/exams_recycle_view"
             android:layout_width="match_parent"
-           android:layout_below="@id/exam_image"
-           android:background="@color/white"
-           android:layout_above="@id/exams_submit_button"
+            android:layout_below="@id/exam_image"
+            android:background="@color/white"
+            android:layout_above="@id/exams_submit_button"
             android:layout_height="wrap_content"
-           android:paddingLeft="@dimen/m10dp"
-           android:paddingTop="@dimen/m10dp"
+            android:paddingLeft="@dimen/m10dp"
+            android:paddingTop="@dimen/m10dp"
             android:gravity="center"
-            android:scrollbars="none"/>
+            android:scrollbars="none"
+           />
 
 </RelativeLayout>

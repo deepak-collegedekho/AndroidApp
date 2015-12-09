@@ -1,10 +1,13 @@
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +28,7 @@ import java.util.HashMap;
  */
 public class ExamsFragment extends BaseFragment {
 
-    private final String TAG = "Exam Frgament";
+    private final String TAG = "ExamsFragment";
     private static String PARAM1 = "param1";
 
     private ArrayList<Exam> mExamList ;
@@ -41,7 +44,6 @@ public class ExamsFragment extends BaseFragment {
         args.putParcelableArrayList(PARAM1,examsList);
         fragment.setArguments(args);
         return fragment;
-
     }
 
     @Override
@@ -75,12 +77,20 @@ public class ExamsFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_user_exams, container, false);
-        ((TextView)rootView.findViewById(R.id.points_test_view)).setText("YOU  HAVE EARNED FOR SHARING YOUR DETAIL");
+        //((TextView)rootView.findViewById(R.id.points_test_view)).setText("YOU HAVE EARNED FOR SHARING YOUR DETAIL");
         RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.exams_recycle_view);
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),2);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
+        /*layoutManager.setSpanCount(new GridLayoutManager.SpanSizeLookup(){
+            @Override
+            public int getSpanSize(int position) {
+                return position % 2 == 0 ? 2 : 1;
+            }
+        });*/
+
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(5, 10, true));
-        recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 10, true));
+        //recyclerView.setHasFixedSize(true);
 
         ExamsAdapter mAdapter = new ExamsAdapter(getActivity(), this.mExamList);
         recyclerView.setAdapter(mAdapter);
@@ -132,7 +142,6 @@ public class ExamsFragment extends BaseFragment {
 
     private void onExamsSelected() {
         if(this.mListener != null) {
-
             HashMap<String, String> params = new HashMap<>();
             if(mExamList != null && !mExamList.isEmpty()) {
                 for (Exam exam:mExamList) {
