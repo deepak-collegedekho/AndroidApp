@@ -94,16 +94,18 @@ final class MWheelOptions {
 
         // 选项3
         wv_option3 = (LoopView) view.findViewById(R.id.j_options3);
-        if (!mOptions3Items.isEmpty()) {
-            wv_option3.setArrayList(mOptions3Items.get(0).get(0));
-            wv_option3.setCurrentItem(0);
-            wv_option3.setNotLoop();
-            wv_option3.setListener(new LoopListener() {
-                @Override
-                public void onItemSelect(int item) {
-                    doItemChange();
-                }
-            });
+        if (mOptions3Items != null && !mOptions3Items.isEmpty()) {
+            if(mOptions3Items.get(0) != null && !mOptions3Items.get(0).isEmpty()) {
+                wv_option3.setArrayList(mOptions3Items.get(0).get(0));
+                wv_option3.setCurrentItem(0);
+                wv_option3.setNotLoop();
+                wv_option3.setListener(new LoopListener() {
+                    @Override
+                    public void onItemSelect(int item) {
+                        doItemChange();
+                    }
+                });
+            }
         }
 
         if (mOptions2Items.isEmpty())

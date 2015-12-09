@@ -165,10 +165,14 @@ public class TabFragment extends  BaseFragment {
         if(this.selectedTabMenuPosition == 0){
             prepBuddies.setSelected(true);
             firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
+            secondSubMenuIV.setImageResource(R.drawable.ic_challenges);
             thirdSubMenuIV.setImageResource(R.drawable.ic_syllabus);
+            fourthSubMenuIV.setImageResource(R.drawable.ic_prep_path);
 
             firstSubMenuTV.setText("Test Calendar");
+            secondSubMenuTV.setText("Challenges");
             thirdSubMenuTV.setText("Syllabus");
+            fourthSubMenuTV.setText("Prep Path");
 
         }else   if(this.selectedTabMenuPosition == 1){
             resourceBuddies.setSelected(true);
@@ -178,7 +182,9 @@ public class TabFragment extends  BaseFragment {
             fourthSubMenuIV.setImageResource(R.drawable.ic_qna);
 
             firstSubMenuTV.setText("Institutes");
+            secondSubMenuTV.setText("News");
             thirdSubMenuTV.setText("Article");
+            fourthSubMenuTV.setText("Qna");
 
         }else   if(this.selectedTabMenuPosition == 2){
             futureBuddies.setSelected(true);

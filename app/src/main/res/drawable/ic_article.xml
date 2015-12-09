@@ -1,7 +1,7 @@
 <!-- res/drawable/qna.xml -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:height="50dp"
-    android:width="50dp"
+    android:height="40dp"
+    android:width="40dp"
     android:viewportHeight="500"
     android:viewportWidth="500">
 

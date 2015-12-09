@@ -23,17 +23,18 @@ public class CoverFlowAdapter extends BaseAdapter {
 	}
 	
 	public void setData(ArrayList<GameEntity> data) {
-		mData = data;
+
+		this.mData = data;
 	}
 	
 	@Override
 	public int getCount() {
-		return mData.size();
+		return this.mData.size();
 	}
 
 	@Override
 	public Object getItem(int pos) {
-		return mData.get(pos);
+		return this.mData.get(pos);
 	}
 
 	@Override
@@ -52,16 +53,16 @@ public class CoverFlowAdapter extends BaseAdapter {
 
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.text = (TextView) rowView.findViewById(R.id.label);
-            viewHolder.image = (ImageView) rowView
-                    .findViewById(R.id.image);
+            viewHolder.image = (ImageView) rowView.findViewById(R.id.image);
             rowView.setTag(viewHolder);
         }
 
-        ViewHolder holder = (ViewHolder) rowView.getTag();
 
+        ViewHolder holder = (ViewHolder) rowView.getTag();
         holder.image.setImageResource(mData.get(position).imageResId);
         holder.text.setText(mData.get(position).titleResId);
 
+		rowView.setTag(R.integer.carousal_item_position, position);
 		return rowView;
 	}
 

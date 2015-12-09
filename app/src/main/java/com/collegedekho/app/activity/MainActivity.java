@@ -2701,10 +2701,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 int count = getSupportFragmentManager().getBackStackEntryCount();
                 if (count >= 1) {
-                    if (isLastFragment())
-                        mClearBackStack();
-                    else
-                        getSupportFragmentManager().popBackStack();
+                         getSupportFragmentManager().popBackStack();
                 } else {
                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                     if(!drawer.isDrawerOpen(GravityCompat.START))
@@ -2725,10 +2722,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } /*else if(this.isLastFragment())
+        } else if(this.isLastFragment())
         {
             this.mClearBackStack();
-        }*/
+        }
         else if(!Constants.READY_TO_CLOSE) {
             Constants.READY_TO_CLOSE = true;
             Utils.DisplayToast(getApplicationContext(), "Press again to close CollegeDekho");

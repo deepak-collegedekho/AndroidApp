@@ -53,7 +53,7 @@ public class InstituteDetailFragment extends BaseFragment {
     ArrayList<ArrayList<InstituteCourse>> courses;
     private Institute mInstitute;
     private InstitutePagerAdapter mDetailsAdapter;
-    private FooterPagerAdapter mFooterAdapter;
+    private FooterPagerAdapter mFo54oterAdapter;
     //private TabLayout tabLayout;
     private ViewPager mDetailsPager;
     private ViewPager mFooterPager;
@@ -137,6 +137,8 @@ public class InstituteDetailFragment extends BaseFragment {
         this.mCoverFlow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                //int itemPosition = (int) view.getTag(R.integer.carousal_item_position);
                 switch (position)
                 {
                     case InstituteDetailFragment.Videos:
