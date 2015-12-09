@@ -18,7 +18,12 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamsAdapter;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,23 +59,7 @@ public class ExamsFragment extends BaseFragment {
         {
             this.mExamList = args.getParcelableArrayList(PARAM1);
         }
-      /*  // for demo
-        this.mExamList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            Exam obj = new Exam();
-            obj.setExam("EXAM "+i);
-            ArrayList<ExamDetail> detailList = new ArrayList<ExamDetail>();
-            for (int j = 0; j <4 ; j++) {
-                ExamDetail detailObj = new ExamDetail();
-                detailObj.setYear("2015+j");
-                detailObj.setExam_date("2015-06-14T00:00:00");
-                if(i%2 ==0)detailObj.setResult_out(true);
-                detailList.add(detailObj);
-            }
-            obj.setExam_details(detailList);
-            if(i%2 ==0)obj.setSelected(true);
-            this.mExamList.add(obj);
-        }*/
+
     }
 
     @Nullable
@@ -142,20 +131,34 @@ public class ExamsFragment extends BaseFragment {
 
     private void onExamsSelected() {
         if(this.mListener != null) {
-            HashMap<String, String> params = new HashMap<>();
+            JSONObject parentJsonObject=new JSONObject();
+            JSONArray parentArray=new JSONArray();
             if(mExamList != null && !mExamList.isEmpty()) {
                 for (Exam exam:mExamList) {
                     if(exam == null)continue;
-                   ArrayList<ExamDetail> detailList = exam.getExam_details();
-                    if(detailList != null && !detailList.isEmpty()) {
-                        for (ExamDetail examDetailObj:detailList) {
+                        ArrayList<ExamDetail> detailList = exam.getExam_details();
+                            if(detailList != null && !detailList.isEmpty()) {
+                                for (ExamDetail examDetailObj:detailList) {
+                                    JSONObject examHash = new JSONObject();
+                                    try {
+                                        examHash.putOpt(Constants.EXAM_ID,examDetailObj.getId());
+                                        examHash.putOpt(Constants.MARKS,examDetailObj.getExam_marks());
+                                        parentArray.put(examHash);
 
-                        }
-                        }
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
 
+                                }
+                            }
                 }
             }
-            this.mListener.onExamsSelected(params);
+            try {
+                parentJsonObject.put(Constants.RESULTS,parentArray);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            this.mListener.onExamsSelected(parentJsonObject);
         }
     }
 
@@ -170,7 +173,7 @@ public class ExamsFragment extends BaseFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public  interface OnExamsSelectListener {
-        void onExamsSelected(HashMap<String, String> params);
+        void onExamsSelected(JSONObject params);
     }
 
 }

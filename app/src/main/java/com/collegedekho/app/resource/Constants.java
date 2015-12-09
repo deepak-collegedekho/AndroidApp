@@ -27,6 +27,7 @@ public class Constants
     public static final String TAG_USER_REGISTRATION = "user_registration";
     public static final String TAG_EDUCATION_DETAILS_SUBMIT = "user_education_submit";
     public static final String TAG_EXAMS_LIST = "exams_list";
+    public static final String TAG_SUBMIT_EXAMS_LIST = "submit_exams_list";
     public static final String TAG_LOAD_STREAM = "load_stream";
     public static final String TAG_USER_EDUCATION = "load_user_education";
     public static final String TAG_UPDATE_STREAM = "update_stream";
@@ -181,6 +182,11 @@ public class Constants
     public static final String USER_LINK = "link";
     public static final String USER_EXPIRE_AT = "expires_at";
     public static final String USER_DEVICE_ID = "device_id";
+
+    public static final String EXAM_ID = "exam_id";
+    public static final String MARKS = "marks";
+    public static final String RESULTS = "results";
+
 
     public static final String APPLY_YEAR = "year_of_admission";
     public static final String APPLY_COURSE = "institute_course";

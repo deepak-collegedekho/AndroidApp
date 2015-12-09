@@ -42,4 +42,7 @@
     <string name="qna_title">QnA</string>
     <string name="news_title">News</string>
     <string name="article_title">Articles</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">CANCEL</string>
 </resources>

@@ -11,6 +11,7 @@ public class ExamDetail implements Parcelable
     private String year;
     private String exam_date;
     private boolean result_out;
+    private String exam_marks="";
 
     public ExamDetail(){
         // required empty cons
@@ -79,5 +80,13 @@ public class ExamDetail implements Parcelable
 
     public void setResult_out(boolean result_out) {
         this.result_out = result_out;
+    }
+
+    public void setExam_marks(String marks){
+        this.exam_marks=marks;
+    }
+
+    public String getExam_marks(){
+        return exam_marks;
     }
 }

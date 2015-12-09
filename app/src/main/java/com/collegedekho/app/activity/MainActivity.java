@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.content.SharedPreferences;
@@ -247,6 +248,7 @@ public class MainActivity extends AppCompatActivity
     static String type = "";
     static String resource_uri = "";
     private  HashMap<String, String> mUserSignUPParams;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -622,6 +624,11 @@ public class MainActivity extends AppCompatActivity
         }else  if(position  == 5){
             onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL+"personalize/forums");
         }
+        if(position==1){
+            hideMenuOption(R.id.action_home);
+        }else {
+            showMenuOption(R.id.action_home);
+        }
         return true;
     }
 
@@ -647,8 +654,23 @@ public class MainActivity extends AppCompatActivity
         }*/
 
         getMenuInflater().inflate(R.menu.main, menu);
-
+        this.menu=menu;
+    hideMenuOption(R.id.action_home);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void hideMenuOption(int id)
+    {
+        MenuItem item = this.menu.findItem(id);
+        item.setVisible(false);
+        invalidateOptionsMenu();
+    }
+
+    private void showMenuOption(int id)
+    {
+        MenuItem item = this.menu.findItem(id);
+        item.setVisible(true);
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -1254,6 +1276,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_EXAMS_LIST:
                 this.mOnExamsLoaded(response);
+                break;
+            case Constants.TAG_SUBMIT_EXAMS_LIST:
+                this.mOnExamsSubmitted(response);
                 break;
         }
 
@@ -2729,6 +2754,7 @@ public class MainActivity extends AppCompatActivity
         else if(!Constants.READY_TO_CLOSE) {
             Constants.READY_TO_CLOSE = true;
             Utils.DisplayToast(getApplicationContext(), "Press again to close CollegeDekho");
+            baskpressHandler.postDelayed(backpressRunnable,1500);
         }
         else {
             super.onBackPressed();
@@ -3176,8 +3202,8 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onEducationSelected(HashMap<String, String> params) {
-       //this.mMakeNetworkCall(Constants.TAG_EDUCATION_DETAILS_SUBMIT, Constants.BASE_URL + "user-education/", params);
-       mOnExamsLoaded("");
+       this.mMakeNetworkCall(Constants.TAG_EDUCATION_DETAILS_SUBMIT, Constants.BASE_URL + "user-education/", params);
+//       mOnExamsLoaded("");
     }
 
     /**
@@ -3194,190 +3220,6 @@ public class MainActivity extends AppCompatActivity
      * @param responseJson
      */
     private void mOnExamsLoaded(String responseJson) {
-        responseJson = " {\n" +
-                " \t\"results\": [{\n" +
-                " \t\t\"exam_details\": [{\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 11,\n" +
-                " \t\t\t\"year\": 2015\n" +
-                " \t\t}],\n" +
-                " \t\t\"exam\": \"CAT\"\n" +
-                " \t}, {\n" +
-                " \t\t\"exam_details\": [{\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2013-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 12,\n" +
-                " \t\t\t\"year\": 2013\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 1,\n" +
-                " \t\t\t\"exam_date\": \"2014-05-02T00:00:00\",\n" +
-                " \t\t\t\"id\": 13,\n" +
-                " \t\t\t\"year\": 2014\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 14,\n" +
-                " \t\t\t\"year\": 2015\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2016-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 15,\n" +
-                " \t\t\t\"year\": 2016\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2017-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 16,\n" +
-                " \t\t\t\"year\": 2017\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2018-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 17,\n" +
-                " \t\t\t\"year\": 2018\n" +
-                " \t\t}],\n" +
-                " \t\t\"exam\": \"SET - Symbiosis Entrance Test\"\n" +
-                " \t}, {\n" +
-                " \t\t\"exam_details\": [{\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2013-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 18,\n" +
-                " \t\t\t\"year\": 2013\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 1,\n" +
-                " \t\t\t\"exam_date\": \"2014-05-02T00:00:00\",\n" +
-                " \t\t\t\"id\": 19,\n" +
-                " \t\t\t\"year\": 2014\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 20,\n" +
-                " \t\t\t\"year\": 2015\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2016-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 21,\n" +
-                " \t\t\t\"year\": 2016\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2017-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 22,\n" +
-                " \t\t\t\"year\": 2017\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2018-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 23,\n" +
-                " \t\t\t\"year\": 2018\n" +
-                " \t\t}],\n" +
-                " \t\t\"exam\": \"MAT - Management Aptitute Test\"\n" +
-                " \t}, {\n" +
-                " \t\t\"exam_details\": [{\n" +
-                " \t\t\t\"result_out\": 1,\n" +
-                " \t\t\t\"exam_date\": \"2013-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 24,\n" +
-                " \t\t\t\"year\": 2013\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 1,\n" +
-                " \t\t\t\"exam_date\": \"2014-05-02T00:00:00\",\n" +
-                " \t\t\t\"id\": 25,\n" +
-                " \t\t\t\"year\": 2014\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 1,\n" +
-                " \t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 26,\n" +
-                " \t\t\t\"year\": 2015\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2016-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 27,\n" +
-                " \t\t\t\"year\": 2016\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2017-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 28,\n" +
-                " \t\t\t\"year\": 2017\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2018-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 29,\n" +
-                " \t\t\t\"year\": 2018\n" +
-                " \t\t}],\n" +
-                " \t\t\"exam\": \"AIEEE - Symbiosis Entrance Test\"\n" +
-                " \t}, {\n" +
-                " \t\t\"exam_details\": [{\n" +
-                " \t\t\t\"result_out\": 1,\n" +
-                " \t\t\t\"exam_date\": \"2013-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 30,\n" +
-                " \t\t\t\"year\": 2013\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 1,\n" +
-                " \t\t\t\"exam_date\": \"2014-05-02T00:00:00\",\n" +
-                " \t\t\t\"id\": 31,\n" +
-                " \t\t\t\"year\": 2014\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 1,\n" +
-                " \t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 32,\n" +
-                " \t\t\t\"year\": 2015\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2016-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 33,\n" +
-                " \t\t\t\"year\": 2016\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2017-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 34,\n" +
-                " \t\t\t\"year\": 2017\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2018-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 35,\n" +
-                " \t\t\t\"year\": 2018\n" +
-                " \t\t}],\n" +
-                " \t\t\"exam\": \"JEE- Joint Entrance Exam\"\n" +
-                " \t}, {\n" +
-                " \t\t\"exam_details\": [{\n" +
-                " \t\t\t\"result_out\": 1,\n" +
-                " \t\t\t\"exam_date\": \"2013-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 36,\n" +
-                " \t\t\t\"year\": 2013\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 1,\n" +
-                " \t\t\t\"exam_date\": \"2014-05-02T00:00:00\",\n" +
-                " \t\t\t\"id\": 37,\n" +
-                " \t\t\t\"year\": 2014\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 1,\n" +
-                " \t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 38,\n" +
-                " \t\t\t\"year\": 2015\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2016-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 39,\n" +
-                " \t\t\t\"year\": 2016\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2017-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 40,\n" +
-                " \t\t\t\"year\": 2017\n" +
-                " \t\t}, {\n" +
-                " \t\t\t\"result_out\": 0,\n" +
-                " \t\t\t\"exam_date\": \"2018-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 41,\n" +
-                " \t\t\t\"year\": 2018\n" +
-                " \t\t}],\n" +
-                " \t\t\"exam\": \"GATE - Gratuate Aptitute Test in Engineering\"\n" +
-                " \t}, {\n" +
-                " \t\t\"exam_details\": [{\n" +
-                " \t\t\t\"result_out\": 1,\n" +
-                " \t\t\t\"exam_date\": \"2015-06-14T00:00:00\",\n" +
-                " \t\t\t\"id\": 42,\n" +
-                " \t\t\t\"year\": 2015\n" +
-                " \t\t}],\n" +
-                " \t\t\"exam\": \"JAT - Joint Admission Test\"\n" +
-                " \t}]\n" +
-                " }";
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
             this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)),false,ExamsFragment.class.toString());
@@ -3392,8 +3234,9 @@ public class MainActivity extends AppCompatActivity
      * @param params
      */
     @Override
-    public void onExamsSelected(HashMap<String, String> params) {
-           mLoadUserProfile("");
+    public void onExamsSelected(JSONObject params) {
+        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "yearly-exams/",params,1);
+         //  mLoadUserProfile("");
     }
     /**
      * This method is load user profile after
@@ -3489,5 +3332,16 @@ public class MainActivity extends AppCompatActivity
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
+    private void mOnExamsSubmitted(String response){
+
+    }
+
+    Handler baskpressHandler=new Handler();
+    Runnable backpressRunnable=new Runnable() {
+        @Override
+        public void run() {
+      Constants.READY_TO_CLOSE=false;
+        }
+    };
 
 }
