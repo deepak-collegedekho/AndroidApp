@@ -22,8 +22,11 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- To keep phone awake -->
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
-
-    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <!-- To read contacts list -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- For haptic feedback -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <!-- Get wifi radio state -->
 
     <application
         android:name="android.support.multidex.MultiDexApplication"

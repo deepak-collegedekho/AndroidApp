@@ -211,6 +211,7 @@ public class Constants
     public static final String ACTION_FILTER_APPLIED = "action_filter_applied";
     public static final String ACTION_ARTICLE_SELECTED = "action_article_selected";
     public static final String ACTION_NEWS_SELECTED = "action_news_selected";
+    public static final String ACTION_SCREEN_SELECTED = "action_screen_selected";
 
     //String messages
     public static final String EMAIL_PASSOWRD_NOT_EXISTS ="The e-mail address and/or password you specified are not correct.";
@@ -231,5 +232,11 @@ public class Constants
     public static final String CONNECTO_LEVEL_SELECTED = "level_selected";
     public static final String CONNECTO_STREAM_UPDATED = "stream_updated";
     public static final String CONNECTO_LEVEL_UPDATED = "level_updated";
+
+    public static final String VOTE_TYPE = "vote_type";
+    public static final String SCREEN_NAME = "screen_name";
+    public static final String LAST_SCREEN_NAME = "last_screen_name";
+
+
 
 }
