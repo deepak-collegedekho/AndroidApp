@@ -46,7 +46,7 @@
             android:orientation="vertical"
             app:cardCornerRadius="@dimen/corner_radius"
             app:cardElevation="@dimen/cardview_default_elevation"
-            android:background="@drawable/ic_chat_bubble_outline"
+            android:background="@drawable/ic_chat_inline"
             app:cardUseCompatPadding="true">
             <LinearLayout
                 android:id="@+id/my_fb_comment_container"

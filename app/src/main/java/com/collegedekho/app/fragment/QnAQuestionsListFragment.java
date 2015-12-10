@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.collegedekho.app.widget.GridSpacingItemDecoration;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class QnAQuestionsListFragment extends BaseFragment {
     public static final String TITLE = "QnA";
@@ -40,11 +42,13 @@ public class QnAQuestionsListFragment extends BaseFragment {
     private int mViewType = Constants.VIEW_INTO_LIST;
     private OnQnAQuestionSelectedListener mListener;
 
-    public static QnAQuestionsListFragment newInstance(ArrayList<QnAQuestions> qnaQuestions)
+    public static QnAQuestionsListFragment newInstance(ArrayList<QnAQuestions> qnaQuestions, String next)
     {
         QnAQuestionsListFragment fragment = new QnAQuestionsListFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(ARG_PARAM1, qnaQuestions);
+        args.putString(ARG_NEXT, next);
+        fragment.setArguments(args);
         fragment.setArguments(args);
 
         return fragment;
@@ -59,6 +63,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mQnAQuestions = getArguments().getParcelableArrayList(ARG_PARAM1);
+            mNextUrl = getArguments().getString(ARG_NEXT);
         }
     }
 
@@ -68,39 +73,41 @@ public class QnAQuestionsListFragment extends BaseFragment {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_qna_questions_list, container, false);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
+        progressBarLL = (LinearLayout) rootView.findViewById(R.id.progressBarLL);
 
-       // BottomSheetLayout bottomSheetLayout = (BottomSheetLayout)rootView.findViewById(R.id.)
+
+        // BottomSheetLayout bottomSheetLayout = (BottomSheetLayout)rootView.findViewById(R.id.)
                 (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
         (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
 
-        RecyclerView questionsListView = (RecyclerView) rootView.findViewById(R.id.institute_questions_list);
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_questions_list);
 
         if(this.mViewType == Constants.VIEW_INTO_GRID) {
-            questionsListView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-            questionsListView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
+            layoutManager = new GridLayoutManager(getActivity(), 2);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
         }
         else {
-            questionsListView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-            questionsListView.setItemAnimator(new DefaultItemAnimator());
+            layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
         }
         this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestions, this.mViewType);
-        questionsListView.setAdapter(this.mAdapter);
-        //questionsListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        recyclerView.setAdapter(this.mAdapter);
+        //recyclerView.addOnScrollListener(scrollListener);
         updateViewTypeIcon(rootView, this.mViewType);
+
         if (mQnAQuestions.size() == 0)
         {
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setText("Couldn't find related questions for you. Like and Shortlist college");
-            questionsListView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
         }
         else
         {
             this.mEmptyTextView.setVisibility(View.GONE);
-            questionsListView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
         }
-
-
-
         (rootView.findViewById(R.id.institute_qna_button_ask_submit)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,6 +143,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        listener = null;
         System.gc();
     }
 
@@ -158,11 +166,13 @@ public class QnAQuestionsListFragment extends BaseFragment {
                 if(rootView != null && mViewType != Constants.VIEW_INTO_GRID) {
                     this.mViewType = Constants.VIEW_INTO_GRID;
                     RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_questions_list);
-                    recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                    layoutManager = new GridLayoutManager(getActivity(), 2);
+                    recyclerView.setLayoutManager(layoutManager);
                     this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestions, Constants.VIEW_INTO_GRID);
                     recyclerView.setAdapter(this.mAdapter);
                     recyclerView.setHasFixedSize(true);
-                    recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 10, true));
+                    recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, true));
+                   // recyclerView.addOnScrollListener(scrollListener);
                 }
 
                 break;
@@ -171,17 +181,27 @@ public class QnAQuestionsListFragment extends BaseFragment {
                 if(rootView1 != null && mViewType != Constants.VIEW_INTO_LIST) {
                     this.mViewType = Constants.VIEW_INTO_LIST;
                     RecyclerView recyclerView1 = (RecyclerView) rootView1.findViewById(R.id.institute_questions_list);
-                    recyclerView1.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+                    layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+                    recyclerView1.setLayoutManager(layoutManager);
                     this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestions, Constants.VIEW_INTO_LIST);
                     recyclerView1.setAdapter(this.mAdapter);
                     recyclerView1.setHasFixedSize(true);
                     recyclerView1.setItemAnimator(new DefaultItemAnimator());
+                    //recyclerView1.addOnScrollListener(scrollListener);
                 }
                 break;
             default:
                 break;
         }
         updateViewTypeIcon(getView(), this.mViewType);
+    }
+
+    public void updateList(List<QnAQuestions> institutes, String next) {
+        this.progressBarLL.setVisibility(View.GONE);
+        this.mQnAQuestions.addAll(institutes);
+        this.mAdapter.notifyDataSetChanged();
+        this.loading = false;
+        this.mNextUrl = next;
     }
 
     public QnAQuestions validateData(View rootView)
@@ -221,6 +241,10 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
         }
     }
+
+    public void updateLikeButtons(int position) {
+        mAdapter.updateLikeButtons(position);
+    }
     public void instituteQnAQuestionAdded(QnAQuestions ques)
     {
         if(this.mQnAQuestions == null)
@@ -243,9 +267,12 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
     }
 
-    public interface OnQnAQuestionSelectedListener {
+    public interface OnQnAQuestionSelectedListener extends BaseListener{
         void onQnAQuestionSelected(QnAQuestions qnaQuestion);
         void onQuestionAsked(QnAQuestions qnaQuestion);
+        @Override
+        void onEndReached(String next, int type);
+        void onQnAQuestionVote(int position, int voteType);
     }
 
 }

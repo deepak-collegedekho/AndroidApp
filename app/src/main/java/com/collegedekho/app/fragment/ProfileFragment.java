@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -15,6 +16,7 @@ import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircleImageView;
 
 import java.util.ArrayList;
@@ -137,7 +139,7 @@ public class ProfileFragment extends  BaseFragment {
         int position =0;
         switch (view.getId())
         {
-            case R.id.prep_buddies:
+            case R.id.prep_buddies:;
                 position = 0;
                 break;
             case R.id.resources_buddies:
@@ -147,8 +149,9 @@ public class ProfileFragment extends  BaseFragment {
                 position = 2;
                 break;
             case R.id.my_alerts:
-                position = 3;
-                break;
+                position = 4;
+                Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
+                return;
             default:
                 break;
         }

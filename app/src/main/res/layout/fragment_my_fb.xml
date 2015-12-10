@@ -87,6 +87,7 @@
             android:hint="enter your message"
             android:gravity="center_vertical"
             android:padding="5dp"
+            android:focusable="true"
             android:background="@android:color/transparent"
             />
         <com.melnykov.fab.FloatingActionButton

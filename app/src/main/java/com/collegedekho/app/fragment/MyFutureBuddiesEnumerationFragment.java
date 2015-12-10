@@ -1,6 +1,6 @@
 package com.collegedekho.app.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,14 +8,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.MyFBEnumerationAdapter;
 import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
+import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
     public static final String TITLE = "Forums";
@@ -27,10 +30,11 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
     private TextView mEmptyTextView;
     private MainActivity mMainActivity;
 
-    public static MyFutureBuddiesEnumerationFragment newInstance(ArrayList<MyFutureBuddiesEnumeration> fbEnumeration) {
+    public static MyFutureBuddiesEnumerationFragment newInstance(ArrayList<MyFutureBuddiesEnumeration> fbEnumeration, String next) {
         MyFutureBuddiesEnumerationFragment fragment = new MyFutureBuddiesEnumerationFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(ARG_PARAM1, fbEnumeration);
+        args.putString(ARG_NEXT, next);
         fragment.setArguments(args);
         return fragment;
     }
@@ -44,6 +48,8 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mFbEnumeration = getArguments().getParcelableArrayList(ARG_PARAM1);
+            mNextUrl = getArguments().getString(ARG_NEXT);
+            listType = Constants.FORUM_LIST_TYPE;
         }
     }
 
@@ -53,14 +59,17 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_my_future_buddies_enumeration, container, false);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
+        this.progressBarLL = (LinearLayout) rootView.findViewById(R.id.progressBarLL);
 
 
         RecyclerView fbEnumerationView = (RecyclerView) rootView.findViewById(R.id.fb_enumeration);
 
         this.mMyFBEnumerationAdapter = new MyFBEnumerationAdapter(getActivity(), this.mFbEnumeration);
-        fbEnumerationView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        layoutManager = new LinearLayoutManager(getActivity());
+        fbEnumerationView.setLayoutManager(layoutManager);
         fbEnumerationView.setAdapter(this.mMyFBEnumerationAdapter);
         fbEnumerationView.setItemAnimator(new DefaultItemAnimator());
+        fbEnumerationView.addOnScrollListener(scrollListener);
 
         if (this.mFbEnumeration.size() == 0)
         {
@@ -77,14 +86,22 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
         return rootView;
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-    }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            if(context instanceof  MainActivity)
+                listener = (OnMyFBSelectedListener)context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnMyFBSelectedListener");
+        }
+    }
     @Override
     public void onDetach() {
         super.onDetach();
+        listener = null;
         System.gc();
     }
 
@@ -104,8 +121,19 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
             this.mMainActivity.currentFragment = this;
     }
 
-    public interface OnMyFBSelectedListener {
+    public void updateList(List<MyFutureBuddiesEnumeration> myfbenumrationList, String next) {
+        this.progressBarLL.setVisibility(View.GONE);
+        this.mFbEnumeration.addAll(myfbenumrationList);
+        this.mMyFBEnumerationAdapter.notifyDataSetChanged();
+        this.loading = false;
+        this.mNextUrl = next;
+    }
+
+    public interface OnMyFBSelectedListener extends BaseListener{
         void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position, int commentsCount);
+
+        @Override
+        void onEndReached(String next, int type);
     }
 
     public void updateEnumerationList(int commentsSetSize, int myFbEnumerationIndex)
@@ -114,5 +142,6 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
 
         this.mMyFBEnumerationAdapter.notifyItemChanged(myFbEnumerationIndex);
         this.mMyFBEnumerationAdapter.notifyDataSetChanged();
+
     }
 }

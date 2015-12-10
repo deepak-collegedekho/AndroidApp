@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -136,7 +137,8 @@ public class TabFragment extends  BaseFragment {
                 break;
             case R.id.my_alerts:
                 this.selectedTabMenuPosition = 3;
-                break;
+                Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
+                return;
             case R.id.home_widget_first:
                 this.selectedSubMenuPosition = 0;
                 this.mUpdateSubMenuItem();
@@ -214,7 +216,10 @@ public class TabFragment extends  BaseFragment {
     }
 
     private void mUpdateSubMenuItem(){
-        if(selectedTabMenuPosition == 1){
+        if(selectedTabMenuPosition ==0 ){
+            Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
+        }
+        else if(selectedTabMenuPosition == 1){
              if(selectedSubMenuPosition == 0){
                  this.mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes");
              }else  if(selectedSubMenuPosition == 1){
@@ -225,6 +230,7 @@ public class TabFragment extends  BaseFragment {
                  this.mHomeItemSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna");
              }
         }
+
     }
 
     private void mHomeItemSelected(String requestType, String url)

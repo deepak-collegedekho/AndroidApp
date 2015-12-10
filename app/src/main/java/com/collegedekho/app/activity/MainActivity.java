@@ -37,6 +37,8 @@ import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -68,7 +70,6 @@ import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.BaseFragment;
-import com.collegedekho.app.fragment.MyAlertFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FilterFragment;
@@ -540,27 +541,20 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
-    public void loadInItDtata()
+    public void loadInItData()
     {
         if (user != null && user.getPref() == User.Prefs.STREAMKNOWN) {
-            // if user is anonymous  then logout social site
+            // if user is anonymous  then logout from facebook
             if(user.is_anony())
                 disconnectFromFacebook();
 
             if (!completedStage2)
                 MainActivity.this.mSetUserPref();
-                //else if(user.getStream() == null || user.getLevel() == null || user.getStream().isEmpty() || user.getLevel().isEmpty())
-                //  MainActivity.this.mSetUserPref();
             else
-            {
-               // MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
-                MainActivity.this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION, Constants.BASE_URL + "user-education/", null);
-            }
+                mLoadUserProfile();
         } else {
             disconnectFromFacebook();
              MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
-            //MainActivity.this.mDisplayFragment(HomeFragment.newInstance(), false, Constants.TAG_FRAGMENT_HOME);
-
         }
     }
 
@@ -675,13 +669,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // to hide the keyboard if visible
-        if (this.getCurrentFocus() != null && this.getCurrentFocus() instanceof EditText) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        }
-
-        if (currentFragment instanceof ProfileFragment) {
+        if(currentFragment instanceof ProfileFragment) {
             menu.getItem(0).setVisible(false);
         }
          else {
@@ -738,6 +726,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     private void mSetUserPref() {
         switch (user.getPref()) {
             case NOT_SURE:
@@ -746,6 +735,7 @@ public class MainActivity extends AppCompatActivity
             case STREAMKNOWN:
                 //this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
                 this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION, Constants.BASE_URL + "user-education/", null);
+
                 break;
         }
     }
@@ -779,6 +769,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * This method is used to update institutes list of next page
+     * @param response
+     */
+
     private void updateNextInstituteList(String response) {
         try {
             List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
@@ -791,6 +786,10 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
+    /**
+     * This method is used to update shorlist institutes list of next page
+     * @param response
+     */
     private void updateNextShortListedInstitutes(String response) {
         try {
             List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
@@ -803,12 +802,16 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
-
-    private void updateNewsList(String response) {
+    /**
+     * This method is used to update news list of next page
+     * @param response
+     */
+    private void updateNextNewsList(String response) {
         try {
             List<News> news = JSON.std.listOfFrom(News.class, extractResults(response));
             this.mNewsList.addAll(news);
             this.mParseSimilarNews(this.mNewsList);
+
             if (currentFragment instanceof NewsFragment) {
                 ((NewsFragment) currentFragment).updateList(news, this.next);
             }
@@ -816,8 +819,11 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
-
-    private void updateArticlesList(String response) {
+    /**
+     * This method is used to update articles list of next page
+     * @param response
+     */
+    private void updateNextArticlesList(String response) {
         try {
             List<Articles> articles = JSON.std.listOfFrom(Articles.class, extractResults(response));
             this.mArticlesList.addAll(articles);
@@ -825,6 +831,28 @@ public class MainActivity extends AppCompatActivity
             this.mParseSimilarArticle(this.mArticlesList);
             if (currentFragment instanceof ArticleFragment) {
                 ((ArticleFragment) currentFragment).updateList(articles, next);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+    /**
+     * This method is used to update qna list of next page
+     * @param response
+     */
+    private void updateNextQnaList(String response) {
+    }
+    /**
+     * This method is used to update qna list of next page
+     * @param response
+     */
+    private void updateNextForumsList(String response) {
+        try {
+            List<MyFutureBuddiesEnumeration> forumsList = JSON.std.listOfFrom(MyFutureBuddiesEnumeration.class, extractResults(response));
+            this.mFbEnumeration.addAll(forumsList);
+
+            if (currentFragment instanceof MyFutureBuddiesEnumerationFragment) {
+                ((MyFutureBuddiesEnumerationFragment) currentFragment).updateList(forumsList, next);
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -890,7 +918,7 @@ public class MainActivity extends AppCompatActivity
     private void mShowMyFBEnumeration(String response) {
         try {
             this.mFbEnumeration = JSON.std.listOfFrom(MyFutureBuddiesEnumeration.class, this.extractResults(response));
-            this.mDisplayFragment(MyFutureBuddiesEnumerationFragment.newInstance(new ArrayList<>(this.mFbEnumeration)), true, Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
+            this.mDisplayFragment(MyFutureBuddiesEnumerationFragment.newInstance(new ArrayList<>(this.mFbEnumeration), next), true, Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1105,6 +1133,13 @@ public class MainActivity extends AppCompatActivity
             case Constants.WIDGET_ARTICES:
                 this.mDisplayArticles(response);
                 break;
+            case Constants.TAG_LOAD_QNA_QUESTIONS:
+                this.mQnAQuestions.clear();
+                this.mShowQnAQuestions(response);
+                break;
+            case Constants.WIDGET_FORUMS:
+                this.mShowMyFBEnumeration(response);
+                break;
             case Constants.TAG_LOAD_COURSES:
                 this.mUpdateCourses(response);
                 break;
@@ -1132,10 +1167,16 @@ public class MainActivity extends AppCompatActivity
                 this.updateNextShortListedInstitutes(response);
                 break;
             case Constants.TAG_NEXT_NEWS:
-                this.updateNewsList(response);
+                this.updateNextNewsList(response);
                 break;
             case Constants.TAG_NEXT_ARTICLES:
-                this.updateArticlesList(response);
+                this.updateNextArticlesList(response);
+                break;
+            case Constants.TAG_NEXT_QNA_LIST:
+                this.updateNextQnaList(response);
+                break;
+            case Constants.TAG_NEXT_FORUMS_LIST:
+                this.updateNextForumsList(response);
                 break;
             case Constants.TAG_SHORTLIST_INSTITUTE:
                 if (tags.length == 2)
@@ -1163,16 +1204,19 @@ public class MainActivity extends AppCompatActivity
                 }
                 this.updateLikeButton(response, extraTag, Integer.parseInt(like));
                 break;
+            case Constants.TAG_QUESTION_LIKE_DISLIKE:
+                if (tags.length == 2)
+                    extraTag = tags[1];
+                if (tags.length == 3) {
+                    extraTag = tags[1];
+                    like = tags[2];
+                }
+                this.updateQuestionLikeButton(response, extraTag, Integer.parseInt(like));
+                break;
             case Constants.TAG_LOAD_PYSCHOMETRIC_TEST:
                 this.loadPyschometricTest(response);
                 break;
-            case Constants.TAG_LOAD_QNA_QUESTIONS:
-                this.mQnAQuestions.clear();
-                this.mShowQnAQuestions(response);
-                break;
-            case Constants.WIDGET_FORUMS:
-                this.mShowMyFBEnumeration(response);
-                break;
+
             case Constants.ACTION_VOTE_QNA_QUESTION_ENTITY:
                 if (tags.length == 3) {
                     parentIndex = tags[1];
@@ -1242,6 +1286,7 @@ public class MainActivity extends AppCompatActivity
 
                     this.mStreamAndLevelSelected(response, parentIndex, childIndex, extraTag);
                 }
+                this.mLoadUserProfile();
                 break;
             case Constants.TAG_UPDATE_PREFRENCES:
                 this.mStreamAndLevelUpdated(response);
@@ -1286,12 +1331,14 @@ public class MainActivity extends AppCompatActivity
             this.progressDialog.dismiss();
     }
 
-
-    private void mDisplayUserEducationFragment(String response)
-    {
-        try
-        {
-
+    /**
+     * This method is used to provide education level
+     * and user will select current education  and request for exams
+     * relative to his/her education
+     * @param response
+     */
+    private void mDisplayUserEducationFragment(String response){
+        try {
             response = response.substring(10, response.length() - 1);
             ArrayList<UserEducation> userEducationList = (ArrayList<UserEducation>) JSON.std.listOfFrom(UserEducation.class, response);
 
@@ -1373,6 +1420,7 @@ public class MainActivity extends AppCompatActivity
         //Send event to connecto for stream and level selection
         this.connecto.track("Stream Selected", new Properties().putValue(Constants.USER_STREAM_NAME, user.getStream_name()));
         this.connecto.track("Level Selected", new Properties().putValue(Constants.USER_LEVEL_NAME, user.getLevel_name()));
+
     }
 
     private void mUpdateUserPref(String response) {
@@ -1434,6 +1482,26 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
     }
+
+
+    private void updateQuestionLikeButton(String response, String extraTag, int like) {
+
+        if(this.mQnAQuestions == null ) return;
+        QnAQuestions qnaQuestion = this.mQnAQuestions.get(Integer.parseInt(extraTag));
+        if(like != Constants.NEITHER_LIKE_NOR_DISLIKE){
+
+            qnaQuestion.setCurrent_user_vote_type(like);
+            if(like == Constants.LIKE_THING){
+            qnaQuestion.setUpvotes(qnaQuestion.getUpvotes()+1);
+        }
+        else if(like == Constants.DISLIKE_THING){
+                qnaQuestion.setUpvotes(qnaQuestion.getUpvotes()-1);
+         }
+        }
+        if(currentFragment instanceof  QnAQuestionsListFragment)
+            currentFragment.updateLikeButtons(Integer.parseInt(extraTag));
+    }
+
 
     private void updateLikeButton(String response, String extraTag, int like) {
         Institute institute = null;
@@ -1731,7 +1799,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mShowQnAQuestions(String response) {
-        this.mDisplayFragment(QnAQuestionsListFragment.newInstance((this.parseAndReturnQnAList(response))), true, Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
+        this.mDisplayFragment(QnAQuestionsListFragment.newInstance((this.parseAndReturnQnAList(response)), next), true, Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
     }
 
 
@@ -1914,7 +1982,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mOnCourseLevelSelected(int level, String streamURI, String streamName) {
-
         //get device id
         String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -1931,8 +1998,7 @@ public class MainActivity extends AppCompatActivity
             MainActivity.user.setStream_name(streamName);
 
         this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, Constants.BASE_URL + "preferences/", hashMap);
-
-        this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
+        //this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
     }
 
     @Override
@@ -1993,7 +2059,23 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_NEXT_NEWS, next, null);
         else if (listType == Constants.ARTICLES_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_ARTICLES, next, null);
+        else if (listType == Constants.QNA_LIST_TYPE)
+            this.mMakeNetworkCall(Constants.TAG_NEXT_QNA_LIST, next, null);
+        else if (listType == Constants.FORUM_LIST_TYPE)
+            this.mMakeNetworkCall(Constants.TAG_NEXT_FORUMS_LIST, next, null);
+    }
 
+    @Override
+    public void onQnAQuestionVote(int position, int voteType) {
+
+        QnAQuestions qnaQuestion = this.mQnAQuestions.get(position);
+        if (qnaQuestion.getCurrent_user_vote_type() != Constants.NEITHER_LIKE_NOR_DISLIKE  && voteType != Constants.NEITHER_LIKE_NOR_DISLIKE) {
+            //neither liked nor disliked case
+            if (voteType == Constants.LIKE_THING)
+                this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + voteType, qnaQuestion.getResource_uri()+"upvote/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + voteType, qnaQuestion.getResource_uri() + "downvote/", null, Request.Method.POST);
+        }
     }
 
     public void updateFilterList(String response) {
@@ -2720,10 +2802,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
 
-                if (getCurrentFocus() != null && getCurrentFocus() instanceof EditText) {
+                /*if (getCurrentFocus() != null && getCurrentFocus() instanceof EditText) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                }
+                }*/
                 int count = getSupportFragmentManager().getBackStackEntryCount();
                 if (count >= 1) {
                          getSupportFragmentManager().popBackStack();
@@ -2763,16 +2845,15 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to clear back stack of FragmentManager
+     * It will remove all fragments present in stack. and now stack
+     * will be empty
      */
     private  void mClearBackStack() {
         try{
             int count = getSupportFragmentManager().getBackStackEntryCount();
-            for (int i = 0; i < count ; i++) {
+            for (int i = 0; i < count ; i++)
                 getSupportFragmentManager().popBackStack();
-            }
-        }
-        catch (Exception e)
-        {
+        }catch (Exception e){
             Log.e(TAG, e.getMessage());
         }
     }
@@ -3203,8 +3284,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onEducationSelected(HashMap<String, String> params) {
        this.mMakeNetworkCall(Constants.TAG_EDUCATION_DETAILS_SUBMIT, Constants.BASE_URL + "user-education/", params);
-//       mOnExamsLoaded("");
     }
+
+    /**
+     * This method is used to send user's current education
+     * details to server like current level, stream and marks
+     */
+    @Override
+    public void onUserNotPreparingSelected() {
+        this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
+    }
+
 
     /**
      * This method is used to handle response having exams list
@@ -3236,15 +3326,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onExamsSelected(JSONObject params) {
         this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "yearly-exams/",params,1);
-
     }
     /**
      * This method is load user profile after
-     * @param responseJson
      */
-    public void mLoadUserProfile(String responseJson) {
+    public void mLoadUserProfile() {
         // unlock navigation drawer when home screen come
         //((DrawerLayout)findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
 
         //  show appBarLayout and toolBar
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
@@ -3273,9 +3363,7 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(requestType, url, this.mFilterKeywords);
             return;
         }
-
        this.mMakeNetworkCall(requestType,url, null);
-
     }
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
@@ -3337,7 +3425,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mOnExamsSubmitted(String response){
-        mLoadUserProfile("");
+
+        mLoadUserProfile();
 
     }
 

@@ -63,6 +63,8 @@ public class Constants
     public static final String TAG_NEXT_INSTITUTE = "next_institutes";
     public static final String TAG_NEXT_NEWS = "next_news";
     public static final String TAG_NEXT_ARTICLES = "next_articles";
+    public static final String TAG_NEXT_QNA_LIST = "next_aqna_list";
+    public static final String TAG_NEXT_FORUMS_LIST = "next_forums_list";
     public static final String TAG_INSTITUTE_LIKE_DISLIKE = "institute_like_dislike";
     public static final String TAG_SHORTLIST_INSTITUTE = "shortlist";
     public static final String TAG_DELETESHORTLIST_INSTITUTE = "delete";
@@ -113,6 +115,7 @@ public class Constants
     public static final int MAIN_ANIMATION_TIME = 6500;
     public static final int SECONDARY_ANIMATION_TIME = 2000;
     public static final String SELECTED_FILTERS = "selected_filters";
+    public static final String TAG_QUESTION_LIKE_DISLIKE = "tag_question_like_dislike";
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET;
     public static final int MY_FB_REFRESH_RATE = 5000;
@@ -151,10 +154,12 @@ public class Constants
 
     public static final int NUMBER_OF_COMMENTS_IN_ONE_GO = 100;
 
-    public static final int INSTITUTE_TYPE   = 1;
-    public static final int NEWS_TYPE        = 2;
-    public static final int ARTICLES_TYPE    = 3;
-    public static final int SHORTLIST_TYPE   = 4;
+    public static final int INSTITUTE_TYPE   = 1 ;
+    public static final int NEWS_TYPE        = 2 ;
+    public static final int ARTICLES_TYPE    = 3 ;
+    public static final int SHORTLIST_TYPE   = 4 ;
+    public static final int QNA_LIST_TYPE    = 5 ;
+    public static final int FORUM_LIST_TYPE  = 6 ;
 
     //User Attributes
     public static final String USER_NAME        = "name";

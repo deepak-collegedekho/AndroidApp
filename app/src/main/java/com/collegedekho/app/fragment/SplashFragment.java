@@ -87,7 +87,7 @@ public class SplashFragment extends BaseFragment {
                         //Initialize the app
                         MainActivity mainActivity = (MainActivity)getActivity();
                         if(mainActivity != null ) {
-                            mainActivity.loadInItDtata();
+                            mainActivity.loadInItData();
                         }
 
                     } else

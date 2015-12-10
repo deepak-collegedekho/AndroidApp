@@ -31,9 +31,9 @@
             android:layout_width="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/m5dp"
-            android:paddingTop="@dimen/m5dp"
-            android:textSize="16sp"
+            android:paddingBottom="@dimen/m10dp"
+            android:paddingTop="@dimen/m10dp"
+            android:textSize="18sp"
             android:foregroundGravity="center"
             android:text="SUBMIT"/>
 

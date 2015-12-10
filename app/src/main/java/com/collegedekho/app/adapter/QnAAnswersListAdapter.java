@@ -84,6 +84,7 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
         return mQnAQuestionAnswers.size();
     }
 
+
     private class QnAAnswerHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView answerText;
         TextView answerVotes;

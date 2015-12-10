@@ -45,10 +45,12 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
 
             if ((!loading) && ((visibleItemCount + pastVisiblesItems) >= totalItemCount)) {
                 loading = true;
-                if(mNextUrl != null) {
+
+                if(mNextUrl != null && progressBarLL != null)
                     progressBarLL.setVisibility(View.VISIBLE);
-                }
-                listener.onEndReached(mNextUrl,listType);
+
+                if(listener != null)
+                    listener.onEndReached(mNextUrl,listType);
             }
             /*if(dy < 0)
             {

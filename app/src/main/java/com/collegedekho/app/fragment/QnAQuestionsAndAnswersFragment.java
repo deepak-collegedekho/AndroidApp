@@ -1,6 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -149,7 +150,7 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         try {
             mListener = (OnQnAAnswerInteractionListener) activity;
@@ -232,6 +233,7 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
 
         this.mAnswersListView.scrollToPosition(this.mQnAAnswersSet.size() - 1);
     }
+
 
     public interface OnQnAAnswerInteractionListener {
         void onQnAQuestionVote(String resourceURI, int voteType, int position);

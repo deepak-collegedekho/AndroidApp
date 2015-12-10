@@ -16,6 +16,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
+import com.collegedekho.app.utils.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -122,11 +123,14 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
 
         if ((myFBComment.getToken()).equals(MainActivity.user.getToken()))
         {
-            //if it is my comment
-           // qnaAnswerHolder.time.setGravity(Gravity.LEFT);
 
-            qnaAnswerHolder.myFbCardLayout.setGravity(Gravity.RIGHT);
-            qnaAnswerHolder.myFbCard.setCardBackgroundColor(this.mContext.getResources().getColor(R.color.self_comment_card_background));
+            qnaAnswerHolder.myFbCardLayout.setGravity(Gravity.RIGHT);   qnaAnswerHolder.myFbCard.setBackgroundResource(R.drawable.ic_chat_inline);
+            int left = Utils.getPadding(mContext,10);
+            int right = Utils.getPadding(mContext,10);
+            int bottom = Utils.getPadding(mContext,25);
+            qnaAnswerHolder.myFbCardLayout.setPadding(left,0,right,0);
+            qnaAnswerHolder.time.setPadding(left,0,right,bottom);
+            qnaAnswerHolder.time.setTextColor(this.mContext.getResources().getColor(R.color.chat_time_blue));
 
             if (myFBComment.isCommentSent())
                 qnaAnswerHolder.mSentNotifier.setVisibility(View.VISIBLE);
@@ -138,7 +142,16 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         {
            // qnaAnswerHolder.time.setGravity(Gravity.RIGHT);
 
-            qnaAnswerHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
+           //qnaAnswerHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
+            qnaAnswerHolder.myFbCard.setBackgroundResource(R.drawable.ic_chat_inline_others);
+            int left = Utils.getPadding(mContext,10);
+            int right = Utils.getPadding(mContext,10);
+            int top = Utils.getPadding(mContext,20);
+            int bottom = Utils.getPadding(mContext,5);
+            qnaAnswerHolder.userName.setPadding(left,top,right,0);
+            qnaAnswerHolder.time.setPadding(left,0,right,bottom);
+            qnaAnswerHolder.time.setTextColor(mContext.getResources().getColor(R.color.chat_time_gray));
+
             qnaAnswerHolder.userName.setText(myFBComment.getUser());
         }
     }

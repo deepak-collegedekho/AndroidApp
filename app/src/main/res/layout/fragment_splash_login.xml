@@ -27,6 +27,7 @@
                 android:layout_weight=".7"
                 android:layout_width="0dp"
                 facebook:com_facebook_login_text="FACEBOOK LOGIN"
+                facebook:com_facebook_logout_text="FACEBOOK LOGIN"
                 style="@style/AppTheme.FacebookButton"/>
 
             <TextView

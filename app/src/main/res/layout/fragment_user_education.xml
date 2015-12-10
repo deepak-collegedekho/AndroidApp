@@ -5,101 +5,100 @@
     android:background="@color/white"
     android:layout_height="match_parent">
 
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:paddingTop="50dp"
-        android:background="@color/app_background"
         android:layout_height="match_parent">
-    <RelativeLayout
-        android:id="@+id/education_point_layout"
-        android:layout_marginBottom="@dimen/m10dp"
-        style="@style/AppTheme.RelativeLayout.Rounded">
-        <TextView
-            style="@style/AppTheme.TextView"
-            android:id="@+id/first_login"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:paddingRight="@dimen/m30dp"
-            android:paddingLeft="@dimen/m30dp"
-            android:maxLines="3"
-            android:textSize="16sp"
-            android:text="CONGRATULATIONS ON YOUR FIRST LOGIN"/>
-
-        <include layout="@layout/layout_points_header"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/first_login"
-            android:paddingTop="@dimen/m12dp"
+            android:paddingTop="50dp"
+            android:background="@color/app_background"
+            android:layout_height="match_parent">
+            <RelativeLayout
+                android:id="@+id/education_point_layout"
+                android:layout_marginBottom="@dimen/m10dp"
+                style="@style/AppTheme.RelativeLayout.Rounded">
+                <TextView
+                    style="@style/AppTheme.TextView"
+                    android:id="@+id/first_login"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:paddingRight="@dimen/m30dp"
+                    android:paddingLeft="@dimen/m30dp"
+                    android:maxLines="3"
+                    android:textSize="16sp"
+                    android:text="CONGRATULATIONS ON YOUR FIRST LOGIN"/>
+
+                <include layout="@layout/layout_points_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/first_login"
+                    android:paddingTop="@dimen/m12dp"
+                    />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/step_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:layout_below="@id/education_point_layout"
+                android:textSize="17sp"
+                android:paddingRight="@dimen/m30dp"
+                android:paddingLeft="@dimen/m30dp"
+                android:paddingBottom="@dimen/m15dp"
+                android:text="YOU ARE JUST 3 STEPS AWAY FROM FINDING YOUR COLLEGES"/>
+
+            <include layout="@layout/layout_user_step"
+                android:id="@+id/step_ui"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/step_textview"/>
+
+            <LinearLayout
+                android:id="@+id/user_education_layout"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_below="@id/step_ui"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left|center"
+        android:orientation="horizontal"
+        android:background="@color/app_background"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/m1dp"
+        android:weightSum="1">
+
+        <TextView
+            style="@style/AppTheme.OrangeButton"
+            android:id="@+id/is_preparing_for_exam"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:background="@color/primary_orange"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
+            android:text="Preparing for exam"/>
+
+        <TextView
+            style="@style/AppTheme.OrangeButton"
+            android:id="@+id/is_not_preparing_for_exam"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_marginLeft="@dimen/m1dp"
+            android:background="@color/primary_orange"
+            android:layout_height="match_parent"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:text="Not Preparing"
             />
 
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/step_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:layout_below="@id/education_point_layout"
-        android:textSize="17sp"
-        android:paddingRight="@dimen/m30dp"
-        android:paddingLeft="@dimen/m30dp"
-        android:paddingBottom="@dimen/m15dp"
-        android:text="YOU ARE JUST 3 STEPS AWAY FROM FINDING YOUR COLLEGES"/>
-
-    <include layout="@layout/layout_user_step"
-        android:id="@+id/step_ui"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/step_textview"/>
-
-    <LinearLayout
-        android:id="@+id/user_education_layout"
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_below="@id/step_ui"
-        android:layout_height="wrap_content"/>
-    </RelativeLayout>
-</ScrollView>
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="left|center"
-    android:orientation="horizontal"
-    android:background="@color/app_background"
-    android:layout_alignParentBottom="true"
-    android:layout_marginBottom="@dimen/m1dp"
-    android:weightSum="1">
-
-    <TextView
-        style="@style/AppTheme.OrangeButton"
-        android:id="@+id/is_preparing_for_exam"
-        android:layout_width="0dp"
-        android:layout_weight=".5"
-        android:background="@color/primary_orange"
-        android:layout_height="match_parent"
-        android:textSize="18sp"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp"
-        android:gravity="center"
-        android:text="Preparing for exam"/>
-
-    <TextView
-        style="@style/AppTheme.OrangeButton"
-        android:id="@+id/is_not_preparing_for_exam"
-        android:layout_width="0dp"
-        android:layout_weight=".5"
-        android:layout_marginLeft="@dimen/m1dp"
-        android:background="@color/primary_orange"
-        android:layout_height="match_parent"
-        android:textSize="18sp"
-        android:gravity="center"
-        android:text="Not Preparing"
-        />
-
-</LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>

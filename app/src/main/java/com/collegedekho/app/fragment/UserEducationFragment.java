@@ -169,6 +169,9 @@ public class UserEducationFragment extends BaseFragment {
     }
 
     private void mUserNotPreparingForExam() {
+        if(this.mListener !=  null){
+            this.mListener.onUserNotPreparingSelected();
+        }
 
     }
 
@@ -184,5 +187,6 @@ public class UserEducationFragment extends BaseFragment {
      */
     public interface OnUserEducationInteractionListener {
         void onEducationSelected(HashMap<String, String> map);
+        void onUserNotPreparingSelected();
     }
 }
