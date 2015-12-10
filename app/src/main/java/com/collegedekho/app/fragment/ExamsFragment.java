@@ -175,5 +175,4 @@ public class ExamsFragment extends BaseFragment {
     public  interface OnExamsSelectListener {
         void onExamsSelected(JSONObject params);
     }
-
 }

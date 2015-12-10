@@ -5,8 +5,8 @@ import android.content.Context;
 import com.collegedekho.app.entities.UserEducation;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import cn.jeesoft.widget.pickerview.CharacterPickerView;
 import cn.jeesoft.widget.pickerview.CharacterPickerWindow;
@@ -49,16 +49,16 @@ public class GaradiWindowHelper {
             options2Items = new ArrayList<>();
             options3Items = new ArrayList();
 
-            final Map<GaradiItem, Map<GaradiItem, List<GaradiItem>>> allCitys = GaradiArrayData.getAllData(userEducationList);
-            for (Map.Entry<GaradiItem, Map<GaradiItem, List<GaradiItem>>> entry1 : allCitys.entrySet()) {
+            final LinkedHashMap<GaradiItem, LinkedHashMap<GaradiItem, List<GaradiItem>>> allData = GaradiArrayData.getAllData(userEducationList);
+            for (LinkedHashMap.Entry<GaradiItem, LinkedHashMap<GaradiItem, List<GaradiItem>>> entry1 : allData.entrySet()) {
                 GaradiItem key1 = entry1.getKey();
-                Map<GaradiItem, List<GaradiItem>> value1 = entry1.getValue();
+                LinkedHashMap<GaradiItem, List<GaradiItem>> value1 = entry1.getValue();
 
                 options1Items.add(key1);
 
                 ArrayList options2Items_01 = new ArrayList();
                 List<List<GaradiItem>> options3Items_01 = new ArrayList<>();
-                for (Map.Entry<GaradiItem, List<GaradiItem>> entry2 : value1.entrySet()) {
+                for (LinkedHashMap.Entry<GaradiItem, List<GaradiItem>> entry2 : value1.entrySet()) {
                     GaradiItem key2 = entry2.getKey();
                     List<GaradiItem> value2 = entry2.getValue();
 

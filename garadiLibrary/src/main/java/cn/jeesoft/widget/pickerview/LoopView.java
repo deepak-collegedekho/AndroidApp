@@ -5,11 +5,13 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
 import android.view.View;
 
 import java.util.List;
@@ -67,11 +69,12 @@ public class LoopView extends View {
     }
 
     private void initLoopView(Context context) {
-        this.setHapticFeedbackEnabled(true);
+        //this.setHapticFeedbackEnabled(true);
+        this.setSoundEffectsEnabled(true);
         textSize = 0;
-        colorGray = 0xffafafaf;
+        colorGray = 0xff9e9e9e;
         colorOrange = 0xfff6901e;
-        colorGrayLight = 0xffc5c5c5;
+        colorGrayLight = 0xff9e9e9e;
         l = 2.0F;
         isLoop = true;
         positon = -1;
@@ -104,17 +107,20 @@ public class LoopView extends View {
         paintA.setAntiAlias(true);
         paintA.setTypeface(Typeface.MONOSPACE);
         paintA.setTextSize(textSize);
+        //paintA.setTextAlign(Paint.Align.CENTER);
         paintB = new Paint();
         paintB.setColor(colorOrange);
         paintB.setAntiAlias(true);
         paintB.setTextScaleX(1.15F);
         paintB.setTypeface(Typeface.MONOSPACE);
         paintB.setTextSize(textSize);
+        //paintB.setTextAlign(Paint.Align.CENTER);
         paintC = new Paint();
         paintC.setColor(colorGrayLight);
         paintC.setAntiAlias(true);
         paintC.setTypeface(Typeface.MONOSPACE);
         paintC.setTextSize(textSize);
+        //paintC.setTextAlign(Paint.Align.CENTER);
         if (android.os.Build.VERSION.SDK_INT >= 11) {
             setLayerType(1, null);
         }
@@ -230,7 +236,8 @@ public class LoopView extends View {
             super.onDraw(canvas);
             return;
         }
-        this.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+        //this.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+        this.playSoundEffect(SoundEffectConstants.CLICK);
         as = new GaradiItem[r];
         w = (int) ((float) totalScrollY / (l * (float) h));
         mCurrentItem = positon + w % arrayList.size();

@@ -45,4 +45,7 @@
 
     <string name="ok">OK</string>
     <string name="cancel">CANCEL</string>
+    <string name="xscale">1.2f</string>
+    <string name="yscale">1f</string>
+
 </resources>

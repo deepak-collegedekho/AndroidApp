@@ -94,6 +94,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                         {
                             holder.mExamName.setSelected(false);
                             holder.mYearSpinner.setSelected(false);
+                            holder.mExamName.setTextColor(ExamsAdapter.this.mContext.getResources().getColor(R.color.text_light_grey));
                         }
                         else{
                             lastExamPosition=holder.mYearSpinner.getSelectedItemPosition();
@@ -103,15 +104,16 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                             }else{
                             }
                             holder.mExamName.setSelected(true);
+                            holder.mExamName.setTextColor(ExamsAdapter.this.mContext.getResources().getColor(R.color.white));
                             if(count>1) {
                                 holder.mYearSpinner.performClick();
                             }else{
+                                //holder.mYearSpinner.setSelected(true);
                                 if(exam.getExam_details().get(lastExamPosition).isResult_out()) {
                                     displayAlert(exam.getExam_details().get(lastExamPosition));
                                 }
                             }
                             holder.mYearSpinner.setSelected(v.isSelected());
-
                         }
                         exam.setSelected(!holder.mExamName.isSelected());
                     }

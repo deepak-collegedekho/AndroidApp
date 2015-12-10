@@ -98,11 +98,12 @@
                             android:textSize="30sp"/>
 
                         <TextView
+                            android:id="@+id/user_cd_recommendation_text"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:textSize="13sp"
                             android:gravity="center|left"
-                            android:text="GET CD \nRECOMMEDATIONS"/>
+                            />
 
                     </LinearLayout>
 
@@ -145,6 +146,7 @@
         android:layout_marginLeft="@dimen/m30dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:src="@drawable/ic_information"/>
     </LinearLayout>
 

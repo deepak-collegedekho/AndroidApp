@@ -18,10 +18,9 @@
             android:text="WHERE YOU ARE"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
-            android:background="@color/j_wheel_header_color"
+            android:background="@drawable/bg_right_border"
             android:textColor="@android:color/black"
             android:gravity="center"/>
-
 
         <cn.jeesoft.widget.pickerview.LoopView
             android:id="@+id/j_options1"
@@ -44,7 +43,7 @@
             android:text="STREAMS"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
-            android:background="@color/j_wheel_header_color"
+            android:background="@drawable/bg_right_border"
             android:textColor="@android:color/black"
             android:gravity="center"/>
 
@@ -69,8 +68,8 @@
             android:text="MARKS"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
-            android:background="@color/j_wheel_header_color"
             android:textColor="@android:color/black"
+            android:background="@drawable/bg_right_border"
             android:gravity="center"/>
 
         <cn.jeesoft.widget.pickerview.LoopView

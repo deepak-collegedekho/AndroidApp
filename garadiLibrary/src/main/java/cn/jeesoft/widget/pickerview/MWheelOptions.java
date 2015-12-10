@@ -48,11 +48,10 @@ final class MWheelOptions {
         this.mOptions1Items = (options1Items == null ? new ArrayList<GaradiItem>() : options1Items);
         this.mOptions2Items = (options2Items == null ? new ArrayList<List<GaradiItem>>() : options2Items);
         this.mOptions3Items = (options3Items == null ? new ArrayList<List<List<GaradiItem>>>() : options3Items);
-        // 选项1
+
         wv_option1 = (LoopView) view.findViewById(R.id.j_options1);
-        wv_option1.setArrayList(mOptions1Items);// 设置显示数据
-        wv_option1.setCurrentItem(0);// 初始化时显示的数据
-        //设置是否循环播放
+        wv_option1.setArrayList(mOptions1Items);
+        wv_option1.setCurrentItem(0);
         wv_option1.setNotLoop();
 
         wv_option1.setListener(new LoopListener() {
@@ -71,14 +70,11 @@ final class MWheelOptions {
             }
         });
 
-        // 选项2
         wv_option2 = (LoopView) view.findViewById(R.id.j_options2);
         if (!mOptions2Items.isEmpty()) {
-            wv_option2.setArrayList(mOptions2Items.get(0));// 设置显示数据
-            wv_option2.setCurrentItem(0);// 初始化时显示的数据
-            //设置是否循环播放
+            wv_option2.setArrayList(mOptions2Items.get(0));
+            wv_option2.setCurrentItem(0);
             wv_option2.setNotLoop();
-            //滚动监听
             wv_option2.setListener(new LoopListener() {
                 @Override
                 public void onItemSelect(int item) {
@@ -92,7 +88,6 @@ final class MWheelOptions {
             });
         }
 
-        // 选项3
         wv_option3 = (LoopView) view.findViewById(R.id.j_options3);
         if (mOptions3Items != null && !mOptions3Items.isEmpty()) {
             if(mOptions3Items.get(0) != null && !mOptions3Items.get(0).isEmpty()) {
@@ -116,9 +111,6 @@ final class MWheelOptions {
         setCurrentItems(0, 0, 0);
     }
 
-    /**
-     * 选中项改变
-     */
     private void doItemChange() {
         if (mOnOptionChangedListener != null) {
             int option1 = wv_option1.getCurrentItem();
@@ -135,22 +127,14 @@ final class MWheelOptions {
         }
     }
 
-    /**
-     * 设置是否循环滚动
-     *
-     * @param cyclic
-     */
+
     public void setCyclic(boolean cyclic) {
         wv_option1.setCyclic(cyclic);
         wv_option2.setCyclic(cyclic);
         wv_option3.setCyclic(cyclic);
     }
 
-    /**
-     * 返回当前选中的结果对应的位置数组 因为支持三级联动效果，分三个级别索引，0，1，2
-     *
-     * @return
-     */
+
     public int[] getCurrentItems() {
         int[] currentItems = new int[3];
         currentItems[0] = wv_option1.getCurrentItem();

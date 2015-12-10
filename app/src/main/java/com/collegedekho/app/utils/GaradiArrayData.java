@@ -9,14 +9,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.TreeMap;
 
 import cn.jeesoft.widget.pickerview.GaradiItem;
 
 public class GaradiArrayData {
 
-    private static final Map<GaradiItem, Map<GaradiItem, List<GaradiItem>>> DATAs = new LinkedHashMap<>();
-    private static final Map<String, List<GaradiItem>> SUBLEVELS = new LinkedHashMap<>();
+    private static final LinkedHashMap<GaradiItem, LinkedHashMap<GaradiItem, List<GaradiItem>>> DATAs = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, List<GaradiItem>> SUBLEVELS = new LinkedHashMap<>();
     private static List<GaradiItem> Marks = new ArrayList<>();
 
     private static void init(ArrayList<UserEducation> userEducationList) {
@@ -24,7 +24,7 @@ public class GaradiArrayData {
             return;
         }
 
-        for (int n = 1; n <= 10; n++)
+        for (int n = 4; n <= 10; n++)
         {
             int from = 1 + (( n - 1 ) * 10);
             int to = n * 10;
@@ -32,11 +32,15 @@ public class GaradiArrayData {
         }
 
         for (int i = 0; i < userEducationList.size(); i++) {
-            Map<GaradiItem, List<GaradiItem>> streamAndMarks = new HashMap<>();
+            LinkedHashMap<GaradiItem, List<GaradiItem>> streamAndMarks = new LinkedHashMap<>();
             ArrayList<GaradiItem> subLevelList = new ArrayList<>();
             UserEducation userEducation = userEducationList.get(i);
             ArrayList<UserEducationStreams> streamList = userEducation.getStreams();
             ArrayList<UserEducationSublevels> sublevelsList = userEducation.getSublevels();
+
+            if(streamList.size() == 0)
+                continue;
+
             for (int j = 0; j < streamList.size(); j++) {
                 UserEducationStreams streams = streamList.get(j);
 
@@ -52,9 +56,9 @@ public class GaradiArrayData {
         }
     }
 
-    public static Map<GaradiItem, Map<GaradiItem, List<GaradiItem>>> getAllData(ArrayList<UserEducation> userEducationList) {
+    public static LinkedHashMap<GaradiItem, LinkedHashMap<GaradiItem, List<GaradiItem>>> getAllData(ArrayList<UserEducation> userEducationList) {
         init(userEducationList);
-        return new HashMap<>(DATAs);
+        return new LinkedHashMap<>(DATAs);
     }
 
     public static List<GaradiItem> getSublevels(String item) {

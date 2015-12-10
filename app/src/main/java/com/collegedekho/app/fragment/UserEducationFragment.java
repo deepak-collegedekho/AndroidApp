@@ -3,6 +3,8 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +64,7 @@ public class UserEducationFragment extends BaseFragment {
         Bundle args = new Bundle();
         args.putParcelableArrayList(USER_EDUCATION_LIST, userEducationList);
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -79,6 +82,11 @@ public class UserEducationFragment extends BaseFragment {
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_user_education, container, false);
+
+        TextView cdTextView = (TextView) rootView.findViewById(R.id.user_cd_recommendation_text);
+        Spanned text = Html.fromHtml("GET <b><font color='#ff8d00'>C</font><font color='#1f2560'>D</font></b> <br>RECOMMEDATIONS");
+        cdTextView.setText(text);
+
         RelativeLayout layout = new RelativeLayout(this.getContext());
         layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
@@ -90,6 +98,7 @@ public class UserEducationFragment extends BaseFragment {
             @Override
             public void onOptionChanged(CharacterPickerView view, String levelID, String subLevelID, String streamID, String marksID) {
                 Log.e("test", levelID + "," + subLevelID + "," + streamID + "," + marksID);
+
                 UserEducationFragment.this.mLevelID = levelID;
                 UserEducationFragment.this.mSubLevelID = subLevelID;
                 UserEducationFragment.this.mStreamID = streamID;
@@ -97,12 +106,11 @@ public class UserEducationFragment extends BaseFragment {
             }
         });
 
-
-
         ((LinearLayout) rootView.findViewById(R.id.user_education_layout)).addView(layout);
 
         rootView.findViewById(R.id.is_preparing_for_exam).setOnClickListener(this);
         rootView.findViewById(R.id.is_not_preparing_for_exam).setOnClickListener(this);
+
         return rootView;
     }
 
@@ -117,7 +125,6 @@ public class UserEducationFragment extends BaseFragment {
         }
     }
 
-
     @Override
     public void onDetach() {
         super.onDetach();
@@ -130,7 +137,6 @@ public class UserEducationFragment extends BaseFragment {
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null)
             mainActivity.currentFragment = this;
-
     }
 
     @Override
@@ -156,10 +162,10 @@ public class UserEducationFragment extends BaseFragment {
             map.put("sublevel", UserEducationFragment.this.mSubLevelID);
             map.put("stream", UserEducationFragment.this.mStreamID);
             map.put("marks", UserEducationFragment.this.mMarks);
-            map.put("is_preparing","1");
+            map.put("is_preparing", "1");
+
             mListener.onEducationSelected(map);
         }
-
     }
 
     private void mUserNotPreparingForExam() {
