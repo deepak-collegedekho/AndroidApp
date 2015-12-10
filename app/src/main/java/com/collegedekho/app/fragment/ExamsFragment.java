@@ -68,8 +68,14 @@ public class ExamsFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_user_exams, container, false);
         //((TextView)rootView.findViewById(R.id.points_test_view)).setText("YOU HAVE EARNED FOR SHARING YOUR DETAIL");
         RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.exams_recycle_view);
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),6,GridLayoutManager.VERTICAL,false);
+        layoutManager.setSpanSizeLookup( new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return position % 5 == 0 ? 3 : 2;
+            }
+        });
+//        layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
         /*layoutManager.setSpanCount(new GridLayoutManager.SpanSizeLookup(){
             @Override
             public int getSpanSize(int position) {
@@ -78,7 +84,7 @@ public class ExamsFragment extends BaseFragment {
         });*/
 
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 10, true));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
         //recyclerView.setHasFixedSize(true);
 
         ExamsAdapter mAdapter = new ExamsAdapter(getActivity(), this.mExamList);
@@ -136,21 +142,21 @@ public class ExamsFragment extends BaseFragment {
             if(mExamList != null && !mExamList.isEmpty()) {
                 for (Exam exam:mExamList) {
                     if(exam == null)continue;
-                        ArrayList<ExamDetail> detailList = exam.getExam_details();
-                            if(detailList != null && !detailList.isEmpty()) {
-                                for (ExamDetail examDetailObj:detailList) {
-                                    JSONObject examHash = new JSONObject();
-                                    try {
-                                        examHash.putOpt(Constants.EXAM_ID,examDetailObj.getId());
-                                        examHash.putOpt(Constants.MARKS,examDetailObj.getExam_marks());
-                                        parentArray.put(examHash);
+                    ArrayList<ExamDetail> detailList = exam.getExam_details();
+                    if(detailList != null && !detailList.isEmpty()) {
+                        for (ExamDetail examDetailObj:detailList) {
+                            JSONObject examHash = new JSONObject();
+                            try {
+                                examHash.putOpt(Constants.EXAM_ID,examDetailObj.getId());
+                                examHash.putOpt(Constants.MARKS,examDetailObj.getExam_marks());
+                                parentArray.put(examHash);
 
-                                    }catch (Exception e){
-                                        e.printStackTrace();
-                                    }
-
-                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
                             }
+
+                        }
+                    }
                 }
             }
             try {

@@ -58,14 +58,14 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                     if(obj == null)continue;
                     year[i] = obj.getYear();
                 }
-                holder.mYearSpinner.setAdapter(new ArrayAdapter<>(this.mContext, android.R.layout.simple_spinner_dropdown_item, year));
+                holder.mYearSpinner.setAdapter(new ArrayAdapter<>(this.mContext, R.layout.spinner_drop_down_item, year));
                 holder.mYearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         lastExamPosition=holder.mYearSpinner.getSelectedItemPosition();
                         if(holder.mExamName.isSelected() && exam.getExam_details().get(lastExamPosition).isResult_out()) {
 //                            lastSelectedExam = exam;
-                            displayAlert(exam.getExam_details().get(lastExamPosition));
+                            displayAlert(exam.getExam_details().get(lastExamPosition),holder);
 
                         }else{
                         }
@@ -75,7 +75,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                     public void onNothingSelected(AdapterView<?> parent) {
                         lastExamPosition=holder.mYearSpinner.getSelectedItemPosition();
                         if(holder.mExamName.isSelected() && exam.getExam_details().get(lastExamPosition).isResult_out()) {
-                            displayAlert(exam.getExam_details().get(lastExamPosition));
+                            displayAlert(exam.getExam_details().get(lastExamPosition),holder);
 
                         }else{
                         }
@@ -99,7 +99,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                         else{
                             lastExamPosition=holder.mYearSpinner.getSelectedItemPosition();
                             if(exam.getExam_details().get(lastExamPosition).isResult_out()) {
-                                displayAlert(exam.getExam_details().get(lastExamPosition));
+                                displayAlert(exam.getExam_details().get(lastExamPosition),holder);
 
                             }else{
                             }
@@ -110,7 +110,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                             }else{
                                 //holder.mYearSpinner.setSelected(true);
                                 if(exam.getExam_details().get(lastExamPosition).isResult_out()) {
-                                    displayAlert(exam.getExam_details().get(lastExamPosition));
+                                    displayAlert(exam.getExam_details().get(lastExamPosition),holder);
                                 }
                             }
                             holder.mYearSpinner.setSelected(v.isSelected());
@@ -140,9 +140,9 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
 
     }
 
-    private void displayAlert(final ExamDetail examDetail){
+    private void displayAlert(final ExamDetail examDetail, final ExamHolderView holder){
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+        final boolean[] gotUserresponse=new boolean[1];
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
         View dialogView = inflater.inflate(R.layout.dialog_get_exam_marks, null);
         dialogBuilder.setView(dialogView);
@@ -157,6 +157,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                 String marks=marksView.getText().toString();
                 if(!marks.equals("")) {
                     examDetail.setExam_marks(marks);
+                    gotUserresponse[0]=true;
                     alertDialog.dismiss();
                 }else{
                     Utils.DisplayToast(mContext,"Enter marks first");
@@ -166,7 +167,17 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
         dialog_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                gotUserresponse[0]=false;
                 alertDialog.dismiss();
+            }
+        });
+        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(!gotUserresponse[0]){
+                    holder.mExamName.setSelected(false);
+                    holder.mYearSpinner.setSelected(false);
+                }
             }
         });
         alertDialog.show();
