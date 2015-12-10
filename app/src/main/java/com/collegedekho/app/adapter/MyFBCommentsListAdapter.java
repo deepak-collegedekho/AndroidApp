@@ -1,6 +1,7 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -124,7 +125,14 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         if ((myFBComment.getToken()).equals(MainActivity.user.getToken()))
         {
 
-            qnaAnswerHolder.myFbCardLayout.setGravity(Gravity.RIGHT);   qnaAnswerHolder.myFbCard.setBackgroundResource(R.drawable.ic_chat_inline);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                qnaAnswerHolder.myFbCard.setBackgroundResource(R.drawable.ic_chat_inline);
+            }
+            else{
+                qnaAnswerHolder.myFbCard.setCardBackgroundColor(this.mContext.getResources().getColor(R.color.self_comment_card_background));
+
+            }
+            qnaAnswerHolder.myFbCardLayout.setGravity(Gravity.RIGHT);
             int left = Utils.getPadding(mContext,10);
             int right = Utils.getPadding(mContext,10);
             int bottom = Utils.getPadding(mContext,25);
@@ -137,13 +145,21 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
 
             qnaAnswerHolder.userName.setVisibility(View.GONE);
             qnaAnswerHolder.setIsRecyclable(false);
+
         }
         else
         {
            // qnaAnswerHolder.time.setGravity(Gravity.RIGHT);
 
            //qnaAnswerHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
-            qnaAnswerHolder.myFbCard.setBackgroundResource(R.drawable.ic_chat_inline_others);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                qnaAnswerHolder.myFbCard.setBackgroundResource(R.drawable.ic_chat_inline_others);
+            }
+            else{
+
+                qnaAnswerHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
+
+           }
             int left = Utils.getPadding(mContext,10);
             int right = Utils.getPadding(mContext,10);
             int top = Utils.getPadding(mContext,20);

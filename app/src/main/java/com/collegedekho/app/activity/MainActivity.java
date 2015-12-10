@@ -2740,6 +2740,7 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             this.mToggle.syncState();
 
+
         } else {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
