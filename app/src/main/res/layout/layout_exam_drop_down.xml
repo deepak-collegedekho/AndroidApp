@@ -19,16 +19,17 @@
         android:background="@drawable/bg_exam_text"
         android:text="Exams"
         />
-
-    <Spinner
-        android:id="@+id/exam_year_spinner"
+    <RelativeLayout
         android:layout_width="wrap_content"
-
-        android:textSize="10sp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:background="@drawable/bg_exam_spinner"
-        android:spinnerMode="dropdown"
-        />
-
+        android:layout_height="match_parent">
+        <Spinner
+            android:id="@+id/exam_year_spinner"
+            android:layout_width="wrap_content"
+            android:textSize="10sp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@drawable/bg_exam_spinner"
+            android:spinnerMode="dropdown"
+            />
+    </RelativeLayout>
 </LinearLayout>
