@@ -47,5 +47,7 @@
     <string name="cancel">CANCEL</string>
     <string name="xscale">1.2f</string>
     <string name="yscale">1f</string>
+    <string name="submit">Submit</string>
+
 
 </resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    >
+
+    <Button android:id="@+id/btn_iknow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I Know what I want"
+        android:textColor="@color/white"
+        android:padding="@dimen/m8dp"
+        android:background="@drawable/bg_button_blue"
+        />
+
+    <Button android:id="@+id/btn_psychometric_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_button_blue"
+        android:textColor="@color/white"
+        android:padding="@dimen/m8dp"
+        android:layout_marginTop="@dimen/m10dp"
+        android:text="Psychometric Test"/>
+
+    <Button android:id="@+id/btn_idontknow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I Dont Know"
+        android:background="@drawable/bg_button_blue"
+        android:textColor="@color/white"
+        android:padding="@dimen/m8dp"
+        android:visibility="gone"
+        />
+</LinearLayout>

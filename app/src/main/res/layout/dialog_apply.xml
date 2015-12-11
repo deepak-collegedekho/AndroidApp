@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Apply Now"
+        android:textSize="20sp"
+        style="@style/AppTheme.TextView.Head"/>
+
+    <View
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        style="@style/AppTheme.HeadDivider"/>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/apply_name_til"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/m15dp"
+        android:layout_marginRight="@dimen/m15dp">
+    <EditText android:id="@+id/apply_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name"
+        android:textColorHint="@color/primaryColor"
+        android:singleLine="true"
+        android:paddingTop="2dp"
+        android:textSize="16sp"
+        android:inputType="textPersonName"
+        android:textColor="@color/textSecondary"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/apply_email_til"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/m15dp"
+        android:layout_marginRight="@dimen/m15dp">
+
+    <EditText android:id="@+id/apply_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:singleLine="true"
+        android:paddingTop="2dp"
+        android:textSize="16sp"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/textSecondary"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/apply_phone_til"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/m15dp"
+        android:layout_marginRight="@dimen/m15dp">
+    <EditText android:id="@+id/apply_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textSecondary"
+        android:singleLine="true"
+        android:paddingTop="2dp"
+        android:textSize="16sp"
+        android:hint="Phone No."
+        android:inputType="phone"/>
+    </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Year of Admission"
+            android:textSize="12sp"
+            android:paddingLeft="3dp"
+            android:layout_marginLeft="@dimen/m15dp"
+            android:layout_marginRight="@dimen/m15dp"
+            android:textColor="?attr/colorControlNormal"/>
+    <Spinner android:id="@+id/apply_year"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:spinnerMode="dropdown"
+        android:layout_marginLeft="@dimen/m15dp"
+        android:layout_marginRight="@dimen/m15dp"
+        android:textColor="@color/textSecondary"
+        android:contentDescription="Year of Admission"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:weightSum="2">
+        <Button android:id="@+id/submit_button"
+            style="@style/AppTheme.BlueButton"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:text="Submit"
+            android:layout_weight="1"/>
+        <Button android:id="@+id/cancel_button"
+            style="@style/AppTheme.BlueButton"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="1dp"
+            android:text="Cancel"
+            android:layout_weight="1"/>
+    </LinearLayout>
+</LinearLayout>

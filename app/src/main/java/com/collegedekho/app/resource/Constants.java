@@ -28,6 +28,8 @@ public class Constants
     public static final String TAG_EDUCATION_DETAILS_SUBMIT = "user_education_submit";
     public static final String TAG_EXAMS_LIST = "exams_list";
     public static final String TAG_SUBMIT_EXAMS_LIST = "submit_exams_list";
+    public static final String TAG_SUBMIT_PSYCHOMETRIC_EXAM = "submit_psychometric_exam";
+
     public static final String TAG_LOAD_STREAM = "load_stream";
     public static final String TAG_USER_EDUCATION = "load_user_education";
     public static final String TAG_UPDATE_STREAM = "update_stream";

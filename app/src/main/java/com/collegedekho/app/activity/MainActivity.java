@@ -37,8 +37,6 @@ import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -47,6 +45,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.toolbox.Volley;
 import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
 import com.appsflyer.DebugLogQueue;
@@ -71,6 +70,7 @@ import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.fragment.MyAlertFragment;
+import com.collegedekho.app.fragment.NotPreparingFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FilterFragment;
@@ -87,6 +87,7 @@ import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.ProfileFragment1;
+import com.collegedekho.app.fragment.PsychometricTestFragment;
 import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.fragment.SplashFragment;
@@ -117,6 +118,7 @@ import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.appdatasearch.GetRecentContextCall;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.tagmanager.Container;
@@ -183,7 +185,8 @@ public class MainActivity extends AppCompatActivity
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleFragment.OnArticleSelectedListener,
         ProfileFragment1.onProfileUpdateListener,
         LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener,
-        InstituteDetailFragment.OnInstituteFooterItemSelected, UserEducationFragment.OnUserEducationInteractionListener
+        InstituteDetailFragment.OnInstituteFooterItemSelected, UserEducationFragment.OnUserEducationInteractionListener,NotPreparingFragment.OnTestOptionsListener,
+        PsychometricTestFragment.OnPsychometricTestSubmitListener
 {
 
     static {
@@ -1325,6 +1328,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_SUBMIT_EXAMS_LIST:
                 this.mOnExamsSubmitted(response);
+                break;
+            case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
+//                this.mOnExamsSubmitted(response);
                 break;
         }
 
@@ -3294,7 +3300,8 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onUserNotPreparingSelected() {
-        this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
+//        this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
+        this.mDisplayFragment(NotPreparingFragment.newInstance(),false,NotPreparingFragment.class.toString() );
     }
 
 
@@ -3366,6 +3373,26 @@ public class MainActivity extends AppCompatActivity
             return;
         }
        this.mMakeNetworkCall(requestType,url, null);
+    }
+
+    @Override
+    public void onPsychometricTest() {
+        this.mDisplayFragment(PsychometricTestFragment.newInstance(),false,NotPreparingFragment.class.toString() );
+    }
+
+    @Override
+    public void onIDontKnow() {
+
+    }
+
+    @Override
+    public void onIknowWhatIWant() {
+        this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
+    }
+
+    @Override
+    public void onSubmitSubmit(HashMap<String,String> params) {
+//        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM,Constants.BASE_URL + "yearly-exams/",params, 1);
     }
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
