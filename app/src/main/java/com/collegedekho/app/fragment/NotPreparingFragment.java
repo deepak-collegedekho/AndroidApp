@@ -9,10 +9,6 @@ import android.widget.Button;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.entities.Exam;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by bashir on 11/12/15.

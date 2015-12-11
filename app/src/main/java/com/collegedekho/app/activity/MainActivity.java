@@ -1957,7 +1957,7 @@ public class MainActivity extends AppCompatActivity
                         dialog.dismiss();
                     }
                 })
-                .setCancelable(false)
+//                .setCancelable(false)
                 .show();
     }
 
