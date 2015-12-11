@@ -1,121 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:gravity="center"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/app_background"
-    android:layout_height="match_parent">
-
-    <include layout="@layout/layout_profile_image"
-        android:id="@+id/include_image_layout"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"/>
-
-    <TextView
-        android:id="@+id/user_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/include_image_layout"
-        android:text="Sashi Negi"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:padding="10dp"
-        android:textSize="18sp"/>
-
+    android:weightSum="1">
     <RelativeLayout
-        android:id="@+id/profile_progressRL"
-        android:layout_width="wrap_content"
-        android:layout_below="@id/user_name"
-        android:layout_marginLeft="@dimen/m100dp"
-        android:padding="10dp"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:id="@+id/profile_progressLL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".05"
+        android:visibility="gone"
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/primary_orange"
-                android:text="PROGRESS"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text="LAST SEVEN DAYS"/>
-        </LinearLayout>
-        <TextView
-            android:layout_toRightOf="@id/profile_progressLL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="30sp"
-            android:paddingLeft="10dp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:text="85%"
-            />
-
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/login_countRL"
-        android:layout_width="wrap_content"
-        android:layout_below="@id/profile_progressRL"
-        android:layout_marginLeft="@dimen/m100dp"
-        android:padding="@dimen/m10dp"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:id="@+id/login_countLL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/primary_orange"
-                android:text="LOGINS"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text="SINCE 31 OCTOBER"/>
-        </LinearLayout>
-        <TextView
-            android:layout_toRightOf="@id/login_countLL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:paddingLeft="10dp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:text="18"/>
-
+        >
+        <android.support.v4.view.ViewPager
+            android:id="@+id/exam_detail_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <android.support.v4.view.PagerTabStrip
+                android:id="@+id/exam_pager_header"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="top"
+                android:textColor="#fff"
+                android:background="?attr/colorPrimary"
+                android:scrollbars="none"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:tabMode="scrollable"
+                />
+        </android.support.v4.view.ViewPager>
     </RelativeLayout>
 
-    <TextView
-        style="@style/AppTheme.BlueButton"
-        android:textColor="@color/white"
-        android:layout_width="wrap_content"
-        android:layout_below="@id/login_countRL"
-        android:layout_centerHorizontal="true"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:layout_marginTop="15dp"
-        android:gravity="center"
-        android:text="LEVEL 3"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".3">
+
+        <include layout="@layout/layout_profile_image"
+            android:id="@+id/include_image_layout"
+            android:layout_width="150dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="150dp"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/m10dp"
+            android:layout_toRightOf="@id/include_image_layout">
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sashi Negi"
+                android:gravity="left"
+                android:textStyle="bold"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingRight="10dp"
+                android:textSize="18sp"/>
+
+            <LinearLayout
+                android:id="@+id/profile_progressLL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_name"
+                android:weightSum="1">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight=".55"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary_orange"
+                        android:text="SYLLABUS"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="COMPLETED"/>
+                </LinearLayout>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight=".45"
+                    android:layout_height="match_parent"
+                    android:paddingRight="10dp"
+                    android:textSize="30sp"
+                    android:textColor="@color/light_blue"
+                    android:text="25%"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/login_countRL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/m5dp"
+                android:layout_below="@id/profile_progressLL"
+                android:weightSum="1">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight=".55"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary_orange"
+                        android:text="TEST"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="GIVEN"/>
+                </LinearLayout>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight=".45"
+                    android:layout_height="wrap_content"
+                    android:textSize="30sp"
+                    android:paddingRight="10dp"
+                    android:textColor="@color/light_blue"
+                    android:text="00"/>
+
+            </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <include layout="@layout/layout_profile_wishlist"
+        android:id="@+id/include_layout_home_widget"
+        android:layout_height="0dp"
+        android:layout_weight=".45"
+        android:layout_width="match_parent"/>
 
     <include layout="@layout/layout_bottom_button"
+        android:layout_below="@id/include_layout_home_widget"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:layout_alignParentBottom="true"/>
+        android:layout_height="0dp"
+        android:layout_weight=".2"
+        android:layout_marginBottom="10dp"
+        />
 
-</RelativeLayout>
+</LinearLayout>

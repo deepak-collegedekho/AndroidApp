@@ -12,15 +12,9 @@ import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.entities.Exam;
-import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircleImageView;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by sureshsaini on 27/11/15.
@@ -53,10 +47,13 @@ public class ProfileFragment extends  BaseFragment {
 
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
-            TextView mProfileName    =   (TextView)rootView.findViewById(R.id.user_name);
-            CircleImageView mProfileImage = (CircleImageView)rootView.findViewById(R.id.profile_image);
-            mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
-            mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
+        TextView mProfileName    =   (TextView)rootView.findViewById(R.id.user_name);
+        CircleImageView mProfileImage = (CircleImageView)rootView.findViewById(R.id.profile_image);
+        mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
+        mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
+
+
+
         if(MainActivity.user != null)
         {
             String name = MainActivity.user.getName();
@@ -75,10 +72,9 @@ public class ProfileFragment extends  BaseFragment {
                 mProfileName.setVisibility(View.VISIBLE);
             }
             String image = MainActivity.user.getImage();
-            if (image != null && ! image.isEmpty()) {
+            if (image != null && ! image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-                mProfileImage.setVisibility(View.VISIBLE);
-            }
+
         }
 
         rootView.findViewById(R.id.prep_buddies).setOnClickListener(this);

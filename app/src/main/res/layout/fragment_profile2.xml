@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <include layout="@layout/layout_profile_image"
-        android:id="@+id/profile_image_layout"
+        android:id="@+id/include_image_layout"
         android:layout_width="match_parent"
         android:layout_height="150dp"/>
 
@@ -14,7 +14,7 @@
         android:id="@+id/user_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/profile_image_layout"
+        android:layout_below="@id/include_image_layout"
         android:text="Sashi Negi"
         android:gravity="center"
         android:textStyle="bold"
@@ -38,12 +38,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
+                android:textStyle="bold"
                 android:textColor="@color/primary_orange"
                 android:text="PROGRESS"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:text="LAST SEVEN DAYS"/>
         </LinearLayout>
         <TextView
@@ -55,7 +56,7 @@
             android:paddingLeft="10dp"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:text="24%"
+            android:text="85%"
             />
 
     </RelativeLayout>
@@ -76,13 +77,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
+                android:textStyle="bold"
                 android:textColor="@color/primary_orange"
                 android:text="LOGINS"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"
-                android:text="LAST SEVEN DAYS"/>
+                android:textSize="12sp"
+                android:text="SINCE 31 OCTOBER"/>
         </LinearLayout>
         <TextView
             android:layout_toRightOf="@id/login_countLL"
@@ -92,9 +94,23 @@
             android:paddingLeft="10dp"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:text="24%"/>
+            android:text="18"/>
 
     </RelativeLayout>
+
+    <TextView
+        style="@style/AppTheme.BlueButton"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/login_countRL"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:text="LEVEL 3"/>
 
     <include layout="@layout/layout_bottom_button"
         android:layout_width="match_parent"

@@ -36,29 +36,7 @@ public class MyAlertFragment extends  BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_my_alert, container, false);
-        WheelView wheelView = (WheelView)rootView.findViewById(R.id.wheelview);
-        wheelView.setAdapter(new WheelAdapter() {
-            @Override
-            public Drawable getDrawable(int position) {
-                //return drawable here - the position can be seen in the gifs above
-                if(position == 1)
-                {
-                    return getDrawable(R.drawable.bg_black_circle);
-                }
-                return null;
-            }
-
-            @Override
-            public int getCount() {
-               return 2;
-            }
-
-            @Override
-            public Object getItem(int position) {
-                return null;
-            }
-        });
+        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
         return rootView;
 

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".5"
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:weightSum="1">
+
+        <RelativeLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_marginRight="@dimen/m8dp"
+            android:background="@drawable/rounded_box_light_blue_20px"
+            android:layout_height="90dp" >
+
+            <ImageView
+                android:id="@+id/backup_colleges_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/ic_backup_colleges"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/backup_colleges_image"
+                android:layout_alignParentBottom="true"
+                android:text="BACKUP"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:paddingBottom="@dimen/m5dp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/backup_colleges_image"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/backup_colleges_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="18/20"
+                    android:gravity="right"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="colleges"
+                    android:gravity="right"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_marginLeft="@dimen/m5dp"
+            android:background="@drawable/rounded_box_light_blue_20px"
+            android:layout_height="90dp" >
+
+            <ImageView
+                android:id="@+id/wishList_colleges_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/ic_wishlist_colleges"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/wishList_colleges_image"
+                android:layout_alignParentBottom="true"
+                android:text="WISHLIST"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:paddingBottom="@dimen/m5dp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/wishList_colleges_image"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/wishList_colleges_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="2/20"
+                    android:gravity="right"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="colleges"
+                    android:gravity="right"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".5"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="15dp"
+        android:weightSum="1">
+
+        <RelativeLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_marginRight="@dimen/m8dp"
+            android:background="@drawable/rounded_box_light_blue_20px"
+            android:layout_height="90dp" >
+
+            <ImageView
+                android:id="@+id/recommended_colleges_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_recommended_colleges"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/recommended_colleges_image"
+                android:layout_alignParentBottom="true"
+                android:text="RECOMMENDED"
+                android:textSize="16sp"
+                android:textColor="@color/white"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/recommended_colleges_image"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/recommended_colleges_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="04/11"
+                    android:gravity="right"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="colleges"
+                    android:gravity="right"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_marginLeft="@dimen/m5dp"
+            android:background="@drawable/rounded_box_light_blue_20px"
+            android:layout_height="90dp" >
+
+            <ImageView
+                android:id="@+id/important_colleges_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_important_dates"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/important_colleges_image"
+                android:layout_alignParentBottom="true"
+                android:text="IMPORTANT DATE"
+                android:gravity="left"
+                android:textSize="16sp"
+                android:textColor="@color/white"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/important_colleges_image"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/important_colleges_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="2/20"
+                    android:gravity="right"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="colleges"
+                    android:gravity="right"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"/>
+
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -70,6 +70,7 @@ import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.BaseFragment;
+import com.collegedekho.app.fragment.MyAlertFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FilterFragment;
