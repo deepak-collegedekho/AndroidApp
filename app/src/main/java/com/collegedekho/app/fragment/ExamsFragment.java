@@ -84,7 +84,7 @@ public class ExamsFragment extends BaseFragment {
         });*/
 
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 8, true));
         //recyclerView.setHasFixedSize(true);
 
         ExamsAdapter mAdapter = new ExamsAdapter(getActivity(), this.mExamList);

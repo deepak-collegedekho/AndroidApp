@@ -48,7 +48,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
 
         final Exam exam = this.mExamList.get(position);
         if(exam != null) {
-            holder.mExamName.setText(exam.getExam());
+            holder.mExamName.setText(exam.getExam_name());
             ArrayList<ExamDetail> examDetail = exam.getExam_details();
             if(examDetail != null){
                 final int count = examDetail.size();

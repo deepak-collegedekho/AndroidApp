@@ -10,7 +10,9 @@ import java.util.ArrayList;
  */
 public class Exam implements Parcelable{
 
-    private String exam;
+    private String exam_name;
+    private String exam_short_name;
+
     private ArrayList<ExamDetail> exam_details;
     private boolean isSelected;
 
@@ -19,7 +21,7 @@ public class Exam implements Parcelable{
     }
 
     protected Exam(Parcel in) {
-        exam = in.readString();
+        exam_name = in.readString();
         exam_details = in.createTypedArrayList(ExamDetail.CREATOR);
         isSelected = in.readByte() != 0;
     }
@@ -43,17 +45,10 @@ public class Exam implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(exam);
+        dest.writeString(exam_name);
+        dest.writeString(exam_short_name);
         dest.writeTypedList(exam_details);
         dest.writeByte((byte) (isSelected ? 1 : 0));
-    }
-
-    public String getExam() {
-        return exam;
-    }
-
-    public void setExam(String exam) {
-        this.exam = exam;
     }
 
     public ArrayList<ExamDetail> getExam_details() {
@@ -70,5 +65,21 @@ public class Exam implements Parcelable{
 
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+
+    public String getExam_short_name() {
+        return exam_short_name;
+    }
+
+    public void setExam_short_name(String exam_short_name) {
+        this.exam_short_name = exam_short_name;
+    }
+
+    public String getExam_name() {
+        return exam_name;
+    }
+
+    public void setExam_name(String exam_name) {
+        this.exam_name = exam_name;
     }
 }
