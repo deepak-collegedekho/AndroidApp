@@ -1,6 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -9,7 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -17,8 +20,11 @@ import android.widget.ToggleButton;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.UserEducation;
+import com.collegedekho.app.entities.UserEducationStreams;
+import com.collegedekho.app.entities.UserEducationSublevels;
 import com.collegedekho.app.utils.GaradiWindowHelper;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -45,7 +51,18 @@ public class UserEducationFragment extends BaseFragment {
     private boolean isUserPreparing;
     private OnUserEducationInteractionListener mListener;
     private RelativeLayout.LayoutParams layoutParams;
+
+
     private ArrayList<UserEducation> mUserEducationList;
+    private ArrayList<UserEducationSublevels> mUserExamSubLevelsList;
+    private ArrayList<ArrayList<UserEducationStreams>> mUserStreamLists;
+    private NumberPicker mExamPicker;
+    private NumberPicker mStreamPicker;
+    private NumberPicker mMarksPicker;
+
+    private String[] exam_arrays ;
+    private String[] stream_arrays ;
+    final String[] marks_arrays = {"30-40%", "40-50%","50-60%","60-70%", "70-80%", "80-90%", "90-100%",};
 
     public UserEducationFragment() {
         // Required empty public constructor
@@ -73,6 +90,7 @@ public class UserEducationFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mUserEducationList = getArguments().getParcelableArrayList(USER_EDUCATION_LIST);
+            makeArraysForPicker();
         }
     }
 
@@ -87,7 +105,7 @@ public class UserEducationFragment extends BaseFragment {
         Spanned text = Html.fromHtml("GET <b><font color='#ff8d00'>C</font><font color='#1f2560'>D</font></b> <br>RECOMMEDATIONS");
         cdTextView.setText(text);
 
-        RelativeLayout layout = new RelativeLayout(this.getContext());
+        /*RelativeLayout layout = new RelativeLayout(this.getContext());
         layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 
@@ -106,10 +124,41 @@ public class UserEducationFragment extends BaseFragment {
             }
         });
 
-        ((LinearLayout) rootView.findViewById(R.id.user_education_layout)).addView(layout);
+        ((LinearLayout) rootView.findViewById(R.id.user_education_layout)).addView(layout);*/
 
         rootView.findViewById(R.id.is_preparing_for_exam).setOnClickListener(this);
         rootView.findViewById(R.id.is_not_preparing_for_exam).setOnClickListener(this);
+
+        mMarksPicker = (NumberPicker) rootView.findViewById(R.id.marks_number_picker);
+        mMarksPicker.setMaxValue(marks_arrays.length-1);
+        mMarksPicker.setMinValue(0);
+        mMarksPicker.setWrapSelectorWheel(false);
+        mMarksPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        mMarksPicker.setDisplayedValues(marks_arrays);
+
+        mExamPicker = (NumberPicker) rootView.findViewById(R.id.exam_number_picker);
+        mExamPicker.setMaxValue(exam_arrays.length-1);
+        mExamPicker.setMinValue(0);
+        mExamPicker.setWrapSelectorWheel(false);
+        mExamPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        mExamPicker.setDisplayedValues(exam_arrays);
+
+        mStreamPicker = (NumberPicker) rootView.findViewById(R.id.stream_number_picker);
+        mStreamPicker.setMaxValue(stream_arrays.length-1);
+        mStreamPicker.setMinValue(0);
+        mStreamPicker.setWrapSelectorWheel(false);
+        mStreamPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        mStreamPicker.setDisplayedValues(stream_arrays);
+
+        mExamPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                mUpdateStreamPicker(newVal);
+
+                mStreamPicker.setValue(0);
+                mMarksPicker.setValue(0);
+            }
+        });
 
         return rootView;
     }
@@ -155,9 +204,71 @@ public class UserEducationFragment extends BaseFragment {
         }
     }
 
+
+    private void makeArraysForPicker(){
+        if(this.mUserEducationList == null)return;
+        int count = this.mUserEducationList.size();
+
+        this.mUserExamSubLevelsList = new ArrayList<>();
+        this.mUserStreamLists = new ArrayList<>();
+        for (int i = 0; i < count ; i++) {
+            this.mUserExamSubLevelsList.addAll(this.mUserEducationList.get(i).getSublevels());
+            int sublevelCount = this.mUserEducationList.get(i).getSublevels().size();
+            for (int j = 0; j <sublevelCount ; j++)
+                this.mUserStreamLists.add(this.mUserEducationList.get(i).getStreams());
+        }
+
+        // make Exam string arrays for picker
+        int examsCount = this.mUserExamSubLevelsList.size();
+        this.exam_arrays = new String[examsCount];
+        for (int i = 0; i < examsCount ; i++)
+            this.exam_arrays[i]  = mUserExamSubLevelsList.get(i).getName();
+
+        // make stream String arrays for picker
+        ArrayList<UserEducationStreams> tempStreamList = mUserStreamLists.get(0);
+        if(tempStreamList == null) return;
+        int streamCount = tempStreamList.size();
+        this.stream_arrays = new String[streamCount];
+        for (int i = 0; i < streamCount ; i++)
+            this.stream_arrays[i]  = tempStreamList.get(i).getName();
+
+    }
+
+    private void mUpdateStreamPicker(int position) {
+
+        if(this.mUserStreamLists == null || position >= this.mUserStreamLists.size())
+            return;
+
+        // make stream String arrays for picker
+        ArrayList<UserEducationStreams> tempStreamList = mUserStreamLists.get(position);
+        if(tempStreamList == null) return;
+        int streamCount = tempStreamList.size();
+        this.stream_arrays = new String[streamCount];
+        for (int i = 0; i < streamCount ; i++)
+            this.stream_arrays[i]  = tempStreamList.get(i).getName();
+
+        mStreamPicker.setDisplayedValues(null);
+        mStreamPicker.setMaxValue(stream_arrays.length-1);
+        mStreamPicker.setMinValue(0);
+        mStreamPicker.setWrapSelectorWheel(false);
+        mStreamPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        mStreamPicker.setDisplayedValues(stream_arrays);
+
+    }
+
     private void mUserPreparingForExam() {
         if (this.mListener != null) {
             HashMap<String, String> map = new HashMap<>();
+
+            int examPosition = mExamPicker.getValue();
+            int streamPosition = mStreamPicker.getValue();
+            int marksPosition = mMarksPicker.getValue();
+            ArrayList<UserEducationStreams> tempStreamList = mUserStreamLists.get(examPosition);
+
+            UserEducationFragment.this.mSubLevelID = ""+mUserExamSubLevelsList.get(examPosition).getId();
+            UserEducationFragment.this.mStreamID = ""+tempStreamList.get(streamPosition).getId();
+            UserEducationFragment.this.mMarks = "40";
+
 
             map.put("sublevel", UserEducationFragment.this.mSubLevelID);
             map.put("stream", UserEducationFragment.this.mStreamID);
@@ -168,6 +279,29 @@ public class UserEducationFragment extends BaseFragment {
         }
     }
 
+
+
+
+
+    public static void setNumberPickerTextColor(NumberPicker numberPicker, int color){
+        final int count = numberPicker.getChildCount();
+        for(int i = 0; i < count; i++){
+            View child = numberPicker.getChildAt(i);
+            if(child instanceof EditText){
+                try{
+                    Field selectorWheelPaintField = numberPicker.getClass().getDeclaredField("mSelectorWheelPaint");
+                    selectorWheelPaintField.setAccessible(true);
+                    ((Paint)selectorWheelPaintField.get(numberPicker)).setColor(color);
+                    numberPicker.invalidate();
+                    ((EditText)child).setTextColor(color);
+
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
     private void mUserNotPreparingForExam() {
         if(this.mListener !=  null){
             this.mListener.onUserNotPreparingSelected();
@@ -189,4 +323,5 @@ public class UserEducationFragment extends BaseFragment {
         void onEducationSelected(HashMap<String, String> map);
         void onUserNotPreparingSelected();
     }
+
 }

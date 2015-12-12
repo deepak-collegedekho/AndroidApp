@@ -111,9 +111,10 @@ public class LoopView extends View {
         paintB = new Paint();
         paintB.setColor(colorOrange);
         paintB.setAntiAlias(true);
-        paintB.setTextScaleX(1.15F);
+        paintB.setTextScaleX(2.5F);
         paintB.setTypeface(Typeface.MONOSPACE);
-        paintB.setTextSize(textSize);
+        int selctedTextSize = (int) (context.getResources().getDisplayMetrics().density * 25);
+        paintB.setTextSize(selctedTextSize);
         //paintB.setTextAlign(Paint.Align.CENTER);
         paintC = new Paint();
         paintC.setColor(colorGrayLight);

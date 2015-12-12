@@ -4,13 +4,9 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.net.Uri;
-import android.provider.ContactsContract;
-import android.support.v4.content.CursorLoader;
 import android.util.Patterns;
 import android.widget.Toast;
 
-import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.TypeFaceTypes;
 
 import java.util.regex.Matcher;
@@ -32,20 +28,11 @@ public class Utils {
             case DROID_SERIF_BOLD:
                 mTypeface = Typeface.createFromAsset(ctx.getAssets(),"fonts/DROID_SERIF_BOLD.ttf");
                 break;
-            case DROID_SERIF_BOLD_ITALIC:
-                mTypeface = Typeface.createFromAsset(ctx.getAssets(),"DROID_SERIF_BOLD_ITALIC.ttf");
+            case PROXIMA_NOVA_REGULAR:
+                mTypeface = Typeface.createFromAsset(ctx.getAssets(),"proxima_nova_regular.ttf");
                 break;
-            case DROID_SERIF_ITALIC:
-                mTypeface = Typeface.createFromAsset(ctx.getAssets(),"DROID_SERIF_ITALIC.ttf");
-                break;
-            case DROID_SERIF_REGULAR:
-                mTypeface = Typeface.createFromAsset(ctx.getAssets(),"DROID_SERIF_REGULAR.ttf");
-                break;
-            case ICOMOONFREE:
-                mTypeface = Typeface.createFromAsset(ctx.getAssets(),"IcoMoonFree.ttf");
-                break;
-            case GOTHAMBOOK:
-                mTypeface = Typeface.createFromAsset(ctx.getAssets(),"GothamBook.otf");
+            case GOTHAM_BOOK:
+                mTypeface = Typeface.createFromAsset(ctx.getAssets(),"gotham-book.ttf");
                 break;
             default:
                 break;

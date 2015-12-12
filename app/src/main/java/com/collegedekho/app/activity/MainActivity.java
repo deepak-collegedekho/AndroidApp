@@ -343,9 +343,9 @@ public class MainActivity extends AppCompatActivity
 
         this.mSetNavigationListener();
 
-         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
+        this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
         //init();
-        //this.mDisplayFragment(MyAlertFragment.newInstance(), false, MyAlertFragment.class.getName());
+        //this.mDisplayFragment(MyAlertFragment.newInstance(null), false, MyAlertFragment.class.getName());
         // show appBarLayout and toolBar
 
         // TODO: Move this to where you establish a user session
@@ -1350,6 +1350,7 @@ public class MainActivity extends AppCompatActivity
             ArrayList<UserEducation> userEducationList = (ArrayList<UserEducation>) JSON.std.listOfFrom(UserEducation.class, response);
 
             this.mDisplayFragment(UserEducationFragment.newInstance(userEducationList), false, Constants.TAG_FRAGMENT_USER_EDUCATION);
+            //this.mDisplayFragment(MyAlertFragment.newInstance(userEducationList), false, MyAlertFragment.class.getName());
         } catch (IOException e) {
             e.printStackTrace();
         }

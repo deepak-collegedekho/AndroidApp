@@ -59,9 +59,39 @@
             <LinearLayout
                 android:id="@+id/user_education_layout"
                 android:layout_width="match_parent"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:layout_below="@id/step_ui"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:weightSum="1">
+
+                <NumberPicker
+                    android:id="@+id/exam_number_picker"
+                    android:layout_width="0dp"
+                    android:layout_weight=".33"
+                    android:layout_marginLeft="@dimen/m10dp"
+                    android:textColor="@color/primary_orange"
+                    android:textSize="16sp"
+                    android:layout_height="wrap_content">
+
+                </NumberPicker>
+                <NumberPicker
+                    android:id="@+id/stream_number_picker"
+                    android:layout_width="0dp"
+                    android:layout_weight=".33"
+                    android:layout_marginLeft="@dimen/m30dp"
+                    android:layout_height="wrap_content">
+
+                </NumberPicker>
+                <NumberPicker
+                    android:id="@+id/marks_number_picker"
+                    android:layout_width="0dp"
+                    android:layout_weight=".33"
+                    android:layout_marginLeft="@dimen/m30dp"
+                    android:layout_marginRight="@dimen/m10dp"
+                    android:layout_height="wrap_content">
+                </NumberPicker>
+                </LinearLayout>
         </RelativeLayout>
     </ScrollView>
     <LinearLayout

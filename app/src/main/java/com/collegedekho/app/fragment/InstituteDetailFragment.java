@@ -131,6 +131,7 @@ public class InstituteDetailFragment extends BaseFragment {
 
         this.mAdapter = new CoverFlowAdapter(this.getContext());
         this.mAdapter.setData(this.mData);
+/*
         this.mCoverFlow = (FeatureCoverFlow) rootView.findViewById(R.id.coverflow);
         this.mCoverFlow.setAdapter(this.mAdapter);
 
@@ -164,6 +165,7 @@ public class InstituteDetailFragment extends BaseFragment {
             public void onScrolling() {
             }
         });
+*/
 
         //this.tabLayout = (TabLayout) rootView.findViewById(R.id.college_tabs_layout);
         //this.tabLayout.setTabTextColors(getResources().getColor(R.color.white), getResources().getColor(R.color.light_grey_background));
