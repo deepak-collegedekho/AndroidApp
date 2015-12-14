@@ -135,7 +135,7 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
     }
 
     public interface OnSubjectSelectedListener {
-        void onSubjectSelected(Subjects subject);
-        void onSubjectCheckboxSelected(Subjects subject);
+        void onSubjectSelected(Subjects subject, int position);
+        void onSubjectCheckboxSelected(Subjects subject, int position);
     }
 }

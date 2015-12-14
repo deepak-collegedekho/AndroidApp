@@ -45,7 +45,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.toolbox.Volley;
 import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
 import com.appsflyer.DebugLogQueue;
@@ -72,7 +71,6 @@ import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.BaseFragment;
-import com.collegedekho.app.fragment.MyAlertFragment;
 import com.collegedekho.app.fragment.NotPreparingFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
@@ -96,6 +94,7 @@ import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.fragment.SplashFragment;
 import com.collegedekho.app.fragment.StreamFragment;
 import com.collegedekho.app.fragment.SyllabusSubjectsListFragment;
+import com.collegedekho.app.fragment.SyllabusUnitListFragment;
 import com.collegedekho.app.fragment.TabFragment;
 import com.collegedekho.app.fragment.UserEducationFragment;
 import com.collegedekho.app.fragment.WidgetListFragment;
@@ -122,7 +121,6 @@ import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.google.android.gms.appdatasearch.GetRecentContextCall;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.tagmanager.Container;
@@ -1001,7 +999,7 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplaySubjectSyllabus(Subjects subject)
     {
-
+        this.mDisplayFragment(SyllabusUnitListFragment.newInstance(subject.getUnits()), false, SyllabusUnitListFragment.class.getSimpleName());
     }
 
     private void mDisplayInstitute(int position) {
@@ -3624,12 +3622,12 @@ public class MainActivity extends AppCompatActivity
 //        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM,Constants.BASE_URL + "yearly-exams/",params, 1);
     }
 
-    public void onSubjectSelected(Subjects subject) {
+    public void onSubjectSelected(Subjects subject, int position) {
         this.mDisplaySubjectSyllabus(subject);
     }
 
     @Override
-    public void onSubjectCheckboxSelected(Subjects subject) {
+    public void onSubjectCheckboxSelected(Subjects subject, int position) {
 
     }
 

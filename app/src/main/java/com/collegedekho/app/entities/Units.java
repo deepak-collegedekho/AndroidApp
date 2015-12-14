@@ -25,7 +25,7 @@ public class Units implements Parcelable {
 
     public int unit_id;
     public int subject_id;
-    public int unit_done_percent;
+    public float unit_done_percent;
     public String unit_name;
     public String subject_name;
     public ArrayList<Chapters> chapters;
@@ -37,7 +37,7 @@ public class Units implements Parcelable {
 
     public Units(Parcel source) {
         unit_id = source.readInt();
-        unit_done_percent = source.readInt();
+        unit_done_percent = source.readFloat();
         unit_name = source.readString();
         chapters = new ArrayList<Chapters>();
         source.readTypedList(chapters, Chapters.CREATOR);
@@ -51,7 +51,7 @@ public class Units implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(unit_id);
-        dest.writeInt(unit_done_percent);
+        dest.writeFloat(unit_done_percent);
         dest.writeString(unit_name);
         dest.writeTypedList(chapters);
     }
@@ -73,10 +73,10 @@ public class Units implements Parcelable {
     }
 
     public int getUnit_done_percent() {
-        return unit_done_percent;
+        return Math.round(unit_done_percent);
     }
 
-    public void setUnit_done_percent(int unit_done_percent) {
+    public void setUnit_done_percent(float unit_done_percent) {
         this.unit_done_percent = unit_done_percent;
     }
 

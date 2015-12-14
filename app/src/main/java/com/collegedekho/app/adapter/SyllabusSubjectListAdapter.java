@@ -33,9 +33,6 @@ public class SyllabusSubjectListAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rootView = LayoutInflater.from(mContext).inflate(R.layout.card_syllabus_subject, parent, false);
-        rootView.setSelected(true);
-        CardView cardView = (CardView) rootView.findViewById(R.id.card_syllabus_subject);
-        cardView.setSelected(true);
         try {
             return new SubjectHolder(rootView, (SyllabusSubjectsListFragment.OnSubjectSelectedListener) this.mContext);
         } catch (ClassCastException e) {
@@ -90,11 +87,11 @@ public class SyllabusSubjectListAdapter extends RecyclerView.Adapter {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.syllabus_subject_checkbox:
-                    mListener.onSubjectCheckboxSelected(SyllabusSubjectListAdapter.this.mSubjects.get(getAdapterPosition()));
+                    mListener.onSubjectCheckboxSelected(SyllabusSubjectListAdapter.this.mSubjects.get(getAdapterPosition()), getAdapterPosition());
                     break;
                 case R.id.syllabus_subject_progress_bar:
                 case R.id.syllabus_subject_name:
-                    mListener.onSubjectCheckboxSelected(SyllabusSubjectListAdapter.this.mSubjects.get(getAdapterPosition()));
+                    mListener.onSubjectSelected(SyllabusSubjectListAdapter.this.mSubjects.get(getAdapterPosition()), getAdapterPosition());
                     break;
                 default:
                     break;

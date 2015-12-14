@@ -272,4 +272,7 @@ public class Constants
    // for close app
     public static boolean READY_TO_CLOSE = false;
 
+    public static final String EXPANDED_INDICATOR = "\u2013";
+    public static final String COLAPSED_INDICATOR = "+";
+
 }
