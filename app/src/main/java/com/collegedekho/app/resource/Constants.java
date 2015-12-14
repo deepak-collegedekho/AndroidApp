@@ -36,6 +36,7 @@ public class Constants
     public static final String KEY_STREAMS = "streams";
     public static final String COMPLETED_SECOND_STAGE = "second_stage";
     public static final String WIDGET_INSTITUTES = "institutes";
+    public static final String WIDGET_SYLLABUS = "syllabus";
     public static final String SEARCHED_INSTITUTES = "searched_institutes";
     public static final String WIDGET_COURSES = "courses";
     public static final String WIDGET_NEWS = "news";
@@ -114,6 +115,8 @@ public class Constants
     public static final int DISLIKE_THING = 1;
     public static final int SHORTLISTED_YES = 1;
     public static final int SHORTLISTED_NO = 0;
+    public static final int BOOLEAN_TRUE = 1;
+    public static final int BOOLEAN_FALSE = 0;
     public static final int MAIN_ANIMATION_TIME = 6500;
     public static final int SECONDARY_ANIMATION_TIME = 2000;
     public static final String SELECTED_FILTERS = "selected_filters";

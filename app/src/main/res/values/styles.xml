@@ -121,6 +121,13 @@
         <item name="android:layout_gravity">center</item>
     </style>
 
+    <style name="AppTheme.CardView.LightBlue" parent="AppTheme.CardView">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">@color/light_blue</item>
+        <item name="cardBackgroundColor">@color/light_blue</item>
+
+    </style>
+
     <style name="AppTheme.CardView.Streams" parent="AppTheme.StreamsCardView">
         <!--<item name="cardElevation">0dp</item>-->
         <item name="android:background">@drawable/stream_card_bg</item>

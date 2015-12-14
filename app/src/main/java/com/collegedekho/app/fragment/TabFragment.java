@@ -160,9 +160,13 @@ public class TabFragment extends  BaseFragment {
         }
         this.mUpdateSelectedTab();
     }
+
     private void mUpdateSelectedTab(){
         View view = getView();
-        if(view ==   null) return;
+
+        if(view ==   null)
+            return;
+
         TextView prepBuddies       = (TextView)view.findViewById(R.id.prep_buddies);
         TextView resourceBuddies   = (TextView)view.findViewById(R.id.resources_buddies);
         TextView futureBuddies     = (TextView)view.findViewById(R.id.future_buddies);
@@ -178,21 +182,21 @@ public class TabFragment extends  BaseFragment {
         ImageView thirdSubMenuIV      = (ImageView)view.findViewById(R.id.home_widget_image_third);
         ImageView fourthSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_fourth);
 
-
         prepBuddies.setSelected(false);
         resourceBuddies.setSelected(false);
         futureBuddies.setSelected(false);
         myAlerts.setSelected(false);
+
         if(this.selectedTabMenuPosition == 0){
             prepBuddies.setSelected(true);
             firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
-            secondSubMenuIV.setImageResource(R.drawable.ic_challenges);
-            thirdSubMenuIV.setImageResource(R.drawable.ic_syllabus);
+            secondSubMenuIV.setImageResource(R.drawable.ic_syllabus);
+            thirdSubMenuIV.setImageResource(R.drawable.ic_challenges);
             fourthSubMenuIV.setImageResource(R.drawable.ic_prep_path);
 
             firstSubMenuTV.setText("Test Calendar");
-            secondSubMenuTV.setText("Challenges");
-            thirdSubMenuTV.setText("Syllabus");
+            secondSubMenuTV.setText("Syllabus");
+            thirdSubMenuTV.setText("Challenges");
             fourthSubMenuTV.setText("Prep Path");
 
         }else   if(this.selectedTabMenuPosition == 1){
@@ -217,7 +221,12 @@ public class TabFragment extends  BaseFragment {
 
     private void mUpdateSubMenuItem(){
         if(selectedTabMenuPosition ==0 ){
-            Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
+            if(selectedSubMenuPosition == 1)
+                this.mHomeItemSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/54/syllabus/");
+            else
+                Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
+
+
         }
         else if(selectedTabMenuPosition == 1){
              if(selectedSubMenuPosition == 0){

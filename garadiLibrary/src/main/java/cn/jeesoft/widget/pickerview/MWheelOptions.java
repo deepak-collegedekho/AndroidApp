@@ -1,5 +1,6 @@
 package cn.jeesoft.widget.pickerview;
 
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -113,17 +114,25 @@ final class MWheelOptions {
 
     private void doItemChange() {
         if (mOnOptionChangedListener != null) {
-            int option1 = wv_option1.getCurrentItem();
-            int option2 = wv_option2.getCurrentItem();
-            int option3 = wv_option3.getCurrentItem();
+            try
+            {
+                int option1 = wv_option1.getCurrentItem();
+                int option2 = wv_option2.getCurrentItem();
+                int option3 = wv_option3.getCurrentItem();
 
-            String levelID = (mOptions1Items.get(option1)).getLevelID();
-            String subLevelID =(mOptions1Items.get(option1)).getId();
-            String streamID = (mOptions2Items.get(option1)).get(option2).getId();
-            int marks = Integer.parseInt((mOptions3Items.get(option1)).get(option2).get(option3).getId());
-            marks = (((marks - 1) * 10) + 5);//get median of range, for eg. 1-10 return 5.
+                String levelID = (mOptions1Items.get(option1)).getLevelID();
+                String subLevelID =(mOptions1Items.get(option1)).getId();
+                String streamID = (mOptions2Items.get(option1)).get(option2).getId();
+                int marks = Integer.parseInt((mOptions3Items.get(option1)).get(option2).get(option3).getId());
+                marks = (((marks - 1) * 10) + 5);//get median of range, for eg. 1-10 return 5.
 
-            mOnOptionChangedListener.onOptionChanged(view, levelID, subLevelID, streamID, String.valueOf(marks));
+                mOnOptionChangedListener.onOptionChanged(view, levelID, subLevelID, streamID, String.valueOf(marks));
+            }
+            catch (Exception e)
+            {
+                Log.e("MWheelOptions", "doItemChange issue");
+                Log.e("MWheelOptions", e.getMessage());
+            }
         }
     }
 

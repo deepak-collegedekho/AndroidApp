@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/app_background"
+    android:weightSum="1">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".3"
+        >
+
+        <include layout="@layout/layout_profile_image"
+            android:id="@+id/include_image_layout"
+            android:layout_width="100dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"
+            android:layout_alignParentLeft="true"
+            />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/m10dp"
+            android:gravity="center_vertical"
+            android:layout_toRightOf="@id/include_image_layout">
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sashi Negi"
+                android:gravity="left"
+                android:textStyle="bold"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingRight="10dp"
+                android:textSize="18sp"
+                android:foregroundGravity="center_vertical"
+                />
+
+            <LinearLayout
+                android:id="@+id/profile_progressLL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_name"
+                android:weightSum="1"
+                >
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight=".55"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary_orange"
+                        android:text="SYLLABUS"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="COMPLETED"/>
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/syllabus_covered"
+                    android:layout_width="0dp"
+                    android:layout_weight=".45"
+                    android:layout_height="match_parent"
+                    android:paddingRight="10dp"
+                    android:textSize="30sp"
+                    android:textColor="@color/light_blue"
+                    android:text="25%"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/login_countRL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/m5dp"
+                android:layout_below="@id/profile_progressLL"
+                android:weightSum="1"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".05"
+        >
+        <android.support.v4.view.ViewPager
+            android:id="@+id/prep_buddy_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <android.support.v4.view.PagerTabStrip
+                android:id="@+id/prep_buddy_header"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="top"
+                android:textColor="#fff"
+                android:background="?attr/colorPrimary"
+                android:scrollbars="none"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:tabMode="scrollable"
+                />
+        </android.support.v4.view.ViewPager>
+    </RelativeLayout>
+</LinearLayout>

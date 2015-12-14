@@ -65,6 +65,7 @@ import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.entities.Stream;
+import com.collegedekho.app.entities.Subjects;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.entities.Widget;
@@ -94,6 +95,7 @@ import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.fragment.SplashFragment;
 import com.collegedekho.app.fragment.StreamFragment;
+import com.collegedekho.app.fragment.SyllabusSubjectsListFragment;
 import com.collegedekho.app.fragment.TabFragment;
 import com.collegedekho.app.fragment.UserEducationFragment;
 import com.collegedekho.app.fragment.WidgetListFragment;
@@ -188,7 +190,8 @@ public class MainActivity extends AppCompatActivity
         ProfileFragment1.onProfileUpdateListener,
         LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener,
         InstituteDetailFragment.OnInstituteFooterItemSelected, UserEducationFragment.OnUserEducationInteractionListener,NotPreparingFragment.OnTestOptionsListener,
-        PsychometricTestFragment.OnPsychometricTestSubmitListener
+        PsychometricTestFragment.OnPsychometricTestSubmitListener,
+        SyllabusSubjectsListFragment.OnSubjectSelectedListener
 {
 
     static {
@@ -996,8 +999,12 @@ public class MainActivity extends AppCompatActivity
         return myFB;
     }
 
-    private void mDisplayInstitute(int position) {
+    private void mDisplaySubjectSyllabus(Subjects subject)
+    {
 
+    }
+
+    private void mDisplayInstitute(int position) {
         int  id ;
         if(currentFragment instanceof InstituteShortlistFragment)
         {
@@ -1337,6 +1344,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
 //                this.mOnExamsSubmitted(response);
                 break;
+            case Constants.WIDGET_SYLLABUS:
+                this.mDisplayExamSyllabusFragment(response);
+                break;
         }
 
         if (this.progressDialog != null && this.progressDialog.isShowing())
@@ -1377,6 +1387,23 @@ public class MainActivity extends AppCompatActivity
             this.mDisplayFragment(UserEducationFragment.newInstance(userEducationList), false, Constants.TAG_FRAGMENT_USER_EDUCATION);
             //this.mDisplayFragment(MyAlertFragment.newInstance(userEducationList), false, MyAlertFragment.class.getName());
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This method is used to display the syllabus
+     * with the context of an exam
+     *
+     * @param response
+     */
+    private void mDisplayExamSyllabusFragment(String response){
+        try {
+            response = response.substring(10, response.length() - 1);
+            //ArrayList<UserEducation> userEducationList = (ArrayList<UserEducation>) JSON.std.listOfFrom(UserEducation.class, response);
+
+            //this.mDisplayFragment(UserEducationFragment.newInstance(userEducationList), false, Constants.TAG_FRAGMENT_USER_EDUCATION);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -3478,6 +3505,102 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(requestType, url, this.mFilterKeywords);
             return;
         }
+        if (requestType.equals(Constants.WIDGET_SYLLABUS)) {
+            String response = "[{\n" +
+                    "\t\"units\": [{\n" +
+                    "\t\t\"unit_name\": \"Time and Measurement\",\n" +
+                    "\t\t\"subject_id\": 1,\n" +
+                    "\t\t\"unit_id\": 1,\n" +
+                    "\t\t\"subject_name\": \"Physics\",\n" +
+                    "\t\t\"chapters\": [{\n" +
+                    "\t\t\t\"weightage\": 1,\n" +
+                    "\t\t\t\"should_be_done\": 1,\n" +
+                    "\t\t\t\"is_done\": 0,\n" +
+                    "\t\t\t\"id\": 9,\n" +
+                    "\t\t\t\"name\": \"Scale\"\n" +
+                    "\t\t}, {\n" +
+                    "\t\t\t\"weightage\": 2,\n" +
+                    "\t\t\t\"should_be_done\": 1,\n" +
+                    "\t\t\t\"is_done\": 0,\n" +
+                    "\t\t\t\"id\": 10,\n" +
+                    "\t\t\t\"name\": \"Distance and Displacement\"\n" +
+                    "\t\t}],\n" +
+                    "\t\t\"yearly_exam\": 54,\n" +
+                    "\t\t\"unit_done_percent\": 0.0\n" +
+                    "\t}, {\n" +
+                    "\t\t\"unit_name\": \"Force and Momentum\",\n" +
+                    "\t\t\"subject_id\": 1,\n" +
+                    "\t\t\"unit_id\": 2,\n" +
+                    "\t\t\"subject_name\": \"Physics\",\n" +
+                    "\t\t\"chapters\": [{\n" +
+                    "\t\t\t\"weightage\": 3,\n" +
+                    "\t\t\t\"should_be_done\": 1,\n" +
+                    "\t\t\t\"is_done\": 0,\n" +
+                    "\t\t\t\"id\": 11,\n" +
+                    "\t\t\t\"name\": \"Gravity\"\n" +
+                    "\t\t}, {\n" +
+                    "\t\t\t\"weightage\": 2,\n" +
+                    "\t\t\t\"should_be_done\": 1,\n" +
+                    "\t\t\t\"is_done\": 0,\n" +
+                    "\t\t\t\"id\": 12,\n" +
+                    "\t\t\t\"name\": \"Torque\"\n" +
+                    "\t\t}],\n" +
+                    "\t\t\"yearly_exam\": 54,\n" +
+                    "\t\t\"unit_done_percent\": 0.0\n" +
+                    "\t}],\n" +
+                    "\t\"subject_id\": 1,\n" +
+                    "\t\"subject_name\": \"Physics\",\n" +
+                    "\t\"yearly_exam\": \"54\"\n" +
+                    "}, {\n" +
+                    "\t\"units\": [{\n" +
+                    "\t\t\"unit_name\": \"Thermodynamics\",\n" +
+                    "\t\t\"subject_id\": 2,\n" +
+                    "\t\t\"unit_id\": 3,\n" +
+                    "\t\t\"subject_name\": \"Chemistry\",\n" +
+                    "\t\t\"chapters\": [{\n" +
+                    "\t\t\t\"weightage\": 1,\n" +
+                    "\t\t\t\"should_be_done\": 1,\n" +
+                    "\t\t\t\"is_done\": 0,\n" +
+                    "\t\t\t\"id\": 13,\n" +
+                    "\t\t\t\"name\": \"Second Law\"\n" +
+                    "\t\t}],\n" +
+                    "\t\t\"yearly_exam\": 54,\n" +
+                    "\t\t\"unit_done_percent\": 0.0\n" +
+                    "\t}],\n" +
+                    "\t\"subject_id\": 2,\n" +
+                    "\t\"subject_name\": \"Chemistry\",\n" +
+                    "\t\"yearly_exam\": \"54\"\n" +
+                    "}, {\n" +
+                    "\t\"units\": [{\n" +
+                    "\t\t\"unit_name\": \"Surface Area\",\n" +
+                    "\t\t\"subject_id\": 3,\n" +
+                    "\t\t\"unit_id\": 4,\n" +
+                    "\t\t\"subject_name\": \"Mathematics\",\n" +
+                    "\t\t\"chapters\": [{\n" +
+                    "\t\t\t\"weightage\": 2,\n" +
+                    "\t\t\t\"should_be_done\": 0,\n" +
+                    "\t\t\t\"is_done\": 0,\n" +
+                    "\t\t\t\"id\": 14,\n" +
+                    "\t\t\t\"name\": \"Sphere\"\n" +
+                    "\t\t}],\n" +
+                    "\t\t\"yearly_exam\": 54,\n" +
+                    "\t\t\"unit_done_percent\": 0.0\n" +
+                    "\t}],\n" +
+                    "\t\"subject_id\": 3,\n" +
+                    "\t\"subject_name\": \"Mathematics\",\n" +
+                    "\t\"yearly_exam\": \"54\"\n" +
+                    "}]";
+
+            try {
+                ArrayList<Subjects> subjectsList = (ArrayList<Subjects>) JSON.std.listOfFrom(Subjects.class, response);
+                this.mDisplayFragment(SyllabusSubjectsListFragment.newInstance(subjectsList), false, SyllabusSubjectsListFragment.class.getSimpleName());
+            } catch (IOException e) {
+                Log.v(TAG, e.getMessage());
+                e.printStackTrace();
+            }
+
+            return;
+        }
        this.mMakeNetworkCall(requestType,url, null);
     }
 
@@ -3499,6 +3622,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSubmitSubmit(HashMap<String,String> params) {
 //        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM,Constants.BASE_URL + "yearly-exams/",params, 1);
+    }
+
+    public void onSubjectSelected(Subjects subject) {
+        this.mDisplaySubjectSyllabus(subject);
+    }
+
+    @Override
+    public void onSubjectCheckboxSelected(Subjects subject) {
+
     }
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
