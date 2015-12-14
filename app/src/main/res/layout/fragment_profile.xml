@@ -6,13 +6,12 @@
     android:orientation="vertical"
     android:background="@color/app_background"
     android:weightSum="1">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".05"
-        android:visibility="gone"
+        android:layout_weight=".05">
 
-        >
         <android.support.v4.view.ViewPager
             android:id="@+id/exam_detail_pager"
             android:layout_width="match_parent"
@@ -33,6 +32,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/check_gesture"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".3">
@@ -89,6 +89,7 @@
                         android:text="COMPLETED"/>
                 </LinearLayout>
                 <TextView
+                    android:id="@+id/covered_syllabus"
                     android:layout_width="0dp"
                     android:layout_weight=".45"
                     android:layout_height="match_parent"

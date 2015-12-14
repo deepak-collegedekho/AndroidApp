@@ -72,25 +72,22 @@
                     android:layout_marginLeft="@dimen/m10dp"
                     android:textColor="@color/primary_orange"
                     android:textSize="16sp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"/>
 
-                </NumberPicker>
                 <NumberPicker
                     android:id="@+id/stream_number_picker"
                     android:layout_width="0dp"
                     android:layout_weight=".33"
                     android:layout_marginLeft="@dimen/m30dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"/>
 
-                </NumberPicker>
                 <NumberPicker
                     android:id="@+id/marks_number_picker"
                     android:layout_width="0dp"
                     android:layout_weight=".33"
                     android:layout_marginLeft="@dimen/m30dp"
                     android:layout_marginRight="@dimen/m10dp"
-                    android:layout_height="wrap_content">
-                </NumberPicker>
+                    android:layout_height="wrap_content"/>
                 </LinearLayout>
         </RelativeLayout>
     </ScrollView>

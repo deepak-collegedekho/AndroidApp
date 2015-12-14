@@ -6,29 +6,23 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.entities.UserEducationStreams;
 import com.collegedekho.app.entities.UserEducationSublevels;
-import com.collegedekho.app.utils.GaradiWindowHelper;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import cn.jeesoft.widget.pickerview.CharacterPickerView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -150,15 +144,16 @@ public class UserEducationFragment extends BaseFragment {
         mStreamPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         mStreamPicker.setDisplayedValues(stream_arrays);
 
-        mExamPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+        /*mExamPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+            public void onValueChange(android.widget.NumberPicker picker, int oldVal, int newVal) {
                 mUpdateStreamPicker(newVal);
 
                 mStreamPicker.setValue(0);
                 mMarksPicker.setValue(0);
             }
-        });
+
+        });*/
 
         return rootView;
     }
@@ -267,7 +262,7 @@ public class UserEducationFragment extends BaseFragment {
 
             UserEducationFragment.this.mSubLevelID = ""+mUserExamSubLevelsList.get(examPosition).getId();
             UserEducationFragment.this.mStreamID = ""+tempStreamList.get(streamPosition).getId();
-            UserEducationFragment.this.mMarks = "40";
+            UserEducationFragment.this.mMarks = this.mGetMarks(marksPosition);
 
 
             map.put("sublevel", UserEducationFragment.this.mSubLevelID);
@@ -279,8 +274,24 @@ public class UserEducationFragment extends BaseFragment {
         }
     }
 
-
-
+   private String mGetMarks(int position){
+       if(position == 1 ){
+          return "35";
+       }else if(position == 2 ){
+          return "45";
+       }else if(position == 3 ){
+          return "55";
+       }else if(position == 4 ){
+           return "65";
+       }else if(position == 5 ){
+           return "75";
+       }else if(position == 6 ){
+          return "85";
+       }else if(position == 7 ){
+          return "95";
+       }
+       return "45";
+   }
 
 
     public static void setNumberPickerTextColor(NumberPicker numberPicker, int color){
@@ -302,6 +313,7 @@ public class UserEducationFragment extends BaseFragment {
             }
         }
     }
+
     private void mUserNotPreparingForExam() {
         if(this.mListener !=  null){
             this.mListener.onUserNotPreparingSelected();

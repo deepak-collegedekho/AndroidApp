@@ -12,6 +12,8 @@ public class ExamDetail implements Parcelable
     private String exam_date;
     private boolean result_out;
     private String exam_marks="";
+    private String exam_name="";
+    private String exam_short_name="";
 
     public ExamDetail(){
         // required empty cons
@@ -22,6 +24,8 @@ public class ExamDetail implements Parcelable
         id = in.readString();
         year = in.readString();
         exam_date = in.readString();
+        exam_name = in.readString();
+        exam_short_name = in.readString();
         result_out = in.readByte() != 0;
     }
 
@@ -47,6 +51,8 @@ public class ExamDetail implements Parcelable
         dest.writeString(id);
         dest.writeString(year);
         dest.writeString(exam_date);
+        dest.writeString(exam_name);
+        dest.writeString(exam_short_name);
         dest.writeByte((byte) (result_out ? 1 : 0));
     }
 
@@ -88,5 +94,21 @@ public class ExamDetail implements Parcelable
 
     public String getExam_marks(){
         return exam_marks;
+    }
+
+    public String getExam_name() {
+        return exam_name;
+    }
+
+    public void setExam_name(String exam_name) {
+        this.exam_name = exam_name;
+    }
+
+    public String getExam_short_name() {
+        return exam_short_name;
+    }
+
+    public void setExam_short_name(String exam_short_name) {
+        this.exam_short_name = exam_short_name;
     }
 }

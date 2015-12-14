@@ -17,6 +17,7 @@
         android:weightSum="1">
 
         <RelativeLayout
+            android:id="@+id/backup_colleges_layout_RL"
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_weight=".5"
@@ -57,6 +58,8 @@
                     android:text="18/20"
                     android:gravity="right"
                     android:textSize="16sp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:textColor="@color/white"/>
 
                 <TextView
@@ -71,6 +74,7 @@
 
         </RelativeLayout>
         <RelativeLayout
+            android:id="@+id/wishList_colleges_layout_RL"
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_weight=".5"
@@ -109,6 +113,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="2/20"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:gravity="right"
                     android:textSize="16sp"
                     android:textColor="@color/white"/>
@@ -137,6 +143,7 @@
         android:weightSum="1">
 
         <RelativeLayout
+            android:id="@+id/recommended_colleges_layout_RL"
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_weight=".5"
@@ -172,7 +179,9 @@
                     android:id="@+id/recommended_colleges_count"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="04/11"
+                    android:text="04/10"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:gravity="right"
                     android:textSize="16sp"
                     android:textColor="@color/white"/>
@@ -189,6 +198,7 @@
 
         </RelativeLayout>
         <RelativeLayout
+            android:id="@+id/important_date_layout_RL"
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_weight=".5"
@@ -197,7 +207,7 @@
             android:layout_height="90dp" >
 
             <ImageView
-                android:id="@+id/important_colleges_image"
+                android:id="@+id/important_dates_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -207,7 +217,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/important_colleges_image"
+                android:layout_below="@id/important_dates_image"
                 android:layout_alignParentBottom="true"
                 android:text="IMPORTANT DATE"
                 android:gravity="left"
@@ -216,16 +226,18 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/important_colleges_image"
+                android:layout_toRightOf="@id/important_dates_image"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/important_colleges_count"
+                    android:id="@+id/important_dates_count"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="2/20"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:gravity="right"
                     android:textSize="16sp"
                     android:textColor="@color/white"/>

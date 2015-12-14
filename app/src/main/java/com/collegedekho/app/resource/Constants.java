@@ -118,6 +118,7 @@ public class Constants
     public static final int SECONDARY_ANIMATION_TIME = 2000;
     public static final String SELECTED_FILTERS = "selected_filters";
     public static final String TAG_QUESTION_LIKE_DISLIKE = "tag_question_like_dislike";
+    public static final String TAG_EXAM_SUMMARY = "exam_summary";
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET;
     public static final int MY_FB_REFRESH_RATE = 5000;

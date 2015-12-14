@@ -113,7 +113,7 @@ public class LoopView extends View {
         paintB.setAntiAlias(true);
         paintB.setTextScaleX(2.5F);
         paintB.setTypeface(Typeface.MONOSPACE);
-        int selctedTextSize = (int) (context.getResources().getDisplayMetrics().density * 25);
+        int selctedTextSize = (int) (context.getResources().getDisplayMetrics().density * 22);
         paintB.setTextSize(selctedTextSize);
         //paintB.setTextAlign(Paint.Align.CENTER);
         paintC = new Paint();
@@ -238,7 +238,7 @@ public class LoopView extends View {
             return;
         }
         //this.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-        this.playSoundEffect(SoundEffectConstants.CLICK);
+        //this.playSoundEffect(SoundEffectConstants.NAVIGATION_DOWN);
         as = new GaradiItem[r];
         w = (int) ((float) totalScrollY / (l * (float) h));
         mCurrentItem = positon + w % arrayList.size();
@@ -385,6 +385,7 @@ public class LoopView extends View {
                 }
                 break;
             case MotionEvent.ACTION_UP:
+                this.playSoundEffect(SoundEffectConstants.NAVIGATION_DOWN);
             default:
                 if (!gestureDetector.onTouchEvent(motionevent) && motionevent.getAction() == 1) {
                     f();

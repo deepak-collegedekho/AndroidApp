@@ -52,6 +52,8 @@ import com.appsflyer.DebugLogQueue;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Exam;
+import com.collegedekho.app.entities.ExamDetail;
+import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.entities.Facet;
 import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.entities.Institute;
@@ -555,7 +557,7 @@ public class MainActivity extends AppCompatActivity
             if (!completedStage2)
                 MainActivity.this.mSetUserPref();
             else
-                mLoadUserProfile();
+                mLoadUserProfile("");
         } else {
             disconnectFromFacebook();
              MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
@@ -875,11 +877,11 @@ public class MainActivity extends AppCompatActivity
 
             // used to create new fragment if shortlist institute fragment
             // is clicked in navigation drawer
-            if (fragment != null && fragment instanceof InstituteListFragment)
+           /* if (fragment != null && fragment instanceof InstituteListFragment)
             {
                 if(((InstituteListFragment) fragment).getFilterAllowed() != filterAllowed)
                     fragment = null;
-            }
+            }*/
 
             if (fragment == null)
                 this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount), true, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
@@ -1125,6 +1127,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_STREAM:
                 this.mDisplayStreams(response, false);
                 break;
+            case Constants.TAG_EXAM_SUMMARY:
+                this.mUpdateExamDetail(response);
+                break;
             case Constants.WIDGET_SHORTLIST:
                 this.mDisplayShortlistedInstituteList(response);
                 break;
@@ -1290,7 +1295,7 @@ public class MainActivity extends AppCompatActivity
 
                     this.mStreamAndLevelSelected(response, parentIndex, childIndex, extraTag);
                 }
-                this.mLoadUserProfile();
+                this.mLoadUserProfile(response);
                 break;
             case Constants.TAG_UPDATE_PREFRENCES:
                 this.mStreamAndLevelUpdated(response);
@@ -1336,6 +1341,26 @@ public class MainActivity extends AppCompatActivity
 
         if (this.progressDialog != null && this.progressDialog.isShowing())
             this.progressDialog.dismiss();
+    }
+
+    private void mUpdateExamDetail(String responseJson) {
+        responseJson = "{\n" +
+                "    \"syllabus_covered\": 10,\n" +
+                "    \"next_important_date\": \"20/05\",\n" +
+                "    \"shortlist_count\": 6,\n" +
+                "    \"recommended_count\": 5,\n" +
+                "    \"yearly_exam_id\": \"23\",\n" +
+                "    \"backup_count\": 4\n" +
+                "}";
+
+        try {
+            ExamSummary examSummary = JSON.std.beanFrom(ExamSummary.class, responseJson);
+            if(currentFragment instanceof ProfileFragment)
+                ((ProfileFragment) currentFragment).updateExamSummary(examSummary );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -1736,6 +1761,12 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_STREAM:
             case Constants.TAG_UPDATE_STREAM:
                 return "Loading Streams...";
+            case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
+                return "Loading Exams...";
+            case Constants.TAG_EXAM_SUMMARY:
+                return "Loading....";
+            case Constants.TAG_SUBMIT_EXAMS_LIST:
+                return "Loading Profile...";
             case Constants.TAG_UPDATE_INSTITUTES:
                 return "Updating Institues...";
             case Constants.TAG_UPDATE_PREFRENCES:
@@ -2838,10 +2869,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if(this.isLastFragment())
+        } /*else if(this.isLastFragment())
         {
             this.mClearBackStack();
-        }
+        }*/
         else if(!Constants.READY_TO_CLOSE) {
             Constants.READY_TO_CLOSE = true;
             Utils.DisplayToast(getApplicationContext(), "Press again to close CollegeDekho");
@@ -3340,7 +3371,74 @@ public class MainActivity extends AppCompatActivity
     /**
      * This method is load user profile after
      */
-    public void mLoadUserProfile() {
+    private void mLoadUserProfile(String responseJson)  {
+
+        responseJson = "{\n" +
+                "\t\"results\": [{\n" +
+                "\t\t\"exam_date\": \"2016-01-31\",\n" +
+                "\t\t\"year\": 2016,\n" +
+                "\t\t\"exam_name\": \"Christ University MBA entrance exam\",\n" +
+                "\t\t\"id\": 90,\n" +
+                "\t\t\"exam_short_name\": null\n" +
+                "\t}, {\n" +
+                "\t\t\"exam_date\": \"2016-05-26\",\n" +
+                "\t\t\"year\": 2016,\n" +
+                "\t\t\"exam_name\": \"ENAT M.Tech\",\n" +
+                "\t\t\"id\": 101,\n" +
+                "\t\t\"exam_short_name\": \"ENAT M.Tech\"\n" +
+                "\t}, {\n" +
+                "\t\t\"exam_date\": \"2016-06-05\",\n" +
+                "\t\t\"year\": 2016,\n" +
+                "\t\t\"exam_name\": \"Jamia Milia MBA\",\n" +
+                "\t\t\"id\": 105,\n" +
+                "\t\t\"exam_short_name\": null\n" +
+                "\t}, {\n" +
+                "\t\t\"exam_date\": \"2016-05-01\",\n" +
+                "\t\t\"year\": 2016,\n" +
+                "\t\t\"exam_name\": \"IPU CET M.Tech\",\n" +
+                "\t\t\"id\": 112,\n" +
+                "\t\t\"exam_short_name\": \"IPU CET M.Tech\"\n" +
+                "\t}, {\n" +
+                "\t\t\"exam_date\": \"2016-06-01\",\n" +
+                "\t\t\"year\": 2016,\n" +
+                "\t\t\"exam_name\": \"MHCET MBA\",\n" +
+                "\t\t\"id\": 113,\n" +
+                "\t\t\"exam_short_name\": \"MHCET MBA\"\n" +
+                "\t}, {\n" +
+                "\t\t\"exam_date\": \"2016-06-01\",\n" +
+                "\t\t\"year\": 2016,\n" +
+                "\t\t\"exam_name\": \"MHCET MBA\",\n" +
+                "\t\t\"id\": 114,\n" +
+                "\t\t\"exam_short_name\": \"MHCET MBA\"\n" +
+                "\t}, {\n" +
+                "\t\t\"exam_date\": \"2016-01-24\",\n" +
+                "\t\t\"year\": 2016,\n" +
+                "\t\t\"exam_name\": \"MONIRBA MBA\",\n" +
+                "\t\t\"id\": 120,\n" +
+                "\t\t\"exam_short_name\": \"MONIRBA MBA\"\n" +
+                "\t}, {\n" +
+                "\t\t\"exam_date\": \"2016-05-15\",\n" +
+                "\t\t\"year\": 2016,\n" +
+                "\t\t\"exam_name\": \"Panjab University -MBA\",\n" +
+                "\t\t\"id\": 121,\n" +
+                "\t\t\"exam_short_name\": \"Panjab University -MBA\"\n" +
+                "\t}, {\n" +
+                "\t\t\"exam_date\": \"2016-07-24\",\n" +
+                "\t\t\"year\": 2016,\n" +
+                "\t\t\"exam_name\": \"Punjab university- BEd\",\n" +
+                "\t\t\"id\": 127,\n" +
+                "\t\t\"exam_short_name\": \"Punjab university- BEd\"\n" +
+                "\t}]\n" +
+                "}";
+        List<ExamDetail> userExamsList = null;
+        if(responseJson != null && !responseJson.isEmpty()) {
+            try {
+                userExamsList = JSON.std.listOfFrom(ExamDetail.class, extractResults(responseJson));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         // unlock navigation drawer when home screen come
         //((DrawerLayout)findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
@@ -3351,18 +3449,25 @@ public class MainActivity extends AppCompatActivity
         params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
         findViewById(R.id.container).setLayoutParams(params);
 
-        this.mDisplayFragment(ProfileFragment.newInstance(),false,ProfileFragment.class.toString() );
+        this.mDisplayFragment(ProfileFragment.newInstance(new ArrayList<ExamDetail>(userExamsList)),false,ProfileFragment.class.toString() );
 
     }
 
     @Override
-    public void onTabSelected(int tabPosition) {
+    public void onTabMenuSelected(int tabPosition) {
         //TODO::  remove this when future buddies tab are present
         if(tabPosition == 2){
             this.onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL+"personalize/forums");
             return;
         }
         this.mDisplayFragment(TabFragment.newInstance(tabPosition),true,TabFragment.class.toString() );
+    }
+
+    @Override
+    public void onExamTabSelected(ExamDetail examDetailObj) {
+         if(examDetailObj == null)return;
+        String id = examDetailObj.getId();
+        this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/"+id+"/summary",null);
     }
 
     @Override
@@ -3456,7 +3561,7 @@ public class MainActivity extends AppCompatActivity
 
     private void mOnExamsSubmitted(String response){
 
-        mLoadUserProfile();
+        mLoadUserProfile(response);
 
     }
 
