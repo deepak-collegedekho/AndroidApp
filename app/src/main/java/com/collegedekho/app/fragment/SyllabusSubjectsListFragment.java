@@ -87,7 +87,6 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
         return rootView;
     }
 
-
   @Override
     public void onAttach(Context context) {
         super.onAttach(context);

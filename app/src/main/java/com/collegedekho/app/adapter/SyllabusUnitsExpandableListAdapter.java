@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -18,7 +19,6 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Chapters;
 import com.collegedekho.app.entities.Units;
 import com.collegedekho.app.resource.Constants;
-
 
 import java.util.ArrayList;
 
@@ -68,24 +68,47 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+    public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         ParentHolder holder;
-        if (convertView == null){
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_syllabus_units, parent, false);
-            holder = new ParentHolder();
-            holder.label = (TextView) convertView.findViewById(R.id.syllabus_units_name);
-            holder.checkBox = (CheckBox) convertView.findViewById(R.id.syllabus_units_checkbox);
-            holder.progressBar = (ProgressBar) convertView.findViewById(R.id.syllabus_units_progress_bar);
+        convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_syllabus_units, parent, false);
+        holder = new ParentHolder();
+        holder.label = (TextView) convertView.findViewById(R.id.syllabus_units_name);
+        holder.checkBox = (CheckBox) convertView.findViewById(R.id.syllabus_units_checkbox);
+        holder.progressBar = (ProgressBar) convertView.findViewById(R.id.syllabus_units_progress_bar);
 
-            convertView.setTag(holder);
-        }
-        else {
-            holder = (ParentHolder) convertView.getTag();
-        }
+        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SyllabusUnitsExpandableListAdapter.this.getGroup(groupPosition).setIs_done(1);
+                ArrayList<Chapters> chaptersList = SyllabusUnitsExpandableListAdapter.this.getGroup(groupPosition).getChapters();
+                for (int i = 0; i < chaptersList.size(); i++)
+                    SyllabusUnitsExpandableListAdapter.this.getGroup(groupPosition).getChapters().get(i).setIs_done(1);
+
+                //SyllabusUnitsExpandableListAdapter.this.notifyDataSetInvalidated();
+                SyllabusUnitsExpandableListAdapter.this.notifyDataSetChanged();
+            }
+        });
+/*
+        holder.checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Units unit = SyllabusUnitsExpandableListAdapter.this.getGroup(groupPosition);
+                unit.setIs_done(1);
+                ArrayList<Chapters> chaptersList = unit.getChapters();
+                for (int i = 0; i < chaptersList.size(); i++)
+                    chaptersList.get(i).setIs_done(1);
+
+                //SyllabusUnitsExpandableListAdapter.this.notifyDataSetInvalidated();
+                SyllabusUnitsExpandableListAdapter.this.notifyDataSetChanged();
+            }
+        });
+*/
+
+        convertView.setTag(holder);
         Units g = getGroup(groupPosition);
         holder.label.setText(g.getUnit_name());
         holder.progressBar.setProgress(g.getUnit_done_percent());
-        holder.checkBox.setSelected(g.getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
+        holder.checkBox.setChecked(g.getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
         ((TextView) convertView.findViewById(R.id.indicator))
                 .setText(isExpanded ? Constants.EXPANDED_INDICATOR : Constants.COLAPSED_INDICATOR);
 
@@ -94,33 +117,16 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-
-        /*convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.syllabus_chapter_recycler_view, parent, false);
-        RecyclerView chapterRecyclerView = (RecyclerView) convertView.findViewById(R.id.chapter_list);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(mContext);
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        chapterRecyclerView.setLayoutManager(mLayoutManager);
-        SyllabusChapterListAdapter scla = new SyllabusChapterListAdapter(this.mContext, this.getGroup(groupPosition).getChapters());
-        chapterRecyclerView.setAdapter(scla);
-
-        return convertView;*/
-
         final ViewHolder holder;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_syllabus_chapters, parent, false);
-            holder = new ViewHolder();
-            holder.chapterLabel = (TextView) convertView.findViewById(R.id.syllabus_chapters_name);
-            holder.chapterCheckBox = (CheckBox) convertView.findViewById(R.id.syllabus_chapters_checkbox);
-            holder.chapterLabel.setText(this.getGroup(groupPosition).getChapters().get(childPosition).getName());
-            holder.chapterCheckBox.setSelected(this.getGroup(groupPosition).getChapters().get(childPosition).getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
-            LinearLayoutManager mLayoutManager = new LinearLayoutManager(mContext);
-            mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-            convertView.setTag(holder);
-        }
-        else {
-            holder = (ViewHolder) convertView.getTag();
-            holder.chapterCheckBox.setSelected(this.getGroup(groupPosition).getChapters().get(childPosition).getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
-        }
+        convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_syllabus_chapters, parent, false);
+        holder = new ViewHolder();
+        holder.chapterLabel = (TextView) convertView.findViewById(R.id.syllabus_chapters_name);
+        holder.chapterCheckBox = (CheckBox) convertView.findViewById(R.id.syllabus_chapters_checkbox);
+        holder.chapterLabel.setText(this.getGroup(groupPosition).getChapters().get(childPosition).getName());
+        holder.chapterCheckBox.setChecked(this.getGroup(groupPosition).getChapters().get(childPosition).getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(mContext);
+        mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        convertView.setTag(holder);
 
         return convertView;
     }

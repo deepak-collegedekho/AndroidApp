@@ -3513,18 +3513,18 @@ public class MainActivity extends AppCompatActivity
                     "\t\t\"chapters\": [{\n" +
                     "\t\t\t\"weightage\": 1,\n" +
                     "\t\t\t\"should_be_done\": 1,\n" +
-                    "\t\t\t\"is_done\": 0,\n" +
+                    "\t\t\t\"is_done\": 1,\n" +
                     "\t\t\t\"id\": 9,\n" +
                     "\t\t\t\"name\": \"Scale\"\n" +
                     "\t\t}, {\n" +
                     "\t\t\t\"weightage\": 2,\n" +
                     "\t\t\t\"should_be_done\": 1,\n" +
-                    "\t\t\t\"is_done\": 0,\n" +
+                    "\t\t\t\"is_done\": 1,\n" +
                     "\t\t\t\"id\": 10,\n" +
                     "\t\t\t\"name\": \"Distance and Displacement\"\n" +
                     "\t\t}],\n" +
                     "\t\t\"yearly_exam\": 54,\n" +
-                    "\t\t\"unit_done_percent\": 0.0\n" +
+                    "\t\t\"unit_done_percent\": 80.0\n" +
                     "\t}, {\n" +
                     "\t\t\"unit_name\": \"Force and Momentum\",\n" +
                     "\t\t\"subject_id\": 1,\n" +
@@ -3533,18 +3533,18 @@ public class MainActivity extends AppCompatActivity
                     "\t\t\"chapters\": [{\n" +
                     "\t\t\t\"weightage\": 3,\n" +
                     "\t\t\t\"should_be_done\": 1,\n" +
-                    "\t\t\t\"is_done\": 0,\n" +
+                    "\t\t\t\"is_done\": 1,\n" +
                     "\t\t\t\"id\": 11,\n" +
                     "\t\t\t\"name\": \"Gravity\"\n" +
                     "\t\t}, {\n" +
                     "\t\t\t\"weightage\": 2,\n" +
                     "\t\t\t\"should_be_done\": 1,\n" +
-                    "\t\t\t\"is_done\": 0,\n" +
+                    "\t\t\t\"is_done\": 1,\n" +
                     "\t\t\t\"id\": 12,\n" +
                     "\t\t\t\"name\": \"Torque\"\n" +
                     "\t\t}],\n" +
                     "\t\t\"yearly_exam\": 54,\n" +
-                    "\t\t\"unit_done_percent\": 0.0\n" +
+                    "\t\t\"unit_done_percent\": 56.89\n" +
                     "\t}],\n" +
                     "\t\"subject_id\": 1,\n" +
                     "\t\"subject_name\": \"Physics\",\n" +
@@ -3558,7 +3558,7 @@ public class MainActivity extends AppCompatActivity
                     "\t\t\"chapters\": [{\n" +
                     "\t\t\t\"weightage\": 1,\n" +
                     "\t\t\t\"should_be_done\": 1,\n" +
-                    "\t\t\t\"is_done\": 0,\n" +
+                    "\t\t\t\"is_done\": 1,\n" +
                     "\t\t\t\"id\": 13,\n" +
                     "\t\t\t\"name\": \"Second Law\"\n" +
                     "\t\t}],\n" +
@@ -3577,12 +3577,12 @@ public class MainActivity extends AppCompatActivity
                     "\t\t\"chapters\": [{\n" +
                     "\t\t\t\"weightage\": 2,\n" +
                     "\t\t\t\"should_be_done\": 0,\n" +
-                    "\t\t\t\"is_done\": 0,\n" +
+                    "\t\t\t\"is_done\": 1,\n" +
                     "\t\t\t\"id\": 14,\n" +
                     "\t\t\t\"name\": \"Sphere\"\n" +
                     "\t\t}],\n" +
                     "\t\t\"yearly_exam\": 54,\n" +
-                    "\t\t\"unit_done_percent\": 0.0\n" +
+                    "\t\t\"unit_done_percent\": 87.0\n" +
                     "\t}],\n" +
                     "\t\"subject_id\": 3,\n" +
                     "\t\"subject_name\": \"Mathematics\",\n" +

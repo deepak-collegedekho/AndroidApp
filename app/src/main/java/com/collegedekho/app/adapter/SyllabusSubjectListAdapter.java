@@ -47,11 +47,7 @@ public class SyllabusSubjectListAdapter extends RecyclerView.Adapter {
         SubjectHolder subjectHolder = (SubjectHolder) holder;
         subjectHolder.mSubjectName.setText(subjects.getSubject_name());
         subjectHolder.mProgressBar.setProgress(subjects.getSubject_done_percent());
-
-        if (subjects.getIs_done() == Constants.BOOLEAN_TRUE)
-            subjectHolder.mcheckBox.setSelected(true);
-        else
-            subjectHolder.mcheckBox.setSelected(false);
+        subjectHolder.mcheckBox.setChecked(subjects.getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
     }
 
     @Override

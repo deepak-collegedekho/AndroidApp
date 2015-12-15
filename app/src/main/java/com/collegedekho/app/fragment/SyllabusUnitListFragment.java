@@ -3,9 +3,6 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +11,7 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.adapter.SyllabusSubjectListAdapter;
 import com.collegedekho.app.adapter.SyllabusUnitsExpandableListAdapter;
-import com.collegedekho.app.entities.Subjects;
 import com.collegedekho.app.entities.Units;
 
 import java.util.ArrayList;
@@ -78,7 +73,9 @@ public class SyllabusUnitListFragment extends BaseFragment {
         if(elv != null) {
             mAdapter = new SyllabusUnitsExpandableListAdapter(this.getActivity(), this.mUnits);
             elv.setAdapter(mAdapter);
-/*            elv.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+
+/*
+            elv.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
                 @Override
                 public void onGroupExpand(int groupPosition) {
                     if (prev != -1 && prev != groupPosition) {
@@ -87,9 +84,24 @@ public class SyllabusUnitListFragment extends BaseFragment {
                     prev = groupPosition;
                 }
             });
+*/
             if (this.mUnits.size() < 2)
-                elv.expandGroup(0);*/
+                elv.expandGroup(0);
 
+/*
+            elv.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+                @Override
+                public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                    parent.expandGroup(groupPosition);
+                    if (prev != -1 && prev != groupPosition) {
+                        elv.collapseGroup(prev);
+                    }
+                    prev = groupPosition;
+
+                    return false;
+                }
+            });
+*/
             //elv.expandGroup(0);
             // Inflate the layout for this fragment
         }
