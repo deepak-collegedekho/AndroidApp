@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -41,6 +42,10 @@ public class PsychometricTestAdapter extends RecyclerView.Adapter<PsychometricTe
         holder.txt_serial_no.setText(question.getSerialNumber()+") ");
         holder.txt_question_text.setText(question.getQuestionText());
         holder.radioGroup.check(question.getCheckedId());
+
+//        ((RadioButton)holder.radioGroup.getChildAt(0)).setText("Text One");
+//        ((RadioButton)holder.radioGroup.getChildAt(1)).setText("Text Two");
+//        ((RadioButton)holder.radioGroup.getChildAt(2)).setText("Text Three");
 
     }
 

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by bashir on 11/12/15.
+ * Created by Bashir on 11/12/15.
  */
 public class PsychometricTestFragment extends BaseFragment {
 

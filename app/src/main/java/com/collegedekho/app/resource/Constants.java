@@ -37,6 +37,8 @@ public class Constants
     public static final String COMPLETED_SECOND_STAGE = "second_stage";
     public static final String WIDGET_INSTITUTES = "institutes";
     public static final String WIDGET_SYLLABUS = "syllabus";
+    public static final String WIDGET_TEST_CALENDAR = "test_calendar";
+
     public static final String SEARCHED_INSTITUTES = "searched_institutes";
     public static final String WIDGET_COURSES = "courses";
     public static final String WIDGET_NEWS = "news";

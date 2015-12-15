@@ -50,6 +50,7 @@ import com.appsflyer.AppsFlyerLib;
 import com.appsflyer.DebugLogQueue;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Articles;
+import com.collegedekho.app.entities.Chapters;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ExamSummary;
@@ -71,6 +72,8 @@ import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.BaseFragment;
+import com.collegedekho.app.fragment.CalendarFragment;
+import com.collegedekho.app.fragment.CalendarParentFragment;
 import com.collegedekho.app.fragment.NotPreparingFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
@@ -218,6 +221,7 @@ public class MainActivity extends AppCompatActivity
     private ActionBarDrawerToggle mToggle;
     public BaseFragment currentFragment;
     private List<Institute> mInstituteList;
+    private List<Chapters>chaptersList;
     private List<Institute> mShortlistedInstituteList;
     private int currentInstitute;
     private ProgressDialog progressDialog;
@@ -1344,6 +1348,8 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.WIDGET_SYLLABUS:
                 this.mDisplayExamSyllabusFragment(response);
+            case Constants.WIDGET_TEST_CALENDAR:
+                this.onTestCalendarResponse(response);
                 break;
         }
 
@@ -3502,6 +3508,10 @@ public class MainActivity extends AppCompatActivity
             this.mFilterKeywords = this.mGetTheFilters();
             this.mMakeNetworkCall(requestType, url, this.mFilterKeywords);
             return;
+        }else if(requestType.equals(Constants.WIDGET_TEST_CALENDAR)){
+            this.mMakeNetworkCall(Constants.WIDGET_TEST_CALENDAR,url,null);
+//            this.mDisplayFragment(CalendarFragment.newInstance(),true,CalendarFragment.class.toString() );
+            return;
         }
         if (requestType.equals(Constants.WIDGET_SYLLABUS)) {
             String response = "[{\n" +
@@ -3693,6 +3703,17 @@ public class MainActivity extends AppCompatActivity
 
         mLoadUserProfile(response);
 
+    }
+    private void onTestCalendarResponse(String response){
+
+        try {
+//            String val = this.extractResults(response);
+            this.chaptersList = JSON.std.listOfFrom(Chapters.class, response);
+                this.mDisplayFragment(CalendarParentFragment.newInstance(new ArrayList(this.chaptersList)), true, Constants.WIDGET_TEST_CALENDAR);
+
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
     }
 
     Handler baskpressHandler=new Handler();
