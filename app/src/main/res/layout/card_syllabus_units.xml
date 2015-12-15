@@ -35,8 +35,8 @@
         <TextView
             android:id="@+id/syllabus_units_name"
             android:layout_width="0dp"
-            android:layout_weight=".6"
-            android:layout_height="match_parent"
+            android:layout_weight=".9"
+            android:layout_height="wrap_content"
             android:paddingBottom="3dp"
             android:paddingTop="3dp"
             android:ellipsize="end"
@@ -52,6 +52,7 @@
             android:layout_height="match_parent"
             android:textColor="@color/white"
             android:focusable="false"
+            android:visibility="gone"
             style="@style/Widget.AppCompat.CompoundButton.CheckBox"
             />
 
@@ -62,9 +63,9 @@
             android:layout_height="match_parent"
             android:textColor="@color/textPrimary"
             android:textSize="22sp"
+            android:gravity="center"
             android:text="+"
             />
-
     </LinearLayout>
 
 

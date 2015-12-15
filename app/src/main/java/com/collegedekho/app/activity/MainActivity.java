@@ -1007,7 +1007,12 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplaySubjectSyllabus(Subjects subject)
     {
-        this.mDisplayFragment(SyllabusUnitListFragment.newInstance(subject.getUnits()), true, SyllabusUnitListFragment.class.getSimpleName());
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(SyllabusUnitListFragment.class.getSimpleName());
+        if (fragment == null)
+            this.mDisplayFragment(SyllabusUnitListFragment.newInstance(subject.getUnits()), true, SyllabusUnitListFragment.class.getSimpleName());
+        else
+            this.mDisplayFragment(fragment, false, SyllabusUnitListFragment.class.getSimpleName());
     }
 
     private void mDisplayInstitute(int position) {
@@ -3686,7 +3691,14 @@ public class MainActivity extends AppCompatActivity
 
             try {
                 ArrayList<Subjects> subjectsList = (ArrayList<Subjects>) JSON.std.listOfFrom(Subjects.class, response);
-                this.mDisplayFragment(SyllabusSubjectsListFragment.newInstance(subjectsList), false, SyllabusSubjectsListFragment.class.getSimpleName());
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                Fragment fragment = fragmentManager.findFragmentByTag(SyllabusSubjectsListFragment.class.getSimpleName());
+                if (fragment == null) {
+                    this.mDisplayFragment(SyllabusSubjectsListFragment.newInstance(subjectsList), true, SyllabusSubjectsListFragment.class.getSimpleName());
+                }
+                else {
+                    this.mDisplayFragment(fragment, false, SyllabusSubjectsListFragment.class.getSimpleName());
+                }
             } catch (IOException e) {
                 Log.v(TAG, e.getMessage());
                 e.printStackTrace();

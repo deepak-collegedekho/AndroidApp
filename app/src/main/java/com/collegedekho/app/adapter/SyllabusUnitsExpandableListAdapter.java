@@ -2,17 +2,13 @@ package com.collegedekho.app.adapter;
 
 import android.app.Activity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -21,11 +17,15 @@ import com.collegedekho.app.entities.Units;
 import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapter {
 
     ArrayList<Units> mUnitsList;
     Activity mContext;
+    // Hashmap for keeping track of our checkbox check states
+    // Initialize our hashmap containing our check states here
+    private static HashMap<Integer, boolean[]> mChildCheckStates = new HashMap<>();
 
     public SyllabusUnitsExpandableListAdapter(Activity context, ArrayList<Units> unitList) {
         mUnitsList = new ArrayList<>(unitList);
@@ -69,64 +69,127 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
 
     @Override
     public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        ParentHolder holder;
+        ParentViewHolder parentViewHolder;
         convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_syllabus_units, parent, false);
-        holder = new ParentHolder();
-        holder.label = (TextView) convertView.findViewById(R.id.syllabus_units_name);
-        holder.checkBox = (CheckBox) convertView.findViewById(R.id.syllabus_units_checkbox);
-        holder.progressBar = (ProgressBar) convertView.findViewById(R.id.syllabus_units_progress_bar);
+        parentViewHolder = new ParentViewHolder();
+        parentViewHolder.parentUnitLabel = (TextView) convertView.findViewById(R.id.syllabus_units_name);
+        parentViewHolder.parentUnitCheckBox = (CheckBox) convertView.findViewById(R.id.syllabus_units_checkbox);
+        parentViewHolder.parentUnitProgressBar = (ProgressBar) convertView.findViewById(R.id.syllabus_units_progress_bar);
 
-        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        parentViewHolder.parentUnitCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SyllabusUnitsExpandableListAdapter.this.getGroup(groupPosition).setIs_done(1);
+                SyllabusUnitsExpandableListAdapter.this.getGroup(groupPosition).setIs_done(isChecked ? Constants.BOOLEAN_TRUE : Constants.BOOLEAN_FALSE);
                 ArrayList<Chapters> chaptersList = SyllabusUnitsExpandableListAdapter.this.getGroup(groupPosition).getChapters();
                 for (int i = 0; i < chaptersList.size(); i++)
-                    SyllabusUnitsExpandableListAdapter.this.getGroup(groupPosition).getChapters().get(i).setIs_done(1);
+                    SyllabusUnitsExpandableListAdapter.this.getGroup(groupPosition).getChapters().get(i).setIs_done(isChecked ? Constants.BOOLEAN_TRUE : Constants.BOOLEAN_FALSE);
 
-                //SyllabusUnitsExpandableListAdapter.this.notifyDataSetInvalidated();
                 SyllabusUnitsExpandableListAdapter.this.notifyDataSetChanged();
             }
         });
-/*
-        holder.checkBox.setOnClickListener(new View.OnClickListener() {
+        /*holder.parentUnitCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Units unit = SyllabusUnitsExpandableListAdapter.this.getGroup(groupPosition);
-                unit.setIs_done(1);
-                ArrayList<Chapters> chaptersList = unit.getChapters();
+                int flag = SyllabusUnitsExpandableListAdapter.this.getGroup(groupPosition).getIs_done() == Constants.BOOLEAN_TRUE ? Constants.BOOLEAN_FALSE : Constants.BOOLEAN_TRUE;
+                SyllabusUnitsExpandableListAdapter.this.getGroup(groupPosition).setIs_done(flag);
+                ArrayList<Chapters> chaptersList = SyllabusUnitsExpandableListAdapter.this.getGroup(groupPosition).getChapters();
                 for (int i = 0; i < chaptersList.size(); i++)
-                    chaptersList.get(i).setIs_done(1);
+                    SyllabusUnitsExpandableListAdapter.this.getGroup(groupPosition).getChapters().get(i).setIs_done(flag);
 
-                //SyllabusUnitsExpandableListAdapter.this.notifyDataSetInvalidated();
                 SyllabusUnitsExpandableListAdapter.this.notifyDataSetChanged();
             }
-        });
-*/
+        });*/
 
-        convertView.setTag(holder);
+        convertView.setTag(parentViewHolder);
         Units g = getGroup(groupPosition);
-        holder.label.setText(g.getUnit_name());
-        holder.progressBar.setProgress(g.getUnit_done_percent());
-        holder.checkBox.setChecked(g.getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
+        parentViewHolder.parentUnitLabel.setText(g.getUnit_name());
+        parentViewHolder.parentUnitProgressBar.setProgress(g.getUnit_done_percent());
+        parentViewHolder.parentUnitCheckBox.setChecked(g.getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
         ((TextView) convertView.findViewById(R.id.indicator))
                 .setText(isExpanded ? Constants.EXPANDED_INDICATOR : Constants.COLAPSED_INDICATOR);
 
         return convertView;
     }
 
+    public HashMap<Integer, boolean[]> getmChildCheckStates() {
+        return mChildCheckStates;
+    }
+
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        final ViewHolder holder;
+        final int mGroupPosition = groupPosition;
+        final int mChildPosition = childPosition;
+        final ChildViewHolder childViewHolder;
         convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_syllabus_chapters, parent, false);
-        holder = new ViewHolder();
-        holder.chapterLabel = (TextView) convertView.findViewById(R.id.syllabus_chapters_name);
-        holder.chapterCheckBox = (CheckBox) convertView.findViewById(R.id.syllabus_chapters_checkbox);
-        holder.chapterLabel.setText(this.getGroup(groupPosition).getChapters().get(childPosition).getName());
-        holder.chapterCheckBox.setChecked(this.getGroup(groupPosition).getChapters().get(childPosition).getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
+        childViewHolder = new ChildViewHolder();
+        childViewHolder.childChapterLabel = (TextView) convertView.findViewById(R.id.syllabus_chapters_name);
+        childViewHolder.childChapterCheckBox = (CheckBox) convertView.findViewById(R.id.syllabus_chapters_checkbox);
+        childViewHolder.childChapterLabel.setText(this.getChild(groupPosition, childPosition).get(childPosition).getName());
+        childViewHolder.childChapterCheckBox.setChecked(this.getChild(groupPosition, childPosition).get(childPosition).getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        convertView.setTag(holder);
+        convertView.setTag(childViewHolder);
+
+        /*
+		 * You have to set the onCheckChangedListener to null
+		 * before restoring check states because each call to
+		 * "setChecked" is accompanied by a call to the
+		 * onCheckChangedListener
+		*/
+        childViewHolder.childChapterCheckBox.setOnCheckedChangeListener(null);
+
+        if (mChildCheckStates.containsKey(mGroupPosition)) {
+
+			 /* if the hashmap mChildCheckStates<Integer, Boolean[]> contains
+			 * the value of the parent view (group) of this child (aka, the key),
+			 * then retrive the boolean array getChecked[]
+			 */
+
+            boolean getChecked[] = mChildCheckStates.get(mGroupPosition);
+
+            // set the check state of this position's checkbox based on the 
+            // boolean value of getChecked[position]
+            childViewHolder.childChapterCheckBox.setChecked(getChecked[mChildPosition]);
+        } else {
+
+			 /* if the hashmap mChildCheckStates<Integer, Boolean[]> does not
+			 * contain the value of the parent view (group) of this child (aka, the key),
+			 * (aka, the key), then initialize getChecked[] as a new boolean array
+			 *  and set it's size to the total number of children associated with 
+			 *  the parent group
+			 */
+
+            boolean getChecked[] = new boolean[getChildrenCount(mGroupPosition)];
+
+            // add getChecked[] to the mChildCheckStates hashmap using mGroupPosition as the key
+            mChildCheckStates.put(mGroupPosition, getChecked);
+
+            // set the check state of this position's checkbox based on the 
+            // boolean value of getChecked[position]
+            //childViewHolder.childChapterCheckBox.setChecked(false);
+        }
+
+        childViewHolder.childChapterCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) {
+
+                    boolean getChecked[] = mChildCheckStates.get(mGroupPosition);
+                    getChecked[mChildPosition] = isChecked;
+                    mChildCheckStates.put(mGroupPosition, getChecked);
+
+                } else {
+
+                    boolean getChecked[] = mChildCheckStates.get(mGroupPosition);
+                    getChecked[mChildPosition] = isChecked;
+                    mChildCheckStates.put(mGroupPosition, getChecked);
+                }
+            }
+        });
+
+
 
         return convertView;
     }
@@ -136,14 +199,14 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
         return false;
     }
 
-    static class ViewHolder{
-        TextView chapterLabel;
-        CheckBox chapterCheckBox;
+    static class ChildViewHolder {
+        TextView childChapterLabel;
+        CheckBox childChapterCheckBox;
     }
 
-    static class ParentHolder{
-        TextView label;
-        ProgressBar progressBar;
-        CheckBox checkBox;
+    static class ParentViewHolder {
+        TextView parentUnitLabel;
+        ProgressBar parentUnitProgressBar;
+        CheckBox parentUnitCheckBox;
     }
 }
