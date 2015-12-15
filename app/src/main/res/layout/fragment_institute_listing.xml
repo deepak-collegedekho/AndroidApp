@@ -19,6 +19,8 @@
         android:layout_marginRight="10dp"
         android:src="@drawable/ic_filter" />
 
+    <include layout="@layout/layout_empty"/>
+
     <include layout="@layout/layout_grid_list"
         android:id="@+id/viewType"
         android:layout_below="@id/textview_page_title"
@@ -60,13 +62,6 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/filter_tokenLL" />
 
-    <TextView
-        android:id="@android:id/empty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:textSize="16dp" />
 
     <include layout="@layout/progressbar"/>
 </RelativeLayout>

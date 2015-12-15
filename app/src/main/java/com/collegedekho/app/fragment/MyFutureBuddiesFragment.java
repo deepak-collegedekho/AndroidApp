@@ -1,6 +1,6 @@
 package com.collegedekho.app.fragment;
 
-import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -21,9 +21,10 @@ import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.Constants;
-import com.melnykov.fab.FloatingActionButton;
+import com.collegedekho.app.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -83,7 +84,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             @Override
             public void onClick(View v) {
 
-                String value = mChatText.getText().toString();
+                final String value = mChatText.getText().toString();
                 if (value.equals("") || value.equals(" "))
                 {
                     Toast.makeText(getActivity(), "Please enter your message", Toast.LENGTH_SHORT).show();
@@ -91,14 +92,45 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                 else
                 {
                     User user =MainActivity.user;
-                    if(user != null && user.is_anony())
+                    if( user == null || user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous user"))
                     {
-                           mChatText.setText("");
-                           mUserLoginRequired(value);
-                           return;
+                        mChatText.setText("");
+                        // mUserLoginRequired(value);
 
+                        final Dialog dialog = new Dialog(getActivity());
+                        dialog.setContentView(R.layout.name_dailog);
+                        dialog.setCanceledOnTouchOutside(true);
+                        TextView submit = (TextView)dialog.findViewById(R.id.name_submit);
+                        dialog.show();
+
+                        submit.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                String name =   ((EditText)dialog.findViewById(R.id.user_name)).getText().toString();
+                                if(name == null || name.length() <= 0)
+                                {
+                                    Utils.DisplayToast(getActivity(), Constants.NAME_EMPTY);
+                                    return;
+                                }
+                                else if(!Utils.isValidName(name)){
+                                    Utils.DisplayToast(getActivity(), Constants.NAME_INVALID);
+                                    return;
+
+                                }
+                                else if(name.length() <= 2)
+                                {
+                                    Utils.DisplayToast(getActivity(), "Minimum length is 3");
+                                    return;
+                                }
+                                dialog.dismiss();
+                                HashMap<String, String> hashMap = new HashMap<>();
+                                hashMap.put(Constants.USER_NAME, name);
+                                mListener.onNameUpdated(hashMap, value);
+                            }
+                        });
+                        return;
                     }
-
                     mSubmittedChat(value);
                 }
             }
@@ -280,5 +312,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex);
         void onMyFBUpdated(int commentsSize, int myFbIndex);
         void onUserLoginRequired(String value);
+        void onNameUpdated(HashMap params, String msg);
     }
 }

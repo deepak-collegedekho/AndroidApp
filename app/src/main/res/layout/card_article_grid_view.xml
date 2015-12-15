@@ -15,14 +15,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:weightSum="10"
-        android:padding="@dimen/m8dp"
+        android:padding="@dimen/m5dp"
         android:orientation="vertical">
 
         <com.collegedekho.app.widget.FadeInImageView
             android:id="@+id/image_article_collapsed"
             style="@style/AppTheme.ImageView.FadeInImage"
             android:layout_height="0dp"
-            android:layout_weight="7.5"
+            android:layout_weight="7"
             android:scaleType="fitCenter"
             android:contentDescription="@string/article_image" />
 
@@ -34,7 +34,7 @@
             android:ellipsize="end"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2.5"
+            android:layout_weight="3"
             android:paddingLeft="@dimen/m6dp"
             android:textSize="13sp"
             android:layout_below="@id/image_article_collapsed" />

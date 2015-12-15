@@ -10,7 +10,7 @@
         android:layout_height="match_parent">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:paddingTop="50dp"
+            android:paddingTop="20dp"
             android:background="@color/app_background"
             android:layout_height="match_parent">
             <RelativeLayout
@@ -91,41 +91,74 @@
                 </LinearLayout>
         </RelativeLayout>
     </ScrollView>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="left|center"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:background="@color/app_background"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/m1dp"
         android:weightSum="1">
 
         <TextView
-            style="@style/AppTheme.OrangeButton"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/m2dp"
+            android:paddingTop="@dimen/m2dp"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:text="Are you preparing for exams \nlike JEEE, CAT, AIPMT"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <TextView
+            style="@style/AppTheme.BlueButton"
             android:id="@+id/is_preparing_for_exam"
             android:layout_width="0dp"
             android:layout_weight=".5"
-            android:background="@color/primary_orange"
+            android:background="@drawable/bg_button_blue_grey"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:paddingBottom="12dp"
-            android:paddingTop="12dp"
-            android:textSize="18sp"
-            android:text="Preparing for exam"/>
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:textSize="16sp"
+            android:text="Yes"/>
 
         <TextView
-            style="@style/AppTheme.OrangeButton"
+            style="@style/AppTheme.BlueButton"
             android:id="@+id/is_not_preparing_for_exam"
             android:layout_width="0dp"
             android:layout_weight=".5"
             android:layout_marginLeft="@dimen/m1dp"
-            android:background="@color/primary_orange"
+            android:background="@drawable/bg_button_blue_grey"
             android:layout_height="match_parent"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:gravity="center"
-            android:text="Not Preparing"
+            android:text="No"
             />
+        </LinearLayout>
+        <TextView
+            style="@style/AppTheme.OrangeButton"
+            android:background="@color/primary_orange"
+            android:id="@+id/education_submit_button"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="3dp"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/m7dp"
+            android:paddingTop="@dimen/m7dp"
+            android:textSize="20sp"
+            android:visibility="gone"
+            android:foregroundGravity="center"
+            android:text="SUBMIT"/>
+
 
     </LinearLayout>
 

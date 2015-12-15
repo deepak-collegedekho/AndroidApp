@@ -176,6 +176,22 @@ public class User
         this.phone_no = phone_no;
     }
 
+    public String getPrimaryEmail() {
+        return primaryEmail;
+    }
+
+    public void setPrimaryEmail(String primaryEmail) {
+        this.primaryEmail = primaryEmail;
+    }
+
+    public String getPrimaryPhone() {
+        return primaryPhone;
+    }
+
+    public void setPrimaryPhone(String primaryPhone) {
+        this.primaryPhone = primaryPhone;
+    }
+
     public void processProfileData(Cursor cursor, Context context) {
         Pattern emailPattern = Patterns.EMAIL_ADDRESS;
 

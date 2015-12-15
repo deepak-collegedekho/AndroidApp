@@ -210,6 +210,11 @@ public class InstituteDetailFragment extends BaseFragment {
         mDetailsAdapter.questionAdded(ques);
     }
 
+
+    public void cancleAppliedRequest(int position, int tabPosition)
+    {
+        this.mDetailsAdapter.updateCourseFragment();
+    }
     public void updateInstituteQnAQuestions(String response)
     {
         new LoadQnAQuestionAsyncTask().execute(response);

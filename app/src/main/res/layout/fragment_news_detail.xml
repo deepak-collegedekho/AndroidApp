@@ -55,7 +55,7 @@
                 android:id="@+id/related_news_list"
                 android:scrollbars="none"
                 android:layout_width="match_parent"
-                android:layout_height="100dp" />
+                android:layout_height="125dp" />
 
     </LinearLayout>
    </ScrollView>

@@ -41,6 +41,7 @@ public class ProfileFragment extends  BaseFragment
     private ExamDetailAdapter mDetailsAdapter;
     private ExamDetail mExamDetail; // detail is needs in tabs to get id of exams
     private ExamSummary mExamSummary;  // exam summary gives info about the colleges of user
+    private boolean isFistTime = false;
 
 
 
@@ -63,6 +64,7 @@ public class ProfileFragment extends  BaseFragment
         if(args != null) {
             this.mExamDetailList = args.getParcelableArrayList(PARAM1);
         }
+        this.isFistTime = true;
     }
 
     @Override
@@ -97,8 +99,10 @@ public class ProfileFragment extends  BaseFragment
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
 
         }
-        if(this.mExamDetailList != null || !this.mExamDetailList.isEmpty()) {
+        if(this.mExamDetailList != null && !this.mExamDetailList.isEmpty()) {
             final ViewPager examPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
+            //rootView.findViewById(R.id.exam_pager_header).setVisibility(View.VISIBLE);
+            examPager.setVisibility(View.VISIBLE);
             this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this, this.mExamDetailList);
             examPager.setAdapter(this.mDetailsAdapter);
 
@@ -136,41 +140,20 @@ public class ProfileFragment extends  BaseFragment
                         examPager.setCurrentItem(currentPosition - 1);
                 }
 
-               /* @Override
-                public boolean onTouch(View v, MotionEvent event) {
-
-                    if (event.getAction()==MotionEvent.ACTION_DOWN) {
-                        switch (v.getId()) {
-
-                            case R.id.backup_colleges_layout_RL:
-                            case R.id.wishList_colleges_layout_RL:
-                            case R.id.recommended_colleges_layout_RL: {
-                                mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes");
-                                break;
-                            }
-                            case R.id.important_date_layout_RL:
-                                Toast.makeText(getActivity(), "Coming soon...", Toast.LENGTH_SHORT).show();
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    return true;
-                }*/
-
             };
 
-//           rootView.findViewById(R.id.backup_colleges_layout_RL).setOnTouchListener(onSwipeTouchListener);
-//            rootView.findViewById(R.id.wishList_colleges_layout_RL).setOnTouchListener(onSwipeTouchListener);
-//            rootView.findViewById(R.id.recommended_colleges_layout_RL).setOnTouchListener(onSwipeTouchListener);
-//            rootView.findViewById(R.id.important_date_layout_RL).setOnTouchListener(onSwipeTouchListener);
+//          rootView.findViewById(R.id.backup_colleges_layout_RL).setOnTouchListener(onSwipeTouchListener);
+//          rootView.findViewById(R.id.wishList_colleges_layout_RL).setOnTouchListener(onSwipeTouchListener);
+//          rootView.findViewById(R.id.recommended_colleges_layout_RL).setOnTouchListener(onSwipeTouchListener);
+//          rootView.findViewById(R.id.important_date_layout_RL).setOnTouchListener(onSwipeTouchListener);
             rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
             rootView.findViewById(R.id.include_layout_home_widget).setOnTouchListener(onSwipeTouchListener);
 
-
-            int currentPosition = examPager.getCurrentItem();
-            onExamTabSelected(currentPosition);
-
+           if(this.isFistTime) {
+               this.isFistTime = false;
+               int currentPosition = examPager.getCurrentItem();
+               onExamTabSelected(currentPosition);
+           }
         }
 
 
@@ -235,7 +218,7 @@ public class ProfileFragment extends  BaseFragment
 
         switch (view.getId())
         {
-            case R.id.prep_buddies:;
+            case R.id.prep_buddies:
                 this.onTabMenuSelected(0);
                 break;
             case R.id.resources_buddies:
@@ -249,6 +232,11 @@ public class ProfileFragment extends  BaseFragment
                 Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
                 return;
            case R.id.backup_colleges_layout_RL:
+               if(this.mExamDetail != null)
+               mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "yearly-exams/" + this.mExamDetail.getId() + "/backup-colleges/");
+               else
+               mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "yearly-exams/54/backup-colleges/");
+               break;
             case R.id.wishList_colleges_layout_RL:
             case R.id.recommended_colleges_layout_RL: {
                 mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes");
@@ -272,11 +260,11 @@ public class ProfileFragment extends  BaseFragment
 
     private void onExamTabSelected(int position) {
 
-        if(this.mListener == null || this.mExamDetailList == null)
+        if(this.mListener == null || this.mExamDetailList == null || this.mExamDetailList.isEmpty())
             return;
 
-        ExamDetail examDetailObj = this.mExamDetailList.get(position);
-        this.mListener.onExamTabSelected(examDetailObj);
+        this.mExamDetail = this.mExamDetailList.get(position);
+        this.mListener.onExamTabSelected(mExamDetail);
 
     }
 

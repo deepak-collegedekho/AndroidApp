@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
-    style="@style/AppTheme.CardView.Streams"
+    style="@style/AppTheme.CardView.MY_FB_Forums"
     android:id="@+id/card_fb_enumeration_container"
     xmlns:android="http://schemas.android.com/apk/res/android">
 <LinearLayout

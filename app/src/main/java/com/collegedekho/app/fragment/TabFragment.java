@@ -220,15 +220,15 @@ public class TabFragment extends  BaseFragment {
     }
 
     private void mUpdateSubMenuItem(){
+
         if(selectedTabMenuPosition ==0 ){
+
             if(selectedSubMenuPosition == 1)
                 this.mHomeItemSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/54/syllabus/");
             else if(selectedSubMenuPosition == 0)
                 this.mHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/54/calendar/");
             else
                 Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
-
-
 
         }
         else if(selectedTabMenuPosition == 1){
@@ -243,6 +243,11 @@ public class TabFragment extends  BaseFragment {
              }
         }
 
+    }
+
+    public void updateTabFragment(int tabPosition){
+        this.selectedTabMenuPosition  = tabPosition;
+        mUpdateSelectedTab();
     }
 
     private void mHomeItemSelected(String requestType, String url)

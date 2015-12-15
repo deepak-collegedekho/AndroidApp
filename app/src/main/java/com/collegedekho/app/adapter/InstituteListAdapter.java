@@ -210,8 +210,8 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             switch (v.getId()) {
                 case R.id.card_institute_button_like:
                     if (!v.isSelected()) {
-                        likeButton.setVisibility(View.INVISIBLE);
-                        upvoteCount.setVisibility(View.INVISIBLE);
+                        likeButton.setVisibility(View.GONE);
+                        //upvoteCount.setVisibility(View.GONE);
                         likeProgressBar.setVisibility(View.VISIBLE);
                         likeButton.setClickable(false);
                         //dislikeButton.setClickable(false);
@@ -220,7 +220,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                     else
                     {
                         //Toast.makeText(mContext, "Already liked..", Toast.LENGTH_SHORT).show();
-                        likeButton.setVisibility(View.INVISIBLE);
+                        likeButton.setVisibility(View.GONE);
                         likeProgressBar.setVisibility(View.VISIBLE);
                         likeButton.setClickable(false);
                         //dislikeButton.setClickable(false);

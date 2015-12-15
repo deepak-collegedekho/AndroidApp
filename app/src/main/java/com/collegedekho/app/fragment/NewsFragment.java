@@ -85,12 +85,19 @@ public class NewsFragment extends BaseFragment  {
 
         if (this.mNewsList == null || this.mNewsList.size() <= 0) {
             (rootView.findViewById(android.R.id.empty)).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
+            rootView.findViewById(R.id.view_into_grid_list).setVisibility(View.GONE);
             return rootView;
+        }
+        else{
+
+            (rootView.findViewById(android.R.id.empty)).setVisibility(View.GONE);
+            rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.view_into_grid_list).setVisibility(View.VISIBLE);
         }
 
         progressBarLL = (LinearLayout)rootView.findViewById(R.id.progressBarLL);
 
-        (rootView.findViewById(android.R.id.empty)).setVisibility(View.GONE);
         (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
         (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
         (rootView).findViewById(R.id.news_detail_layout).setOnClickListener(this);

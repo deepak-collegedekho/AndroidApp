@@ -63,6 +63,7 @@
         android:singleLine="true"
         android:paddingTop="2dp"
         android:textSize="16sp"
+        android:maxLength="12"
         android:hint="Phone No."
         android:inputType="phone"/>
     </android.support.design.widget.TextInputLayout>

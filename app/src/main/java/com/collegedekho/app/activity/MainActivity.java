@@ -38,9 +38,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -178,7 +181,7 @@ public class MainActivity extends AppCompatActivity
         LoaderManager.LoaderCallbacks<Cursor>,ExamsFragment.OnExamsSelectListener,
         ProfileFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
         HomeFragment.OnHomeInteractionListener, DataLoadListener,
-        StreamFragment.OnStreamInteractionListener,
+        StreamFragment.OnStreamInteractionListener,AdapterView.OnItemSelectedListener,
         InstituteListFragment.OnInstituteSelectedListener,
         InstituteShortlistFragment.OnShortlistedInstituteSelectedListener,
         OnApplyClickedListener, WidgetListFragment.OnWidgetInteractionListener,
@@ -261,6 +264,7 @@ public class MainActivity extends AppCompatActivity
     static String resource_uri = "";
     private  HashMap<String, String> mUserSignUPParams;
     private Menu menu;
+    private String mYear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1003,7 +1007,7 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplaySubjectSyllabus(Subjects subject)
     {
-        this.mDisplayFragment(SyllabusUnitListFragment.newInstance(subject.getUnits()), false, SyllabusUnitListFragment.class.getSimpleName());
+        this.mDisplayFragment(SyllabusUnitListFragment.newInstance(subject.getUnits()), true, SyllabusUnitListFragment.class.getSimpleName());
     }
 
     private void mDisplayInstitute(int position) {
@@ -1351,6 +1355,12 @@ public class MainActivity extends AppCompatActivity
             case Constants.WIDGET_TEST_CALENDAR:
                 this.onTestCalendarResponse(response);
                 break;
+            case Constants.TAG_NAME_UPDATED:
+                if (tags.length > 1) {
+                    parentIndex = tags[1];
+                    this.onNameUpdatedResponse(response, parentIndex);
+                }
+                break;
         }
 
         if (this.progressDialog != null && this.progressDialog.isShowing())
@@ -1358,14 +1368,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mUpdateExamDetail(String responseJson) {
-        responseJson = "{\n" +
+        /*responseJson = "{\n" +
                 "    \"syllabus_covered\": 10,\n" +
                 "    \"next_important_date\": \"20/05\",\n" +
                 "    \"shortlist_count\": 6,\n" +
                 "    \"recommended_count\": 5,\n" +
                 "    \"yearly_exam_id\": \"23\",\n" +
                 "    \"backup_count\": 4\n" +
-                "}";
+                "}";*/
 
         try {
             ExamSummary examSummary = JSON.std.beanFrom(ExamSummary.class, responseJson);
@@ -2158,34 +2168,104 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onCourseApplied(int position, int tabPosition, InstituteCourse instituteCourse) {
+    public void onCourseApplied(final int position, final int tabPosition, final InstituteCourse instituteCourse) {
 
-        HashMap<String, String> map = new HashMap<>();
+        final HashMap<String, String> params = new HashMap<>();
+        if(user != null) {
+            String name = user.getName();
+            String email = user.getEmail();
+            String phone = user.getPhone_no();
 
-        if (user != null) {
-            map.put(Constants.USER_NAME, user.getName());
-            map.put(Constants.USER_EMAIL, user.getEmail());
+            if(name.equalsIgnoreCase("Anonymous user"))
+                name="";
+
+            if ((user.getName() == null || user.getName().isEmpty() || name.equalsIgnoreCase("Anonymous user")) &&  user.profileData[0] != null)
+                name = user.profileData[0];
+            if(phone == null || phone.isEmpty())
+                phone = user.getPrimaryPhone();
+            if (user.getEmail().contains("@anonymouscollegedekho.com"))
+                email = user.getPrimaryEmail();
+
+            if (name== null || name.isEmpty() || name.contains("Anonymous user") ||
+                    phone == null || phone.length() <= 6 ||
+                    email == null || email.contains("@anonymouscollegedekho.com")) {
+                final View view = getLayoutInflater().inflate(R.layout.dialog_apply, null, false);
+                ((TextView) view.findViewById(R.id.apply_name)).setText(name);
+                ((TextView) view.findViewById(R.id.apply_email)).setText(email);
+                ((TextView) view.findViewById(R.id.apply_phone)).setText(phone);
+                Spinner datePicker = (Spinner) view.findViewById(R.id.apply_year);
+                datePicker.setAdapter(new ArrayAdapter<>(this, R.layout.item_spinner, getYears()));
+                datePicker.setOnItemSelectedListener(this);
+                final Dialog apply = new android.app.AlertDialog.Builder(this)
+                        .setView(view)
+                        .create();
+                apply.setCanceledOnTouchOutside(false);
+                apply.show();
+                (view.findViewById(R.id.submit_button)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String name = ((TextView) view.findViewById(R.id.apply_name)).getText().toString();
+                        String email = ((TextView) view.findViewById(R.id.apply_email)).getText().toString();
+                        String phone = ((TextView) view.findViewById(R.id.apply_phone)).getText().toString();
+                        if (name == null || name.isEmpty()) {
+                            Utils.DisplayToast(getApplicationContext(), Constants.NAME_EMPTY);
+                            return;
+                        } else if (!Utils.isValidName(name)) {
+                            Utils.DisplayToast(getApplicationContext(), Constants.NAME_INVALID);
+                            return;
+                        } else if (phone == null || phone.isEmpty()) {
+                            Utils.DisplayToast(getApplicationContext(), Constants.PHONE_EMPTY);
+                            return;
+                        } else if (phone.length() <= 9 || phone.length() > 12 || !Utils.isValidPhone(phone) ) {
+                            Utils.DisplayToast(getApplicationContext(), Constants.PHONE_INVALID);
+                            return;
+                        } else if (email == null || email.isEmpty()) {
+                            Utils.DisplayToast(getApplicationContext(), Constants.EMAIL_EMPTY);
+                            return;
+                        } else if (!Utils.isValidEmail(email)) {
+                            Utils.DisplayToast(getApplicationContext(), Constants.EMAIL_INVALID);
+                            return;
+                        }
+                        apply.dismiss();
+                        params.put(Constants.USER_NAME, name);
+                        params.put(Constants.USER_EMAIL, email);
+                        params.put(Constants.USER_PHONE, phone);
+                        params.put(Constants.APPLY_YEAR, mYear);
+                        appplyCourse(instituteCourse, params, position, tabPosition);
+                    }
+                });
+
+                (view.findViewById(R.id.cancel_button)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        apply.dismiss();
+                        if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
+                            ((InstituteDetailFragment) currentFragment).cancleAppliedRequest(position, tabPosition);
+                    }
+                });
+            }
+            else {
+                params.put(Constants.USER_NAME, name);
+                params.put(Constants.USER_EMAIL, email);
+                params.put(Constants.USER_PHONE, phone);
+
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                params.put(Constants.APPLY_YEAR, "" + year);
+                appplyCourse(instituteCourse, params, position, tabPosition);
+            }
         }
-
-        TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        String mPhoneNumber = tMgr.getLine1Number();
-        if (mPhoneNumber != null) {
-            map.put(Constants.USER_PHONE, mPhoneNumber);
-        } else {
-            if (user != null) map.put("phone_no", user.getPhone_no());
-        }
-
-        map.put(Constants.APPLY_COURSE, "" + instituteCourse.getId());
+    }
+    private void appplyCourse(InstituteCourse instituteCourse, HashMap params , int position, int tabPosition)
+    {
+        params.put(Constants.APPLY_COURSE, "" + instituteCourse.getId());
         if (mInstitute != null) {
-            map.put("institute", "" + mInstitute.getId());
+            params.put("institute", "" + mInstitute.getId());
         }
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        map.put(Constants.APPLY_YEAR, "" + year);
 
         String URL = Constants.BASE_URL + "lms/";
         instituteCourseId = "" + instituteCourse.getId();
-        this.mMakeNetworkCall(Constants.TAG_APPLIED_COURSE + "#" + position + "#" + tabPosition, URL, map, Request.Method.POST);
+        this.mMakeNetworkCall(Constants.TAG_APPLIED_COURSE + "#" + position + "#" + tabPosition, URL, params, Request.Method.POST);
 
         //GA Event for course applied
         MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_COURSE_APPLIED,
@@ -2197,6 +2277,16 @@ public class MainActivity extends AppCompatActivity
         this.connecto.track(Constants.CATEGORY_INSTITUTES, new Properties().putValue(Constants.APPLY_COURSE_ID, String.valueOf(instituteCourse.getId())).
                 putValue(Constants.APPLY_COURSE, instituteCourse.getName()).
                 putValue(Constants.APPLY_INSTITUTE, mInstitute.getResource_uri()));
+    }
+
+    public ArrayList<String> getYears(){
+        ArrayList<String> years = new ArrayList<>();
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        for(int i=0; i<5; i++){
+            years.add(""+(year+i));
+        }
+        mYear = years.get(0);
+        return years;
     }
 
     @Override
@@ -2877,14 +2967,12 @@ public class MainActivity extends AppCompatActivity
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }*/
-                int count = getSupportFragmentManager().getBackStackEntryCount();
-                if (count >= 1) {
-                         getSupportFragmentManager().popBackStack();
-                } else {
-                    /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                 /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                     if(!drawer.isDrawerOpen(GravityCompat.START))
                         drawer.openDrawer(GravityCompat.START);*/
-                }
+                onBackPressed();
+
+
             }
         });
     }
@@ -2900,11 +2988,7 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } /*else if(this.isLastFragment())
-        {
-            this.mClearBackStack();
-        }*/
-        else if(!Constants.READY_TO_CLOSE) {
+        } else if(!Constants.READY_TO_CLOSE) {
             Constants.READY_TO_CLOSE = true;
             Utils.DisplayToast(getApplicationContext(), "Press again to close CollegeDekho");
             baskpressHandler.postDelayed(backpressRunnable,1500);
@@ -2929,20 +3013,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * This method is used to check about fragment is second last
-     * in  back stack fragmentManager
-     * @return boolean
-     */
-    private boolean isLastFragment()
-    {
-        if (currentFragment instanceof  InstituteListFragment || currentFragment instanceof  NewsFragment
-                || currentFragment instanceof  ArticleFragment || currentFragment instanceof QnAQuestionsListFragment
-                || currentFragment instanceof  MyFutureBuddiesEnumerationFragment || currentFragment instanceof InstituteDetailFragment)
-            return true;
-        else
-            return false;
-    }
 
     /**
      * This method is called when user is not login and want to do something
@@ -3357,18 +3427,7 @@ public class MainActivity extends AppCompatActivity
        this.mMakeNetworkCall(Constants.TAG_EDUCATION_DETAILS_SUBMIT, Constants.BASE_URL + "user-education/", params);
     }
 
-    /**
-     * This method is used to send user's current education
-     * details to server like current level, stream and marks
-     */
-    @Override
-    public void onUserNotPreparingSelected() {
-//        this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
-        this.mDisplayFragment(NotPreparingFragment.newInstance(),false,NotPreparingFragment.class.toString() );
-    }
-
-
-    /**
+       /**
      * This method is used to handle response having exams list
      * after user education detail is submitted to server.
      */
@@ -3399,12 +3458,22 @@ public class MainActivity extends AppCompatActivity
     public void onExamsSelected(JSONObject params) {
         this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "yearly-exams/",params,1);
     }
+
+    /**
+     * This method is used to send user's current education
+     * details to server like current level, stream and marks
+     */
+    @Override
+    public void onUserNotPreparingSelected() {
+//        this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
+        this.mDisplayFragment(NotPreparingFragment.newInstance(),false,NotPreparingFragment.class.toString() );
+    }
     /**
      * This method is load user profile after
      */
     private void mLoadUserProfile(String responseJson)  {
 
-        responseJson = "{\n" +
+       /* responseJson = "{\n" +
                 "\t\"results\": [{\n" +
                 "\t\t\"exam_date\": \"2016-01-31\",\n" +
                 "\t\t\"year\": 2016,\n" +
@@ -3460,7 +3529,7 @@ public class MainActivity extends AppCompatActivity
                 "\t\t\"id\": 127,\n" +
                 "\t\t\"exam_short_name\": \"Punjab university- BEd\"\n" +
                 "\t}]\n" +
-                "}";
+                "}";*/
         List<ExamDetail> userExamsList = null;
         if(responseJson != null && !responseJson.isEmpty()) {
             try {
@@ -3469,6 +3538,7 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
         }
+
 
         // unlock navigation drawer when home screen come
         //((DrawerLayout)findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
@@ -3479,9 +3549,15 @@ public class MainActivity extends AppCompatActivity
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
         params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
         findViewById(R.id.container).setLayoutParams(params);
+        if(userExamsList == null)
+            userExamsList = new ArrayList<>();
 
-        this.mDisplayFragment(ProfileFragment.newInstance(new ArrayList<ExamDetail>(userExamsList)),false,ProfileFragment.class.toString() );
-
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
+        if(fragment == null)
+           this.mDisplayFragment(ProfileFragment.newInstance(new ArrayList<>(userExamsList)),false,ProfileFragment.class.toString() );
+        else{
+            this.mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
+        }
     }
 
     @Override
@@ -3491,14 +3567,23 @@ public class MainActivity extends AppCompatActivity
             this.onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL+"personalize/forums");
             return;
         }
-        this.mDisplayFragment(TabFragment.newInstance(tabPosition),true,TabFragment.class.toString() );
+
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName() );
+        if(fragment == null)
+            this.mDisplayFragment(TabFragment.newInstance(tabPosition), true, TabFragment.class.getSimpleName() );
+        else {
+            if (currentFragment instanceof TabFragment)
+                ((TabFragment) currentFragment).updateTabFragment(tabPosition);
+
+            this.mDisplayFragment(fragment, false, TabFragment.class.getSimpleName() );
+        }
     }
 
     @Override
     public void onExamTabSelected(ExamDetail examDetailObj) {
          if(examDetailObj == null)return;
         String id = examDetailObj.getId();
-        this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/"+id+"/summary",null);
+        this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/"+id+"/summary/",null);
     }
 
     @Override
@@ -3641,6 +3726,16 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        mYear = (String)parent.getItemAtPosition(position);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override
         public void onContainerAvailable(ContainerHolder containerHolder, String containerVersion) {
@@ -3700,9 +3795,49 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mOnExamsSubmitted(String response){
-
         mLoadUserProfile(response);
+    }
 
+
+    @Override
+    public void onNameUpdated(HashMap params, String msg) {
+
+        this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#"+msg, Constants.BASE_URL + "preferences/", params);
+
+    }
+    private void onNameUpdatedResponse(String response , String msg) {
+        User tempuser = MainActivity.user;
+        try {
+            user = JSON.std.beanFrom(User.class, response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //save the preferences locally
+        user.setPref(User.Prefs.STREAMKNOWN);
+        if (tempuser != null){
+            user.setToken(tempuser.getToken());
+            user.setImage(tempuser.getImage());
+            user.setLevel_name(tempuser.getLevel_name());
+            user.setStream_name(tempuser.getStream_name());
+            user.setStream(tempuser.getStream());
+            user.setLevel(tempuser.getLevel());
+            user.setPrimaryEmail(tempuser.getPrimaryEmail());
+            user.setPrimaryPhone(tempuser.getPrimaryPhone());
+            user.profileData = tempuser.profileData;
+        }
+
+        String u = null;
+        try {
+            u = JSON.std.asString(user);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+
+        if(currentFragment instanceof  MyFutureBuddiesFragment)
+        {
+            ((MyFutureBuddiesFragment)currentFragment).sendChatRequest(msg);
+        }
     }
     private void onTestCalendarResponse(String response){
 
@@ -3715,6 +3850,7 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
+
 
     Handler baskpressHandler=new Handler();
     Runnable backpressRunnable=new Runnable() {

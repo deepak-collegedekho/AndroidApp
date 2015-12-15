@@ -119,7 +119,7 @@ public class ArticleDetailFragment extends BaseFragment {
         }
         ((TextView) rootView.findViewById(R.id.textview_article_pubdate)).setText(d);
 
-        ArrayList<Articles> similarArticle =  new ArrayList<Articles>();
+        ArrayList<Articles> similarArticle =  new ArrayList<>();
         ArrayList<String> similarArticlesIds = mArticle.getSimilarArticlesIds();
         if (similarArticlesIds != null)
         {

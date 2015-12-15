@@ -132,6 +132,17 @@
         <!--<item name="cardElevation">0dp</item>-->
         <item name="android:background">@drawable/stream_card_bg</item>
     </style>
+
+    <style name="AppTheme.CardView.MY_FB_Forums" parent="AppTheme.StreamsCardView" >
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="cardCornerRadius">@dimen/corner_radius</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardUseCompatPadding">true</item>
+        <item name="elevation">2dp</item>
+        <item name="cardBackgroundColor">@color/white</item>
+    </style>
+
     <style name="AppTheme.CardView.MYFB_WishList" parent="AppTheme.StreamsCardView">
         <item name="android:layout_marginTop">2dp</item>
         <item name="android:layout_marginBottom">2dp</item>

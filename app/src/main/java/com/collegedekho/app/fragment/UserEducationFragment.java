@@ -120,9 +120,6 @@ public class UserEducationFragment extends BaseFragment {
 
         ((LinearLayout) rootView.findViewById(R.id.user_education_layout)).addView(layout);*/
 
-        rootView.findViewById(R.id.is_preparing_for_exam).setOnClickListener(this);
-        rootView.findViewById(R.id.is_not_preparing_for_exam).setOnClickListener(this);
-
         mMarksPicker = (NumberPicker) rootView.findViewById(R.id.marks_number_picker);
         mMarksPicker.setMaxValue(marks_arrays.length-1);
         mMarksPicker.setMinValue(0);
@@ -154,6 +151,10 @@ public class UserEducationFragment extends BaseFragment {
             }
 
         });*/
+
+        rootView.findViewById(R.id.is_preparing_for_exam).setOnClickListener(this);
+        rootView.findViewById(R.id.is_not_preparing_for_exam).setOnClickListener(this);
+        rootView.findViewById(R.id.education_submit_button).setOnClickListener(this);
 
         return rootView;
     }
@@ -189,13 +190,34 @@ public class UserEducationFragment extends BaseFragment {
         switch(view.getId())
         {
             case R.id.is_preparing_for_exam:
-                mUserPreparingForExam();
+                 mPreparingForExam(0);
                 break;
             case R.id.is_not_preparing_for_exam:
-                mUserNotPreparingForExam();
+                mPreparingForExam(1);
+                break;
+            case R.id.education_submit_button:
+                mUserPreparingForExam();
                 break;
             default:
                 break;
+        }
+    }
+
+    private void mPreparingForExam(int position)
+    {
+        View view = getView();
+        if(view != null) {
+            view.findViewById(R.id.education_submit_button).setVisibility(View.VISIBLE);
+            if (position == 0) {
+                isUserPreparing = true;
+                view.findViewById(R.id.is_preparing_for_exam).setSelected(true);
+                view.findViewById(R.id.is_not_preparing_for_exam).setSelected(false);
+            }
+            else{
+                isUserPreparing = false;
+                view.findViewById(R.id.is_preparing_for_exam).setSelected(false);
+                view.findViewById(R.id.is_not_preparing_for_exam).setSelected(true);
+            }
         }
     }
 
@@ -253,24 +275,29 @@ public class UserEducationFragment extends BaseFragment {
 
     private void mUserPreparingForExam() {
         if (this.mListener != null) {
-            HashMap<String, String> map = new HashMap<>();
 
-            int examPosition = mExamPicker.getValue();
-            int streamPosition = mStreamPicker.getValue();
-            int marksPosition = mMarksPicker.getValue();
-            ArrayList<UserEducationStreams> tempStreamList = mUserStreamLists.get(examPosition);
+            if(isUserPreparing) {
+                HashMap<String, String> map = new HashMap<>();
 
-            UserEducationFragment.this.mSubLevelID = ""+mUserExamSubLevelsList.get(examPosition).getId();
-            UserEducationFragment.this.mStreamID = ""+tempStreamList.get(streamPosition).getId();
-            UserEducationFragment.this.mMarks = this.mGetMarks(marksPosition);
+                int examPosition = mExamPicker.getValue();
+                int streamPosition = mStreamPicker.getValue();
+                int marksPosition = mMarksPicker.getValue();
+                ArrayList<UserEducationStreams> tempStreamList = mUserStreamLists.get(examPosition);
+
+                UserEducationFragment.this.mSubLevelID = "" + mUserExamSubLevelsList.get(examPosition).getId();
+                UserEducationFragment.this.mStreamID = "" + tempStreamList.get(streamPosition).getId();
+                UserEducationFragment.this.mMarks = this.mGetMarks(marksPosition);
 
 
-            map.put("sublevel", UserEducationFragment.this.mSubLevelID);
-            map.put("stream", UserEducationFragment.this.mStreamID);
-            map.put("marks", UserEducationFragment.this.mMarks);
-            map.put("is_preparing", "1");
+                map.put("sublevel", UserEducationFragment.this.mSubLevelID);
+                map.put("stream", UserEducationFragment.this.mStreamID);
+                map.put("marks", UserEducationFragment.this.mMarks);
+                map.put("is_preparing", "1");
 
-            mListener.onEducationSelected(map);
+                mListener.onEducationSelected(map);
+            }else{
+                mUserNotPreparingForExam();
+            }
         }
     }
 
