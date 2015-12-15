@@ -78,7 +78,7 @@ public class SyllabusUnitListFragment extends BaseFragment {
         if(elv != null) {
             mAdapter = new SyllabusUnitsExpandableListAdapter(this.getActivity(), this.mUnits);
             elv.setAdapter(mAdapter);
-            elv.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+/*            elv.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
                 @Override
                 public void onGroupExpand(int groupPosition) {
                     if (prev != -1 && prev != groupPosition) {
@@ -88,9 +88,9 @@ public class SyllabusUnitListFragment extends BaseFragment {
                 }
             });
             if (this.mUnits.size() < 2)
-                elv.expandGroup(0);
+                elv.expandGroup(0);*/
 
-            elv.expandGroup(0);
+            //elv.expandGroup(0);
             // Inflate the layout for this fragment
         }
     }

@@ -39,7 +39,7 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return 1;
+        return this.getGroup(groupPosition).getChapters().size();
     }
 
     @Override
@@ -95,7 +95,7 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
-        convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.syllabus_chapter_recycler_view, parent, false);
+        /*convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.syllabus_chapter_recycler_view, parent, false);
         RecyclerView chapterRecyclerView = (RecyclerView) convertView.findViewById(R.id.chapter_list);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -103,12 +103,36 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
         SyllabusChapterListAdapter scla = new SyllabusChapterListAdapter(this.mContext, this.getGroup(groupPosition).getChapters());
         chapterRecyclerView.setAdapter(scla);
 
+        return convertView;*/
+
+        final ViewHolder holder;
+        if (convertView == null) {
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_syllabus_chapters, parent, false);
+            holder = new ViewHolder();
+            holder.chapterLabel = (TextView) convertView.findViewById(R.id.syllabus_chapters_name);
+            holder.chapterCheckBox = (CheckBox) convertView.findViewById(R.id.syllabus_chapters_checkbox);
+            holder.chapterLabel.setText(this.getGroup(groupPosition).getChapters().get(childPosition).getName());
+            holder.chapterCheckBox.setSelected(this.getGroup(groupPosition).getChapters().get(childPosition).getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(mContext);
+            mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            convertView.setTag(holder);
+        }
+        else {
+            holder = (ViewHolder) convertView.getTag();
+            holder.chapterCheckBox.setSelected(this.getGroup(groupPosition).getChapters().get(childPosition).getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
+        }
+
         return convertView;
     }
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return false;
+    }
+
+    static class ViewHolder{
+        TextView chapterLabel;
+        CheckBox chapterCheckBox;
     }
 
     static class ParentHolder{
