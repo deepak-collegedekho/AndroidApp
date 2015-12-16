@@ -24,8 +24,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     private ArrayList<Date> itemList;
     private int startCellPosition =0;
     private int endCellPosition =0;
-    private boolean isActiveSet;
-    private boolean caIncreament;
+    private boolean isActiveCell;
     LayoutInflater inflater;
     // today
     Date today;
@@ -33,7 +32,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     Calendar cal;
     private int mOffSet;
     private OnCalendarItemSelectListener mListener;
-    String[] monthNames = {"JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
+    private String[] monthNames = {"JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
     int[]subjectColors={0xff0066ff,0xffff5c33,0xffff8533,0xffff3399,0xffffc61a,0xff8533ff};
 
     public CalendarAdapter(Context context, ArrayList<Date> itemList, OnCalendarItemSelectListener listener,int offSet) {
@@ -41,7 +40,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         this.itemList = itemList;
          this.mOffSet=offSet;
         mCalendar = Calendar.getInstance();
-        mCalendar.add(Calendar.MONTH,offSet);
         cal = Calendar.getInstance();
         mListener = listener;
         inflater=(LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -65,43 +63,65 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int month = cal.get(Calendar.MONTH);
         int year = cal.get(Calendar.YEAR);
-        if(month== mCalendar.get(Calendar.MONTH) && day== mCalendar.get(Calendar.DAY_OF_MONTH) &&year== mCalendar.get(Calendar.YEAR)){
-            if(!isActiveSet) {
-                isActiveSet = true;
-                caIncreament=true;
-                startCellPosition = position;
+        String day_key=String.valueOf(cal.get(Calendar.YEAR)+"_"+String.valueOf(cal.get(Calendar.DAY_OF_YEAR)));
+        if (year == mCalendar.get(Calendar.YEAR)) {     //current year
+            if (month == mCalendar.get(Calendar.MONTH)) {       //current month
+                if (day == mCalendar.get(Calendar.DAY_OF_MONTH)) {      //today
+                    if(!isActiveCell) {
+                        isActiveCell = true;
+                        startCellPosition = position;
+                        mListener.onItemSelect(position, startCellPosition,endCellPosition,day_key);
+                    }
+                    holder.dateView.setTextColor(0xff0066ff);
+                }
+            }else { //outside current month
+                if(day==1){
+                    if(!isActiveCell) {
+                        isActiveCell = true;
+                        startCellPosition = position;
+                        mListener.onItemSelect(position, startCellPosition,endCellPosition,day_key);
+                    }else {
+                        endCellPosition=position-1;
+                        isActiveCell =false;
+                    }
+                }
+
             }
-        }else if(day==1 && month!= mCalendar.get(Calendar.MONTH)){
-            if(!isActiveSet) {
-                isActiveSet = true;
-                caIncreament=true;
-                startCellPosition = position;
+            if (day == 1) {
+                holder.monthView.setText(monthNames[cal.get(Calendar.MONTH)]);
+                holder.monthView.setVisibility(View.VISIBLE);
+
+            } else {
+                holder.monthView.setVisibility(View.INVISIBLE);
             }
-            if(isActiveSet){
-                caIncreament=false;
-                endCellPosition=position-1;
+        }else {  //outside current year
+
+            if (day == 1) {
+                holder.monthView.setText(monthNames[cal.get(Calendar.MONTH)]);
+                holder.monthView.setVisibility(View.VISIBLE);
+
+                if(!isActiveCell) {
+                    isActiveCell = true;
+                    startCellPosition = position;
+                    mListener.onItemSelect(position, startCellPosition,endCellPosition,day_key);
+
+                }else {
+                    endCellPosition=position-1;
+                    isActiveCell = false;
+                }
+
+            } else {
+                holder.monthView.setVisibility(View.INVISIBLE);
             }
         }
-        if (month != mCalendar.get(Calendar.MONTH) || year != mCalendar.get(Calendar.YEAR)) {
-            // if this day is outside current month, grey it out
-            holder.dateView.setTextColor(0xffcccccc);
-            holder.dotView.setVisibility(View.INVISIBLE);
-        } else if (day == mCalendar.get(Calendar.DAY_OF_MONTH)) {
-            // if it is today, set it to blue/bold
-            holder.dateView.setTextColor(0xff0066ff);
-        } else if (day < mCalendar.get(Calendar.DAY_OF_MONTH)) {
-            holder.dotView.setVisibility(View.INVISIBLE);
-
-        }
-
-        if (day == 1) {
-            holder.monthView.setText(monthNames[cal.get(Calendar.MONTH)]);
-            holder.monthView.setVisibility(View.VISIBLE);
-
+        if (isActiveCell) {
+            holder.dotView.setVisibility(View.VISIBLE);
         } else {
-            holder.monthView.setVisibility(View.INVISIBLE);
+            holder.dotView.setVisibility(View.INVISIBLE);
+            holder.dateView.setTextColor(0xffcccccc);
         }
-        int i=0;
+
+       /* int i=0;
         for(String key:CalendarParentFragment.subjectsMap.keySet()){
             float dayCount=Float.valueOf(CalendarParentFragment.subjectsMap.get(key));
             if(dayCount>CalendarParentFragment.numDays){
@@ -110,14 +130,19 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 holder.dotView.addView(dot);
             }
 
-        }
+        }*/
 
+        String key=CalendarParentFragment.yearCalendar.get(day_key);
+        if(key!=null){
+            String[] keyArray=key.split(",");
+            for (int j=0;j<keyArray.length;j++){
+                View dot=inflater.inflate(R.layout.dot_view,holder.dotView,false);
+                dot.setBackgroundColor(subjectColors[j]);
+                holder.dotView.addView(dot);
+            }
+        }
+        holder.dateView.setTag(day_key);
         holder.dateView.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));
-        if(caIncreament) {
-            CalendarParentFragment.numDays++;
-            CalendarParentFragment.daysIncreamented++;
-        }
-
     }
 
     @Override
@@ -141,11 +166,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
         @Override
         public void onClick(View v) {
-            mListener.onItemSelect(getLayoutPosition(), startCellPosition,endCellPosition);
+            String key=(String) (v.findViewById(R.id.txt_date)).getTag();
+            mListener.onItemSelect(getLayoutPosition(), startCellPosition,endCellPosition,key);
         }
     }
 
     public interface OnCalendarItemSelectListener {
-        public void onItemSelect(int position,int startPosition,int endPosition);
+        public void onItemSelect(int position,int startPosition,int endPosition,String itemKey);
     }
 }

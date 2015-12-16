@@ -12,19 +12,22 @@ import android.view.ViewGroup;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.CalendarAdapter;
+import com.collegedekho.app.adapter.CalendarItemDetailsAdapter;
+import com.collegedekho.app.adapter.SyllabusChapterListAdapter;
+import com.collegedekho.app.entities.ChapterDetails;
 import com.collegedekho.app.entities.Chapters;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by Bashir on 14/12/15.
  */
-public class CalendarFragment extends BaseFragment {
-    private RecyclerView recyclerView;
+public class CalendarFragment extends BaseFragment implements CalendarAdapter.OnCalendarItemSelectListener {
+    private RecyclerView calendarRecyclerView;
+    private RecyclerView detailsRecyclerView;
     // how many days to show, defaults to six weeks, 42 days
     private static int DAYS_COUNT = 42;
 
@@ -37,14 +40,14 @@ public class CalendarFragment extends BaseFragment {
     // current displayed month
     private Calendar currentDate;
 
-    private GridLayoutManager layoutManager;
+    private GridLayoutManager calendarLayoutManager;
+    private LinearLayoutManager detailsLayoutManager;
     private static ArrayList<Chapters> chaptersList;
     private static CalendarAdapter.OnCalendarItemSelectListener mListener;
     int offSet=0;
-    public static CalendarFragment newInstance(ArrayList<Chapters> chapters, CalendarAdapter.OnCalendarItemSelectListener listener) {
+    public static CalendarFragment newInstance(ArrayList<Chapters> chapters) {
         chaptersList = chapters;
         Bundle args = new Bundle();
-        mListener = listener;
         CalendarFragment fragment = new CalendarFragment();
         fragment.setArguments(args);
         return fragment;
@@ -60,11 +63,16 @@ public class CalendarFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        recyclerView = (RecyclerView) view.findViewById(R.id.calendar_recycler);
-        layoutManager = new GridLayoutManager(getActivity(), 7);
+        calendarRecyclerView = (RecyclerView) view.findViewById(R.id.calendar_recycler);
+        detailsRecyclerView=(RecyclerView)view.findViewById(R.id.calendar_details_recycler);
+        calendarLayoutManager = new GridLayoutManager(getActivity(), 7);
 
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
+        detailsLayoutManager=new LinearLayoutManager(getActivity());
+        detailsLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        detailsRecyclerView.setLayoutManager(detailsLayoutManager);
+
+        calendarLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        calendarRecyclerView.setLayoutManager(calendarLayoutManager);
         currentDate=Calendar.getInstance();
         offSet=getArguments().getInt("id");
         currentDate.add(Calendar.MONTH,offSet);
@@ -83,12 +91,12 @@ public class CalendarFragment extends BaseFragment {
 
         // move calendar backwards to the beginning of the week
         calendar.add(Calendar.DAY_OF_MONTH, -monthBeginningCell);
-        while (cells.size() < DAYS_COUNT) {
+      /*  while (cells.size() < DAYS_COUNT) {
             cells.add(calendar.getTime());
             calendar.add(Calendar.DAY_OF_MONTH, 1);
-        }
+        }*/
 
-        /*if (monthBeginningCell > 3) {
+        if (monthBeginningCell > 3) {
             // fill cells (42 days calendar as per our business logic)
             DAYS_COUNT = 42;
             while (cells.size() < DAYS_COUNT) {
@@ -101,11 +109,36 @@ public class CalendarFragment extends BaseFragment {
                 cells.add(calendar.getTime());
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
             }
-        }*/
+        }
         // update grid
-        CalendarAdapter calendarAdapter = new CalendarAdapter(getActivity(), cells, mListener, offSet);
-        recyclerView.setAdapter(calendarAdapter);
+        CalendarAdapter calendarAdapter = new CalendarAdapter(getActivity(), cells, this, offSet);
+        calendarRecyclerView.setAdapter(calendarAdapter);
     }
 
+//SyllabusChapterListAdapter
+
+    @Override
+    public void onItemSelect(int position, int startPosition,int endPosition,String itemKey) {
+//        int effectivePosition=(position-startPosition)+(currentPage*42);
+//        if(effectivePosition>-1 && mChapterList.get(0).getChapters().size()>=effectivePosition) {
+////            Log.e("DEBUG",mChapterList.get(0).getChapters().get(effectivePosition).getChapter_name());
+//
+//        }
+        Log.e("DEBUG", "Position " + position + " Active Position " + startPosition+" End position "+endPosition+" Effective Position "+itemKey);
+        String keys=CalendarParentFragment.yearCalendar.get(itemKey);
+                if(keys!=null) {
+                    String[]subject_keys=keys.split(",");
+                    ArrayList<ChapterDetails> chaptersList = new ArrayList<>();
+                    for (int i = 0; i < subject_keys.length; i++) {
+                        ArrayList<ChapterDetails> chapters = CalendarParentFragment.chaptersDetailsList.get(subject_keys[i]);
+                        if (chapters != null && !chapters.isEmpty()) {
+                            chaptersList.add(chapters.get(0));
+                        }
+                    }
+                    CalendarItemDetailsAdapter calendarItemDetailsAdapter = new CalendarItemDetailsAdapter(getActivity(), chaptersList);
+                    detailsRecyclerView.setAdapter(calendarItemDetailsAdapter);
+                }
+
+    }
 
 }

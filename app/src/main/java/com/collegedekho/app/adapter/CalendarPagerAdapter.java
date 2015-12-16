@@ -17,17 +17,15 @@ import java.util.Calendar;
 public class CalendarPagerAdapter extends FragmentStatePagerAdapter {
     private int NUM_PAGES=1;
     ArrayList<Chapters> chapterList;
-    private CalendarAdapter.OnCalendarItemSelectListener mListener;
-    public CalendarPagerAdapter(FragmentManager fm, int pageCount, CalendarAdapter.OnCalendarItemSelectListener listener)
+    public CalendarPagerAdapter(FragmentManager fm, int pageCount)
     {
         super(fm);
         this.NUM_PAGES=pageCount;
-        this.mListener=listener;
     }
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment= CalendarFragment.newInstance(chapterList,mListener);
+        Fragment fragment= CalendarFragment.newInstance(chapterList);
         Bundle b=new Bundle();
         b.putInt("id", position);
         fragment.setArguments(b);

@@ -20,18 +20,20 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Created by Bashir on 14/12/15.
  */
-public class CalendarParentFragment extends BaseFragment implements ViewPager.OnPageChangeListener, CalendarAdapter.OnCalendarItemSelectListener {
+public class CalendarParentFragment extends BaseFragment implements ViewPager.OnPageChangeListener {
     private CalendarPagerAdapter mPagerAdapter;
     private ViewPager viewPager;
     private int numPages = 1;
     private static ArrayList<Chapters> mChapterList;
     public static HashMap<String,String>subjectsMap;
-    public static int numDays=0;
-    public static int daysIncreamented;
+    public static LinkedHashMap<String,String>yearCalendar=new LinkedHashMap<>();
+    public static LinkedHashMap<String,ArrayList<ChapterDetails>>chaptersDetailsList=new LinkedHashMap<>();
+
     public static CalendarParentFragment newInstance(ArrayList<Chapters> chapterList) {
 
         Bundle args = new Bundle();
@@ -54,21 +56,19 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
         super.onViewCreated(view, savedInstanceState);
         initCalendar();
         viewPager = (ViewPager) view.findViewById(R.id.pager);
-        mPagerAdapter = new CalendarPagerAdapter(getChildFragmentManager(), numPages, CalendarParentFragment.this);
+        mPagerAdapter = new CalendarPagerAdapter(getChildFragmentManager(), numPages);
         viewPager.setAdapter(mPagerAdapter);
         viewPager.addOnPageChangeListener(this);
     }
 
     private void initCalendar() {
-        numDays = 0;
-        daysIncreamented = 0;
         Chapters chapters = mChapterList.get(0);
         String examDate = chapters.getExam_date();
         ArrayList<ChapterDetails> chapterDetailsList = chapters.getChapters();
         if (chapterDetailsList == null || chapterDetailsList.isEmpty()) {
             return;
         }
-        subjectsMap = new HashMap<>();
+        subjectsMap = new LinkedHashMap<>();
         for (ChapterDetails chapterDetails : chapterDetailsList) {
             String id = subjectsMap.get(chapterDetails.getSubject_id());
             if (id == null) {
@@ -77,8 +77,34 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
                 float total = Float.valueOf(subjectsMap.get(chapterDetails.getSubject_id())) + Float.valueOf(chapterDetails.getDays_to_complete());
                 subjectsMap.put(chapterDetails.getSubject_id(), String.valueOf(total));
             }
+                ArrayList<ChapterDetails> detailsList = chaptersDetailsList.get(chapterDetails.getSubject_id());
+                if (detailsList == null) {
+                    detailsList = new ArrayList<>();
+                    detailsList.add(chapterDetails);
+                    chaptersDetailsList.put(chapterDetails.getSubject_id(), detailsList);
+                } else {
+                    chaptersDetailsList.get(chapterDetails.getSubject_id()).add(chapterDetails);
+                }
         }
+        Calendar calendar=Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR,-1);
+        Date today=new Date();
+        for(String key:subjectsMap.keySet()){
+            int dayCount=(int)Math.ceil(Double.valueOf(CalendarParentFragment.subjectsMap.get(key)));
+                for (int i=0;i<dayCount;i++){
+                    calendar.add(Calendar.DAY_OF_YEAR,1);
+                    String day_key=String.valueOf(calendar.get(Calendar.YEAR)+"_"+String.valueOf(calendar.get(Calendar.DAY_OF_YEAR)));
+                    String day_value=yearCalendar.get(day_key);
+                    if(day_value==null) {
+                        yearCalendar.put(day_key, key);
+                    }else if(!day_value.contains(key)){
+                        yearCalendar.put(day_key, day_value+","+key);
+                    }
+                }
+            calendar.setTime(today);
+            calendar.add(Calendar.DAY_OF_YEAR,-1);
 
+        }
         SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
         Date endDate;
         Date startDate = new Date();
@@ -104,33 +130,14 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
 
     }
 
-    int currentPage = 0;
 
     @Override
     public void onPageSelected(int i) {
-        if(currentPage<i){
-//            numDays-=42;
-            daysIncreamented=0;
-        }else{
-            numDays-=daysIncreamented;
-            daysIncreamented=0;
-        }
-    currentPage = i;
 
     }
 
     @Override
     public void onPageScrollStateChanged(int i) {
 
-    }
-
-    @Override
-    public void onItemSelect(int position, int startPosition,int endPosition) {
-        int effectivePosition=(position-startPosition)+(currentPage*42);
-        if(effectivePosition>-1 && mChapterList.get(0).getChapters().size()>=effectivePosition) {
-//            Log.e("DEBUG",mChapterList.get(0).getChapters().get(effectivePosition).getChapter_name());
-
-        }
-        Log.e("DEBUG", "Position " + position + " Active Position " + startPosition+" End position "+endPosition+" Effective Position "+effectivePosition);
     }
 }
