@@ -2,6 +2,6 @@
 <View xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/m6dp"
     android:layout_height="@dimen/m6dp"
-    android:layout_marginLeft="@dimen/m4dp"
-    android:layout_marginTop="@dimen/m4dp"
+    android:layout_marginLeft="@dimen/m2dp"
+    android:layout_marginTop="@dimen/m2dp"
     android:background="@drawable/bg_button_blue" />

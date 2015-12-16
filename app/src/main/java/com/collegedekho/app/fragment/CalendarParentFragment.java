@@ -30,9 +30,9 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
     private ViewPager viewPager;
     private int numPages = 1;
     private static ArrayList<Chapters> mChapterList;
-    public static HashMap<String,String>subjectsMap;
-    public static LinkedHashMap<String,String>yearCalendar=new LinkedHashMap<>();
-    public static LinkedHashMap<String,ArrayList<ChapterDetails>>chaptersDetailsList=new LinkedHashMap<>();
+    private HashMap<String,String>subjectsMap;
+    private LinkedHashMap<String,String>yearCalendar=new LinkedHashMap<>();
+    private LinkedHashMap<String,ArrayList<ChapterDetails>>chaptersDetailsList=new LinkedHashMap<>();
 
     public static CalendarParentFragment newInstance(ArrayList<Chapters> chapterList) {
 
@@ -56,12 +56,15 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
         super.onViewCreated(view, savedInstanceState);
         initCalendar();
         viewPager = (ViewPager) view.findViewById(R.id.pager);
-        mPagerAdapter = new CalendarPagerAdapter(getChildFragmentManager(), numPages);
+        mPagerAdapter = new CalendarPagerAdapter(getChildFragmentManager(), numPages,yearCalendar,chaptersDetailsList);
         viewPager.setAdapter(mPagerAdapter);
         viewPager.addOnPageChangeListener(this);
     }
 
     private void initCalendar() {
+        if(mChapterList==null || mChapterList.isEmpty()){
+            return;
+        }
         Chapters chapters = mChapterList.get(0);
         String examDate = chapters.getExam_date();
         ArrayList<ChapterDetails> chapterDetailsList = chapters.getChapters();
@@ -90,7 +93,7 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
         calendar.add(Calendar.DAY_OF_YEAR,-1);
         Date today=new Date();
         for(String key:subjectsMap.keySet()){
-            int dayCount=(int)Math.ceil(Double.valueOf(CalendarParentFragment.subjectsMap.get(key)));
+            int dayCount=(int)Math.ceil(Double.valueOf(subjectsMap.get(key)));
                 for (int i=0;i<dayCount;i++){
                     calendar.add(Calendar.DAY_OF_YEAR,1);
                     String day_key=String.valueOf(calendar.get(Calendar.YEAR)+"_"+String.valueOf(calendar.get(Calendar.DAY_OF_YEAR)));

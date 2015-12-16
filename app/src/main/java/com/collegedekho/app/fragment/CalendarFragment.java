@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Created by Bashir on 14/12/15.
@@ -44,9 +45,13 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
     private LinearLayoutManager detailsLayoutManager;
     private static ArrayList<Chapters> chaptersList;
     private static CalendarAdapter.OnCalendarItemSelectListener mListener;
+    private  static LinkedHashMap<String,ArrayList<ChapterDetails>>mChaptersDetailsList;
     int offSet=0;
-    public static CalendarFragment newInstance(ArrayList<Chapters> chapters) {
+    private static LinkedHashMap<String,String> mYearCalendar;
+    public static CalendarFragment newInstance(ArrayList<Chapters> chapters,LinkedHashMap<String,String> yearCalendar,LinkedHashMap<String,ArrayList<ChapterDetails>>chaptersDetailsList) {
         chaptersList = chapters;
+        mYearCalendar=yearCalendar;
+        mChaptersDetailsList=chaptersDetailsList;
         Bundle args = new Bundle();
         CalendarFragment fragment = new CalendarFragment();
         fragment.setArguments(args);
@@ -91,12 +96,12 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
 
         // move calendar backwards to the beginning of the week
         calendar.add(Calendar.DAY_OF_MONTH, -monthBeginningCell);
-      /*  while (cells.size() < DAYS_COUNT) {
+       while (cells.size() < DAYS_COUNT) {
             cells.add(calendar.getTime());
             calendar.add(Calendar.DAY_OF_MONTH, 1);
-        }*/
+        }
 
-        if (monthBeginningCell > 3) {
+        /*if (monthBeginningCell > 3) {
             // fill cells (42 days calendar as per our business logic)
             DAYS_COUNT = 42;
             while (cells.size() < DAYS_COUNT) {
@@ -109,9 +114,9 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
                 cells.add(calendar.getTime());
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
             }
-        }
+        }*/
         // update grid
-        CalendarAdapter calendarAdapter = new CalendarAdapter(getActivity(), cells, this, offSet);
+        CalendarAdapter calendarAdapter = new CalendarAdapter(getActivity(), cells, this,mYearCalendar);
         calendarRecyclerView.setAdapter(calendarAdapter);
     }
 
@@ -125,12 +130,12 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
 //
 //        }
         Log.e("DEBUG", "Position " + position + " Active Position " + startPosition+" End position "+endPosition+" Effective Position "+itemKey);
-        String keys=CalendarParentFragment.yearCalendar.get(itemKey);
+        String keys=mYearCalendar.get(itemKey);
                 if(keys!=null) {
                     String[]subject_keys=keys.split(",");
                     ArrayList<ChapterDetails> chaptersList = new ArrayList<>();
                     for (int i = 0; i < subject_keys.length; i++) {
-                        ArrayList<ChapterDetails> chapters = CalendarParentFragment.chaptersDetailsList.get(subject_keys[i]);
+                        ArrayList<ChapterDetails> chapters = mChaptersDetailsList.get(subject_keys[i]);
                         if (chapters != null && !chapters.isEmpty()) {
                             chaptersList.add(chapters.get(0));
                         }

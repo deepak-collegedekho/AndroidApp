@@ -1,6 +1,9 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +17,7 @@ import com.collegedekho.app.fragment.CalendarParentFragment;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 /**
  * Created by Bashir on 14/12/15.
@@ -26,6 +30,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     private int endCellPosition =0;
     private boolean isActiveCell;
     LayoutInflater inflater;
+    private LinkedHashMap<String,String> mYearCalendar;
     // today
     Date today;
     Calendar mCalendar;
@@ -33,16 +38,17 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     private int mOffSet;
     private OnCalendarItemSelectListener mListener;
     private String[] monthNames = {"JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
-    int[]subjectColors={0xff0066ff,0xffff5c33,0xffff8533,0xffff3399,0xffffc61a,0xff8533ff};
-
-    public CalendarAdapter(Context context, ArrayList<Date> itemList, OnCalendarItemSelectListener listener,int offSet) {
+    int[]subjectColors={0xff0066ff,0xffff5c33,0xffff8533,0xffff3399,0xffffc61a,0xff8533ff,0xff0066ff,0xffff5c33,0xffff8533,0xffff3399,0xffffc61a,0xff8533ff};
+//    private Drawable mDrawable;
+    public CalendarAdapter(Context context, ArrayList<Date> itemList, OnCalendarItemSelectListener listener,LinkedHashMap<String,String> yearCalendar) {
         this.mContext = context;
         this.itemList = itemList;
-         this.mOffSet=offSet;
+         this.mYearCalendar=yearCalendar;
         mCalendar = Calendar.getInstance();
         cal = Calendar.getInstance();
         mListener = listener;
         inflater=(LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
     }
 
     @Override
@@ -121,23 +127,16 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             holder.dateView.setTextColor(0xffcccccc);
         }
 
-       /* int i=0;
-        for(String key:CalendarParentFragment.subjectsMap.keySet()){
-            float dayCount=Float.valueOf(CalendarParentFragment.subjectsMap.get(key));
-            if(dayCount>CalendarParentFragment.numDays){
-                View dot=inflater.inflate(R.layout.dot_view,holder.dotView,false);
-                dot.setBackgroundColor(subjectColors[i++]);
-                holder.dotView.addView(dot);
-            }
-
-        }*/
-
-        String key=CalendarParentFragment.yearCalendar.get(day_key);
+        String key=mYearCalendar.get(day_key);
         if(key!=null){
             String[] keyArray=key.split(",");
             for (int j=0;j<keyArray.length;j++){
                 View dot=inflater.inflate(R.layout.dot_view,holder.dotView,false);
-                dot.setBackgroundColor(subjectColors[j]);
+
+                Drawable  mDrawable = mContext.getResources().getDrawable(R.drawable.bg_button_blue);
+                mDrawable.setColorFilter(new
+                        PorterDuffColorFilter(subjectColors[j], PorterDuff.Mode.SRC_IN));
+                dot.setBackgroundDrawable(mDrawable);
                 holder.dotView.addView(dot);
             }
         }
