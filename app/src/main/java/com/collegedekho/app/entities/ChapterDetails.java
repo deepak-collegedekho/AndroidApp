@@ -14,6 +14,7 @@ public class ChapterDetails implements Parcelable {
     String chapter_name;
     String yearly_exam_chapter_id;
     String days_to_complete;
+    private boolean isSelected;
 
     public static final Creator<ChapterDetails> CREATOR = new Creator<ChapterDetails>() {
         @Override
@@ -38,6 +39,7 @@ public class ChapterDetails implements Parcelable {
         chapter_name = in.readString();
         yearly_exam_chapter_id = in.readString();
         days_to_complete = in.readString();
+        isSelected=in.readByte()!=0;
 
     }
 
@@ -97,6 +99,14 @@ public class ChapterDetails implements Parcelable {
         this.days_to_complete = days_to_complete;
     }
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -112,6 +122,6 @@ public class ChapterDetails implements Parcelable {
         dest.writeString(chapter_name);
         dest.writeString(yearly_exam_chapter_id);
         dest.writeString(days_to_complete);
-
+        dest.writeByte((byte) (isSelected ? 1 : 0));
     }
 }
