@@ -11,19 +11,19 @@
         style="@style/AppTheme.Bottom_Button"
         android:layout_width="0dp"
         android:layout_weight=".25"
-        android:text="PREP \nBUDDIE"/>
+        android:text="PREP \nBUDDY"/>
     <TextView
         android:id="@+id/resources_buddies"
         style="@style/AppTheme.Bottom_Button"
         android:layout_width="0dp"
         android:layout_weight=".25"
-        android:text="RESOURCE \nBUDDIE"/>
+        android:text="RESOURCE \nBUDDY"/>
     <TextView
         android:id="@+id/future_buddies"
         style="@style/AppTheme.Bottom_Button"
         android:layout_width="0dp"
         android:layout_weight=".25"
-        android:text="FUTURE \nBUDDIE"/>
+        android:text="FUTURE \nBUDDY"/>
     <TextView
         android:id="@+id/my_alerts"
         style="@style/AppTheme.Bottom_Button"

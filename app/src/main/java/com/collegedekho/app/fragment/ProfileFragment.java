@@ -238,12 +238,11 @@ public class ProfileFragment extends  BaseFragment
                mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "yearly-exams/54/backup-colleges/");
                break;
             case R.id.wishList_colleges_layout_RL:
-            case R.id.recommended_colleges_layout_RL: {
+            case R.id.recommended_colleges_layout_RL:
                 mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes");
                 break;
-            }
             case R.id.important_date_layout_RL:
-                Toast.makeText(getActivity(), "Coming soon...", Toast.LENGTH_SHORT).show();
+                this.mHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/54/calendar/");
                 break;
             default:
                 break;

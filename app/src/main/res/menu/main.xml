@@ -4,6 +4,7 @@
         android:id="@+id/action_home"
         android:orderInCategory="100"
         app:showAsAction="never"
+        android:visible="false"
         android:title="@string/action_home"/>
 
 </menu>

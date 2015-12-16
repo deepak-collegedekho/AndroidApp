@@ -633,11 +633,11 @@ public class MainActivity extends AppCompatActivity
         }else  if(position  == 5){
             onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL+"personalize/forums");
         }
-        if(position==1){
+        /*if(position==1){
             hideMenuOption(R.id.action_home);
         }else {
             showMenuOption(R.id.action_home);
-        }
+        }*/
         return true;
     }
 
@@ -664,7 +664,12 @@ public class MainActivity extends AppCompatActivity
 
         getMenuInflater().inflate(R.menu.main, menu);
         this.menu=menu;
-    hideMenuOption(R.id.action_home);
+        /*MenuItem item = menu.findItem(R.id.action_home);
+        if(item != null) {
+            item.setVisible(false);
+
+        }*/
+        hideMenuOption(R.id.action_home);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -675,12 +680,12 @@ public class MainActivity extends AppCompatActivity
         invalidateOptionsMenu();
     }
 
-    private void showMenuOption(int id)
+    /*private void showMenuOption(int id)
     {
         MenuItem item = this.menu.findItem(id);
         item.setVisible(true);
         invalidateOptionsMenu();
-    }
+    }*/
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -2975,7 +2980,10 @@ public class MainActivity extends AppCompatActivity
                  /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                     if(!drawer.isDrawerOpen(GravityCompat.START))
                         drawer.openDrawer(GravityCompat.START);*/
-                onBackPressed();
+                int count = getSupportFragmentManager().getBackStackEntryCount();
+                if (count >= 1) {
+                    getSupportFragmentManager().popBackStack();
+                }
 
 
             }

@@ -2,10 +2,12 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -194,6 +196,12 @@ public class TabFragment extends  BaseFragment {
             thirdSubMenuIV.setImageResource(R.drawable.ic_challenges);
             fourthSubMenuIV.setImageResource(R.drawable.ic_prep_path);
 
+            LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 1.0f);
+            ll.setLayoutParams(lp);
+            view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
+
             firstSubMenuTV.setText("Test Calendar");
             secondSubMenuTV.setText("Syllabus");
             thirdSubMenuTV.setText("Challenges");
@@ -205,6 +213,12 @@ public class TabFragment extends  BaseFragment {
             secondSubMenuIV.setImageResource(R.drawable.ic_news);
             thirdSubMenuIV.setImageResource(R.drawable.ic_article);
             fourthSubMenuIV.setImageResource(R.drawable.ic_qna);
+
+            LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 0, .5f);
+            ll.setLayoutParams(lp);
+            view.findViewById(R.id.home_widget_second_layout).setVisibility(View.VISIBLE);
 
             firstSubMenuTV.setText("Institutes");
             secondSubMenuTV.setText("News");

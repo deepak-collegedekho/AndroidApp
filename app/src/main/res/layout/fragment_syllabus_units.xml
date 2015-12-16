@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-		xmlns:android="http://schemas.android.com/apk/res/android"
-         android:orientation="vertical"
-         android:layout_width="fill_parent"
-         android:layout_height="fill_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <TextView
+        android:id="@+id/unit_page_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Physics"
+        android:textSize="14sp"
+        android:background="@color/primary_color_dark"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        />
     <ExpandableListView
         android:id="@+id/units_expandable_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:groupIndicator="@null"
         />
 </LinearLayout>
