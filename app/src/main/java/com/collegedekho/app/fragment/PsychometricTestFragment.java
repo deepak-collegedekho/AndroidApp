@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -21,12 +23,12 @@ import java.util.HashMap;
 /**
  * Created by Bashir on 11/12/15.
  */
-public class PsychometricTestFragment extends BaseFragment {
+public class PsychometricTestFragment extends BaseFragment implements PsychometricTestAdapter.OnItemClickListener {
 
     private RecyclerView recyclerView;
-    private TextView btnSubmit;
     private OnPsychometricTestSubmitListener mListener;
-    private ArrayList<PsychometricTestQuestion>questionList;
+    private ArrayList<PsychometricTestQuestion> mQuestionList;
+    private ArrayList<PsychometricTestQuestion> subList;
 
 //    String[] questions = new String[]{"Are you the one who can understand the feelings and emotions of your near and dear ones?", "Do you enjoy solving new puzzles that requires multidimensional thought process?", "During your school/college have you taken lead in organizing project, activity or event?",
 //            "Given a situation can you visualize it and can sketch it.", "Do you have an excellent command over languages that you speak or write. Always Sometimes Never", "Have you actively participated in debate competition organized in school or college .", "Are you the one who list out and organize day to day activities systematically.",
@@ -39,10 +41,11 @@ public class PsychometricTestFragment extends BaseFragment {
 //            "Do you prefer to actively host for parties at workplace, home or club?", "Can you sit in front of computers for hours at a stretch for cracking the logic behind any program. ", "Do you have the capability of getting in the shoes of others and understand their point of view rather then only considered about proving your point.", "Are you good in cracking the logic behind any problem? ",
 //            "During your childhood your friends naturally expected you to be the leader.", "Do you like reading novels or newspaper during your spare time .", "Have you ever filed a petition or RTI?", "Can you solve Maths questions effortlessly? ",
 //            "Are you confident can no one beat you in arguments. Always Sometimes Never", "Whenever you are free do you prefer to pen down your thoughts by drawing or sketching ? ", "Are you the one who prefer solving most of the problems by thinking in a step by step manner. Always Sometimes Never", "Given a task that involves 24*7 efforts i.e immense hard work you are the one who will not run away from that but on the contrary fight till its accomplishment? ", "While taking crucial decisions do you refer it with your close associates."};
-
-    public static PsychometricTestFragment newInstance(ArrayList<PsychometricTestQuestion> questionsList) {
+private static PsychometricTestFragment.OnNextPageListener mNextListener;
+    public static PsychometricTestFragment newInstance(ArrayList<PsychometricTestQuestion> questionsList,PsychometricTestFragment.OnNextPageListener listener) {
         Bundle args = new Bundle();
-        args.putParcelableArrayList("questions_list",questionsList);
+        mNextListener=listener;
+        args.putParcelableArrayList("psychometric_questions_list", questionsList);
         PsychometricTestFragment fragment = new PsychometricTestFragment();
         fragment.setArguments(args);
         return fragment;
@@ -51,42 +54,47 @@ public class PsychometricTestFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            questionList = getArguments().getParcelableArrayList("questions_list");
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            mQuestionList = bundle.getParcelableArrayList("psychometric_questions_list");
+            int id=bundle.getInt("id");
+            int start=id*4;
+            int end=start+4;
+            if(end>mQuestionList.size()){
+                end=mQuestionList.size()-start;
+            }
+            subList = new ArrayList<PsychometricTestQuestion>(mQuestionList.subList(start, end));
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup rootView=(ViewGroup)inflater.inflate(R.layout.psychometric_test_fragment,container,false);
-        layoutManager=new LinearLayoutManager(getActivity());
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.psychometric_test_fragment, container, false);
+        layoutManager = new LinearLayoutManager(getActivity());
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        recyclerView=(RecyclerView)view.findViewById(R.id.psychometric_test_recycler);
-        btnSubmit=(TextView)view.findViewById(R.id.btn_submit);
+        recyclerView = (RecyclerView) view.findViewById(R.id.psychometric_test_recycler);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        PsychometricTestAdapter adapter=new PsychometricTestAdapter(getActivity(),questionList);
+        PsychometricTestAdapter adapter = new PsychometricTestAdapter(getActivity(), subList, this);
         recyclerView.setAdapter(adapter);
-        btnSubmit.setOnClickListener(this);
     }
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try{
+        try {
             if (context instanceof MainActivity)
-                this.mListener = (OnPsychometricTestSubmitListener)context;
-        }
-        catch (ClassCastException e){
-            throw  new ClassCastException(context.toString()
-                    +"must implement OnPsychometricTestSubmitListener");
+                this.mListener = (OnPsychometricTestSubmitListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + "must implement OnPsychometricTestSubmitListener");
         }
     }
 
@@ -110,9 +118,9 @@ public class PsychometricTestFragment extends BaseFragment {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_submit:
-                submitPsychometricTest();
+//                submitPsychometricTest();
                 break;
             default:
                 break;
@@ -120,19 +128,29 @@ public class PsychometricTestFragment extends BaseFragment {
     }
 
     private void submitPsychometricTest() {
-        HashMap<String,String>questionResponse=new HashMap<>();
-        for (PsychometricTestQuestion question:questionList){
-            questionResponse.put(question.getId(),question.getAnswer());
+        HashMap<String, String> questionResponse = new HashMap<>();
+        for (PsychometricTestQuestion question : mQuestionList) {
+            questionResponse.put(question.getId(), question.getAnswer());
         }
         mListener.onSubmitSubmit(questionResponse);
     }
 
     public interface OnPsychometricTestSubmitListener {
-        void onSubmitSubmit(HashMap<String,String>params);
+        void onSubmitSubmit(HashMap<String, String> params);
     }
 
     @Override
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
+    }
+
+    @Override
+    public void onItemClicked(int position) {
+        Log.e("DEBUG","Goto Next page..");
+        mNextListener.gotoNext();
+    }
+
+    public interface OnNextPageListener{
+        public void gotoNext();
     }
 }

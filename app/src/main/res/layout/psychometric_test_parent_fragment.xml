@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:orientation="vertical">
+
+    <com.collegedekho.app.display.NonSwipeableViewPager
+        android:id="@+id/psychometric_test_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_above="@+id/btn_submit">
+
+    </com.collegedekho.app.display.NonSwipeableViewPager>
+
+    <TextView
+        android:id="@+id/btn_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/m2dp"
+        android:background="@drawable/bg_button_orange"
+        android:gravity="center"
+        android:padding="@dimen/m8dp"
+        android:text="@string/submit"
+        android:layout_weight="3"
+        android:textColor="@color/white" />
+</LinearLayout>

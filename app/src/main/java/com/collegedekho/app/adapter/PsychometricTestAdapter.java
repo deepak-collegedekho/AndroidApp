@@ -18,12 +18,13 @@ import java.util.ArrayList;
  */
 public class PsychometricTestAdapter extends RecyclerView.Adapter<PsychometricTestAdapter.PsychometricTestViewHolder> {
 
-    Context mContext;
-    ArrayList<PsychometricTestQuestion> itemList;
-
-    public PsychometricTestAdapter(Context context, ArrayList<PsychometricTestQuestion> itemList) {
+    private Context mContext;
+    private ArrayList<PsychometricTestQuestion> itemList;
+    private OnItemClickListener mClickListener;
+    public PsychometricTestAdapter(Context context, ArrayList<PsychometricTestQuestion> itemList,OnItemClickListener clickListener) {
         this.mContext = context;
         this.itemList = itemList;
+        this.mClickListener=clickListener;
     }
 
     @Override
@@ -71,6 +72,7 @@ public class PsychometricTestAdapter extends RecyclerView.Adapter<PsychometricTe
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             int position = this.getLayoutPosition();
             PsychometricTestQuestion question = itemList.get(position);
+
             switch (checkedId) {
                 case R.id.option_always:
                     question.setAnswer("2");
@@ -87,6 +89,20 @@ public class PsychometricTestAdapter extends RecyclerView.Adapter<PsychometricTe
                     break;
             }
             question.setCheckedId(checkedId);
+            int size=getItemCount();
+            int count=0;
+            for (int i=0;i<size;i++){
+                if(itemList.get(i).getCheckedId()!=0){
+                    count++;
+                }
+            }
+            if(count==size) {
+                mClickListener.onItemClicked(position);
+            }
         }
+    }
+
+    public interface OnItemClickListener{
+        public void onItemClicked(int position);
     }
 }

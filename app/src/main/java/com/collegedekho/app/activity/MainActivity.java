@@ -98,6 +98,7 @@ import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.ProfileFragment1;
 import com.collegedekho.app.fragment.PsychometricTestFragment;
+import com.collegedekho.app.fragment.PsychometricTestParentFragment;
 import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.fragment.SplashFragment;
@@ -3758,7 +3759,7 @@ public class MainActivity extends AppCompatActivity
             Map<String, Object> map = JSON.std.mapFrom(response);
             String val = JSON.std.asString(map.get("questions"));
             this.psychometricQuestionsList = JSON.std.listOfFrom(PsychometricTestQuestion.class, val);
-            this.mDisplayFragment(PsychometricTestFragment.newInstance(new ArrayList(this.psychometricQuestionsList)),false,NotPreparingFragment.class.toString() );
+            this.mDisplayFragment(PsychometricTestParentFragment.newInstance(new ArrayList(this.psychometricQuestionsList)),false,NotPreparingFragment.class.toString() );
 
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());

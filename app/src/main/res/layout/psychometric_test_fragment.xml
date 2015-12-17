@@ -13,14 +13,4 @@
 
     </android.support.v7.widget.RecyclerView>
 
-    <TextView android:id="@+id/btn_submit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/m80dp"
-        android:layout_weight="1"
-        android:background="@drawable/bg_button_orange"
-        android:padding="@dimen/m8dp"
-        android:text="@string/submit"
-        android:gravity="center"
-        android:textColor="@color/white" />
 </LinearLayout>
