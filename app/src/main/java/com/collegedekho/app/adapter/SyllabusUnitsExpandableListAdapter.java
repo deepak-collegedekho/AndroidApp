@@ -117,18 +117,18 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        final int mGroupPosition = groupPosition;
-        final int mChildPosition = childPosition;
-        final ChildViewHolder childViewHolder;
+
+        ChildViewHolder childViewHolder = new ChildViewHolder();
+
         convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_syllabus_chapters, parent, false);
-        childViewHolder = new ChildViewHolder();
         childViewHolder.childChapterLabel = (TextView) convertView.findViewById(R.id.syllabus_chapters_name);
         childViewHolder.childChapterCheckBox = (CheckBox) convertView.findViewById(R.id.syllabus_chapters_checkbox);
-        childViewHolder.childChapterLabel.setText(this.getChild(groupPosition, childPosition).get(childPosition).getName());
-        childViewHolder.childChapterCheckBox.setChecked(this.getChild(groupPosition, childPosition).get(childPosition).getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(mContext);
-        mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        convertView.setTag(childViewHolder);
+
+        final Chapters  chapters = this.getChild(groupPosition, childPosition).get(childPosition);
+
+        childViewHolder.childChapterLabel.setText(chapters.getName());
+        childViewHolder.childChapterCheckBox.setChecked(chapters.getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
+
 
         /*
 		 * You have to set the onCheckChangedListener to null
@@ -138,12 +138,12 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
 		*/
         childViewHolder.childChapterCheckBox.setOnCheckedChangeListener(null);
 
-        if (mChildCheckStates.containsKey(mGroupPosition)) {
+       /* if (mChildCheckStates.containsKey(mGroupPosition)) {
 
-			 /* if the hashmap mChildCheckStates<Integer, Boolean[]> contains
+			 *//* if the hashmap mChildCheckStates<Integer, Boolean[]> contains
 			 * the value of the parent view (group) of this child (aka, the key),
 			 * then retrive the boolean array getChecked[]
-			 */
+			 *//*
 
             boolean getChecked[] = mChildCheckStates.get(mGroupPosition);
 
@@ -152,12 +152,12 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
             childViewHolder.childChapterCheckBox.setChecked(getChecked[mChildPosition]);
         } else {
 
-			 /* if the hashmap mChildCheckStates<Integer, Boolean[]> does not
+			 *//* if the hashmap mChildCheckStates<Integer, Boolean[]> does not
 			 * contain the value of the parent view (group) of this child (aka, the key),
 			 * (aka, the key), then initialize getChecked[] as a new boolean array
 			 *  and set it's size to the total number of children associated with 
 			 *  the parent group
-			 */
+			 *//*
 
             boolean getChecked[] = new boolean[getChildrenCount(mGroupPosition)];
 
@@ -167,7 +167,7 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
             // set the check state of this position's checkbox based on the 
             // boolean value of getChecked[position]
             //childViewHolder.childChapterCheckBox.setChecked(false);
-        }
+        }*/
 
         childViewHolder.childChapterCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
@@ -176,15 +176,16 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
 
                 if (isChecked) {
 
-                    boolean getChecked[] = mChildCheckStates.get(mGroupPosition);
+                   /* boolean getChecked[] = mChildCheckStates.get(mGroupPosition);
                     getChecked[mChildPosition] = isChecked;
-                    mChildCheckStates.put(mGroupPosition, getChecked);
+                    mChildCheckStates.put(mGroupPosition, getChecked);*/
+                    chapters.setIs_done(1);
 
                 } else {
-
-                    boolean getChecked[] = mChildCheckStates.get(mGroupPosition);
+                    chapters.setIs_done(0);
+                   /* boolean getChecked[] = mChildCheckStates.get(mGroupPosition);
                     getChecked[mChildPosition] = isChecked;
-                    mChildCheckStates.put(mGroupPosition, getChecked);
+                    mChildCheckStates.put(mGroupPosition, getChecked);*/
                 }
             }
         });

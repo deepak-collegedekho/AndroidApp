@@ -63,5 +63,5 @@
         android:layout_below="@+id/filter_tokenLL" />
 
 
-    <include layout="@layout/progressbar"/>
+    <include layout="@layout/layout_progressbar"/>
 </RelativeLayout>

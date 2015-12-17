@@ -18,9 +18,11 @@
    <ProgressBar
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="4dp"
+       android:layout_marginTop="5dp"
         android:id="@+id/syllabus_units_progress_bar"
         android:layout_centerHorizontal="true"
+        android:progressDrawable="@drawable/progressbar_background"
         android:max="100"
         android:progress="75"/>
     <LinearLayout

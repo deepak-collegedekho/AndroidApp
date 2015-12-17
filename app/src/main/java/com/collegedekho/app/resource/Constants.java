@@ -126,6 +126,7 @@ public class Constants
     public static final String TAG_QUESTION_LIKE_DISLIKE = "tag_question_like_dislike";
     public static final String TAG_EXAM_SUMMARY = "exam_summary";
     public static final String TAG_NAME_UPDATED = "name_updated";
+    public static final String SUBMITTED_CHAPTER_STATUS = "chapter_submitted";
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET;
     public static final int MY_FB_REFRESH_RATE = 5000;
@@ -201,6 +202,8 @@ public class Constants
     public static final String EXAM_ID = "exam_id";
     public static final String MARKS = "marks";
     public static final String RESULTS = "results";
+    public static final String CHAPTERS = "chapters";
+    public static final String SUBJECTS = "subjects";
 
 
     public static final String APPLY_YEAR = "year_of_admission";

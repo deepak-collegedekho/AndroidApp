@@ -60,6 +60,6 @@
         android:layout_below="@id/news_detail_scrollView"
         android:layout_alignParentBottom="true"/>
 
-    <include layout="@layout/progressbar"/>
+    <include layout="@layout/layout_progressbar"/>
 
 </RelativeLayout>

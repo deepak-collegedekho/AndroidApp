@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="1dip" />
+            <gradient
+                android:startColor="@color/chat_time_gray"
+                android:centerColor="@color/chat_time_gray"
+                android:endColor="@color/chat_time_gray"
+                />
+        </shape>
+    </item>
+
+
+    <item
+        android:id="@android:id/progress"
+        >
+        <clip>
+            <shape>
+                <corners
+                    android:radius="2dip" />
+                <gradient
+                    android:startColor="@color/primary_orange"
+                    android:endColor="@color/primary_orange" />
+            </shape>
+        </clip>
+    </item>
+
+</layer-list>

@@ -79,6 +79,7 @@ import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.fragment.CalendarFragment;
 import com.collegedekho.app.fragment.CalendarParentFragment;
+import com.collegedekho.app.fragment.MyAlertFragment;
 import com.collegedekho.app.fragment.NotPreparingFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
@@ -569,7 +570,8 @@ public class MainActivity extends AppCompatActivity
             if (!completedStage2)
                 MainActivity.this.mSetUserPref();
             else
-                mLoadUserProfile("");
+                this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
+
         } else {
             disconnectFromFacebook();
              MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
@@ -3017,6 +3019,8 @@ public class MainActivity extends AppCompatActivity
             baskpressHandler.postDelayed(backpressRunnable,1500);
         }
         else {
+            if(currentFragment instanceof SyllabusSubjectsListFragment)
+                ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
             super.onBackPressed();
         }
     }
@@ -3770,6 +3774,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void submitExamStatus(JSONObject jsonObject) {
+        this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS, Constants.BASE_URL+"yearly-exams/54/syllabus/",jsonObject,1);
+
+    }
+
+    @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         mYear = (String)parent.getItemAtPosition(position);
     }
@@ -3844,10 +3854,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onNameUpdated(HashMap params, String msg) {
-
         this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#"+msg, Constants.BASE_URL + "preferences/", params);
-
     }
+
     private void onNameUpdatedResponse(String response , String msg) {
         User tempuser = MainActivity.user;
         try {

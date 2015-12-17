@@ -27,5 +27,5 @@
         android:layout_below="@id/viewType"
         style="@style/AppTheme.RecyclerView"/>
 
-    <include layout="@layout/progressbar"/>
+    <include layout="@layout/layout_progressbar"/>
 </LinearLayout>

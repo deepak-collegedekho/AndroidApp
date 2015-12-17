@@ -1,11 +1,14 @@
 package com.collegedekho.app.fragment;
 
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.UserEducation;
@@ -62,6 +65,10 @@ public class MyAlertFragment extends  BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_number_picker, container, false);
 
+        //ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.app_progressbar);
+        //progressBar.getProgressDrawable().setColorFilter(getActivity().getResources().getColor(R.color.primary_orange_dark), PorterDuff.Mode.SRC_IN);
+/*
+
         mMarksPicker = (NumberPicker) rootView.findViewById(R.id.marks_number_picker);
         mMarksPicker.setMaxValue(marks_arrays.length-1);
         mMarksPicker.setMinValue(0);
@@ -81,7 +88,7 @@ public class MyAlertFragment extends  BaseFragment {
         mStreamPicker.setMinValue(0);
         mStreamPicker.setWrapSelectorWheel(false);
         mStreamPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        mStreamPicker.setDisplayedValues(stream_arrays);
+        mStreamPicker.setDisplayedValues(stream_arrays);*/
 
        /* mExamPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
