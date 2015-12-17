@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity
         LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener,
         InstituteDetailFragment.OnInstituteFooterItemSelected, UserEducationFragment.OnUserEducationInteractionListener,NotPreparingFragment.OnTestOptionsListener,
         PsychometricTestFragment.OnPsychometricTestSubmitListener,
-        SyllabusSubjectsListFragment.OnSubjectSelectedListener
+        SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData
 {
 
     static {
@@ -1378,6 +1378,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
                 this.onPsychometricTestResponse(response);
+                break;
+            case Constants.TAG_PSYCHOMETRIC_RESPONSE:
+
                 break;
         }
 
@@ -3021,6 +3024,8 @@ public class MainActivity extends AppCompatActivity
         else {
             if(currentFragment instanceof SyllabusSubjectsListFragment)
                 ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
+            else if (currentFragment instanceof CalendarParentFragment)
+                ((CalendarParentFragment)currentFragment).submitCalendarData();
             super.onBackPressed();
         }
     }
@@ -3914,6 +3919,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+    @Override
+    public void onSubmitCalendarData(JSONObject object,String url) {
+        this.mMakeJsonObjectNetworkCall(Constants.TAG_PSYCHOMETRIC_RESPONSE,Constants.BASE_URL+url,object,1);
+    }
 
     Handler baskpressHandler=new Handler();
     Runnable backpressRunnable=new Runnable() {

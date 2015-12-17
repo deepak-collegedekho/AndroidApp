@@ -48,14 +48,12 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
 
     private GridLayoutManager calendarLayoutManager;
     private LinearLayoutManager detailsLayoutManager;
-    private static ArrayList<Chapters> chaptersList;
     private static CalendarAdapter.OnCalendarItemSelectListener mListener;
     private static LinkedHashMap<String, ArrayList<ChapterDetails>> mChaptersDetailsList;
     int offSet = 0;
     private static LinkedHashMap<String, String> mYearCalendar;
 
-    public static CalendarFragment newInstance(ArrayList<Chapters> chapters, LinkedHashMap<String, String> yearCalendar, LinkedHashMap<String, ArrayList<ChapterDetails>> chaptersDetailsList) {
-        chaptersList = chapters;
+    public static CalendarFragment newInstance(LinkedHashMap<String, String> yearCalendar, LinkedHashMap<String, ArrayList<ChapterDetails>> chaptersDetailsList) {
         mYearCalendar = yearCalendar;
         mChaptersDetailsList = chaptersDetailsList;
         Bundle args = new Bundle();

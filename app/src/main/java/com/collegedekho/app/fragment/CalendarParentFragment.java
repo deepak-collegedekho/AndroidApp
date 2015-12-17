@@ -1,5 +1,6 @@
 package com.collegedekho.app.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -14,6 +16,10 @@ import com.collegedekho.app.adapter.CalendarAdapter;
 import com.collegedekho.app.adapter.CalendarPagerAdapter;
 import com.collegedekho.app.entities.ChapterDetails;
 import com.collegedekho.app.entities.Chapters;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,10 +36,11 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
     private CalendarPagerAdapter mPagerAdapter;
     private ViewPager viewPager;
     private int numPages = 1;
+    private OnSubmitCalendarData mListener;
     private static ArrayList<Chapters> mChapterList;
-    private HashMap<String,String>subjectsMap;
-    private LinkedHashMap<String,String>yearCalendar=new LinkedHashMap<>();
-    private LinkedHashMap<String,ArrayList<ChapterDetails>>chaptersDetailsList=new LinkedHashMap<>();
+    private HashMap<String, String> subjectsMap;
+    private LinkedHashMap<String, String> yearCalendar = new LinkedHashMap<>();
+    private LinkedHashMap<String, ArrayList<ChapterDetails>> chaptersDetailsList = new LinkedHashMap<>();
 
     public static CalendarParentFragment newInstance(ArrayList<Chapters> chapterList) {
 
@@ -57,17 +64,18 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
         super.onViewCreated(view, savedInstanceState);
         initCalendar();
         viewPager = (ViewPager) view.findViewById(R.id.pager);
-        mPagerAdapter = new CalendarPagerAdapter(getChildFragmentManager(), numPages,yearCalendar,chaptersDetailsList);
+        mPagerAdapter = new CalendarPagerAdapter(getChildFragmentManager(), numPages, yearCalendar, chaptersDetailsList);
         viewPager.setAdapter(mPagerAdapter);
         viewPager.addOnPageChangeListener(this);
     }
 
     private void initCalendar() {
-        if(mChapterList==null || mChapterList.isEmpty()){
+        if (mChapterList == null || mChapterList.isEmpty()) {
             return;
         }
         Chapters chapters = mChapterList.get(0);
         String examDate = chapters.getExam_date();
+//        examDate="2018-04-14";
         ArrayList<ChapterDetails> chapterDetailsList = chapters.getChapters();
         if (chapterDetailsList == null || chapterDetailsList.isEmpty()) {
             return;
@@ -81,32 +89,32 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
                 float total = Float.valueOf(subjectsMap.get(chapterDetails.getSubject_id())) + Float.valueOf(chapterDetails.getDays_to_complete());
                 subjectsMap.put(chapterDetails.getSubject_id(), String.valueOf(total));
             }
-                ArrayList<ChapterDetails> detailsList = chaptersDetailsList.get(chapterDetails.getSubject_id());
-                if (detailsList == null) {
-                    detailsList = new ArrayList<>();
-                    detailsList.add(chapterDetails);
-                    chaptersDetailsList.put(chapterDetails.getSubject_id(), detailsList);
-                } else {
-                    chaptersDetailsList.get(chapterDetails.getSubject_id()).add(chapterDetails);
-                }
+            ArrayList<ChapterDetails> detailsList = chaptersDetailsList.get(chapterDetails.getSubject_id());
+            if (detailsList == null) {
+                detailsList = new ArrayList<>();
+                detailsList.add(chapterDetails);
+                chaptersDetailsList.put(chapterDetails.getSubject_id(), detailsList);
+            } else {
+                chaptersDetailsList.get(chapterDetails.getSubject_id()).add(chapterDetails);
+            }
         }
-        Calendar calendar=Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR,-1);
-        Date today=new Date();
-        for(String key:subjectsMap.keySet()){
-            int dayCount=(int)Math.ceil(Double.valueOf(subjectsMap.get(key)));
-                for (int i=0;i<dayCount;i++){
-                    calendar.add(Calendar.DAY_OF_YEAR,1);
-                    String day_key=String.valueOf(calendar.get(Calendar.YEAR)+"_"+String.valueOf(calendar.get(Calendar.DAY_OF_YEAR)));
-                    String day_value=yearCalendar.get(day_key);
-                    if(day_value==null) {
-                        yearCalendar.put(day_key, key);
-                    }else if(!day_value.contains(key)){
-                        yearCalendar.put(day_key, day_value+","+key);
-                    }
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        Date today = new Date();
+        for (String key : subjectsMap.keySet()) {
+            int dayCount = (int) Math.ceil(Double.valueOf(subjectsMap.get(key)));
+            for (int i = 0; i < dayCount; i++) {
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+                String day_key = String.valueOf(calendar.get(Calendar.YEAR) + "_" + String.valueOf(calendar.get(Calendar.DAY_OF_YEAR)));
+                String day_value = yearCalendar.get(day_key);
+                if (day_value == null) {
+                    yearCalendar.put(day_key, key);
+                } else if (!day_value.contains(key)) {
+                    yearCalendar.put(day_key, day_value + "," + key);
                 }
+            }
             calendar.setTime(today);
-            calendar.add(Calendar.DAY_OF_YEAR,-1);
+            calendar.add(Calendar.DAY_OF_YEAR, -1);
 
         }
         SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
@@ -144,10 +152,72 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
     public void onPageScrollStateChanged(int i) {
 
     }
-    public void onSubmitCalendarData(){
-        if(chaptersDetailsList!=null && !chaptersDetailsList.isEmpty()){
-//            ((MainActivity)getActivity()).onSubmitCalendarData(chaptersDetailsList);
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (mainActivity != null)
+            mainActivity.currentFragment = this;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            if (context instanceof MainActivity)
+                this.mListener = (OnSubmitCalendarData) context;
+        }
+        catch (ClassCastException e){
+            throw  new ClassCastException(context.toString()
+                    +"must implement OnSubmitCalendarData");
         }
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.mListener = null;
+
+    }
+    public void submitCalendarData() {
+        ArrayList<Integer>chaptersArray=new ArrayList<>();
+        ArrayList<Integer>subjectsArray=new ArrayList<>();
+        JSONObject object=new JSONObject();
+
+        if (mChapterList==null || mChapterList.isEmpty()){
+            return;
+        }
+        Chapters chapters = mChapterList.get(0);
+
+        String exam_id=chapters.getYearly_exam_id();
+        if (chaptersDetailsList != null && !chaptersDetailsList.isEmpty()) {
+
+            for (String key : chaptersDetailsList.keySet()) {
+                ArrayList<ChapterDetails> chapterDetailses = chaptersDetailsList.get(key);
+                if (chapterDetailses != null && !chapterDetailses.isEmpty()) {
+                    for (ChapterDetails chapterDetails : chapterDetailses) {
+                        if (chapterDetails.isSelected()) {
+                            subjectsArray.add(Integer.valueOf(chapterDetails.getSubject_id()));
+                            chaptersArray.add(Integer.valueOf(chapterDetails.getChapter_id()));
+                            Log.e("DEBUG", chapterDetails.getSubject_name() + " : " + chapterDetails.getChapter_name());
+                        }
+                    }
+                }
+
+            }
+            try {
+                object.putOpt("chapters",new JSONArray(chaptersArray));
+                object.putOpt("subjects",new JSONArray(subjectsArray));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if(mListener!=null)
+            mListener.onSubmitCalendarData(object,"yearly-exams/"+exam_id+"/syllabus/");
+        }
+    }
+
+    public interface OnSubmitCalendarData{
+        public void onSubmitCalendarData(JSONObject object,String url);
+    }
 }

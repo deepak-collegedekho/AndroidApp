@@ -18,7 +18,6 @@ import java.util.LinkedHashMap;
  */
 public class CalendarPagerAdapter extends FragmentStatePagerAdapter {
     private int NUM_PAGES=1;
-    ArrayList<Chapters> chapterList;
     LinkedHashMap<String,String> mYearCalendar;
     private LinkedHashMap<String,ArrayList<ChapterDetails>> mChaptersDetailsList;
     public CalendarPagerAdapter(FragmentManager fm, int pageCount,LinkedHashMap<String,String> yearCalendar,LinkedHashMap<String,ArrayList<ChapterDetails>> chaptersDetailsList)
@@ -31,7 +30,7 @@ public class CalendarPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment= CalendarFragment.newInstance(chapterList,mYearCalendar,mChaptersDetailsList);
+        Fragment fragment= CalendarFragment.newInstance(mYearCalendar,mChaptersDetailsList);
         Bundle b=new Bundle();
         b.putInt("id", position);
         fragment.setArguments(b);
