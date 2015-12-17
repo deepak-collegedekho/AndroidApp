@@ -1354,7 +1354,7 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayUserEducationFragment(response);
                 break;
             case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
-                this.mOnUserEducationResponse();
+                this.mOnUserEducationResponse(response);
                 break;
             case Constants.TAG_EXAMS_LIST:
                 this.mOnExamsLoaded(response);
@@ -3458,7 +3458,18 @@ public class MainActivity extends AppCompatActivity
      * This method is used to handle response having exams list
      * after user education detail is submitted to server.
      */
-    private void mOnUserEducationResponse() {
+    private void mOnUserEducationResponse(String response) {
+
+        User userObj = null;
+        try {
+            userObj = JSON.std.beanFrom(User.class, response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if(userObj != null && user != null){
+         // user.set
+        }
         this.mMakeNetworkCall(Constants.TAG_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
 
     }

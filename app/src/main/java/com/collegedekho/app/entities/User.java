@@ -30,6 +30,8 @@ public class User
     private String phone_no = "";
     private String stream_name = "";
     private String level_name = "";
+    private String  is_preparing= "";
+    private String sublevel = "";
 
     private String primaryEmail;
     private String primaryPhone;
@@ -190,6 +192,22 @@ public class User
 
     public void setPrimaryPhone(String primaryPhone) {
         this.primaryPhone = primaryPhone;
+    }
+
+    public String getIs_preparing() {
+        return is_preparing;
+    }
+
+    public void setIs_preparing(String is_preparing) {
+        this.is_preparing = is_preparing;
+    }
+
+    public String getSublevel() {
+        return sublevel;
+    }
+
+    public void setSublevel(String sublevel) {
+        this.sublevel = sublevel;
     }
 
     public void processProfileData(Cursor cursor, Context context) {
