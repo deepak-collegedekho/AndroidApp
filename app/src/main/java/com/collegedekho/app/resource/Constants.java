@@ -248,6 +248,7 @@ public class Constants
     public static final String ACTION_INSTITUTE_LIKED = "action_institute_like";
     public static final String ACTION_INSTITUTE_DISLIKED = "action_institute_disliked";
     public static final String ACTION_INSTITUTE_LIKING_UNBIASED = "action_institute_liking_unbiased";
+    public static final String ACTION_QNA_LIKING_UNBIASED = "action_qna_liking_unbiased";
     public static final String ACTION_VOTE_QNA_QUESTION_UPVOTED = "action_qna_question_entity_upvoted";
     public static final String ACTION_VOTE_QNA_QUESTION_DOWNVOTED = "action_qna_question_entity_downvoted";
     public static final String ACTION_VOTE_QNA_ANSWER_UPVOTED = "action_qna_answer_entity_upvoted";

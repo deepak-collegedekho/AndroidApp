@@ -24,7 +24,7 @@
             android:layout_height="112dp"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            app:background_progressbar_color="@color/app_background"
+            app:background_progressbar_color="@android:color/transparent"
             app:background_progressbar_width="0dp"
             android:layout_gravity="center"
             app:progress="60"

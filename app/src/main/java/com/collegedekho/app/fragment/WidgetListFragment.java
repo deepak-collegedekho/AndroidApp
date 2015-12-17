@@ -156,8 +156,6 @@ public class WidgetListFragment extends BaseFragment implements AdapterView.OnIt
 
         if (this.mMainActivity != null) {
             this.mMainActivity.currentFragment = this;
-            this.mMainActivity.mShouldDisplayHomeUp();
-            this.mMainActivity.mUpdateNavigationMenuItem(0);
         }
 
     }

@@ -10,21 +10,17 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.widget.CircleImageView;
 
-import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -178,8 +174,9 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
             this.likeProgressBar = (ProgressBar) itemView.findViewById(R.id.card_item_like_progressBar);
             this.likeButton.setOnClickListener(this);
             this.mListener = listener;
-           itemView.findViewById(R.id.card_institute_like).setOnClickListener(this);
+           itemView.findViewById(R.id.card_item_like_layout).setOnClickListener(this);
            itemView.findViewById(R.id.layout_item_expand).setOnClickListener(this);
+           itemView.findViewById(R.id.qna_card_view).setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
 
@@ -188,7 +185,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
             switch(v.getId()) {
 
                 case R.id.card_item_button_like:
-                case R.id.card_institute_like:
+                case R.id.card_item_like_layout:
                    if (!v.isSelected()) {
                         likeButton.setVisibility(View.GONE);
                         likeProgressBar.setVisibility(View.VISIBLE);
@@ -204,6 +201,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
                     }
                     break;
                 case R.id.layout_item_expand:
+                case R.id.qna_card_view:
                     mListener.onQnAQuestionSelected(mQnAQuestions.get(getAdapterPosition()));
                     break;
             }

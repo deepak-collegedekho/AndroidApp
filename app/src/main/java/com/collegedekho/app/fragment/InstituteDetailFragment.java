@@ -11,13 +11,7 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ViewSwitcher;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.CoverFlowAdapter;
@@ -96,7 +90,7 @@ public class InstituteDetailFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_institute_detail_new, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_institute_detail, container, false);
         /*if (mInstitute.getBanner() != null) {
             ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
             NetworkImageView imageView = ((NetworkImageView) rootView.findViewById(R.id.image_college_banner));

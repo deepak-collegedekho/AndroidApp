@@ -1,7 +1,6 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
-import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -107,7 +105,7 @@ public class InstituteShortListAdapter extends RecyclerView.Adapter {
              }
              this.siItemFacilities = (LinearLayout) itemView.findViewById(R.id.card_college_facility_list);
 
-             itemView.findViewById(R.id.card_institute_like).setOnClickListener(this);
+             itemView.findViewById(R.id.card_item_like_layout).setOnClickListener(this);
              itemView.findViewById(R.id.card_item_button_like).setOnClickListener(this);
              itemView.findViewById(R.id.card_institute_shortlist).setOnClickListener(this);
              (itemView.findViewById(R.id.layout_item_expand)).setOnClickListener(this);
@@ -209,7 +207,7 @@ public class InstituteShortListAdapter extends RecyclerView.Adapter {
          @Override
          public void onClick(View v) {
              switch (v.getId()) {
-                     case R.id.card_institute_like:
+                     case R.id.card_item_like_layout:
                  case R.id.card_item_button_like:
                          if (!v.isSelected()) {
                              siLikeButton.setVisibility(View.GONE);

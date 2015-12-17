@@ -94,9 +94,17 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                     User user =MainActivity.user;
                     if( user == null || user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous user"))
                     {
-                        mChatText.setText("");
-                        // mUserLoginRequired(value);
 
+                        mChatText.setText("");
+                         // get name from my profile me
+                        if(user.profileData[0] != null){
+                            HashMap<String, String> hashMap = new HashMap<>();
+                            hashMap.put(Constants.USER_NAME, user.profileData[0]);
+                            mListener.onNameUpdated(hashMap, value);
+                            return;
+                        }
+
+                       // show dialog for name if user name is not present
                         final Dialog dialog = new Dialog(getActivity());
                         dialog.setContentView(R.layout.name_dailog);
                         dialog.setCanceledOnTouchOutside(true);
@@ -118,11 +126,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                                     return;
 
                                 }
-                                else if(name.length() <= 2)
-                                {
-                                    Utils.DisplayToast(getActivity(), "Minimum length is 3");
-                                    return;
-                                }
+
                                 dialog.dismiss();
                                 HashMap<String, String> hashMap = new HashMap<>();
                                 hashMap.put(Constants.USER_NAME, name);

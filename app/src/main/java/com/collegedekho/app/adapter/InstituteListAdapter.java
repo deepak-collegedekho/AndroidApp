@@ -1,19 +1,14 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +43,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int viewID =  R.layout.card_institute_list_grid_view;
         if(this.mViewType == Constants.VIEW_INTO_LIST)
-            viewID = R.layout.item_institute_list_new;
+            viewID = R.layout.card__institute_list_view;
         View rootView = LayoutInflater.from(mContext).inflate(viewID, parent, false);
         try {
             return new InstituteHolder(rootView, (InstituteListFragment.OnInstituteSelectedListener) this.mContext);
@@ -164,7 +159,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             //dislikeProgressBar = (ProgressBar) itemView.findViewById(R.id.dislike_progressBar);
 
             likeButton.setOnClickListener(this);
-            (itemView.findViewById(R.id.card_institute_expand_container)).setOnClickListener(this);
+            (itemView.findViewById(R.id.card_institute_container)).setOnClickListener(this);
             (itemView.findViewById(R.id.card_institute_shortlist)).setOnClickListener(this);
             //dislikeButton.setOnClickListener(this);
             //itemView.setOnClickListener(this);
@@ -239,7 +234,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                     else
                         Toast.makeText(mContext, "Already disliked. You really hate this one..", Toast.LENGTH_SHORT).show();
                     break;
-                case R.id.card_institute_expand_container:
+                case R.id.card_institute_container:
                     this.mListener.onInstituteSelected(getAdapterPosition());
                     break;
                 case R.id.card_institute_shortlist:
@@ -249,7 +244,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                     this.mListener.onInstituteShortlisted(getAdapterPosition());
                     break;
                 default:
-                    //mListener.onInstituteSelected(getAdapterPosition());
+                    mListener.onInstituteSelected(getAdapterPosition());
                     break;
             }
         }

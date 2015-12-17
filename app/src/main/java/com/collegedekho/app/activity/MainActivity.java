@@ -181,8 +181,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
 public class MainActivity extends AppCompatActivity
-        implements  NavigationView.OnNavigationItemSelectedListener,
-        LoaderManager.LoaderCallbacks<Cursor>,ExamsFragment.OnExamsSelectListener,
+        implements  LoaderManager.LoaderCallbacks<Cursor>,ExamsFragment.OnExamsSelectListener,
         ProfileFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
         HomeFragment.OnHomeInteractionListener, DataLoadListener,
         StreamFragment.OnStreamInteractionListener,AdapterView.OnItemSelectedListener,
@@ -224,7 +223,6 @@ public class MainActivity extends AppCompatActivity
     public static Tracker tracker;
 
     public static NetworkUtils networkUtils;
-    private Toolbar mToolbar;
     private ActionBarDrawerToggle mToggle;
     public BaseFragment currentFragment;
     private List<Institute> mInstituteList;
@@ -352,12 +350,8 @@ public class MainActivity extends AppCompatActivity
         this.mRegisterFacebookSdk();
         this.mSetupGTM();
 
-        this.mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        this.setSupportActionBar(this.mToolbar);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
-        this.mSetNavigationListener();
+        this.mSetUpAPPToolBar();
 
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
         //init();
@@ -366,6 +360,19 @@ public class MainActivity extends AppCompatActivity
 
         // TODO: Move this to where you establish a user session
         //logUser();
+    }
+
+    private void mSetUpAPPToolBar() {
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_navigation_icon);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mClearBackStack();
+            }
+        });
     }
 
 
@@ -579,131 +586,14 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * This method is called when Navigation drawer item is selected
-     * @param item  selected position of navigation drawer item
-     */
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-
-        DrawerLayout drawer = (DrawerLayout) this.findViewById(R.id.drawer_layout);
-        int id = item.getItemId();
-        Fragment fragment = null;
-        int position=0;
-        switch (id) {
-            case R.id.nav_home:
-                mClearBackStack();
-                drawer.closeDrawer(GravityCompat.START);
-                return true;
-            case R.id.nav_institutes:
-                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
-                position = 1;
-                break;
-            case R.id.nav_news:
-                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_NEWS_LIST);
-                position = 2;
-                break;
-            case R.id.nav_articles:
-                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_ARTICLES_LIST);
-                position = 3;
-                break;
-            case R.id.nav_my_qna:
-                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
-                position = 4;
-                break;
-            case R.id.nav_future_buddies:
-                fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
-                position = 5;
-                break;
-        }
-
-        drawer.closeDrawer(GravityCompat.START);
-        if(fragment != null) {
-            this.mUpdateNavigationMenuItem(position);
-            int count = getSupportFragmentManager().getBackStackEntryCount();
-            for (int i = 0; i < count-1; i++) {
-                getSupportFragmentManager().popBackStack();
-            }
-            return true;
-        }
-        if(position  == 1){
-            onHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes");
-        }else  if(position  == 2){
-            onHomeItemSelected(Constants.WIDGET_NEWS, Constants.BASE_URL+"personalize/news");
-        }else  if(position  == 3){
-            onHomeItemSelected(Constants.WIDGET_ARTICES, Constants.BASE_URL+"personalize/articles");
-        }else  if(position  == 4){
-            onHomeItemSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna");
-        }else  if(position  == 5){
-            onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL+"personalize/forums");
-        }
-        /*if(position==1){
-            hideMenuOption(R.id.action_home);
-        }else {
-            showMenuOption(R.id.action_home);
-        }*/
-        return true;
-    }
-
-    /**
-     * This method is used to update menu item on navigation drawer
-     * @param position
-     */
-    public void mUpdateNavigationMenuItem(int position) {
-
-        ((NavigationView) findViewById(R.id.nav_view)).getMenu().getItem(position).setChecked(true);
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /*if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.main, menu);
-            restoreActionBar();
-            return true;
-        }*/
 
-        getMenuInflater().inflate(R.menu.main, menu);
-        this.menu=menu;
-        /*MenuItem item = menu.findItem(R.id.action_home);
-        if(item != null) {
-            item.setVisible(false);
-
-        }*/
-        hideMenuOption(R.id.action_home);
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void hideMenuOption(int id)
-    {
-        MenuItem item = this.menu.findItem(id);
-        item.setVisible(false);
-        invalidateOptionsMenu();
-    }
 
-    /*private void showMenuOption(int id)
-    {
-        MenuItem item = this.menu.findItem(id);
-        item.setVisible(true);
-        invalidateOptionsMenu();
-    }*/
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if(currentFragment instanceof ProfileFragment) {
-            menu.getItem(0).setVisible(false);
-        }
-         else {
-            menu.getItem(0).setVisible(true);
-        }
-
-        return super.onPrepareOptionsMenu(menu);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -711,11 +601,6 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        int id = item.getItemId();
-        if (id == R.id.action_home) {
-            this.mClearBackStack();
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -1116,7 +1001,6 @@ public class MainActivity extends AppCompatActivity
                 if (findViewById(R.id.app_bar_layout).getVisibility() != View.VISIBLE)
                     findViewById(R.id.app_bar_layout).setVisibility(View.VISIBLE);
             }
-            this.mShouldDisplayHomeUp();
 
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
@@ -1584,15 +1468,42 @@ public class MainActivity extends AppCompatActivity
 
         if(this.mQnAQuestions == null ) return;
         QnAQuestions qnaQuestion = this.mQnAQuestions.get(Integer.parseInt(extraTag));
-        if(like != Constants.NEITHER_LIKE_NOR_DISLIKE){
+        if (like == Constants.NEITHER_LIKE_NOR_DISLIKE)
+        {
+            qnaQuestion.setCurrent_user_vote_type(Constants.NEITHER_LIKE_NOR_DISLIKE);
+            qnaQuestion.setUpvotes(qnaQuestion.getUpvotes() - 1);
 
-            qnaQuestion.setCurrent_user_vote_type(like);
-            if(like == Constants.LIKE_THING){
-            qnaQuestion.setUpvotes(qnaQuestion.getUpvotes()+1);
-        }
-        else if(like == Constants.DISLIKE_THING){
-                qnaQuestion.setUpvotes(qnaQuestion.getUpvotes()-1);
-         }
+            this.connecto.track(Constants.ACTION_QNA_LIKING_UNBIASED, new Properties().putValue(Constants.TAG_QUESTION_LIKE_DISLIKE, Constants.NEITHER_LIKE_NOR_DISLIKE).putValue(qnaQuestion.getTitle(), Constants.NEITHER_LIKE_NOR_DISLIKE).putValue(Constants.QNA_QUESTION_RESOURCE_URI, qnaQuestion.getResource_uri()));
+
+            //GA Event for institute liked neutralized
+            MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_QNA_LIKING_UNBIASED,
+                            "qna title: " + qnaQuestion.getTitle() +
+                            "Disliked institute: " + String.valueOf(like));
+
+        } else {
+            if (like != Constants.NEITHER_LIKE_NOR_DISLIKE) {
+
+                qnaQuestion.setCurrent_user_vote_type(like);
+                if (like == Constants.LIKE_THING) {
+                    qnaQuestion.setUpvotes(qnaQuestion.getUpvotes() + 1);
+
+                    this.connecto.track(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, new Properties().putValue(Constants.ACTION_VOTE_QNA_QUESTION_UPVOTED, Constants.LIKE_THING).putValue(qnaQuestion.getTitle(), Constants.LIKE_THING).putValue(Constants.QNA_QUESTION_RESOURCE_URI, qnaQuestion.getResource_uri()));
+
+                    //GA Event for institute liked neutralized
+                    MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_QUESTION_ENTITY,
+                            "qna title: " + qnaQuestion.getTitle() +
+                                    "Disliked institute: " + String.valueOf(like));
+                } else if (like == Constants.DISLIKE_THING) {
+                    qnaQuestion.setUpvotes(qnaQuestion.getUpvotes() - 1);
+
+                    this.connecto.track(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, new Properties().putValue(Constants.ACTION_VOTE_QNA_QUESTION_DOWNVOTED, Constants.DISLIKE_THING).putValue(qnaQuestion.getTitle(), Constants.DISLIKE_THING).putValue(Constants.QNA_QUESTION_RESOURCE_URI, qnaQuestion.getResource_uri()));
+
+                    //GA Event for institute liked neutralized
+                    MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_QUESTION_ENTITY,
+                            "qna title: " + qnaQuestion.getTitle() +
+                                    "Disliked institute: " + String.valueOf(like));
+                }
+            }
         }
         if(currentFragment instanceof  QnAQuestionsListFragment)
             currentFragment.updateLikeButtons(Integer.parseInt(extraTag));
@@ -2175,12 +2086,18 @@ public class MainActivity extends AppCompatActivity
     public void onQnAQuestionVote(int position, int voteType) {
 
         QnAQuestions qnaQuestion = this.mQnAQuestions.get(position);
-        if (qnaQuestion.getCurrent_user_vote_type() != Constants.NEITHER_LIKE_NOR_DISLIKE  && voteType != Constants.NEITHER_LIKE_NOR_DISLIKE) {
+        if (qnaQuestion.getCurrent_user_vote_type() == Constants.NEITHER_LIKE_NOR_DISLIKE) {
             //neither liked nor disliked case
             if (voteType == Constants.LIKE_THING)
-                this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + voteType, qnaQuestion.getResource_uri()+"upvote/", null, Request.Method.POST);
+                this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + voteType, qnaQuestion.getResource_uri() + "upvote/", null, Request.Method.POST);
             else
                 this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + voteType, qnaQuestion.getResource_uri() + "downvote/", null, Request.Method.POST);
+        }else  if (qnaQuestion.getCurrent_user_vote_type() != Constants.NEITHER_LIKE_NOR_DISLIKE  && voteType != Constants.NEITHER_LIKE_NOR_DISLIKE) {
+            //neither liked nor disliked case
+            if (voteType == Constants.LIKE_THING)
+                this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE , qnaQuestion.getResource_uri()+"upvote/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE , qnaQuestion.getResource_uri() + "downvote/", null, Request.Method.POST);
         }
     }
 
@@ -2318,7 +2235,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onWidgetSelected(Widget widget, int position) {
         this.mCurrentTitle = widget.getTitle();
-        this.mUpdateNavigationMenuItem(position);
         if (widget.getType().equals(Constants.WIDGET_INSTITUTES)) {
             this.mFilterKeywords = this.mGetTheFilters();
 
@@ -2918,19 +2834,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void mShouldDisplayHomeUp(){
-
-        if (this.currentFragment instanceof  ProfileFragment || this.currentFragment instanceof WidgetListFragment ||
-                this.currentFragment instanceof HomeFragment || this.currentFragment instanceof SplashFragment||
-                this.currentFragment instanceof UserEducationFragment || this.currentFragment instanceof ExamsFragment) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            this.mToggle.syncState();
-
-
-        } else {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-    }
 
     /**
      * This method is called when user change anything in Institute List
@@ -2944,67 +2847,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * This method is called when user press navigation back arrow
-     *  present on the toolbar
-     */
-    private void mSetNavigationListener() {
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        this.mToggle = new ActionBarDrawerToggle(
-                this, drawer, this.mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                String name  = MainActivity.user.getName();
-                TextView mProfileName    =   (TextView)findViewById(R.id.nav_header_name);
-                TextView mStreamName    =   (TextView)findViewById(R.id.nav_header_stream);
-                CircleImageView mProfileImage = (CircleImageView)findViewById(R.id.nav_header_profile_image);
-                mProfileImage.setDefaultImageResId(R.drawable.ic_default_image);
-                mProfileImage.setErrorImageResId(R.drawable.ic_default_image);
-                if(name.equalsIgnoreCase("Anonymous User"))
-                {
-                    mProfileName.setText("");
-                    mProfileName.setVisibility(View.INVISIBLE);
-                }else {
-                    mProfileName.setText(name);
-                    mProfileName.setVisibility(View.VISIBLE);
-                }
-                mStreamName.setText(MainActivity.user.getStream_name());
-
-                String image = MainActivity.user.getImage();
-                if (image != null && ! image.isEmpty()) {
-                    mProfileImage.setImageUrl(image, MySingleton.getInstance(getApplicationContext()).getImageLoader());
-                    mProfileImage.setVisibility(View.VISIBLE);
-                }
-                else
-                    mProfileImage.setVisibility(View.GONE);
-            }
-        };
-        drawer.setDrawerListener(this.mToggle);
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        this.mToggle.syncState();
-        this.mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*if (getCurrentFocus() != null && getCurrentFocus() instanceof EditText) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                }*/
-                 /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                    if(!drawer.isDrawerOpen(GravityCompat.START))
-                        drawer.openDrawer(GravityCompat.START);*/
-                int count = getSupportFragmentManager().getBackStackEntryCount();
-                if (count >= 1) {
-                    getSupportFragmentManager().popBackStack();
-                }
-
-
-            }
-        });
-    }
     /**
      * This method is called when user press device back button
      * Do these task
@@ -3474,7 +3316,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         if(userObj != null && user != null){
-         // user.set
+          this.user.setSublevel(userObj.getSublevel());
+          this.user.setIs_preparing(userObj.getIs_preparing());
         }
         this.mMakeNetworkCall(Constants.TAG_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
 
@@ -3892,6 +3735,8 @@ public class MainActivity extends AppCompatActivity
             user.setLevel(tempuser.getLevel());
             user.setPrimaryEmail(tempuser.getPrimaryEmail());
             user.setPrimaryPhone(tempuser.getPrimaryPhone());
+            user.setSublevel(tempuser.getSublevel());
+            user.setIs_preparing(tempuser.getIs_preparing());
             user.profileData = tempuser.profileData;
         }
 

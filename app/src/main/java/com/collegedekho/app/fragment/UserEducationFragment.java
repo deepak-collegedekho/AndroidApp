@@ -141,7 +141,7 @@ public class UserEducationFragment extends BaseFragment {
         mStreamPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         mStreamPicker.setDisplayedValues(stream_arrays);
 
-        /*mExamPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+        mExamPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(android.widget.NumberPicker picker, int oldVal, int newVal) {
                 mUpdateStreamPicker(newVal);
@@ -150,7 +150,7 @@ public class UserEducationFragment extends BaseFragment {
                 mMarksPicker.setValue(0);
             }
 
-        });*/
+        });
 
         rootView.findViewById(R.id.is_preparing_for_exam).setOnClickListener(this);
         rootView.findViewById(R.id.is_not_preparing_for_exam).setOnClickListener(this);
@@ -212,11 +212,18 @@ public class UserEducationFragment extends BaseFragment {
                 isUserPreparing = true;
                 view.findViewById(R.id.is_preparing_for_exam).setSelected(true);
                 view.findViewById(R.id.is_not_preparing_for_exam).setSelected(false);
+                view.findViewById(R.id.first_step_user_image).setVisibility(View.INVISIBLE);
+                view.findViewById(R.id.second_step_user_image).setVisibility(View.VISIBLE);
+                ((TextView)view.findViewById(R.id.help_us_to_understand_uTV)).setTextColor(getResources().getColor(R.color.primary_orange));
             }
             else{
                 isUserPreparing = false;
                 view.findViewById(R.id.is_preparing_for_exam).setSelected(false);
                 view.findViewById(R.id.is_not_preparing_for_exam).setSelected(true);
+                view.findViewById(R.id.first_step_user_image).setVisibility(View.INVISIBLE);
+                view.findViewById(R.id.second_step_user_image).setVisibility(View.VISIBLE);
+                ((TextView)view.findViewById(R.id.help_us_to_understand_uTV)).setTextColor(getResources().getColor(R.color.primary_orange));
+
             }
         }
     }

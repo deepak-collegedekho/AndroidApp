@@ -16,6 +16,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.widget.CircleImageView;
+import com.collegedekho.app.widget.CircularProgressBar;
 
 /**
  * Created by sureshsaini on 6/12/15.

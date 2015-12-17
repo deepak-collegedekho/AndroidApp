@@ -183,8 +183,6 @@ public class ProfileFragment extends  BaseFragment
         MainActivity mainActivity = (MainActivity)getActivity();
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
-            mainActivity.mShouldDisplayHomeUp();
-            mainActivity.mUpdateNavigationMenuItem(0);
         }
     }
 

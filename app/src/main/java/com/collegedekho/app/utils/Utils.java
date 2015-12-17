@@ -79,7 +79,7 @@ public class Utils {
      * @return
      */
     public static boolean isValidName(CharSequence target) {
-        if(target == null || target.length() <= 3)
+        if(target == null || target.length() < 3)
             return false;
 
         Pattern ps = Pattern.compile("^[a-zA-Z ]+$");

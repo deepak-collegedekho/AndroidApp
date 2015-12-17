@@ -4,8 +4,8 @@
     <!-- Base application theme. -->
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/primary_color</item>
-        <item name="android:colorPrimary" tools:ignore="NewApi">@color/primary_color</item>
+        <item name="colorPrimary">@color/white</item>
+        <item name="android:colorPrimary" tools:ignore="NewApi">@color/white</item>
         <item name="colorPrimaryDark">@color/primary_color_dark</item>
         <item name="android:colorPrimaryDark" tools:ignore="NewApi">@color/primary_color_dark</item>
         <item name="colorAccent">@color/text_subhead_blue</item>
@@ -326,7 +326,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">16dp</item>
-        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:background">@color/primaryColor</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:paddingBottom">10dp</item>

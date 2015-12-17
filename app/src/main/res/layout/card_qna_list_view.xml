@@ -8,6 +8,7 @@
     android:orientation="vertical"
     android:elevation="@dimen/m2dp"
     app:cardElevation="@dimen/cardview_default_elevation"
+    android:id="@+id/qna_card_view"
     app:cardUseCompatPadding="true">
 
     <LinearLayout
