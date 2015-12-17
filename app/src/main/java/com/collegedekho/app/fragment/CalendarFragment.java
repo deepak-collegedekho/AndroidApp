@@ -111,25 +111,22 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
 
         // move calendar backwards to the beginning of the week
         calendar.add(Calendar.DAY_OF_MONTH, -monthBeginningCell);
+
+        /*if (monthBeginningCell > 3) {
+            // fill cells (42 days calendar as per our business logic)
+            DAYS_COUNT = 42;
+
+        } else {
+            DAYS_COUNT = 35;
+
+        }*/
+
         while (cells.size() < DAYS_COUNT) {
             cells.add(calendar.getTime());
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
 
-        /*if (monthBeginningCell > 3) {
-            // fill cells (42 days calendar as per our business logic)
-            DAYS_COUNT = 42;
-            while (cells.size() < DAYS_COUNT) {
-                cells.add(calendar.getTime());
-                calendar.add(Calendar.DAY_OF_MONTH, 1);
-            }
-        } else {
-            DAYS_COUNT = 35;
-            while (cells.size() < DAYS_COUNT) {
-                cells.add(calendar.getTime());
-                calendar.add(Calendar.DAY_OF_MONTH, 1);
-            }
-        }*/
+
         // update grid
         CalendarAdapter calendarAdapter = new CalendarAdapter(getActivity(), cells, this, mYearCalendar);
         calendarRecyclerView.setAdapter(calendarAdapter);
@@ -139,12 +136,6 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
 
     @Override
     public void onItemSelect(int position, int startPosition, int endPosition, String itemKey) {
-//        int effectivePosition=(position-startPosition)+(currentPage*42);
-//        if(effectivePosition>-1 && mChapterList.get(0).getChapters().size()>=effectivePosition) {
-////            Log.e("DEBUG",mChapterList.get(0).getChapters().get(effectivePosition).getChapter_name());
-//
-//        }
-        Log.e("DEBUG", "Position " + position + " Active Position " + startPosition + " End position " + endPosition + " Effective Position " + itemKey);
         String keys = mYearCalendar.get(itemKey);
         if (keys != null) {
             String[] subject_keys = keys.split(",");

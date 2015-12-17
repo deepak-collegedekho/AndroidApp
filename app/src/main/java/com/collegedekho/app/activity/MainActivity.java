@@ -65,6 +65,8 @@ import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
 import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.News;
+import com.collegedekho.app.entities.PsychometricTestQuestion;
+import com.collegedekho.app.entities.PsychometricTestQuestions;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.entities.Stream;
@@ -225,6 +227,7 @@ public class MainActivity extends AppCompatActivity
     public BaseFragment currentFragment;
     private List<Institute> mInstituteList;
     private List<Chapters>chaptersList;
+    private List<PsychometricTestQuestion>psychometricQuestionsList;
     private List<Institute> mShortlistedInstituteList;
     private int currentInstitute;
     private ProgressDialog progressDialog;
@@ -1371,6 +1374,9 @@ public class MainActivity extends AppCompatActivity
                     this.onNameUpdatedResponse(response, parentIndex);
                 }
                 break;
+            case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
+                this.onPsychometricTestResponse(response);
+                break;
         }
 
         if (this.progressDialog != null && this.progressDialog.isShowing())
@@ -1856,6 +1862,10 @@ public class MainActivity extends AppCompatActivity
                 return "Submitting psychometric analysis...";
             case Constants.SEARCHED_INSTITUTES:
                 return "Loading...";
+            case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
+                return "Loading ....";
+            case Constants.WIDGET_TEST_CALENDAR:
+                return "Loading your plan...";
         }
         return null;
     }
@@ -3719,9 +3729,22 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPsychometricTest() {
-        this.mDisplayFragment(PsychometricTestFragment.newInstance(),false,NotPreparingFragment.class.toString() );
+        this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_QUESTIONS,Constants.BASE_URL+"psychometric/",null);
     }
 
+    private void onPsychometricTestResponse(String response){
+
+        try {
+            Map<String, Object> map = JSON.std.mapFrom(response);
+            String val = JSON.std.asString(map.get("questions"));
+            this.psychometricQuestionsList = JSON.std.listOfFrom(PsychometricTestQuestion.class, val);
+            this.mDisplayFragment(PsychometricTestFragment.newInstance(new ArrayList(this.psychometricQuestionsList)),false,NotPreparingFragment.class.toString() );
+
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+    }
     @Override
     public void onIDontKnow() {
 

@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -39,8 +38,8 @@ public class PsychometricTestAdapter extends RecyclerView.Adapter<PsychometricTe
     @Override
     public void onBindViewHolder(PsychometricTestViewHolder holder, int position) {
         PsychometricTestQuestion question = itemList.get(position);
-        holder.txt_serial_no.setText(question.getSerialNumber()+") ");
-        holder.txt_question_text.setText(question.getQuestionText());
+        holder.txt_serial_no.setText(question.getId()+") ");
+        holder.txt_question_text.setText(question.getQuestion());
         holder.radioGroup.check(question.getCheckedId());
 
 //        ((RadioButton)holder.radioGroup.getChildAt(0)).setText("Text One");
@@ -73,15 +72,15 @@ public class PsychometricTestAdapter extends RecyclerView.Adapter<PsychometricTe
             int position = this.getLayoutPosition();
             PsychometricTestQuestion question = itemList.get(position);
             switch (checkedId) {
-                case R.id.option_one:
-                    question.setAnswer("1");
-                    break;
-                case R.id.option_two:
+                case R.id.option_always:
                     question.setAnswer("2");
                     break;
+                case R.id.option_sometimes:
+                    question.setAnswer("1");
+                    break;
 
-                case R.id.option_three:
-                    question.setAnswer("3");
+                case R.id.option_never:
+                    question.setAnswer("0");
                     break;
 
                 default:

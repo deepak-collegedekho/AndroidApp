@@ -45,7 +45,7 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/option_one"
+                android:id="@+id/option_always"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -54,7 +54,7 @@
                 android:textStyle="bold" />
 
             <RadioButton
-                android:id="@+id/option_two"
+                android:id="@+id/option_sometimes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -63,7 +63,7 @@
                 android:textStyle="bold" />
 
             <RadioButton
-                android:id="@+id/option_three"
+                android:id="@+id/option_never"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

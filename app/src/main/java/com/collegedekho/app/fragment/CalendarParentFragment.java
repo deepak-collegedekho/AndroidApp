@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.CalendarAdapter;
 import com.collegedekho.app.adapter.CalendarPagerAdapter;
 import com.collegedekho.app.entities.ChapterDetails;
@@ -143,4 +144,10 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
     public void onPageScrollStateChanged(int i) {
 
     }
+    public void onSubmitCalendarData(){
+        if(chaptersDetailsList!=null && !chaptersDetailsList.isEmpty()){
+//            ((MainActivity)getActivity()).onSubmitCalendarData(chaptersDetailsList);
+        }
+    }
+
 }

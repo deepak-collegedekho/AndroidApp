@@ -31,6 +31,7 @@ public class Constants
     public static final String TAG_SUBMIT_PSYCHOMETRIC_EXAM = "submit_psychometric_exam";
 
     public static final String TAG_LOAD_STREAM = "load_stream";
+    public static final String TAG_PSYCHOMETRIC_QUESTIONS = "load_psychometric_questions";
     public static final String TAG_USER_EDUCATION = "load_user_education";
     public static final String TAG_UPDATE_STREAM = "update_stream";
     public static final String KEY_STREAMS = "streams";

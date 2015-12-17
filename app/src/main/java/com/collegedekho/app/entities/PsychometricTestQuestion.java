@@ -19,9 +19,9 @@ public class PsychometricTestQuestion implements Parcelable{
             return new PsychometricTestQuestion[size];
         }
     };
-
-    private String serialNumber;
-    private String questionText;
+    private String question;
+    private String id;
+    private String stream_id;
     private int checkedId;
     private String answer="0";
     public PsychometricTestQuestion(){
@@ -29,24 +29,34 @@ public class PsychometricTestQuestion implements Parcelable{
     }
 
     public PsychometricTestQuestion(Parcel parcel){
-        serialNumber=parcel.readString();
-        questionText=parcel.readString();
+        question=parcel.readString();
+        id=parcel.readString();
+        stream_id=parcel.readString();
 
     }
-    public String getSerialNumber() {
-        return serialNumber;
+
+    public String getQuestion() {
+        return question;
     }
 
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
+    public void setQuestion(String question) {
+        this.question = question;
     }
 
-    public String getQuestionText() {
-        return questionText;
+    public String getId() {
+        return id;
     }
 
-    public void setQuestionText(String questionText) {
-        this.questionText = questionText;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getStream_id() {
+        return stream_id;
+    }
+
+    public void setStream_id(String stream_id) {
+        this.stream_id = stream_id;
     }
 
     public int getCheckedId() {
@@ -72,7 +82,8 @@ public class PsychometricTestQuestion implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(serialNumber);
-        dest.writeString(questionText);
+        dest.writeString(question);
+        dest.writeString(id);
+        dest.writeString(stream_id);
     }
 }
