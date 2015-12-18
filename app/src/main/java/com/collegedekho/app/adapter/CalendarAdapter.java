@@ -38,7 +38,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     private int mOffSet;
     private OnCalendarItemSelectListener mListener;
     private String[] monthNames = {"JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
-    int[]subjectColors={0xff0066ff,0xffff5c33,0xffff8533,0xffff3399,0xffffc61a,0xff8533ff,0xff0066ff,0xffff5c33,0xffff8533,0xffff3399,0xffffc61a,0xff8533ff};
+    int[]subjectColors={0xff003fff,0xff0066ff,0xffff5c33,0xff00b300,0xffcc0000,0xffe5e600,0xff001a4d,0xff009933,0xffcc5200,0xffcc7a00,0xff003300,0xffcc0052,0xff990033,0xff000d33,0xffffff00};
 //    private Drawable mDrawable;
     public CalendarAdapter(Context context, ArrayList<Date> itemList, OnCalendarItemSelectListener listener,LinkedHashMap<String,String> yearCalendar) {
         this.mContext = context;
@@ -134,8 +134,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 View dot=inflater.inflate(R.layout.dot_view,holder.dotView,false);
 
                 Drawable  mDrawable = mContext.getResources().getDrawable(R.drawable.bg_button_blue);
+                int colorIndex=Integer.valueOf(keyArray[j])%15;
                 mDrawable.setColorFilter(new
-                        PorterDuffColorFilter(subjectColors[j], PorterDuff.Mode.SRC_IN));
+                        PorterDuffColorFilter(subjectColors[colorIndex], PorterDuff.Mode.SRC_IN));
                 dot.setBackgroundDrawable(mDrawable);
                 holder.dotView.addView(dot);
             }
