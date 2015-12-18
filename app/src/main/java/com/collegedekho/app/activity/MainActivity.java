@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity
         ProfileFragment1.onProfileUpdateListener,
         LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener,
         InstituteDetailFragment.OnInstituteFooterItemSelected, UserEducationFragment.OnUserEducationInteractionListener,NotPreparingFragment.OnTestOptionsListener,
-        PsychometricTestFragment.OnPsychometricTestSubmitListener,
+        PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData
 {
 
@@ -1038,7 +1038,7 @@ public class MainActivity extends AppCompatActivity
                 this.mUserFacebookLoginResponse(response);
                 break;
             case Constants.TAG_LOAD_STREAM:
-                this.mDisplayStreams(response, false);
+                this.mDisplayStreams(response, true);
                 break;
             case Constants.TAG_EXAM_SUMMARY:
                 this.mUpdateExamDetail(response);
@@ -1248,7 +1248,7 @@ public class MainActivity extends AppCompatActivity
                 this.mOnExamsSubmitted(response);
                 break;
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
-//                this.mOnExamsSubmitted(response);
+                this.mOnExamsSubmitted(response);
                 break;
             case Constants.WIDGET_SYLLABUS:
                 this.mDisplayExamSyllabusFragment(response);
@@ -1740,6 +1740,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_EXAM_SUMMARY:
                 return "Loading....";
             case Constants.TAG_SUBMIT_EXAMS_LIST:
+            case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
                 return "Loading Profile...";
             case Constants.TAG_UPDATE_INSTITUTES:
                 return "Updating Institues...";
@@ -3353,7 +3354,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onUserNotPreparingSelected() {
 //        this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
-        this.mDisplayFragment(NotPreparingFragment.newInstance(),false,NotPreparingFragment.class.toString() );
+        this.mDisplayFragment(NotPreparingFragment.newInstance(),true,NotPreparingFragment.class.toString() );
     }
     /**
      * This method is load user profile after
@@ -3602,7 +3603,7 @@ public class MainActivity extends AppCompatActivity
             Map<String, Object> map = JSON.std.mapFrom(response);
             String val = JSON.std.asString(map.get("questions"));
             this.psychometricQuestionsList = JSON.std.listOfFrom(PsychometricTestQuestion.class, val);
-            this.mDisplayFragment(PsychometricTestParentFragment.newInstance(new ArrayList(this.psychometricQuestionsList)),false,NotPreparingFragment.class.toString() );
+            this.mDisplayFragment(PsychometricTestParentFragment.newInstance(new ArrayList(this.psychometricQuestionsList)),true,PsychometricTestParentFragment.class.toString() );
 
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -3620,8 +3621,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSubmitSubmit(HashMap<String,String> params) {
-//        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM,Constants.BASE_URL + "yearly-exams/",params, 1);
+    public void onSubmitPsychometricTest(JSONObject params) {
+        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM,Constants.BASE_URL + "psychometric/",params, 1);
     }
 
     public void onSubjectSelected(Subjects subject, int position) {

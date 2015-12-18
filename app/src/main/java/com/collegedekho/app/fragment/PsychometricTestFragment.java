@@ -26,7 +26,6 @@ import java.util.HashMap;
 public class PsychometricTestFragment extends BaseFragment implements PsychometricTestAdapter.OnItemClickListener {
 
     private RecyclerView recyclerView;
-    private OnPsychometricTestSubmitListener mListener;
     private ArrayList<PsychometricTestQuestion> mQuestionList;
     private ArrayList<PsychometricTestQuestion> subList;
 
@@ -85,37 +84,6 @@ private static PsychometricTestFragment.OnNextPageListener mNextListener;
         recyclerView.setAdapter(adapter);
     }
 
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            if (context instanceof MainActivity)
-                this.mListener = (OnPsychometricTestSubmitListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + "must implement OnPsychometricTestSubmitListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        this.mListener = null;
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        MainActivity mainActivity = (MainActivity) getActivity();
-
-        if (mainActivity != null)
-            mainActivity.currentFragment = this;
-
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -127,17 +95,6 @@ private static PsychometricTestFragment.OnNextPageListener mNextListener;
         }
     }
 
-    private void submitPsychometricTest() {
-        HashMap<String, String> questionResponse = new HashMap<>();
-        for (PsychometricTestQuestion question : mQuestionList) {
-            questionResponse.put(question.getId(), question.getAnswer());
-        }
-        mListener.onSubmitSubmit(questionResponse);
-    }
-
-    public interface OnPsychometricTestSubmitListener {
-        void onSubmitSubmit(HashMap<String, String> params);
-    }
 
     @Override
     public void setMenuVisibility(boolean menuVisible) {
@@ -146,7 +103,6 @@ private static PsychometricTestFragment.OnNextPageListener mNextListener;
 
     @Override
     public void onItemClicked(int position) {
-        Log.e("DEBUG","Goto Next page..");
         mNextListener.gotoNext();
     }
 
