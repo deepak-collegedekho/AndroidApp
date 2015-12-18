@@ -90,10 +90,10 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Stream streamObj =  streams.get(position);
-        if(isStreamUpdate) {
-            onStreamUpdated(streamObj.resourceUri, streamObj.getName() );
-        }
-        else
+//        if(isStreamUpdate) {
+//            onStreamUpdated(streamObj.resourceUri, streamObj.getName() );
+//        }
+//        else
         onStreamSelected(streamObj.resourceUri,streamObj.getName());
     }
 

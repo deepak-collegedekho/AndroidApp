@@ -19,7 +19,6 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -30,7 +29,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
@@ -66,7 +64,6 @@ import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.PsychometricTestQuestion;
-import com.collegedekho.app.entities.PsychometricTestQuestions;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.entities.Stream;
@@ -77,9 +74,7 @@ import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.BaseFragment;
-import com.collegedekho.app.fragment.CalendarFragment;
 import com.collegedekho.app.fragment.CalendarParentFragment;
-import com.collegedekho.app.fragment.MyAlertFragment;
 import com.collegedekho.app.fragment.NotPreparingFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
@@ -97,7 +92,6 @@ import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.ProfileFragment1;
-import com.collegedekho.app.fragment.PsychometricTestFragment;
 import com.collegedekho.app.fragment.PsychometricTestParentFragment;
 import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
@@ -114,11 +108,9 @@ import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.resource.Constants;
 
 import com.collegedekho.app.resource.ContainerHolderSingleton;
-import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 
-import com.collegedekho.app.widget.CircleImageView;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
@@ -221,6 +213,7 @@ public class MainActivity extends AppCompatActivity
 
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
+    private int backPressCount =0;
 
     public static NetworkUtils networkUtils;
     private ActionBarDrawerToggle mToggle;
@@ -500,6 +493,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        backPressCount=0;
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
         AppsFlyerLib.onActivityResume(this);
@@ -2857,11 +2851,13 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        int backStackCount=getSupportFragmentManager().getBackStackEntryCount();
+      /*  DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if(!Constants.READY_TO_CLOSE) {
+        } else*/ if(backStackCount == 0 && backPressCount == 0) {
             Constants.READY_TO_CLOSE = true;
+            backPressCount++;
             Utils.DisplayToast(getApplicationContext(), "Press again to close CollegeDekho");
             baskpressHandler.postDelayed(backpressRunnable,1500);
         }
@@ -3771,12 +3767,12 @@ public class MainActivity extends AppCompatActivity
     public void onSubmitCalendarData(JSONObject object,String url) {
         this.mMakeJsonObjectNetworkCall(Constants.TAG_PSYCHOMETRIC_RESPONSE,Constants.BASE_URL+url,object,1);
     }
-
     Handler baskpressHandler=new Handler();
-    Runnable backpressRunnable=new Runnable() {
+    Runnable backpressRunnable = new Runnable() {
         @Override
         public void run() {
-      Constants.READY_TO_CLOSE=false;
+            backPressCount = 0;
+            Constants.READY_TO_CLOSE = false;
         }
     };
 

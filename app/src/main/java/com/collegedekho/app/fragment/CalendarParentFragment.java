@@ -16,6 +16,7 @@ import com.collegedekho.app.adapter.CalendarAdapter;
 import com.collegedekho.app.adapter.CalendarPagerAdapter;
 import com.collegedekho.app.entities.ChapterDetails;
 import com.collegedekho.app.entities.Chapters;
+import com.collegedekho.app.resource.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -154,8 +155,15 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        Constants.READY_TO_CLOSE = true;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        Constants.READY_TO_CLOSE = false;
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null)
             mainActivity.currentFragment = this;
