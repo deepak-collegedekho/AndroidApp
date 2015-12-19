@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,6 +18,8 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.entities.UserEducationStreams;
 import com.collegedekho.app.entities.UserEducationSublevels;
+import com.collegedekho.app.widget.NumberPicker;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -5,13 +5,17 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
+import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.MySingleton;
+
+import java.util.ArrayList;
 
 /**
  * Created by harshvardhan on 16/11/15.
@@ -63,7 +67,20 @@ public class InstituteInfrastructureFragment extends BaseFragment {
 
         ((TextView) rootView.findViewById(R.id.infra_about)).setText(this.mInstitute.getInfra_snap());
 
+        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.infrastructure_college_facility_list);
+        setupFacilities(inflater, layout, this.mInstitute.getFacilities());
+
         return rootView;
     }
+
+    private void setupFacilities(LayoutInflater inflater, LinearLayout facilityLayout, ArrayList<Facility> facilities) {
+        ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
+        for (Facility f : facilities) {
+            NetworkImageView imageView = (NetworkImageView) inflater.inflate(R.layout.item_facility, facilityLayout, false);
+            imageView.setImageUrl(f.image, imageLoader);
+            facilityLayout.addView(imageView);
+        }
+    }
+
 
 }

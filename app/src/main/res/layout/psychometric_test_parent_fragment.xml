@@ -15,14 +15,16 @@
     </com.collegedekho.app.display.NonSwipeableViewPager>
 
     <TextView
+        style="@style/AppTheme.OrangeButton"
+        android:background="@color/primary_orange"
         android:id="@+id/btn_submit"
         android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="3dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/m2dp"
-        android:background="@drawable/bg_button_orange"
-        android:gravity="center"
-        android:padding="@dimen/m8dp"
-        android:text="@string/submit"
-        android:layout_weight="3"
-        android:textColor="@color/white" />
+        android:paddingBottom="@dimen/m8dp"
+        android:paddingTop="@dimen/m8dp"
+        android:textSize="20sp"
+        android:foregroundGravity="center"
+        android:text="SUBMIT"/>
 </LinearLayout>

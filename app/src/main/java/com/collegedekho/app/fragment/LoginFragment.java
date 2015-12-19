@@ -115,9 +115,12 @@ public class LoginFragment extends  BaseFragment{
                 try {
                     if (json != null) {
                         // get user profile info
-                        JSONObject pictureJsonObj = json.getJSONObject("picture");
-                        JSONObject data = pictureJsonObj.getJSONObject("data");
-                        String image = data.getString("url");
+                       /* JSONObject pictureJsonObj = json.getJSONObject("picture");
+                        JSONObject data = pictureJsonObj.getJSONObject("data");*/
+
+                        //String image = data.getString("url");
+                        String image ="https://graph.facebook.com/" + json.optString("id") + "/picture?type=large";
+
                         if (MainActivity.user == null)
                             MainActivity.user = new User();
 

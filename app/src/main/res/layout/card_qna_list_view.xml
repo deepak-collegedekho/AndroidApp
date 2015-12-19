@@ -23,7 +23,7 @@
     android:layout_weight="5"
     android:layout_height="wrap_content">
 
-        <com.collegedekho.app.widget.CircleImageView
+        <com.collegedekho.app.widget.CircularImageView
             style="@style/AppTheme.ImageView.ProfileImage"
             android:src="@android:drawable/sym_def_app_icon"
             android:id="@+id/card_qna_profile_image"

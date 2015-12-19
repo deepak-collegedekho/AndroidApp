@@ -366,6 +366,9 @@ public class MainActivity extends AppCompatActivity
                 mClearBackStack();
             }
         });
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
     }
 
 
@@ -1241,11 +1244,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_SUBMIT_EXAMS_LIST:
                 this.mOnExamsSubmitted(response);
                 break;
-            case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
-                this.mOnExamsSubmitted(response);
-                break;
             case Constants.WIDGET_SYLLABUS:
                 this.mDisplayExamSyllabusFragment(response);
+                break;
             case Constants.WIDGET_TEST_CALENDAR:
                 this.onTestCalendarResponse(response);
                 break;
@@ -1258,6 +1259,16 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
                 this.onPsychometricTestResponse(response);
                 break;
+            case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
+                this.mOnPsychometricTestSubmitted(response);
+                break;
+            case Constants.TAG_PSYCHOMETRIC_TEXT_COMPLETED:
+                if (tags.length > 2) {
+                    parentIndex = tags[1];
+                    childIndex = tags[2];
+                    mOnPsychometricTestCompleted(parentIndex, childIndex, response);
+                }
+                break;
             case Constants.TAG_PSYCHOMETRIC_RESPONSE:
 
                 break;
@@ -1267,16 +1278,45 @@ public class MainActivity extends AppCompatActivity
             this.progressDialog.dismiss();
     }
 
-    private void mUpdateExamDetail(String responseJson) {
-        /*responseJson = "{\n" +
-                "    \"syllabus_covered\": 10,\n" +
-                "    \"next_important_date\": \"20/05\",\n" +
-                "    \"shortlist_count\": 6,\n" +
-                "    \"recommended_count\": 5,\n" +
-                "    \"yearly_exam_id\": \"23\",\n" +
-                "    \"backup_count\": 4\n" +
-                "}";*/
+    private void mOnPsychometricTestCompleted(String streamId, String streaName, String response) {
 
+        try {
+            User userObj = JSON.std.beanFrom(User.class,response);
+            if(MainActivity.user != null){
+                MainActivity.user.setStream_name(streaName);
+                MainActivity.user.setStream(streamId);
+                MainActivity.user.setLevel_name(userObj.getLevel_name());
+                MainActivity.user.setLevel(userObj.getLevel());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
+
+    }
+
+    private void mOnPsychometricTestSubmitted(String response) {
+
+        if(response == null)
+             return;
+
+        HashMap<String, String> params = new HashMap<>();
+        try {
+            JSONObject jsonObj = new JSONObject(response);
+            String stream_id = jsonObj.optString(Constants.USER_STREAM_ID);
+            String stream_name =  jsonObj.optString(Constants.USER_STREAM_NAME);
+            params.put(Constants.USER_STREAM_ID,stream_id);
+            params.put(Constants.USER_STREAM_NAME,stream_name);
+            this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_TEXT_COMPLETED+"#"+stream_id+"#"+stream_name, Constants.BASE_URL + "preferences/", params);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+          }
+
+    private void mUpdateExamDetail(String responseJson) {
         try {
             ExamSummary examSummary = JSON.std.beanFrom(ExamSummary.class, responseJson);
             if(currentFragment instanceof ProfileFragment)
@@ -1284,7 +1324,6 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -1312,14 +1351,22 @@ public class MainActivity extends AppCompatActivity
      * @param response
      */
     private void mDisplayExamSyllabusFragment(String response){
-        try {
-            response = response.substring(10, response.length() - 1);
-            //ArrayList<UserEducation> userEducationList = (ArrayList<UserEducation>) JSON.std.listOfFrom(UserEducation.class, response);
 
-            //this.mDisplayFragment(UserEducationFragment.newInstance(userEducationList), false, Constants.TAG_FRAGMENT_USER_EDUCATION);
-        } catch (Exception e) {
+        try {
+            ArrayList<Subjects> subjectsList = (ArrayList<Subjects>) JSON.std.listOfFrom(Subjects.class, response);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            Fragment fragment = fragmentManager.findFragmentByTag(SyllabusSubjectsListFragment.class.getSimpleName());
+            if (fragment == null) {
+                this.mDisplayFragment(SyllabusSubjectsListFragment.newInstance(subjectsList), true, SyllabusSubjectsListFragment.class.getSimpleName());
+            }
+            else {
+                this.mDisplayFragment(fragment, false, SyllabusSubjectsListFragment.class.getSimpleName());
+            }
+        } catch (IOException e) {
+            Log.v(TAG, e.getMessage());
             e.printStackTrace();
         }
+
     }
 
     private void mStreamAndLevelUpdated(String response)
@@ -3357,63 +3404,6 @@ public class MainActivity extends AppCompatActivity
      */
     private void mLoadUserProfile(String responseJson)  {
 
-       /* responseJson = "{\n" +
-                "\t\"results\": [{\n" +
-                "\t\t\"exam_date\": \"2016-01-31\",\n" +
-                "\t\t\"year\": 2016,\n" +
-                "\t\t\"exam_name\": \"Christ University MBA entrance exam\",\n" +
-                "\t\t\"id\": 90,\n" +
-                "\t\t\"exam_short_name\": null\n" +
-                "\t}, {\n" +
-                "\t\t\"exam_date\": \"2016-05-26\",\n" +
-                "\t\t\"year\": 2016,\n" +
-                "\t\t\"exam_name\": \"ENAT M.Tech\",\n" +
-                "\t\t\"id\": 101,\n" +
-                "\t\t\"exam_short_name\": \"ENAT M.Tech\"\n" +
-                "\t}, {\n" +
-                "\t\t\"exam_date\": \"2016-06-05\",\n" +
-                "\t\t\"year\": 2016,\n" +
-                "\t\t\"exam_name\": \"Jamia Milia MBA\",\n" +
-                "\t\t\"id\": 105,\n" +
-                "\t\t\"exam_short_name\": null\n" +
-                "\t}, {\n" +
-                "\t\t\"exam_date\": \"2016-05-01\",\n" +
-                "\t\t\"year\": 2016,\n" +
-                "\t\t\"exam_name\": \"IPU CET M.Tech\",\n" +
-                "\t\t\"id\": 112,\n" +
-                "\t\t\"exam_short_name\": \"IPU CET M.Tech\"\n" +
-                "\t}, {\n" +
-                "\t\t\"exam_date\": \"2016-06-01\",\n" +
-                "\t\t\"year\": 2016,\n" +
-                "\t\t\"exam_name\": \"MHCET MBA\",\n" +
-                "\t\t\"id\": 113,\n" +
-                "\t\t\"exam_short_name\": \"MHCET MBA\"\n" +
-                "\t}, {\n" +
-                "\t\t\"exam_date\": \"2016-06-01\",\n" +
-                "\t\t\"year\": 2016,\n" +
-                "\t\t\"exam_name\": \"MHCET MBA\",\n" +
-                "\t\t\"id\": 114,\n" +
-                "\t\t\"exam_short_name\": \"MHCET MBA\"\n" +
-                "\t}, {\n" +
-                "\t\t\"exam_date\": \"2016-01-24\",\n" +
-                "\t\t\"year\": 2016,\n" +
-                "\t\t\"exam_name\": \"MONIRBA MBA\",\n" +
-                "\t\t\"id\": 120,\n" +
-                "\t\t\"exam_short_name\": \"MONIRBA MBA\"\n" +
-                "\t}, {\n" +
-                "\t\t\"exam_date\": \"2016-05-15\",\n" +
-                "\t\t\"year\": 2016,\n" +
-                "\t\t\"exam_name\": \"Panjab University -MBA\",\n" +
-                "\t\t\"id\": 121,\n" +
-                "\t\t\"exam_short_name\": \"Panjab University -MBA\"\n" +
-                "\t}, {\n" +
-                "\t\t\"exam_date\": \"2016-07-24\",\n" +
-                "\t\t\"year\": 2016,\n" +
-                "\t\t\"exam_name\": \"Punjab university- BEd\",\n" +
-                "\t\t\"id\": 127,\n" +
-                "\t\t\"exam_short_name\": \"Punjab university- BEd\"\n" +
-                "\t}]\n" +
-                "}";*/
         List<ExamDetail> userExamsList = null;
         if(responseJson != null && !responseJson.isEmpty()) {
             try {
@@ -3478,111 +3468,11 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(requestType, url, this.mFilterKeywords);
             return;
         }else if(requestType.equals(Constants.WIDGET_TEST_CALENDAR)){
-            this.mMakeNetworkCall(Constants.WIDGET_TEST_CALENDAR,url,null);
-//            this.mDisplayFragment(CalendarFragment.newInstance(),true,CalendarFragment.class.toString() );
+            this.mMakeNetworkCall(requestType,url,null);
             return;
         }
         if (requestType.equals(Constants.WIDGET_SYLLABUS)) {
-            String response = "[{\n" +
-                    "\t\"units\": [{\n" +
-                    "\t\t\"unit_name\": \"Time and Measurement\",\n" +
-                    "\t\t\"subject_id\": 1,\n" +
-                    "\t\t\"unit_id\": 1,\n" +
-                    "\t\t\"subject_name\": \"Physics\",\n" +
-                    "\t\t\"chapters\": [{\n" +
-                    "\t\t\t\"weightage\": 1,\n" +
-                    "\t\t\t\"should_be_done\": 1,\n" +
-                    "\t\t\t\"is_done\": 1,\n" +
-                    "\t\t\t\"id\": 9,\n" +
-                    "\t\t\t\"name\": \"Scale\"\n" +
-                    "\t\t}, {\n" +
-                    "\t\t\t\"weightage\": 2,\n" +
-                    "\t\t\t\"should_be_done\": 1,\n" +
-                    "\t\t\t\"is_done\": 1,\n" +
-                    "\t\t\t\"id\": 10,\n" +
-                    "\t\t\t\"name\": \"Distance and Displacement\"\n" +
-                    "\t\t}],\n" +
-                    "\t\t\"yearly_exam\": 54,\n" +
-                    "\t\t\"unit_done_percent\": 80.0\n" +
-                    "\t}, {\n" +
-                    "\t\t\"unit_name\": \"Force and Momentum\",\n" +
-                    "\t\t\"subject_id\": 1,\n" +
-                    "\t\t\"unit_id\": 2,\n" +
-                    "\t\t\"subject_name\": \"Physics\",\n" +
-                    "\t\t\"chapters\": [{\n" +
-                    "\t\t\t\"weightage\": 3,\n" +
-                    "\t\t\t\"should_be_done\": 1,\n" +
-                    "\t\t\t\"is_done\": 1,\n" +
-                    "\t\t\t\"id\": 11,\n" +
-                    "\t\t\t\"name\": \"Gravity\"\n" +
-                    "\t\t}, {\n" +
-                    "\t\t\t\"weightage\": 2,\n" +
-                    "\t\t\t\"should_be_done\": 1,\n" +
-                    "\t\t\t\"is_done\": 1,\n" +
-                    "\t\t\t\"id\": 12,\n" +
-                    "\t\t\t\"name\": \"Torque\"\n" +
-                    "\t\t}],\n" +
-                    "\t\t\"yearly_exam\": 54,\n" +
-                    "\t\t\"unit_done_percent\": 56.89\n" +
-                    "\t}],\n" +
-                    "\t\"subject_id\": 1,\n" +
-                    "\t\"subject_name\": \"Physics\",\n" +
-                    "\t\"yearly_exam\": \"54\"\n" +
-                    "}, {\n" +
-                    "\t\"units\": [{\n" +
-                    "\t\t\"unit_name\": \"Thermodynamics\",\n" +
-                    "\t\t\"subject_id\": 2,\n" +
-                    "\t\t\"unit_id\": 3,\n" +
-                    "\t\t\"subject_name\": \"Chemistry\",\n" +
-                    "\t\t\"chapters\": [{\n" +
-                    "\t\t\t\"weightage\": 1,\n" +
-                    "\t\t\t\"should_be_done\": 1,\n" +
-                    "\t\t\t\"is_done\": 1,\n" +
-                    "\t\t\t\"id\": 13,\n" +
-                    "\t\t\t\"name\": \"Second Law\"\n" +
-                    "\t\t}],\n" +
-                    "\t\t\"yearly_exam\": 54,\n" +
-                    "\t\t\"unit_done_percent\": 0.0\n" +
-                    "\t}],\n" +
-                    "\t\"subject_id\": 2,\n" +
-                    "\t\"subject_name\": \"Chemistry\",\n" +
-                    "\t\"yearly_exam\": \"54\"\n" +
-                    "}, {\n" +
-                    "\t\"units\": [{\n" +
-                    "\t\t\"unit_name\": \"Surface Area\",\n" +
-                    "\t\t\"subject_id\": 3,\n" +
-                    "\t\t\"unit_id\": 4,\n" +
-                    "\t\t\"subject_name\": \"Mathematics\",\n" +
-                    "\t\t\"chapters\": [{\n" +
-                    "\t\t\t\"weightage\": 2,\n" +
-                    "\t\t\t\"should_be_done\": 0,\n" +
-                    "\t\t\t\"is_done\": 1,\n" +
-                    "\t\t\t\"id\": 14,\n" +
-                    "\t\t\t\"name\": \"Sphere\"\n" +
-                    "\t\t}],\n" +
-                    "\t\t\"yearly_exam\": 54,\n" +
-                    "\t\t\"unit_done_percent\": 87.0\n" +
-                    "\t}],\n" +
-                    "\t\"subject_id\": 3,\n" +
-                    "\t\"subject_name\": \"Mathematics\",\n" +
-                    "\t\"yearly_exam\": \"54\"\n" +
-                    "}]";
-
-            try {
-                ArrayList<Subjects> subjectsList = (ArrayList<Subjects>) JSON.std.listOfFrom(Subjects.class, response);
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                Fragment fragment = fragmentManager.findFragmentByTag(SyllabusSubjectsListFragment.class.getSimpleName());
-                if (fragment == null) {
-                    this.mDisplayFragment(SyllabusSubjectsListFragment.newInstance(subjectsList), true, SyllabusSubjectsListFragment.class.getSimpleName());
-                }
-                else {
-                    this.mDisplayFragment(fragment, false, SyllabusSubjectsListFragment.class.getSimpleName());
-                }
-            } catch (IOException e) {
-                Log.v(TAG, e.getMessage());
-                e.printStackTrace();
-            }
-
+            this.mMakeNetworkCall(requestType, url, null);
             return;
         }
        this.mMakeNetworkCall(requestType,url, null);

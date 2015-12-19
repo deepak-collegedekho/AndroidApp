@@ -62,9 +62,6 @@ public class MyAlertFragment extends  BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.layout_number_picker, container, false);
 
-        //ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.app_progressbar);
-        //progressBar.getProgressDrawable().setColorFilter(getActivity().getResources().getColor(R.color.primary_orange_dark), PorterDuff.Mode.SRC_IN);
-/*
 
         mMarksPicker = (NumberPicker) rootView.findViewById(R.id.marks_number_picker);
         mMarksPicker.setMaxValue(marks_arrays.length-1);
@@ -85,35 +82,20 @@ public class MyAlertFragment extends  BaseFragment {
         mStreamPicker.setMinValue(0);
         mStreamPicker.setWrapSelectorWheel(false);
         mStreamPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        mStreamPicker.setDisplayedValues(stream_arrays);*/
+        mStreamPicker.setDisplayedValues(stream_arrays);
 
-       /* mExamPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+        mExamPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mUpdateStreamPicker(newVal);
+            public void onValueChange(android.widget.NumberPicker picker, int oldVal, int newVal) {
 
                 mStreamPicker.setValue(0);
                 mMarksPicker.setValue(0);
-                setNumberPickerTextColor(picker,newVal, R.color.primary_orange);
+                View view  = picker.getChildAt(newVal);
+                mExamPicker.updateView(view);
+                mExamPicker.invalidate();
             }
         });
-        mMarksPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-
-
-                int examPosition = mExamPicker.getValue();
-                int streamPosition = mExamPicker.getValue();
-                ArrayList<UserEducationStreams> tempStreamList = mUserStreamLists.get(examPosition);
-
-                mUserExamSubLevelsList.get(examPosition).getId();
-                tempStreamList.get(streamPosition).getId();
-
-
-            }
-        });*/
-
-        return rootView;
+       return rootView;
 
     }
 

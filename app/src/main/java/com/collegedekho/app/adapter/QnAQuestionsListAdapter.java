@@ -19,7 +19,7 @@ import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.widget.CircleImageView;
+import com.collegedekho.app.widget.CircularImageView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -152,7 +152,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
 
         TextView questionHeading;
         TextView userName;
-        CircleImageView userProfileImage;
+        CircularImageView userProfileImage;
         TextView questionVotes;
         TextView answerCount;
         TextView addedOn;
@@ -163,7 +163,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
 
         public QnAQuestionHolder(View itemView, QnAQuestionsListFragment.OnQnAQuestionSelectedListener listener) {
             super(itemView);
-            this.userProfileImage = (CircleImageView) itemView.findViewById(R.id.card_qna_profile_image);
+            this.userProfileImage = (CircularImageView) itemView.findViewById(R.id.card_qna_profile_image);
             this.questionHeading = (TextView) itemView.findViewById(R.id.card_qna_question_heading);
             this.userName = (TextView) itemView.findViewById(R.id.card_qna_user_name);
             this.questionVotes = (TextView) itemView.findViewById(R.id.card_item_like_count);

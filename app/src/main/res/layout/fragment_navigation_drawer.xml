@@ -11,7 +11,7 @@
     android:orientation="vertical"
     android:gravity="bottom">
 
-    <com.collegedekho.app.widget.CircleImageView
+    <com.collegedekho.app.widget.CircularImageView
         style="@style/AppTheme.ImageView.ProfileImage"
         android:src="@android:drawable/sym_def_app_icon"
         android:id="@+id/nav_header_profile_image"

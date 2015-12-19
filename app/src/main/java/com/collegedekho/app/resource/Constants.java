@@ -128,6 +128,7 @@ public class Constants
     public static final String TAG_EXAM_SUMMARY = "exam_summary";
     public static final String TAG_NAME_UPDATED = "name_updated";
     public static final String SUBMITTED_CHAPTER_STATUS = "chapter_submitted";
+    public static final String TAG_PSYCHOMETRIC_TEXT_COMPLETED = "psychometric_text_completed";
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET;
     public static final int MY_FB_REFRESH_RATE = 5000;
@@ -187,6 +188,7 @@ public class Constants
     public static final String USER_STREAM      = "stream";
     public static final String USER_LEVEL       = "level";
     public static final String USER_STREAM_NAME = "stream_name";
+    public static final String USER_STREAM_ID   = "stream_id";
     public static final String USER_LEVEL_NAME  = "level_name";
     public static final String USER_RESOURCE_URI = "user";
     public static final String USER_PHONE       = "phone_no";

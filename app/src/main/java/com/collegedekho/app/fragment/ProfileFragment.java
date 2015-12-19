@@ -21,9 +21,8 @@ import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.listener.OnSwipeTouchListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.widget.CircleImageView;
+import com.collegedekho.app.widget.CircularImageView;
 
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -73,7 +72,7 @@ public class ProfileFragment extends  BaseFragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
         TextView mProfileName    =   (TextView)rootView.findViewById(R.id.user_name);
-        CircleImageView mProfileImage = (CircleImageView)rootView.findViewById(R.id.profile_image);
+        CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
 
@@ -101,7 +100,6 @@ public class ProfileFragment extends  BaseFragment
         }
         if(this.mExamDetailList != null && !this.mExamDetailList.isEmpty()) {
             final ViewPager examPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
-            //rootView.findViewById(R.id.exam_pager_header).setVisibility(View.VISIBLE);
             examPager.setVisibility(View.VISIBLE);
             this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this, this.mExamDetailList);
             examPager.setAdapter(this.mDetailsAdapter);
@@ -205,10 +203,7 @@ public class ProfileFragment extends  BaseFragment
         this.mListener = null;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-       // super.onCreateOptionsMenu(menu, inflater);
-    }
+
 
     @Override
     public void onClick(View view) {
@@ -226,7 +221,6 @@ public class ProfileFragment extends  BaseFragment
                 this.onTabMenuSelected(2);
                 break;
             case R.id.my_alerts:
-                //this.onTabMenuSelected(3);
                 Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
                 return;
            case R.id.backup_colleges_layout_RL:
@@ -236,6 +230,8 @@ public class ProfileFragment extends  BaseFragment
                mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "yearly-exams/54/backup-colleges/");
                break;
             case R.id.wishList_colleges_layout_RL:
+                mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes");
+                break;
             case R.id.recommended_colleges_layout_RL:
                 mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes");
                 break;
@@ -279,10 +275,10 @@ public class ProfileFragment extends  BaseFragment
         TextView important_dateTV =  (TextView)view.findViewById(R.id.important_dates_count);
         TextView covered_syllabus =  (TextView)view.findViewById(R.id.covered_syllabus);
 
-        backup_countTV.setText(this.mExamSummary.getBackup_count()+"/20");
-        wishList_countTV.setText(this.mExamSummary.getShortlist_count()+"/20");
-        recommended_countTV.setText(this.mExamSummary.getRecommended_count()+"/10");
-        important_dateTV.setText(this.mExamSummary.getNext_important_date()+"/20");
+        backup_countTV.setText(""+this.mExamSummary.getBackup_count());
+        wishList_countTV.setText(""+this.mExamSummary.getShortlist_count());
+        recommended_countTV.setText(""+this.mExamSummary.getRecommended_count());
+        important_dateTV.setText(""+this.mExamSummary.getNext_important_date());
         covered_syllabus.setText(""+this.mExamSummary.getSyllabus_covered()+"%");
 
     }

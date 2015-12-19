@@ -2,7 +2,6 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +14,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.widget.CircleImageView;
-import com.collegedekho.app.widget.CircularProgressBar;
+import com.collegedekho.app.widget.CircularImageView;
 
 /**
  * Created by sureshsaini on 6/12/15.
@@ -56,7 +54,7 @@ public class TabFragment extends  BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
 
         TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
-        CircleImageView mProfileImage = (CircleImageView)rootView.findViewById(R.id.profile_image);
+        CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
 
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
