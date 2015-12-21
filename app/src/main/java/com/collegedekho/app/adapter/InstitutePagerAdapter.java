@@ -3,20 +3,24 @@ package com.collegedekho.app.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.util.Log;
 
+import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
+import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.Placements;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
-import com.collegedekho.app.fragment.InstituteAboutFragment;
+import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.InstituteCoursesFragment;
 import com.collegedekho.app.fragment.InstituteInfrastructureFragment;
+import com.collegedekho.app.fragment.InstituteNewsFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstitutePlacementFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
+import com.collegedekho.app.fragment.NewsFragment;
 
+import java.sql.Array;
 import java.util.ArrayList;
 
 /**
@@ -28,12 +32,16 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     private static final int COURSES_POSITION = 1;
     private static final int PLACEMENT_POSITION = 2;
     private static final int INFRA_POSITION = 3;
+    private static final int NEWS_POSITION = 4;
+    private static final int ARTICLE_POSITION = 5;
 
     private Institute mInstitute;
     private Placements p;
-    private int count = 4;
-    private InstituteCoursesFragment f;
-    private InstituteOverviewFragment o;
+    private int count = 6;
+    private InstituteCoursesFragment mCourseFragment;
+    private InstituteOverviewFragment mOverViewFragment;
+    private NewsFragment mNewsFragment;
+    private ArticleFragment mArticleFragment;
     private InstituteQnAFragment q;
     private ArrayList<ArrayList<InstituteCourse>> mCourses;
     private ArrayList<QnAQuestions> mQnAQuestions;
@@ -55,11 +63,17 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case OVERVIEW_POSITION:
-                this.o = InstituteOverviewFragment.newInstance(this.mInstitute);
-                return this.o;
+                this.mOverViewFragment = InstituteOverviewFragment.newInstance(this.mInstitute);
+                return this.mOverViewFragment;
             case COURSES_POSITION:
-                this.f = InstituteCoursesFragment.newInstance(this.mCourses, this.mInstitute);
-                return this.f;
+                this.mCourseFragment = InstituteCoursesFragment.newInstance(this.mCourses, this.mInstitute);
+                return this.mCourseFragment;
+            case NEWS_POSITION:
+                this.mNewsFragment = NewsFragment.newInstance(new ArrayList<News>(),"", null);
+                return this.mNewsFragment;
+            case ARTICLE_POSITION:
+                this.mArticleFragment = ArticleFragment.newInstance(new ArrayList<Articles>(),"", null);
+                return this.mArticleFragment;
             case PLACEMENT_POSITION:
                 InstitutePlacementFragment frag = InstitutePlacementFragment.newInstance(this.p, this.mInstitute);
                 return frag;
@@ -86,6 +100,10 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
                 return "PLACEMENTS";
             case INFRA_POSITION:
                 return "INFRASTRUCTURE";
+            case NEWS_POSITION:
+                return "NEWS";
+            case ARTICLE_POSITION:
+                return "ARTICLES";
         }
         return super.getPageTitle(position);
     }
@@ -96,8 +114,8 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
             mCourses.get(i).addAll(courses.get(i));
             count += courses.get(i).size();
         }
-        if (f != null)
-            f.updateData(count);
+        if (mCourseFragment != null)
+            mCourseFragment.updateData(count);
     }
 
     public void setQnAQuestions(ArrayList<QnAQuestions> qnaQuestions)
@@ -111,8 +129,8 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public void updateShortListButton() {
-        if (o != null)
-            o.updateShortListButton();
+        if (mOverViewFragment != null)
+            mOverViewFragment.updateShortListButton();
     }
 
     public void questionAdded(QnAQuestions ques)
@@ -127,9 +145,16 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     }
     public void updateCourseFragment()
     {
-        if(f!= null)
-        {
-            f.updateAdapter();
-        }
+        if(mCourseFragment != null)
+            mCourseFragment.updateAdapter();
+    }
+
+    public void updateInstituteNews(ArrayList<News> newsList, String next) {
+        if(mNewsFragment != null)
+            mNewsFragment.updateInstituteNewsList(newsList, next);
+    }
+    public void updateInstituteArticles(ArrayList<Articles> artiles, String next) {
+        if(mArticleFragment != null)
+            mArticleFragment.updateInstituteArticleList(artiles, next);
     }
 }

@@ -15,7 +15,9 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.CoverFlowAdapter;
+import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.GameEntity;
+import com.collegedekho.app.entities.News;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.InstitutePagerAdapter;
@@ -45,17 +47,19 @@ public class InstituteDetailFragment extends BaseFragment {
     public static final int Articles = 3;
 
     ArrayList<ArrayList<InstituteCourse>> courses;
+    ArrayList<News> mInstituteNewsList;
+    ArrayList<Articles> mInstituteArticleList;
     private Institute mInstitute;
     private InstitutePagerAdapter mDetailsAdapter;
     private FooterPagerAdapter mFo54oterAdapter;
-    //private TabLayout tabLayout;
     private ViewPager mDetailsPager;
     private ViewPager mFooterPager;
     private FeatureCoverFlow mCoverFlow;
     private CoverFlowAdapter mAdapter;
     private ArrayList<GameEntity> mData = new ArrayList<>(4);
     private InstituteDetailFragment.OnInstituteFooterItemSelected mListener;
-
+    private String nextArticleUrl;
+    private String nextNewsUrl;
 
 
     public InstituteDetailFragment() {
@@ -166,7 +170,25 @@ public class InstituteDetailFragment extends BaseFragment {
         //this.tabLayout.setupWithViewPager(this.mDetailsPager);
 
         //this.mDetailsPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(this.tabLayout));
+        this.mDetailsPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if(position == 4)
+                mDetailsAdapter.updateInstituteNews(mInstituteNewsList, nextNewsUrl);
+                if(position == 5)
+                    mDetailsAdapter.updateInstituteArticles(mInstituteArticleList, nextArticleUrl);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         return rootView;
     }
 
@@ -217,6 +239,17 @@ public class InstituteDetailFragment extends BaseFragment {
     public void updateInstituteShortlist()
     {
         mDetailsAdapter.updateShortListButton();
+    }
+
+    public void updateInstituteNews(ArrayList<News> newsList, String next) {
+        this.mInstituteNewsList = newsList;
+        this.nextNewsUrl = next;
+        mDetailsAdapter.updateInstituteNews( this.mInstituteNewsList, next);
+    }
+    public void updateInstituteArticle(ArrayList<Articles> articleList, String next) {
+        this.mInstituteArticleList = articleList;
+        this.nextArticleUrl = next;
+        mDetailsAdapter.updateInstituteArticles( this.mInstituteArticleList, next);
     }
 
     private class LoadCoursesAsyncTask extends AsyncTask<String, Void, Void> {

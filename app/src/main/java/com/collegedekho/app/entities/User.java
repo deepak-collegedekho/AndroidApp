@@ -211,6 +211,8 @@ public class User
     }
 
     public void processProfileData(Cursor cursor, Context context) {
+        if(cursor == null)return;
+
         Pattern emailPattern = Patterns.EMAIL_ADDRESS;
 
         if(emailPattern == null)return;

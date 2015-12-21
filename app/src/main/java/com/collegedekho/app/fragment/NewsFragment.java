@@ -82,27 +82,14 @@ public class NewsFragment extends BaseFragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_news, container, false);
-
-        if (this.mNewsList == null || this.mNewsList.size() <= 0) {
-            (rootView.findViewById(android.R.id.empty)).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
-            rootView.findViewById(R.id.view_into_grid_list).setVisibility(View.GONE);
-            return rootView;
-        }
-        else{
-
-            (rootView.findViewById(android.R.id.empty)).setVisibility(View.GONE);
-            rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.view_into_grid_list).setVisibility(View.VISIBLE);
-        }
-
         progressBarLL = (LinearLayout)rootView.findViewById(R.id.progressBarLL);
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
 
         (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
         (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
         (rootView).findViewById(R.id.news_detail_layout).setOnClickListener(this);
-       RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
-        if(this.mViewType == Constants.VIEW_INTO_GRID) {
+
+       if(this.mViewType == Constants.VIEW_INTO_GRID) {
             layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
             rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
             int padd = Utils.getPadding(getContext(), 60);
@@ -118,12 +105,14 @@ public class NewsFragment extends BaseFragment  {
         }
         recyclerView.setLayoutManager(layoutManager);
         updateViewTypeIcon(rootView, this.mViewType);
+
         this.mAdapter = new NewsListAdapter(getActivity(), new ArrayList<News>(), mViewType);
         recyclerView.setAdapter(this.mAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        mUpdateNewsDetail(rootView, this.mNewsList.get(0));
         recyclerView.addOnScrollListener(scrollListener);
+
+        mUpdateNewsListAdapter(rootView);
 
         return rootView;
     }
@@ -264,17 +253,46 @@ public class NewsFragment extends BaseFragment  {
     {
         mUpdateNewsDetail(getView(), news);
     }
+
     public void updateList(List<News> news, String next) {
        progressBarLL.setVisibility(View.GONE);
         this.mNewsList.addAll(news);
-        if(this.mViewType == Constants.VIEW_INTO_GRID)
-        {
-            mUpdateNewsDetail(getView(), mNewsList.get(0));
-        }
-        this.mAdapter.notifyDataSetChanged();
+        mUpdateNewsListAdapter(getView());
         loading = false;
         mNextUrl = next;
     }
+
+    public void updateInstituteNewsList(ArrayList<News> newsList, String next)
+    {
+        this.mNewsList = newsList;
+        mUpdateNewsListAdapter(getView());
+        mNextUrl = next;
+    }
+
+    private void mUpdateNewsListAdapter(View view){
+        if(view == null)return;
+
+        if (this.mNewsList == null || this.mNewsList.size() <= 0) {
+            view.findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
+            view.findViewById(R.id.view_into_grid_list).setVisibility(View.GONE);
+        }else{
+            view.findViewById(android.R.id.empty).setVisibility(View.GONE);
+            view.findViewById(R.id.view_into_grid_list).setVisibility(View.VISIBLE);
+
+            if(this.mViewType == Constants.VIEW_INTO_GRID)
+            {
+                view.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
+                if(mNewsList != null && !mNewsList.isEmpty())
+                    mUpdateNewsDetail(getView(), mNewsList.get(0));
+            }
+        }
+
+        this.mAdapter.updateNewsAdapter(this.mNewsList);
+        this.mAdapter.notifyDataSetChanged();
+
+    }
+
     public interface OnNewsSelectedListener extends  BaseListener{
         void onNewsSelected(News news, boolean flag);
 

@@ -235,7 +235,7 @@
                     android:id="@+id/important_dates_count"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="2/20"
+                    android:text="2015/02/03"
                     android:maxLines="1"
                     android:ellipsize="end"
                     android:gravity="right"
@@ -245,7 +245,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="colleges"
+                    android:text=""
                     android:gravity="right"
                     android:textSize="12sp"
                     android:textColor="@color/white"/>

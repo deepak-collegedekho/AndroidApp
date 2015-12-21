@@ -14,6 +14,7 @@ public class ExamDetail implements Parcelable
     private String exam_marks="";
     private String exam_name="";
     private String exam_short_name="";
+    private boolean isSelected;
 
     public ExamDetail(){
         // required empty cons
@@ -110,5 +111,13 @@ public class ExamDetail implements Parcelable
 
     public void setExam_short_name(String exam_short_name) {
         this.exam_short_name = exam_short_name;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

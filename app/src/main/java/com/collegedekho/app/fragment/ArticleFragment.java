@@ -20,6 +20,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ArticleListAdapter;
 import com.collegedekho.app.entities.Articles;
+import com.collegedekho.app.entities.News;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
@@ -80,28 +81,13 @@ public class ArticleFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_article, container, false);
+        progressBarLL = (LinearLayout)rootView.findViewById(R.id.progressBarLL);
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.article_list_recyclerView);
 
-        if (mArticlesList == null || mArticlesList.size() <= 0) {
-            (rootView.findViewById(android.R.id.empty)).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.article_list_recyclerView).setVisibility(View.GONE);
-            rootView.findViewById(R.id.article_detail_scrollView).setVisibility(View.GONE);
-            rootView.findViewById(R.id.view_into_grid_list).setVisibility(View.GONE);
-            return rootView;
-        }
-        else{
-            (rootView.findViewById(android.R.id.empty)).setVisibility(View.GONE);
-            rootView.findViewById(R.id.article_list_recyclerView).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.article_detail_scrollView).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.view_into_grid_list).setVisibility(View.VISIBLE);
-        }
 
         (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
         (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
         (rootView).findViewById(R.id.article_detail_layout).setOnClickListener(this);
-
-        progressBarLL = (LinearLayout)rootView.findViewById(R.id.progressBarLL);
-
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.article_list_recyclerView);
         if(mViewType == Constants.VIEW_INTO_GRID) {
             layoutManager =new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
             rootView.findViewById(R.id.article_detail_scrollView).setVisibility(View.VISIBLE);
@@ -121,8 +107,9 @@ public class ArticleFragment extends BaseFragment {
         recyclerView.setAdapter(this.mAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        mUpdateArticleDetail(rootView, this.mArticlesList.get(0));
         recyclerView.addOnScrollListener(scrollListener);
+
+        mUpdateArticleListAdapter(rootView);
         return rootView;
     }
 
@@ -261,14 +248,46 @@ public class ArticleFragment extends BaseFragment {
     public void updateList(List<Articles> article, String next) {
         progressBarLL.setVisibility(View.GONE);
         this.mArticlesList.addAll(article);
-        if(this.mViewType == Constants.VIEW_INTO_GRID)
-        {
-            mUpdateArticleDetail(getView(), mArticlesList.get(0));
-        }
-        mAdapter.notifyDataSetChanged();
+        mUpdateArticleListAdapter(getView());
         loading = false;
         mNextUrl = next;
     }
+
+    public void updateInstituteArticleList(ArrayList<Articles> artiles, String next) {
+
+        this.mArticlesList = artiles;
+        mUpdateArticleListAdapter(getView());
+        mNextUrl = next;
+    }
+
+    private void mUpdateArticleListAdapter(View view){
+        if(view == null)return;
+
+        if (mArticlesList == null || mArticlesList.size() <= 0) {
+            view.findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.article_list_recyclerView).setVisibility(View.GONE);
+            view.findViewById(R.id.article_detail_scrollView).setVisibility(View.GONE);
+            view.findViewById(R.id.view_into_grid_list).setVisibility(View.GONE);
+        }
+        else{
+            view.findViewById(android.R.id.empty).setVisibility(View.GONE);
+            view.findViewById(R.id.article_list_recyclerView).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.view_into_grid_list).setVisibility(View.VISIBLE);
+        }
+
+
+        if(this.mViewType == Constants.VIEW_INTO_GRID)
+            {
+                view.findViewById(R.id.article_detail_scrollView).setVisibility(View.VISIBLE);
+                if(mArticlesList != null && !mArticlesList.isEmpty())
+                    mUpdateArticleDetail(getView(), mArticlesList.get(0));
+            }
+
+        this.mAdapter.updateArticleAdapter(this.mArticlesList);
+        this.mAdapter.notifyDataSetChanged();
+
+    }
+
     public interface OnArticleSelectedListener extends  BaseListener{
         void onArticleSelected(Articles article, boolean flag);
             @Override

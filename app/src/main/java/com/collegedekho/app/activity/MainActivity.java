@@ -213,7 +213,6 @@ public class MainActivity extends AppCompatActivity
 
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
-    private int backPressCount =0;
 
     public static NetworkUtils networkUtils;
     private ActionBarDrawerToggle mToggle;
@@ -363,12 +362,15 @@ public class MainActivity extends AppCompatActivity
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(currentFragment instanceof SyllabusSubjectsListFragment)
+                    ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
+                else if (currentFragment instanceof CalendarParentFragment)
+                    ((CalendarParentFragment)currentFragment).submitCalendarData();
                 mClearBackStack();
             }
         });
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-
     }
 
 
@@ -496,7 +498,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        backPressCount=0;
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
         AppsFlyerLib.onActivityResume(this);
@@ -927,7 +928,10 @@ public class MainActivity extends AppCompatActivity
             this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE);
 
         this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
-        this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS, mInstitute.getResource_uri() + "qna/", null, Request.Method.GET);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id) , null);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id) , null);
+
+        //this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS, mInstitute.getResource_uri() + "qna/", null, Request.Method.GET);
     }
 
     private void loadPyschometricTest(String response) {
@@ -1061,6 +1065,12 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_LOAD_COURSES:
                 this.mUpdateCourses(response);
+                break;
+            case Constants.TAG_LOAD_INSTITUTE_NEWS:
+                this.mUpdateInstituteNews(response);
+                break;
+            case Constants.TAG_LOAD_INSTITUTE_ARTICLE:
+                this.mUpdateInstituteArticle(response);
                 break;
             case Constants.TAG_APPLIED_COURSE:
                 String tabPosition = null;
@@ -1269,14 +1279,13 @@ public class MainActivity extends AppCompatActivity
                     mOnPsychometricTestCompleted(parentIndex, childIndex, response);
                 }
                 break;
-            case Constants.TAG_PSYCHOMETRIC_RESPONSE:
 
-                break;
         }
 
         if (this.progressDialog != null && this.progressDialog.isShowing())
             this.progressDialog.dismiss();
     }
+
 
     private void mOnPsychometricTestCompleted(String streamId, String streaName, String response) {
 
@@ -1866,6 +1875,41 @@ public class MainActivity extends AppCompatActivity
         try {
             if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
                 ((InstituteDetailFragment) currentFragment).updateCourses(response);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    /**
+     * This method is used to update institute articles
+     * @param response
+     */
+    private void mUpdateInstituteArticle(String response) {
+        try {
+
+            this.mArticlesList  =  JSON.std.listOfFrom(Articles.class, extractResults(response));
+            this.mParseSimilarArticle(this.mArticlesList );
+
+            if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
+                ((InstituteDetailFragment) currentFragment).updateInstituteArticle((ArrayList)this.mArticlesList , next);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+    /**
+     * This method is used to update institute news
+     * @param response
+     */
+    private void mUpdateInstituteNews(String response) {
+        try {
+
+            this.mNewsList  =  JSON.std.listOfFrom(News.class, extractResults(response));
+            this.mParseSimilarNews(this.mNewsList );
+
+            if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
+                ((InstituteDetailFragment) currentFragment).updateInstituteNews((ArrayList)this.mNewsList , next);
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -2899,12 +2943,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         int backStackCount=getSupportFragmentManager().getBackStackEntryCount();
-      /*  DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else*/ if(backStackCount == 0 && backPressCount == 0) {
+      if(backStackCount == 0 && !Constants.READY_TO_CLOSE) {
             Constants.READY_TO_CLOSE = true;
-            backPressCount++;
             Utils.DisplayToast(getApplicationContext(), "Press again to close CollegeDekho");
             baskpressHandler.postDelayed(backpressRunnable,1500);
         }
@@ -3661,7 +3701,6 @@ public class MainActivity extends AppCompatActivity
     Runnable backpressRunnable = new Runnable() {
         @Override
         public void run() {
-            backPressCount = 0;
             Constants.READY_TO_CLOSE = false;
         }
     };

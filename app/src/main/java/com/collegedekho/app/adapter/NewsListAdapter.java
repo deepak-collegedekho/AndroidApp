@@ -131,6 +131,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
     }
 
     public void updateNewsAdapter(ArrayList<News> newsList){
+        if(newsList == null)return;
         this.mNewsList = newsList;
         notifyDataSetChanged();
     }

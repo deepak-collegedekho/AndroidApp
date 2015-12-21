@@ -129,6 +129,8 @@ public class Constants
     public static final String TAG_NAME_UPDATED = "name_updated";
     public static final String SUBMITTED_CHAPTER_STATUS = "chapter_submitted";
     public static final String TAG_PSYCHOMETRIC_TEXT_COMPLETED = "psychometric_text_completed";
+    public static final String TAG_LOAD_INSTITUTE_NEWS = "institute_news";
+    public static final String TAG_LOAD_INSTITUTE_ARTICLE = "institute_article";
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET;
     public static final int MY_FB_REFRESH_RATE = 5000;

@@ -56,6 +56,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                 for (int i = 0; i < count; i++) {
                     ExamDetail obj = examDetail.get(i);
                     if(obj == null)continue;
+                    if(i==0)obj.setSelected(true);
                     year[i] = obj.getYear();
                 }
                 holder.mYearSpinner.setAdapter(new ArrayAdapter<>(this.mContext, R.layout.spinner_drop_down_item, year));
@@ -69,6 +70,17 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
 
                         }else{
                         }
+                        // make all exam detail selected false;
+                        ArrayList<ExamDetail> examDetail = exam.getExam_details();
+                        if(examDetail != null) {
+                            final int count = examDetail.size();
+                            for (int i = 0; i < count; i++) {
+                                ExamDetail obj = examDetail.get(i);
+                                if (obj == null) continue;
+                                obj.setSelected(false);
+                            }
+                        }
+                        examDetail.get(position).setSelected(true);
                     }
 
                     @Override
@@ -115,7 +127,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                             }
                             holder.mYearSpinner.setSelected(v.isSelected());
                         }
-                        exam.setSelected(!holder.mExamName.isSelected());
+                        exam.setSelected(holder.mExamName.isSelected());
                     }
                 });
             }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.text.TextUtilsCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import com.collegedekho.app.adapter.ExamsAdapter;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
 
 import org.json.JSONArray;
@@ -136,20 +138,25 @@ public class ExamsFragment extends BaseFragment {
     }
 
     private void onExamsSelected() {
+        boolean isExamSelected = false;
         if(this.mListener != null) {
             JSONObject parentJsonObject=new JSONObject();
             JSONArray parentArray=new JSONArray();
             if(mExamList != null && !mExamList.isEmpty()) {
                 for (Exam exam:mExamList) {
                     if(exam == null)continue;
+                    if(!exam.isSelected())continue;
                     ArrayList<ExamDetail> detailList = exam.getExam_details();
                     if(detailList != null && !detailList.isEmpty()) {
                         for (ExamDetail examDetailObj:detailList) {
+                            if(!examDetailObj.isSelected())continue;
                             JSONObject examHash = new JSONObject();
                             try {
+
                                 examHash.putOpt(Constants.EXAM_ID,examDetailObj.getId());
                                 examHash.putOpt(Constants.MARKS,examDetailObj.getExam_marks());
                                 parentArray.put(examHash);
+                               isExamSelected = true;
 
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -163,6 +170,10 @@ public class ExamsFragment extends BaseFragment {
                 parentJsonObject.put(Constants.RESULTS,parentArray);
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+            if(!isExamSelected){
+                Utils.DisplayToast(getActivity(),"Please Select a Exam");
+                return;
             }
             this.mListener.onExamsSelected(parentJsonObject);
         }

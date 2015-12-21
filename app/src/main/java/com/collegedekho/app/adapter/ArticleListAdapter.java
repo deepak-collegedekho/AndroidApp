@@ -128,7 +128,9 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
     public int getItemCount() {
         return mArticles.size();
     }
+
     public void updateArticleAdapter(ArrayList<Articles> articleList){
+        if(this.mArticles == null)return;
         mArticles = articleList;
         notifyDataSetChanged();
     }
