@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.ChapterDetails;
+import com.collegedekho.app.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -38,6 +39,7 @@ public class CalendarItemDetailsAdapter extends RecyclerView.Adapter<CalendarIte
     public void onBindViewHolder(CalendarItemDetailView holder, int position) {
         ChapterDetails chapterDetails = itemList.get(position);
         holder.chapterName.setText(chapterDetails.getChapter_name());
+        holder.chapterName.setTextColor(Utils.getSubjectColor(Integer.valueOf(chapterDetails.getSubject_id())));
         holder.itemCheck.setChecked(chapterDetails.isSelected());
     }
 

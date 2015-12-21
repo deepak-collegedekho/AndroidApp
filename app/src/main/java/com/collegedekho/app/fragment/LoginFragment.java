@@ -226,11 +226,11 @@ public class LoginFragment extends  BaseFragment{
             mUserSignUp(hashMap);
         }*/
     }
-    private void mUserSignUp(HashMap params)
+   /* private void mUserSignUp(HashMap params)
     {
         if(mListener != null)
             mListener.onSplashUserSignUp(params);
-    }
+    }*/
 
     private void mSkipUserLogin()
     {
@@ -244,23 +244,10 @@ public class LoginFragment extends  BaseFragment{
             mListener.onFacebookLogin(params);
     }
 
-    private static boolean isValidEmail(CharSequence target) {
-        return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
-    }
-
-    private static boolean isValidPhone(CharSequence target) {
-        return target != null && Patterns.PHONE.matcher(target).matches();
-    }
-
-    private static boolean isValidName(CharSequence target) {
-        Pattern ps = Pattern.compile("^[a-zA-Z ]+$");
-        Matcher ms = ps.matcher(target);
-        return ms.matches();
-    }
 
     public interface OnUserSignUpListener {
 
-      void onSplashUserSignUp(HashMap<String,String> params);
+      //void onSplashUserSignUp(HashMap<String,String> params);
 
         void onSkipUserLogin();
 

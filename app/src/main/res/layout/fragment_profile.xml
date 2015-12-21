@@ -1,36 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/app_background"
     android:weightSum="1">
-        <android.support.v4.view.ViewPager
-            android:id="@+id/exam_detail_pager"
-            android:layout_height="0dp"
-            android:layout_weight=".05"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            >
-            <android.support.v4.view.PagerTabStrip
-                android:id="@+id/exam_pager_header"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="top"
-                android:textColor="#fff"
-                android:background="@color/primaryColor"
-                android:scrollbars="none"
-                app:layout_scrollFlags="scroll|enterAlways"
-                app:tabMode="scrollable"
-                />
-        </android.support.v4.view.ViewPager>
+
+    <include layout="@layout/layout_exam_tabs"
+        android:layout_height="0dp"
+        android:layout_weight=".05"
+        android:layout_width="match_parent"/>
 
     <RelativeLayout
         android:id="@+id/check_gesture"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".3">
+        android:layout_weight=".3"
+        android:layout_gravity="center">
 
         <include layout="@layout/layout_profile_image"
             android:id="@+id/include_image_layout"
@@ -43,6 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/m10dp"
+            android:gravity="center"
             android:layout_toRightOf="@id/include_image_layout">
 
             <TextView
@@ -58,10 +45,11 @@
                 android:textSize="18sp"/>
 
             <LinearLayout
-                android:id="@+id/profile_progressLL"
+                android:id="@+id/profile_syllabus_statusLL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/user_name"
+                android:gravity="center"
                 android:weightSum="1">
 
                 <LinearLayout
@@ -80,7 +68,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         android:text="COMPLETED"/>
                 </LinearLayout>
                 <TextView
@@ -91,7 +79,9 @@
                     android:paddingRight="10dp"
                     android:textSize="30sp"
                     android:textColor="@color/light_blue"
-                    android:text="0%"
+                    android:text="25%"
+                    android:gravity="top"
+                    android:layout_gravity="top"
                     />
 
             </LinearLayout>
@@ -101,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/m5dp"
                 android:visibility="gone"
-                android:layout_below="@id/profile_progressLL"
+                android:layout_below="@id/profile_syllabus_statusLL"
                 android:weightSum="1">
                 <LinearLayout
                     android:layout_width="0dp"

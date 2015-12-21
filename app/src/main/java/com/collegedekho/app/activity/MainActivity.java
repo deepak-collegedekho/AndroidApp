@@ -23,7 +23,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.CursorLoader;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -33,7 +32,6 @@ import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -66,6 +64,8 @@ import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.PsychometricTestQuestion;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
+import com.collegedekho.app.entities.StepByStepQuestion;
+import com.collegedekho.app.entities.StepByStepResult;
 import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.Subjects;
 import com.collegedekho.app.entities.User;
@@ -79,7 +79,6 @@ import com.collegedekho.app.fragment.NotPreparingFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FilterFragment;
-import com.collegedekho.app.fragment.HomeFragment;
 import com.collegedekho.app.fragment.InstituteDetailFragment;
 import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
@@ -92,6 +91,7 @@ import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.ProfileFragment1;
+import com.collegedekho.app.fragment.PsychometricTestFragment;
 import com.collegedekho.app.fragment.PsychometricTestParentFragment;
 import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
@@ -103,6 +103,7 @@ import com.collegedekho.app.fragment.TabFragment;
 import com.collegedekho.app.fragment.UserEducationFragment;
 import com.collegedekho.app.fragment.WidgetListFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
+import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.resource.Constants;
@@ -175,7 +176,7 @@ SOFTWARE.*/
 public class MainActivity extends AppCompatActivity
         implements  LoaderManager.LoaderCallbacks<Cursor>,ExamsFragment.OnExamsSelectListener,
         ProfileFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
-        HomeFragment.OnHomeInteractionListener, DataLoadListener,
+        DataLoadListener,
         StreamFragment.OnStreamInteractionListener,AdapterView.OnItemSelectedListener,
         InstituteListFragment.OnInstituteSelectedListener,
         InstituteShortlistFragment.OnShortlistedInstituteSelectedListener,
@@ -188,9 +189,11 @@ public class MainActivity extends AppCompatActivity
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleFragment.OnArticleSelectedListener,
         ProfileFragment1.onProfileUpdateListener,
         LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener,
-        InstituteDetailFragment.OnInstituteFooterItemSelected, UserEducationFragment.OnUserEducationInteractionListener,NotPreparingFragment.OnTestOptionsListener,
+        InstituteDetailFragment.OnInstituteFooterItemSelected, UserEducationFragment.OnUserEducationInteractionListener,
         PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
-        SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData
+        SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData,
+        NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener
+
 {
 
     static {
@@ -254,7 +257,7 @@ public class MainActivity extends AppCompatActivity
     // private CharSequence mTitle;
     public static User user;
     private User.Prefs userPref;
-    private boolean completedStage2;
+    private boolean IS_USER_CREATED;
     static String type = "";
     static String resource_uri = "";
     private  HashMap<String, String> mUserSignUPParams;
@@ -560,95 +563,73 @@ public class MainActivity extends AppCompatActivity
                 }
             }
 
-            this.completedStage2 = sp.getBoolean(Constants.COMPLETED_SECOND_STAGE, false);
+            this.IS_USER_CREATED = sp.getBoolean(Constants.USER_CREATED, false);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
-
     }
+
     public void loadInItData()
     {
-        if (user != null && user.getPref() == User.Prefs.STREAMKNOWN) {
+        if (IS_USER_CREATED) {
             // if user is anonymous  then logout from facebook
             if(user.is_anony())
                 disconnectFromFacebook();
+            this.mLoadUserStatusScreen();
 
-            if (!completedStage2)
-                MainActivity.this.mSetUserPref();
-            else
-                this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
-
-        } else {
+        }else{
             disconnectFromFacebook();
              MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
         }
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    public void onHomeItemSelected(User.Prefs preference) {
-        this.userPref = preference;
-        requestUserCreation();
-    }
-
-    private void requestUserCreation() {
-        if (MainActivity.user == null)
-            this.mMakeNetworkCall(Constants.TAG_CREATE_USER, Constants.BASE_URL + "users/anonymous/", new HashMap<String, String>());
-        else {
-            MainActivity.user.setPref(this.userPref);
-            this.mSetUserPref();
-        }
-    }
-
+    /**
+     * This method is called when first time anonymous user is created
+     * @param json
+     */
     private void mUserCreated(String json) {
         try {
             MainActivity.user = JSON.std.beanFrom(User.class, json);
             MainActivity.user.setPref(this.userPref);
             this.networkUtils.setToken(MainActivity.user.getToken());
-
             this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()));
 
             String u = JSON.std.asString(MainActivity.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.USER_CREATED, true).commit();
 
-            this.mSetUserPref();
+            this.mLoadUserStatusScreen();
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
+    /**
+     * This method is used to load screens according to user status
+     * if education and exam is selected then load profile screen
+     * if education is selected but exam is not selected then load exams screen
+     * if both are not selected then load education screen
+     *
+     */
 
-    private void mSetUserPref() {
-        switch (user.getPref()) {
-            case NOT_SURE:
-                this.mMakeNetworkCall(Constants.TAG_LOAD_PYSCHOMETRIC_TEST, Constants.BASE_URL + "psychometrictests/", null);
-                break;
-            case STREAMKNOWN:
-                //this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
-                this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION, Constants.BASE_URL + "user-education/", null);
+    private void mLoadUserStatusScreen() {
 
-                break;
-        }
+        if(this.user.getEducation_set() == 1 &&  this.user.getExams_set() == 1)
+            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
+        else if(this.user.getEducation_set() == 1 &&  this.user.getExams_set() == 0)
+            this.mMakeNetworkCall(Constants.TAG_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
+        else
+            this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION,  Constants.BASE_URL + "user-education/", null);
+
     }
 
+    /**
+     * This method is used to split response json
+     * with result , filter and next tags
+     * @param response
+     * @return
+     */
     public String extractResults(String response) {
         try {
             Map<String, Object> map = JSON.std.mapFrom(response);
@@ -672,6 +653,18 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayStreams(String response, boolean addToBackstack) {
         try {
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, extractResults(response));
+            this.mDisplayFragment(StreamFragment.newInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    private void mDisplayStreamsSelection(String response, boolean addToBackstack) {
+        try {
+            Map<String, Object> map = JSON.std.mapFrom(response);
+            String results=JSON.std.asString(map.get("results"));
+            List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
+            this.mClearBackStack();
             this.mDisplayFragment(StreamFragment.newInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -1023,26 +1016,37 @@ public class MainActivity extends AppCompatActivity
 
         switch (tags[0]) {
             case Constants.TAG_SKIP_LOGIN:
-            case Constants.TAG_CREATE_USER:
                 this.mUserCreated(response);
-                break;
-            case Constants.TAG_CREATE_ANONY_USER:
-                this.mCreatedAnonymousUser(response);
                 break;
             case Constants.TAG_CREATE_FACEBOOK_ANONY_USER_:
                 this.mCreatedFacebookAnonymousUser(response);
                 break;
-            case Constants.TAG_USER_SIGNUP:
-                this.mUserSignUpResponse(response);
-                break;
             case Constants.TAG_USER_FACEBOOK_LOGIN:
                 this.mUserFacebookLoginResponse(response);
                 break;
-            case Constants.TAG_LOAD_STREAM:
-                this.mDisplayStreams(response, true);
+            case Constants.TAG_USER_EDUCATION:
+                this.mDisplayUserEducationFragment(response);
+                break;
+            case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
+                this.mOnUserEducationResponse(response);
+                break;
+            case Constants.TAG_USER_EDUCATION_SET:
+                this.mUserEducationStepCompleted(response);
+                break;
+            case Constants.TAG_EXAMS_LIST:
+                this.mOnExamsLoaded(response);
+                break;
+            case Constants.TAG_SUBMIT_EXAMS_LIST:
+                this.mOnUserExamsSelected(response);
+                break;
+            case Constants.TAG_USER_EXAMS_SET:
+                this.mUserExamStepCompleted(response);
                 break;
             case Constants.TAG_EXAM_SUMMARY:
                 this.mUpdateExamDetail(response);
+                break;
+            case Constants.TAG_LOAD_STREAM:
+                this.mDisplayStreams(response, true);
                 break;
             case Constants.WIDGET_SHORTLIST:
                 this.mDisplayShortlistedInstituteList(response);
@@ -1079,9 +1083,6 @@ public class MainActivity extends AppCompatActivity
                     tabPosition = tags[2];
                 }
                 this.mUpdateAppliedCourses(response, extraTag, tabPosition);
-                break;
-            case Constants.TAG_LOAD_HOME:
-                this.mUpdateHome(response);
                 break;
             case Constants.TAG_POST_QUESTION:
                 this.mInstituteQnAQuestionAdded(response);
@@ -1242,18 +1243,8 @@ public class MainActivity extends AppCompatActivity
             case Constants.SEARCHED_INSTITUTES:
                 this.mDisplayInstituteList(response, true);
                 break;
-            case Constants.TAG_USER_EDUCATION:
-                this.mDisplayUserEducationFragment(response);
-                break;
-            case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
-                this.mOnUserEducationResponse(response);
-                break;
-            case Constants.TAG_EXAMS_LIST:
-                this.mOnExamsLoaded(response);
-                break;
-            case Constants.TAG_SUBMIT_EXAMS_LIST:
-                this.mOnExamsSubmitted(response);
-                break;
+
+
             case Constants.WIDGET_SYLLABUS:
                 this.mDisplayExamSyllabusFragment(response);
                 break;
@@ -1270,7 +1261,7 @@ public class MainActivity extends AppCompatActivity
                 this.onPsychometricTestResponse(response);
                 break;
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
-                this.mOnPsychometricTestSubmitted(response);
+                this.mDisplayStreamsSelection(response, false);
                 break;
             case Constants.TAG_PSYCHOMETRIC_TEXT_COMPLETED:
                 if (tags.length > 2) {
@@ -1279,12 +1270,22 @@ public class MainActivity extends AppCompatActivity
                     mOnPsychometricTestCompleted(parentIndex, childIndex, response);
                 }
                 break;
-
+            case Constants.TAG_LOAD_STEP_BY_STEP:
+                if (tags.length > 1) {
+                    parentIndex = tags[1];
+                    childIndex = tags[2];
+                    this.mDisplayStepByStepQuestion(response, parentIndex, childIndex);
+                }
+                break;
+            case Constants.TAG_SUBMIT_SBS_EXAM:
+                this.mStepByStepDone(response);
+                break;
         }
 
         if (this.progressDialog != null && this.progressDialog.isShowing())
             this.progressDialog.dismiss();
     }
+
 
 
     private void mOnPsychometricTestCompleted(String streamId, String streaName, String response) {
@@ -1301,7 +1302,7 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+       this.mClearBackStack();
         this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
 
     }
@@ -1348,6 +1349,74 @@ public class MainActivity extends AppCompatActivity
 
             this.mDisplayFragment(UserEducationFragment.newInstance(userEducationList), false, Constants.TAG_FRAGMENT_USER_EDUCATION);
             //this.mDisplayFragment(MyAlertFragment.newInstance(userEducationList), false, MyAlertFragment.class.getName());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This method is used to display step by step questions
+     *
+     * @param response
+     */
+    private void mDisplayStepByStepQuestion(String response, String currentLevel, String questionSetCount){
+        try {
+            //set current level
+            StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.valueOf(currentLevel));
+
+            response = response.substring(13, response.length() - 1);
+
+            ArrayList<StepByStepQuestion> stepByStepQuestions = (ArrayList<StepByStepQuestion>) JSON.std.listOfFrom(StepByStepQuestion.class, response);
+
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(StepByStepFragment.class.getSimpleName());
+
+            if (fragment == null)
+            {
+                StepByStepFragment stepByStepFragment = StepByStepFragment.newInstance(stepByStepQuestions);
+                this.mDisplayFragment(stepByStepFragment, true, StepByStepFragment.class.getSimpleName());
+            }
+            else {
+                if (fragment instanceof StepByStepFragment)
+                    ((StepByStepFragment) fragment).updateQuestionSet(stepByStepQuestions, Integer.parseInt(questionSetCount));
+
+                this.mDisplayFragment(fragment, false, StepByStepFragment.class.getSimpleName());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This method is used to display step by step results
+     *
+     * @param response
+     */
+    private void mStepByStepDone(String response){
+        try {
+            StepByStepResult sbsResult = JSON.std.beanFrom(StepByStepResult.class, response);
+            //sbsResult
+            MainActivity.user.setStream_name(sbsResult.getStream_name());
+            MainActivity.user.setStream(String.valueOf(sbsResult.getStream_id()));
+
+            String u = null;
+            u = JSON.std.asString(MainActivity.user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+
+            int count = 0;
+            Map<String, String> filterKeywords = new HashMap<>();
+
+            for (int n = 0; n < sbsResult.getTags().size(); n++)
+                filterKeywords.put("tag_uris[" + (count++) + "]", sbsResult.getTags().get(n));
+
+            this.mFilterKeywords = filterKeywords;
+            this.mFilterCount = this.mFilterKeywords.size();
+
+                //save preferences.
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
+
+            //move to profile
+            this.mLoadUserProfile(null);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1416,7 +1485,7 @@ public class MainActivity extends AppCompatActivity
     private void mStreamAndLevelSelected(String response, String level, String stream, String streamName) {
         //Retrieve token from pref to save it across the pref updates
 
-        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.USER_CREATED, true).commit();
 
         String token = user.getToken();
         String image = user.getImage();
@@ -1450,7 +1519,7 @@ public class MainActivity extends AppCompatActivity
         //Send event to connecto for stream and level selection
         this.connecto.track("Stream Selected", new Properties().putValue(Constants.USER_STREAM_NAME, user.getStream_name()));
         this.connecto.track("Level Selected", new Properties().putValue(Constants.USER_LEVEL_NAME, user.getLevel_name()));
-
+        this.mClearBackStack();
     }
 
     private void mUpdateUserPref(String response) {
@@ -1477,7 +1546,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             if (stream != "" && level != "") {
-                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
+                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.USER_CREATED, true).commit();
 
                 try {
                     String u = JSON.std.asString(user);
@@ -1488,12 +1557,11 @@ public class MainActivity extends AppCompatActivity
                     hashMap.put("level", Constants.BASE_URL + "level/" + user.getLevel() + "/");
 
                     this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + user.getLevel() + "#" + user.getStream(), Constants.BASE_URL + "preferences/", hashMap);
-                    this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
-                } catch (IOException e) {
+                    } catch (IOException e) {
                     Log.e(TAG, e.getMessage());
                 }
             } else if (stream != "" && level == "") {
-                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
+                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.USER_CREATED, true).commit();
 
                 try {
                     String u = JSON.std.asString(user);
@@ -1503,8 +1571,7 @@ public class MainActivity extends AppCompatActivity
                     hashMap.put("stream",Constants.BASE_URL + "streams/" + user.getStream() + "/");
 
                     this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + user.getLevel() + "#" + user.getStream(), Constants.BASE_URL + "preferences/", hashMap);
-                    this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
-                } catch (IOException e) {
+                        } catch (IOException e) {
                     Log.e(TAG, e.getMessage());
                 }
             }
@@ -1665,6 +1732,7 @@ public class MainActivity extends AppCompatActivity
             ((InstituteShortlistFragment) currentFragment).updateShortlistButton(Integer.parseInt(extraTag));
         //Toast.makeText(this, institute.getShort_name() + message, Toast.LENGTH_SHORT).show();
     }
+
     private void updateShortlistInstitute(String response, String extraTag)
     {
         Institute institute = this.mInstituteList.get(Integer.parseInt(extraTag));
@@ -1724,14 +1792,11 @@ public class MainActivity extends AppCompatActivity
                     similarNewsIds.add(id);
                 }
             } catch (JSONException e) {
-
                 Log.e(MainActivity.class.getSimpleName(), e.getMessage() + e.getCause());
-
             }
             news.setSimilarNewsIds(similarNewsIds);
         }
     }
-
 
     private void mDisplayArticles(String response) {
         try {
@@ -1744,7 +1809,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mParseSimilarArticle(List articleList) {
-
         if (articleList == null) {
             return;
         }
@@ -1772,16 +1836,14 @@ public class MainActivity extends AppCompatActivity
 
     public static String GetPersonalizedMessage(String tag) {
         switch (tag) {
-            case Constants.TAG_CREATE_USER:
+
+            case Constants.TAG_SKIP_LOGIN:
             case Constants.TAG_CREATE_ANONY_USER:
-            case Constants.TAG_USER_SIGNUP:
-                return "Creating a user...";
+                return "Loading....";
             case Constants.TAG_USER_REGISTRATION :
                 return "Creating User Please Wait";
             case Constants.TAG_USER_LOGIN:
                 return "Signing User Please Wait.....";
-            case Constants.TAG_SKIP_LOGIN:
-                return "Loading Streams.....";
             case Constants.TAG_LOAD_STREAM:
             case Constants.TAG_UPDATE_STREAM:
                 return "Loading Streams...";
@@ -1805,8 +1867,6 @@ public class MainActivity extends AppCompatActivity
                 return "Loading Articles...";
             case Constants.WIDGET_COURSES:
                 return "Loading Courses...";
-            case Constants.TAG_LOAD_HOME:
-                return "Loading...";
             case Constants.TAG_POST_QUESTION:
                 return "Posting your question...";
             case Constants.TAG_LOAD_FILTERS:
@@ -2101,8 +2161,7 @@ public class MainActivity extends AppCompatActivity
             MainActivity.user.setStream_name(streamName);
 
         this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, Constants.BASE_URL + "preferences/", hashMap);
-        //this.mMakeNetworkCall(Constants.TAG_LOAD_HOME, Constants.BASE_URL + "widgets/", null);
-    }
+          }
 
     @Override
     public void onInstituteSelected(int position) {
@@ -2345,9 +2404,7 @@ public class MainActivity extends AppCompatActivity
      */
     private Map mGetTheFilters() {
         Map<String, String> map = new HashMap<>();
-
         SharedPreferences sp = getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
-
         String value = sp.getString(Constants.SELECTED_FILTERS, null);
 
         if (value != null && value != "") {
@@ -2996,55 +3053,16 @@ public class MainActivity extends AppCompatActivity
     public void onUserSignUp(String url, HashMap hashMap, String msg) {
         this.mMakeNetworkCall(Constants.TAG_USER_REGISTRATION + "#" + msg, url, hashMap);}
 
-    /**
-     * This method is used to sign Up User
-     * @param params request data
-     */
-    @Override
-    public void onSplashUserSignUp(HashMap<String, String> params) {
-        this.userPref = User.Prefs.STREAMKNOWN;
-        this.mMakeNetworkCall(Constants.TAG_CREATE_ANONY_USER, Constants.BASE_URL + "users/anonymous/", params);
-        this.mUserSignUPParams = params;
 
-    }
     /**
      * This method is called when user skip
      *  registration or facebook login
      */
     @Override
     public void onSkipUserLogin() {
-        this.userPref = User.Prefs.STREAMKNOWN;
         this.mMakeNetworkCall(Constants.TAG_SKIP_LOGIN, Constants.BASE_URL + "users/anonymous/", new HashMap<String, String>());
     }
 
-    private void  mCreatedAnonymousUser(String json)
-    {
-        try {
-            this.user = JSON.std.beanFrom(User.class, json);
-           // this.user.setPref(this.userPref);
-            this.networkUtils.setToken(this.user.getToken());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.mMakeNetworkCall(Constants.TAG_USER_SIGNUP, Constants.BASE_URL + "auth/register/", this.mUserSignUPParams);
-    }
-
-
-    private void mUserSignUpResponse(String json)
-    {
-        User tempUser = this.user;
-        try {
-            this.user = JSON.std.beanFrom(User.class, json);
-            this.user.setToken(tempUser.getToken());
-            this.user.setPref(this.userPref);
-            String u = JSON.std.asString(this.user);
-            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.mSetUserPref();
-    }
 
     /**
      * This method is used to login with facebook account
@@ -3089,16 +3107,13 @@ public class MainActivity extends AppCompatActivity
             this.user.setImage(tempUser.getImage());
             this.user.setPref(this.userPref);
             String u = JSON.std.asString(this.user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.USER_CREATED, true).commit();
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(this.user.getLevel() == null || this.user.getStream() == null )
-            this.mSetUserPref();
-        else
-            this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION,  Constants.BASE_URL + "user-education/", null);
-
+        this.mLoadUserStatusScreen();
     }
 
     /**
@@ -3120,9 +3135,6 @@ public class MainActivity extends AppCompatActivity
         }).executeAsync();
     }
 
-
-
-
     /**
      * This method is used to sign in with any social site
      * @param url social site url
@@ -3133,7 +3145,6 @@ public class MainActivity extends AppCompatActivity
     public void onUserSignIn(String url, HashMap hashMap, String msg) {
         this.mMakeNetworkCall(Constants.TAG_USER_LOGIN + "#" + msg, url, hashMap);
     }
-
 
     /***
      * This method is called when user sign Up successfully
@@ -3170,7 +3181,6 @@ public class MainActivity extends AppCompatActivity
      * @param response response json send  by server
      * @param msg MyFb comment message
      */
-
     public void onUserSignInResponse(String response, String msg) {
 
         User tempUser = user;
@@ -3193,6 +3203,44 @@ public class MainActivity extends AppCompatActivity
         showMyFbMessage(msg);
 
     }
+
+    private void mOnUserExamsSelected(String response) {
+
+        Map<String, String> params = new HashMap<>();
+        params.put(Constants.USER_EXAMS_SET,"1");
+        this.mMakeNetworkCall(Constants.TAG_USER_EXAMS_SET,Constants.BASE_URL + "preferences/", params);
+
+        mLoadUserProfile(response);
+    }
+
+    private void mUserExamStepCompleted(String responseJson) {
+
+        try {
+            User userObj = JSON.std.beanFrom(User.class, responseJson);
+            this.user.setExams_set(userObj.getExams_set());
+            String u = JSON.std.asString(this.user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+
+        }catch(IOException e) {
+
+            e.printStackTrace();
+        }
+    }
+
+
+    private void mUserEducationStepCompleted(String responseJson){
+
+        try {
+            User userObj = JSON.std.beanFrom(User.class, responseJson);
+            this.user.setLevel(userObj.getLevel());
+            this.user.setLevel_name(userObj.getLevel_name());
+            this.user.setEducation_set(userObj.getEducation_set());
+            String u = JSON.std.asString(this.user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+     }
 
     private void showMyFbMessage(String msg)
     {
@@ -3402,6 +3450,11 @@ public class MainActivity extends AppCompatActivity
         if(userObj != null && user != null){
           this.user.setSublevel(userObj.getSublevel());
           this.user.setIs_preparing(userObj.getIs_preparing());
+
+          Map<String, String> params = new HashMap<>();
+          params.put(Constants.USER_EDUCATION_SET,"1");
+          this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION_SET,Constants.BASE_URL + "preferences/", params);
+
         }
         this.mMakeNetworkCall(Constants.TAG_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
 
@@ -3414,7 +3467,7 @@ public class MainActivity extends AppCompatActivity
     private void mOnExamsLoaded(String responseJson) {
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
-            this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)),false,ExamsFragment.class.toString());
+            this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)),true,ExamsFragment.class.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -3427,6 +3480,8 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onExamsSelected(JSONObject params) {
+
+
         this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "yearly-exams/",params,1);
     }
 
@@ -3453,12 +3508,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-
-        // unlock navigation drawer when home screen come
-        //((DrawerLayout)findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-
-        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.COMPLETED_SECOND_STAGE, true).commit();
-
         //  show appBarLayout and toolBar
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
         params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
@@ -3478,7 +3527,7 @@ public class MainActivity extends AppCompatActivity
     public void onTabMenuSelected(int tabPosition) {
         //TODO::  remove this when future buddies tab are present
         if(tabPosition == 2){
-            this.onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL+"personalize/forums");
+            this.onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL+"personalize/forums", null);
             return;
         }
 
@@ -3497,15 +3546,22 @@ public class MainActivity extends AppCompatActivity
     public void onExamTabSelected(ExamDetail examDetailObj) {
          if(examDetailObj == null)return;
         String id = examDetailObj.getId();
-        this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/"+id+"/summary/",null);
+
+        Map<String, String> params = new HashMap<>();
+        params.put("tag_uris[" + (0) + "]", examDetailObj.getExam_tag());
+
+        this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/"+id+"/summary/",params);
     }
 
-    @Override
-    public void onHomeItemSelected(String requestType, String url) {
+    public void onHomeItemSelected(String requestType, String url, String tag) {
 
         if (requestType.equals(Constants.WIDGET_INSTITUTES)) {
-            this.mFilterKeywords = this.mGetTheFilters();
-            this.mMakeNetworkCall(requestType, url, this.mFilterKeywords);
+
+           Map<String , String> params = this.mGetTheFilters();
+            if(tag != null && !tag.isEmpty())
+            params.put("tag_uris[" + (params.size()) + "]",tag);
+
+            this.mMakeNetworkCall(requestType, url, params);
             return;
         }else if(requestType.equals(Constants.WIDGET_TEST_CALENDAR)){
             this.mMakeNetworkCall(requestType,url,null);
@@ -3515,7 +3571,11 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(requestType, url, null);
             return;
         }
-       this.mMakeNetworkCall(requestType,url, null);
+        Map<String, String> params = new HashMap<>();
+        if(tag != null && !tag.isEmpty())
+            params.put("tag_uris[" + (0) + "]",tag);
+
+       this.mMakeNetworkCall(requestType,url, params);
     }
 
     @Override
@@ -3537,8 +3597,33 @@ public class MainActivity extends AppCompatActivity
 
     }
     @Override
-    public void onIDontKnow() {
-
+    public void onStepByStep() {
+        new AlertDialog.Builder(this)
+                .setTitle("Currently Studying at?")
+                .setSingleChoiceItems(StepByStepQuestion.CurrentLevels.getValues(), -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which)
+                        {
+                            case 0:
+                                StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.IN_SCHOOL);
+                                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP + "#" + StepByStepQuestion.CurrentLevels.IN_SCHOOL + "#" + "1", Constants.BASE_URL + "step-by-step/ug-ques-one/", null);
+                                break;
+                            case 1:
+                                StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE);
+                                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP  + "#" + StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE + "#" + "1", Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
+                                break;
+                            case 2:
+                                StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE);
+                                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP + "#" + StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE + "#" + "1", Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
+                                break;
+                            default:
+                                break;
+                        }
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     @Override
@@ -3574,6 +3659,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    @Override
+    public void onFetchQuestions(String tag, String url) {
+        this.mMakeNetworkCall(tag, url, null, Request.Method.GET);
+    }
+
+    @Override
+    public void onSBSTestFinish(String tag, String url, JSONObject answerObject) {
+        this.mMakeJsonObjectNetworkCall(tag, url, answerObject, Request.Method.POST);
     }
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
@@ -3634,9 +3729,6 @@ public class MainActivity extends AppCompatActivity
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
-    private void mOnExamsSubmitted(String response){
-        mLoadUserProfile(response);
-    }
 
 
     @Override

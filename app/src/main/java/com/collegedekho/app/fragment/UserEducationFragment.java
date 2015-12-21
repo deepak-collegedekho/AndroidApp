@@ -250,6 +250,9 @@ public class UserEducationFragment extends BaseFragment {
             this.exam_arrays[i]  = mUserExamSubLevelsList.get(i).getName();
 
         // make stream String arrays for picker
+        if (mUserStreamLists.size() == 0)
+            return;
+
         ArrayList<UserEducationStreams> tempStreamList = mUserStreamLists.get(0);
         if(tempStreamList == null) return;
         int streamCount = tempStreamList.size();

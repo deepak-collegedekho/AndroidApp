@@ -24,6 +24,7 @@ public class PsychometricTestQuestion implements Parcelable{
     private String stream_id;
     private int checkedId;
     private String answer="0";
+
     public PsychometricTestQuestion(){
 
     }

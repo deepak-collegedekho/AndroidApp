@@ -5,25 +5,43 @@
     android:layout_width="match_parent"
     android:orientation="horizontal"
     android:weightSum="1"
-    android:layout_margin="4dp"
-    android:gravity="center_horizontal"
+    android:layout_margin="5dp"
+    android:gravity="center_vertical"
     >
-    <TextView
-        android:id="@+id/single_choice_text"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight=".8"
-        android:text="this is option"
-        android:gravity="center_vertical"
-        />
     <RadioButton
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight=".1"
+        android:layout_weight=".02"
         android:gravity="center"
         android:id="@+id/single_choice_radio"
         android:checked="false"
         android:focusable="false"
         android:clickable="false"
         />
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_weight=".7"
+        android:orientation="vertical"
+        android:weightSum="1"
+        android:layout_margin="4dp"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
+        >
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/option_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight=".3"
+            android:layout_gravity="center"
+            />
+        <TextView
+            android:id="@+id/single_choice_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:text="this is option"
+            android:gravity="center_horizontal"
+            />
+    </LinearLayout>
 </LinearLayout>
