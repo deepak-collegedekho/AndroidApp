@@ -47,6 +47,14 @@ public class Stream implements Parcelable {
         this.resourceUri = resource_uri;
     }
 
+    public String getResourceUri() {
+        return resourceUri;
+    }
+
+    public void setResourceUri(String resource_uri) {
+        this.resourceUri = resource_uri;
+    }
+
     public String getName() {
         return name;
     }
@@ -98,6 +106,13 @@ public class Stream implements Parcelable {
         return shortName;
     }
 
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
     public void setShort_name(String shortName) {
         this.shortName = shortName;
     }

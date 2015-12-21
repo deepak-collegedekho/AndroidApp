@@ -678,6 +678,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void mDisplayStreamsSelection(String response, boolean addToBackstack) {
+        try {
+            Map<String, Object> map = JSON.std.mapFrom(response);
+            String results=JSON.std.asString(map.get("results"));
+            List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
+            this.mClearBackStack();
+            this.mDisplayFragment(StreamFragment.newInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
     /**
      * This method is used to update institutes list of next page
      * @param response
@@ -1270,7 +1282,7 @@ public class MainActivity extends AppCompatActivity
                 this.onPsychometricTestResponse(response);
                 break;
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
-                this.mOnPsychometricTestSubmitted(response);
+                this.mDisplayStreamsSelection(response, false);
                 break;
             case Constants.TAG_PSYCHOMETRIC_TEXT_COMPLETED:
                 if (tags.length > 2) {
