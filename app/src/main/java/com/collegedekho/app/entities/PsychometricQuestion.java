@@ -45,7 +45,6 @@ public class PsychometricQuestion implements Parcelable {
 
         secondary = source.createTypedArrayList(PsychometricQuestion.CREATOR);
         source.readTypedList(secondary, PsychometricQuestion.CREATOR);
-
     }
 
     @Override

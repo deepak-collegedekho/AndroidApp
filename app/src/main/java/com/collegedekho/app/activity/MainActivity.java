@@ -66,6 +66,8 @@ import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.PsychometricTestQuestion;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
+import com.collegedekho.app.entities.StepByStepQuestion;
+import com.collegedekho.app.entities.StepByStepResult;
 import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.Subjects;
 import com.collegedekho.app.entities.User;
@@ -92,6 +94,7 @@ import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.ProfileFragment1;
+import com.collegedekho.app.fragment.PsychometricTestFragment;
 import com.collegedekho.app.fragment.PsychometricTestParentFragment;
 import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
@@ -103,6 +106,7 @@ import com.collegedekho.app.fragment.TabFragment;
 import com.collegedekho.app.fragment.UserEducationFragment;
 import com.collegedekho.app.fragment.WidgetListFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
+import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.resource.Constants;
@@ -188,9 +192,11 @@ public class MainActivity extends AppCompatActivity
         MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleFragment.OnArticleSelectedListener,
         ProfileFragment1.onProfileUpdateListener,
         LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener,
-        InstituteDetailFragment.OnInstituteFooterItemSelected, UserEducationFragment.OnUserEducationInteractionListener,NotPreparingFragment.OnTestOptionsListener,
+        InstituteDetailFragment.OnInstituteFooterItemSelected, UserEducationFragment.OnUserEducationInteractionListener,
         PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
-        SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData
+        SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData,
+        NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener
+
 {
 
     static {
@@ -1291,7 +1297,16 @@ public class MainActivity extends AppCompatActivity
                     mOnPsychometricTestCompleted(parentIndex, childIndex, response);
                 }
                 break;
-
+            case Constants.TAG_LOAD_STEP_BY_STEP:
+                if (tags.length > 1) {
+                    parentIndex = tags[1];
+                    childIndex = tags[2];
+                    this.mDisplayStepByStepQuestion(response, parentIndex, childIndex);
+                }
+                break;
+            case Constants.TAG_SUBMIT_SBS_EXAM:
+                this.mStepByStepDone(response);
+                break;
         }
 
         if (this.progressDialog != null && this.progressDialog.isShowing())
@@ -1360,6 +1375,74 @@ this.mClearBackStack();
 
             this.mDisplayFragment(UserEducationFragment.newInstance(userEducationList), false, Constants.TAG_FRAGMENT_USER_EDUCATION);
             //this.mDisplayFragment(MyAlertFragment.newInstance(userEducationList), false, MyAlertFragment.class.getName());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This method is used to display step by step questions
+     *
+     * @param response
+     */
+    private void mDisplayStepByStepQuestion(String response, String currentLevel, String questionSetCount){
+        try {
+            //set current level
+            StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.valueOf(currentLevel));
+
+            response = response.substring(13, response.length() - 1);
+
+            ArrayList<StepByStepQuestion> stepByStepQuestions = (ArrayList<StepByStepQuestion>) JSON.std.listOfFrom(StepByStepQuestion.class, response);
+
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(StepByStepFragment.class.getSimpleName());
+
+            if (fragment == null)
+            {
+                StepByStepFragment stepByStepFragment = StepByStepFragment.newInstance(stepByStepQuestions);
+                this.mDisplayFragment(stepByStepFragment, true, StepByStepFragment.class.getSimpleName());
+            }
+            else {
+                if (fragment instanceof StepByStepFragment)
+                    ((StepByStepFragment) fragment).updateQuestionSet(stepByStepQuestions, Integer.parseInt(questionSetCount));
+
+                this.mDisplayFragment(fragment, false, StepByStepFragment.class.getSimpleName());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This method is used to display step by step results
+     *
+     * @param response
+     */
+    private void mStepByStepDone(String response){
+        try {
+            StepByStepResult sbsResult = JSON.std.beanFrom(StepByStepResult.class, response);
+            //sbsResult
+            MainActivity.user.setStream_name(sbsResult.getStream_name());
+            MainActivity.user.setStream(String.valueOf(sbsResult.getStream_id()));
+
+            String u = null;
+            u = JSON.std.asString(MainActivity.user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+
+            int count = 0;
+            Map<String, String> filterKeywords = new HashMap<>();
+
+            for (int n = 0; n < sbsResult.getTags().size(); n++)
+                filterKeywords.put("tag_uris[" + (count++) + "]", sbsResult.getTags().get(n));
+
+            this.mFilterKeywords = filterKeywords;
+            this.mFilterCount = this.mFilterKeywords.size();
+
+                //save preferences.
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
+
+            //move to profile
+            this.mLoadUserProfile(null);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1677,6 +1760,7 @@ this.mClearBackStack();
             ((InstituteShortlistFragment) currentFragment).updateShortlistButton(Integer.parseInt(extraTag));
         //Toast.makeText(this, institute.getShort_name() + message, Toast.LENGTH_SHORT).show();
     }
+
     private void updateShortlistInstitute(String response, String extraTag)
     {
         Institute institute = this.mInstituteList.get(Integer.parseInt(extraTag));
@@ -1736,14 +1820,11 @@ this.mClearBackStack();
                     similarNewsIds.add(id);
                 }
             } catch (JSONException e) {
-
                 Log.e(MainActivity.class.getSimpleName(), e.getMessage() + e.getCause());
-
             }
             news.setSimilarNewsIds(similarNewsIds);
         }
     }
-
 
     private void mDisplayArticles(String response) {
         try {
@@ -1756,7 +1837,6 @@ this.mClearBackStack();
     }
 
     private void mParseSimilarArticle(List articleList) {
-
         if (articleList == null) {
             return;
         }
@@ -3132,9 +3212,6 @@ this.mClearBackStack();
         }).executeAsync();
     }
 
-
-
-
     /**
      * This method is used to sign in with any social site
      * @param url social site url
@@ -3145,7 +3222,6 @@ this.mClearBackStack();
     public void onUserSignIn(String url, HashMap hashMap, String msg) {
         this.mMakeNetworkCall(Constants.TAG_USER_LOGIN + "#" + msg, url, hashMap);
     }
-
 
     /***
      * This method is called when user sign Up successfully
@@ -3182,7 +3258,6 @@ this.mClearBackStack();
      * @param response response json send  by server
      * @param msg MyFb comment message
      */
-
     public void onUserSignInResponse(String response, String msg) {
 
         User tempUser = user;
@@ -3514,7 +3589,6 @@ this.mClearBackStack();
 
     @Override
     public void onHomeItemSelected(String requestType, String url) {
-
         if (requestType.equals(Constants.WIDGET_INSTITUTES)) {
             this.mFilterKeywords = this.mGetTheFilters();
             this.mMakeNetworkCall(requestType, url, this.mFilterKeywords);
@@ -3527,7 +3601,8 @@ this.mClearBackStack();
             this.mMakeNetworkCall(requestType, url, null);
             return;
         }
-       this.mMakeNetworkCall(requestType,url, null);
+
+        this.mMakeNetworkCall(requestType,url, null);
     }
 
     @Override
@@ -3549,8 +3624,33 @@ this.mClearBackStack();
 
     }
     @Override
-    public void onIDontKnow() {
-
+    public void onStepByStep() {
+        new AlertDialog.Builder(this)
+                .setTitle("Currently Studying at?")
+                .setSingleChoiceItems(StepByStepQuestion.CurrentLevels.getValues(), -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which)
+                        {
+                            case 0:
+                                StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.IN_SCHOOL);
+                                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP + "#" + StepByStepQuestion.CurrentLevels.IN_SCHOOL + "#" + "1", Constants.BASE_URL + "step-by-step/ug-ques-one/", null);
+                                break;
+                            case 1:
+                                StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE);
+                                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP  + "#" + StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE + "#" + "1", Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
+                                break;
+                            case 2:
+                                StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE);
+                                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP + "#" + StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE + "#" + "1", Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
+                                break;
+                            default:
+                                break;
+                        }
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     @Override
@@ -3587,6 +3687,17 @@ this.mClearBackStack();
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
+    @Override
+    public void onFetchQuestions(String tag, String url) {
+        this.mMakeNetworkCall(tag, url, null, Request.Method.GET);
+    }
+
+    @Override
+    public void onSBSTestFinish(String tag, String url, JSONObject answerObject) {
+        this.mMakeJsonObjectNetworkCall(tag, url, answerObject, Request.Method.POST);
+    }
+
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override

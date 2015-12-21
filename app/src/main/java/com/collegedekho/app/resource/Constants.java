@@ -29,10 +29,12 @@ public class Constants
     public static final String TAG_EXAMS_LIST = "exams_list";
     public static final String TAG_SUBMIT_EXAMS_LIST = "submit_exams_list";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_EXAM = "submit_psychometric_exam";
+    public static final String TAG_SUBMIT_SBS_EXAM = "submit_sbs_exam";
 
     public static final String TAG_LOAD_STREAM = "load_stream";
     public static final String TAG_PSYCHOMETRIC_QUESTIONS = "load_psychometric_questions";
     public static final String TAG_PSYCHOMETRIC_RESPONSE = "load_psychometric_response";
+    public static final String TAG_LOAD_STEP_BY_STEP = "load_step_by_step";
     public static final String TAG_USER_EDUCATION = "load_user_education";
     public static final String TAG_UPDATE_STREAM = "update_stream";
     public static final String KEY_STREAMS = "streams";
@@ -48,7 +50,7 @@ public class Constants
     public static final String WIDGET_FORUMS = "forums";
     public static final String TAG_LOAD_QNA_QUESTIONS = "qna";
     //public static final String IP = "http://10.0.3.2";
-//    public static final String IP = "http://www.launch.collegedekho.com";
+    //public static final String IP = "http://www.launch.collegedekho.com";
     public static final String IP = "http://www.collegedekho.com";
     //public static final String IP = "http://192.168.8.101";
     //public static final String IP = "http://192.168.56.1";

@@ -8,6 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Some random question?"
+        android:textSize="20sp"
+        android:textColor="@color/primary_color"
         />
     <View
         style="@style/AppTheme.Divider1"
