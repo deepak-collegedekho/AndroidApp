@@ -1450,7 +1450,7 @@ public class MainActivity extends AppCompatActivity
         //Send event to connecto for stream and level selection
         this.connecto.track("Stream Selected", new Properties().putValue(Constants.USER_STREAM_NAME, user.getStream_name()));
         this.connecto.track("Level Selected", new Properties().putValue(Constants.USER_LEVEL_NAME, user.getLevel_name()));
-
+        this.mClearBackStack();
     }
 
     private void mUpdateUserPref(String response) {
@@ -3414,7 +3414,7 @@ public class MainActivity extends AppCompatActivity
     private void mOnExamsLoaded(String responseJson) {
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
-            this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)),false,ExamsFragment.class.toString());
+            this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)),true,ExamsFragment.class.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
