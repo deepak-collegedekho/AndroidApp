@@ -199,8 +199,8 @@ public class MainActivity extends AppCompatActivity
 {
 
     static {
-        Constants.FilterCategoryMap.put(Constants.ID_HOSTEL, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
         Constants.FilterCategoryMap.put(Constants.ID_FACILITIES, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
+        Constants.FilterCategoryMap.put(Constants.ID_HOSTEL, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
 
         Constants.FilterCategoryMap.put(Constants.ID_FEE_RANGE, Constants.FILTER_CATEGORY_TYPE_AND_SUPPORT_SERVICES);
         Constants.FilterCategoryMap.put(Constants.ID_INSTITUTE_TYPE, Constants.FILTER_CATEGORY_TYPE_AND_SUPPORT_SERVICES);
@@ -240,9 +240,11 @@ public class MainActivity extends AppCompatActivity
     private List<News> mNewsList;
     private List<Articles> mArticlesList;
     private Institute mInstitute;
+    private String mLastScreenName = "";
     private String instituteCourseId = "";
     private List<Widget> mWidgets;
     public static CallbackManager callbackManager;
+    private Date mTimeScreenClicked = new Date();
 
     private String mGTMContainerId = "www.collegedekho.com";
     private Connecto connecto = null;
@@ -567,6 +569,8 @@ public class MainActivity extends AppCompatActivity
                 this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()).putValue(Constants.USER_STREAM_NAME, MainActivity.user.getStream_name()).putValue(Constants.USER_LEVEL_NAME, MainActivity.user.getLevel_name()));
                 this.connecto.track("Session Started", new Properties().putValue("session_start_datetime", new Date().toString()));
 
+                AppsFlyerLib.setCustomerUserId(MainActivity.user.getId());
+
                 // this code for backward compatibility because in first release user stream and level
                 // were saved in uri form instead of IDs. it can be remove after some releases
                 if (MainActivity.user != null && MainActivity.user.getStream() != null && MainActivity.user.getLevel() != null) {
@@ -603,7 +607,6 @@ public class MainActivity extends AppCompatActivity
              MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
         }
     }
-
 
     /**
      * This method is called when first time anonymous user is created
@@ -1024,6 +1027,18 @@ public class MainActivity extends AppCompatActivity
         finally {
             //Send GA Session
             MainActivity.GAScreenEvent(tag);
+
+            //Appsflyer events
+            HashMap<String, Object> eventValue = new HashMap<String, Object>();
+            eventValue.put(Constants.SCREEN_NAME, tag);
+            eventValue.put(Constants.LAST_SCREEN_NAME, this.mLastScreenName);
+            eventValue.put(Constants.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS, new Date().getTime() - this.mTimeScreenClicked.getTime());
+
+            this.mTimeScreenClicked = new Date();
+
+            this.mLastScreenName = tag;
+
+            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_SCREEN_SELECTED, eventValue);
         }
     }
 
@@ -1596,6 +1611,12 @@ public class MainActivity extends AppCompatActivity
                             "Institute Name: " + institute.getShort_name() +
                             "Disliked institute: " + String.valueOf(like));
 
+            //Appsflyer events
+            Map<String, Object> eventValue = new HashMap<String, Object>();
+            eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
+            eventValue.put(Constants.VOTE_TYPE, Constants.NEITHER_LIKE_NOR_DISLIKE);
+
+            MainActivity.AppsflyerTrackerEvent(this, Constants.TAG_INSTITUTE_LIKE_DISLIKE, eventValue);
         } else {
             try {
                 institute.setCurrent_user_vote_type(like);
@@ -1612,6 +1633,12 @@ public class MainActivity extends AppCompatActivity
                                     "Institute Name: " + institute.getShort_name() +
                                     "Disliked institute: " + String.valueOf(like));
 
+                    //Appsflyer events
+                    Map<String, Object> eventValue = new HashMap<String, Object>();
+                    eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
+                    eventValue.put(Constants.VOTE_TYPE, Constants.LIKE_THING);
+
+                    MainActivity.AppsflyerTrackerEvent(this, Constants.TAG_INSTITUTE_LIKE_DISLIKE, eventValue);
                 }
                 else if (like == Constants.DISLIKE_THING)
                 {
@@ -1622,6 +1649,13 @@ public class MainActivity extends AppCompatActivity
                             "Institute ID: " + String.valueOf(institute.getId()) +
                                     "Institute Name: " + institute.getShort_name() +
                                     "Disliked institute: " + String.valueOf(like));
+
+                    //Appsflyer events
+                    Map<String, Object> eventValue = new HashMap<String, Object>();
+                    eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
+                    eventValue.put(Constants.VOTE_TYPE, Constants.DISLIKE_THING);
+
+                    MainActivity.AppsflyerTrackerEvent(this, Constants.TAG_INSTITUTE_LIKE_DISLIKE, eventValue);
                 }
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
@@ -1694,6 +1728,14 @@ public class MainActivity extends AppCompatActivity
             MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_SHORTLISTED_REMOVED, "Institute Shortlisting Removed : " + String.valueOf(institute.getResource_uri()) + " Institute Name: " + institute.getName() + " Institute City: " + institute.getCity_name());
             //CONNECTO Event for institute shortlisting removed
             this.connecto.track(Constants.ACTION_INSTITUTE_SHORTLISTED_REMOVED, new Properties().putValue(Constants.ACTION_INSTITUTE_SHORTLISTED, Constants.SHORTLISTED_NO).putValue(institute.getShort_name(), Constants.SHORTLISTED_NO).putValue(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri()));
+
+            //Appsflyer events
+            Map<String, Object> eventValue = new HashMap<String, Object>();
+            eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
+            eventValue.put(Constants.TAG_SHORTLIST_INSTITUTE, Constants.SHORTLISTED_NO);
+
+            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_INSTITUTE_SHORTLISTED, eventValue);
+
         } else {
             try {
                 institute.setIs_shortlisted(Constants.SHORTLISTED_YES);
@@ -1702,13 +1744,18 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_SHORTLISTED, "Institute Shortlisted : " + String.valueOf(institute.getResource_uri()) + " Institute Name: " + institute.getName() + " Institute City: " + institute.getCity_name());
                 //CONNECTO Event for institute shortlisting removed
                 this.connecto.track(Constants.ACTION_INSTITUTE_SHORTLISTED, new Properties().putValue(Constants.ACTION_INSTITUTE_SHORTLISTED, Constants.SHORTLISTED_YES).putValue(institute.getShort_name(), Constants.SHORTLISTED_YES).putValue(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri()));
+                //Appsflyer events
+                Map<String, Object> eventValue = new HashMap<String, Object>();
+                eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
+                eventValue.put(Constants.TAG_SHORTLIST_INSTITUTE, Constants.SHORTLISTED_YES);
+
+                MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_INSTITUTE_SHORTLISTED, eventValue);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
         }
         if (currentFragment instanceof InstituteListFragment)
             ((InstituteListFragment) currentFragment).updateShortlistButton(Integer.parseInt(extraTag));
-        //Toast.makeText(this, institute.getShort_name() + message, Toast.LENGTH_SHORT).show();
     }
 
     private void mDisplayNews(String response) {
@@ -2314,6 +2361,13 @@ public class MainActivity extends AppCompatActivity
         this.connecto.track(Constants.CATEGORY_INSTITUTES, new Properties().putValue(Constants.APPLY_COURSE_ID, String.valueOf(instituteCourse.getId())).
                 putValue(Constants.APPLY_COURSE, instituteCourse.getName()).
                 putValue(Constants.APPLY_INSTITUTE, mInstitute.getResource_uri()));
+
+        //Appsflyer events
+        Map<String, Object> eventValue = new HashMap<String, Object>();
+        eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(instituteCourse.getId()));
+        eventValue.put(Constants.APPLY_COURSE, instituteCourse.getName());
+
+        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_COURSE_APPLIED, eventValue);
     }
 
     public ArrayList<String> getYears(){
@@ -2409,6 +2463,11 @@ public class MainActivity extends AppCompatActivity
             //Send GA and Connecto event for news selected
             MainActivity.GATrackerEvent(Constants.CATEGORY_NEWS, Constants.ACTION_NEWS_SELECTED, String.valueOf(Constants.BASE_URL + "/personalize/" + Constants.WIDGET_NEWS + "/" + news.getId()));
             this.connecto.track(Constants.ACTION_NEWS_SELECTED, new Properties().putValue(Constants.ACTION_NEWS_SELECTED, news.getId()));
+            //Appsflyer events
+            Map<String, Object> eventValue = new HashMap<String, Object>();
+            eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(news.getId()));
+
+            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_NEWS_SELECTED, eventValue);
         }
     }
 
@@ -2434,6 +2493,12 @@ public class MainActivity extends AppCompatActivity
             MainActivity.GATrackerEvent(Constants.CATEGORY_ARTICLE, Constants.ACTION_ARTICLE_SELECTED, String.valueOf(Constants.BASE_URL + "/personalize/" + Constants.WIDGET_ARTICES + "/" + article.getId()));
 
             this.connecto.track(Constants.ACTION_ARTICLE_SELECTED, new Properties().putValue(Constants.ACTION_ARTICLE_SELECTED, article.getId()));
+
+            //Appsflyer events
+            Map<String, Object> eventValue = new HashMap<String, Object>();
+            eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(article.getId()));
+
+            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_ARTICLE_SELECTED, eventValue);
         }
     }
 
@@ -2474,8 +2539,15 @@ public class MainActivity extends AppCompatActivity
         //send GA and connecto event for filter applied
         MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_FILTER_APPLIED, "");
 
+        Map<String, Object> eventValue = new HashMap<String, Object>();
         for (String key : this.mFilterKeywords.keySet())
+        {
             this.connecto.track(Constants.ACTION_FILTER_APPLIED, new Properties().putValue(Constants.SELECTED_FILTERS, this.mFilterKeywords.get(key)));
+            eventValue.put(Constants.SELECTED_FILTERS, this.mFilterKeywords.get(key));
+        }
+
+        //Appsflyer events
+        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_FILTER_APPLIED, eventValue);
     }
 
     @Override
@@ -2614,6 +2686,8 @@ public class MainActivity extends AppCompatActivity
             if (currentFragment instanceof QnAQuestionsAndAnswersFragment)
                 ((QnAQuestionsAndAnswersFragment) currentFragment).onVotingFeedback(questionIndex, -1, voteType);
 
+            Map<String, Object> eventValue = new HashMap<String, Object>();
+
             QnAQuestions question = this.mQnAQuestions.get(questionIndex);
 
             if (voteType == Constants.LIKE_THING)
@@ -2621,14 +2695,23 @@ public class MainActivity extends AppCompatActivity
                 //GA and Connecto Event for question vote up
                 MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_QUESTION_UPVOTED, "Question Voted : " + String.valueOf(voteType));
                 this.connecto.track(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, new Properties().putValue(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.LIKE_THING).putValue(question.getResource_uri(), Constants.LIKE_THING));
+
+                //Appsflyer events
+                eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(question.getResource_uri()));
+                eventValue.put(Constants.VOTE_TYPE, Constants.LIKE_THING);
             }
             else if (voteType == Constants.DISLIKE_THING)
             {
                 //GA and Connecto Event for question vote down
                 MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_QUESTION_DOWNVOTED, "Question Voted : " + String.valueOf(voteType));
                 this.connecto.track(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, new Properties().putValue(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.DISLIKE_THING).putValue(question.getResource_uri(), Constants.DISLIKE_THING));
+
+                //Appsflyer events
+                eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(question.getResource_uri()));
+                eventValue.put(Constants.VOTE_TYPE, Constants.DISLIKE_THING);
             }
 
+            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, eventValue);
         }
         catch (Exception e)
         {
@@ -2642,6 +2725,7 @@ public class MainActivity extends AppCompatActivity
         ((QnAQuestionsAndAnswersFragment) currentFragment).onVotingFeedback(questionIndex, answerIndex, voteType);
         try
         {
+            Map<String, Object> eventValue = new HashMap<String, Object>();
             QnAAnswers answer = this.mQnAQuestions.get(questionIndex).getAnswer_set().get(answerIndex);
 
             if (voteType == Constants.LIKE_THING)
@@ -2649,14 +2733,22 @@ public class MainActivity extends AppCompatActivity
                 //GA and Connecto Event for answer vote up
                 MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_ANSWER_UPVOTED, "Answer Voted : " + String.valueOf(voteType));
                 this.connecto.track(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, new Properties().putValue(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, Constants.LIKE_THING).putValue(answer.getResource_uri(), Constants.LIKE_THING));
+                eventValue.put(Constants.TAG_RESOURCE_URI, answer.getResource_uri());
+                eventValue.put(Constants.VOTE_TYPE, Constants.LIKE_THING);
             }
             else if (voteType == Constants.DISLIKE_THING)
             {
                 //GA and Connecto Event for answer vote down
                 MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_ANSWER_DOWNVOTED, "Answer Voted : " + String.valueOf(voteType));
                 this.connecto.track(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, new Properties().putValue(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, Constants.DISLIKE_THING).putValue(answer.getResource_uri(), Constants.DISLIKE_THING));
+                eventValue.put(Constants.TAG_RESOURCE_URI, answer.getResource_uri());
+                eventValue.put(Constants.VOTE_TYPE, Constants.DISLIKE_THING);
             }
 
+            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, eventValue);
+
+            //GA Event for answer vote
+            MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, "Answer Voted : " + String.valueOf(voteType));
         }
         catch (Exception e)
         {
@@ -2696,6 +2788,11 @@ public class MainActivity extends AppCompatActivity
                     "ID: " + String.valueOf(qnaAnswer.getResource_uri()));
 
             this.connecto.track(Constants.ACTION_QNA_ANSWER_SUBMITTED, new Properties().putValue(Constants.QNA_ANSWER_RESOURCE_URI, qnaAnswer.getResource_uri()));
+
+            Map<String, Object> eventValue = new HashMap<String, Object>();
+            eventValue.put(Constants.TAG_RESOURCE_URI, qnaAnswer.getResource_uri());
+
+            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_QNA_ANSWER_SUBMITTED, eventValue);
         }
     }
 
@@ -2705,6 +2802,12 @@ public class MainActivity extends AppCompatActivity
 
         //GA Event for FB selection
         MainActivity.GATrackerEvent(Constants.CATEGORY_MY_FB, Constants.ACTION_MY_FB_SELECTED, "FB selected: " + myFutureBuddiesEnumeration.getInstitute_name());
+
+        //Appsflyer events
+        Map<String, Object> eventValue = new HashMap<String, Object>();
+        eventValue.put(Constants.TAG_RESOURCE_URI, myFutureBuddiesEnumeration.getResource_uri());
+
+        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_MY_FB_SELECTED, eventValue);
     }
 
     @Override
@@ -2742,6 +2845,12 @@ public class MainActivity extends AppCompatActivity
             MainActivity.GATrackerEvent(Constants.CATEGORY_MY_FB, Constants.ACTION_MY_FB_COMMENT_SUBMITTED, "Comment Added");
 
             this.connecto.track(Constants.ACTION_MY_FB_COMMENT_SUBMITTED, new Properties().putValue(Constants.MY_FB_URI, this.mFbEnumeration.get(fbIndex).getResource_uri()));
+
+            //Appsflyer events
+            Map<String, Object> eventValue = new HashMap<String, Object>();
+            eventValue.put(Constants.TAG_RESOURCE_URI, this.mFbEnumeration.get(fbIndex).getResource_uri());
+
+            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_MY_FB_COMMENT_SUBMITTED, eventValue);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -2805,6 +2914,12 @@ public class MainActivity extends AppCompatActivity
                     "Resource URI: " + String.valueOf(qnaQuestion.getResource_uri()));
 
             this.connecto.track(Constants.ACTION_QNA_QUESTION_ASKED, new Properties().putValue(Constants.QNA_QUESTION_RESOURCE_URI, qnaQuestion.getResource_uri()));
+
+            //Appsflyer events
+            Map<String, Object> eventValue = new HashMap<String, Object>();
+            eventValue.put(Constants.TAG_RESOURCE_URI, qnaQuestion.getResource_uri());
+
+            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_QNA_QUESTION_ASKED, eventValue);
 
             if (currentFragment instanceof InstituteDetailFragment || currentFragment instanceof  QnAQuestionsListFragment)
                  currentFragment.instituteQnAQuestionAdded(qnaQuestion);
@@ -3314,6 +3429,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public static void AppsflyerTrackerEvent(Context context, String eventName, Map<String, Object> eventValue)
+    {
+        AppsFlyerLib.trackEvent(context, eventName, eventValue);
+    }
+
     @Override
     public void onFooterVideosSelected(ArrayList<String> videos) {
 
@@ -3388,7 +3508,6 @@ public class MainActivity extends AppCompatActivity
      * after user education detail is submitted to server.
      */
     private void mOnUserEducationResponse(String response) {
-
         Map<String, String> params = new HashMap<>();
         params.put(Constants.USER_EDUCATION_SET,"1");
         this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION_SET,Constants.BASE_URL + "preferences/", params);
@@ -3407,7 +3526,21 @@ public class MainActivity extends AppCompatActivity
         }
         this.mMakeNetworkCall(Constants.TAG_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
 
+        //Appsflyer events
+        Map<String, Object> eventValue = new HashMap<String, Object>();
+        eventValue.put(Constants.USER_CURRENT_SUBLEVEL, user.getSublevel());
+        eventValue.put(Constants.USER_IS_PREPARING, user.getIs_preparing());
+
+        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_USER_PREFERENCE, eventValue);
+
+        //GA Event
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_CURRENT_STREAM_SELECTED, user.getSublevel());
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing());
+
+        //Send event to connecto
+        this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_CURRENT_STREAM_SELECTED, user.getStream_name()).putValue(Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing()));
     }
+
     /**
      * This method is used to handle response having exams list
      * after user education detail is submitted to server.
@@ -3429,8 +3562,6 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onExamsSelected(JSONObject params) {
-
-
         this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "yearly-exams/",params,1);
     }
 
@@ -3440,9 +3571,9 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onUserNotPreparingSelected() {
-//        this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
-        this.mDisplayFragment(NotPreparingFragment.newInstance(),true,NotPreparingFragment.class.toString() );
+        this.mDisplayFragment(NotPreparingFragment.newInstance(),true,NotPreparingFragment.class.toString());
     }
+
     /**
      * This method is load user profile after
      */
@@ -3450,7 +3581,26 @@ public class MainActivity extends AppCompatActivity
 
         if(responseJson != null && !responseJson.isEmpty()) {
             try {
-                mUserExamsList = JSON.std.listOfFrom(ExamDetail.class, extractResults(responseJson));
+                this.mUserExamsList = JSON.std.listOfFrom(ExamDetail.class, extractResults(responseJson));
+
+                Map<String, Object> eventValue = new HashMap<String, Object>();
+                String[] examNames = new String[this.mUserExamsList.size()];
+                for (int n = 0; n < this.mUserExamsList.size(); n++)
+                {
+                    ExamDetail examDetail = this.mUserExamsList.get(n);
+
+                    //GA Event
+                    MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_USER_EXAM_SELECTED, examDetail.getExam_name());
+                    //Connecto Event
+                    this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_USER_EXAM_SELECTED, examDetail.getExam_name()));
+
+                    examNames[n] = examDetail.getExam_name() + "#" + examDetail.getExam_date();
+                }
+
+                eventValue.put(Constants.USER_EXAMS_SET, examNames);
+
+                //Appsflyer events
+                MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_USER_EXAM_SELECTED, eventValue);
             } catch (IOException e) {
                 e.printStackTrace();
             }

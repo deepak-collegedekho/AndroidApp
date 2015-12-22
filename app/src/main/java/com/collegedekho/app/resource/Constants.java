@@ -198,8 +198,13 @@ public class Constants
     public static final String USER_STREAM      = "stream";
     public static final String USER_LEVEL       = "level";
     public static final String USER_STREAM_NAME = "stream_name";
+    public static final String USER_CURRENT_STREAM_NAME = "current_stream_name";
+    public static final String USER_CURRENT_SUBLEVEL = "current_sublevel";
+    public static final String USER_IS_PREPARING = "is_preparing";
     public static final String USER_STREAM_ID   = "stream_id";
+    public static final String USER_CURRENT_STREAM_ID   = "current_stream_id";
     public static final String USER_LEVEL_NAME  = "level_name";
+    public static final String USER_CURRENT_LEVEL_NAME  = "current_level_name";
     public static final String USER_EDUCATION_SET = "education_set";
     public static final String USER_EXAMS_SET = "exams_set";
     public static final String USER_RESOURCE_URI = "user";
@@ -245,8 +250,12 @@ public class Constants
     //Actions
     public static final String ACTION_STREAM_UPDATED = "action_stream_updated";
     public static final String ACTION_LEVEL_UPDATED = "action_level_updated";
+    public static final String ACTION_CURRENT_STREAM_UPDATED = "action_current_stream_updated";
+    public static final String ACTION_CURRENT_LEVEL_UPDATED = "action_current_level_updated";
     public static final String ACTION_STREAM_SELECTED = "action_stream_selected";
     public static final String ACTION_LEVEL_SELECTED = "action_level_selected";
+    public static final String ACTION_CURRENT_STREAM_SELECTED = "action_current_stream_selected";
+    public static final String ACTION_CURRENT_LEVEL_SELECTED = "action_current_level_selected";
     public static final String ACTION_MY_FB_SELECTED = "action_my_fb_selected";
     public static final String ACTION_QNA_QUESTION_ASKED = "action_qna_question_asked";
     public static final String QNA_QUESTION_RESOURCE_URI = "qna_question_resource_uri";
@@ -271,6 +280,12 @@ public class Constants
     public static final String ACTION_ARTICLE_SELECTED = "action_article_selected";
     public static final String ACTION_NEWS_SELECTED = "action_news_selected";
     public static final String INSTITUTE_RESOURCE_URI = "institute_resource_uri";
+    public static final String ACTION_SCREEN_SELECTED = "action_screen_selected";
+    public static final String ACTION_USER_IS_PREPARING = "action_is_preparing";
+    public static final String ACTION_USER_PREFERENCE = "action_user_preference";
+    public static final String ACTION_USER_EXAM_SELECTED = "action_user_exam_selected";
+
+
 
     //String messages
     public static final String EMAIL_PASSOWRD_NOT_EXISTS ="The e-mail address and/or password you specified are not correct.";
@@ -292,10 +307,15 @@ public class Constants
     public static final String CONNECTO_STREAM_UPDATED = "stream_updated";
     public static final String CONNECTO_LEVEL_UPDATED = "level_updated";
 
-   // for close app
+    // for close app
     public static boolean READY_TO_CLOSE = false;
 
     public static final String EXPANDED_INDICATOR = "\u2013";
     public static final String COLAPSED_INDICATOR = "+";
+
+    public static final String VOTE_TYPE = "vote_type";
+    public static final String SCREEN_NAME = "screen_name";
+    public static final String LAST_SCREEN_NAME = "last_screen_name";
+    public static final String TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS = "time_lapsed_since_last_screen_name_in_ms";
 
 }
