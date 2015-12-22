@@ -3703,8 +3703,18 @@ public class MainActivity extends AppCompatActivity
         try {
 //            String val = this.extractResults(response);
             this.chaptersList = JSON.std.listOfFrom(Chapters.class, response);
-                this.mDisplayFragment(CalendarParentFragment.newInstance(new ArrayList(this.chaptersList)), true, Constants.WIDGET_TEST_CALENDAR);
 
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(CalendarParentFragment.class.getSimpleName() );
+            if(fragment == null)
+                this.mDisplayFragment(CalendarParentFragment.newInstance(new ArrayList(this.chaptersList)), true, CalendarParentFragment.class.getSimpleName() );
+            else {
+                if (currentFragment instanceof CalendarParentFragment)
+                    ((CalendarParentFragment) currentFragment).updateCalander(new ArrayList(this.chaptersList));
+
+                this.mDisplayFragment(fragment, false, CalendarParentFragment.class.getSimpleName());
+
+                //this.mDisplayFragment(CalendarParentFragment.newInstance(new ArrayList(this.chaptersList)), true, Constants.WIDGET_TEST_CALENDAR);
+            }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }

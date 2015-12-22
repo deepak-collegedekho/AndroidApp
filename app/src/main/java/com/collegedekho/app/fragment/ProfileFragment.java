@@ -187,6 +187,7 @@ public class ProfileFragment extends  BaseFragment
             mainActivity.currentFragment = this;
             mainActivity.mUpdateTabMenuItem(-1);
         }
+        updateExamSummary(this.mExamSummary);
 
         getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
     }

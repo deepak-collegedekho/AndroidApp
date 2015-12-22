@@ -225,6 +225,13 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
         }
     }
 
+    public void updateCalander(ArrayList<Chapters> chapterList){
+        this.mChapterList = chapterList;
+        initCalendar();
+        if(mPagerAdapter != null)
+            mPagerAdapter.notifyDataSetChanged();
+
+    }
     public interface OnSubmitCalendarData{
         public void onSubmitCalendarData(JSONObject object,String url);
     }

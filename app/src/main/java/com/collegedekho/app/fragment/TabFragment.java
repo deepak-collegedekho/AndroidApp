@@ -62,6 +62,7 @@ public class TabFragment extends  BaseFragment
             this.selectedTabMenuPosition = args.getInt(PARAM1);
             this.mExamDetailList = args.getParcelableArrayList(PARAM2);
         }
+       isFistTime = true;
     }
 
     @Override
@@ -97,7 +98,6 @@ public class TabFragment extends  BaseFragment
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
                 mProfileImage.setVisibility(View.VISIBLE);
             }
-
         }
 
         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
@@ -162,6 +162,11 @@ public class TabFragment extends  BaseFragment
     @Override
     public void onResume() {
         super.onResume();
+        MainActivity mainActivity = (MainActivity)getActivity();
+        if (mainActivity != null) {
+            mainActivity.currentFragment = this;
+            mainActivity.mUpdateTabMenuItem(this.selectedTabMenuPosition);
+        }
         this.mUpdateSubMenuItem();
         getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
 
@@ -273,13 +278,13 @@ public class TabFragment extends  BaseFragment
 
         if(selectedTabMenuPosition == 1){
 
-            if(selectedSubMenuPosition == 2)
-                if(this.mExamDetail != null)
-                this.mHomeItemSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/"+mExamDetail.getId()+"/syllabus/",this.mExamDetail.getExam_tag());
-            else if(selectedSubMenuPosition == 1)
-                    if(this.mExamDetail != null)
-                this.mHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/+"+mExamDetail.getId()+"/calendar/",this.mExamDetail.getExam_tag());
-            else
+            if(selectedSubMenuPosition == 2) {
+                if (this.mExamDetail != null)
+                    this.mHomeItemSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/syllabus/",null);
+            } else if(selectedSubMenuPosition == 1) {
+                if (this.mExamDetail != null)
+                    this.mHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/calendar/", null);
+            }else
                 Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
 
         }
