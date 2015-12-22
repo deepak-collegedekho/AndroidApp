@@ -41,6 +41,7 @@ public class Constants
     public static final String TAG_UPDATE_STREAM = "update_stream";
     public static final String KEY_STREAMS = "streams";
     public static final String USER_CREATED = "user_created";
+    public static final String USER_PROFILE_LOADED = "user_profile_loaded";
     public static final String WIDGET_INSTITUTES = "institutes";
     public static final String WIDGET_SYLLABUS = "syllabus";
     public static final String WIDGET_TEST_CALENDAR = "test_calendar";

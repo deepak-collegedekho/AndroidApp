@@ -54,7 +54,7 @@ public class SplashFragment extends BaseFragment {
             CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) layout.getLayoutParams();
             params.setBehavior(null);
 
-           int splashTime = 6500;
+           int splashTime = 5000;
 
             if(IS_FIRST_TIME) {
                 IS_FIRST_TIME = false;

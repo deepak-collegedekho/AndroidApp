@@ -11,23 +11,27 @@
         style="@style/AppTheme.Bottom_Button"
         android:layout_width="0dp"
         android:layout_weight=".25"
+        android:tag="1"
         android:text="PREP \nBUDDY"/>
     <TextView
         android:id="@+id/resources_buddies"
         style="@style/AppTheme.Bottom_Button"
         android:layout_width="0dp"
         android:layout_weight=".25"
+        android:tag="2"
         android:text="RESOURCE \nBUDDY"/>
     <TextView
         android:id="@+id/future_buddies"
         style="@style/AppTheme.Bottom_Button"
         android:layout_width="0dp"
         android:layout_weight=".25"
+        android:tag="3"
         android:text="FUTURE \nBUDDY"/>
     <TextView
         android:id="@+id/my_alerts"
         style="@style/AppTheme.Bottom_Button"
         android:layout_width="0dp"
         android:layout_weight=".25"
+        android:tag="4"
         android:text="MY \n ALERTS "/>
 </LinearLayout>

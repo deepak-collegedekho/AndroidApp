@@ -29,4 +29,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:id="@+id/bottom_tab_layout"
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/layout_bottom_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"/>
+    </FrameLayout>
+
 </android.support.design.widget.CoordinatorLayout>
