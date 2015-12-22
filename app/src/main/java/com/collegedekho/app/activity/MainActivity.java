@@ -3209,7 +3209,7 @@ public class MainActivity extends AppCompatActivity
         Map<String, String> params = new HashMap<>();
         params.put(Constants.USER_EXAMS_SET,"1");
         this.mMakeNetworkCall(Constants.TAG_USER_EXAMS_SET,Constants.BASE_URL + "preferences/", params);
-
+        this.mClearBackStack();
         mLoadUserProfile(response);
     }
 
