@@ -83,7 +83,8 @@ public class Constants
     public static final String TAG_UNSHORTLIST_INSTITUTE = "unshortlist_institute";
     public static final int NEITHER_LIKE_NOR_DISLIKE = -1;
     public static final String WIDGET_SHORTLIST = "shortlistedinstitutes";
-    public static final String TAG_LOAD_PYSCHOMETRIC_TEST = "load_pyschometric_test";
+    public static final String TAG_LOAD_PSYCHOMETRIC_TEST = "load_psychometric_test";
+    public static final String TAG_MY_ALERTS = "my_alerts";
     public static final String TAG_LOAD_INSTITUTE_QNA_QUESTIONS = "institute_qna";
     public static final String TAG_FRAGMENT_INSTITUTE_LIST = "fragment_institute_list";
     public static final String TAG_FRAGMENT_SHORTLISTED_INSTITUTE_LIST = "fragment_shortlisted_institute_list";

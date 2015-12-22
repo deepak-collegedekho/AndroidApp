@@ -57,6 +57,7 @@ import com.collegedekho.app.entities.Facet;
 import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
+import com.collegedekho.app.entities.MyAlertDate;
 import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
 import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
@@ -99,6 +100,8 @@ import com.collegedekho.app.fragment.StreamFragment;
 import com.collegedekho.app.fragment.SyllabusSubjectsListFragment;
 import com.collegedekho.app.fragment.SyllabusUnitListFragment;
 import com.collegedekho.app.fragment.TabFragment;
+import com.collegedekho.app.fragment.UserAlertsFragment;
+import com.collegedekho.app.fragment.UserAlertsParentFragment;
 import com.collegedekho.app.fragment.UserEducationFragment;
 import com.collegedekho.app.fragment.WidgetListFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
@@ -191,7 +194,7 @@ public class MainActivity extends AppCompatActivity
         InstituteDetailFragment.OnInstituteFooterItemSelected, UserEducationFragment.OnUserEducationInteractionListener,
         PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData,
-        NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener
+        NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,UserAlertsFragment.OnAlertItemSelectListener
 
 {
 
@@ -270,6 +273,7 @@ public class MainActivity extends AppCompatActivity
 
     private boolean IS_PROFILE_LOADED;
     private boolean IS_USER_CREATED;
+    private List<MyAlertDate> myAlertsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1164,7 +1168,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 this.updateQuestionLikeButton(response, extraTag, Integer.parseInt(like));
                 break;
-            case Constants.TAG_LOAD_PYSCHOMETRIC_TEST:
+            case Constants.TAG_LOAD_PSYCHOMETRIC_TEST:
                 this.loadPyschometricTest(response);
                 break;
 
@@ -1297,6 +1301,10 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_SUBMIT_SBS_EXAM:
                 this.mStepByStepDone(response);
+                break;
+
+            case Constants.TAG_MY_ALERTS:
+                this.onMyAlertsLoaded(response);
                 break;
         }
 
@@ -1812,7 +1820,7 @@ public class MainActivity extends AppCompatActivity
                 return "Posting your question...";
             case Constants.TAG_LOAD_FILTERS:
                 return "Loading Filters...";
-            case Constants.TAG_LOAD_PYSCHOMETRIC_TEST:
+            case Constants.TAG_LOAD_PSYCHOMETRIC_TEST:
                 return "Loading Questionnaire...";
             case Constants.TAG_LOAD_QNA_QUESTIONS:
                 return "Loading Questions...";
@@ -1833,6 +1841,8 @@ public class MainActivity extends AppCompatActivity
                 return "Loading ....";
             case Constants.WIDGET_TEST_CALENDAR:
                 return "Loading your plan...";
+            case Constants.TAG_MY_ALERTS:
+                return "Loading important events...";
         }
         return null;
     }
@@ -3597,6 +3607,13 @@ public class MainActivity extends AppCompatActivity
         this.mMakeJsonObjectNetworkCall(tag, url, answerObject, Request.Method.POST);
     }
 
+    @Override
+    public void onItemSelected(int position) {
+        if(this.myAlertsList!=null && !this.myAlertsList.isEmpty()){
+            this.mDisplayFragment(UserAlertsParentFragment.newInstance(position,new ArrayList(this.myAlertsList)),true,UserAlertsParentFragment.class.toString());
+        }
+    }
+
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override
         public void onContainerAvailable(ContainerHolder containerHolder, String containerVersion) {
@@ -3744,8 +3761,7 @@ public class MainActivity extends AppCompatActivity
            }
 
            if(postion == 4){
-
-               Toast.makeText(getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
+                MainActivity.this.mMakeNetworkCall(Constants.TAG_MY_ALERTS,Constants.BASE_URL+"exam-alerts/",null);
                     return;
            }
            mUpdateTabMenuItem(postion);
@@ -3792,5 +3808,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void onMyAlertsLoaded(String response) {
+        response="{\"results\":[{\"count\":1,\"dates\":[{\"date\":\"2015-09-30\",\"exam_id\":1,\"type\":\"Advertisement Opening Date\"}],\"year\":2015,\"month\":9},{\"count\":2,\"dates\":[{\"date\":\"2015-05-19\",\"exam_id\":265,\"type\":\"Advertisement Opening Date\"},{\"date\":\"2015-05-20\",\"exam_id\":265,\"type\":\"Registration Start Date\"}],\"year\":2015,\"month\":5},{\"count\":5,\"dates\":[{\"date\":\"2015-06-08\",\"exam_id\":265,\"type\":\"Admit Card Start Date\"},{\"date\":\"2015-06-10\",\"exam_id\":265,\"type\":\"Admit Card End Date\"},{\"date\":\"2015-06-14\",\"exam_id\":265,\"type\":\"Test Date\"},{\"date\":\"2015-06-14\",\"exam_id\":265,\"type\":\"Test Start Date\"},{\"date\":\"2015-06-14\",\"exam_id\":265,\"type\":\"Test End Date\"}],\"year\":2015,\"month\":6},{\"count\":1,\"dates\":[{\"date\":\"2015-07-03\",\"exam_id\":265,\"type\":\"Test Results Date\"}],\"year\":2015,\"month\":7}]}";
+        try {
+            Map<String, Object> map = JSON.std.mapFrom(response);
+            String result = JSON.std.asString(map.get("results"));
+            this.myAlertsList = JSON.std.listOfFrom(MyAlertDate.class, result);
+            this.displayAlerts(new ArrayList(this.myAlertsList));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void displayAlerts(ArrayList<MyAlertDate>dates){
+        this.mDisplayFragment(UserAlertsFragment.newInstance(dates),true,UserAlertsFragment.class.toString());
+    }
 
 }
