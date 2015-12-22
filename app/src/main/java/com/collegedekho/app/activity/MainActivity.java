@@ -2150,7 +2150,7 @@ public class MainActivity extends AppCompatActivity
 
         //send them to DB
         HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("status", user.getPref().name().toLowerCase());
+//        hashMap.put("status", user.getPref().name().toLowerCase());
         hashMap.put("user", user.getResource_uri());
         hashMap.put(Constants.USER_STREAM, streamURI);
         hashMap.put(Constants.USER_LEVEL, Constants.BASE_URL + "level/" + (level + 1) + "/");
