@@ -21,10 +21,14 @@ import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.listener.OnSwipeTouchListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.widget.CircleImageView;
 import com.collegedekho.app.widget.CircularImageView;
 
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by sureshsaini on 27/11/15.
@@ -98,8 +102,13 @@ public class ProfileFragment extends  BaseFragment
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
 
         }
+
         if(this.mExamDetailList != null && !this.mExamDetailList.isEmpty()) {
+
+            rootView.findViewById(R.id.prep_buddies).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.VISIBLE);
             final ViewPager examPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
+            //rootView.findViewById(R.id.exam_pager_header).setVisibility(View.VISIBLE);
             examPager.setVisibility(View.VISIBLE);
             this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this, this.mExamDetailList);
             examPager.setAdapter(this.mDetailsAdapter);
@@ -152,6 +161,10 @@ public class ProfileFragment extends  BaseFragment
                int currentPosition = examPager.getCurrentItem();
                onExamTabSelected(currentPosition);
            }
+        }else{
+
+            rootView.findViewById(R.id.prep_buddies).setVisibility(View.GONE);
+            rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.GONE);
         }
 
 
@@ -163,6 +176,7 @@ public class ProfileFragment extends  BaseFragment
         rootView.findViewById(R.id.wishList_colleges_layout_RL).setOnClickListener(this);
         rootView.findViewById(R.id.recommended_colleges_layout_RL).setOnClickListener(this);
         rootView.findViewById(R.id.important_date_layout_RL).setOnClickListener(this);
+        rootView.findViewById(R.id.profile_syllabus_statusLL).setOnClickListener(this);
 
         return rootView;
     }
@@ -203,7 +217,10 @@ public class ProfileFragment extends  BaseFragment
         this.mListener = null;
     }
 
-
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+       // super.onCreateOptionsMenu(menu, inflater);
+    }
 
     @Override
     public void onClick(View view) {
@@ -211,6 +228,10 @@ public class ProfileFragment extends  BaseFragment
 
         switch (view.getId())
         {
+            case R.id.profile_syllabus_statusLL:
+                if(this.mExamDetail != null)
+                this.mHomeItemSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/"+ this.mExamDetail.getId()+"/syllabus/",null);
+                break;
             case R.id.prep_buddies:
                 this.onTabMenuSelected(0);
                 break;
@@ -221,46 +242,54 @@ public class ProfileFragment extends  BaseFragment
                 this.onTabMenuSelected(2);
                 break;
             case R.id.my_alerts:
+                //this.onTabMenuSelected(3);
                 Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
                 return;
            case R.id.backup_colleges_layout_RL:
                if(this.mExamDetail != null)
-               mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "yearly-exams/" + this.mExamDetail.getId() + "/backup-colleges/");
+                   mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes", this.mExamDetail.getExam_tag());
                else
-               mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "yearly-exams/54/backup-colleges/");
+               mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes",null);
                break;
             case R.id.wishList_colleges_layout_RL:
-                mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes");
+                mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
                 break;
             case R.id.recommended_colleges_layout_RL:
-                mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes");
+                if(this.mExamDetail != null)
+                    mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",this.mExamDetail.getExam_tag());
+                    else
+                    mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
                 break;
             case R.id.important_date_layout_RL:
-                this.mHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/54/calendar/");
+
+                if(this.mExamDetail != null)
+                this.mHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/"+mExamDetail.getId()+"/calendar/", null);
+                else
+                    this.mHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/54/calendar/", null);
                 break;
             default:
                 break;
         }
+    }
 
+
+    private void mHomeItemSelected(String requestType, String url, String examTag)
+    {
+        if(mListener != null)
+            mListener.onHomeItemSelected(requestType, url, examTag);
     }
 
     private void onTabMenuSelected(int tabPosition) {
         if(this.mListener != null)
                       this.mListener.onTabMenuSelected(tabPosition);
-
     }
-
 
     private void onExamTabSelected(int position) {
-
         if(this.mListener == null || this.mExamDetailList == null || this.mExamDetailList.isEmpty())
             return;
-
         this.mExamDetail = this.mExamDetailList.get(position);
         this.mListener.onExamTabSelected(mExamDetail);
-
     }
-
 
     public void updateExamSummary(ExamSummary examSummary) {
         this.mExamSummary = examSummary;
@@ -275,10 +304,10 @@ public class ProfileFragment extends  BaseFragment
         TextView important_dateTV =  (TextView)view.findViewById(R.id.important_dates_count);
         TextView covered_syllabus =  (TextView)view.findViewById(R.id.covered_syllabus);
 
-        backup_countTV.setText(""+this.mExamSummary.getBackup_count());
-        wishList_countTV.setText(""+this.mExamSummary.getShortlist_count());
-        recommended_countTV.setText(""+this.mExamSummary.getRecommended_count());
-        important_dateTV.setText(""+this.mExamSummary.getNext_important_date());
+        backup_countTV.setText(this.mExamSummary.getBackup_count()+"/20");
+        wishList_countTV.setText(this.mExamSummary.getShortlist_count()+"/20");
+        recommended_countTV.setText(this.mExamSummary.getRecommended_count()+"/10");
+        important_dateTV.setText(this.mExamSummary.getNext_important_date());
         covered_syllabus.setText(""+this.mExamSummary.getSyllabus_covered()+"%");
 
     }
@@ -288,11 +317,6 @@ public class ProfileFragment extends  BaseFragment
 
     }
 
-    private void mHomeItemSelected(String requestType, String url)
-    {
-        if(mListener != null)
-            mListener.onHomeItemSelected(requestType, url);
-    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -309,7 +333,7 @@ public class ProfileFragment extends  BaseFragment
         void onTabMenuSelected(int tabPosition);
         void onExamTabSelected(ExamDetail tabPosition);
 
-        void onHomeItemSelected(String requestType, String url);
+        void onHomeItemSelected(String requestType, String url, String examTag);
     }
 
 }

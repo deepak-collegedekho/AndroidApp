@@ -85,10 +85,10 @@ public class TextQuestionFragment extends PsychometricQuestionFragment implement
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnStepByStepFragmentListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnStepByStepFragmentListener");
         }
     }*/
 

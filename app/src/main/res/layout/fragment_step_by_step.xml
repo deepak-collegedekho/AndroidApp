@@ -1,0 +1,35 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment">
+
+    <!--android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:hapticFeedbackEnabled="true"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:layout_above="@id/button_next">
+    </android.support.v4.view.ViewPager-->
+
+    <com.collegedekho.app.display.NonSwipeableViewPager
+        android:id="@+id/sbs_pager"
+        android:hapticFeedbackEnabled="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/activity_horizontal_margin_small"
+        android:paddingRight="@dimen/activity_horizontal_margin_small"
+        android:layout_above="@id/button_next"
+        />
+    <TextView
+        android:id="@+id/sbs_button_next"
+        style="@style/AppTheme.CardView.LightBlue"
+        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:layout_margin="@dimen/activity_vertical_margin_small"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:text="Next"
+        />
+</RelativeLayout>

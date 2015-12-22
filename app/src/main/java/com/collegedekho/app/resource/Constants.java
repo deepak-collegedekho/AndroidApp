@@ -29,14 +29,16 @@ public class Constants
     public static final String TAG_EXAMS_LIST = "exams_list";
     public static final String TAG_SUBMIT_EXAMS_LIST = "submit_exams_list";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_EXAM = "submit_psychometric_exam";
+    public static final String TAG_SUBMIT_SBS_EXAM = "submit_sbs_exam";
 
     public static final String TAG_LOAD_STREAM = "load_stream";
     public static final String TAG_PSYCHOMETRIC_QUESTIONS = "load_psychometric_questions";
     public static final String TAG_PSYCHOMETRIC_RESPONSE = "load_psychometric_response";
+    public static final String TAG_LOAD_STEP_BY_STEP = "load_step_by_step";
     public static final String TAG_USER_EDUCATION = "load_user_education";
     public static final String TAG_UPDATE_STREAM = "update_stream";
     public static final String KEY_STREAMS = "streams";
-    public static final String COMPLETED_SECOND_STAGE = "second_stage";
+    public static final String USER_CREATED = "user_created";
     public static final String WIDGET_INSTITUTES = "institutes";
     public static final String WIDGET_SYLLABUS = "syllabus";
     public static final String WIDGET_TEST_CALENDAR = "test_calendar";
@@ -48,7 +50,7 @@ public class Constants
     public static final String WIDGET_FORUMS = "forums";
     public static final String TAG_LOAD_QNA_QUESTIONS = "qna";
     //public static final String IP = "http://10.0.3.2";
-//    public static final String IP = "http://www.launch.collegedekho.com";
+    //public static final String IP = "http://www.launch.collegedekho.com";
     public static final String IP = "http://www.collegedekho.com";
     //public static final String IP = "http://192.168.8.101";
     //public static final String IP = "http://192.168.56.1";
@@ -131,6 +133,8 @@ public class Constants
     public static final String TAG_PSYCHOMETRIC_TEXT_COMPLETED = "psychometric_text_completed";
     public static final String TAG_LOAD_INSTITUTE_NEWS = "institute_news";
     public static final String TAG_LOAD_INSTITUTE_ARTICLE = "institute_article";
+    public static final String TAG_USER_EDUCATION_SET = "user_education_set";
+    public static final String TAG_USER_EXAMS_SET = "user_exams_set";
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET;
     public static final int MY_FB_REFRESH_RATE = 5000;
@@ -192,6 +196,8 @@ public class Constants
     public static final String USER_STREAM_NAME = "stream_name";
     public static final String USER_STREAM_ID   = "stream_id";
     public static final String USER_LEVEL_NAME  = "level_name";
+    public static final String USER_EDUCATION_SET = "education_set";
+    public static final String USER_EXAMS_SET = "exams_set";
     public static final String USER_RESOURCE_URI = "user";
     public static final String USER_PHONE       = "phone_no";
     public static final String USER_IMAGE       = "user_image";

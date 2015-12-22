@@ -190,6 +190,4 @@ public class DropDownQuestionFragment extends PsychometricQuestionFragment imple
             return convertView;
         }
     }
-
-
 }

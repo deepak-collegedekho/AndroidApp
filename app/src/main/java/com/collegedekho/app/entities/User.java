@@ -32,6 +32,8 @@ public class User
     private String level_name = "";
     private String  is_preparing= "";
     private String sublevel = "";
+    private int education_set = 0;
+    private int exams_set = 0;
 
     private String primaryEmail;
     private String primaryPhone;
@@ -208,6 +210,22 @@ public class User
 
     public void setSublevel(String sublevel) {
         this.sublevel = sublevel;
+    }
+
+    public int getEducation_set() {
+        return education_set;
+    }
+
+    public void setEducation_set(int education_set) {
+        this.education_set = education_set;
+    }
+
+    public int getExams_set() {
+        return exams_set;
+    }
+
+    public void setExams_set(int exams_set) {
+        this.exams_set = exams_set;
     }
 
     public void processProfileData(Cursor cursor, Context context) {

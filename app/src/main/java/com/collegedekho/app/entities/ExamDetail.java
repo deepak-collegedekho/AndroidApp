@@ -13,6 +13,7 @@ public class ExamDetail implements Parcelable
     private boolean result_out;
     private String exam_marks="";
     private String exam_name="";
+    private String exam_tag="";
     private String exam_short_name="";
     private boolean isSelected;
 
@@ -26,6 +27,7 @@ public class ExamDetail implements Parcelable
         year = in.readString();
         exam_date = in.readString();
         exam_name = in.readString();
+        exam_tag = in.readString();
         exam_short_name = in.readString();
         result_out = in.readByte() != 0;
     }
@@ -53,6 +55,7 @@ public class ExamDetail implements Parcelable
         dest.writeString(year);
         dest.writeString(exam_date);
         dest.writeString(exam_name);
+        dest.writeString(exam_tag);
         dest.writeString(exam_short_name);
         dest.writeByte((byte) (result_out ? 1 : 0));
     }
@@ -119,5 +122,13 @@ public class ExamDetail implements Parcelable
 
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+
+    public String getExam_tag() {
+        return exam_tag;
+    }
+
+    public void setExam_tag(String exam_tag) {
+        this.exam_tag = exam_tag;
     }
 }
