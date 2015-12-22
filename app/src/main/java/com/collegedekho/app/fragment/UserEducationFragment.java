@@ -124,6 +124,8 @@ public class UserEducationFragment extends BaseFragment {
         mMarksPicker = (NumberPicker) rootView.findViewById(R.id.marks_number_picker);
         mMarksPicker.setMaxValue(marks_arrays.length-1);
         mMarksPicker.setMinValue(0);
+        mMarksPicker.setSaveFromParentEnabled(false);
+        mMarksPicker.setSaveEnabled(true);
         mMarksPicker.setWrapSelectorWheel(false);
         mMarksPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         mMarksPicker.setDisplayedValues(marks_arrays);
@@ -131,6 +133,8 @@ public class UserEducationFragment extends BaseFragment {
         mExamPicker = (NumberPicker) rootView.findViewById(R.id.exam_number_picker);
         mExamPicker.setMaxValue(exam_arrays.length-1);
         mExamPicker.setMinValue(0);
+        mExamPicker.setSaveFromParentEnabled(false);
+        mExamPicker.setSaveEnabled(true);
         mExamPicker.setWrapSelectorWheel(false);
         mExamPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         mExamPicker.setDisplayedValues(exam_arrays);
@@ -138,6 +142,8 @@ public class UserEducationFragment extends BaseFragment {
         mStreamPicker = (NumberPicker) rootView.findViewById(R.id.stream_number_picker);
         mStreamPicker.setMaxValue(stream_arrays.length-1);
         mStreamPicker.setMinValue(0);
+        mStreamPicker.setSaveFromParentEnabled(false);
+        mStreamPicker.setSaveEnabled(true);
         mStreamPicker.setWrapSelectorWheel(false);
         mStreamPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         mStreamPicker.setDisplayedValues(stream_arrays);
