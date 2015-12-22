@@ -27,6 +27,8 @@ public class Constants
     public static final String TAG_USER_REGISTRATION = "user_registration";
     public static final String TAG_EDUCATION_DETAILS_SUBMIT = "user_education_submit";
     public static final String TAG_EXAMS_LIST = "exams_list";
+    public static final String TAG_LOAD_EXAMS_LIST = "load_exams_list";
+
     public static final String TAG_SUBMIT_EXAMS_LIST = "submit_exams_list";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_EXAM = "submit_psychometric_exam";
     public static final String TAG_SUBMIT_SBS_EXAM = "submit_sbs_exam";

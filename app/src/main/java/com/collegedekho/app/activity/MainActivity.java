@@ -618,7 +618,7 @@ public class MainActivity extends AppCompatActivity
         if(this.user.getEducation_set() == 1 &&  this.user.getExams_set() == 1)
             this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
         else if(this.user.getEducation_set() == 1 &&  this.user.getExams_set() == 0)
-            this.mMakeNetworkCall(Constants.TAG_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
+            this.mMakeNetworkCall(Constants.TAG_LOAD_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
         else
             this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION,  Constants.BASE_URL + "user-education/", null);
 
@@ -1034,7 +1034,10 @@ public class MainActivity extends AppCompatActivity
                 this.mUserEducationStepCompleted(response);
                 break;
             case Constants.TAG_EXAMS_LIST:
-                this.mOnExamsLoaded(response);
+                this.mOnExamsLoaded(response,true);
+                break;
+            case Constants.TAG_LOAD_EXAMS_LIST:
+                this.mOnExamsLoaded(response,false);
                 break;
             case Constants.TAG_SUBMIT_EXAMS_LIST:
                 this.mOnUserExamsSelected(response);
@@ -3464,10 +3467,10 @@ public class MainActivity extends AppCompatActivity
      * after user education detail is submitted to server.
      * @param responseJson
      */
-    private void mOnExamsLoaded(String responseJson) {
+    private void mOnExamsLoaded(String responseJson,boolean addToBackStack) {
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
-            this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)),true,ExamsFragment.class.toString());
+            this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)),addToBackStack,ExamsFragment.class.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
