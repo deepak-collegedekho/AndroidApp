@@ -1440,6 +1440,7 @@ public class MainActivity extends AppCompatActivity
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
 
             //move to profile
+            this.mClearBackStack();
             this.mLoadUserProfile(null);
         } catch (IOException e) {
             e.printStackTrace();
