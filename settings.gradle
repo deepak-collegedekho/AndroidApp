@@ -1,1 +1,1 @@
-include ':app', ':garadiLibrary'
+include ':app'

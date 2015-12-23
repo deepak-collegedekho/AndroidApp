@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/collegedekho-android-app.iml" filepath="$PROJECT_DIR$/collegedekho-android-app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/garadiLibrary/garadiLibrary.iml" filepath="$PROJECT_DIR$/garadiLibrary/garadiLibrary.iml" />
     </modules>
   </component>
 </project>

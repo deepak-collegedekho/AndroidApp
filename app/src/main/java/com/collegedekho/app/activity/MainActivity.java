@@ -114,6 +114,7 @@ import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 
+import com.crashlytics.android.Crashlytics;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
@@ -136,6 +137,7 @@ import bolts.AppLinks;
 import io.connecto.android.sdk.Connecto;
 import io.connecto.android.sdk.Properties;
 import io.connecto.android.sdk.Traits;
+import io.fabric.sdk.android.Fabric;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -340,7 +342,7 @@ public class MainActivity extends AppCompatActivity
         //this.connecto.track("Session Started", new Properties().putValue("value", 800));
         this.connecto.registerWithGCM(MainActivity.this, this.SENDER_ID);
 
-        //Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
 
         this.analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
         this.analytics.setLocalDispatchPeriod(1800);
@@ -376,7 +378,7 @@ public class MainActivity extends AppCompatActivity
         // show appBarLayout and toolBar
 
         // TODO: Move this to where you establish a user session
-        //logUser();
+        logUser();
     }
 
     private void mSetUpAPPToolBar() {
@@ -399,8 +401,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    /*private void logUser() {
-        // TODO: Use the current user's information
+    private void logUser() {
         // You can call any combination of these three methods
         if (MainActivity.user != null)
         {
@@ -408,7 +409,7 @@ public class MainActivity extends AppCompatActivity
             Crashlytics.setUserEmail(MainActivity.user.getEmail());
             Crashlytics.setUserName(MainActivity.user.getName());
         }
-    }*/
+    }
 
     private void mhandleNotifications()
     {
