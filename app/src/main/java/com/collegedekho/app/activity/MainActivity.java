@@ -5,9 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Handler;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -15,6 +12,7 @@ import android.content.pm.Signature;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
@@ -22,7 +20,9 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -76,8 +76,6 @@ import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.fragment.CalendarParentFragment;
-import com.collegedekho.app.fragment.NotPreparingFragment;
-import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FilterFragment;
 import com.collegedekho.app.fragment.InstituteDetailFragment;
@@ -91,6 +89,8 @@ import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
+import com.collegedekho.app.fragment.NotPreparingFragment;
+import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.ProfileFragment1;
 import com.collegedekho.app.fragment.PsychometricTestParentFragment;
 import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
@@ -109,11 +109,9 @@ import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.resource.Constants;
-
 import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
-
 import com.crashlytics.android.Crashlytics;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -133,12 +131,6 @@ import com.google.android.gms.tagmanager.Container;
 import com.google.android.gms.tagmanager.ContainerHolder;
 import com.google.android.gms.tagmanager.TagManager;
 
-import bolts.AppLinks;
-import io.connecto.android.sdk.Connecto;
-import io.connecto.android.sdk.Properties;
-import io.connecto.android.sdk.Traits;
-import io.fabric.sdk.android.Fabric;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -153,6 +145,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import bolts.AppLinks;
+import io.connecto.android.sdk.Connecto;
+import io.connecto.android.sdk.Properties;
+import io.connecto.android.sdk.Traits;
+import io.fabric.sdk.android.Fabric;
 
 /*
 The MIT License (MIT)
@@ -271,7 +269,7 @@ public class MainActivity extends AppCompatActivity
     private String mYear;
     private View view;
     private TextView prepBuddies       ;
-    private TextView resourceBuddies  ;
+    private TextView resourceBuddies   ;
     private TextView futureBuddies     ;
     private TextView myAlerts          ;
 

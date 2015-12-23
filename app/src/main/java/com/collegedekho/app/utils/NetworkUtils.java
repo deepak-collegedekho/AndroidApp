@@ -21,6 +21,7 @@ import com.collegedekho.app.resource.ErrorCode;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.resource.Constants;
+import com.crashlytics.android.Crashlytics;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,6 +91,8 @@ public class NetworkUtils {
             @Override
             public void onErrorResponse(VolleyError error)
             {
+                Crashlytics.logException(error);
+
                 String json = null;
                 NetworkResponse response = error.networkResponse;
                 if (response != null && response.data != null)
@@ -155,6 +158,8 @@ public class NetworkUtils {
                 @Override
                 public void onErrorResponse(VolleyError error)
                 {
+                    Crashlytics.logException(error);
+
                     String json = null;
                     NetworkResponse response = error.networkResponse;
                     if (response != null && response.data != null)
@@ -261,6 +266,8 @@ public class NetworkUtils {
                     @Override
                     public void onErrorResponse(VolleyError error)
                     {
+                        Crashlytics.logException(error);
+
                         String json = null;
                         NetworkResponse response = error.networkResponse;
                         if (response != null && response.data != null)
