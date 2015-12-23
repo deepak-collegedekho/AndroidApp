@@ -49,7 +49,7 @@ public class NewsFragment extends BaseFragment  {
     private ArrayList<News> mNewsList;
     private String mTitle;
     private NewsListAdapter mAdapter;
-    private int mViewType = Constants.VIEW_INTO_LIST;
+    private int mViewType = Constants.VIEW_INTO_GRID;
     private News mNews;
 
     public NewsFragment() {
@@ -113,6 +113,8 @@ public class NewsFragment extends BaseFragment  {
         recyclerView.addOnScrollListener(scrollListener);
 
         mUpdateNewsListAdapter(rootView);
+        if(this.mNewsList != null && this.mNewsList.size() >0)
+            this.mUpdateNewsDetail(rootView, this.mNewsList.get(0));
 
         return rootView;
     }
@@ -148,9 +150,9 @@ public class NewsFragment extends BaseFragment  {
     public void onResume() {
         super.onResume();
 
-        MainActivity mMainActivity = (MainActivity) this.getActivity();
+       /* MainActivity mMainActivity = (MainActivity) this.getActivity();
         if (mMainActivity != null)
-            mMainActivity.currentFragment = this;
+            mMainActivity.currentFragment = this;*/
 
     }
 
@@ -254,20 +256,23 @@ public class NewsFragment extends BaseFragment  {
         mUpdateNewsDetail(getView(), news);
     }
 
-    public void updateList(List<News> news, String next) {
+    public void updateNewsList(ArrayList<News> newslist, String next) {
        progressBarLL.setVisibility(View.GONE);
-        this.mNewsList.addAll(news);
+        this.mNewsList = newslist;
         mUpdateNewsListAdapter(getView());
         loading = false;
         mNextUrl = next;
     }
 
-    public void updateInstituteNewsList(ArrayList<News> newsList, String next)
+   /* public void updateInstituteNewsList(ArrayList<News> newsList, String next)
     {
+
+        progressBarLL.setVisibility(View.GONE);
         this.mNewsList = newsList;
         mUpdateNewsListAdapter(getView());
+        loading = false;
         mNextUrl = next;
-    }
+    }*/
 
     private void mUpdateNewsListAdapter(View view){
         if(view == null)return;

@@ -178,9 +178,11 @@ public class InstituteDetailFragment extends BaseFragment {
 
             @Override
             public void onPageSelected(int position) {
-                if(position == 4)
-                mDetailsAdapter.updateInstituteNews(mInstituteNewsList, nextNewsUrl);
-                if(position == 5)
+                if(position == 1)
+                    mDetailsAdapter.setCourses(courses);
+                else if(position == 4)
+                   mDetailsAdapter.updateInstituteNews(mInstituteNewsList, nextNewsUrl);
+                else if(position == 5)
                     mDetailsAdapter.updateInstituteArticles(mInstituteArticleList, nextArticleUrl);
             }
 
