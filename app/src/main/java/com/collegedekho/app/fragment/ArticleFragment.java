@@ -88,6 +88,7 @@ public class ArticleFragment extends BaseFragment {
         (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
         (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
         (rootView).findViewById(R.id.article_detail_layout).setOnClickListener(this);
+
         if(mViewType == Constants.VIEW_INTO_GRID) {
             layoutManager =new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
             rootView.findViewById(R.id.article_detail_scrollView).setVisibility(View.VISIBLE);
@@ -255,12 +256,7 @@ public class ArticleFragment extends BaseFragment {
         mNextUrl = next;
     }
 
-   /* public void updateInstituteArticleList(ArrayList<Articles> artiles, String next) {
-        this.mArticlesList = artiles;
-        mUpdateArticleListAdapter(getView());
-        mNextUrl = next;
-    }
-*/
+
     private void mUpdateArticleListAdapter(View view){
         if(view == null)return;
         if (mArticlesList == null || mArticlesList.size() <= 0) {
@@ -270,16 +266,17 @@ public class ArticleFragment extends BaseFragment {
             view.findViewById(R.id.view_into_grid_list).setVisibility(View.GONE);
         }else{
             view.findViewById(android.R.id.empty).setVisibility(View.GONE);
-            view.findViewById(R.id.article_list_recyclerView).setVisibility(View.VISIBLE);
             view.findViewById(R.id.view_into_grid_list).setVisibility(View.VISIBLE);
-        }
 
-        if(this.mViewType == Constants.VIEW_INTO_GRID)
+            if(this.mViewType == Constants.VIEW_INTO_GRID)
             {
                 view.findViewById(R.id.article_detail_scrollView).setVisibility(View.VISIBLE);
                 if(mArticlesList != null && !mArticlesList.isEmpty())
                     mUpdateArticleDetail(getView(), mArticlesList.get(0));
             }
+        }
+
+
 
         this.mAdapter.updateArticleAdapter(this.mArticlesList);
         this.mAdapter.notifyDataSetChanged();

@@ -264,15 +264,7 @@ public class NewsFragment extends BaseFragment  {
         mNextUrl = next;
     }
 
-   /* public void updateInstituteNewsList(ArrayList<News> newsList, String next)
-    {
 
-        progressBarLL.setVisibility(View.GONE);
-        this.mNewsList = newsList;
-        mUpdateNewsListAdapter(getView());
-        loading = false;
-        mNextUrl = next;
-    }*/
 
     private void mUpdateNewsListAdapter(View view){
         if(view == null)return;
