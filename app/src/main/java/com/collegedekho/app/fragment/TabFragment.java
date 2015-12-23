@@ -287,9 +287,9 @@ public class TabFragment extends  BaseFragment{
         else if(selectedTabPosition == 2){
              if(selectedSubMenuPosition == 1){
                  if(this.mExamDetail != null)
-                 this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes",this.mExamDetail.getExam_tag());
+                 this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes/",this.mExamDetail.getExam_tag());
                  else
-                 this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes", null);
+                 this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes/", null);
              }else  if(selectedSubMenuPosition == 2){
                  this.mHomeWidgetSelected(Constants.WIDGET_NEWS, Constants.BASE_URL+"personalize/news", null);
              }else  if(selectedSubMenuPosition == 3){
@@ -314,10 +314,10 @@ public class TabFragment extends  BaseFragment{
 
 
         //TODO:: showing progress as a profile circle
-        if(examSummary.getSyllabus_covered() ==0)
+        //if(examSummary.getSyllabus_covered() ==0)
             profileCompleted.setProgress(100);
-        else
-            profileCompleted.setProgress(examSummary.getSyllabus_covered());
+        //else
+           // profileCompleted.setProgress(examSummary.getSyllabus_covered());
     }
     OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {
         @Override

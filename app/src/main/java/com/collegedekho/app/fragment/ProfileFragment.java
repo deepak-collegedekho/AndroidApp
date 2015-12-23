@@ -127,12 +127,12 @@ public class ProfileFragment extends  BaseFragment
 
             rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
             rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
-            if(this.isFistTime) {
-                this.isFistTime = false;
+            /*if(this.isFistTime) {
+                this.isFistTime = false;*/
                 int currentPosition = mExamTabPager.getCurrentItem();
                 mExamTabSelected(currentPosition);
-            }
-            mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
+            /*}
+            mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);*/
 
         }else{
 
@@ -207,9 +207,9 @@ public class ProfileFragment extends  BaseFragment
                 break;
             case R.id.backup_colleges_layout_RL:
                if(this.mExamDetail != null)
-                   mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes", this.mExamDetail.getExam_tag());
+                   mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mExamDetail.getExam_tag());
                else
-               mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes",null);
+               mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/",null);
                break;
             case R.id.wishList_colleges_layout_RL:
                 mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
@@ -265,10 +265,10 @@ public class ProfileFragment extends  BaseFragment
         covered_syllabus.setText(""+this.mExamSummary.getSyllabus_covered()+"%");
 
         //TODO:: showing progress as a profile circle
-        if(this.mExamSummary.getSyllabus_covered() ==0)
+        //if(this.mExamSummary.getSyllabus_covered() ==0)
          profileCompleted.setProgress(100);
-        else
-         profileCompleted.setProgress(this.mExamSummary.getSyllabus_covered());
+        //else
+         //profileCompleted.setProgress(this.mExamSummary.getSyllabus_covered());
     }
 
             OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {

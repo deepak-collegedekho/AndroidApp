@@ -33,7 +33,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
     private ArrayList<QnAQuestions> mQnAQuestions;
     private TextView mEmptyTextView;
     private QnAQuestionsListAdapter mAdapter;
-    private int mViewType = Constants.VIEW_INTO_LIST;
+    private int mViewType = Constants.VIEW_INTO_GRID;
     private OnQnAQuestionSelectedListener mListener;
 
     public static QnAQuestionsListFragment newInstance(ArrayList<QnAQuestions> qnaQuestions, String next)

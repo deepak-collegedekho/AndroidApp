@@ -56,7 +56,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private MainActivity mMainActivity;
     private TextView mEmptyTextView;
 
-    private  int mViewType = Constants.VIEW_INTO_LIST; ;
+    private  int mViewType = Constants.VIEW_INTO_GRID; ;
     private ContactsCompletionView mCompletionView;
     private ArrayAdapter<String> tolenAdapter;
 
