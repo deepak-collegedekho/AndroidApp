@@ -121,10 +121,7 @@ public class UserAlertDetailsFragment extends BaseFragment implements UserAlerts
     @Override
     public void onItemSelect(int position, int startPosition, int endPosition, String itemKey) {
         if(itemKey==null){
-//            detailsRecyclerView.setVisibility(View.INVISIBLE);
             return;
-        }else {
-//            detailsRecyclerView.setVisibility(View.VISIBLE);
         }
         int count = dates.size();
         ArrayList<MyAlertDateDescription> details = new ArrayList<>();

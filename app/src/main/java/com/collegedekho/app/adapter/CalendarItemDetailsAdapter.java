@@ -31,7 +31,7 @@ public class CalendarItemDetailsAdapter extends RecyclerView.Adapter<CalendarIte
     public CalendarItemDetailView onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
                 from(parent.getContext()).
-                inflate(R.layout.card_syllabus_chapters, parent, false);
+                inflate(R.layout.calendar_item_detail_card_view, parent, false);
         return new CalendarItemDetailView(itemView);
     }
 
@@ -39,7 +39,9 @@ public class CalendarItemDetailsAdapter extends RecyclerView.Adapter<CalendarIte
     public void onBindViewHolder(CalendarItemDetailView holder, int position) {
         ChapterDetails chapterDetails = itemList.get(position);
         holder.chapterName.setText(chapterDetails.getChapter_name());
-        holder.chapterName.setTextColor(Utils.getSubjectColor(Integer.valueOf(chapterDetails.getSubject_id())));
+//        holder.chapterName.setTextColor(Utils.getSubjectColor(Integer.valueOf(chapterDetails.getSubject_id())));
+        holder.subjectName.setText(chapterDetails.getSubject_name());
+        holder.subjectName.setTextColor(Utils.getSubjectColor(Integer.valueOf(chapterDetails.getSubject_id())));
         holder.itemCheck.setChecked(chapterDetails.isSelected());
     }
 
@@ -50,13 +52,15 @@ public class CalendarItemDetailsAdapter extends RecyclerView.Adapter<CalendarIte
 
     public class CalendarItemDetailView extends RecyclerView.ViewHolder implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
-        TextView chapterName;
-        CheckBox itemCheck;
-
+        public TextView chapterName;
+        public CheckBox itemCheck;
+        public TextView subjectName;
         public CalendarItemDetailView(View itemView) {
             super(itemView);
             chapterName = (TextView) itemView.findViewById(R.id.syllabus_chapters_name);
             itemCheck = (CheckBox) itemView.findViewById(R.id.syllabus_chapters_checkbox);
+            subjectName=(TextView)itemView.findViewById(R.id.subject_name);
+            subjectName.setVisibility(View.VISIBLE);
             itemCheck.setOnCheckedChangeListener(this);
             itemView.setOnClickListener(this);
         }

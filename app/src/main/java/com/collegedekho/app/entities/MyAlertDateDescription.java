@@ -10,6 +10,24 @@ public class MyAlertDateDescription implements Parcelable {
     private int exam_id;
     private String type;
     private String date;
+    private String exam_name;
+    private String exam_short_name;
+
+    public String getExam_name() {
+        return exam_name;
+    }
+
+    public void setExam_name(String exam_name) {
+        this.exam_name = exam_name;
+    }
+
+    public String getExam_short_name() {
+        return exam_short_name;
+    }
+
+    public void setExam_short_name(String exam_short_name) {
+        this.exam_short_name = exam_short_name;
+    }
 
     public MyAlertDateDescription() {
     }
@@ -18,6 +36,8 @@ public class MyAlertDateDescription implements Parcelable {
         exam_id = in.readInt();
         type = in.readString();
         date = in.readString();
+        exam_name=in.readString();
+        exam_short_name=in.readString();
     }
 
     public static final Creator<MyAlertDateDescription> CREATOR = new Creator<MyAlertDateDescription>() {
@@ -66,5 +86,8 @@ public class MyAlertDateDescription implements Parcelable {
         dest.writeString(date);
         dest.writeString(type);
         dest.writeInt(exam_id);
+        dest.writeString(exam_name);
+        dest.writeString(exam_short_name);
+
     }
 }

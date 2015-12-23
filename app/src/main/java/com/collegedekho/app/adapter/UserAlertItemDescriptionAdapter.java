@@ -32,7 +32,7 @@ public class UserAlertItemDescriptionAdapter extends RecyclerView.Adapter<UserAl
     public UserAlertItemDetailView onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
                 from(parent.getContext()).
-                inflate(R.layout.card_syllabus_chapters, parent, false);
+                inflate(R.layout.calendar_item_detail_card_view, parent, false);
         return new UserAlertItemDetailView(itemView);
     }
 
@@ -40,7 +40,11 @@ public class UserAlertItemDescriptionAdapter extends RecyclerView.Adapter<UserAl
     public void onBindViewHolder(UserAlertItemDetailView holder, int position) {
         MyAlertDateDescription description = itemList.get(position);
         holder.chapterName.setText(description.getType());
-        holder.chapterName.setTextColor(Utils.getSubjectColor(description.getExam_id()));
+//        holder.chapterName.setTextColor(Utils.getSubjectColor(description.getExam_id()));
+        holder.subjectName.setText(description.getExam_name());
+        holder.subjectName.setTextColor(Utils.getSubjectColor(description.getExam_id()));
+        holder.subjectName.setVisibility(View.VISIBLE);
+
     }
 
     @Override
@@ -50,13 +54,14 @@ public class UserAlertItemDescriptionAdapter extends RecyclerView.Adapter<UserAl
 
     public class UserAlertItemDetailView extends RecyclerView.ViewHolder {
 
-        TextView chapterName;
-        CheckBox itemCheck;
-
+        public TextView chapterName;
+        public CheckBox itemCheck;
+        public TextView subjectName;
         public UserAlertItemDetailView(View itemView) {
             super(itemView);
             chapterName = (TextView) itemView.findViewById(R.id.syllabus_chapters_name);
             itemCheck = (CheckBox) itemView.findViewById(R.id.syllabus_chapters_checkbox);
+            subjectName=(TextView)itemView.findViewById(R.id.subject_name);
             itemCheck.setVisibility(View.GONE);
         }
 
