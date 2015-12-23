@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
     private boolean isActiveCell;
     LayoutInflater inflater;
     private HashMap<String, Integer> keys = new HashMap<>();
+    private HashMap<String, Integer>codes=new HashMap<>();
     boolean isNotified;
     Calendar mCalendar;
     Calendar cal;
@@ -50,6 +52,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
         for (int i = 0; i < size; i++) {
             if (keys.get(dateDesc.get(i).getDate()) == null) {
                 keys.put(dateDesc.get(i).getDate(), 1);
+                codes.put(dateDesc.get(i).getDate(),dateDesc.get(i).getExam_id());
             } else {
                 keys.put(dateDesc.get(i).getDate(), keys.get(dateDesc.get(i).getDate()) + 1);
             }
@@ -113,7 +116,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
                 holder.monthView.setVisibility(View.VISIBLE);
 
             } else {
-                holder.monthView.setVisibility(View.INVISIBLE);
+                holder.monthView.setVisibility(View.GONE);
             }
         } else {  //outside current year
 
@@ -132,7 +135,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
                 }
 
             } else {
-                holder.monthView.setVisibility(View.INVISIBLE);
+                holder.monthView.setVisibility(View.GONE);
             }
         }
         if (isActiveCell) {
@@ -157,16 +160,16 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
 
             Drawable mDrawable = mContext.getResources().getDrawable(R.drawable.bg_button_blue);
             mDrawable.setColorFilter(new
-                    PorterDuffColorFilter(Utils.getSubjectColor(j), PorterDuff.Mode.SRC_IN));
+                    PorterDuffColorFilter(Utils.getSubjectColor(codes.get(day_key)), PorterDuff.Mode.SRC_IN));
             dot.setBackgroundDrawable(mDrawable);
             holder.dotView.addView(dot);
             holder.dotView.setVisibility(View.VISIBLE);
         }
         if (position==selectedPosition){
-            holder.view.setBackgroundColor(0xffcccccc);
+            holder.view.setCardBackgroundColor(0xffcccccc);
             mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
         }else {
-            holder.view.setBackgroundColor(0xffffffff);
+            holder.view.setCardBackgroundColor(0xffffffff);
         }
         holder.dateView.setTag(day_key);
         holder.dateView.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));
@@ -182,14 +185,14 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
         public LinearLayout dotView;
         public TextView monthView;
         public TextView dateView;
-        public View view;
+        public CardView view;
 
         public AlertItemViewHolder(View itemView) {
             super(itemView);
             dotView = (LinearLayout) itemView.findViewById(R.id.calendar_dot_view);
             monthView = (TextView) itemView.findViewById(R.id.txt_month);
             dateView = (TextView) itemView.findViewById(R.id.txt_date);
-            view=itemView;
+            view=(CardView) itemView.findViewById(R.id.calendar_card_view);
             itemView.setOnClickListener(this);
         }
 

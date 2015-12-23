@@ -98,7 +98,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 holder.monthView.setVisibility(View.VISIBLE);
 
             } else {
-                holder.monthView.setVisibility(View.INVISIBLE);
+                holder.monthView.setVisibility(View.GONE);
             }
         }else {  //outside current year
 
@@ -117,7 +117,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 }
 
             } else {
-                holder.monthView.setVisibility(View.INVISIBLE);
+                holder.monthView.setVisibility(View.GONE);
             }
         }
         if (isActiveCell) {

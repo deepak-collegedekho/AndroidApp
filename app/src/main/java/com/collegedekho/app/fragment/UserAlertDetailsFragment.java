@@ -127,11 +127,11 @@ public class UserAlertDetailsFragment extends BaseFragment implements UserAlerts
 //            detailsRecyclerView.setVisibility(View.VISIBLE);
         }
         int count = dates.size();
-        ArrayList<String> details = new ArrayList<>();
+        ArrayList<MyAlertDateDescription> details = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             MyAlertDateDescription description = dates.get(i);
             if (description.getDate().equals(itemKey)) {
-                details.add(description.getType());
+                details.add(description);
             }
         }
         UserAlertItemDescriptionAdapter alertItemDescriptionAdapter=new UserAlertItemDescriptionAdapter(getActivity(),details);

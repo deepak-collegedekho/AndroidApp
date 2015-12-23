@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.ChapterDetails;
+import com.collegedekho.app.entities.MyAlertDateDescription;
 import com.collegedekho.app.utils.Utils;
 
 import java.util.ArrayList;
@@ -20,9 +21,9 @@ import java.util.ArrayList;
  */
 public class UserAlertItemDescriptionAdapter extends RecyclerView.Adapter<UserAlertItemDescriptionAdapter.UserAlertItemDetailView> {
     private Context mContext;
-    private ArrayList<String> itemList;
+    private ArrayList<MyAlertDateDescription> itemList;
 
-    public UserAlertItemDescriptionAdapter(Context context, ArrayList<String> itemList) {
+    public UserAlertItemDescriptionAdapter(Context context, ArrayList<MyAlertDateDescription> itemList) {
         this.mContext = context;
         this.itemList = itemList;
     }
@@ -37,9 +38,9 @@ public class UserAlertItemDescriptionAdapter extends RecyclerView.Adapter<UserAl
 
     @Override
     public void onBindViewHolder(UserAlertItemDetailView holder, int position) {
-        String name = itemList.get(position);
-        holder.chapterName.setText(name);
-        holder.chapterName.setTextColor(Utils.getSubjectColor(position));
+        MyAlertDateDescription description = itemList.get(position);
+        holder.chapterName.setText(description.getType());
+        holder.chapterName.setTextColor(Utils.getSubjectColor(description.getExam_id()));
     }
 
     @Override
