@@ -1254,7 +1254,7 @@ public class MainActivity extends AppCompatActivity
 
                     this.mStreamAndLevelSelected(response, parentIndex, childIndex, extraTag);
                 }
-                this.mLoadUserProfile(response);
+                this.mLoadUserProfile(null);
                 break;
             case Constants.TAG_UPDATE_PREFRENCES:
                 this.mStreamAndLevelUpdated(response);

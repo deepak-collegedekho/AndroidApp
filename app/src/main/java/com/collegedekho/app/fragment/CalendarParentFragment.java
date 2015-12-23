@@ -207,8 +207,7 @@ boolean isReadyToSubmit=false;
                     for (ChapterDetails chapterDetails : chapterDetailses) {
                         if (chapterDetails.isSelected()) {
                             subjectsArray.add(Integer.valueOf(chapterDetails.getSubject_id()));
-                            chaptersArray.add(Integer.valueOf(chapterDetails.getChapter_id()));
-                            Log.e("DEBUG", chapterDetails.getSubject_name() + " : " + chapterDetails.getChapter_name());
+                            chaptersArray.add(Integer.valueOf(chapterDetails.getYearly_exam_chapter_id()));
                         }
                     }
                 }
