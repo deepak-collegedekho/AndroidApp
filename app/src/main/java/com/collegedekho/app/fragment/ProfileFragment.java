@@ -127,12 +127,12 @@ public class ProfileFragment extends  BaseFragment
 
             rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
             rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
-            /*if(this.isFistTime) {
+           /* if(this.isFistTime) {
                 this.isFistTime = false;*/
-                int currentPosition = mExamTabPager.getCurrentItem();
-                mExamTabSelected(currentPosition);
-            /*}
-            mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);*/
+                //int currentPosition = mExamTabPager.getCurrentItem();
+                mExamTabSelected(0);
+            //}
+            mExamTabPager.setCurrentItem(0);
 
         }else{
 
