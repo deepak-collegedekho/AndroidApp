@@ -192,7 +192,7 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
         ArrayList<Integer>chaptersArray=new ArrayList<>();
         ArrayList<Integer>subjectsArray=new ArrayList<>();
         JSONObject object=new JSONObject();
-
+boolean isReadyToSubmit=false;
         if (mChapterList==null || mChapterList.isEmpty()){
             return;
         }
@@ -215,13 +215,16 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
 
             }
             try {
+                if (!chaptersArray.isEmpty() && !subjectsArray.isEmpty()){
+                    isReadyToSubmit=true;
+                }
                 object.putOpt("chapters",new JSONArray(chaptersArray));
                 object.putOpt("subjects",new JSONArray(subjectsArray));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if(mListener!=null)
-            mListener.onSubmitCalendarData(object,"yearly-exams/"+exam_id+"/syllabus/");
+            if(mListener!=null && isReadyToSubmit)
+            mListener.onSubmitCalendarData(object,"yearly-exams/"+exam_id+"/calendar/");
         }
     }
 

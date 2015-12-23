@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/home/Bashir/Android/StudioProjects/collegedekho-android-app/garadiLibrary/build/intermediates/res/merged/androidTest/debug/layout/j_picker_items.xml",
+        "source": "/home/Bashir/Android/StudioProjects/collegedekho-android-app/garadiLibrary/build/intermediates/bundles/debug/res/layout/j_picker_items.xml"
+    },
+    {
+        "merged": "/home/Bashir/Android/StudioProjects/collegedekho-android-app/garadiLibrary/build/intermediates/res/merged/androidTest/debug/layout/j_picker_dialog.xml",
+        "source": "/home/Bashir/Android/StudioProjects/collegedekho-android-app/garadiLibrary/build/intermediates/bundles/debug/res/layout/j_picker_dialog.xml"
+    }
+]

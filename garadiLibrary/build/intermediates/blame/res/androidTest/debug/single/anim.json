@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/home/Bashir/Android/StudioProjects/collegedekho-android-app/garadiLibrary/build/intermediates/res/merged/androidTest/debug/anim/j_anim_enter_bottom.xml",
+        "source": "/home/Bashir/Android/StudioProjects/collegedekho-android-app/garadiLibrary/build/intermediates/bundles/debug/res/anim/j_anim_enter_bottom.xml"
+    },
+    {
+        "merged": "/home/Bashir/Android/StudioProjects/collegedekho-android-app/garadiLibrary/build/intermediates/res/merged/androidTest/debug/anim/j_anim_exit_bottom.xml",
+        "source": "/home/Bashir/Android/StudioProjects/collegedekho-android-app/garadiLibrary/build/intermediates/bundles/debug/res/anim/j_anim_exit_bottom.xml"
+    }
+]

@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/home/Bashir/Android/StudioProjects/collegedekho-android-app/garadiLibrary/build/intermediates/res/merged/androidTest/debug/drawable/bg_right_border.xml",
+        "source": "/home/Bashir/Android/StudioProjects/collegedekho-android-app/garadiLibrary/build/intermediates/bundles/debug/res/drawable/bg_right_border.xml"
+    },
+    {
+        "merged": "/home/Bashir/Android/StudioProjects/collegedekho-android-app/garadiLibrary/build/intermediates/res/merged/androidTest/debug/drawable/j_wheel_val.xml",
+        "source": "/home/Bashir/Android/StudioProjects/collegedekho-android-app/garadiLibrary/build/intermediates/bundles/debug/res/drawable/j_wheel_val.xml"
+    },
+    {
+        "merged": "/home/Bashir/Android/StudioProjects/collegedekho-android-app/garadiLibrary/build/intermediates/res/merged/androidTest/debug/drawable/j_wheel_timebtn.xml",
+        "source": "/home/Bashir/Android/StudioProjects/collegedekho-android-app/garadiLibrary/build/intermediates/bundles/debug/res/drawable/j_wheel_timebtn.xml"
+    }
+]
