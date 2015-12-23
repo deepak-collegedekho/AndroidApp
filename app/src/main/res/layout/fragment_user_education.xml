@@ -132,9 +132,9 @@
             android:layout_alignParentBottom="true"
             android:layout_marginTop="3dp"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/m8dp"
-            android:paddingTop="@dimen/m8dp"
-            android:textSize="20sp"
+            android:paddingBottom="@dimen/m9dp"
+            android:paddingTop="@dimen/m9dp"
+            android:textSize="21sp"
             android:visibility="gone"
             android:foregroundGravity="center"
             android:text="SUBMIT"/>

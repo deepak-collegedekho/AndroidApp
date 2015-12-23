@@ -109,6 +109,7 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public void setCourses(ArrayList<ArrayList<InstituteCourse>> courses) {
+        if(courses == null)return;
         int count = 0;
         for (int i = 0; i < courses.size(); i++) {
             mCourses.get(i).addAll(courses.get(i));
@@ -151,10 +152,10 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
 
     public void updateInstituteNews(ArrayList<News> newsList, String next) {
         if(mNewsFragment != null)
-            mNewsFragment.updateInstituteNewsList(newsList, next);
+            mNewsFragment.updateNewsList(newsList, next);
     }
     public void updateInstituteArticles(ArrayList<Articles> artiles, String next) {
         if(mArticleFragment != null)
-            mArticleFragment.updateInstituteArticleList(artiles, next);
+            mArticleFragment.updateArticleList(artiles, next);
     }
 }

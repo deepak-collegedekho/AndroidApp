@@ -737,13 +737,17 @@ public class MainActivity extends AppCompatActivity
             this.mNewsList.addAll(news);
             this.mParseSimilarNews(this.mNewsList);
 
-            if (currentFragment instanceof NewsFragment) {
-                ((NewsFragment) currentFragment).updateList(news, this.next);
+            if (this.mNewsList != null &&currentFragment instanceof NewsFragment) {
+                ((NewsFragment) currentFragment).updateNewsList((ArrayList)this.mNewsList, this.next);
+            }
+            if (this.mNewsList != null && currentFragment instanceof InstituteDetailFragment) {
+                ((InstituteDetailFragment) currentFragment).updateInstituteNews((ArrayList)this.mNewsList , this.next);
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
+
     /**
      * This method is used to update articles list of next page
      * @param response
@@ -754,8 +758,12 @@ public class MainActivity extends AppCompatActivity
             this.mArticlesList.addAll(articles);
 
             this.mParseSimilarArticle(this.mArticlesList);
-            if (currentFragment instanceof ArticleFragment) {
-                ((ArticleFragment) currentFragment).updateList(articles, next);
+            if (this.mArticlesList != null && currentFragment instanceof ArticleFragment) {
+                ((ArticleFragment) currentFragment).updateArticleList(articles, next);
+            }
+
+            if (this.mArticlesList != null && currentFragment instanceof InstituteDetailFragment) {
+                ((InstituteDetailFragment) currentFragment).updateInstituteArticle((ArrayList)this.mArticlesList , this.next);
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -1252,7 +1260,7 @@ public class MainActivity extends AppCompatActivity
 
                     this.mStreamAndLevelSelected(response, parentIndex, childIndex, extraTag);
                 }
-                this.mLoadUserProfile(response);
+                this.mLoadUserProfile(null);
                 break;
             case Constants.TAG_UPDATE_PREFRENCES:
                 this.mStreamAndLevelUpdated(response);
