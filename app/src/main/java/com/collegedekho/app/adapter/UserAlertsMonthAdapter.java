@@ -137,6 +137,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
         }
         if (isActiveCell) {
             holder.dotView.setVisibility(View.VISIBLE);
+            holder.dateView.setTextColor(0xff000000);
         } else {
             holder.dotView.setVisibility(View.INVISIBLE);
             holder.dateView.setTextColor(0xffcccccc);
@@ -166,7 +167,6 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
             mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
         }else {
             holder.view.setBackgroundColor(0xffffffff);
-
         }
         holder.dateView.setTag(day_key);
         holder.dateView.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));

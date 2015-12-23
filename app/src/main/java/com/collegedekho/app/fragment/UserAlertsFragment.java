@@ -59,6 +59,13 @@ public class UserAlertsFragment extends BaseFragment implements UserAlertsAdapte
         alertRecycler.setLayoutManager(layoutManager);
         UserAlertsAdapter userAlertsAdapter = new UserAlertsAdapter(getActivity(), alertDates, this);
         alertRecycler.setAdapter(userAlertsAdapter);
+        if(alertDates.isEmpty()){
+            view.findViewById(R.id.error_message).setVisibility(View.VISIBLE);
+            alertRecycler.setVisibility(View.GONE);
+        }else{
+            view.findViewById(R.id.error_message).setVisibility(View.GONE);
+            alertRecycler.setVisibility(View.VISIBLE);
+        }
     }
 
 

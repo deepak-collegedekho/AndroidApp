@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.collegedekho.app.entities.ChapterDetails;
 import com.collegedekho.app.entities.Chapters;
+import com.collegedekho.app.entities.MyAlertDate;
 import com.collegedekho.app.fragment.CalendarFragment;
 
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ public class CalendarPagerAdapter extends FragmentStatePagerAdapter {
     private int NUM_PAGES=1;
     LinkedHashMap<String,String> mYearCalendar;
     private LinkedHashMap<String,ArrayList<ChapterDetails>> mChaptersDetailsList;
+    private String[] monthNames = {"","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+
     public CalendarPagerAdapter(FragmentManager fm, int pageCount,LinkedHashMap<String,String> yearCalendar,LinkedHashMap<String,ArrayList<ChapterDetails>> chaptersDetailsList)
     {
         super(fm);
@@ -35,6 +38,17 @@ public class CalendarPagerAdapter extends FragmentStatePagerAdapter {
         b.putInt("id", position);
         fragment.setArguments(b);
         return  fragment;
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        Calendar calendar=Calendar.getInstance();
+        calendar.add(Calendar.MONTH,position);
+        StringBuilder builder=new StringBuilder();
+            builder.append(monthNames[calendar.get(Calendar.MONTH)+1]);
+            builder.append(" ");
+            builder.append(calendar.get(Calendar.YEAR));
+        return builder.toString();
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.MyAlertDate;
 import com.collegedekho.app.entities.MyAlertDateDescription;
 import com.collegedekho.app.fragment.UserAlertDetailsFragment;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 public class UserAlertsPagerAdapter extends FragmentStatePagerAdapter {
     private int NUM_PAGES=1;
     private ArrayList<MyAlertDate> alertDatesList;
+    private String[] monthNames = {"","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+
     public UserAlertsPagerAdapter(FragmentManager fm, int pageCount,ArrayList<MyAlertDate> alertDatesList)
     {
         super(fm);
@@ -39,6 +42,17 @@ public class UserAlertsPagerAdapter extends FragmentStatePagerAdapter {
         return  fragment;
     }
 
+    @Override
+    public CharSequence getPageTitle(int position) {
+        MyAlertDate alertDate =  alertDatesList.get(position);
+        StringBuilder builder=new StringBuilder();
+        if(alertDate != null){
+            builder.append(monthNames[alertDate.getMonth()]);
+            builder.append(" ");
+            builder.append(alertDate.getYear());
+        }
+            return builder.toString();
+    }
     @Override
     public int getCount() {
         return NUM_PAGES;
