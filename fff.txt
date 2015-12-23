@@ -1,0 +1,903 @@
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+index cca2cda..7158618 100644
+--- a/.idea/misc.xml
++++ b/.idea/misc.xml
+@@ -37,7 +37,7 @@
+     <ConfirmationsSetting value="0" id="Add" />
+     <ConfirmationsSetting value="0" id="Remove" />
+   </component>
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" default="true" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
+diff --git a/app/app.iml b/app/app.iml
+index 4b3c269..6a8a923 100644
+--- a/app/app.iml
++++ b/app/app.iml
+@@ -135,68 +135,68 @@
+     </content>
+     <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
+-    <orderEntry type="library" exported="" name="crashlytics-2.5.2" level="project" />
+-    <orderEntry type="library" exported="" name="crashlytics-core-2.3.5" level="project" />
+-    <orderEntry type="library" exported="" name="design-23.1.1" level="project" />
+-    <orderEntry type="library" exported="" name="answers-1.3.2" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-ads-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="guava-jdk5-13.0" level="project" />
+-    <orderEntry type="library" exported="" name="google-http-client-jackson2-1.19.0" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-base-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-auth-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-drive-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-identity-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="jackson-jr-objects-2.5.3" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-appstate-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="jsr305-1.3.9" level="project" />
+     <orderEntry type="library" exported="" name="mediarouter-v7-22.2.0" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-safetynet-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="google-api-client-1.19.0" level="project" />
+     <orderEntry type="library" exported="" name="play-services-plus-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="connecto-android-sdk-0.0.6" level="project" />
+-    <orderEntry type="library" exported="" name="bolts-android-1.2.0" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-wearable-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-maps-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="google-http-client-1.19.0" level="project" />
+-    <orderEntry type="library" exported="" name="support-v4-23.1.1" level="project" />
+-    <orderEntry type="library" exported="" name="AF-Android-SDK-v3.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-gcm-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-analytics-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="cardview-v7-23.1.1" level="project" />
+-    <orderEntry type="library" exported="" name="gridlayout-v7-23.1.1" level="project" />
+-    <orderEntry type="library" exported="" name="google-oauth-client-1.19.0" level="project" />
+-    <orderEntry type="library" exported="" name="multidex-1.0.1" level="project" />
+-    <orderEntry type="library" exported="" name="library-1.0" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-measurement-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-fitness-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="wheelview-0.3.1" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-games-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="play-services-appindexing-8.3.0" level="project" />
+     <orderEntry type="library" exported="" name="library-1.0.16" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-vision-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="play-services-identity-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="floatingactionbutton-1.3.0" level="project" />
++    <orderEntry type="library" exported="" name="google-api-services-youtube-v3-rev120-1.19.0" level="project" />
++    <orderEntry type="library" exported="" name="recyclerview-v7-23.1.1" level="project" />
++    <orderEntry type="library" exported="" name="play-services-analytics-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="play-services-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
+     <orderEntry type="library" exported="" name="appcompat-v7-23.1.1" level="project" />
++    <orderEntry type="library" exported="" name="bolts-android-1.2.0" level="project" />
++    <orderEntry type="library" exported="" name="connecto-android-sdk-0.0.6" level="project" />
++    <orderEntry type="library" exported="" name="play-services-cast-8.3.0" level="project" />
++    <orderEntry type="library" exported="" scope="TEST" name="multidex-instrumentation-1.0.1" level="project" />
++    <orderEntry type="library" exported="" name="jackson-core-2.5.3" level="project" />
++    <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
++    <orderEntry type="library" exported="" name="play-services-appstate-8.3.0" level="project" />
+     <orderEntry type="library" exported="" name="YouTubeAndroidPlayerApi" level="project" />
+     <orderEntry type="library" exported="" name="1_YouTubeAndroidPlayerApi" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-appindexing-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
++    <orderEntry type="library" exported="" name="beta-1.1.3" level="project" />
++    <orderEntry type="library" exported="" name="play-services-games-8.3.0" level="project" />
+     <orderEntry type="library" exported="" name="fabric-1.3.6" level="project" />
++    <orderEntry type="library" exported="" name="play-services-safetynet-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="jackson-jr-objects-2.5.3" level="project" />
++    <orderEntry type="library" exported="" name="play-services-basement-8.3.0" level="project" />
+     <orderEntry type="library" exported="" name="facebook-android-sdk-4.7.0" level="project" />
+-    <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
++    <orderEntry type="library" exported="" name="play-services-nearby-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="library-1.0" level="project" />
++    <orderEntry type="library" exported="" name="google-oauth-client-1.19.0" level="project" />
++    <orderEntry type="library" exported="" name="play-services-fitness-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="google-api-client-1.19.0" level="project" />
++    <orderEntry type="library" exported="" name="answers-1.3.2" level="project" />
++    <orderEntry type="library" exported="" name="google-http-client-1.19.0" level="project" />
+     <orderEntry type="library" exported="" name="play-services-location-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="floatingactionbutton-1.3.0" level="project" />
++    <orderEntry type="library" exported="" name="jsoup-1.8.1" level="project" />
++    <orderEntry type="library" exported="" name="play-services-auth-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="play-services-wearable-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="play-services-base-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="play-services-measurement-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="wheelview-0.3.1" level="project" />
++    <orderEntry type="library" exported="" name="play-services-vision-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="play-services-wallet-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="AF-Android-SDK-v3.3.0" level="project" />
++    <orderEntry type="library" exported="" name="support-v4-23.1.1" level="project" />
++    <orderEntry type="library" exported="" name="jsr305-1.3.9" level="project" />
++    <orderEntry type="library" exported="" name="play-services-drive-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="play-services-ads-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="crashlytics-2.5.2" level="project" />
+     <orderEntry type="library" exported="" name="play-services-appinvite-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-cast-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="fabtransitionlayout-0.2.0" level="project" />
+-    <orderEntry type="library" exported="" name="google-api-services-youtube-v3-rev120-1.19.0" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-nearby-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="recyclerview-v7-23.1.1" level="project" />
++    <orderEntry type="library" exported="" name="gridlayout-v7-23.1.1" level="project" />
++    <orderEntry type="library" exported="" name="cardview-v7-23.1.1" level="project" />
++    <orderEntry type="library" exported="" name="crashlytics-core-2.3.5" level="project" />
++    <orderEntry type="library" exported="" name="play-services-gcm-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="design-23.1.1" level="project" />
++    <orderEntry type="library" exported="" name="play-services-maps-8.3.0" level="project" />
++    <orderEntry type="library" exported="" name="multidex-1.0.1" level="project" />
++    <orderEntry type="library" exported="" name="google-http-client-jackson2-1.19.0" level="project" />
++    <orderEntry type="library" exported="" name="guava-jdk5-13.0" level="project" />
+     <orderEntry type="library" exported="" name="play-services-panorama-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="beta-1.1.3" level="project" />
+-    <orderEntry type="library" exported="" name="jackson-core-2.5.3" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-wallet-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" name="jsoup-1.8.1" level="project" />
+-    <orderEntry type="library" exported="" name="play-services-basement-8.3.0" level="project" />
+-    <orderEntry type="library" exported="" scope="TEST" name="multidex-instrumentation-1.0.1" level="project" />
++    <orderEntry type="library" exported="" name="fabtransitionlayout-0.2.0" level="project" />
+     <orderEntry type="module" module-name="garadiLibrary" exported="" />
+   </component>
+ </module>
+\ No newline at end of file
+diff --git a/app/src/main/java/com/collegedekho/app/activity/MainActivity.java b/app/src/main/java/com/collegedekho/app/activity/MainActivity.java
+index 3c7ea03..88acd3c 100755
+--- a/app/src/main/java/com/collegedekho/app/activity/MainActivity.java
++++ b/app/src/main/java/com/collegedekho/app/activity/MainActivity.java
+@@ -3632,9 +3632,8 @@ public class MainActivity extends AppCompatActivity
+     public void onExamTabSelected(ExamDetail examDetailObj) {
+          if(examDetailObj == null)return;
+         String id = examDetailObj.getId();
+-
+-        Map<String, String> params = new HashMap<>();
+-        params.put("tag_uris[" + (0) + "]", examDetailObj.getExam_tag());
++        Map<String , String> params = this.mGetTheFilters();
++        params.put("tag_uris[" + (params.size()) + "]",examDetailObj.getExam_tag());
+ 
+         this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/"+id+"/summary/",params);
+     }
+@@ -3732,8 +3731,11 @@ public class MainActivity extends AppCompatActivity
+     }
+ 
+     @Override
+-    public void submitExamStatus(JSONObject jsonObject) {
+-        this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS, Constants.BASE_URL+"yearly-exams/54/syllabus/",jsonObject,1);
++    public void onSubmitCompletedSyllabus(JSONObject jsonObject) {
++
++       String examId = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
++       if(!examId.isEmpty())
++           this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS, Constants.BASE_URL+"yearly-exams/"+examId+"/syllabus/",jsonObject,1);
+ 
+     }
+ 
+diff --git a/app/src/main/java/com/collegedekho/app/adapter/ExamDetailAdapter.java b/app/src/main/java/com/collegedekho/app/adapter/ExamDetailAdapter.java
+index 907e8cd..b8d747a 100644
+--- a/app/src/main/java/com/collegedekho/app/adapter/ExamDetailAdapter.java
++++ b/app/src/main/java/com/collegedekho/app/adapter/ExamDetailAdapter.java
+@@ -16,17 +16,15 @@ public class ExamDetailAdapter extends FragmentStatePagerAdapter {
+ 
+     ArrayList<ExamDetail> mExamDetailList;
+     private ExamDetailFragment mExamFragment[];
+-    ExamDetailFragment.OnProfileListener mProfileListener;
+     private int count;
+ 
+-    public ExamDetailAdapter(FragmentManager fm, ExamDetailFragment.OnProfileListener listener, ArrayList<ExamDetail> examDetailList) {
++    public ExamDetailAdapter(FragmentManager fm, ArrayList<ExamDetail> examDetailList) {
+         super(fm);
+         if(examDetailList != null){
+             count = examDetailList.size();
+             this.mExamFragment =  new ExamDetailFragment[count];
+         }
+         this.mExamDetailList = examDetailList;
+-        this.mProfileListener = listener;
+     }
+ 
+     @Override
+diff --git a/app/src/main/java/com/collegedekho/app/fragment/BaseFragment.java b/app/src/main/java/com/collegedekho/app/fragment/BaseFragment.java
+index b0aa540..8a0456e 100755
+--- a/app/src/main/java/com/collegedekho/app/fragment/BaseFragment.java
++++ b/app/src/main/java/com/collegedekho/app/fragment/BaseFragment.java
+@@ -30,6 +30,7 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
+     protected String mNextUrl;
+     protected BaseListener listener;
+     protected  int listType;
++    protected  static int EXAM_TAB_POSITION =0;
+ 
+ 
+     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+diff --git a/app/src/main/java/com/collegedekho/app/fragment/ExamDetailFragment.java b/app/src/main/java/com/collegedekho/app/fragment/ExamDetailFragment.java
+index 2098eee..c6d47e8 100644
+--- a/app/src/main/java/com/collegedekho/app/fragment/ExamDetailFragment.java
++++ b/app/src/main/java/com/collegedekho/app/fragment/ExamDetailFragment.java
+@@ -47,7 +47,4 @@ public class ExamDetailFragment extends BaseFragment{
+         View rootView = inflater.inflate(R.layout.fragment_exam_detail, container, false);
+         return rootView;
+     }
+-    public interface OnProfileListener{
+-        void updateExamDetail(ExamSummary examSummary);
+-    }
+ }
+diff --git a/app/src/main/java/com/collegedekho/app/fragment/ProfileFragment.java b/app/src/main/java/com/collegedekho/app/fragment/ProfileFragment.java
+index 77827d0..91db1ee 100644
+--- a/app/src/main/java/com/collegedekho/app/fragment/ProfileFragment.java
++++ b/app/src/main/java/com/collegedekho/app/fragment/ProfileFragment.java
+@@ -7,11 +7,9 @@ import android.util.Log;
+ import android.view.LayoutInflater;
+ import android.view.Menu;
+ import android.view.MenuInflater;
+-import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.TextView;
+-import android.widget.Toast;
+ 
+ import com.collegedekho.app.R;
+ import com.collegedekho.app.activity.MainActivity;
+@@ -21,20 +19,16 @@ import com.collegedekho.app.entities.ExamSummary;
+ import com.collegedekho.app.listener.OnSwipeTouchListener;
+ import com.collegedekho.app.resource.Constants;
+ import com.collegedekho.app.resource.MySingleton;
+-import com.collegedekho.app.widget.CircleImageView;
+ import com.collegedekho.app.widget.CircularImageView;
+-
+-import org.w3c.dom.Text;
++import com.collegedekho.app.widget.CircularProgressBar;
+ 
+ import java.util.ArrayList;
+-import java.util.HashMap;
+-import java.util.Map;
+ 
+ /**
+  * Created by sureshsaini on 27/11/15.
+  */
+ public class ProfileFragment extends  BaseFragment
+-        implements ExamDetailFragment.OnProfileListener{
++        {
+ 
+     private final String TAG = "profile Frgament";
+     private static String PARAM1 = "param1";
+@@ -44,6 +38,7 @@ public class ProfileFragment extends  BaseFragment
+     private ExamDetailAdapter mDetailsAdapter;
+     private ExamDetail mExamDetail; // detail is needs in tabs to get id of exams
+     private ExamSummary mExamSummary;  // exam summary gives info about the colleges of user
++    private ViewPager mExamTabPager  = null;
+     private boolean isFistTime = false;
+ 
+ 
+@@ -76,6 +71,7 @@ public class ProfileFragment extends  BaseFragment
+         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
+ 
+         TextView mProfileName    =   (TextView)rootView.findViewById(R.id.user_name);
++        mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
+         CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
+         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
+         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
+@@ -106,12 +102,12 @@ public class ProfileFragment extends  BaseFragment
+         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
+ 
+             rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.VISIBLE);
+-            final ViewPager examPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
+-            examPager.setVisibility(View.VISIBLE);
+-            this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this, this.mExamDetailList);
+-            examPager.setAdapter(this.mDetailsAdapter);
++            rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.VISIBLE);
++            mExamTabPager.setVisibility(View.VISIBLE);
++            this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
++            mExamTabPager.setAdapter(this.mDetailsAdapter);
+ 
+-            examPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
++            mExamTabPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                 @Override
+                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                     Log.e("","");
+@@ -119,7 +115,8 @@ public class ProfileFragment extends  BaseFragment
+ 
+                 @Override
+                 public void onPageSelected(int position) {
+-                    onExamTabSelected(position);
++                    EXAM_TAB_POSITION =position;
++                    mExamTabSelected(position);
+                 }
+ 
+                 @Override
+@@ -128,37 +125,20 @@ public class ProfileFragment extends  BaseFragment
+                 }
+             });
+ 
+-            OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {
+-                @Override
+-                public void onSwipeLeft() {
+-                    int currentPosition = examPager.getCurrentItem();
+-                    if (mExamDetailList.size()-1 >= currentPosition)
+-                        examPager.setCurrentItem(currentPosition + 1);
+-                }
+-
+-                @Override
+-                public void onSwipeRight() {
+-                    super.onSwipeRight();
+-
+-                    int currentPosition = examPager.getCurrentItem();
+-                    if (currentPosition > 0)
+-                        examPager.setCurrentItem(currentPosition - 1);
+-                }
+-
+-            };
+-
+             rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
+             rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
++            if(this.isFistTime) {
++                this.isFistTime = false;
++                int currentPosition = mExamTabPager.getCurrentItem();
++                mExamTabSelected(currentPosition);
++            }
++            mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
+ 
+-           if(this.isFistTime) {
+-               this.isFistTime = false;
+-               int currentPosition = examPager.getCurrentItem();
+-               onExamTabSelected(currentPosition);
+-           }
+         }else{
+ 
+             rootView.findViewById(R.id.prep_buddies).setVisibility(View.GONE);
+             rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.GONE);
++            rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.GONE);
+         }
+ 
+         rootView.findViewById(R.id.backup_colleges_layout_RL).setOnClickListener(this);
+@@ -187,7 +167,6 @@ public class ProfileFragment extends  BaseFragment
+             mainActivity.currentFragment = this;
+             mainActivity.mUpdateTabMenuItem(-1);
+         }
+-        updateExamSummary(this.mExamSummary);
+ 
+         getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
+     }
+@@ -224,52 +203,50 @@ public class ProfileFragment extends  BaseFragment
+         {
+             case R.id.profile_syllabus_statusLL:
+                 if(this.mExamDetail != null)
+-                this.mHomeItemSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/"+ this.mExamDetail.getId()+"/syllabus/",null);
++                this.mProfileWidgetSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/"+ this.mExamDetail.getId()+"/syllabus/",null);
+                 break;
+             case R.id.backup_colleges_layout_RL:
+                if(this.mExamDetail != null)
+-                   mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes", this.mExamDetail.getExam_tag());
++                   mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes", this.mExamDetail.getExam_tag());
+                else
+-               mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes",null);
++               mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes",null);
+                break;
+             case R.id.wishList_colleges_layout_RL:
+-                mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
++                mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+                 break;
+             case R.id.recommended_colleges_layout_RL:
+                 if(this.mExamDetail != null)
+-                    mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",this.mExamDetail.getExam_tag());
++                    mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",this.mExamDetail.getExam_tag());
+                     else
+-                    mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
++                    mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
+                 break;
+             case R.id.important_date_layout_RL:
+ 
+                 if(this.mExamDetail != null)
+-                this.mHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/"+mExamDetail.getId()+"/calendar/", null);
+-                else
+-                    this.mHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/54/calendar/", null);
+-                break;
++                this.mProfileWidgetSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/"+mExamDetail.getId()+"/calendar/", null);
++                  break;
+             default:
+                 break;
+         }
+     }
+ 
+ 
+-    private void mHomeItemSelected(String requestType, String url, String examTag)
++    private void mProfileWidgetSelected(String requestType, String url, String examTag)
+     {
+         if(mListener != null)
+             mListener.onHomeItemSelected(requestType, url, examTag);
+     }
+ 
+-    private void onExamTabSelected(int position) {
+-        if(this.mListener == null || this.mExamDetailList == null || this.mExamDetailList.isEmpty())
+-            return;
+-        this.mExamDetail = this.mExamDetailList.get(position);
+-        this.mListener.onExamTabSelected(mExamDetail);
++    private void mExamTabSelected(int position) {
++        if(this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() >position)
++        {
++           this.mExamDetail = this.mExamDetailList.get(position);
++           this.mListener.onExamTabSelected(mExamDetail);
++        }
+     }
+ 
+     public void updateExamSummary(ExamSummary examSummary) {
+         this.mExamSummary = examSummary;
+-
+         View view = getView();
+         if(view == null || this.mExamSummary == null)
+             return;
+@@ -279,6 +256,7 @@ public class ProfileFragment extends  BaseFragment
+         TextView recommended_countTV =  (TextView)view.findViewById(R.id.recommended_colleges_count);
+         TextView important_dateTV =  (TextView)view.findViewById(R.id.important_dates_count);
+         TextView covered_syllabus =  (TextView)view.findViewById(R.id.covered_syllabus);
++        CircularProgressBar profileCompleted =  (CircularProgressBar) view.findViewById(R.id.profile_image_circular_progressbar);
+ 
+         backup_countTV.setText(""+this.mExamSummary.getBackup_count());
+         wishList_countTV.setText(""+this.mExamSummary.getShortlist_count());
+@@ -286,14 +264,33 @@ public class ProfileFragment extends  BaseFragment
+         important_dateTV.setText(""+this.mExamSummary.getNext_important_date());
+         covered_syllabus.setText(""+this.mExamSummary.getSyllabus_covered()+"%");
+ 
++        //TODO:: showing progress as a profile circle
++        if(this.mExamSummary.getSyllabus_covered() ==0)
++         profileCompleted.setProgress(100);
++        else
++         profileCompleted.setProgress(this.mExamSummary.getSyllabus_covered());
+     }
+ 
+-    @Override    public void updateExamDetail(ExamSummary examSummary) {
++            OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {
++                @Override
++                public void onSwipeLeft() {
++                    int currentPosition = mExamTabPager.getCurrentItem();
++                    if (mExamDetailList.size()-1 >= currentPosition)
++                        mExamTabPager.setCurrentItem(currentPosition + 1);
++                }
++
++                @Override
++                public void onSwipeRight() {
++                    super.onSwipeRight();
+ 
+-    }
++                    int currentPosition = mExamTabPager.getCurrentItem();
++                    if (currentPosition > 0)
++                        mExamTabPager.setCurrentItem(currentPosition - 1);
++                }
+ 
++            };
+ 
+-    /**
++            /**
+      * This interface must be implemented by activities that contain this
+      * fragment to allow an interaction in this fragment to be communicated
+      * to the activity and potentially other fragments contained in that
+diff --git a/app/src/main/java/com/collegedekho/app/fragment/SyllabusSubjectsListFragment.java b/app/src/main/java/com/collegedekho/app/fragment/SyllabusSubjectsListFragment.java
+index 1924a91..9a4e8d9 100755
+--- a/app/src/main/java/com/collegedekho/app/fragment/SyllabusSubjectsListFragment.java
++++ b/app/src/main/java/com/collegedekho/app/fragment/SyllabusSubjectsListFragment.java
+@@ -253,13 +253,13 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
+             e.printStackTrace();
+         }
+         if(listener != null)
+-            listener.submitExamStatus(parentJsonObj);
++            listener.onSubmitCompletedSyllabus(parentJsonObj);
+ 
+     }
+ 
+     public interface OnSubjectSelectedListener {
+         void onSubjectSelected(Subjects subject, int position);
+         void onSubjectCheckboxSelected(Subjects subject, int position);
+-        void submitExamStatus(JSONObject jsonObject);
++        void onSubmitCompletedSyllabus(JSONObject jsonObject);
+     }
+ }
+diff --git a/app/src/main/java/com/collegedekho/app/fragment/TabFragment.java b/app/src/main/java/com/collegedekho/app/fragment/TabFragment.java
+index f626a27..0da7840 100644
+--- a/app/src/main/java/com/collegedekho/app/fragment/TabFragment.java
++++ b/app/src/main/java/com/collegedekho/app/fragment/TabFragment.java
+@@ -21,25 +21,26 @@ import com.collegedekho.app.listener.OnSwipeTouchListener;
+ import com.collegedekho.app.resource.Constants;
+ import com.collegedekho.app.resource.MySingleton;
+ import com.collegedekho.app.widget.CircularImageView;
++import com.collegedekho.app.widget.CircularProgressBar;
+ 
+ import java.util.ArrayList;
+ 
+ /**
+  * Created by sureshsaini on 6/12/15.
+  */
+-public class TabFragment extends  BaseFragment
+-        implements ExamDetailFragment.OnProfileListener{
++public class TabFragment extends  BaseFragment{
+     private final String TAG ="Tab Fragment";
+     private static String PARAM1 = "param1";
+     private static String PARAM2 = "param2";
+ 
+-    private int selectedTabMenuPosition =0;
++    private int selectedTabPosition =0;
+     private int selectedSubMenuPosition =0;
+     private  OnHomeItemSelectListener mListener;
+     private ArrayList<ExamDetail> mExamDetailList;
+     private ExamDetailAdapter mDetailsAdapter;
+     private ExamDetail mExamDetail;
+-    private boolean isFistTime;
++    private ViewPager mExamTabPager  = null;
++    private boolean isFistTime = false;
+ 
+     public static TabFragment newInstance(int tabPosoition,ArrayList<ExamDetail> examList) {
+         TabFragment fragment = new TabFragment();
+@@ -59,10 +60,10 @@ public class TabFragment extends  BaseFragment
+         super.onCreate(savedInstanceState);
+         Bundle args = getArguments();
+         if(args != null) {
+-            this.selectedTabMenuPosition = args.getInt(PARAM1);
++            this.selectedTabPosition = args.getInt(PARAM1);
+             this.mExamDetailList = args.getParcelableArrayList(PARAM2);
+         }
+-       isFistTime = true;
++        this.isFistTime = true;
+     }
+ 
+     @Override
+@@ -70,7 +71,7 @@ public class TabFragment extends  BaseFragment
+ 
+         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
+ 
+-        final ViewPager examPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
++        mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
+         TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
+         CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
+ 
+@@ -102,11 +103,11 @@ public class TabFragment extends  BaseFragment
+ 
+         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
+ 
+-            examPager.setVisibility(View.VISIBLE);
+-            this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this, this.mExamDetailList);
+-            examPager.setAdapter(this.mDetailsAdapter);
++            mExamTabPager.setVisibility(View.VISIBLE);
++            this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
++            mExamTabPager.setAdapter(this.mDetailsAdapter);
+ 
+-            examPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
++            mExamTabPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                 @Override
+                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                     Log.e("","");
+@@ -114,42 +115,24 @@ public class TabFragment extends  BaseFragment
+ 
+                 @Override
+                 public void onPageSelected(int position) {
+-                    onExamTabSelected(position);
++                    EXAM_TAB_POSITION =position;
++                    mExamTabSelected(position);
+                 }
+ 
+                 @Override
+                 public void onPageScrollStateChanged(int state) {
+                     Log.e("","");
+                 }
+-            });
+-
+-            OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {
+-                @Override
+-                public void onSwipeLeft() {
+-                    int currentPosition = examPager.getCurrentItem();
+-                    if (mExamDetailList.size()-1 >= currentPosition)
+-                        examPager.setCurrentItem(currentPosition + 1);
+-                }
+-
+-                @Override
+-                public void onSwipeRight() {
+-                    super.onSwipeRight();
+-
+-                    int currentPosition = examPager.getCurrentItem();
+-                    if (currentPosition > 0)
+-                        examPager.setCurrentItem(currentPosition - 1);
+-                }
+-
+-            };
+-
++           });
+            rootView.findViewById(R.id.exam_swipe_listener_layout).setOnTouchListener(onSwipeTouchListener);
+            rootView.findViewById(R.id.include_layout_home_widget).setOnTouchListener(onSwipeTouchListener);
+ 
+             if(this.isFistTime) {
+                 this.isFistTime = false;
+-                int currentPosition = examPager.getCurrentItem();
+-                onExamTabSelected(currentPosition);
++                int currentPosition = mExamTabPager.getCurrentItem();
++                mExamTabSelected(currentPosition);
+             }
++            mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
+         }
+         rootView.findViewById(R.id.home_widget_first).setOnClickListener(this);
+         rootView.findViewById(R.id.home_widget_second).setOnClickListener(this);
+@@ -165,8 +148,12 @@ public class TabFragment extends  BaseFragment
+         MainActivity mainActivity = (MainActivity)getActivity();
+         if (mainActivity != null) {
+             mainActivity.currentFragment = this;
+-            mainActivity.mUpdateTabMenuItem(this.selectedTabMenuPosition);
++            mainActivity.mUpdateTabMenuItem(this.selectedTabPosition);
+         }
++/*
++        if (mExamDetailList.size() >= EXAM_TAB_POSITION)
++            mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);*/
++
+         this.mUpdateSubMenuItem();
+         getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
+ 
+@@ -207,15 +194,21 @@ public class TabFragment extends  BaseFragment
+             e.printStackTrace();
+         }
+ 
+-
+         this.mSubMenuItemClickListener();
+         this.mUpdateSubMenuItem();
+     }
+ 
+-    private void onExamTabSelected(int position) {
+-        if(this.mListener == null || this.mExamDetailList == null || this.mExamDetailList.isEmpty())
+-            return;
+-        this.mExamDetail = this.mExamDetailList.get(position);
++    private void mExamTabSelected(int position) {
++        if(this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() >position) {
++            this.mExamDetail = this.mExamDetailList.get(position);
++            this.mListener.onExamTabSelected(mExamDetail);
++        }
++    }
++
++    private void mHomeWidgetSelected(String requestType, String url, String tag)
++    {
++        if(mListener != null)
++            mListener.onHomeItemSelected(requestType, url,tag);
+     }
+ 
+     private void mUpdateSubMenuItem(){
+@@ -234,7 +227,7 @@ public class TabFragment extends  BaseFragment
+         ImageView fourthSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_fourth);
+ 
+ 
+-        if(this.selectedTabMenuPosition == 1){
++        if(this.selectedTabPosition == 1){
+             firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
+             secondSubMenuIV.setImageResource(R.drawable.ic_syllabus);
+             thirdSubMenuIV.setImageResource(R.drawable.ic_challenges);
+@@ -251,7 +244,7 @@ public class TabFragment extends  BaseFragment
+             thirdSubMenuTV.setText("Challenges");
+             fourthSubMenuTV.setText("Prep Path");
+ 
+-        }else   if(this.selectedTabMenuPosition == 2){
++        }else   if(this.selectedTabPosition == 2){
+             firstSubMenuIV.setImageResource(R.drawable.ic_institute);
+             secondSubMenuIV.setImageResource(R.drawable.ic_news);
+             thirdSubMenuIV.setImageResource(R.drawable.ic_article);
+@@ -268,58 +261,82 @@ public class TabFragment extends  BaseFragment
+             thirdSubMenuTV.setText("Article");
+             fourthSubMenuTV.setText("Qna");
+ 
+-        }else   if(this.selectedTabMenuPosition == 3){
++        }else   if(this.selectedTabPosition == 3){
+ 
+-        }else   if(this.selectedTabMenuPosition == 4){
++        }else   if(this.selectedTabPosition == 4){
+         }
+     }
+ 
+     private void mSubMenuItemClickListener(){
+ 
+-        if(selectedTabMenuPosition == 1){
++        if(selectedTabPosition == 1){
+ 
+             if(selectedSubMenuPosition == 2) {
+-                if (this.mExamDetail != null)
+-                    this.mHomeItemSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/syllabus/",null);
++                if (this.mExamDetail != null) {
++                    this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS , Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/syllabus/", null);
++                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  mExamDetail.getId()).commit();
++
++                }
+             } else if(selectedSubMenuPosition == 1) {
+                 if (this.mExamDetail != null)
+-                    this.mHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/calendar/", null);
++                    this.mHomeWidgetSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/calendar/", null);
+             }else
+                 Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
+ 
+         }
+-        else if(selectedTabMenuPosition == 2){
++        else if(selectedTabPosition == 2){
+              if(selectedSubMenuPosition == 1){
+                  if(this.mExamDetail != null)
+-                 this.mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes",this.mExamDetail.getExam_tag());
++                 this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes",this.mExamDetail.getExam_tag());
+                  else
+-                 this.mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes", null);
++                 this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes", null);
+              }else  if(selectedSubMenuPosition == 2){
+-                 this.mHomeItemSelected(Constants.WIDGET_NEWS, Constants.BASE_URL+"personalize/news", null);
++                 this.mHomeWidgetSelected(Constants.WIDGET_NEWS, Constants.BASE_URL+"personalize/news", null);
+              }else  if(selectedSubMenuPosition == 3){
+-                 this.mHomeItemSelected(Constants.WIDGET_ARTICES, Constants.BASE_URL+"personalize/articles", null);
++                 this.mHomeWidgetSelected(Constants.WIDGET_ARTICES, Constants.BASE_URL+"personalize/articles", null);
+              }else  if(selectedSubMenuPosition == 4){
+-                 this.mHomeItemSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna", null);
++                 this.mHomeWidgetSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna", null);
+              }
+         }
+ 
+     }
+ 
+     public void updateTabFragment(int tabPosition){
+-        this.selectedTabMenuPosition  = tabPosition;
++        this.selectedTabPosition = tabPosition;
+         mUpdateSubMenuItem();
+     }
+ 
+-    private void mHomeItemSelected(String requestType, String url, String tag)
+-    {
+-      if(mListener != null)
+-          mListener.onHomeItemSelected(requestType, url,tag);
+-    }
++    public void updateExamSummary(ExamSummary examSummary) {
++        View view = getView();
++        if(view == null || examSummary == null)
++            return;
++         CircularProgressBar profileCompleted =  (CircularProgressBar) view.findViewById(R.id.profile_image_circular_progressbar);
+ 
+-    @Override
+-    public void updateExamDetail(ExamSummary examSummary) {
+ 
++        //TODO:: showing progress as a profile circle
++        if(examSummary.getSyllabus_covered() ==0)
++            profileCompleted.setProgress(100);
++        else
++            profileCompleted.setProgress(examSummary.getSyllabus_covered());
+     }
++    OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {
++        @Override
++        public void onSwipeLeft() {
++            int currentPosition = mExamTabPager.getCurrentItem();
++            if (mExamDetailList.size()-1 >= currentPosition)
++                mExamTabPager.setCurrentItem(currentPosition + 1);
++        }
++
++        @Override
++        public void onSwipeRight() {
++            super.onSwipeRight();
++
++            int currentPosition = mExamTabPager.getCurrentItem();
++            if (currentPosition > 0)
++                mExamTabPager.setCurrentItem(currentPosition - 1);
++        }
++
++    };
+ 
+ 
+     /**
+diff --git a/app/src/main/java/com/collegedekho/app/fragment/UserEducationFragment.java b/app/src/main/java/com/collegedekho/app/fragment/UserEducationFragment.java
+index 663a152..ddffe4f 100644
+--- a/app/src/main/java/com/collegedekho/app/fragment/UserEducationFragment.java
++++ b/app/src/main/java/com/collegedekho/app/fragment/UserEducationFragment.java
+@@ -100,26 +100,6 @@ public class UserEducationFragment extends BaseFragment {
+         Spanned text = Html.fromHtml("GET <b><font color='#ff8d00'>C</font><font color='#1f2560'>D</font></b> <br>RECOMMEDATIONS");
+         cdTextView.setText(text);
+ 
+-        /*RelativeLayout layout = new RelativeLayout(this.getContext());
+-        layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+-        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+-
+-        CharacterPickerView pickerView = new CharacterPickerView(this.getContext());
+-        layout.addView(pickerView, layoutParams);
+-        GaradiWindowHelper.setPickerData(pickerView, this.mUserEducationList);
+-        pickerView.setOnOptionChangedListener(new CharacterPickerView.OnOptionChangedListener() {
+-            @Override
+-            public void onOptionChanged(CharacterPickerView view, String levelID, String subLevelID, String streamID, String marksID) {
+-                Log.e("test", levelID + "," + subLevelID + "," + streamID + "," + marksID);
+-
+-                UserEducationFragment.this.mLevelID = levelID;
+-                UserEducationFragment.this.mSubLevelID = subLevelID;
+-                UserEducationFragment.this.mStreamID = streamID;
+-                UserEducationFragment.this.mMarks = marksID;
+-            }
+-        });
+-
+-        ((LinearLayout) rootView.findViewById(R.id.user_education_layout)).addView(layout);*/
+ 
+         mMarksPicker = (NumberPicker) rootView.findViewById(R.id.marks_number_picker);
+         mMarksPicker.setMaxValue(marks_arrays.length-1);
+@@ -186,6 +166,7 @@ public class UserEducationFragment extends BaseFragment {
+     @Override
+     public void onResume() {
+         super.onResume();
++        mUpdateStreamPicker(0);
+         MainActivity mainActivity = (MainActivity) getActivity();
+         if (mainActivity != null)
+             mainActivity.currentFragment = this;
+@@ -338,26 +319,6 @@ public class UserEducationFragment extends BaseFragment {
+    }
+ 
+ 
+-    public static void setNumberPickerTextColor(NumberPicker numberPicker, int color){
+-        final int count = numberPicker.getChildCount();
+-        for(int i = 0; i < count; i++){
+-            View child = numberPicker.getChildAt(i);
+-            if(child instanceof EditText){
+-                try{
+-                    Field selectorWheelPaintField = numberPicker.getClass().getDeclaredField("mSelectorWheelPaint");
+-                    selectorWheelPaintField.setAccessible(true);
+-                    ((Paint)selectorWheelPaintField.get(numberPicker)).setColor(color);
+-                    numberPicker.invalidate();
+-                    ((EditText)child).setTextColor(color);
+-
+-                }catch(Exception e){
+-                    e.printStackTrace();
+-                }
+-
+-            }
+-        }
+-    }
+-
+     private void mUserNotPreparingForExam() {
+         if(this.mListener !=  null){
+             this.mListener.onUserNotPreparingSelected();
+@@ -380,4 +341,5 @@ public class UserEducationFragment extends BaseFragment {
+         void onUserNotPreparingSelected();
+     }
+ 
++
+ }
+diff --git a/app/src/main/java/com/collegedekho/app/resource/Constants.java b/app/src/main/java/com/collegedekho/app/resource/Constants.java
+index b59f881..5cf789c 100755
+--- a/app/src/main/java/com/collegedekho/app/resource/Constants.java
++++ b/app/src/main/java/com/collegedekho/app/resource/Constants.java
+@@ -139,6 +139,7 @@ public class Constants
+     public static final String TAG_LOAD_INSTITUTE_ARTICLE = "institute_article";
+     public static final String TAG_USER_EDUCATION_SET = "user_education_set";
+     public static final String TAG_USER_EXAMS_SET = "user_exams_set";
++    public static final String SELECTED_EXAM_ID = "selected_exam_id";
+     public static boolean SEND_REQUEST = true;
+     public static volatile boolean IS_CONNECTED_TO_INTERNET;
+     public static final int MY_FB_REFRESH_RATE = 5000;
+diff --git a/app/src/main/res/layout/fragment_profile.xml b/app/src/main/res/layout/fragment_profile.xml
+index 326ff4b..d336b19 100644
+--- a/app/src/main/res/layout/fragment_profile.xml
++++ b/app/src/main/res/layout/fragment_profile.xml
+@@ -79,7 +79,7 @@
+                     android:paddingRight="10dp"
+                     android:textSize="30sp"
+                     android:textColor="@color/light_blue"
+-                    android:text="25%"
++                    android:text="0%"
+                     android:gravity="top"
+                     android:layout_gravity="top"
+                     />
+diff --git a/app/src/main/res/layout/layout_number_picker.xml b/app/src/main/res/layout/layout_number_picker.xml
+index ee1b4d1..24400d0 100644
+--- a/app/src/main/res/layout/layout_number_picker.xml
++++ b/app/src/main/res/layout/layout_number_picker.xml
+@@ -43,7 +43,7 @@
+         android:id="@+id/j_options2_title"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+-        android:text="STREAMS"
++        android:text="STREAM"
+         android:paddingBottom="5dp"
+         android:paddingTop="5dp"
+         android:background="@drawable/bg_right_border"
+diff --git a/app/src/main/res/layout/layout_profile_image.xml b/app/src/main/res/layout/layout_profile_image.xml
+index 0fe1d60..3bf0799 100644
+--- a/app/src/main/res/layout/layout_profile_image.xml
++++ b/app/src/main/res/layout/layout_profile_image.xml
+@@ -27,7 +27,7 @@
+             app:background_progressbar_color="@android:color/transparent"
+             app:background_progressbar_width="0dp"
+             android:layout_gravity="center"
+-            app:progress="60"
++            app:progress="100"
+             app:progressbar_color="@color/primary_orange"
+             app:progressbar_width="3dp"/>
+ 
+diff --git a/garadiLibrary/garadiLibrary.iml b/garadiLibrary/garadiLibrary.iml
+index 3f64e4d..1d359df 100644
+--- a/garadiLibrary/garadiLibrary.iml
++++ b/garadiLibrary/garadiLibrary.iml
+@@ -74,7 +74,6 @@
+       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jniLibs" />
+       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/lint" />
+       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
+-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/restart-dex" />
+       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/rs" />
+       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
+       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />

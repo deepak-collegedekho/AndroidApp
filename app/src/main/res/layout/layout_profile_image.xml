@@ -27,7 +27,7 @@
             app:background_progressbar_color="@android:color/transparent"
             app:background_progressbar_width="0dp"
             android:layout_gravity="center"
-            app:progress="60"
+            app:progress="100"
             app:progressbar_color="@color/primary_orange"
             app:progressbar_width="3dp"/>
 

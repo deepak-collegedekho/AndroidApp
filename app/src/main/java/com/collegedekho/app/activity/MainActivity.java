@@ -3632,9 +3632,8 @@ public class MainActivity extends AppCompatActivity
     public void onExamTabSelected(ExamDetail examDetailObj) {
          if(examDetailObj == null)return;
         String id = examDetailObj.getId();
-
-        Map<String, String> params = new HashMap<>();
-        params.put("tag_uris[" + (0) + "]", examDetailObj.getExam_tag());
+        Map<String , String> params = this.mGetTheFilters();
+        params.put("tag_uris[" + (params.size()) + "]",examDetailObj.getExam_tag());
 
         this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/"+id+"/summary/",params);
     }
@@ -3732,8 +3731,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void submitExamStatus(JSONObject jsonObject) {
-        this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS, Constants.BASE_URL+"yearly-exams/54/syllabus/",jsonObject,1);
+    public void onSubmitCompletedSyllabus(JSONObject jsonObject) {
+
+       String examId = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
+       if(!examId.isEmpty())
+           this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS, Constants.BASE_URL+"yearly-exams/"+examId+"/syllabus/",jsonObject,1);
 
     }
 

@@ -16,17 +16,15 @@ public class ExamDetailAdapter extends FragmentStatePagerAdapter {
 
     ArrayList<ExamDetail> mExamDetailList;
     private ExamDetailFragment mExamFragment[];
-    ExamDetailFragment.OnProfileListener mProfileListener;
     private int count;
 
-    public ExamDetailAdapter(FragmentManager fm, ExamDetailFragment.OnProfileListener listener, ArrayList<ExamDetail> examDetailList) {
+    public ExamDetailAdapter(FragmentManager fm, ArrayList<ExamDetail> examDetailList) {
         super(fm);
         if(examDetailList != null){
             count = examDetailList.size();
             this.mExamFragment =  new ExamDetailFragment[count];
         }
         this.mExamDetailList = examDetailList;
-        this.mProfileListener = listener;
     }
 
     @Override

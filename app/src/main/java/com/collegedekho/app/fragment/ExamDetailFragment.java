@@ -47,7 +47,4 @@ public class ExamDetailFragment extends BaseFragment{
         View rootView = inflater.inflate(R.layout.fragment_exam_detail, container, false);
         return rootView;
     }
-    public interface OnProfileListener{
-        void updateExamDetail(ExamSummary examSummary);
-    }
 }

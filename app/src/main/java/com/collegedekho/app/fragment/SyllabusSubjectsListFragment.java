@@ -253,13 +253,13 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
             e.printStackTrace();
         }
         if(listener != null)
-            listener.submitExamStatus(parentJsonObj);
+            listener.onSubmitCompletedSyllabus(parentJsonObj);
 
     }
 
     public interface OnSubjectSelectedListener {
         void onSubjectSelected(Subjects subject, int position);
         void onSubjectCheckboxSelected(Subjects subject, int position);
-        void submitExamStatus(JSONObject jsonObject);
+        void onSubmitCompletedSyllabus(JSONObject jsonObject);
     }
 }

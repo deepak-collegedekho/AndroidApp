@@ -30,6 +30,7 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
     protected String mNextUrl;
     protected BaseListener listener;
     protected  int listType;
+    protected  static int EXAM_TAB_POSITION =0;
 
 
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {

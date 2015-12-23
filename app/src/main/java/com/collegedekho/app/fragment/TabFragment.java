@@ -21,25 +21,26 @@ import com.collegedekho.app.listener.OnSwipeTouchListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.widget.CircularImageView;
+import com.collegedekho.app.widget.CircularProgressBar;
 
 import java.util.ArrayList;
 
 /**
  * Created by sureshsaini on 6/12/15.
  */
-public class TabFragment extends  BaseFragment
-        implements ExamDetailFragment.OnProfileListener{
+public class TabFragment extends  BaseFragment{
     private final String TAG ="Tab Fragment";
     private static String PARAM1 = "param1";
     private static String PARAM2 = "param2";
 
-    private int selectedTabMenuPosition =0;
+    private int selectedTabPosition =0;
     private int selectedSubMenuPosition =0;
     private  OnHomeItemSelectListener mListener;
     private ArrayList<ExamDetail> mExamDetailList;
     private ExamDetailAdapter mDetailsAdapter;
     private ExamDetail mExamDetail;
-    private boolean isFistTime;
+    private ViewPager mExamTabPager  = null;
+    private boolean isFistTime = false;
 
     public static TabFragment newInstance(int tabPosoition,ArrayList<ExamDetail> examList) {
         TabFragment fragment = new TabFragment();
@@ -59,10 +60,10 @@ public class TabFragment extends  BaseFragment
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if(args != null) {
-            this.selectedTabMenuPosition = args.getInt(PARAM1);
+            this.selectedTabPosition = args.getInt(PARAM1);
             this.mExamDetailList = args.getParcelableArrayList(PARAM2);
         }
-       isFistTime = true;
+        this.isFistTime = true;
     }
 
     @Override
@@ -70,7 +71,7 @@ public class TabFragment extends  BaseFragment
 
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
 
-        final ViewPager examPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
+        mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
         TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
         CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
 
@@ -102,11 +103,11 @@ public class TabFragment extends  BaseFragment
 
         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
 
-            examPager.setVisibility(View.VISIBLE);
-            this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this, this.mExamDetailList);
-            examPager.setAdapter(this.mDetailsAdapter);
+            mExamTabPager.setVisibility(View.VISIBLE);
+            this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
+            mExamTabPager.setAdapter(this.mDetailsAdapter);
 
-            examPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            mExamTabPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                     Log.e("","");
@@ -114,42 +115,24 @@ public class TabFragment extends  BaseFragment
 
                 @Override
                 public void onPageSelected(int position) {
-                    onExamTabSelected(position);
+                    EXAM_TAB_POSITION =position;
+                    mExamTabSelected(position);
                 }
 
                 @Override
                 public void onPageScrollStateChanged(int state) {
                     Log.e("","");
                 }
-            });
-
-            OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {
-                @Override
-                public void onSwipeLeft() {
-                    int currentPosition = examPager.getCurrentItem();
-                    if (mExamDetailList.size()-1 >= currentPosition)
-                        examPager.setCurrentItem(currentPosition + 1);
-                }
-
-                @Override
-                public void onSwipeRight() {
-                    super.onSwipeRight();
-
-                    int currentPosition = examPager.getCurrentItem();
-                    if (currentPosition > 0)
-                        examPager.setCurrentItem(currentPosition - 1);
-                }
-
-            };
-
+           });
            rootView.findViewById(R.id.exam_swipe_listener_layout).setOnTouchListener(onSwipeTouchListener);
            rootView.findViewById(R.id.include_layout_home_widget).setOnTouchListener(onSwipeTouchListener);
 
             if(this.isFistTime) {
                 this.isFistTime = false;
-                int currentPosition = examPager.getCurrentItem();
-                onExamTabSelected(currentPosition);
+                int currentPosition = mExamTabPager.getCurrentItem();
+                mExamTabSelected(currentPosition);
             }
+            mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
         }
         rootView.findViewById(R.id.home_widget_first).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_second).setOnClickListener(this);
@@ -165,8 +148,12 @@ public class TabFragment extends  BaseFragment
         MainActivity mainActivity = (MainActivity)getActivity();
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
-            mainActivity.mUpdateTabMenuItem(this.selectedTabMenuPosition);
+            mainActivity.mUpdateTabMenuItem(this.selectedTabPosition);
         }
+/*
+        if (mExamDetailList.size() >= EXAM_TAB_POSITION)
+            mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);*/
+
         this.mUpdateSubMenuItem();
         getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
 
@@ -207,15 +194,21 @@ public class TabFragment extends  BaseFragment
             e.printStackTrace();
         }
 
-
         this.mSubMenuItemClickListener();
         this.mUpdateSubMenuItem();
     }
 
-    private void onExamTabSelected(int position) {
-        if(this.mListener == null || this.mExamDetailList == null || this.mExamDetailList.isEmpty())
-            return;
-        this.mExamDetail = this.mExamDetailList.get(position);
+    private void mExamTabSelected(int position) {
+        if(this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() >position) {
+            this.mExamDetail = this.mExamDetailList.get(position);
+            this.mListener.onExamTabSelected(mExamDetail);
+        }
+    }
+
+    private void mHomeWidgetSelected(String requestType, String url, String tag)
+    {
+        if(mListener != null)
+            mListener.onHomeItemSelected(requestType, url,tag);
     }
 
     private void mUpdateSubMenuItem(){
@@ -234,7 +227,7 @@ public class TabFragment extends  BaseFragment
         ImageView fourthSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_fourth);
 
 
-        if(this.selectedTabMenuPosition == 1){
+        if(this.selectedTabPosition == 1){
             firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
             secondSubMenuIV.setImageResource(R.drawable.ic_syllabus);
             thirdSubMenuIV.setImageResource(R.drawable.ic_challenges);
@@ -251,7 +244,7 @@ public class TabFragment extends  BaseFragment
             thirdSubMenuTV.setText("Challenges");
             fourthSubMenuTV.setText("Prep Path");
 
-        }else   if(this.selectedTabMenuPosition == 2){
+        }else   if(this.selectedTabPosition == 2){
             firstSubMenuIV.setImageResource(R.drawable.ic_institute);
             secondSubMenuIV.setImageResource(R.drawable.ic_news);
             thirdSubMenuIV.setImageResource(R.drawable.ic_article);
@@ -268,58 +261,82 @@ public class TabFragment extends  BaseFragment
             thirdSubMenuTV.setText("Article");
             fourthSubMenuTV.setText("Qna");
 
-        }else   if(this.selectedTabMenuPosition == 3){
+        }else   if(this.selectedTabPosition == 3){
 
-        }else   if(this.selectedTabMenuPosition == 4){
+        }else   if(this.selectedTabPosition == 4){
         }
     }
 
     private void mSubMenuItemClickListener(){
 
-        if(selectedTabMenuPosition == 1){
+        if(selectedTabPosition == 1){
 
             if(selectedSubMenuPosition == 2) {
-                if (this.mExamDetail != null)
-                    this.mHomeItemSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/syllabus/",null);
+                if (this.mExamDetail != null) {
+                    this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS , Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/syllabus/", null);
+                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  mExamDetail.getId()).commit();
+
+                }
             } else if(selectedSubMenuPosition == 1) {
                 if (this.mExamDetail != null)
-                    this.mHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/calendar/", null);
+                    this.mHomeWidgetSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/calendar/", null);
             }else
                 Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
 
         }
-        else if(selectedTabMenuPosition == 2){
+        else if(selectedTabPosition == 2){
              if(selectedSubMenuPosition == 1){
                  if(this.mExamDetail != null)
-                 this.mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes",this.mExamDetail.getExam_tag());
+                 this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes",this.mExamDetail.getExam_tag());
                  else
-                 this.mHomeItemSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes", null);
+                 this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes", null);
              }else  if(selectedSubMenuPosition == 2){
-                 this.mHomeItemSelected(Constants.WIDGET_NEWS, Constants.BASE_URL+"personalize/news", null);
+                 this.mHomeWidgetSelected(Constants.WIDGET_NEWS, Constants.BASE_URL+"personalize/news", null);
              }else  if(selectedSubMenuPosition == 3){
-                 this.mHomeItemSelected(Constants.WIDGET_ARTICES, Constants.BASE_URL+"personalize/articles", null);
+                 this.mHomeWidgetSelected(Constants.WIDGET_ARTICES, Constants.BASE_URL+"personalize/articles", null);
              }else  if(selectedSubMenuPosition == 4){
-                 this.mHomeItemSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna", null);
+                 this.mHomeWidgetSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna", null);
              }
         }
 
     }
 
     public void updateTabFragment(int tabPosition){
-        this.selectedTabMenuPosition  = tabPosition;
+        this.selectedTabPosition = tabPosition;
         mUpdateSubMenuItem();
     }
 
-    private void mHomeItemSelected(String requestType, String url, String tag)
-    {
-      if(mListener != null)
-          mListener.onHomeItemSelected(requestType, url,tag);
-    }
+    public void updateExamSummary(ExamSummary examSummary) {
+        View view = getView();
+        if(view == null || examSummary == null)
+            return;
+         CircularProgressBar profileCompleted =  (CircularProgressBar) view.findViewById(R.id.profile_image_circular_progressbar);
 
-    @Override
-    public void updateExamDetail(ExamSummary examSummary) {
 
+        //TODO:: showing progress as a profile circle
+        if(examSummary.getSyllabus_covered() ==0)
+            profileCompleted.setProgress(100);
+        else
+            profileCompleted.setProgress(examSummary.getSyllabus_covered());
     }
+    OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {
+        @Override
+        public void onSwipeLeft() {
+            int currentPosition = mExamTabPager.getCurrentItem();
+            if (mExamDetailList.size()-1 >= currentPosition)
+                mExamTabPager.setCurrentItem(currentPosition + 1);
+        }
+
+        @Override
+        public void onSwipeRight() {
+            super.onSwipeRight();
+
+            int currentPosition = mExamTabPager.getCurrentItem();
+            if (currentPosition > 0)
+                mExamTabPager.setCurrentItem(currentPosition - 1);
+        }
+
+    };
 
 
     /**

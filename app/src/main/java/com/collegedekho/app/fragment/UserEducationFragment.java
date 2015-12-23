@@ -100,26 +100,6 @@ public class UserEducationFragment extends BaseFragment {
         Spanned text = Html.fromHtml("GET <b><font color='#ff8d00'>C</font><font color='#1f2560'>D</font></b> <br>RECOMMEDATIONS");
         cdTextView.setText(text);
 
-        /*RelativeLayout layout = new RelativeLayout(this.getContext());
-        layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-
-        CharacterPickerView pickerView = new CharacterPickerView(this.getContext());
-        layout.addView(pickerView, layoutParams);
-        GaradiWindowHelper.setPickerData(pickerView, this.mUserEducationList);
-        pickerView.setOnOptionChangedListener(new CharacterPickerView.OnOptionChangedListener() {
-            @Override
-            public void onOptionChanged(CharacterPickerView view, String levelID, String subLevelID, String streamID, String marksID) {
-                Log.e("test", levelID + "," + subLevelID + "," + streamID + "," + marksID);
-
-                UserEducationFragment.this.mLevelID = levelID;
-                UserEducationFragment.this.mSubLevelID = subLevelID;
-                UserEducationFragment.this.mStreamID = streamID;
-                UserEducationFragment.this.mMarks = marksID;
-            }
-        });
-
-        ((LinearLayout) rootView.findViewById(R.id.user_education_layout)).addView(layout);*/
 
         mMarksPicker = (NumberPicker) rootView.findViewById(R.id.marks_number_picker);
         mMarksPicker.setMaxValue(marks_arrays.length-1);
@@ -186,6 +166,7 @@ public class UserEducationFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        mUpdateStreamPicker(0);
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null)
             mainActivity.currentFragment = this;
@@ -338,26 +319,6 @@ public class UserEducationFragment extends BaseFragment {
    }
 
 
-    public static void setNumberPickerTextColor(NumberPicker numberPicker, int color){
-        final int count = numberPicker.getChildCount();
-        for(int i = 0; i < count; i++){
-            View child = numberPicker.getChildAt(i);
-            if(child instanceof EditText){
-                try{
-                    Field selectorWheelPaintField = numberPicker.getClass().getDeclaredField("mSelectorWheelPaint");
-                    selectorWheelPaintField.setAccessible(true);
-                    ((Paint)selectorWheelPaintField.get(numberPicker)).setColor(color);
-                    numberPicker.invalidate();
-                    ((EditText)child).setTextColor(color);
-
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-
-            }
-        }
-    }
-
     private void mUserNotPreparingForExam() {
         if(this.mListener !=  null){
             this.mListener.onUserNotPreparingSelected();
@@ -379,5 +340,6 @@ public class UserEducationFragment extends BaseFragment {
         void onEducationSelected(HashMap<String, String> map);
         void onUserNotPreparingSelected();
     }
+
 
 }
