@@ -93,9 +93,10 @@
             android:text="Are you preparing for exams \nlike JEEE, CAT, AIPMT"
             />
 
-        <LinearLayout
+       <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+           android:visibility="gone"
             android:orientation="horizontal">
 
         <TextView
@@ -124,6 +125,28 @@
             android:text="No"
             />
         </LinearLayout>
+        <RadioGroup android:id="@+id/exam_rd_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/m5dp"
+            >
+            <RadioButton android:id="@+id/rd_btn_yes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yes"
+                android:textSize="20sp"
+                android:layout_marginRight="@dimen/m40dp"
+                />
+            <RadioButton android:id="@+id/rd_btn_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginLeft="@dimen/m40dp"
+                android:text="No"
+                />
+        </RadioGroup>
         <TextView
             style="@style/AppTheme.OrangeButton"
             android:background="@color/primary_orange"

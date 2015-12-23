@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -46,7 +47,7 @@ public class UserEducationFragment extends BaseFragment {
     private boolean isUserPreparing;
     private OnUserEducationInteractionListener mListener;
     private RelativeLayout.LayoutParams layoutParams;
-
+private RadioGroup examRadioGroup;
 
     private ArrayList<UserEducation> mUserEducationList;
     private ArrayList<UserEducationSublevels> mUserExamSubLevelsList;
@@ -100,7 +101,21 @@ public class UserEducationFragment extends BaseFragment {
         Spanned text = Html.fromHtml("GET <b><font color='#ff8d00'>C</font><font color='#1f2560'>D</font></b> <br>RECOMMEDATIONS");
         cdTextView.setText(text);
 
+        examRadioGroup=(RadioGroup)rootView.findViewById(R.id.exam_rd_group);
+        examRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                 switch (checkedId){
+                     case R.id.rd_btn_yes:
+                         mPreparingForExam(0);
+                         break;
 
+                     case R.id.rd_btn_no:
+                         mPreparingForExam(1);
+                         break;
+                 }
+            }
+        });
         mMarksPicker = (NumberPicker) rootView.findViewById(R.id.marks_number_picker);
         mMarksPicker.setMaxValue(marks_arrays.length-1);
         mMarksPicker.setMinValue(0);
@@ -184,6 +199,7 @@ public class UserEducationFragment extends BaseFragment {
                 mPreparingForExam(1);
                 break;
             case R.id.education_submit_button:
+
                 mUserPreparingForExam();
                 break;
             default:

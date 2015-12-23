@@ -192,7 +192,7 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
         ArrayList<Integer>chaptersArray=new ArrayList<>();
         ArrayList<Integer>subjectsArray=new ArrayList<>();
         JSONObject object=new JSONObject();
-boolean isReadyToSubmit=false;
+        boolean isReadyToSubmit=false;
         if (mChapterList==null || mChapterList.isEmpty()){
             return;
         }
