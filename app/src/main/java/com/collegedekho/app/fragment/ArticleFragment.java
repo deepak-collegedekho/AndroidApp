@@ -111,47 +111,9 @@ public class ArticleFragment extends BaseFragment {
         recyclerView.addOnScrollListener(scrollListener);
 
         mUpdateArticleListAdapter(rootView);
-        if(this.mArticlesList != null && this.mArticlesList.size() >0)
-        this.mUpdateArticleDetail(rootView, this.mArticlesList.get(0));
         return rootView;
     }
 
-    /**
-     * This method update article details
-     * @param article
-     */
-    private void mUpdateArticleDetail(View view,  Articles article)
-    {
-        if(view == null || article == null)return;
-        this.mArticle = article;
-        ((TextView) view.findViewById(R.id.article_title)).setText(article.title);
-        ((TextView) view.findViewById(R.id.article_content)).setText(Html.fromHtml(article.content));
-        if (article.image != null && !article.image.isEmpty()) {
-            ((NetworkImageView) view.findViewById(R.id.article_college_banner)).setImageUrl(article.image, MySingleton.getInstance(getActivity()).getImageLoader());
-            view.findViewById(R.id.article_college_banner).setVisibility(View.VISIBLE);
-        }else
-            view.findViewById(R.id.article_college_banner).setVisibility(View.GONE);
-        String d = "";
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date date = sdf.parse(article.published_on);
-            sdf.applyPattern("MMMM d, yyyy KK:mm a");
-            d = sdf.format(date);
-        } catch (ParseException e) {
-            Log.e(TAG, "Date format unknown: " + article.published_on);
-//                Utils.sendException(t, TAG, "DateFormatUnknown", r.getAddedOn());
-        }
-        ((TextView) view.findViewById(R.id.article_pubdate)).setText(d);
-        ArrayList<Articles> newList = new ArrayList<>();
-        for (Articles n : mArticlesList) {
-            if(n.getId() == article.getId())continue;
-            newList.add(n);
-        }
-        view.findViewById(R.id.article_detail_scrollView).scrollTo(0, 0);
-        mAdapter.updateArticleAdapter(newList);
-
-    }
 
 
     @Override
@@ -183,11 +145,6 @@ public class ArticleFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
-       /* MainActivity mMainActivity = (MainActivity) this.getActivity();
-
-        if (mMainActivity != null)
-            mMainActivity.currentFragment = this;*/
 
     }
 
@@ -266,6 +223,7 @@ public class ArticleFragment extends BaseFragment {
             view.findViewById(R.id.view_into_grid_list).setVisibility(View.GONE);
         }else{
             view.findViewById(android.R.id.empty).setVisibility(View.GONE);
+            view.findViewById(R.id.article_list_recyclerView).setVisibility(View.VISIBLE);
             view.findViewById(R.id.view_into_grid_list).setVisibility(View.VISIBLE);
 
             if(this.mViewType == Constants.VIEW_INTO_GRID)
@@ -274,14 +232,52 @@ public class ArticleFragment extends BaseFragment {
                 if(mArticlesList != null && !mArticlesList.isEmpty())
                     mUpdateArticleDetail(getView(), mArticlesList.get(0));
             }
+            else{
+                this.mAdapter.updateArticleAdapter(this.mArticlesList);
+                this.mAdapter.notifyDataSetChanged();
+
+            }
         }
 
 
-
-        this.mAdapter.updateArticleAdapter(this.mArticlesList);
-        this.mAdapter.notifyDataSetChanged();
+    }
+    /**
+     * This method update article details
+     * @param article
+     */
+    private void mUpdateArticleDetail(View view,  Articles article)
+    {
+        if(view == null || article == null)return;
+        this.mArticle = article;
+        ((TextView) view.findViewById(R.id.article_title)).setText(article.title);
+        ((TextView) view.findViewById(R.id.article_content)).setText(Html.fromHtml(article.content));
+        if (article.image != null && !article.image.isEmpty()) {
+            ((NetworkImageView) view.findViewById(R.id.article_college_banner)).setImageUrl(article.image, MySingleton.getInstance(getActivity()).getImageLoader());
+            view.findViewById(R.id.article_college_banner).setVisibility(View.VISIBLE);
+        }else
+            view.findViewById(R.id.article_college_banner).setVisibility(View.GONE);
+        String d = "";
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date date = sdf.parse(article.published_on);
+            sdf.applyPattern("MMMM d, yyyy KK:mm a");
+            d = sdf.format(date);
+        } catch (ParseException e) {
+            Log.e(TAG, "Date format unknown: " + article.published_on);
+//                Utils.sendException(t, TAG, "DateFormatUnknown", r.getAddedOn());
+        }
+        ((TextView) view.findViewById(R.id.article_pubdate)).setText(d);
+        ArrayList<Articles> newList = new ArrayList<>();
+        for (Articles n : mArticlesList) {
+            if(n.getId() == article.getId())continue;
+            newList.add(n);
+        }
+        view.findViewById(R.id.article_detail_scrollView).scrollTo(0, 0);
+        mAdapter.updateArticleAdapter(newList);
 
     }
+
 
     public interface OnArticleSelectedListener extends  BaseListener{
         void onArticleSelected(Articles article, boolean flag);
