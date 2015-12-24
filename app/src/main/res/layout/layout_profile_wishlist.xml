@@ -17,49 +17,46 @@
         android:weightSum="1">
 
         <RelativeLayout
-            android:id="@+id/backup_colleges_layout_RL"
+            android:id="@+id/recommended_colleges_layout_RL"
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_weight=".5"
-            android:layout_marginRight="@dimen/m8dp"
             android:background="@drawable/rounded_box_light_blue_20px"
             android:layout_height="90dp" >
 
             <ImageView
-                android:id="@+id/backup_colleges_image"
+                android:id="@+id/recommended_colleges_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_alignParentBottom="true"
-                android:src="@drawable/ic_backup_colleges"/>
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_recommended_colleges"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/backup_colleges_image"
+                android:layout_below="@id/recommended_colleges_image"
                 android:layout_alignParentBottom="true"
-                android:text="BACKUP"
-                android:gravity="center"
+                android:text="RECOMMENDED"
                 android:textSize="16sp"
-                android:textColor="@color/white"
-                android:paddingBottom="@dimen/m5dp"/>
+                android:textColor="@color/white"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/backup_colleges_image"
+                android:layout_toRightOf="@id/recommended_colleges_image"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/backup_colleges_count"
+                    android:id="@+id/recommended_colleges_count"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:gravity="right"
-                    android:textSize="16sp"
                     android:maxLines="1"
                     android:ellipsize="end"
+                    android:gravity="right"
+                    android:textSize="16sp"
                     android:textColor="@color/white"/>
 
                 <TextView
@@ -73,6 +70,7 @@
             </LinearLayout>
 
         </RelativeLayout>
+
         <RelativeLayout
             android:id="@+id/wishList_colleges_layout_RL"
             android:orientation="vertical"
@@ -143,47 +141,49 @@
         android:weightSum="1">
 
         <RelativeLayout
-            android:id="@+id/recommended_colleges_layout_RL"
+            android:id="@+id/backup_colleges_layout_RL"
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_weight=".5"
-            android:layout_marginRight="@dimen/m8dp"
+
             android:background="@drawable/rounded_box_light_blue_20px"
             android:layout_height="90dp" >
 
             <ImageView
-                android:id="@+id/recommended_colleges_image"
+                android:id="@+id/backup_colleges_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_recommended_colleges"/>
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/ic_backup_colleges"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/recommended_colleges_image"
+                android:layout_toRightOf="@id/backup_colleges_image"
                 android:layout_alignParentBottom="true"
-                android:text="RECOMMENDED"
+                android:text="BACKUP"
+                android:gravity="center"
                 android:textSize="16sp"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:paddingBottom="@dimen/m5dp"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/recommended_colleges_image"
+                android:layout_toRightOf="@id/backup_colleges_image"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/recommended_colleges_count"
+                    android:id="@+id/backup_colleges_count"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:maxLines="1"
-                    android:ellipsize="end"
                     android:gravity="right"
                     android:textSize="16sp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:textColor="@color/white"/>
 
                 <TextView
@@ -197,6 +197,7 @@
             </LinearLayout>
 
         </RelativeLayout>
+
         <RelativeLayout
             android:id="@+id/important_date_layout_RL"
             android:orientation="vertical"

@@ -27,7 +27,7 @@ import java.util.ArrayList;
 /**
  * Created by sureshsaini on 27/11/15.
  */
-public class ProfileFragment extends  BaseFragment
+public class ProfileFragment extends BaseFragment
         {
 
     private final String TAG = "profile Frgament";
@@ -136,9 +136,19 @@ public class ProfileFragment extends  BaseFragment
 
         }else{
 
+            if(this.mListener != null)
+            {
+                this.mExamDetail = new ExamDetail();
+                this.mExamDetail.setId("0");
+
+                this.mListener.onExamTabSelected(this.mExamDetail);
+            }
+
             rootView.findViewById(R.id.prep_buddies).setVisibility(View.GONE);
             rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.GONE);
             rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.GONE);
+            rootView.findViewById(R.id.backup_colleges_layout_RL).setVisibility(View.GONE);
+
         }
 
         rootView.findViewById(R.id.backup_colleges_layout_RL).setOnClickListener(this);
