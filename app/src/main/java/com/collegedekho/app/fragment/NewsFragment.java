@@ -113,7 +113,6 @@ public class NewsFragment extends BaseFragment  {
         recyclerView.addOnScrollListener(scrollListener);
 
         mUpdateNewsListAdapter(rootView);
-
         return rootView;
     }
 
@@ -239,7 +238,7 @@ public class NewsFragment extends BaseFragment  {
             {
                 view.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
                 if(mNewsList != null && !mNewsList.isEmpty())
-                    mUpdateNewsDetail(getView(), mNewsList.get(0));
+                    mUpdateNewsDetail(view, mNewsList.get(0));
             }
             else{
                 this.mAdapter.updateNewsAdapter(this.mNewsList);

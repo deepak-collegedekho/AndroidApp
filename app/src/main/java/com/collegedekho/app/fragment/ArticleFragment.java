@@ -230,7 +230,7 @@ public class ArticleFragment extends BaseFragment {
             {
                 view.findViewById(R.id.article_detail_scrollView).setVisibility(View.VISIBLE);
                 if(mArticlesList != null && !mArticlesList.isEmpty())
-                    mUpdateArticleDetail(getView(), mArticlesList.get(0));
+                    mUpdateArticleDetail(view, mArticlesList.get(0));
             }
             else{
                 this.mAdapter.updateArticleAdapter(this.mArticlesList);
@@ -238,8 +238,6 @@ public class ArticleFragment extends BaseFragment {
 
             }
         }
-
-
     }
     /**
      * This method update article details
