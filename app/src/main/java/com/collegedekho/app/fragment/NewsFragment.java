@@ -113,8 +113,6 @@ public class NewsFragment extends BaseFragment  {
         recyclerView.addOnScrollListener(scrollListener);
 
         mUpdateNewsListAdapter(rootView);
-        if(this.mNewsList != null && this.mNewsList.size() >0)
-            this.mUpdateNewsDetail(rootView, this.mNewsList.get(0));
 
         return rootView;
     }
@@ -208,6 +206,51 @@ public class NewsFragment extends BaseFragment  {
         updateViewTypeIcon(getView(), this.mViewType);
     }
 
+
+
+
+    public void updateNews(News news)
+    {
+        mUpdateNewsDetail(getView(), news);
+    }
+
+    public void updateNewsList(ArrayList<News> newslist, String next) {
+       progressBarLL.setVisibility(View.GONE);
+        this.mNewsList = newslist;
+        mUpdateNewsListAdapter(getView());
+        loading = false;
+        mNextUrl = next;
+    }
+
+
+
+    private void mUpdateNewsListAdapter(View view){
+        if(view == null)return;
+
+        if (this.mNewsList == null || this.mNewsList.size() <= 0) {
+            view.findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
+            view.findViewById(R.id.view_into_grid_list).setVisibility(View.GONE);
+        }else{
+            view.findViewById(android.R.id.empty).setVisibility(View.GONE);
+            view.findViewById(R.id.view_into_grid_list).setVisibility(View.VISIBLE);
+
+            if(this.mViewType == Constants.VIEW_INTO_GRID)
+            {
+                view.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
+                if(mNewsList != null && !mNewsList.isEmpty())
+                    mUpdateNewsDetail(getView(), mNewsList.get(0));
+            }
+            else{
+                this.mAdapter.updateNewsAdapter(this.mNewsList);
+                this.mAdapter.notifyDataSetChanged();
+            }
+        }
+
+
+
+    }
+
     /**
      * This method is used to display detail of News
      * @param view
@@ -247,46 +290,6 @@ public class NewsFragment extends BaseFragment  {
         view.findViewById(R.id.news_detail_scrollView).scrollTo(0, 0);
 
         this.mAdapter.updateNewsAdapter(newList);
-
-    }
-
-
-    public void updateNews(News news)
-    {
-        mUpdateNewsDetail(getView(), news);
-    }
-
-    public void updateNewsList(ArrayList<News> newslist, String next) {
-       progressBarLL.setVisibility(View.GONE);
-        this.mNewsList = newslist;
-        mUpdateNewsListAdapter(getView());
-        loading = false;
-        mNextUrl = next;
-    }
-
-
-
-    private void mUpdateNewsListAdapter(View view){
-        if(view == null)return;
-
-        if (this.mNewsList == null || this.mNewsList.size() <= 0) {
-            view.findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
-            view.findViewById(R.id.view_into_grid_list).setVisibility(View.GONE);
-        }else{
-            view.findViewById(android.R.id.empty).setVisibility(View.GONE);
-            view.findViewById(R.id.view_into_grid_list).setVisibility(View.VISIBLE);
-
-            if(this.mViewType == Constants.VIEW_INTO_GRID)
-            {
-                view.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
-                if(mNewsList != null && !mNewsList.isEmpty())
-                    mUpdateNewsDetail(getView(), mNewsList.get(0));
-            }
-        }
-
-        this.mAdapter.updateNewsAdapter(this.mNewsList);
-        this.mAdapter.notifyDataSetChanged();
 
     }
 

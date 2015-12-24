@@ -158,4 +158,14 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         if(mArticleFragment != null)
             mArticleFragment.updateArticleList(artiles, next);
     }
+
+    public void updateNews(News news) {
+        if(mNewsFragment != null)
+            mNewsFragment.updateNews(news);
+    }
+
+    public void updateArticle(Articles article) {
+        if(mArticleFragment != null)
+            mArticleFragment.updateArticle(article);
+    }
 }

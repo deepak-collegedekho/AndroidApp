@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -130,9 +131,9 @@ public class ProfileFragment extends BaseFragment
            /* if(this.isFistTime) {
                 this.isFistTime = false;*/
                 //int currentPosition = mExamTabPager.getCurrentItem();
-                mExamTabSelected(0);
+               // mExamTabSelected(0);
             //}
-            mExamTabPager.setCurrentItem(0);
+         //   mExamTabPager.setCurrentItem(0);
 
         }else{
 
@@ -172,14 +173,17 @@ public class ProfileFragment extends BaseFragment
         super.onResume();
         Constants.READY_TO_CLOSE = false;
 
-        MainActivity mainActivity = (MainActivity)getActivity();
+        MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
             mainActivity.mUpdateTabMenuItem(-1);
         }
 
+        baskpressHandler.postDelayed(backpressRunnable,300);
+
         getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -316,5 +320,16 @@ public class ProfileFragment extends BaseFragment
 
         void onHomeItemSelected(String requestType, String url, String examTag);
     }
+
+
+
+            Handler baskpressHandler=new Handler();
+            Runnable backpressRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    int currentPosition = mExamTabPager.getCurrentItem();
+                    mExamTabSelected(currentPosition);
+                }
+            };
 
 }

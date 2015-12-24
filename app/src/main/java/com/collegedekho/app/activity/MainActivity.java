@@ -613,9 +613,18 @@ public class MainActivity extends AppCompatActivity
      */
     private void mUserCreated(String json) {
         try {
+            User tempUser = MainActivity.user;
             MainActivity.user = JSON.std.beanFrom(User.class, json);
             MainActivity.user.setPref(this.userPref);
+            MainActivity.user.setPref(this.userPref);
             this.networkUtils.setToken(MainActivity.user.getToken());
+            if (tempUser != null){
+                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+            MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+            MainActivity.user.profileData = tempUser.profileData;
+           }
+
+
             this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()));
 
             String u = JSON.std.asString(MainActivity.user);
@@ -1517,10 +1526,8 @@ public class MainActivity extends AppCompatActivity
         //Retrieve token from pref to save it across the pref updates
 
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.USER_CREATED, true).commit();
+        User tempUser = MainActivity.user;
 
-        String token = user.getToken();
-        String image = user.getImage();
-        //TODO: May be we can make a new pref entry for token
         try {
             MainActivity.user = JSON.std.beanFrom(User.class, response);
         } catch (IOException e) {
@@ -1528,8 +1535,13 @@ public class MainActivity extends AppCompatActivity
         }
         //save the preferences locally
         MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
-        MainActivity.user.setToken(token);
-        MainActivity.user.setImage(image);
+        if (tempUser != null){
+        MainActivity.user.setToken(tempUser.getToken());
+        MainActivity.user.setImage(tempUser.getImage());
+        MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+        MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+        MainActivity.user.profileData = tempUser.profileData;
+    }
 
         if (streamName != "" && streamName != null)
             MainActivity.user.setStream_name(streamName);
@@ -2481,6 +2493,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onArticleSelected(Articles article, boolean addToBackstack) {
+        if(article == null)return;
         if (!addToBackstack) {
             this. currentFragment.updateArticle(article);
         }
@@ -2505,7 +2518,6 @@ public class MainActivity extends AppCompatActivity
             //Appsflyer events
             Map<String, Object> eventValue = new HashMap<String, Object>();
             eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(article.getId()));
-
             MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_ARTICLE_SELECTED, eventValue);
         }
     }
@@ -3159,7 +3171,12 @@ public class MainActivity extends AppCompatActivity
             this.user = JSON.std.beanFrom(User.class, json);
           //  this.user.setPref(this.userPref);
             this.networkUtils.setToken(this.user.getToken());
-            this.user.setImage(tempUser.getImage());
+            if (tempUser != null){
+                MainActivity.user.setImage(tempUser.getImage());
+                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+                MainActivity.user.profileData = tempUser.profileData;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -3176,7 +3193,12 @@ public class MainActivity extends AppCompatActivity
         try {
             this.user = JSON.std.beanFrom(User.class, json);
             this.networkUtils.setToken(user.getToken());
-            this.user.setImage(tempUser.getImage());
+           if (tempUser != null){
+                MainActivity.user.setImage(tempUser.getImage());
+                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+                MainActivity.user.profileData = tempUser.profileData;
+            }
             this.user.setPref(this.userPref);
             String u = JSON.std.asString(this.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.USER_CREATED, true).commit();
@@ -3232,11 +3254,17 @@ public class MainActivity extends AppCompatActivity
         }
         //save the preferences locally
         this.user.setPref(User.Prefs.STREAMKNOWN);
-        this.user.setStream(tempUser.getStream());
-        this.user.setLevel(tempUser.getLevel());
-        this.user.setStream_name(tempUser.getStream_name());
-        this.user.setLevel_name(tempUser.getLevel_name());
-        this.user.setToken(tempUser.getToken());
+        if (tempUser != null){
+            MainActivity.user.setStream(tempUser.getStream());
+            MainActivity.user.setLevel(tempUser.getLevel());
+            MainActivity.user.setStream_name(tempUser.getStream_name());
+            MainActivity.user.setLevel_name(tempUser.getLevel_name());
+            MainActivity.user.setToken(tempUser.getToken());
+            MainActivity.user.setImage(tempUser.getImage());
+            MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+            MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+            MainActivity.user.profileData = tempUser.profileData;
+        }
         this.networkUtils.setToken(user.getToken());
         String u = null;
         try {
