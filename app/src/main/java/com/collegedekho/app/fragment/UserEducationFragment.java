@@ -1,14 +1,17 @@
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -16,9 +19,11 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.entities.UserEducationStreams;
 import com.collegedekho.app.entities.UserEducationSublevels;
+import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.NumberPicker;
 
 import java.lang.reflect.Field;
@@ -47,7 +52,7 @@ public class UserEducationFragment extends BaseFragment {
     private boolean isUserPreparing;
     private OnUserEducationInteractionListener mListener;
     private RelativeLayout.LayoutParams layoutParams;
-private RadioGroup examRadioGroup;
+    private RadioGroup examRadioGroup;
 
     private ArrayList<UserEducation> mUserEducationList;
     private ArrayList<UserEducationSublevels> mUserExamSubLevelsList;
@@ -311,6 +316,7 @@ private RadioGroup examRadioGroup;
                 mListener.onEducationSelected(map);
             }else{
                 mUserNotPreparingForExam();
+//                displayAlert(getActivity());
             }
         }
     }
@@ -355,7 +361,45 @@ private RadioGroup examRadioGroup;
     public interface OnUserEducationInteractionListener {
         void onEducationSelected(HashMap<String, String> map);
         void onUserNotPreparingSelected();
+        void onStepByStep();
+        void onIknowWhatIWant();
+        void onPsychometricTest();
     }
 
+    private void displayAlert(final Context context){
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+        View dialogView = inflater.inflate(R.layout.not_preparing_dialog_layout, null);
+        dialogBuilder.setView(dialogView);
 
+        Button btn_step=(Button)dialogView.findViewById(R.id.btn_step_by_step);
+        Button btn_iknow=(Button)dialogView.findViewById(R.id.btn_i_know);
+        Button btn_psychometric=(Button)dialogView.findViewById(R.id.btn_psychometric_test);
+
+        final AlertDialog alertDialog = dialogBuilder.create();
+        btn_step.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    alertDialog.dismiss();
+                mListener.onStepByStep();
+            }
+        });
+        btn_iknow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                mListener.onIknowWhatIWant();
+            }
+        });
+
+        btn_psychometric.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                mListener.onPsychometricTest();
+            }
+        });
+
+        alertDialog.show();
+    }
 }

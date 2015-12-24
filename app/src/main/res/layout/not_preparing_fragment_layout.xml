@@ -1,38 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center_vertical"
     android:gravity="center"
-    >
+    android:layout_margin="20dp"
+    android:orientation="vertical">
 
-    <Button android:id="@+id/btn_step_by_step"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Step by Step"
+    <LinearLayout
+        android:id="@+id/btn_step_by_step"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/m20dp"
+        android:layout_weight="1"
         android:background="@drawable/bg_button_orange"
-        android:textColor="@color/white"
-        android:padding="@dimen/m8dp"
-        android:layout_marginTop="@dimen/m10dp"
-        />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
 
-    <Button android:id="@+id/btn_i_know"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="I Know what I want"
-        android:textColor="@color/white"
-        android:padding="@dimen/m8dp"
-        android:background="@drawable/bg_button_orange"
-        android:layout_marginTop="@dimen/m10dp"
-        />
+        android:padding="@dimen/m8dp">
 
-    <Button android:id="@+id/btn_psychometric_test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/step_by_step" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/m10dp"
+                android:gravity="center_vertical"
+                android:text="Step by Step"
+                android:textColor="@color/white"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/m10dp"
+                android:textSize="18sp"
+                android:text="Take step-by-step guide to college search"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btn_i_know"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/m20dp"
+        android:layout_weight="1"
         android:background="@drawable/bg_button_orange"
-        android:text="Psychometric Test"
-        android:textColor="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_search_college" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/m10dp"
+                android:gravity="center_vertical"
+                android:text="I Know what I want"
+                android:textColor="@color/white"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/m10dp"
+                android:textSize="18sp"
+                android:text="Discover colleges as per your preferences"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btn_psychometric_test"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/m20dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_button_orange"
+        android:gravity="center_vertical"
+
         android:padding="@dimen/m8dp"
-        android:layout_marginTop="@dimen/m10dp"
-        />
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_psychometric" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/m10dp"
+                android:gravity="center_vertical"
+                android:text="Psychometric Test"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/m10dp"
+                android:text="desc"
+                android:visibility="gone"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

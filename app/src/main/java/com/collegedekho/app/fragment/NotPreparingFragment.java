@@ -16,9 +16,9 @@ import com.collegedekho.app.activity.MainActivity;
 
 
 public class NotPreparingFragment extends BaseFragment {
-    Button btn_iknow;
-    Button btn_psychometric;
-    Button btn_step_by_step;
+    View btn_iknow;
+    View btn_psychometric;
+    View btn_step_by_step;
     OnNotPreparingOptionsListener listener;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,9 +30,9 @@ public class NotPreparingFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        btn_iknow=(Button)view.findViewById(R.id.btn_i_know);
-        btn_psychometric =(Button)view.findViewById(R.id.btn_psychometric_test);
-        btn_step_by_step =(Button)view.findViewById(R.id.btn_step_by_step);
+        btn_iknow=(View)view.findViewById(R.id.btn_i_know);
+        btn_psychometric =(View)view.findViewById(R.id.btn_psychometric_test);
+        btn_step_by_step =(View)view.findViewById(R.id.btn_step_by_step);
 
         btn_iknow.setOnClickListener(this);
         btn_psychometric.setOnClickListener(this);
