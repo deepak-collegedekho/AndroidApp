@@ -6,8 +6,6 @@ import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -33,10 +31,11 @@ public class ProfileFragment extends BaseFragment
 
     private final String TAG = "profile Frgament";
     private static String PARAM1 = "param1";
-
-    private OnTabSelectListener mListener;
     private ArrayList<ExamDetail> mExamDetailList;
     private ExamDetailAdapter mDetailsAdapter;
+    private TextView mProfileName;
+    private CircularImageView mProfileImage;
+    private OnTabSelectListener mListener;
     private ExamDetail mExamDetail; // detail is needs in tabs to get id of exams
     private ExamSummary mExamSummary;  // exam summary gives info about the colleges of user
     private ViewPager mExamTabPager  = null;
@@ -71,34 +70,12 @@ public class ProfileFragment extends BaseFragment
 
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        TextView mProfileName    =   (TextView)rootView.findViewById(R.id.user_name);
+        mProfileName    =   (TextView)rootView.findViewById(R.id.user_name);
         mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
-        CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
+        mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
 
-        if(MainActivity.user != null)
-        {
-            String name = MainActivity.user.getName();
-            if(name.contains("Anonymous User"))
-            {
-                if(MainActivity.user.profileData[0] != null)
-                {
-                    mProfileName.setText(MainActivity.user.profileData[0]);
-                    mProfileName.setVisibility(View.VISIBLE);
-                }else {
-                    mProfileName.setText("");
-                    mProfileName.setVisibility(View.GONE);
-                }
-            }else {
-                mProfileName.setText(name);
-                mProfileName.setVisibility(View.VISIBLE);
-            }
-            String image = MainActivity.user.getImage();
-            if (image != null && ! image.isEmpty())
-                mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-
-        }
 
         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
 
@@ -128,12 +105,6 @@ public class ProfileFragment extends BaseFragment
 
             rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
             rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
-           /* if(this.isFistTime) {
-                this.isFistTime = false;*/
-                //int currentPosition = mExamTabPager.getCurrentItem();
-               // mExamTabSelected(0);
-            //}
-         //   mExamTabPager.setCurrentItem(0);
             rootView.findViewById(R.id.pager_strip).setVisibility(View.VISIBLE);
 
         }else{
@@ -174,13 +145,37 @@ public class ProfileFragment extends BaseFragment
         super.onResume();
         Constants.READY_TO_CLOSE = false;
 
+        if(MainActivity.user != null)
+        {
+            String name = MainActivity.user.getName();
+            if(name.contains("Anonymous User"))
+            {
+                if(MainActivity.user.profileData[0] != null)
+                {
+                    mProfileName.setText(MainActivity.user.profileData[0]);
+                    mProfileName.setVisibility(View.VISIBLE);
+                }else {
+                    mProfileName.setText("");
+                    mProfileName.setVisibility(View.GONE);
+                }
+            }else {
+                mProfileName.setText(name);
+                mProfileName.setVisibility(View.VISIBLE);
+            }
+            String image = MainActivity.user.getImage();
+            if (image != null && ! image.isEmpty())
+                mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+
+        }
+
+
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
             mainActivity.mUpdateTabMenuItem(-1);
         }
 
-        baskpressHandler.postDelayed(backpressRunnable,300);
+        updateExamSummaryHandler.postDelayed(updateExamSummaryRunnable,300);
 
         getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
     }
@@ -205,10 +200,6 @@ public class ProfileFragment extends BaseFragment
         this.mListener = null;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-       // super.onCreateOptionsMenu(menu, inflater);
-    }
 
     @Override
     public void onClick(View view) {
@@ -219,6 +210,7 @@ public class ProfileFragment extends BaseFragment
             case R.id.profile_syllabus_statusLL:
                 if(this.mExamDetail != null)
                 this.mProfileWidgetSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/"+ this.mExamDetail.getId()+"/syllabus/",null);
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  mExamDetail.getId()).commit();
                 break;
             case R.id.backup_colleges_layout_RL:
                if(this.mExamDetail != null)
@@ -227,13 +219,13 @@ public class ProfileFragment extends BaseFragment
                mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/",null);
                break;
             case R.id.wishList_colleges_layout_RL:
-                mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+                mProfileWidgetSelected(Constants.WIDGET_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
                 break;
             case R.id.recommended_colleges_layout_RL:
                 if(this.mExamDetail != null)
-                    mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",this.mExamDetail.getExam_tag());
+                    mProfileWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",this.mExamDetail.getExam_tag());
                     else
-                    mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
+                    mProfileWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
                 break;
             case R.id.important_date_layout_RL:
 
@@ -324,8 +316,8 @@ public class ProfileFragment extends BaseFragment
 
 
 
-            Handler baskpressHandler=new Handler();
-            Runnable backpressRunnable = new Runnable() {
+            Handler updateExamSummaryHandler=new Handler();
+            Runnable updateExamSummaryRunnable = new Runnable() {
                 @Override
                 public void run() {
                     int currentPosition = mExamTabPager.getCurrentItem();

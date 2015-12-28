@@ -43,6 +43,8 @@ public class Constants
     public static final String USER_CREATED = "user_created";
     public static final String USER_PROFILE_LOADED = "user_profile_loaded";
     public static final String WIDGET_INSTITUTES = "institutes";
+    public static final String WIDGET_RECOMMENDED_INSTITUTES = "recommended_institutes";
+    public static final String WIDGET_SHORTLIST_INSTITUTES = "shortlist_institutes";
     public static final String WIDGET_SYLLABUS = "syllabus";
     public static final String WIDGET_TEST_CALENDAR = "test_calendar";
 
@@ -82,7 +84,7 @@ public class Constants
     public static final String TAG_DELETESHORTLIST_INSTITUTE = "delete";
     public static final String TAG_UNSHORTLIST_INSTITUTE = "unshortlist_institute";
     public static final int NEITHER_LIKE_NOR_DISLIKE = -1;
-    public static final String WIDGET_SHORTLIST = "shortlistedinstitutes";
+    //public static final String WIDGET_SHORTLIST = "shortlistedinstitutes";
     public static final String TAG_LOAD_PSYCHOMETRIC_TEST = "load_psychometric_test";
     public static final String TAG_MY_ALERTS = "my_alerts";
     public static final String TAG_LOAD_INSTITUTE_QNA_QUESTIONS = "institute_qna";

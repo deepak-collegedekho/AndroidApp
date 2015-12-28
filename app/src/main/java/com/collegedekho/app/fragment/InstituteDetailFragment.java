@@ -104,9 +104,12 @@ public class InstituteDetailFragment extends BaseFragment {
         } else {
             ((NetworkImageView) rootView.findViewById(R.id.image_college_banner)).setDefaultImageResId(R.drawable.default_banner);
         }*/
-
-        this.mDetailsAdapter = new InstitutePagerAdapter(getChildFragmentManager(), this.mInstitute);
-
+        if(this.mDetailsAdapter == null) {
+            this.mDetailsAdapter = new InstitutePagerAdapter(getChildFragmentManager(), this.mInstitute);
+        }
+        else{
+            this.mDetailsAdapter.updateInstitutiesList(this.mInstitute);
+        }
         this.mDetailsPager = (ViewPager) rootView.findViewById(R.id.college_detail_pager);
         this.mDetailsPager.setAdapter(this.mDetailsAdapter);
         this.mDetailsPager.setOffscreenPageLimit(3);
@@ -225,7 +228,7 @@ public class InstituteDetailFragment extends BaseFragment {
 
     public void instituteQnAQuestionAdded(QnAQuestions ques)
     {
-        mDetailsAdapter.questionAdded(ques);
+       // mDetailsAdapter.questionAdded(ques);
     }
 
 
@@ -248,7 +251,7 @@ public class InstituteDetailFragment extends BaseFragment {
         this.nextNewsUrl = next;
         mDetailsAdapter.updateInstituteNews( this.mInstituteNewsList, next);
     }
-    @Override
+    /*@Override
     public void updateNews(News news){
         mDetailsAdapter.updateNews(news);
     }
@@ -256,7 +259,7 @@ public class InstituteDetailFragment extends BaseFragment {
     @Override
     public void updateArticle(Articles article) {
         mDetailsAdapter.updateArticle(article);
-    }
+    }*/
 
     public void updateInstituteArticle(ArrayList<Articles> articleList, String next) {
         this.mInstituteArticleList = articleList;
@@ -421,7 +424,7 @@ public class InstituteDetailFragment extends BaseFragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            mDetailsAdapter.setQnAQuestions(mQnAQuestions);
+          //  mDetailsAdapter.setQnAQuestions(mQnAQuestions);
             if (getView() != null) {
                 //tabLayout.setupWithViewPager(mDetailsPager);
             }

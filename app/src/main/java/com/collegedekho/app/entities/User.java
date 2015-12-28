@@ -34,6 +34,7 @@ public class User
     private String sublevel = "";
     private int education_set = 0;
     private int exams_set = 0;
+    private int progress = 0;
 
     private String primaryEmail;
     private String primaryPhone;
@@ -226,6 +227,14 @@ public class User
 
     public void setExams_set(int exams_set) {
         this.exams_set = exams_set;
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
     }
 
     public void processProfileData(Cursor cursor, Context context) {

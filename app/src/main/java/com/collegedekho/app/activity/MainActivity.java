@@ -439,7 +439,7 @@ public class MainActivity extends AppCompatActivity
             {
                 this.mCurrentTitle = "My Shortlist";
 
-                this.mMakeNetworkCall(Constants.WIDGET_SHORTLIST, MainActivity.resource_uri, null);
+                this.mMakeNetworkCall(Constants.WIDGET_SHORTLIST_INSTITUTES, MainActivity.resource_uri, null);
                 break;
             }
             case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST:
@@ -747,10 +747,10 @@ public class MainActivity extends AppCompatActivity
             this.mParseSimilarNews(this.mNewsList);
 
             if (this.mNewsList != null &&currentFragment instanceof NewsFragment) {
-                ((NewsFragment) currentFragment).updateNewsList((ArrayList)this.mNewsList, this.next);
+                ((NewsFragment) currentFragment).updateNewsList(new ArrayList<>(this.mNewsList), this.next);
             }
             if (this.mNewsList != null && currentFragment instanceof InstituteDetailFragment) {
-                ((InstituteDetailFragment) currentFragment).updateInstituteNews((ArrayList)this.mNewsList , this.next);
+                ((InstituteDetailFragment) currentFragment).updateInstituteNews(new ArrayList<>(this.mNewsList) , this.next);
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -768,11 +768,11 @@ public class MainActivity extends AppCompatActivity
 
             this.mParseSimilarArticle(this.mArticlesList);
             if (this.mArticlesList != null && currentFragment instanceof ArticleFragment) {
-                ((ArticleFragment) currentFragment).updateArticleList(articles, next);
+                ((ArticleFragment) currentFragment).updateArticleList(new ArrayList<>(articles), next);
             }
 
             if (this.mArticlesList != null && currentFragment instanceof InstituteDetailFragment) {
-                ((InstituteDetailFragment) currentFragment).updateInstituteArticle((ArrayList)this.mArticlesList , this.next);
+                ((InstituteDetailFragment) currentFragment).updateInstituteArticle(new ArrayList<>(this.mArticlesList) , this.next);
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -801,7 +801,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void mDisplayInstituteList(String response, boolean filterAllowed) {
+    private void mDisplayInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl) {
         try {
             String val = this.extractResults(response);
             this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
@@ -809,15 +809,10 @@ public class MainActivity extends AppCompatActivity
             if (this.mFilterKeywords.size() > 0)
                 this.mFilterCount = this.mFilterKeywords.size();
 
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+            if(!isHavingNextUrl)
+              next = null;
 
-            // used to create new fragment if shortlist institute fragment
-            // is clicked in navigation drawer
-           /* if (fragment != null && fragment instanceof InstituteListFragment)
-            {
-                if(((InstituteListFragment) fragment).getFilterAllowed() != filterAllowed)
-                    fragment = null;
-            }*/
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
 
             if (fragment == null)
                 this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount), true, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
@@ -834,11 +829,11 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
+/*
 
-    private void mDisplayShortlistedInstituteList(String response) {
+   private void mDisplayShortlistedInstituteList(String response) {
         try {
             this.mShortlistedInstituteList = JSON.std.listOfFrom(Institute.class, this.extractResults(response));
-
             Fragment fragment = this.getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE_LIST);
 
             if (fragment == null)
@@ -856,6 +851,7 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
+*/
 
     private void mShowMyFBEnumeration(String response) {
         try {
@@ -1104,12 +1100,23 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_STREAM:
                 this.mDisplayStreams(response, true);
                 break;
-            case Constants.WIDGET_SHORTLIST:
-                this.mDisplayShortlistedInstituteList(response);
+            case Constants.WIDGET_SHORTLIST_INSTITUTES:
+                this.mCurrentTitle = "WishList Institutes";
+                this.mDisplayInstituteList(response, false, true);
                 break;
             case Constants.WIDGET_INSTITUTES:
-                this.mDisplayInstituteList(response, true);
+                this.mCurrentTitle = "Institutes";
+                this.mDisplayInstituteList(response, true, true);
                 break;
+            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
+                this.mCurrentTitle = "Recommended Institutes";
+                this.mDisplayInstituteList(response, true, false );
+                break;
+            case Constants.SEARCHED_INSTITUTES:
+                this.mCurrentTitle = "Institutes";
+                this.mDisplayInstituteList(response, true, true);
+                break;
+
             case Constants.WIDGET_NEWS:
                 this.mDisplayNews(response);
                 break;
@@ -1292,9 +1299,6 @@ public class MainActivity extends AppCompatActivity
                     parentIndex = tags[1];
                 }
                 this.onUserSignInResponse(response, parentIndex);
-                break;
-            case Constants.SEARCHED_INSTITUTES:
-                this.mDisplayInstituteList(response, true);
                 break;
 
 
@@ -1774,8 +1778,18 @@ public class MainActivity extends AppCompatActivity
                 Log.e(TAG, e.getMessage());
             }
         }
-        if (currentFragment instanceof InstituteListFragment)
+        if (currentFragment instanceof InstituteListFragment) {
+            int position = Integer.parseInt(extraTag);
+            boolean isFilterAllowed = ((InstituteListFragment) currentFragment).getFilterAllowed();
+            if(!isFilterAllowed){
+                if(mInstituteList != null && mInstituteList.size() >position )
+                {
+                    mInstituteList.remove(position);
+                }
+
+            }
             ((InstituteListFragment) currentFragment).updateShortlistButton(Integer.parseInt(extraTag));
+        }
     }
 
     private void mDisplayNews(String response) {
@@ -1875,7 +1889,8 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_UPDATE_PREFRENCES:
                 return "Updating Profile...";
             case Constants.WIDGET_INSTITUTES:
-            case Constants.WIDGET_SHORTLIST:
+            case Constants.WIDGET_SHORTLIST_INSTITUTES:
+            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
                 return "Loading Institutes...";
             case Constants.WIDGET_NEWS:
                 return "Loading News...";
@@ -2191,11 +2206,7 @@ public class MainActivity extends AppCompatActivity
     }
     @Override
     public void onInstituteLikedDisliked(int position, int liked) {
-        Institute institute = null;
-        if(currentFragment instanceof InstituteShortlistFragment)
-            institute = this.mShortlistedInstituteList.get(position);
-        else
-            institute = this.mInstituteList.get(position);
+        Institute   institute = this.mInstituteList.get(position);
         if (institute.getCurrent_user_vote_type() == Constants.NEITHER_LIKE_NOR_DISLIKE) {
             //neither liked nor disliked case
             if (liked == Constants.LIKE_THING)
@@ -2506,10 +2517,8 @@ public class MainActivity extends AppCompatActivity
                 if (fragment instanceof ArticleDetailFragment) {
                     ((ArticleDetailFragment) fragment).updateArticle(article);
                 }
-
                 this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
             }
-
             //Send GA and Connecto event for article selected
             MainActivity.GATrackerEvent(Constants.CATEGORY_ARTICLE, Constants.ACTION_ARTICLE_SELECTED, String.valueOf(Constants.BASE_URL + "/personalize/" + Constants.WIDGET_ARTICES + "/" + article.getId()));
 
@@ -3676,7 +3685,9 @@ public class MainActivity extends AppCompatActivity
 
     public void onHomeItemSelected(String requestType, String url, String tag) {
 
-        if (requestType.equals(Constants.WIDGET_INSTITUTES)) {
+        if (requestType.equals(Constants.WIDGET_INSTITUTES)
+                || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES)
+                || requestType.equalsIgnoreCase(Constants.WIDGET_SHORTLIST_INSTITUTES)) {
 
            Map<String , String> params = this.mGetTheFilters();
             if(tag != null && !tag.isEmpty())
@@ -3767,7 +3778,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSubmitCompletedSyllabus(JSONObject jsonObject) {
+    public void onSyllabusChanged(JSONObject jsonObject) {
 
        String examId = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
        if(!examId.isEmpty())

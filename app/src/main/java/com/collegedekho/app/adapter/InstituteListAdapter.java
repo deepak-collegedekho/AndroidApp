@@ -112,7 +112,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         this.notifyDataSetChanged();
     }
 
-    public void updateShortlistStatus(int position)
+    public void updateShortlistStatus(int position , boolean isFilterAllowed)
     {
         /*this.mShortListTV.setEnabled(true);
         this.mShortListTV.setVisibility(View.VISIBLE);
@@ -124,8 +124,15 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             this.mShortListTV.setText("Delete " + mInstitute.getShort_name() + " from your shortlist");
             this.mShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
         }*/
+        if(!isFilterAllowed){
+            if(mInstitutes != null && mInstitutes.size() > position)
+            {
+                mInstitutes.remove(position);
+            }
 
-        this.notifyItemChanged(position);
+        }else {
+            this.notifyItemChanged(position);
+        }
         this.notifyDataSetChanged();
     }
 

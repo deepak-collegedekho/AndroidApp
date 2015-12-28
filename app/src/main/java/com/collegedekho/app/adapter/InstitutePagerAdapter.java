@@ -42,9 +42,7 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     private InstituteOverviewFragment mOverViewFragment;
     private NewsFragment mNewsFragment;
     private ArticleFragment mArticleFragment;
-    private InstituteQnAFragment q;
     private ArrayList<ArrayList<InstituteCourse>> mCourses;
-    private ArrayList<QnAQuestions> mQnAQuestions;
 
     public InstitutePagerAdapter(FragmentManager fragmentManager, Institute institute) {
         super(fragmentManager);
@@ -107,6 +105,9 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         }
         return super.getPageTitle(position);
     }
+    public void updateInstitutiesList(Institute institute){
+        this.mInstitute = institute;
+    }
 
     public void setCourses(ArrayList<ArrayList<InstituteCourse>> courses) {
         if(courses == null)return;
@@ -119,31 +120,11 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
             mCourseFragment.updateData(count);
     }
 
-    public void setQnAQuestions(ArrayList<QnAQuestions> qnaQuestions)
-    {
-        if (q != null)
-        {
-            this.mQnAQuestions = qnaQuestions;
-            q.instituteQnAUpdated(qnaQuestions);
-        }
-        this.mQnAQuestions = qnaQuestions;
-    }
-
     public void updateShortListButton() {
         if (mOverViewFragment != null)
             mOverViewFragment.updateShortListButton();
     }
 
-    public void questionAdded(QnAQuestions ques)
-    {
-        if (q != null)
-            q.questionAdded(ques);
-    }
-
-    public void answerAdded(QnAAnswers ans)
-    {
-
-    }
     public void updateCourseFragment()
     {
         if(mCourseFragment != null)
@@ -158,7 +139,7 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         if(mArticleFragment != null)
             mArticleFragment.updateArticleList(artiles, next);
     }
-
+/*
     public void updateNews(News news) {
         if(mNewsFragment != null)
             mNewsFragment.updateNews(news);
@@ -167,5 +148,5 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     public void updateArticle(Articles article) {
         if(mArticleFragment != null)
             mArticleFragment.updateArticle(article);
-    }
+    }*/
 }

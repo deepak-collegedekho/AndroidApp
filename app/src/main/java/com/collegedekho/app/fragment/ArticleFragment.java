@@ -145,11 +145,25 @@ public class ArticleFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        MainActivity mMainActivity = (MainActivity) this.getActivity();
+        if (mMainActivity != null)
+            mMainActivity.currentFragment = this;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser) {
+            MainActivity mMainActivity = (MainActivity) this.getActivity();
+            if (mMainActivity != null)
+                mMainActivity.currentFragment = this;
+        }
+
 
     }
 
 
-    @Override
+        @Override
     public void onClick(View view) {
         super.onClick(view);
         switch (view.getId())
@@ -205,9 +219,9 @@ public class ArticleFragment extends BaseFragment {
         mUpdateArticleDetail(getView(), article);
     }
 
-    public void updateArticleList(List<Articles> article, String next) {
+    public void updateArticleList(ArrayList<Articles> articlelist, String next) {
         progressBarLL.setVisibility(View.GONE);
-        this.mArticlesList.addAll(article);
+        this.mArticlesList = articlelist;
         mUpdateArticleListAdapter(getView());
         loading = false;
         mNextUrl = next;
@@ -266,13 +280,13 @@ public class ArticleFragment extends BaseFragment {
 //                Utils.sendException(t, TAG, "DateFormatUnknown", r.getAddedOn());
         }
         ((TextView) view.findViewById(R.id.article_pubdate)).setText(d);
-        ArrayList<Articles> newList = new ArrayList<>();
+        ArrayList<Articles> articleList = new ArrayList<>();
         for (Articles n : mArticlesList) {
             if(n.getId() == article.getId())continue;
-            newList.add(n);
+            articleList.add(n);
         }
         view.findViewById(R.id.article_detail_scrollView).scrollTo(0, 0);
-        mAdapter.updateArticleAdapter(newList);
+        mAdapter.updateArticleAdapter(articleList);
 
     }
 

@@ -146,11 +146,20 @@ public class NewsFragment extends BaseFragment  {
     @Override
     public void onResume() {
         super.onResume();
-
-       /* MainActivity mMainActivity = (MainActivity) this.getActivity();
+        MainActivity mMainActivity = (MainActivity) this.getActivity();
         if (mMainActivity != null)
-            mMainActivity.currentFragment = this;*/
+            mMainActivity.currentFragment = this;
+    }
 
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser) {
+            MainActivity mMainActivity = (MainActivity) this.getActivity();
+            if (mMainActivity != null)
+                mMainActivity.currentFragment = this;
+        }
     }
 
     @Override

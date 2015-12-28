@@ -85,9 +85,16 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
     {
         mNextButton.setEnabled(true);
         mNextButton.setText("Next");
+        this.mStepByStepQuestions = stepByStepQuestion;
 
-        this.mStepByStepQuestions.addAll(stepByStepQuestion);
-        this.mQuestionAdapter.notifyDataSetChanged();
+        if(mQuestionAdapter == null){
+            this.mQuestionAdapter = new StepByStepAdapter(getActivity().getSupportFragmentManager(), getActivity().getApplicationContext(), this.mStepByStepQuestions);
+            this.mViewPager.setAdapter(this.mQuestionAdapter);
+
+        }else {
+            this.mStepByStepQuestions.addAll(stepByStepQuestion);
+            this.mQuestionAdapter.notifyDataSetChanged();
+        }
 
         //this.mQuestionSetCount = questionSetCount;
         this.mSetCurrentItem();

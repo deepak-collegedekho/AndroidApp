@@ -241,7 +241,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
     public void updateShortlistButton(int position)
     {
-        mAdapter.updateShortlistStatus(position);
+        mAdapter.updateShortlistStatus(position, this.filterAllowed);
     }
 
     public void updateFilterButton(int filterCount)

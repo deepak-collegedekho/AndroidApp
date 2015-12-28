@@ -157,13 +157,15 @@ public class ArticleDetailFragment extends BaseFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser) {
+            MainActivity mMainActivity = (MainActivity) this.getActivity();
+            if (mMainActivity != null)
+                mMainActivity.currentFragment = this;
+        }
 
-        MainActivity mMainActivity = (MainActivity) this.getActivity();
 
-        if (mMainActivity != null)
-            mMainActivity.currentFragment = this;
     }
 }
 
