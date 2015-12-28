@@ -30,6 +30,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     private int startCellPosition =0;
     private int endCellPosition =0;
     private boolean isActiveCell;
+    private boolean isCurrent=false;
     LayoutInflater inflater;
     private LinkedHashMap<String,String> mYearCalendar;
     // today
@@ -70,8 +71,11 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         int month = cal.get(Calendar.MONTH);
         int year = cal.get(Calendar.YEAR);
         String day_key=String.valueOf(cal.get(Calendar.YEAR)+"_"+String.valueOf(cal.get(Calendar.DAY_OF_YEAR)));
+        if(day==1 && ! isCurrent){
+            isCurrent=true;
+        }
         if (year == mCalendar.get(Calendar.YEAR)) {     //current year
-            if (month == mCalendar.get(Calendar.MONTH)) {       //current month
+            if (month == mCalendar.get(Calendar.MONTH) && isCurrent) {       //current month
                 if (day == mCalendar.get(Calendar.DAY_OF_MONTH)) {      //today
                     if(!isActiveCell) {
                         isActiveCell = true;
