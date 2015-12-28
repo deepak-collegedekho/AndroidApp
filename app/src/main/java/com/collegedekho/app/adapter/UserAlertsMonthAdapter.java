@@ -206,6 +206,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
 //            mListener.onItemSelect(getLayoutPosition(), startCellPosition, endCellPosition, key);
             if(key!=null && keys.containsKey(key)) {
                 selectedPosition = getLayoutPosition();
+                isCurrentMonth=false;
                 notifyDataSetChanged();
             }
         }
