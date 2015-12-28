@@ -134,6 +134,7 @@ public class ProfileFragment extends BaseFragment
                // mExamTabSelected(0);
             //}
          //   mExamTabPager.setCurrentItem(0);
+            rootView.findViewById(R.id.pager_strip).setVisibility(View.VISIBLE);
 
         }else{
 
@@ -144,7 +145,7 @@ public class ProfileFragment extends BaseFragment
 
                 this.mListener.onExamTabSelected(this.mExamDetail);
             }
-
+            rootView.findViewById(R.id.pager_strip).setVisibility(View.GONE);
             rootView.findViewById(R.id.prep_buddies).setVisibility(View.GONE);
             rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.GONE);
             rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.GONE);

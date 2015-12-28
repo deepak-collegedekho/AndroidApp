@@ -7,6 +7,7 @@
     android:weightSum="1">
 
     <include layout="@layout/layout_exam_tabs"
+        android:id="@+id/pager_strip"
         android:layout_height="0dp"
         android:layout_weight=".05"
         android:layout_width="match_parent"/>
@@ -16,20 +17,20 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".3"
+        android:gravity="center"
         android:layout_gravity="center">
 
         <include layout="@layout/layout_profile_image"
             android:id="@+id/include_image_layout"
             android:layout_width="150dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginLeft="14dp"
             android:layout_height="150dp"/>
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/m10dp"
             android:gravity="center"
+            android:layout_centerVertical="true"
             android:layout_toRightOf="@id/include_image_layout">
 
             <TextView
@@ -40,7 +41,6 @@
                 android:gravity="left"
                 android:textStyle="bold"
                 android:paddingTop="10dp"
-                android:paddingBottom="10dp"
                 android:paddingRight="10dp"
                 android:textSize="18sp"/>
 
@@ -54,7 +54,7 @@
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_weight=".55"
+                    android:layout_weight=".47"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
@@ -74,14 +74,12 @@
                 <TextView
                     android:id="@+id/covered_syllabus"
                     android:layout_width="0dp"
-                    android:layout_weight=".45"
-                    android:layout_height="match_parent"
+                    android:layout_weight=".53"
+                    android:layout_height="wrap_content"
                     android:paddingRight="10dp"
-                    android:textSize="30sp"
+                    android:textSize="38sp"
                     android:textColor="@color/light_blue"
                     android:text="0%"
-                    android:gravity="top"
-                    android:layout_gravity="top"
                     />
 
             </LinearLayout>
