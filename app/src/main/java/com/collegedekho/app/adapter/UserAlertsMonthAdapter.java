@@ -32,6 +32,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
     private int startCellPosition = 0;
     private int endCellPosition = 0;
     private boolean isActiveCell;
+    private boolean isCurrentMonth=false;
     LayoutInflater inflater;
     private HashMap<String, Integer> keys = new HashMap<>();
     private HashMap<String, Integer>codes=new HashMap<>();
@@ -87,9 +88,12 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
         if (dy.length() < 2) {
             dy = "0" + dy;
         }
+        if(day==1 &&! isCurrentMonth){
+            isCurrentMonth=true;
+        }
         String day_key = year + "-" + mth + "-" + dy;
         if (year == mCalendar.get(Calendar.YEAR)) {     //current year
-            if (month == mCalendar.get(Calendar.MONTH)) {       //current month
+            if (month == mCalendar.get(Calendar.MONTH) && isCurrentMonth) {       //current month
                 if (day == mCalendar.get(Calendar.DAY_OF_MONTH)) {      //today
                     if (!isActiveCell) {
                         isActiveCell = true;
