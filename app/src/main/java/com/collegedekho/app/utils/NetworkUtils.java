@@ -112,8 +112,10 @@ public class NetworkUtils {
                 if (mtoken != null)
                 {
                     Map<String, String> params = new HashMap<>();
+
                     params.put("Authorization", "Token " + mtoken);
                     params.put("Accept", "application/json");
+
                     return params;
                 }
                 return super.getHeaders();
@@ -165,7 +167,6 @@ public class NetworkUtils {
                     if (response != null && response.data != null)
                     {
                         json = new String(response.data);
-
                     }
                     String[] tags = tag.split("#");
                     if(tags[0].equalsIgnoreCase(Constants.TAG_USER_LOGIN))

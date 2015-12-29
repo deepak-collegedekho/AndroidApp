@@ -85,6 +85,11 @@ public class RangeQuestionFragment extends StepByStepFragment {
             this.mMax = this.mMax ^ this.mMin;
         }
 
+        TextView maxText = (TextView) rootView.findViewById(R.id.max_value);
+        maxText.setText("MAX:" + String.valueOf(this.mMax));
+        TextView minText = (TextView) rootView.findViewById(R.id.min_value);
+        minText.setText("MIN:" + String.valueOf(this.mMin));
+
         final TextView seekBarValue = (TextView) rootView.findViewById(R.id.range_value);
 
         SeekBar seekBar = (SeekBar) rootView.findViewById(R.id.range_seekbar);

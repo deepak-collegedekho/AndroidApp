@@ -192,7 +192,7 @@ public class SingleChoiceQuestionFragment extends StepByStepFragment implements 
 
             //set image
             ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
-            NetworkImageView optionImage = (NetworkImageView) convertView.findViewById(R.id.option_image);
+            NetworkImageView optionImage = (NetworkImageView) convertView.findViewById(R.id.single_option_image);
 
             optionImage.setDefaultImageResId(R.drawable.ic_default_image);
             if (sbsChoice.getImage() != null && !sbsChoice.getImage().isEmpty())

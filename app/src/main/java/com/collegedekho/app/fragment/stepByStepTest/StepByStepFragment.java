@@ -18,6 +18,7 @@ import com.collegedekho.app.entities.StepByStepQuestion;
 import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.listener.PsychometricAnalysisPageListener;
 import com.collegedekho.app.resource.Constants;
+import com.melnykov.fab.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,10 +40,11 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
     private static final String ARG_PARAM2 = "param2";
     private static JSONObject mAnswersMap = new JSONObject();
     private ViewPager mViewPager;
-    private TextView mNextButton;
+    private FloatingActionButton mNextButton;
     private StepByStepAdapter mQuestionAdapter;
     private StepByStepQuestion.CurrentLevels mCurrentLevel;
     private int mQuestionSetCount = 1;
+    private boolean mIsFinished = false;
 
     // TODO: Rename and change types of parameters
     private ArrayList<StepByStepQuestion> mStepByStepQuestions;
@@ -83,9 +85,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
 
     public void updateQuestionSet(ArrayList<StepByStepQuestion> stepByStepQuestion, int questionSetCount)
     {
-        mNextButton.setEnabled(true);
-        mNextButton.setText("Next");
-        this.mStepByStepQuestions = stepByStepQuestion;
+        this.mNextButton.setEnabled(true);
 
         if(mQuestionAdapter == null){
             this.mQuestionAdapter = new StepByStepAdapter(getActivity().getSupportFragmentManager(), getActivity().getApplicationContext(), this.mStepByStepQuestions);
@@ -96,7 +96,6 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
             this.mQuestionAdapter.notifyDataSetChanged();
         }
 
-        //this.mQuestionSetCount = questionSetCount;
         this.mSetCurrentItem();
     }
 
@@ -119,7 +118,8 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_step_by_step, container, false);
         this.mViewPager = (NonSwipeableViewPager) rootView.findViewById(R.id.sbs_pager);
-        this.mNextButton = (TextView) rootView.findViewById(R.id.sbs_button_next);
+        this.mViewPager.setHapticFeedbackEnabled(true);
+        this.mNextButton = (FloatingActionButton) rootView.findViewById(R.id.sbs_button_next);
 
         this.mQuestionAdapter = new StepByStepAdapter(getActivity().getSupportFragmentManager(), getActivity().getApplicationContext(), this.mStepByStepQuestions);
         this.mViewPager.setAdapter(this.mQuestionAdapter);
@@ -134,8 +134,8 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                 boolean isAnswered;
                 StepByStepFragment inContextFragment;
 
-                if (StepByStepFragment.this.mNextButton.getText().toString() == "Finish") {
-                    mFinishTest();
+                if (StepByStepFragment.this.mIsFinished) {
+                    StepByStepFragment.this.mFinishTest();
                     return;
                 }
 
@@ -169,40 +169,51 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                     //if in_school or graduate case
                     if (StepByStepQuestion.getCurrentLevel() == StepByStepQuestion.CurrentLevels.IN_SCHOOL)
                     {
+                        // if question set count equal to three
+                        if (StepByStepFragment.this.mQuestionSetCount == 3 && StepByStepFragment.this.mViewPager.getCurrentItem() == StepByStepFragment.this.mQuestionAdapter.getCount() - 2)
+                        {
+                            //StepByStepFragment.this.mNextButton.setText("Finish");
+                            StepByStepFragment.this.mIsFinished = true;
+                            StepByStepFragment.this.mNextButton.setImageDrawable(StepByStepFragment.this.getContext().getResources().getDrawable(R.drawable.ic_checked));
+                        }
+
                         // if not on the last question yet for the set
                         if (StepByStepFragment.this.mViewPager.getCurrentItem() < StepByStepFragment.this.mQuestionAdapter.getCount() - 1)
                         {
                             // question set count should not matter
                             StepByStepFragment.this.mSetCurrentItem();
+
                         }
                         // if on the last question for the question set
                         else if (StepByStepFragment.this.mViewPager.getCurrentItem() == StepByStepFragment.this.mQuestionAdapter.getCount() - 1)
                         {
-                            // if question set count equal to three
-                            if (StepByStepFragment.this.mQuestionSetCount == 3)
-                            {
-                                StepByStepFragment.this.mNextButton.setText("Finish");
-                                return;
-                            }
-                            else if (StepByStepFragment.this.mQuestionSetCount < 3)
+                            if (StepByStepFragment.this.mQuestionSetCount < 3)
                             {
                                 try {
                                     answerValue = String.valueOf(StepByStepFragment.mAnswersMap.get(StepByStepFragment.this.mStepByStepQuestions.get(currentIndex).getName()));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                questionSetCount = mGetQuestionSetCountIncrementedString();
+                                questionSetCount = StepByStepFragment.this.mGetQuestionSetCountIncrementedString();
                                 String tag = Constants.TAG_LOAD_STEP_BY_STEP + "#" + StepByStepQuestion.CurrentLevels.IN_SCHOOL + "#" + String.valueOf(StepByStepFragment.this.mQuestionSetCount);
                                 String url = Constants.BASE_URL + "step-by-step/" +  answerValue + "/ug-ques-" + questionSetCount;
                                 StepByStepFragment.this.mNextButton.setEnabled(false);
-                                StepByStepFragment.this.mNextButton.setText("Loading questions..");
-                                mGetQuestions(tag, url);
+                                //StepByStepFragment.this.mNextButton.setText("Loading questions..");
+                                StepByStepFragment.this.mGetQuestions(tag, url);
                             }
                         }
                     }
                     // if post graduate case
                     if (StepByStepQuestion.getCurrentLevel() == StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE  || StepByStepQuestion.getCurrentLevel() == StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE)
                     {
+                        // if question set count equal to two
+                        if (StepByStepFragment.this.mQuestionSetCount == 2 && StepByStepFragment.this.mViewPager.getCurrentItem() == StepByStepFragment.this.mQuestionAdapter.getCount() - 2)
+                        {
+                            //StepByStepFragment.this.mNextButton.setText("Finish");
+                            StepByStepFragment.this.mIsFinished = true;
+                            StepByStepFragment.this.mNextButton.setImageDrawable(StepByStepFragment.this.getContext().getResources().getDrawable(R.drawable.ic_checked));
+                        }
+
                         // if not on the last question yet for the set
                         if (StepByStepFragment.this.mViewPager.getCurrentItem() < StepByStepFragment.this.mQuestionAdapter.getCount() - 1)
                         {
@@ -212,13 +223,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                         // if on the last question for the question set
                         else if (StepByStepFragment.this.mViewPager.getCurrentItem() == StepByStepFragment.this.mQuestionAdapter.getCount() - 1)
                         {
-                            // if question set count equal to two
-                            if (StepByStepFragment.this.mQuestionSetCount == 2)
-                            {
-                                StepByStepFragment.this.mNextButton.setText("Finish");
-                                return;
-                            }
-                            else if (StepByStepFragment.this.mQuestionSetCount < 2)
+                            if (StepByStepFragment.this.mQuestionSetCount < 2)
                             {
                                 try {
                                     answerValue = String.valueOf(StepByStepFragment.mAnswersMap.get(StepByStepFragment.this.mStepByStepQuestions.get(currentIndex).getName()));
@@ -226,13 +231,12 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                                     e.printStackTrace();
                                 }
 
-                                questionSetCount = mGetQuestionSetCountIncrementedString();
+                                questionSetCount = StepByStepFragment.this.mGetQuestionSetCountIncrementedString();
                                 String tag = Constants.TAG_LOAD_STEP_BY_STEP + "#" + StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE + "#" + String.valueOf(StepByStepFragment.this.mQuestionSetCount);
                                 String url = Constants.BASE_URL + "step-by-step/" +  answerValue + "/pg-ques-" + questionSetCount;
                                 StepByStepFragment.this.mNextButton.setEnabled(false);
-                                StepByStepFragment.this.mNextButton.setText("Loading questions..");
-                                mGetQuestions(tag, url);
-                            }
+                                //StepByStepFragment.this.mNextButton.setText("Loading questions..");
+                                StepByStepFragment.this.mGetQuestions(tag, url);                            }
                         }
                     }
                 } else {

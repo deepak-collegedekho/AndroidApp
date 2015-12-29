@@ -121,7 +121,6 @@ public class ProfileFragment extends BaseFragment
             rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.GONE);
             rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.GONE);
             rootView.findViewById(R.id.backup_colleges_layout_RL).setVisibility(View.GONE);
-
         }
 
         rootView.findViewById(R.id.backup_colleges_layout_RL).setOnClickListener(this);

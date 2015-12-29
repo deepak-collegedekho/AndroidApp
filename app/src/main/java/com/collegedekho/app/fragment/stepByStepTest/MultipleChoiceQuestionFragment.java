@@ -14,10 +14,13 @@ import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.PsychometricQuestion;
 import com.collegedekho.app.entities.StepByStepChoice;
 import com.collegedekho.app.entities.StepByStepQuestion;
+import com.collegedekho.app.resource.MySingleton;
 
 import org.json.JSONArray;
 
@@ -172,6 +175,7 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
         this.mAnswered = true;
 
         this.mAnswers.put(position, this.mChoiceListAdapter.getItem(position).getId());
+        this.mChoiceListAdapter.notifyDataSetChanged();
     }
 
     private class ChoiceListAdapter extends BaseAdapter
@@ -216,9 +220,13 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
 
             sbsChoice = mChoiceList.get(position);
 
-            CheckBox choice = (CheckBox) convertView.findViewById(R.id.multiple_choice_checkbox);
+            //set name
+            final TextView choiceText = (TextView) convertView.findViewById(R.id.multiple_choice_text);
+            choiceText.setText(sbsChoice.getName());
+
+            final CheckBox choice = (CheckBox) convertView.findViewById(R.id.multiple_choice_checkbox);
             choice.setTag(position);
-            choice.setText(sbsChoice.getName());
+            //choice.setText(sbsChoice.getName());
             choice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -240,6 +248,34 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
             });
 
             choice.setChecked(mIsChecked[position]);
+
+            choiceText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    choice.performClick();
+                }
+            });
+
+            //set image
+            ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
+            NetworkImageView optionImage = (NetworkImageView) convertView.findViewById(R.id.multiple_option_image);
+
+            optionImage.setDefaultImageResId(R.drawable.ic_default_image);
+            if (sbsChoice.getImage() != null && !sbsChoice.getImage().isEmpty())
+            {
+                if (optionImage.getVisibility() == View.GONE)
+                    optionImage.setVisibility(View.VISIBLE);
+                optionImage.setImageUrl(sbsChoice.getImage(), imageLoader);
+            }
+            else
+                optionImage.setVisibility(View.GONE);
+
+            optionImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    choice.performClick();
+                }
+            });
 
             return convertView;
         }

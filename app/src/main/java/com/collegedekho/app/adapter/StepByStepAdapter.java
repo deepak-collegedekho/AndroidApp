@@ -33,11 +33,6 @@ public class StepByStepAdapter extends FragmentStatePagerAdapter {
         this.mContext = context;
         this.mPQuestion = pQuestions;
         this.mStepByStepFragmentsArray = new ArrayList<StepByStepFragment>();
-
-/*
-        if(this.mPQuestion != null && this.mPQuestion.size() > 0)
-            this.mCurrentQuestionFragment = this.mReturnFragmentofType(this.mPQuestion.get(0), (this.mPQuestion.get(0).getType()));
-*/
     }
 
     public StepByStepAdapter(FragmentManager fm) {
@@ -65,26 +60,13 @@ public class StepByStepAdapter extends FragmentStatePagerAdapter {
             case Constants.QTYPE_RANGE:
                 this.mCurrentQuestionFragment = RangeQuestionFragment.newInstance(question);
                 break;
-/*
-            case Constants.QTYPE_DROPDOWN:
-                this.mCurrentQuestionFragment = DropDownQuestionFragment.newInstance(question);
-                break;
-            case Constants.QTYPE_INPUT:
-                this.mCurrentQuestionFragment = TextQuestionFragment.newInstance(question);
-                break;
-            case Constants.QTYPE_RANGE:
-                this.mCurrentQuestionFragment = RangeQuestionFragment.newInstance(question);
-                break;
-            case Constants.QTYPE_MULTIPLE:
-                this.mCurrentQuestionFragment = MultipleChoiceQuestionFragment.newInstance(question, 2);
-                break;
-*/
             default:
                 this.mCurrentQuestionFragment = null;
                 break;
         }
 
-        this.mStepByStepFragmentsArray.add(this.mCurrentQuestionFragment);
+        if (this.mCurrentQuestionFragment != null)
+            this.mStepByStepFragmentsArray.add(this.mCurrentQuestionFragment);
 
         return mCurrentQuestionFragment;
     }
@@ -92,21 +74,6 @@ public class StepByStepAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return mPQuestion.size();
-    }
-
-    public StepByStepFragment getCurrentQuestionFragment() {
-        return mCurrentQuestionFragment;
-    }
-
-    public StepByStepFragment getLastQuestionFragment() {
-        return mLastQuestionFragment;
-    }
-
-    public void addSecondary(int index, StepByStepQuestion ques)
-    {
-        this.mPQuestion.add(index, ques);
-
-        this.notifyDataSetChanged();
     }
 
     public StepByStepFragment getFragment(int position) {
