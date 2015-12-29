@@ -113,7 +113,10 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         if(courses == null)return;
         int count = 0;
         for (int i = 0; i < courses.size(); i++) {
-            mCourses.get(i).addAll(courses.get(i));
+            ArrayList<InstituteCourse> coursesList =  mCourses.get(i);
+            if(coursesList == null)continue;
+            coursesList.clear();
+            coursesList.addAll(courses.get(i));
             count += courses.get(i).size();
         }
         if (mCourseFragment != null)

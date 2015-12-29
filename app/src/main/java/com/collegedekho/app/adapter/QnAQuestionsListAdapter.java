@@ -69,7 +69,11 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
 
         QnAQuestionHolder qnAQuestionHolder = (QnAQuestionHolder) holder;
         qnAQuestionHolder.questionHeading.setText(qnaQuestion.getTitle());
-        qnAQuestionHolder.userName.setText(qnaQuestion.getUser());
+        if(qnaQuestion.getUser().equalsIgnoreCase("Anonymous user"))
+            qnAQuestionHolder.userName.setText("");
+        else
+            qnAQuestionHolder.userName.setText(qnaQuestion.getUser());
+
         qnAQuestionHolder.questionVotes.setText(String.valueOf(qnaQuestion.getUpvotes()));
         qnAQuestionHolder.answerCount.setText(String.valueOf(qnaQuestion.getAnswers_count()) + "\n" + "Answer");
 

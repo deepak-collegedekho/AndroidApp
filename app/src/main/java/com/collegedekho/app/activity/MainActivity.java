@@ -616,13 +616,23 @@ public class MainActivity extends AppCompatActivity
             User tempUser = MainActivity.user;
             MainActivity.user = JSON.std.beanFrom(User.class, json);
             MainActivity.user.setPref(this.userPref);
-            MainActivity.user.setPref(this.userPref);
             this.networkUtils.setToken(MainActivity.user.getToken());
             if (tempUser != null){
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
             MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
             MainActivity.user.profileData = tempUser.profileData;
            }
+            if(MainActivity.user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous user")) {
+
+                // get name from my profile me
+                if (user.profileData[0] != null) {
+                    HashMap<String, String> hashMap = new HashMap<>();
+                    user.setName( user.profileData[0]);
+                    hashMap.put(Constants.USER_NAME, user.profileData[0]);
+                    this.mMakeNetworkCall("name_updated" ,Constants.BASE_URL + "preferences/", hashMap);
+
+                }
+            }
 
 
             this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()));
@@ -939,16 +949,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mDisplayInstitute(int position) {
-        int  id ;
-        if(currentFragment instanceof InstituteShortlistFragment)
-        {
-            this.mInstitute = this.mShortlistedInstituteList.get(position);
-            id = this.mShortlistedInstituteList.get(position).getId();
-        }
-        else {
+
+
             this.mInstitute = this.mInstituteList.get(position);
-            id = this.mInstituteList.get(position).getId();
-        }
+          int  id = this.mInstituteList.get(position).getId();
 
         final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE);
         if (fragment == null)
@@ -960,7 +964,6 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id) , null);
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id) , null);
 
-        //this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_QNA_QUESTIONS, mInstitute.getResource_uri() + "qna/", null, Request.Method.GET);
     }
 
     private void loadPyschometricTest(String response) {
@@ -3207,6 +3210,7 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
                 MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
                 MainActivity.user.profileData = tempUser.profileData;
+
             }
             this.user.setPref(this.userPref);
             String u = JSON.std.asString(this.user);

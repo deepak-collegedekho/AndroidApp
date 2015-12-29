@@ -49,7 +49,7 @@ public class ArticleFragment extends BaseFragment {
     private ArrayList<Articles> mArticlesList;
     private String mTitle;
     private ArticleListAdapter mAdapter;
-    private int mViewType = Constants.VIEW_INTO_GRID;
+    private int mViewType = Constants.VIEW_INTO_LIST;
     private Articles mArticle;
 
     public ArticleFragment() {

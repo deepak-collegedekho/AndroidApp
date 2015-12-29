@@ -20,13 +20,13 @@ public class InstituteCourse implements Parcelable {
         }
     };
     public long id;
-    public String name;
-    public String specialization;
-    public String stream_name;
-    public String degree_name;
+    public String name = "";
+    public String specialization = "";
+    public String stream_name = "";
+    public String degree_name = "";
     public int duration;
     public int level;
-    public String duration_type_display;
+    public String duration_type_display="";
     public int is_applied;
     public InstituteCourse() {
     }

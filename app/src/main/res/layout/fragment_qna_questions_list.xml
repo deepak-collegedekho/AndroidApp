@@ -36,21 +36,22 @@
             android:id="@+id/institute_questions_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="5dp" />
+            android:padding="5dp"
+            android:layout_marginBottom="35dp"/>
 
 
             <include layout="@layout/layout_qna_ask_question"
                 android:id="@+id/qna_ask_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_gravity="top"
                 android:visibility="gone"
                 android:layout_marginLeft="@dimen/m25dp"
                 android:layout_marginRight="@dimen/m25dp"
                 android:layout_centerInParent="true"/>
 
 
-        <com.melnykov.fab.FloatingActionButton
+       <!-- <com.melnykov.fab.FloatingActionButton
             android:id="@+id/qna_ask_question_fab_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,12 +61,30 @@
             android:layout_alignParentRight="true"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
+            android:visibility="gone"
             fab:fab_colorNormal="@color/primary_orange"
-            fab:fab_colorPressed="@color/primaryColorDark" />
+            fab:fab_colorPressed="@color/primaryColorDark" />-->
 
-        <include layout="@layout/layout_progressbar"/>
+        <TextView
+            style="@style/AppTheme.OrangeButton"
+            android:background="@color/primary_orange"
+            android:id="@+id/question_ask_button"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/m9dp"
+            android:paddingTop="@dimen/m9dp"
+            android:textSize="21sp"
+            android:foregroundGravity="center"
+            android:text="Ask a Question"/>
+
+        <include layout="@layout/layout_progressbar"
+            android:layout_above="@id/question_ask_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </RelativeLayout>
+
 
 
 </LinearLayout>

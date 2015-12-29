@@ -30,10 +30,10 @@ public class QnAQuestionsListFragment extends BaseFragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
 
-    private ArrayList<QnAQuestions> mQnAQuestions;
+    private ArrayList<QnAQuestions> mQnAQuestionsList;
     private TextView mEmptyTextView;
     private QnAQuestionsListAdapter mAdapter;
-    private int mViewType = Constants.VIEW_INTO_GRID;
+    private int mViewType = Constants.VIEW_INTO_LIST;
     private OnQnAQuestionSelectedListener mListener;
 
     public static QnAQuestionsListFragment newInstance(ArrayList<QnAQuestions> qnaQuestions, String next)
@@ -56,7 +56,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mQnAQuestions = getArguments().getParcelableArrayList(ARG_PARAM1);
+            mQnAQuestionsList = getArguments().getParcelableArrayList(ARG_PARAM1);
             mNextUrl = getArguments().getString(ARG_NEXT);
         }
     }
@@ -70,10 +70,6 @@ public class QnAQuestionsListFragment extends BaseFragment {
         progressBarLL = (LinearLayout) rootView.findViewById(R.id.progressBarLL);
 
 
-        // BottomSheetLayout bottomSheetLayout = (BottomSheetLayout)rootView.findViewById(R.id.)
-                (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
-        (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
-
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_questions_list);
 
         if(this.mViewType == Constants.VIEW_INTO_GRID) {
@@ -86,38 +82,31 @@ public class QnAQuestionsListFragment extends BaseFragment {
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
         }
-        this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestions, this.mViewType);
+        this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestionsList, this.mViewType);
         recyclerView.setAdapter(this.mAdapter);
         //recyclerView.addOnScrollListener(scrollListener);
         updateViewTypeIcon(rootView, this.mViewType);
 
-        if (mQnAQuestions.size() == 0)
+        if (mQnAQuestionsList.size() == 0)
         {
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setText("Couldn't find related questions for you. Like and Shortlist college");
             recyclerView.setVisibility(View.GONE);
+            rootView.findViewById(R.id.question_ask_button).setVisibility(View.GONE);
         }
         else
         {
             this.mEmptyTextView.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.question_ask_button).setVisibility(View.VISIBLE);
         }
-        (rootView.findViewById(R.id.institute_qna_button_ask_submit)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onAskExpertSubmitButtonPressed();
-            }
-        });
 
-        (rootView.findViewById(R.id.qna_ask_question_fab_button)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if ((rootView.findViewById(R.id.qna_ask_layout)).getVisibility() == View.GONE)
-                    (rootView.findViewById(R.id.qna_ask_layout)).setVisibility(View.VISIBLE);
-                else
-                    (rootView.findViewById(R.id.qna_ask_layout)).setVisibility(View.GONE);
-            }
-        });
+        rootView.findViewById(R.id.view_into_grid).setOnClickListener(this);
+        rootView.findViewById(R.id.view_into_list).setOnClickListener(this);
+        rootView.findViewById(R.id.question_ask_button).setOnClickListener(this);
+        rootView.findViewById(R.id.question_ask_cross).setOnClickListener(this);
+        rootView.findViewById(R.id.institute_qna_button_ask_submit).setOnClickListener(this);
+
 
         return rootView;
     }
@@ -153,16 +142,16 @@ public class QnAQuestionsListFragment extends BaseFragment {
     @Override
     public void onClick(View view) {
         super.onClick(view);
+        View rootView = getView();
         switch (view.getId())
         {
             case R.id.view_into_grid:
-                View rootView = getView();
                 if(rootView != null && mViewType != Constants.VIEW_INTO_GRID) {
                     this.mViewType = Constants.VIEW_INTO_GRID;
                     RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_questions_list);
                     layoutManager = new GridLayoutManager(getActivity(), 2);
                     recyclerView.setLayoutManager(layoutManager);
-                    this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestions, Constants.VIEW_INTO_GRID);
+                    this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestionsList, Constants.VIEW_INTO_GRID);
                     recyclerView.setAdapter(this.mAdapter);
                     recyclerView.setHasFixedSize(true);
                     recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, true));
@@ -171,18 +160,34 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
                 break;
             case R.id.view_into_list:
-                View rootView1 = getView();
-                if(rootView1 != null && mViewType != Constants.VIEW_INTO_LIST) {
+                if(rootView!= null && mViewType != Constants.VIEW_INTO_LIST) {
                     this.mViewType = Constants.VIEW_INTO_LIST;
-                    RecyclerView recyclerView1 = (RecyclerView) rootView1.findViewById(R.id.institute_questions_list);
+                    RecyclerView recyclerView1 = (RecyclerView) rootView.findViewById(R.id.institute_questions_list);
                     layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
                     recyclerView1.setLayoutManager(layoutManager);
-                    this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestions, Constants.VIEW_INTO_LIST);
+                    this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestionsList, Constants.VIEW_INTO_LIST);
                     recyclerView1.setAdapter(this.mAdapter);
                     recyclerView1.setHasFixedSize(true);
                     recyclerView1.setItemAnimator(new DefaultItemAnimator());
                     //recyclerView1.addOnScrollListener(scrollListener);
                 }
+                break;
+            case R.id.question_ask_button:
+                if(rootView != null) {
+                    if ((rootView.findViewById(R.id.qna_ask_layout)).getVisibility() == View.GONE) {
+                        (rootView.findViewById(R.id.qna_ask_layout)).setVisibility(View.VISIBLE);
+                        rootView.findViewById(R.id.question_ask_button).setVisibility(View.GONE);
+                    }
+                }
+                break;
+            case R.id.question_ask_cross:
+                if(rootView != null)  {
+                    rootView.findViewById(R.id.question_ask_button).setVisibility(View.VISIBLE);
+                    (rootView.findViewById(R.id.qna_ask_layout)).setVisibility(View.GONE);
+                }
+                break;
+            case R.id.institute_qna_button_ask_submit:
+                onAskExpertSubmitButtonPressed();
                 break;
             default:
                 break;
@@ -192,7 +197,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
     public void updateList(List<QnAQuestions> institutes, String next) {
         this.progressBarLL.setVisibility(View.GONE);
-        this.mQnAQuestions.addAll(institutes);
+        this.mQnAQuestionsList.addAll(institutes);
         this.mAdapter.notifyDataSetChanged();
         this.loading = false;
         this.mNextUrl = next;
@@ -229,6 +234,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
             QnAQuestions q = validateData(rootView);
             if (q != null && mListener != null)
             {
+
                 this.mListener.onQuestionAsked(q);
 
             }
@@ -241,21 +247,19 @@ public class QnAQuestionsListFragment extends BaseFragment {
     }
     public void instituteQnAQuestionAdded(QnAQuestions ques)
     {
-        if(this.mQnAQuestions == null)
-            this.mQnAQuestions = new ArrayList<>();
+        if(this.mQnAQuestionsList == null)
+            this.mQnAQuestionsList = new ArrayList<>();
 
-            this.mQnAQuestions.add(mQnAQuestions.size(), ques);
-            this.mAdapter.notifyItemInserted(mQnAQuestions.size() - 1);
+            this.mQnAQuestionsList.add(mQnAQuestionsList.size(), ques);
+            this.mAdapter.notifyItemInserted(mQnAQuestionsList.size() - 1);
             this.mAdapter.notifyDataSetChanged();
 
             View view = getView();
             if(view != null) {
-               ((RecyclerView) view.findViewById(R.id.institute_questions_list)).scrollToPosition(mQnAQuestions.size() - 1);
+               ((RecyclerView) view.findViewById(R.id.institute_questions_list)).scrollToPosition(mQnAQuestionsList.size() - 1);
 
-                if ((view.findViewById(R.id.qna_ask_layout)).getVisibility() == View.GONE)
-                    (view.findViewById(R.id.qna_ask_layout)).setVisibility(View.VISIBLE);
-                else
-                    (view.findViewById(R.id.qna_ask_layout)).setVisibility(View.GONE);
+                view.findViewById(R.id.qna_ask_layout).setVisibility(View.GONE);
+                view.findViewById(R.id.question_ask_button).setVisibility(View.VISIBLE);
             }
 
 

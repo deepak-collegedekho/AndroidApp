@@ -251,15 +251,7 @@ public class InstituteDetailFragment extends BaseFragment {
         this.nextNewsUrl = next;
         mDetailsAdapter.updateInstituteNews( this.mInstituteNewsList, next);
     }
-    /*@Override
-    public void updateNews(News news){
-        mDetailsAdapter.updateNews(news);
-    }
 
-    @Override
-    public void updateArticle(Articles article) {
-        mDetailsAdapter.updateArticle(article);
-    }*/
 
     public void updateInstituteArticle(ArrayList<Articles> articleList, String next) {
         this.mInstituteArticleList = articleList;
