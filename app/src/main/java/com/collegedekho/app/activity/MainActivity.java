@@ -3694,6 +3694,8 @@ public class MainActivity extends AppCompatActivity
          if(examDetailObj == null)return;
         String id = examDetailObj.getId();
         Map<String , String> params = this.mGetTheFilters();
+        if(params == null)
+            params = new HashMap<>();
         params.put("tag_uris[" + (params.size()) + "]",examDetailObj.getExam_tag());
 
         this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/"+id+"/summary/",params);
@@ -3702,8 +3704,8 @@ public class MainActivity extends AppCompatActivity
     public void onHomeItemSelected(String requestType, String url, String tag) {
 
         if (requestType.equals(Constants.WIDGET_INSTITUTES)
-                || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES)
-                || requestType.equalsIgnoreCase(Constants.WIDGET_SHORTLIST_INSTITUTES)) {
+                || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES)){
+                //|| requestType.equalsIgnoreCase(Constants.WIDGET_SHORTLIST_INSTITUTES)) {
 
            Map<String , String> params = this.mGetTheFilters();
             if(tag != null && !tag.isEmpty())

@@ -32,7 +32,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,7 +45,7 @@ public class InstituteDetailFragment extends BaseFragment {
     public static final int News = 2;
     public static final int Articles = 3;
 
-    ArrayList<ArrayList<InstituteCourse>> courses;
+    private ArrayList<ArrayList<InstituteCourse>> courses;
     ArrayList<News> mInstituteNewsList;
     ArrayList<Articles> mInstituteArticleList;
     private Institute mInstitute;
@@ -54,7 +53,6 @@ public class InstituteDetailFragment extends BaseFragment {
     private FooterPagerAdapter mFo54oterAdapter;
     private ViewPager mDetailsPager;
     private ViewPager mFooterPager;
-    private FeatureCoverFlow mCoverFlow;
     private CoverFlowAdapter mAdapter;
     private ArrayList<GameEntity> mData = new ArrayList<>(4);
     private InstituteDetailFragment.OnInstituteFooterItemSelected mListener;
@@ -132,41 +130,7 @@ public class InstituteDetailFragment extends BaseFragment {
 
         this.mAdapter = new CoverFlowAdapter(this.getContext());
         this.mAdapter.setData(this.mData);
-/*
-        this.mCoverFlow = (FeatureCoverFlow) rootView.findViewById(R.id.coverflow);
-        this.mCoverFlow.setAdapter(this.mAdapter);
 
-        this.mCoverFlow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                //int itemPosition = (int) view.getTag(R.integer.carousal_item_position);
-                switch (position)
-                {
-                    case InstituteDetailFragment.Videos:
-                    {
-                        InstituteDetailFragment.this.mListener.onFooterVideosSelected((InstituteDetailFragment.this.mInstitute.getVideos()));
-                        break;
-                    }
-                    default:
-                    {
-                        InstituteDetailFragment.this.mListener.OnFooterOtherItemsSelected(position, InstituteDetailFragment.this.mInstitute.getId());
-                        break;
-                    }
-                }
-            }
-        });
-
-        this.mCoverFlow.setOnScrollPositionListener(new FeatureCoverFlow.OnScrollPositionListener() {
-            @Override
-            public void onScrolledToPosition(int position) {
-            }
-
-            @Override
-            public void onScrolling() {
-            }
-        });
-*/
 
         //this.tabLayout = (TabLayout) rootView.findViewById(R.id.college_tabs_layout);
         //this.tabLayout.setTabTextColors(getResources().getColor(R.color.white), getResources().getColor(R.color.light_grey_background));
@@ -223,7 +187,7 @@ public class InstituteDetailFragment extends BaseFragment {
            }
        }
 
-       this.mDetailsAdapter.updateCourseFragment();
+       mDetailsAdapter.updateCourseFragment();
     }
 
     public void instituteQnAQuestionAdded(QnAQuestions ques)
@@ -432,6 +396,16 @@ public class InstituteDetailFragment extends BaseFragment {
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
     }
+/*
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser) {
+            MainActivity mMainActivity = (MainActivity) this.getActivity();
+            if (mMainActivity != null)
+                mMainActivity.currentFragment = this;
+        }
+    }*/
 
     public interface OnInstituteFooterItemSelected{
         void onFooterVideosSelected(ArrayList<String> videos);

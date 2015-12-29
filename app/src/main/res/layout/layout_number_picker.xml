@@ -26,7 +26,7 @@
     <com.collegedekho.app.widget.NumberPicker
         android:id="@+id/exam_number_picker"
         android:layout_width="match_parent"
-        android:layout_marginLeft="@dimen/m10dp"
+        android:layout_marginLeft="@dimen/m8dp"
         android:textColor="@color/primary_orange"
         android:layout_below="@id/j_options1_title"
         android:textSize="16sp"
@@ -76,6 +76,7 @@
     <com.collegedekho.app.widget.NumberPicker
         android:id="@+id/marks_number_picker"
         android:layout_width="match_parent"
+        android:layout_marginRight="@dimen/m8dp"
         android:layout_below="@id/j_options3_title"
         android:layout_height="wrap_content"/>
   </RelativeLayout>

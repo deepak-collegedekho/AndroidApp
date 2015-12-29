@@ -158,8 +158,6 @@ public class ArticleFragment extends BaseFragment {
             if (mMainActivity != null)
                 mMainActivity.currentFragment = this;
         }
-
-
     }
 
 

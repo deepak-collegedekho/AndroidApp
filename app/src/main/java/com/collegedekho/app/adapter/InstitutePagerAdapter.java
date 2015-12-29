@@ -87,6 +87,7 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         return count;
     }
 
+
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position) {

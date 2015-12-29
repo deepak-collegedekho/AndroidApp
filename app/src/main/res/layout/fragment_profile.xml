@@ -16,7 +16,7 @@
         android:id="@+id/check_gesture"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".3"
+        android:layout_weight=".33"
         android:gravity="center"
         android:layout_gravity="center">
 
@@ -44,11 +44,24 @@
                 android:paddingRight="10dp"
                 android:textSize="18sp"/>
 
+            <TextView
+                android:id="@+id/user_profile_stream"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_below="@id/user_name"
+                android:gravity="left"
+                android:textStyle="bold"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingRight="10dp"
+                android:textSize="18sp"/>
+
             <LinearLayout
                 android:id="@+id/profile_syllabus_statusLL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/user_name"
+                android:layout_below="@id/user_profile_stream"
                 android:gravity="center"
                 android:weightSum="1">
 

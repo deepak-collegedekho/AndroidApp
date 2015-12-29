@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/white"
-        android:layout_weight=".3">
+        android:layout_weight=".33">
 
         <include layout="@layout/layout_profile_image"
             android:id="@+id/include_image_layout"
@@ -27,25 +27,40 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/m10dp"
+            android:gravity="center"
             android:layout_toRightOf="@id/include_image_layout">
 
 
             <TextView
                 android:id="@+id/user_name"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Sashi Negi"
                 android:gravity="left|center"
                 android:textStyle="bold"
-                android:padding="10dp"
+                android:padding="8dp"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/user_stream"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="left|center"
+                android:layout_below="@id/user_name"
+                android:textStyle="bold"
+                android:paddingBottom="5dp"
+                android:paddingRight="5dp"
+                android:paddingLeft="8dp"
+                android:visibility="gone"
                 android:textSize="18sp"/>
 
             <LinearLayout
                 android:id="@+id/test_takenLL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/user_name"
-                android:paddingLeft="10dp"
+                android:layout_below="@id/user_stream"
+                android:paddingLeft="8dp"
                 android:gravity="center"
                 android:visibility="gone"
                 android:orientation="horizontal">
@@ -73,7 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/test_takenLL"
-                android:paddingLeft="10dp"
+                android:paddingLeft="8dp"
                 android:gravity="center"
                 android:visibility="gone"
                 android:orientation="horizontal">
@@ -101,13 +116,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".65"
+        android:layout_weight=".62"
         android:orientation="vertical"
         android:weightSum="1">
 
         <include layout="@layout/layout_home_widget"
             android:layout_height="0dp"
-            android:layout_weight=".7"
+            android:layout_weight=".75"
             android:layout_width="match_parent"
             android:id="@+id/include_layout_home_widget"/>
 
@@ -115,7 +130,7 @@
             android:layout_below="@id/include_layout_home_widget"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".3"
+            android:layout_weight=".25"
             android:visibility="gone"
             android:layout_marginBottom="15dp"
             android:layout_alignParentBottom="true"/>

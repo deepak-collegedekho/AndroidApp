@@ -73,6 +73,7 @@ public class TabFragment extends  BaseFragment{
 
         mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
         TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
+        TextView mStreamName = (TextView) rootView.findViewById(R.id.user_stream);
         CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
 
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
@@ -98,6 +99,14 @@ public class TabFragment extends  BaseFragment{
             if (image != null && ! image.isEmpty()) {
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
                 mProfileImage.setVisibility(View.VISIBLE);
+            }
+            String streamName = MainActivity.user.getStream_name();
+            if(streamName != null && !streamName.isEmpty()){
+                mStreamName.setVisibility(View.VISIBLE);
+                mStreamName.setText(streamName);
+            }
+            else{
+                mStreamName.setVisibility(View.GONE);
             }
         }
 

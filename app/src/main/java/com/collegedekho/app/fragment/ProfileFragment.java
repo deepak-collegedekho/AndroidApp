@@ -34,6 +34,7 @@ public class ProfileFragment extends BaseFragment
     private ArrayList<ExamDetail> mExamDetailList;
     private ExamDetailAdapter mDetailsAdapter;
     private TextView mProfileName;
+    private TextView mStreamName;
     private CircularImageView mProfileImage;
     private OnTabSelectListener mListener;
     private ExamDetail mExamDetail; // detail is needs in tabs to get id of exams
@@ -71,6 +72,7 @@ public class ProfileFragment extends BaseFragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
         mProfileName    =   (TextView)rootView.findViewById(R.id.user_name);
+        mStreamName    =   (TextView)rootView.findViewById(R.id.user_profile_stream);
         mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
         mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
@@ -164,6 +166,15 @@ public class ProfileFragment extends BaseFragment
             String image = MainActivity.user.getImage();
             if (image != null && ! image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+
+            String streamName = MainActivity.user.getStream_name();
+            if(streamName != null && !streamName.isEmpty()){
+                mStreamName.setVisibility(View.VISIBLE);
+                mStreamName.setText(streamName);
+            }
+            else{
+                mStreamName.setVisibility(View.GONE);
+            }
 
         }
 
