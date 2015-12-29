@@ -32,8 +32,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Permission to write to external storage -->
 
-
-
     <application
         android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
@@ -126,6 +124,5 @@
                 <data android:scheme="package"/>
             </intent-filter>
         </receiver>
-        <meta-data android:name="AppsFlyerDevKey" android:value="v3bLHGLaEavK2ePfvpj6aA"/>
     </application>
 </manifest>

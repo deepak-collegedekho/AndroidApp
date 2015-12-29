@@ -626,14 +626,17 @@ public class MainActivity extends AppCompatActivity
 
                 // get name from my profile me
                 if (user.profileData[0] != null) {
+                    //get device id
+                    String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+
                     HashMap<String, String> hashMap = new HashMap<>();
                     user.setName( user.profileData[0]);
                     hashMap.put(Constants.USER_NAME, user.profileData[0]);
-                    this.mMakeNetworkCall("name_updated" ,Constants.BASE_URL + "preferences/", hashMap);
+                    hashMap.put(Constants.USER_DEVICE_ID, deviceId);
 
+                    this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED, Constants.BASE_URL + "preferences/", hashMap);
                 }
             }
-
 
             this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()));
 
@@ -2543,7 +2546,7 @@ public class MainActivity extends AppCompatActivity
         map.put("title", question.getTitle());
         map.put("desc", question.getDesc());
         if(!(currentFragment instanceof  QnAQuestionsListFragment))
-        map.put("institute", "" + this.mInstituteList.get(currentInstitute).getResource_uri());
+            map.put("institute", "" + this.mInstituteList.get(currentInstitute).getResource_uri());
         //map.put("stream", Constants.BASE_URL + "streams/1/");
         /*map.put("user", user.getResource_uri());
         //:TODO remove hard coding of streams/1
@@ -3319,9 +3322,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mOnUserExamsSelected(String response) {
+        String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         Map<String, String> params = new HashMap<>();
         params.put(Constants.USER_EXAMS_SET,"1");
+        params.put(Constants.USER_DEVICE_ID, deviceId);
+
         this.mMakeNetworkCall(Constants.TAG_USER_EXAMS_SET,Constants.BASE_URL + "preferences/", params);
         this.mClearBackStack();
         mLoadUserProfile(response);
@@ -3558,8 +3564,13 @@ public class MainActivity extends AppCompatActivity
      * after user education detail is submitted to server.
      */
     private void mOnUserEducationResponse(String response) {
+        String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+
         Map<String, String> params = new HashMap<>();
         params.put(Constants.USER_EDUCATION_SET,"1");
+        params.put(Constants.USER_DEVICE_ID, deviceId);
+
         this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION_SET,Constants.BASE_URL + "preferences/", params);
 
         User userObj = null;
@@ -3880,7 +3891,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onNameUpdated(HashMap params, String msg) {
-        this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#"+msg, Constants.BASE_URL + "preferences/", params);
+        this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED + "#" + msg, Constants.BASE_URL + "preferences/", params);
     }
 
     private void onNameUpdatedResponse(String response , String msg) {
