@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -47,6 +48,7 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
     private TextView mEmptyTextView;
     private OnSubjectSelectedListener listener;
     private ArrayList<Subjects> mSubjectsLastStatus;
+    private Button btnSubmit;
 
     public SyllabusSubjectsListFragment() {
         // Required empty public constructor
@@ -84,12 +86,16 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new SyllabusSubjectListAdapter(getActivity(), mSubjects);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
+        this.btnSubmit=(Button)rootView.findViewById(R.id.btn_submit_subjects);
 
         if (mSubjects.size() == 0) {
             mEmptyTextView.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setText("No Subjects");
+            btnSubmit.setVisibility(View.GONE);
+        }else{
+            btnSubmit.setVisibility(View.VISIBLE);
         }
-
+        btnSubmit.setOnClickListener(this);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -255,6 +261,15 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
         if(listener != null)
             listener.onSyllabusChanged(parentJsonObj);
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btn_submit_subjects:
+                ((MainActivity)getActivity()).onBackPressed();
+                break;
+        }
     }
 
     public interface OnSubjectSelectedListener {

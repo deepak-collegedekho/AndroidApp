@@ -1311,6 +1311,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.WIDGET_TEST_CALENDAR:
                 this.onTestCalendarResponse(response);
                 break;
+            case Constants.TAG_PSYCHOMETRIC_RESPONSE:
+
+                break;
             case Constants.TAG_NAME_UPDATED:
                 if (tags.length > 1) {
                     parentIndex = tags[1];
@@ -3104,8 +3107,6 @@ public class MainActivity extends AppCompatActivity
         else {
             if(currentFragment instanceof SyllabusSubjectsListFragment)
                 ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
-            else if (currentFragment instanceof CalendarParentFragment)
-                ((CalendarParentFragment)currentFragment).submitCalendarData();
             super.onBackPressed();
         }
     }
@@ -3944,6 +3945,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSubmitCalendarData(JSONObject object,String url) {
         this.mMakeJsonObjectNetworkCall(Constants.TAG_PSYCHOMETRIC_RESPONSE,Constants.BASE_URL+url,object,1);
+        String examId = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
+        if(!examId.isEmpty())
+        this.onHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/"+examId+"/calendar/", null);
     }
     Handler baskpressHandler=new Handler();
     Runnable backpressRunnable = new Runnable() {

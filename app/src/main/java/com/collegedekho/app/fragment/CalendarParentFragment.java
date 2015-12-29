@@ -9,10 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.CalendarAdapter;
+import com.collegedekho.app.adapter.CalendarItemDetailsAdapter;
 import com.collegedekho.app.adapter.CalendarPagerAdapter;
 import com.collegedekho.app.entities.ChapterDetails;
 import com.collegedekho.app.entities.Chapters;
@@ -33,23 +35,32 @@ import java.util.LinkedHashMap;
 /**
  * Created by Bashir on 14/12/15.
  */
-public class CalendarParentFragment extends BaseFragment implements ViewPager.OnPageChangeListener {
+public class CalendarParentFragment extends BaseFragment implements ViewPager.OnPageChangeListener,CalendarItemDetailsAdapter.OnItemStateChangeListener {
     private CalendarPagerAdapter mPagerAdapter;
     private ViewPager viewPager;
+    private Button btnSubmitCalendar;
     private int numPages = 1;
     private OnSubmitCalendarData mListener;
-    private static ArrayList<Chapters> mChapterList;
+    private ArrayList<Chapters> mChapterList;
     private HashMap<String, String> subjectsMap;
-    private LinkedHashMap<String, String> yearCalendar = new LinkedHashMap<>();
+    private LinkedHashMap<String, String> yearCalendar;
     private LinkedHashMap<String, ArrayList<ChapterDetails>> chaptersDetailsList = new LinkedHashMap<>();
-
     public static CalendarParentFragment newInstance(ArrayList<Chapters> chapterList) {
 
         Bundle args = new Bundle();
-        mChapterList = chapterList;
         CalendarParentFragment fragment = new CalendarParentFragment();
+        args.putParcelableArrayList("chapters_list",chapterList);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args=getArguments();
+        if(args!=null){
+            mChapterList=args.getParcelableArrayList("chapters_list");
+        }
     }
 
     @Nullable
@@ -65,20 +76,25 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
         super.onViewCreated(view, savedInstanceState);
         initCalendar();
         viewPager = (ViewPager) view.findViewById(R.id.pager);
-        mPagerAdapter = new CalendarPagerAdapter(getChildFragmentManager(), numPages, yearCalendar, chaptersDetailsList);
+        btnSubmitCalendar=(Button)view.findViewById(R.id.btn_submit_calendar);
+
+        mPagerAdapter = new CalendarPagerAdapter(getChildFragmentManager(), numPages, yearCalendar, chaptersDetailsList,this);
         viewPager.setAdapter(mPagerAdapter);
         viewPager.addOnPageChangeListener(this);
+        btnSubmitCalendar.setOnClickListener(this);
     }
 
     private void initCalendar() {
         if (mChapterList == null || mChapterList.isEmpty()) {
             return;
         }
+        yearCalendar=new LinkedHashMap<>();
         Chapters chapters = mChapterList.get(0);
         String examDate = chapters.getExam_date();
 //        examDate="2018-04-14";
         ArrayList<ChapterDetails> chapterDetailsList = chapters.getChapters();
         if (chapterDetailsList == null || chapterDetailsList.isEmpty()) {
+            numPages=1;
             return;
         }
         subjectsMap = new LinkedHashMap<>();
@@ -230,11 +246,38 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
     public void updateCalander(ArrayList<Chapters> chapterList){
         this.mChapterList = chapterList;
         initCalendar();
-        if(mPagerAdapter != null)
-            mPagerAdapter.notifyDataSetChanged();
+        if(mPagerAdapter != null) {
+            btnSubmitCalendar.setEnabled(false);
+            getArguments().putParcelableArrayList("chapters_list",chapterList);
+            mPagerAdapter.setNumberOfPages(numPages);
+//            mPagerAdapter.update();
 
+        }
     }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btn_submit_calendar:
+                submitCalendarData();
+//                ((MainActivity)getActivity()).onBackPressed();
+                break;
+        }
+    }
+
+    @Override
+    public void OnStateChanged(boolean state) {
+        if(state){
+            btnSubmitCalendar.setEnabled(true);
+
+        }else{
+            btnSubmitCalendar.setEnabled(false);
+
+        }
+    }
+
     public interface OnSubmitCalendarData{
         public void onSubmitCalendarData(JSONObject object,String url);
     }
+
 }

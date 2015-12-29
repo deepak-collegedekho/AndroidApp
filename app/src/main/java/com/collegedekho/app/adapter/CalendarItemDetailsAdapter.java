@@ -21,10 +21,11 @@ import java.util.ArrayList;
 public class CalendarItemDetailsAdapter extends RecyclerView.Adapter<CalendarItemDetailsAdapter.CalendarItemDetailView> {
     private Context mContext;
     private ArrayList<ChapterDetails> itemList;
-
-    public CalendarItemDetailsAdapter(Context context, ArrayList<ChapterDetails> itemList) {
+    private CalendarItemDetailsAdapter.OnItemStateChangeListener mListener;
+    public CalendarItemDetailsAdapter(Context context, ArrayList<ChapterDetails> itemList,CalendarItemDetailsAdapter.OnItemStateChangeListener listener) {
         this.mContext = context;
         this.itemList = itemList;
+        this.mListener=listener;
     }
 
     @Override
@@ -75,8 +76,28 @@ public class CalendarItemDetailsAdapter extends RecyclerView.Adapter<CalendarIte
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             itemCheck.setChecked(isChecked);
             itemList.get(getLayoutPosition()).setSelected(isChecked);
+            int size=itemList.size();
+            for(int i=0;i<size;i++) {
+                ChapterDetails chapterDetails=itemList.get(i);
+                if(chapterDetails==null){
+                    continue;
+                }
+                if(chapterDetails.isSelected()) {
+                    mListener.OnStateChanged(true);
+                break;
+                }
+                if(i==size-1){
+                    mListener.OnStateChanged(false);
+                }
+            }
         }
     }
 
+    public void setListener(CalendarItemDetailsAdapter.OnItemStateChangeListener listener){
+        mListener=listener;
+    }
+    public interface OnItemStateChangeListener{
+        public void OnStateChanged(boolean state);
+    }
 
 }

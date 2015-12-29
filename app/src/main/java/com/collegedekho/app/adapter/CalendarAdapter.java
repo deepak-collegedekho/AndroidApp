@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.fragment.CalendarParentFragment;
 import com.collegedekho.app.utils.Utils;
 
 import java.util.ArrayList;
@@ -30,8 +30,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     private int startCellPosition =0;
     private int endCellPosition =0;
     private boolean isActiveCell;
-    private boolean isCurrent=false;
+    private boolean isCurrentMonth =false;
     LayoutInflater inflater;
+    int selectedPosition=-1;
     private LinkedHashMap<String,String> mYearCalendar;
     // today
     Date today;
@@ -71,11 +72,11 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         int month = cal.get(Calendar.MONTH);
         int year = cal.get(Calendar.YEAR);
         String day_key=String.valueOf(cal.get(Calendar.YEAR)+"_"+String.valueOf(cal.get(Calendar.DAY_OF_YEAR)));
-        if(day==1 && ! isCurrent){
-            isCurrent=true;
+        if(day==1 && !isCurrentMonth){
+            isCurrentMonth =true;
         }
         if (year == mCalendar.get(Calendar.YEAR)) {     //current year
-            if (month == mCalendar.get(Calendar.MONTH) && isCurrent) {       //current month
+            if (month == mCalendar.get(Calendar.MONTH) && isCurrentMonth) {       //current month
                 if (day == mCalendar.get(Calendar.DAY_OF_MONTH)) {      //today
                     if(!isActiveCell) {
                         isActiveCell = true;
@@ -89,6 +90,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                     if(!isActiveCell) {
                         isActiveCell = true;
                         startCellPosition = position;
+                        selectedPosition=position;
+                        isCurrentMonth =false;
                         mListener.onItemSelect(position, startCellPosition,endCellPosition,day_key);
                     }else {
                         endCellPosition=position-1;
@@ -113,6 +116,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 if(!isActiveCell) {
                     isActiveCell = true;
                     startCellPosition = position;
+                    selectedPosition=position;
+                    isCurrentMonth =false;
                     mListener.onItemSelect(position, startCellPosition,endCellPosition,day_key);
 
                 }else {
@@ -146,6 +151,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         }
         holder.dateView.setTag(day_key);
         holder.dateView.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));
+        if (position==selectedPosition){
+            holder.view.setCardBackgroundColor(0xffcccccc);
+            isCurrentMonth =false;
+            mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
+        }else {
+            holder.view.setCardBackgroundColor(0xffffffff);
+        }
     }
 
     @Override
@@ -158,12 +170,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         public LinearLayout dotView;
         public TextView monthView;
         public TextView dateView;
-
+        public CardView view;
         public CalendarViewHolder(View itemView) {
             super(itemView);
             dotView =  (LinearLayout)itemView.findViewById(R.id.calendar_dot_view);
             monthView = (TextView) itemView.findViewById(R.id.txt_month);
             dateView = (TextView) itemView.findViewById(R.id.txt_date);
+            view=(CardView)itemView.findViewById(R.id.calendar_card_view);
             itemView.setOnClickListener(this);
         }
 
@@ -171,6 +184,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         public void onClick(View v) {
             String key=(String) (v.findViewById(R.id.txt_date)).getTag();
             mListener.onItemSelect(getLayoutPosition(), startCellPosition,endCellPosition,key);
+            selectedPosition=getLayoutPosition();
+            isCurrentMonth =false;
+            notifyDataSetChanged();
         }
     }
 

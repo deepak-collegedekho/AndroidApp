@@ -32,7 +32,7 @@ public class UserAlertItemDescriptionAdapter extends RecyclerView.Adapter<UserAl
     public UserAlertItemDetailView onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
                 from(parent.getContext()).
-                inflate(R.layout.calendar_item_detail_card_view, parent, false);
+                inflate(R.layout.user_alert_item_detail_card_view, parent, false);
         return new UserAlertItemDetailView(itemView);
     }
 

@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ public class SyllabusUnitListFragment extends BaseFragment {
     private SyllabusUnitsExpandableListAdapter mAdapter;
     private MainActivity mMainActivity;
     private TextView mEmptyTextView;
+    private Button btnSubmit;
     private static int prev = -1;
 
     public SyllabusUnitListFragment() {
@@ -62,6 +64,8 @@ public class SyllabusUnitListFragment extends BaseFragment {
 
     public void setUp(View view){
         final ExpandableListView elv = (ExpandableListView) view.findViewById(R.id.units_expandable_list);
+        btnSubmit=(Button)view.findViewById(R.id.btn_submit_units);
+        btnSubmit.setOnClickListener(this);
         if(elv != null) {
             mAdapter = new SyllabusUnitsExpandableListAdapter(this.getActivity(), this.mUnits);
 
@@ -119,5 +123,14 @@ public class SyllabusUnitListFragment extends BaseFragment {
             this.mEmptyTextView.setVisibility(View.GONE);
         }
 */
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btn_submit_units:
+                ((MainActivity)getActivity()).onBackPressed();
+                break;
+        }
     }
 }

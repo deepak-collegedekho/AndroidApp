@@ -22,18 +22,27 @@ public class CalendarPagerAdapter extends FragmentStatePagerAdapter {
     LinkedHashMap<String,String> mYearCalendar;
     private LinkedHashMap<String,ArrayList<ChapterDetails>> mChaptersDetailsList;
     private String[] monthNames = {"","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-
-    public CalendarPagerAdapter(FragmentManager fm, int pageCount,LinkedHashMap<String,String> yearCalendar,LinkedHashMap<String,ArrayList<ChapterDetails>> chaptersDetailsList)
+    private CalendarItemDetailsAdapter.OnItemStateChangeListener mListener;
+    Fragment fragment;
+    public CalendarPagerAdapter(FragmentManager fm, int pageCount,LinkedHashMap<String,String> yearCalendar,LinkedHashMap<String,ArrayList<ChapterDetails>> chaptersDetailsList,CalendarItemDetailsAdapter.OnItemStateChangeListener listener)
     {
         super(fm);
         this.mChaptersDetailsList=chaptersDetailsList;
         this.mYearCalendar=yearCalendar;
         this.NUM_PAGES=pageCount;
+        this.mListener=listener;
+    }
+
+    public CalendarPagerAdapter(FragmentManager fm, int pageCount,CalendarItemDetailsAdapter.OnItemStateChangeListener listener)
+    {
+        super(fm);
+        this.NUM_PAGES=pageCount;
+        this.mListener=listener;
     }
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment= CalendarFragment.newInstance(mYearCalendar,mChaptersDetailsList);
+        fragment= CalendarFragment.newInstance(mListener);
         Bundle b=new Bundle();
         b.putInt("id", position);
         fragment.setArguments(b);
@@ -56,4 +65,17 @@ public class CalendarPagerAdapter extends FragmentStatePagerAdapter {
         return NUM_PAGES;
     }
 
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+    public void setNumberOfPages(int number){
+        NUM_PAGES=number;
+        notifyDataSetChanged();
+    }
+    public void update(){
+        if (fragment!=null && fragment instanceof CalendarFragment){
+            ((CalendarFragment)fragment).updateData();
+        }
+    }
 }

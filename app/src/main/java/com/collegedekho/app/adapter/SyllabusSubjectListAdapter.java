@@ -47,7 +47,7 @@ public class SyllabusSubjectListAdapter extends RecyclerView.Adapter {
         SubjectHolder subjectHolder = (SubjectHolder) holder;
         subjectHolder.mSubjectName.setText(subjects.getSubject_name());
         subjectHolder.mProgressBar.setProgress(subjects.getSubject_done_percent());
-        subjectHolder.mcheckBox.setChecked(subjects.getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
+        subjectHolder.examPercent.setText(String.valueOf(subjects.getSubject_done_percent()));
     }
 
     @Override
@@ -63,7 +63,7 @@ public class SyllabusSubjectListAdapter extends RecyclerView.Adapter {
     class SubjectHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView mSubjectName;
         ProgressBar mProgressBar;
-        CheckBox mcheckBox;
+        TextView examPercent;
 
         SyllabusSubjectsListFragment.OnSubjectSelectedListener mListener;
 
@@ -71,20 +71,16 @@ public class SyllabusSubjectListAdapter extends RecyclerView.Adapter {
             super(itemView);
             mSubjectName = (TextView) itemView.findViewById(R.id.syllabus_subject_name);
             mProgressBar = ((ProgressBar) itemView.findViewById(R.id.syllabus_subject_progress_bar));
-            mcheckBox = (CheckBox) itemView.findViewById(R.id.syllabus_subject_checkbox);
+            examPercent=(TextView)itemView.findViewById(R.id.exam_percentage);
             mListener = listener;
 
             mSubjectName.setOnClickListener(this);
             mProgressBar.setOnClickListener(this);
-            mcheckBox.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.syllabus_subject_checkbox:
-                    mListener.onSubjectCheckboxSelected(SyllabusSubjectListAdapter.this.mSubjects.get(getAdapterPosition()), getAdapterPosition());
-                    break;
                 case R.id.syllabus_subject_progress_bar:
                 case R.id.syllabus_subject_name:
                     mListener.onSubjectSelected(SyllabusSubjectListAdapter.this.mSubjects.get(getAdapterPosition()), getAdapterPosition());

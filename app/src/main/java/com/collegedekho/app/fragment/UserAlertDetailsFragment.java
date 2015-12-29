@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.CalendarAdapter;
@@ -39,7 +41,7 @@ public class UserAlertDetailsFragment extends BaseFragment implements UserAlerts
 
     // current displayed month
     private Calendar currentDate;
-
+    private LinearLayout.LayoutParams params;
     private GridLayoutManager calendarLayoutManager;
     private LinearLayoutManager detailsLayoutManager;
     LinkedHashMap<String, String> yearCalendar;
@@ -85,7 +87,6 @@ public class UserAlertDetailsFragment extends BaseFragment implements UserAlerts
         calendarRecyclerView = (RecyclerView) view.findViewById(R.id.calendar_recycler);
         detailsRecyclerView = (RecyclerView) view.findViewById(R.id.calendar_details_recycler);
         calendarLayoutManager = new GridLayoutManager(getActivity(), 7);
-
         detailsLayoutManager = new LinearLayoutManager(getActivity());
         detailsLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         detailsRecyclerView.setLayoutManager(detailsLayoutManager);
@@ -98,6 +99,9 @@ public class UserAlertDetailsFragment extends BaseFragment implements UserAlerts
             currentDate.set(Calendar.MONTH, month);
             currentDate.set(Calendar.YEAR, year);
         }
+        params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.weight=0.9f;
+        detailsRecyclerView.setLayoutParams(params);
         updateCalendar(currentDate);
     }
 

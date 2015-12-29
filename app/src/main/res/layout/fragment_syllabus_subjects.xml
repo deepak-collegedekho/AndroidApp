@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
 		xmlns:android="http://schemas.android.com/apk/res/android"
          android:orientation="vertical"
          android:layout_width="fill_parent"
          android:layout_height="fill_parent">
 
-    <include layout="@layout/layout_empty"/>
+    <include layout="@layout/layout_empty"
+                />
 
     <TextView
         android:id="@+id/subject_page_title"
@@ -22,7 +23,16 @@
         android:id="@+id/syllabus_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/subject_page_title"
+        android:layout_above="@+id/btn_submit_subjects"
         android:scrollbars="none"/>
 
-
-</LinearLayout>
+    <Button android:id="@+id/btn_submit_subjects"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_button_orange"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        android:text="@string/submit"/>
+</RelativeLayout>

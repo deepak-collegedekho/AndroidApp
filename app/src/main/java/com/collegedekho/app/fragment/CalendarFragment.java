@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.CalendarAdapter;
@@ -22,6 +23,8 @@ import com.collegedekho.app.adapter.SyllabusChapterListAdapter;
 import com.collegedekho.app.entities.ChapterDetails;
 import com.collegedekho.app.entities.Chapters;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,8 +37,13 @@ import java.util.LinkedHashMap;
 public class CalendarFragment extends BaseFragment implements CalendarAdapter.OnCalendarItemSelectListener {
     private RecyclerView calendarRecyclerView;
     private RecyclerView detailsRecyclerView;
+    private CalendarItemDetailsAdapter calendarItemDetailsAdapter;
+    //    private LinearLayout.LayoutParams params;
     // how many days to show, defaults to six weeks, 42 days
     private static int DAYS_COUNT = 42;
+    private HashMap<String, String> subjectsMap;
+    private LinkedHashMap<String, String> mYearCalendar;
+    private LinkedHashMap<String, ArrayList<ChapterDetails>> chaptersDetailsList = new LinkedHashMap<>();
 
     // default date format
     private static final String DATE_FORMAT = "MMM yyyy";
@@ -48,18 +56,39 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
 
     private GridLayoutManager calendarLayoutManager;
     private LinearLayoutManager detailsLayoutManager;
-    private static CalendarAdapter.OnCalendarItemSelectListener mListener;
-    private static LinkedHashMap<String, ArrayList<ChapterDetails>> mChaptersDetailsList;
+    private static CalendarItemDetailsAdapter.OnItemStateChangeListener mListener;
+//    private static LinkedHashMap<String, ArrayList<ChapterDetails>> mChaptersDetailsList=new LinkedHashMap<>();
     int offSet = 0;
-    private static LinkedHashMap<String, String> mYearCalendar;
+//    private static LinkedHashMap<String, String> mYearCalendar;
+    private ArrayList<Chapters> mChapterList;
 
-    public static CalendarFragment newInstance(LinkedHashMap<String, String> yearCalendar, LinkedHashMap<String, ArrayList<ChapterDetails>> chaptersDetailsList) {
-        mYearCalendar = yearCalendar;
-        mChaptersDetailsList = chaptersDetailsList;
+    public static CalendarFragment newInstance(LinkedHashMap<String, String> yearCalendar, LinkedHashMap<String, ArrayList<ChapterDetails>> chaptersDetailsList,CalendarItemDetailsAdapter.OnItemStateChangeListener listener) {
+//        mYearCalendar = yearCalendar;
+//        mChaptersDetailsList = chaptersDetailsList;
+        mListener=listener;
         Bundle args = new Bundle();
         CalendarFragment fragment = new CalendarFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public static CalendarFragment newInstance(CalendarItemDetailsAdapter.OnItemStateChangeListener listener) {
+        mListener=listener;
+        Bundle args = new Bundle();
+        CalendarFragment fragment = new CalendarFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args=getParentFragment().getArguments();
+        if(args!=null){
+            mChapterList=args.getParcelableArrayList("chapters_list");
+            mChapterList.size();
+            initCalendar();
+        }
     }
 
     @Nullable
@@ -85,6 +114,9 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
         currentDate = Calendar.getInstance();
         offSet = getArguments().getInt("id");
         currentDate.add(Calendar.MONTH, offSet);
+//        params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        params.weight=0.75f;
+//        detailsRecyclerView.setLayoutParams(params);
         updateCalendar(currentDate);
 
     }
@@ -93,12 +125,14 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if(calendarItemDetailsAdapter!=null){
+//                updateCalendar(currentDate);
                 calendarItemDetailsAdapter.notifyDataSetChanged();
             }
         }else{
             // fragment is no longer visible
         }
     }
+
     public void updateCalendar(Calendar calendar) {
         ArrayList<Date> cells = new ArrayList<Date>();
 //        Calendar calendar = (Calendar) currentDate.clone();
@@ -110,27 +144,17 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
         // move calendar backwards to the beginning of the week
         calendar.add(Calendar.DAY_OF_MONTH, -monthBeginningCell);
 
-        /*if (monthBeginningCell > 3) {
-            // fill cells (42 days calendar as per our business logic)
-            DAYS_COUNT = 42;
-
-        } else {
-            DAYS_COUNT = 35;
-
-        }*/
 
         while (cells.size() < DAYS_COUNT) {
             cells.add(calendar.getTime());
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
 
-
         // update grid
         CalendarAdapter calendarAdapter = new CalendarAdapter(getActivity(), cells, this, mYearCalendar);
         calendarRecyclerView.setAdapter(calendarAdapter);
     }
 
-    CalendarItemDetailsAdapter calendarItemDetailsAdapter;
 
     @Override
     public void onItemSelect(int position, int startPosition, int endPosition, String itemKey) {
@@ -139,14 +163,71 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
             String[] subject_keys = keys.split(",");
             ArrayList<ChapterDetails> chaptersList = new ArrayList<>();
             for (int i = 0; i < subject_keys.length; i++) {
-                ArrayList<ChapterDetails> chapters = mChaptersDetailsList.get(subject_keys[i]);
+                ArrayList<ChapterDetails> chapters = chaptersDetailsList.get(subject_keys[i]);
                 if (chapters != null && !chapters.isEmpty()) {
                     chaptersList.add(chapters.get(0));
                 }
             }
-            calendarItemDetailsAdapter = new CalendarItemDetailsAdapter(getActivity(), chaptersList);
+            calendarItemDetailsAdapter = new CalendarItemDetailsAdapter(getActivity(), chaptersList,mListener);
             detailsRecyclerView.setAdapter(calendarItemDetailsAdapter);
         }
 
+    }
+
+    private void initCalendar() {
+        if (mChapterList == null || mChapterList.isEmpty()) {
+            return;
+        }
+        mYearCalendar=new LinkedHashMap<>();
+        Chapters chapters = mChapterList.get(0);
+        ArrayList<ChapterDetails> chapterDetailsList = chapters.getChapters();
+        if (chapterDetailsList == null || chapterDetailsList.isEmpty()) {
+            return;
+        }
+        subjectsMap = new LinkedHashMap<>();
+        for (ChapterDetails chapterDetails : chapterDetailsList) {
+            String id = subjectsMap.get(chapterDetails.getSubject_id());
+            if (id == null) {
+                subjectsMap.put(chapterDetails.getSubject_id(), chapterDetails.getDays_to_complete());
+            } else {
+                float total = Float.valueOf(subjectsMap.get(chapterDetails.getSubject_id())) + Float.valueOf(chapterDetails.getDays_to_complete());
+                subjectsMap.put(chapterDetails.getSubject_id(), String.valueOf(total));
+            }
+            ArrayList<ChapterDetails> detailsList = chaptersDetailsList.get(chapterDetails.getSubject_id());
+            if (detailsList == null) {
+                detailsList = new ArrayList<>();
+                detailsList.add(chapterDetails);
+                chaptersDetailsList.put(chapterDetails.getSubject_id(), detailsList);
+            } else {
+                chaptersDetailsList.get(chapterDetails.getSubject_id()).add(chapterDetails);
+            }
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        Date today = new Date();
+        for (String key : subjectsMap.keySet()) {
+            int dayCount = (int) Math.ceil(Double.valueOf(subjectsMap.get(key)));
+            for (int i = 0; i < dayCount; i++) {
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+                String day_key = String.valueOf(calendar.get(Calendar.YEAR) + "_" + String.valueOf(calendar.get(Calendar.DAY_OF_YEAR)));
+                String day_value = mYearCalendar.get(day_key);
+                if (day_value == null) {
+                    mYearCalendar.put(day_key, key);
+                } else if (!day_value.contains(key)) {
+                    mYearCalendar.put(day_key, day_value + "," + key);
+                }
+            }
+            calendar.setTime(today);
+            calendar.add(Calendar.DAY_OF_YEAR, -1);
+        }
+    }
+
+    public void updateData( ){
+        Bundle args=getParentFragment().getArguments();
+        if(args!=null){
+            mChapterList=args.getParcelableArrayList("chapters_list");
+            initCalendar();
+            updateCalendar(currentDate);
+        }
     }
 }

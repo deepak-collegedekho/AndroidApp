@@ -73,9 +73,9 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
         convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_syllabus_units, parent, false);
         parentViewHolder = new ParentViewHolder();
         parentViewHolder.parentUnitLabel = (TextView) convertView.findViewById(R.id.syllabus_units_name);
+        parentViewHolder.subPercentage=(TextView)convertView.findViewById(R.id.sub_percentage);
         parentViewHolder.parentUnitCheckBox = (CheckBox) convertView.findViewById(R.id.syllabus_units_checkbox);
         parentViewHolder.parentUnitProgressBar = (ProgressBar) convertView.findViewById(R.id.syllabus_units_progress_bar);
-
         parentViewHolder.parentUnitCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -103,6 +103,7 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
         convertView.setTag(parentViewHolder);
         Units g = getGroup(groupPosition);
         parentViewHolder.parentUnitLabel.setText(g.getUnit_name());
+        parentViewHolder.subPercentage.setText(String.valueOf(g.getUnit_done_percent()));
         parentViewHolder.parentUnitProgressBar.setProgress(g.getUnit_done_percent());
         parentViewHolder.parentUnitCheckBox.setChecked(g.getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
         ((TextView) convertView.findViewById(R.id.indicator))
@@ -207,6 +208,7 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
 
     static class ParentViewHolder {
         TextView parentUnitLabel;
+        TextView subPercentage;
         ProgressBar parentUnitProgressBar;
         CheckBox parentUnitCheckBox;
     }
