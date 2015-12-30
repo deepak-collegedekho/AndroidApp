@@ -21,6 +21,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ArticleListAdapter;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.News;
+import com.collegedekho.app.listener.OnArticleSelectListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
@@ -37,7 +38,7 @@ import java.util.TimeZone;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link OnArticleSelectedListener} interface
+ * {@link OnArticleSelectListener} interface
  * to handle interaction events.
  * Use the {@link ArticleFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -121,7 +122,7 @@ public class ArticleFragment extends BaseFragment {
         super.onAttach(context);
         try {
             if(context instanceof  MainActivity)
-                listener = (OnArticleSelectedListener)context;
+                listener = (OnArticleSelectListener)context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnArticleSelectedListener");
@@ -288,10 +289,4 @@ public class ArticleFragment extends BaseFragment {
 
     }
 
-
-    public interface OnArticleSelectedListener extends  BaseListener{
-        void onArticleSelected(Articles article, boolean flag);
-            @Override
-        void onEndReached(String next, int type);
-    }
 }

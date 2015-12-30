@@ -18,13 +18,13 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.adapter.NewsListAdapter;
+import com.collegedekho.app.adapter.ArticleListAdapter;
+import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.News;
-import com.collegedekho.app.listener.OnNewsSelectListener;
+import com.collegedekho.app.listener.OnArticleSelectListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
-import com.collegedekho.app.widget.DividerItemDecoration;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,29 +38,29 @@ import java.util.TimeZone;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link OnNewsSelectListener} interface
+ * {@link OnArticleSelectListener} interface
  * to handle interaction events.
- * Use the {@link NewsFragment#newInstance} factory method to
+ * Use the {@link ArticleFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class InstituteNewsFragment extends BaseFragment  {
-    private static final String ARG_NEWS = "news";
+public class InstituteArticleFragment extends BaseFragment {
+    private static final String ARG_ARCTICLE = "article";
 
-    public static final String TITLE = "News";
-    private ArrayList<News> mNewsList;
+    public static final String TITLE = "Article";
+    private ArrayList<Articles> mArticlesList;
     private String mTitle;
-    private NewsListAdapter mAdapter;
+    private ArticleListAdapter mAdapter;
     private int mViewType = Constants.VIEW_INTO_LIST;
-    private News mNews;
+    private Articles mArticle;
 
-    public InstituteNewsFragment() {
+    public InstituteArticleFragment() {
         // Required empty public constructor
     }
 
-    public static InstituteNewsFragment newInstance(ArrayList<News> news, String title, String next) {
-        InstituteNewsFragment fragment = new InstituteNewsFragment();
+    public static InstituteArticleFragment newInstance(ArrayList<Articles> article, String title, String next) {
+        InstituteArticleFragment fragment = new InstituteArticleFragment();
         Bundle args = new Bundle();
-        args.putParcelableArrayList(ARG_NEWS, news);
+        args.putParcelableArrayList(ARG_ARCTICLE, article);
         args.putString(ARG_TITLE, title);
         args.putString(ARG_NEXT, next);
         fragment.setArguments(args);
@@ -71,51 +71,50 @@ public class InstituteNewsFragment extends BaseFragment  {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.mNewsList = getArguments().getParcelableArrayList(ARG_NEWS);
+            this.mArticlesList = getArguments().getParcelableArrayList(ARG_ARCTICLE);
             this.mTitle = getArguments().getString(ARG_TITLE);
             this.mNextUrl = getArguments().getString(ARG_NEXT);
-            listType = Constants.NEWS_TYPE;
-
+            listType = Constants.ARTICLES_TYPE;
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_news, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_article, container, false);
         progressBarLL = (LinearLayout)rootView.findViewById(R.id.progressBarLL);
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.article_list_recyclerView);
+
 
         (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
         (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
-        (rootView).findViewById(R.id.news_detail_layout).setOnClickListener(this);
+        (rootView).findViewById(R.id.article_detail_layout).setOnClickListener(this);
 
-        if(this.mViewType == Constants.VIEW_INTO_GRID) {
-            layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-            rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
-            int padd = Utils.getPadding(getContext(), 60);
+        if(mViewType == Constants.VIEW_INTO_GRID) {
+            layoutManager =new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+            rootView.findViewById(R.id.article_detail_scrollView).setVisibility(View.VISIBLE);
             progressBarLL.setGravity(Gravity.RIGHT);
-            progressBarLL.setPadding(0, 0, 0, padd);
-
+            int padd = Utils.getPadding(getContext(), 60);
+            progressBarLL.setPadding(0,0,0, padd);
         }
         else {
-            layoutManager =new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-            rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
+            rootView.findViewById(R.id.article_detail_scrollView).setVisibility(View.GONE);
+            layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
             progressBarLL.setGravity(Gravity.CENTER);
-            progressBarLL.setPadding(0, 0, 0, 0);
+            progressBarLL.setPadding(0,0,0, 0);
         }
         recyclerView.setLayoutManager(layoutManager);
         updateViewTypeIcon(rootView, this.mViewType);
-
-        this.mAdapter = new NewsListAdapter(getActivity(), new ArrayList<News>(), mViewType);
+        this.mAdapter = new ArticleListAdapter(getActivity(), new ArrayList<Articles>(), mViewType);
         recyclerView.setAdapter(this.mAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(scrollListener);
 
-        mUpdateNewsListAdapter(rootView);
+        mUpdateArticleListAdapter(rootView);
         return rootView;
     }
+
 
 
     @Override
@@ -123,17 +122,17 @@ public class InstituteNewsFragment extends BaseFragment  {
         super.onAttach(context);
         try {
             if(context instanceof  MainActivity)
-                listener = (OnNewsSelectListener)context;
+                listener = (OnArticleSelectListener)context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnNewsSelectedListener");
+                    + " must implement OnArticleSelectedListener");
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(ARG_NEWS, this.mNewsList);
+        outState.putParcelableArrayList(ARG_ARCTICLE, this.mArticlesList);
         outState.putString(ARG_TITLE, this.mTitle);
         outState.putString(ARG_NEXT, this.mNextUrl);
     }
@@ -153,140 +152,122 @@ public class InstituteNewsFragment extends BaseFragment  {
                 View rootView = getView();
                 if(rootView != null && mViewType != Constants.VIEW_INTO_GRID) {
                     this.mViewType = Constants.VIEW_INTO_GRID;
-                    rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
-                    RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
+                    rootView.findViewById(R.id.article_detail_scrollView).setVisibility(View.VISIBLE);
+                    RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.article_list_recyclerView);
                     layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
                     recyclerView.setLayoutManager(layoutManager);
-                    this.mAdapter = new NewsListAdapter(getActivity(), this.mNewsList, Constants.VIEW_INTO_GRID);
+                    this.mAdapter = new ArticleListAdapter(getActivity(), this.mArticlesList, Constants.VIEW_INTO_GRID);
                     recyclerView.setAdapter(this.mAdapter);
                     recyclerView.setHasFixedSize(true);
-                    int padd = Utils.getPadding(getContext(), 60);
                     progressBarLL.setGravity(Gravity.RIGHT);
+                    int padd = Utils.getPadding(getContext(), 60);
                     progressBarLL.setPadding(0, 0, 0, padd);
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
-                    this.mUpdateNewsDetail(rootView, this.mNewsList.get(0));
                     recyclerView.addOnScrollListener(scrollListener);
+                    this.mUpdateArticleDetail(rootView, this.mArticlesList.get(0));
                 }
                 break;
             case R.id.view_into_list:
                 View rootView1 = getView();
                 if(rootView1 != null && mViewType != Constants.VIEW_INTO_LIST) {
                     this.mViewType = Constants.VIEW_INTO_LIST;
-                    rootView1.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
-                    RecyclerView recyclerView1 = (RecyclerView) rootView1.findViewById(R.id.news_list_recyclerView);
+                    rootView1.findViewById(R.id.article_detail_scrollView).setVisibility(View.GONE);
+                    RecyclerView recyclerView1 = (RecyclerView) rootView1.findViewById(R.id.article_list_recyclerView);
                     layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
                     recyclerView1.setLayoutManager(layoutManager);
-                    this.mAdapter = new NewsListAdapter(getActivity(), this.mNewsList, Constants.VIEW_INTO_LIST);
+                    this.mAdapter = new ArticleListAdapter(getActivity(), this.mArticlesList, Constants.VIEW_INTO_LIST);
                     recyclerView1.setAdapter(this.mAdapter);
                     recyclerView1.setHasFixedSize(true);
                     progressBarLL.setGravity(Gravity.CENTER);
                     progressBarLL.setPadding(0, 0, 0, 0);
-                    recyclerView1.setItemAnimator(new DefaultItemAnimator());
                     recyclerView1.addOnScrollListener(scrollListener);
+                    recyclerView1.setItemAnimator(new DefaultItemAnimator());
                 }
                 break;
-            case R.id.news_detail_layout:
+            case R.id.article_detail_layout:
 
-                (( MainActivity)getActivity()).onNewsSelected(this.mNews, true);
+                (( MainActivity)getActivity()).onArticleSelected(this.mArticle, true);
                 break;
             default:
                 break;
-        }
 
+        }
         updateViewTypeIcon(getView(), this.mViewType);
     }
-
-
-
-
-    public void updateNews(News news)
+    public void updateArticle(Articles article)
     {
-        mUpdateNewsDetail(getView(), news);
+        mUpdateArticleDetail(getView(), article);
     }
 
-    public void updateNewsList(ArrayList<News> newslist, String next) {
+    public void updateArticleList(ArrayList<Articles> articlelist, String next) {
         progressBarLL.setVisibility(View.GONE);
-        this.mNewsList = newslist;
-        mUpdateNewsListAdapter(getView());
+        this.mArticlesList = articlelist;
+        mUpdateArticleListAdapter(getView());
         loading = false;
         mNextUrl = next;
     }
 
 
-
-    private void mUpdateNewsListAdapter(View view){
+    private void mUpdateArticleListAdapter(View view){
         if(view == null)return;
-
-        if (this.mNewsList == null || this.mNewsList.size() <= 0) {
+        if (mArticlesList == null || mArticlesList.size() <= 0) {
             view.findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
+            view.findViewById(R.id.article_list_recyclerView).setVisibility(View.GONE);
+            view.findViewById(R.id.article_detail_scrollView).setVisibility(View.GONE);
             view.findViewById(R.id.view_into_grid_list).setVisibility(View.GONE);
         }else{
             view.findViewById(android.R.id.empty).setVisibility(View.GONE);
+            view.findViewById(R.id.article_list_recyclerView).setVisibility(View.VISIBLE);
             view.findViewById(R.id.view_into_grid_list).setVisibility(View.VISIBLE);
 
             if(this.mViewType == Constants.VIEW_INTO_GRID)
             {
-                view.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
-                if(mNewsList != null && !mNewsList.isEmpty())
-                    mUpdateNewsDetail(view, mNewsList.get(0));
+                view.findViewById(R.id.article_detail_scrollView).setVisibility(View.VISIBLE);
+                if(mArticlesList != null && !mArticlesList.isEmpty())
+                    mUpdateArticleDetail(view, mArticlesList.get(0));
             }
             else{
-                this.mAdapter.updateNewsAdapter(this.mNewsList);
+                this.mAdapter.updateArticleAdapter(this.mArticlesList);
                 this.mAdapter.notifyDataSetChanged();
+
             }
         }
-
-
-
     }
-
     /**
-     * This method is used to display detail of News
-     * @param view
-     * @param news
+     * This method update article details
+     * @param article
      */
-    private void mUpdateNewsDetail(View view, News news)
+    private void mUpdateArticleDetail(View view,  Articles article)
     {
-        if(view == null || news == null)return;
-        this.mNews= news;
-        ((TextView) view.findViewById(R.id.news_title)).setText(Html.fromHtml(news.title));
-        ((TextView) view.findViewById(R.id.news_content)).setText(Html.fromHtml(news.content));
-        //((TextView) view.findViewById(R.id.news_title)).setTypeface(Utils.getTypeFace(getActivity(), TypeFaceTypes.GOTHAMBOOK));
-        //((TextView) view.findViewById(R.id.news_content)).setTypeface(Utils.getTypeFace(getActivity(), TypeFaceTypes.DROID_SERIF_BOLD));
-
-        if (news.image != null && !news.image.isEmpty()) {
-            ((NetworkImageView) view.findViewById(R.id.news_college_banner)).setImageUrl(news.image, MySingleton.getInstance(getActivity()).getImageLoader());
-            view.findViewById(R.id.news_college_banner).setVisibility(View.VISIBLE);
+        if(view == null || article == null)return;
+        this.mArticle = article;
+        ((TextView) view.findViewById(R.id.article_title)).setText(article.title);
+        ((TextView) view.findViewById(R.id.article_content)).setText(Html.fromHtml(article.content));
+        if (article.image != null && !article.image.isEmpty()) {
+            ((NetworkImageView) view.findViewById(R.id.article_college_banner)).setImageUrl(article.image, MySingleton.getInstance(getActivity()).getImageLoader());
+            view.findViewById(R.id.article_college_banner).setVisibility(View.VISIBLE);
         }else
-            view.findViewById(R.id.news_college_banner).setVisibility(View.GONE);
+            view.findViewById(R.id.article_college_banner).setVisibility(View.GONE);
         String d = "";
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date date = sdf.parse(news.published_on);
+            Date date = sdf.parse(article.published_on);
             sdf.applyPattern("MMMM d, yyyy KK:mm a");
             d = sdf.format(date);
         } catch (ParseException e) {
-            Log.e(TAG, "Date format unknown: " + news.published_on);
+            Log.e(TAG, "Date format unknown: " + article.published_on);
 //                Utils.sendException(t, TAG, "DateFormatUnknown", r.getAddedOn());
         }
-        ((TextView) view.findViewById(R.id.news_pubdate)).setText(d);
-        ArrayList<News> newList = new ArrayList<>();
-        for (News n : this.mNewsList) {
-            if(n.getId() == news.getId())continue;
-            newList.add(n);
+        ((TextView) view.findViewById(R.id.article_pubdate)).setText(d);
+        ArrayList<Articles> articleList = new ArrayList<>();
+        for (Articles n : mArticlesList) {
+            if(n.getId() == article.getId())continue;
+            articleList.add(n);
         }
-        view.findViewById(R.id.news_detail_scrollView).scrollTo(0, 0);
-
-        this.mAdapter.updateNewsAdapter(newList);
+        view.findViewById(R.id.article_detail_scrollView).scrollTo(0, 0);
+        mAdapter.updateArticleAdapter(articleList);
 
     }
 
-    /*public interface OnNewsSelectedListener extends  BaseListener{
-        void onNewsSelected(News news, boolean flag);
-
-        @Override
-        void onEndReached(String next, int type);
-    }*/
 }

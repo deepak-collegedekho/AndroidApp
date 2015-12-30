@@ -12,6 +12,7 @@ import com.collegedekho.app.entities.Placements;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.fragment.ArticleFragment;
+import com.collegedekho.app.fragment.InstituteArticleFragment;
 import com.collegedekho.app.fragment.InstituteCoursesFragment;
 import com.collegedekho.app.fragment.InstituteInfrastructureFragment;
 import com.collegedekho.app.fragment.InstituteNewsFragment;
@@ -40,8 +41,8 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     private int count = 6;
     private InstituteCoursesFragment mCourseFragment;
     private InstituteOverviewFragment mOverViewFragment;
-    private NewsFragment mNewsFragment;
-    private ArticleFragment mArticleFragment;
+    private InstituteNewsFragment mNewsFragment;
+    private InstituteArticleFragment mArticleFragment;
     private ArrayList<ArrayList<InstituteCourse>> mCourses;
 
     public InstitutePagerAdapter(FragmentManager fragmentManager, Institute institute) {
@@ -67,10 +68,10 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
                 this.mCourseFragment = InstituteCoursesFragment.newInstance(this.mCourses, this.mInstitute);
                 return this.mCourseFragment;
             case NEWS_POSITION:
-                this.mNewsFragment = NewsFragment.newInstance(new ArrayList<News>(),"", null);
+                this.mNewsFragment = InstituteNewsFragment.newInstance(new ArrayList<News>(),"", null);
                 return this.mNewsFragment;
             case ARTICLE_POSITION:
-                this.mArticleFragment = ArticleFragment.newInstance(new ArrayList<Articles>(),"", null);
+                this.mArticleFragment = InstituteArticleFragment.newInstance(new ArrayList<Articles>(),"", null);
                 return this.mArticleFragment;
             case PLACEMENT_POSITION:
                 InstitutePlacementFragment frag = InstitutePlacementFragment.newInstance(this.p, this.mInstitute);
@@ -143,8 +144,8 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         if(mArticleFragment != null)
             mArticleFragment.updateArticleList(artiles, next);
     }
-/*
-    public void updateNews(News news) {
+
+   public void updateNews(News news) {
         if(mNewsFragment != null)
             mNewsFragment.updateNews(news);
     }
@@ -152,5 +153,5 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     public void updateArticle(Articles article) {
         if(mArticleFragment != null)
             mArticleFragment.updateArticle(article);
-    }*/
+    }
 }

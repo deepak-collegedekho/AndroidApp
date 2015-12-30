@@ -17,6 +17,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.fragment.NewsFragment;
+import com.collegedekho.app.listener.OnNewsSelectListener;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.resource.Constants;
@@ -65,7 +66,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
        View  rootView = LayoutInflater.from(this.mContext).inflate( layoutID,parent, false);
         try {
-            return new NewsHolder(rootView, (NewsFragment.OnNewsSelectedListener) mContext);
+            return new NewsHolder(rootView, (OnNewsSelectListener) mContext);
         } catch (ClassCastException e) {
             throw new ClassCastException(mContext.toString()
                     + " must implement OnNewsSelectedListener");
@@ -142,11 +143,11 @@ public class NewsListAdapter extends RecyclerView.Adapter {
         TextView newsPubDate;
         TextView newsContent;
         NetworkImageView newsImage;
-        NewsFragment.OnNewsSelectedListener mListener;
+        OnNewsSelectListener mListener;
         RelativeLayout container;
         TextView streamTypeHeader;
 
-        public NewsHolder(View itemView, NewsFragment.OnNewsSelectedListener listener) {
+        public NewsHolder(View itemView, OnNewsSelectListener listener) {
             super(itemView);
 
             if(mViewType == Constants.VIEW_INTO_LIST) {

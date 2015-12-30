@@ -113,7 +113,7 @@ public class NewsDetailFragment extends BaseFragment {
         }
         ((TextView) rootView.findViewById(R.id.textview_news_pubdate)).setText(d);
 
-        ArrayList<News> similarNews =  new ArrayList<News>();
+        ArrayList<News> similarNews =  new ArrayList<>();
         ArrayList<String> relatedNewsIds = mNews.getSimilarNewsIds();
         if (relatedNewsIds != null)
         {

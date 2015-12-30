@@ -216,6 +216,15 @@ public class InstituteDetailFragment extends BaseFragment {
         mDetailsAdapter.updateInstituteNews( this.mInstituteNewsList, next);
     }
 
+     public void updateNews(News news) {
+        if(mDetailsAdapter != null)
+            mDetailsAdapter.updateNews(news);
+    }
+
+    public void updateArticle(Articles article) {
+        if(mDetailsAdapter != null)
+            mDetailsAdapter.updateArticle(article);
+    }
 
     public void updateInstituteArticle(ArrayList<Articles> articleList, String next) {
         this.mInstituteArticleList = articleList;
@@ -396,16 +405,6 @@ public class InstituteDetailFragment extends BaseFragment {
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
     }
-/*
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser) {
-            MainActivity mMainActivity = (MainActivity) this.getActivity();
-            if (mMainActivity != null)
-                mMainActivity.currentFragment = this;
-        }
-    }*/
 
     public interface OnInstituteFooterItemSelected{
         void onFooterVideosSelected(ArrayList<String> videos);

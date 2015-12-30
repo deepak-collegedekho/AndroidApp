@@ -17,6 +17,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.fragment.ArticleFragment;
+import com.collegedekho.app.listener.OnArticleSelectListener;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.resource.Constants;
@@ -61,7 +62,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
 
         View  rootView = LayoutInflater.from(this.mContext).inflate( layoutID,parent, false);
         try {
-            return new ArticleHolder(rootView, (ArticleFragment.OnArticleSelectedListener) mContext);
+            return new ArticleHolder(rootView, (OnArticleSelectListener) mContext);
         } catch (ClassCastException e) {
             throw new ClassCastException(mContext.toString()
                     + " must implement OnArticleSelectedListener");
@@ -141,11 +142,11 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
         TextView articlePubDate;
         TextView articleContent;
         NetworkImageView articleImage;
-        ArticleFragment.OnArticleSelectedListener mListener;
+        OnArticleSelectListener mListener;
         RelativeLayout container;
         TextView streamTypeHeader;
 
-        public ArticleHolder(View itemView, ArticleFragment.OnArticleSelectedListener listener) {
+        public ArticleHolder(View itemView, OnArticleSelectListener listener) {
             super(itemView);
 
             if (mViewType == Constants.VIEW_INTO_LIST) {

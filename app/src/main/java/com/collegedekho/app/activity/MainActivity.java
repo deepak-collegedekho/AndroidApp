@@ -108,6 +108,8 @@ import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragme
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
+import com.collegedekho.app.listener.OnArticleSelectListener;
+import com.collegedekho.app.listener.OnNewsSelectListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.utils.NetworkUtils;
@@ -183,12 +185,12 @@ public class MainActivity extends AppCompatActivity
         InstituteListFragment.OnInstituteSelectedListener,
         InstituteShortlistFragment.OnShortlistedInstituteSelectedListener,
         OnApplyClickedListener, WidgetListFragment.OnWidgetInteractionListener,
-        NewsFragment.OnNewsSelectedListener, InstituteQnAFragment.OnQuestionAskedListener,
+        OnNewsSelectListener, InstituteQnAFragment.OnQuestionAskedListener,
         FilterFragment.OnFilterInteractionListener, InstituteOverviewFragment.OnInstituteShortlistedListener,
         QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener,
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
-        MyFutureBuddiesFragment.OnMyFBInteractionListener,ArticleFragment.OnArticleSelectedListener,
+        MyFutureBuddiesFragment.OnMyFBInteractionListener,OnArticleSelectListener,
         ProfileFragment1.onProfileUpdateListener,
         LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener,
         InstituteDetailFragment.OnInstituteFooterItemSelected, UserEducationFragment.OnUserEducationInteractionListener,
@@ -759,7 +761,7 @@ public class MainActivity extends AppCompatActivity
             this.mNewsList.addAll(news);
             this.mParseSimilarNews(this.mNewsList);
 
-            if (this.mNewsList != null &&currentFragment instanceof NewsFragment) {
+            if (this.mNewsList != null &&   currentFragment instanceof NewsFragment) {
                 ((NewsFragment) currentFragment).updateNewsList(new ArrayList<>(this.mNewsList), this.next);
             }
             if (this.mNewsList != null && currentFragment instanceof InstituteDetailFragment) {
@@ -781,7 +783,7 @@ public class MainActivity extends AppCompatActivity
 
             this.mParseSimilarArticle(this.mArticlesList);
             if (this.mArticlesList != null && currentFragment instanceof ArticleFragment) {
-                ((ArticleFragment) currentFragment).updateArticleList(new ArrayList<>(articles), next);
+                ((ArticleFragment) currentFragment).updateArticleList(new ArrayList<>(this.mArticlesList), next);
             }
 
             if (this.mArticlesList != null && currentFragment instanceof InstituteDetailFragment) {
@@ -952,10 +954,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mDisplayInstitute(int position) {
-
-
-            this.mInstitute = this.mInstituteList.get(position);
-          int  id = this.mInstituteList.get(position).getId();
+        this.mInstitute = this.mInstituteList.get(position);
+        int  id = this.mInstituteList.get(position).getId();
 
         final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE);
         if (fragment == null)
@@ -1116,7 +1116,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
                 this.mCurrentTitle = "Recommended Institutes";
-                this.mDisplayInstituteList(response, true, false );
+                this.mDisplayInstituteList(response, false, false );
                 break;
             case Constants.SEARCHED_INSTITUTES:
                 this.mCurrentTitle = "Institutes";
