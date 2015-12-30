@@ -1,6 +1,5 @@
 package com.collegedekho.app.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;

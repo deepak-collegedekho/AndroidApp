@@ -8,8 +8,6 @@ import com.collegedekho.app.listener.PsychometricAnalysisPageListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-
 /**
  * Created by harshvardhan on 06/08/15.
  */

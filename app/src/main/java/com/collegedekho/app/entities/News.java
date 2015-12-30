@@ -3,8 +3,6 @@ package com.collegedekho.app.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.lang.Integer;
-import java.lang.String;
 import java.util.ArrayList;
 
 /**

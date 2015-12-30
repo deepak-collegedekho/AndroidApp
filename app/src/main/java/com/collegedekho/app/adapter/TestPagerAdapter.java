@@ -4,8 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.collegedekho.app.entities.InstituteCourse;
-import com.collegedekho.app.fragment.CourseFragment;
 import com.collegedekho.app.fragment.TestFragment;
 
 import java.util.ArrayList;

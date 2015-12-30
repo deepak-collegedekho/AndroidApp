@@ -5,13 +5,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.collegedekho.app.entities.ChapterDetails;
 import com.collegedekho.app.entities.PsychometricTestQuestion;
-import com.collegedekho.app.fragment.CalendarFragment;
 import com.collegedekho.app.fragment.PsychometricTestFragment;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 /**
  * Created by Bashir on 17/12/15.

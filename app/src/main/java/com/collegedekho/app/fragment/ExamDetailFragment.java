@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.ExamDetail;
-import com.collegedekho.app.entities.ExamSummary;
 
 import java.util.ArrayList;
 

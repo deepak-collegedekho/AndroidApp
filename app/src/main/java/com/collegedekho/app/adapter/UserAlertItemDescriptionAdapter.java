@@ -6,11 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.entities.ChapterDetails;
 import com.collegedekho.app.entities.MyAlertDateDescription;
 import com.collegedekho.app.utils.Utils;
 

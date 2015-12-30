@@ -3,9 +3,6 @@ package com.collegedekho.app.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /**
  * @author Harsh Vardhan
  *         Created: 16/12/15

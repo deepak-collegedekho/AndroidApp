@@ -1,7 +1,5 @@
 package com.collegedekho.app.listener;
 
-import android.net.Uri;
-
 /**
  * Created by harshvardhan on 14/08/15.
  */

@@ -1,24 +1,18 @@
 package com.collegedekho.app.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.PsychometricTestAdapter;
 import com.collegedekho.app.entities.PsychometricTestQuestion;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by Bashir on 11/12/15.

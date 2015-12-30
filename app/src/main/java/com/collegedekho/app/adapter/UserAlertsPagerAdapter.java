@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.MyAlertDate;
 import com.collegedekho.app.entities.MyAlertDateDescription;
 import com.collegedekho.app.fragment.UserAlertDetailsFragment;

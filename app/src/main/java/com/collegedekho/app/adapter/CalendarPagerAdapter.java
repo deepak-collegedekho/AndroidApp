@@ -6,8 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.collegedekho.app.entities.ChapterDetails;
-import com.collegedekho.app.entities.Chapters;
-import com.collegedekho.app.entities.MyAlertDate;
 import com.collegedekho.app.fragment.CalendarFragment;
 
 import java.util.ArrayList;

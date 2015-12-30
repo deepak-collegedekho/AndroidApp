@@ -14,16 +14,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.CoverFlowAdapter;
+import com.collegedekho.app.adapter.InstitutePagerAdapter;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.GameEntity;
-import com.collegedekho.app.entities.News;
-import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.adapter.InstitutePagerAdapter;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
+import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.QnAQuestions;
+import com.collegedekho.app.resource.Constants;
 import com.fasterxml.jackson.jr.ob.JSON;
 
 import org.json.JSONException;
