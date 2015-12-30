@@ -21,6 +21,7 @@ public class UserEntranceFragment extends  BaseFragment {
     private static final String PARAM1="param1";
 
     private ArrayList<String> mTestList;
+    private boolean IS_TUTE_COMPLETED = true;
 
     public static UserEntranceFragment newInstance(ArrayList<String> testList) {
         UserEntranceFragment fragment = new UserEntranceFragment();

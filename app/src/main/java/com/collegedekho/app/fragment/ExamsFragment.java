@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -34,6 +35,7 @@ public class ExamsFragment extends BaseFragment {
 
     private ArrayList<Exam> mExamList ;
     private OnExamsSelectListener mListener;
+    private boolean IS_TUTE_COMPLETED = true;
 
     public ExamsFragment() {
         // required empty Constructor
@@ -62,6 +64,8 @@ public class ExamsFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_user_exams, container, false);
+        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.EXAMS_SCREEN_TUTE, false);
+
         //((TextView)rootView.findViewById(R.id.points_test_view)).setText("YOU HAVE EARNED FOR SHARING YOUR DETAIL");
         RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.exams_recycle_view);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),6,GridLayoutManager.VERTICAL,false);
@@ -86,6 +90,17 @@ public class ExamsFragment extends BaseFragment {
         ExamsAdapter mAdapter = new ExamsAdapter(getActivity(), this.mExamList);
         recyclerView.setAdapter(mAdapter);
         rootView.findViewById(R.id.exams_submit_button).setOnClickListener(this);
+
+        rootView.findViewById(R.id.exam_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                v.setVisibility(View.GONE);
+                IS_TUTE_COMPLETED = true;
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.EXAMS_SCREEN_TUTE, true).apply();
+                return false;
+            }
+        });
 
         return rootView;
     }
@@ -116,6 +131,16 @@ public class ExamsFragment extends BaseFragment {
 
         if (mainActivity != null)
             mainActivity.currentFragment = this;
+
+
+        View view =  getView();
+        if(view != null ){
+            if(!IS_TUTE_COMPLETED) {
+                view.findViewById(R.id.exam_tour_guide_image).setVisibility(View.VISIBLE);
+            }else {
+                view.findViewById(R.id.exam_tour_guide_image).setVisibility(View.GONE);
+            }
+        }
 
     }
     @Override

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -41,6 +42,7 @@ public class TabFragment extends  BaseFragment{
     private ExamDetail mExamDetail;
     private ViewPager mExamTabPager  = null;
     private boolean isFistTime = false;
+    private boolean IS_TUTE_COMPLETED = true;
 
     public static TabFragment newInstance(int tabPosoition,ArrayList<ExamDetail> examList) {
         TabFragment fragment = new TabFragment();
@@ -70,6 +72,7 @@ public class TabFragment extends  BaseFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
+
 
         mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
         TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
@@ -147,6 +150,18 @@ public class TabFragment extends  BaseFragment{
         rootView.findViewById(R.id.home_widget_second).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_third).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_fourth).setOnClickListener(this);
+
+        rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                v.setVisibility(View.GONE);
+                IS_TUTE_COMPLETED = true;
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.PREP_BUDDY_SCREEN_TUTE, true).apply();
+                return false;
+            }
+        });
+
 
         return rootView;
     }
@@ -237,6 +252,13 @@ public class TabFragment extends  BaseFragment{
 
 
         if(this.selectedTabPosition == 1){
+            IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PREP_BUDDY_SCREEN_TUTE, false);
+            if(view != null ){
+                if(!IS_TUTE_COMPLETED)
+                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
+                else
+                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+            }
             firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
             secondSubMenuIV.setImageResource(R.drawable.ic_syllabus);
             thirdSubMenuIV.setImageResource(R.drawable.ic_challenges);

@@ -63,7 +63,6 @@ public class Constants
     public static final String BASE_URL = IP + "/api/1/";
     public static final String TAG_LOAD_COURSES = "load_courses";
     public static final String TAG_APPLIED_COURSE = "applied_course";
-    public static final String TAG_LOAD_HOME = "home";
     public static final String TAG_POST_QUESTION = "post_question";
     public static final String TAG_LOAD_FILTERS = "load_filters";
     public static final String TAG_RESOURCE_URI = "resource_uri";
@@ -114,11 +113,9 @@ public class Constants
     public static final String TAG_FRAGMENT_MY_FB = "fragment_my_fb";
     public static final String TAG_FRAGMENT_MY_FB_ENUMERATION = "fragment_my_fb_enumeration";
     public static final String TAG_FRAGMENT_STREAMS = "fragment_streams";
-    public static final String TAG_FRAGMENT_HOME = "fragment_home";
     public static final String TAG_FRAGMENT_PROFILE = "fragment_profile1";
     public static final String TAG_FRAGMENT_QNA_ANSWERS_LIST = "fragment_qna_answers_list";
     public static final String TAG_FRAGMENT_USER_EDUCATION = "fragment_user_education";
-    public static final String KEY_USER_LEARNED_TOUCH = "user_touch";
     public static final String TAG_FRAGMENT_SIGNIN = "fragment_signin";
     public static final String TAG_FRAGMENT_LOGIN= "fragment_login";
     public static final String METHOD_GET = "GET";
@@ -129,8 +126,6 @@ public class Constants
     public static final int SHORTLISTED_NO = 0;
     public static final int BOOLEAN_TRUE = 1;
     public static final int BOOLEAN_FALSE = 0;
-    public static final int MAIN_ANIMATION_TIME = 6500;
-    public static final int SECONDARY_ANIMATION_TIME = 2000;
     public static final String SELECTED_FILTERS = "selected_filters";
     public static final String TAG_QUESTION_LIKE_DISLIKE = "tag_question_like_dislike";
     public static final String TAG_EXAM_SUMMARY = "exam_summary";
@@ -158,10 +153,6 @@ public class Constants
 
     public static final HashMap<Integer, Integer> FilterCategoryMap = new HashMap<Integer, Integer>();
 
-   /* public static final int TYPE_NEWS = 1;
-    public static final int TYPE_SIMILARLAR_NEWS = 2;
-    public static final int TYPE_ARTCLES = 1;
-    public static final int TYPE_SIMILARLAR_ARTICLES = 2;*/
 
     public static final int VIEW_INTO_GRID  = 1;
     public static final int VIEW_INTO_LIST  = 2;
@@ -211,7 +202,6 @@ public class Constants
     public static final String USER_CURRENT_LEVEL_NAME  = "current_level_name";
     public static final String USER_EDUCATION_SET = "education_set";
     public static final String USER_EXAMS_SET = "exams_set";
-    public static final String USER_RESOURCE_URI = "user";
     public static final String USER_PHONE       = "phone_no";
     public static final String USER_IMAGE       = "user_image";
     public static final String USER_VERIFIED= "verified";
@@ -324,4 +314,15 @@ public class Constants
     public static final String LAST_SCREEN_NAME = "last_screen_name";
     public static final String TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS = "time_lapsed_since_last_screen_name_in_ms";
 
+    // for app tutorials
+
+    public static final String KEY_USER_LEARNED_TOUCH   = "user_touch";
+    public static final String PROFILE_SCREEN_TUTE      = "profile_tute";
+    public static final String EDUCATION_SCREEN_TUTE    = "education_tute";
+    public static final String EXAMS_SCREEN_TUTE        = "exams_tute";
+    public static final String PREP_BUDDY_SCREEN_TUTE   = "prep_tute";
+    public static final String INSTITUTE_LIST_SCREEN_TUTE = "institute_tute";
+    public static final String MY_FB_SCREEN_TUTE        = "myfb_tute";
+
+    public static boolean IS_RECOMENDED_COLLEGE = false;
 }

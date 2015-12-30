@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
      android:layout_width="match_parent"
     android:background="@color/app_background"
-    android:paddingTop="50dp"
     android:layout_height="match_parent">
 
     <TextView
@@ -13,6 +12,7 @@
         android:textStyle="bold"
         android:layout_below="@id/points_layout"
         android:textSize="17sp"
+        android:paddingTop="50dp"
         android:paddingRight="@dimen/m40dp"
         android:paddingLeft="@dimen/m40dp"
         android:paddingBottom="@dimen/m15dp"
@@ -49,5 +49,18 @@
             android:gravity="center"
             android:scrollbars="none"
            />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/exam_tour_guide_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:clickable="true"
+            android:src="@drawable/ic_exam_tute" />
+
+    </FrameLayout>
 
 </RelativeLayout>

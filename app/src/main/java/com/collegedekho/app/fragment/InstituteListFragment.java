@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -53,6 +54,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private boolean filterAllowed;
     private int filterCount;
     private TextView mEmptyTextView;
+    private boolean IS_TUTE_COMPLETED = true;
 
     private  int mViewType = Constants.VIEW_INTO_LIST;
     private ContactsCompletionView mCompletionView;
@@ -94,6 +96,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_institute_listing, container, false);
+        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.INSTITUTE_LIST_SCREEN_TUTE, false);
 
         mCompletionView = (ContactsCompletionView)rootView.findViewById(R.id.searchView);
         mCompletionView.setAdapter(tolenAdapter);
@@ -162,6 +165,17 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                 return convertView;
             }
         };
+        rootView.findViewById(R.id.institute_list_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                v.setVisibility(View.GONE);
+                IS_TUTE_COMPLETED = true;
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.INSTITUTE_LIST_SCREEN_TUTE, true).apply();
+                return false;
+            }
+        });
+
 
         return rootView;
     }
@@ -213,6 +227,13 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         }
 
         updateFilterButton(filterCount);
+        View view =  getView();
+        if(view != null ){
+            if(!IS_TUTE_COMPLETED)
+                view.findViewById(R.id.institute_list_tour_guide_image).setVisibility(View.VISIBLE);
+            else
+                view.findViewById(R.id.institute_list_tour_guide_image).setVisibility(View.GONE);
+        }
     }
 
     public void clearList() {

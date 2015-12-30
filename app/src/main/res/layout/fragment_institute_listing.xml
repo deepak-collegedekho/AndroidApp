@@ -63,4 +63,18 @@
 
 
     <include layout="@layout/layout_progressbar"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/institute_list_tour_guide_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:clickable="true"
+            android:src="@drawable/ic_institute_tute" />
+
+    </FrameLayout>
 </RelativeLayout>

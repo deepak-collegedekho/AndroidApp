@@ -124,7 +124,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             this.mShortListTV.setText("Delete " + mInstitute.getShort_name() + " from your shortlist");
             this.mShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
         }*/
-        if(!isFilterAllowed){
+        if(!isFilterAllowed &&  !Constants.IS_RECOMENDED_COLLEGE){
             if(mInstitutes != null && mInstitutes.size() > position)
             {
                 mInstitutes.remove(position);

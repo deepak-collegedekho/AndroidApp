@@ -6,6 +6,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -28,7 +29,7 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
     private ArrayList<MyFutureBuddiesEnumeration> mFbEnumeration;
     private MyFBEnumerationAdapter mMyFBEnumerationAdapter;
     private TextView mEmptyTextView;
-    private MainActivity mMainActivity;
+    private boolean IS_TUTE_COMPLETED = true;
 
     public static MyFutureBuddiesEnumerationFragment newInstance(ArrayList<MyFutureBuddiesEnumeration> fbEnumeration, String next) {
         MyFutureBuddiesEnumerationFragment fragment = new MyFutureBuddiesEnumerationFragment();
@@ -58,6 +59,8 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_my_future_buddies_enumeration, container, false);
+        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.MY_FB_SCREEN_TUTE, false);
+
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
         this.progressBarLL = (LinearLayout) rootView.findViewById(R.id.progressBarLL);
 
@@ -82,6 +85,17 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
             this.mEmptyTextView.setVisibility(View.GONE);
             fbEnumerationView.setVisibility(View.VISIBLE);
         }
+
+        rootView.findViewById(R.id.myfb_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                v.setVisibility(View.GONE);
+                IS_TUTE_COMPLETED = true;
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.MY_FB_SCREEN_TUTE, true).apply();
+                return false;
+            }
+        });
 
         return rootView;
     }
@@ -115,10 +129,18 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
         super.onResume();
 
         //mark it current fragment here
-        this.mMainActivity = (MainActivity) this.getActivity();
+        MainActivity mMainActivity = (MainActivity) this.getActivity();
 
-        if (this.mMainActivity != null)
-            this.mMainActivity.currentFragment = this;
+        if (mMainActivity != null)
+            mMainActivity.currentFragment = this;
+
+        View view =  getView();
+        if(view != null ){
+            if(!IS_TUTE_COMPLETED)
+                view.findViewById(R.id.myfb_tour_guide_image).setVisibility(View.VISIBLE);
+            else
+                view.findViewById(R.id.myfb_tour_guide_image).setVisibility(View.GONE);
+        }
     }
 
     public void updateList(List<MyFutureBuddiesEnumeration> myfbenumrationList, String next) {

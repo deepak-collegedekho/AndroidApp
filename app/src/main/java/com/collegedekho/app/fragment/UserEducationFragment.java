@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,6 +20,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.entities.UserEducationStreams;
 import com.collegedekho.app.entities.UserEducationSublevels;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.NumberPicker;
 
 import java.util.ArrayList;
@@ -59,6 +61,8 @@ public class UserEducationFragment extends BaseFragment {
     private String[] stream_arrays ;
     final String[] marks_arrays = {"30-40%", "40-50%","50-60%","60-70%", "70-80%", "80-90%", "90-100%",};
 
+    private boolean IS_TUTE_COMPLETED = true;
+
     public UserEducationFragment() {
         // Required empty public constructor
     }
@@ -95,6 +99,7 @@ public class UserEducationFragment extends BaseFragment {
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_user_education, container, false);
+        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.EDUCATION_SCREEN_TUTE, false);
 
         TextView cdTextView = (TextView) rootView.findViewById(R.id.user_cd_recommendation_text);
         Spanned text = Html.fromHtml("GET <b><font color='#ff8d00'>C</font><font color='#1f2560'>D</font></b> <br>RECOMMEDATIONS");
@@ -156,7 +161,16 @@ public class UserEducationFragment extends BaseFragment {
         rootView.findViewById(R.id.is_preparing_for_exam).setOnClickListener(this);
         rootView.findViewById(R.id.is_not_preparing_for_exam).setOnClickListener(this);
         rootView.findViewById(R.id.education_submit_button).setOnClickListener(this);
+        rootView.findViewById(R.id.education_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
 
+                    v.setVisibility(View.GONE);
+                    IS_TUTE_COMPLETED = true;
+                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.EDUCATION_SCREEN_TUTE, true).apply();
+                return false;
+            }
+        });
         return rootView;
     }
 
@@ -184,6 +198,15 @@ public class UserEducationFragment extends BaseFragment {
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null)
             mainActivity.currentFragment = this;
+
+        View view =  getView();
+        if(view != null ){
+            if(!IS_TUTE_COMPLETED) {
+                view.findViewById(R.id.education_tour_guide_image).setVisibility(View.VISIBLE);
+            }else {
+                view.findViewById(R.id.education_tour_guide_image).setVisibility(View.GONE);
+            }
+        }
     }
 
     @Override

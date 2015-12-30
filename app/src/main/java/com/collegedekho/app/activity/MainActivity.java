@@ -1146,18 +1146,22 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.WIDGET_SHORTLIST_INSTITUTES:
                 this.mCurrentTitle = "WishList Institutes";
+                Constants.IS_RECOMENDED_COLLEGE = false;
                 this.mDisplayInstituteList(response, false, true);
                 break;
             case Constants.WIDGET_INSTITUTES:
                 this.mCurrentTitle = "Institutes";
+                Constants.IS_RECOMENDED_COLLEGE = false;
                 this.mDisplayInstituteList(response, true, true);
                 break;
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
                 this.mCurrentTitle = "Recommended Institutes";
+                Constants.IS_RECOMENDED_COLLEGE = true;
                 this.mDisplayInstituteList(response, false, false );
                 break;
             case Constants.SEARCHED_INSTITUTES:
                 this.mCurrentTitle = "Institutes";
+                Constants.IS_RECOMENDED_COLLEGE = false;
                 this.mDisplayInstituteList(response, true, true);
                 break;
 
