@@ -1,7 +1,6 @@
 package com.collegedekho.app.adapter;
 
 import android.app.Activity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

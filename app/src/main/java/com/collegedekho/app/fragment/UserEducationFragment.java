@@ -1,8 +1,6 @@
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -12,21 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.entities.UserEducationStreams;
 import com.collegedekho.app.entities.UserEducationSublevels;
-import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.NumberPicker;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 

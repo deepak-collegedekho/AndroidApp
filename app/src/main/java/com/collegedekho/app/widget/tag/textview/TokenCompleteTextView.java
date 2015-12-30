@@ -36,7 +36,6 @@ import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 
-import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.resource.Constants;
 
 import java.io.Serializable;

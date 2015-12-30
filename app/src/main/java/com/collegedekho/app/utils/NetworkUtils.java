@@ -17,10 +17,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.resource.ErrorCode;
-import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.resource.ErrorCode;
+import com.collegedekho.app.resource.MySingleton;
 import com.crashlytics.android.Crashlytics;
 
 import org.json.JSONException;

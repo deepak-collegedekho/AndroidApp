@@ -1,16 +1,11 @@
 package com.collegedekho.app.entities;
 
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.jr.ob.impl.DeferredMap;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 /**

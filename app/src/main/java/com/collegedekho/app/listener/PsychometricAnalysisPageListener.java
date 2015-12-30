@@ -3,8 +3,6 @@ package com.collegedekho.app.listener;
 
 import android.support.v4.app.Fragment;
 
-import java.util.Map;
-
 /**
  * Created by harshvardhan on 05/08/15.
  */

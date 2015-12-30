@@ -458,9 +458,25 @@ public class MainActivity extends AppCompatActivity
                 this.mMakeNetworkCall(Constants.WIDGET_FORUMS, MainActivity.resource_uri, null);
                 break;
             }
+
+            case Constants.WIDGET_TEST_CALENDAR:
+                this.mMakeNetworkCall(Constants.WIDGET_TEST_CALENDAR,MainActivity.resource_uri,null);
+                break;
+
+            case Constants.TAG_MY_ALERTS:
+                MainActivity.this.mMakeNetworkCall(Constants.TAG_MY_ALERTS,MainActivity.resource_uri,null);
+                break;
+
+            case Constants.WIDGET_SYLLABUS:
+                this.mMakeNetworkCall(Constants.WIDGET_SYLLABUS, MainActivity.resource_uri, null);
+                break;
+
+
             default:
                 break;
         }
+        MainActivity.type="";
+        MainActivity.resource_uri="";
     }
 
     /**
@@ -524,6 +540,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        Bundle extras = getIntent().getExtras();
+        if (extras != null)
+        {
+            MainActivity.type = extras.getString("screen");
+            MainActivity.resource_uri = extras.getString("resource_uri");
+        }
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
         AppsFlyerLib.onActivityResume(this);
@@ -1382,6 +1404,9 @@ public class MainActivity extends AppCompatActivity
         try {
             ExamSummary examSummary = JSON.std.beanFrom(ExamSummary.class, responseJson);
                 currentFragment.updateExamSummary(examSummary );
+            if(MainActivity.type!=null && !MainActivity.type.matches("") && MainActivity.resource_uri!=null && !MainActivity.resource_uri.matches("")){
+                mhandleNotifications();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

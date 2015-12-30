@@ -16,11 +16,11 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
-import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.NewsListAdapter;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.resource.MySingleton;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

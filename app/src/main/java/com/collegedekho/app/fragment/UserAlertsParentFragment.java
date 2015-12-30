@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,24 +11,11 @@ import android.widget.Button;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.adapter.CalendarPagerAdapter;
 import com.collegedekho.app.adapter.UserAlertsPagerAdapter;
-import com.collegedekho.app.entities.ChapterDetails;
-import com.collegedekho.app.entities.Chapters;
 import com.collegedekho.app.entities.MyAlertDate;
 import com.collegedekho.app.resource.Constants;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 /**
  * Created by Bashir on 14/12/15.

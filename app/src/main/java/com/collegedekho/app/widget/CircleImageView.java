@@ -16,7 +16,6 @@
 package com.collegedekho.app.widget;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
@@ -34,10 +33,8 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
 import com.android.volley.toolbox.NetworkImageView;
-import com.collegedekho.app.R;
 
 public class CircleImageView extends NetworkImageView {
 

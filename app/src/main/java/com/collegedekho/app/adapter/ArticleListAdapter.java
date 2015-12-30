@@ -7,20 +7,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.fragment.ArticleFragment;
-import com.collegedekho.app.listener.OnArticleSelectListener;
-import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.entities.Articles;
+import com.collegedekho.app.listener.OnArticleSelectListener;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.resource.MySingleton;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -5,13 +5,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.collegedekho.app.entities.PsychometricPrimaryQuestion;
 import com.collegedekho.app.entities.PsychometricQuestion;
 import com.collegedekho.app.fragment.pyschometricTest.DropDownQuestionFragment;
 import com.collegedekho.app.fragment.pyschometricTest.MultipleChoiceQuestionFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
-import com.collegedekho.app.fragment.pyschometricTest.SingleChoiceQuestionFragment;
 import com.collegedekho.app.fragment.pyschometricTest.RangeQuestionFragment;
+import com.collegedekho.app.fragment.pyschometricTest.SingleChoiceQuestionFragment;
 import com.collegedekho.app.fragment.pyschometricTest.TextQuestionFragment;
 import com.collegedekho.app.resource.Constants;
 
