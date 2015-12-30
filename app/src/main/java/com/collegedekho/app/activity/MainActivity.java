@@ -3690,6 +3690,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onUserNotPreparingSelected() {
         this.mDisplayFragment(NotPreparingFragment.newInstance(),true,NotPreparingFragment.class.toString());
+
+        //Appsflyer events
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(Constants.USER_CURRENT_SUBLEVEL, user.getSublevel());
+        eventValue.put(Constants.USER_IS_PREPARING, user.getIs_preparing());
+
+        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_USER_PREFERENCE, eventValue);
+
+        //GA Event
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_CURRENT_STREAM_SELECTED, user.getSublevel());
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing());
+
+        //Send event to connecto
+        this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_CURRENT_STREAM_SELECTED, user.getStream_name()).putValue(Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing()));
     }
 
     /**
@@ -3791,6 +3805,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPsychometricTest() {
         this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_QUESTIONS,Constants.BASE_URL+"psychometric/",null);
+
+        //Appsflyer events
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(Constants.CHOOSEN_ACTION_WHEN_NOT_PREPARING, PsychometricTestQuestion.class.getSimpleName());
+
+        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_WHEN_NOT_PREPARING, eventValue);
+
+        //GA Event
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.CHOOSEN_ACTION_WHEN_NOT_PREPARING, PsychometricTestQuestion.class.getSimpleName());
+
+        //Send event to connecto
+        this.connecto.track(Constants.ACTION_WHEN_NOT_PREPARING, new Properties().putValue(Constants.CHOOSEN_ACTION_WHEN_NOT_PREPARING, PsychometricTestQuestion.class.getSimpleName()));
     }
 
     private void onPsychometricTestResponse(String response){
@@ -3834,11 +3860,35 @@ public class MainActivity extends AppCompatActivity
                     }
                 })
                 .show();
+
+        //Appsflyer events
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(Constants.CHOOSEN_ACTION_WHEN_NOT_PREPARING, StepByStepFragment.class.getSimpleName());
+
+        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_WHEN_NOT_PREPARING, eventValue);
+
+        //GA Event
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.CHOOSEN_ACTION_WHEN_NOT_PREPARING, StepByStepFragment.class.getSimpleName());
+
+        //Send event to connecto
+        this.connecto.track(Constants.ACTION_WHEN_NOT_PREPARING, new Properties().putValue(Constants.CHOOSEN_ACTION_WHEN_NOT_PREPARING, StepByStepFragment.class.getSimpleName()));
     }
 
     @Override
     public void onIknowWhatIWant() {
         this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
+
+        //Appsflyer events
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(Constants.CHOOSEN_ACTION_WHEN_NOT_PREPARING, "I_KNOW_WHAT_I_WANT");
+
+        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_WHEN_NOT_PREPARING, eventValue);
+
+        //GA Event
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.CHOOSEN_ACTION_WHEN_NOT_PREPARING, "I_KNOW_WHAT_I_WANT");
+
+        //Send event to connecto
+        this.connecto.track(Constants.ACTION_WHEN_NOT_PREPARING, new Properties().putValue(Constants.CHOOSEN_ACTION_WHEN_NOT_PREPARING, "I_KNOW_WHAT_I_WANT"));
     }
 
     @Override

@@ -198,7 +198,6 @@ public class UserEducationFragment extends BaseFragment {
                 mPreparingForExam(1);
                 break;
             case R.id.education_submit_button:
-
                 mUserPreparingForExam();
                 break;
             default:

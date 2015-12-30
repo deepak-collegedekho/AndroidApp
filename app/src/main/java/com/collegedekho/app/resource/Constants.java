@@ -204,6 +204,7 @@ public class Constants
     public static final String USER_CURRENT_STREAM_NAME = "current_stream_name";
     public static final String USER_CURRENT_SUBLEVEL = "current_sublevel";
     public static final String USER_IS_PREPARING = "is_preparing";
+    public static final String CHOOSEN_ACTION_WHEN_NOT_PREPARING = "choosen_action_when_not_preparing";
     public static final String USER_STREAM_ID   = "stream_id";
     public static final String USER_CURRENT_STREAM_ID   = "current_stream_id";
     public static final String USER_LEVEL_NAME  = "level_name";
@@ -288,6 +289,7 @@ public class Constants
     public static final String ACTION_USER_PREFERENCE = "action_user_preference";
     public static final String ACTION_USER_EXAM_SELECTED = "action_user_exam_selected";
     public static final String ACTION_INSTITUTE_SELECTED = "action_institute_selected";
+    public static final String ACTION_WHEN_NOT_PREPARING = "action_when_not_preparing";
 
 
 
