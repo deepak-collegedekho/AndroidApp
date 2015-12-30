@@ -50,12 +50,9 @@ public class InstituteDetailFragment extends BaseFragment {
     ArrayList<Articles> mInstituteArticleList;
     private Institute mInstitute;
     private InstitutePagerAdapter mDetailsAdapter;
-    private FooterPagerAdapter mFo54oterAdapter;
     private ViewPager mDetailsPager;
-    private ViewPager mFooterPager;
     private CoverFlowAdapter mAdapter;
     private ArrayList<GameEntity> mData = new ArrayList<>(4);
-    private InstituteDetailFragment.OnInstituteFooterItemSelected mListener;
     private String nextArticleUrl;
     private String nextNewsUrl;
 
@@ -85,7 +82,6 @@ public class InstituteDetailFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mInstitute = getArguments().getParcelable(ARG_INSTITUTE);
-            this.mListener = (InstituteDetailFragment.OnInstituteFooterItemSelected) this.getActivity();
         }
     }
 
@@ -110,7 +106,7 @@ public class InstituteDetailFragment extends BaseFragment {
         }
         this.mDetailsPager = (ViewPager) rootView.findViewById(R.id.college_detail_pager);
         this.mDetailsPager.setAdapter(this.mDetailsAdapter);
-        this.mDetailsPager.setOffscreenPageLimit(3);
+        this.mDetailsPager.setOffscreenPageLimit(5);
 
         //this.mFooterAdapter = new FooterPagerAdapter(this.mInstitute, this.getContext());
 
@@ -196,7 +192,7 @@ public class InstituteDetailFragment extends BaseFragment {
     }
 
 
-    public void cancleAppliedRequest(int position, int tabPosition)
+    public void cancleAppliedRequest()
     {
         this.mDetailsAdapter.updateCourseFragment();
     }
@@ -373,7 +369,7 @@ public class InstituteDetailFragment extends BaseFragment {
     }
 
     public class LoadQnAQuestionAsyncTask extends AsyncTask<String, Void, Void> {
-        String mResponse;
+
         ArrayList<QnAQuestions> mQnAQuestions;
         @Override
         protected Void doInBackground(String... str)

@@ -16,7 +16,7 @@
         android:id="@+id/course_tab_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/m30dp"
-        android:padding="@dimen/activity_horizontal_margin"
+        android:paddingLeft="@dimen/m8dp"
         android:text="Loading Courses..."
         android:textStyle="bold" />
 

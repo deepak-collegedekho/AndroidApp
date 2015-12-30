@@ -662,9 +662,9 @@ public class MainActivity extends AppCompatActivity
 
     private void mLoadUserStatusScreen() {
 
-        if(this.user.getEducation_set() == 1 &&  this.user.getExams_set() == 1 || IS_PROFILE_LOADED)
+        if(MainActivity.user.getEducation_set() == 1 &&  MainActivity.user.getExams_set() == 1 || IS_PROFILE_LOADED)
             this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
-        else if(this.user.getEducation_set() == 1 &&  this.user.getExams_set() == 0)
+        else if(MainActivity.user.getEducation_set() == 1 &&  MainActivity.user.getExams_set() == 0)
             this.mMakeNetworkCall(Constants.TAG_LOAD_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
         else
             this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION,  Constants.BASE_URL + "user-education/", null);
@@ -688,8 +688,7 @@ public class MainActivity extends AppCompatActivity
             if (map.containsKey("filters"))
                 this.mFilters = JSON.std.asString(map.get("filters"));
 
-            String val = JSON.std.asString(map.get("results"));
-            return val;
+            return JSON.std.asString(map.get("results"));
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1645,7 +1644,7 @@ public class MainActivity extends AppCompatActivity
                             "Disliked institute: " + String.valueOf(like));
 
             //Appsflyer events
-            Map<String, Object> eventValue = new HashMap<String, Object>();
+            Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
             eventValue.put(Constants.VOTE_TYPE, Constants.NEITHER_LIKE_NOR_DISLIKE);
 
@@ -2364,7 +2363,7 @@ public class MainActivity extends AppCompatActivity
                     public void onClick(View v) {
                         apply.dismiss();
                         if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
-                            ((InstituteDetailFragment) currentFragment).cancleAppliedRequest(position, tabPosition);
+                            ((InstituteDetailFragment) currentFragment).cancleAppliedRequest();
                     }
                 });
             }
@@ -2427,7 +2426,6 @@ public class MainActivity extends AppCompatActivity
             this.mFilterKeywords = this.mGetTheFilters();
 
             this.mMakeNetworkCall(widget.getType(), widget.getAction_url(), this.mFilterKeywords);
-
             return;
         }
 
@@ -3205,9 +3203,9 @@ public class MainActivity extends AppCompatActivity
      */
     private void mUserFacebookLoginResponse(String json)
     {
-        User tempUser = this.user;
+        User tempUser = MainActivity.user;
         try {
-            this.user = JSON.std.beanFrom(User.class, json);
+            MainActivity.user = JSON.std.beanFrom(User.class, json);
             this.networkUtils.setToken(user.getToken());
            if (tempUser != null){
                 MainActivity.user.setImage(tempUser.getImage());
@@ -3216,7 +3214,7 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.user.profileData = tempUser.profileData;
 
             }
-            this.user.setPref(this.userPref);
+            MainActivity.user.setPref(this.userPref);
             String u = JSON.std.asString(this.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.USER_CREATED, true).commit();
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
@@ -3337,8 +3335,8 @@ public class MainActivity extends AppCompatActivity
 
         try {
             User userObj = JSON.std.beanFrom(User.class, responseJson);
-            this.user.setExams_set(userObj.getExams_set());
-            String u = JSON.std.asString(this.user);
+            MainActivity.user.setExams_set(userObj.getExams_set());
+            String u = JSON.std.asString(MainActivity.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
 
         }catch(IOException e) {
@@ -3588,7 +3586,7 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
 
         //Appsflyer events
-        Map<String, Object> eventValue = new HashMap<String, Object>();
+        Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(Constants.USER_CURRENT_SUBLEVEL, user.getSublevel());
         eventValue.put(Constants.USER_IS_PREPARING, user.getIs_preparing());
 

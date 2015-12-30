@@ -21,7 +21,6 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.InstituteListAdapter;
-import com.collegedekho.app.adapter.InstituteShortListAdapter;
 import com.collegedekho.app.entities.Facet;
 import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.entities.Institute;
@@ -53,10 +52,9 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private InstituteListAdapter mAdapter;
     private boolean filterAllowed;
     private int filterCount;
-    private MainActivity mMainActivity;
     private TextView mEmptyTextView;
 
-    private  int mViewType = Constants.VIEW_INTO_LIST; ;
+    private  int mViewType = Constants.VIEW_INTO_LIST;
     private ContactsCompletionView mCompletionView;
     private ArrayAdapter<String> tolenAdapter;
 
@@ -125,11 +123,11 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         mAdapter = new InstituteListAdapter(getActivity(), mInstitutes, this.mViewType);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
 
-        if (mInstitutes.size() == 0) {
+        if (mInstitutes.size() == 0)
             rootView.findViewById(R.id.viewType).setVisibility(View.GONE);
-        }else{
+        else
             rootView.findViewById(R.id.viewType).setVisibility(View.VISIBLE);
-        }
+
 
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
@@ -201,10 +199,10 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     public void onResume() {
         super.onResume();
 
-        this.mMainActivity = (MainActivity) this.getActivity();
+       MainActivity mMainActivity = (MainActivity) this.getActivity();
 
-        if (this.mMainActivity != null)
-            this.mMainActivity.currentFragment = this;
+        if (mMainActivity != null)
+            mMainActivity.currentFragment = this;
 
         if (mInstitutes.size() == 0)
             this.mEmptyTextView.setVisibility(View.VISIBLE);
