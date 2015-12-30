@@ -22,6 +22,7 @@
                     android:id="@+id/first_step_user_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:src="@drawable/ic_user"/>
             </LinearLayout>
 
@@ -48,7 +49,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
-                            android:visibility="gone"
+                            android:visibility="visible"
                             android:src="@drawable/ic_user"/>
                     </LinearLayout>
 
@@ -145,6 +146,7 @@
                         android:layout_height="match_parent"
                         android:textSize="13sp"
                         android:gravity="center|left"
+                        android:textColor="@color/primary_orange"
                         android:text="HELP US \nUNDERSTAND YOU"/>
 
                 </LinearLayout>

@@ -3149,8 +3149,8 @@ public class MainActivity extends AppCompatActivity
             baskpressHandler.postDelayed(backpressRunnable,1500);
         }
         else {
-            if(currentFragment instanceof SyllabusSubjectsListFragment)
-                ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
+//            if(currentFragment instanceof SyllabusSubjectsListFragment)
+//                ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
             super.onBackPressed();
         }
     }

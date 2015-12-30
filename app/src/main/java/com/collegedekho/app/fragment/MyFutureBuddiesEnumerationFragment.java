@@ -74,7 +74,7 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
         if (this.mFbEnumeration.size() == 0)
         {
             this.mEmptyTextView.setVisibility(View.VISIBLE);
-            this.mEmptyTextView.setText("Couldn't find related groups for you. Like and Shortlist colleges.");
+            this.mEmptyTextView.setText("Uh oh! You need to shortlist or like colleges to interact and chat with fellow aspirants & seniors of a college.");
             fbEnumerationView.setVisibility(View.GONE);
         }
         else

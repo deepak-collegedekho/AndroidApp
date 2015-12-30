@@ -48,7 +48,7 @@
                 android:paddingRight="@dimen/m30dp"
                 android:paddingLeft="@dimen/m30dp"
                 android:paddingBottom="@dimen/m15dp"
-                android:text="YOU ARE JUST 3 STEPS AWAY FROM FINDING YOUR COLLEGES"/>
+                android:text="YOU ARE JUST 3 STEPS AWAY FROM FINDING THE RIGHT COLLEGE!"/>
 
             <include layout="@layout/layout_user_step"
                 android:id="@+id/step_ui"
@@ -90,7 +90,7 @@
             android:paddingTop="@dimen/m2dp"
             android:textSize="14sp"
             android:gravity="center"
-            android:text="Are you preparing for exams \nlike JEEE, CAT, AIPMT"
+            android:text="Are you preparing for exams \nlike JEE, CAT, AIPMT"
             />
 
        <LinearLayout

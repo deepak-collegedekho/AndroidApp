@@ -204,10 +204,13 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
 
-        if (mInstitutes.size() == 0)
+        if (mInstitutes.size() == 0) {
+            this.mEmptyTextView.setText("Opps! Unable to find colleges for your preferences, please change your filters in ‘*Resource Buddy*’!");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
-        else
+        }
+        else {
             this.mEmptyTextView.setVisibility(View.GONE);
+        }
 
         updateFilterButton(filterCount);
     }
