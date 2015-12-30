@@ -668,7 +668,6 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_LOAD_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
         else
             this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION,  Constants.BASE_URL + "user-education/", null);
-
     }
 
     /**
@@ -966,6 +965,22 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id) , null);
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id) , null);
 
+        //Appsflyer events
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(Constants.INSTITUTE_RESOURCE_URI, this.mInstitute.getResource_uri());
+        eventValue.put(Constants.INSTITUTE_ID, String.valueOf(id));
+
+        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_INSTITUTE_SELECTED, eventValue);
+
+        //GA Event
+        String[] lables = new String[2];
+        lables[0] = String.valueOf(id);
+        lables[1] = this.mInstitute.getResource_uri();
+
+        MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_SELECTED, lables);
+
+        //Send event to connecto
+        this.connecto.track(Constants.ACTION_INSTITUTE_SELECTED, new Properties().putValue(Constants.INSTITUTE_RESOURCE_URI, this.mInstitute.getResource_uri()).putValue(Constants.INSTITUTE_ID, String.valueOf(id)));
     }
 
     private void loadPyschometricTest(String response) {
@@ -1047,6 +1062,7 @@ public class MainActivity extends AppCompatActivity
 
             //Appsflyer events
             HashMap<String, Object> eventValue = new HashMap<String, Object>();
+
             eventValue.put(Constants.SCREEN_NAME, tag);
             eventValue.put(Constants.LAST_SCREEN_NAME, this.mLastScreenName);
             eventValue.put(Constants.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS, new Date().getTime() - this.mTimeScreenClicked.getTime());
@@ -1056,6 +1072,7 @@ public class MainActivity extends AppCompatActivity
             this.mLastScreenName = tag;
 
             MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_SCREEN_SELECTED, eventValue);
+            this.connecto.track(Constants.ACTION_SCREEN_SELECTED, new Properties().putValue(Constants.SCREEN_NAME, tag).putValue(Constants.LAST_SCREEN_NAME, this.mLastScreenName).putValue(Constants.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS, new Date().getTime() - this.mTimeScreenClicked.getTime()));
         }
     }
 
@@ -1072,7 +1089,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_SKIP_LOGIN:
                 this.mUserCreated(response);
                 break;
-            case Constants.TAG_CREATE_FACEBOOK_ANONY_USER_:
+            case Constants.TAG_CREATE_FACEBOOK_ANONY_USER:
                 this.mCreatedFacebookAnonymousUser(response);
                 break;
             case Constants.TAG_USER_FACEBOOK_LOGIN:
@@ -1547,13 +1564,14 @@ public class MainActivity extends AppCompatActivity
         }
         //save the preferences locally
         MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
-        if (tempUser != null){
-        MainActivity.user.setToken(tempUser.getToken());
-        MainActivity.user.setImage(tempUser.getImage());
-        MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
-        MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
-        MainActivity.user.profileData = tempUser.profileData;
-    }
+        if (tempUser != null)
+        {
+            MainActivity.user.setToken(tempUser.getToken());
+            MainActivity.user.setImage(tempUser.getImage());
+            MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+            MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+            MainActivity.user.profileData = tempUser.profileData;
+        }
 
         if (streamName != "" && streamName != null)
             MainActivity.user.setStream_name(streamName);
@@ -3169,7 +3187,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFacebookLogin(HashMap<String, String> params) {
         this.userPref = User.Prefs.STREAMKNOWN;
-        this.mMakeNetworkCall(Constants.TAG_CREATE_FACEBOOK_ANONY_USER_, Constants.BASE_URL + "users/anonymous/", params);
+        this.mMakeNetworkCall(Constants.TAG_CREATE_FACEBOOK_ANONY_USER, Constants.BASE_URL + "users/anonymous/", params);
         this.mUserSignUPParams = params;
     }
 
@@ -3392,6 +3410,22 @@ public class MainActivity extends AppCompatActivity
                     .build());
         }
     }
+
+    public static void GATrackerEvent(String category, String action, String[] labels)
+    {
+        if(MainActivity.tracker!=null)
+        {
+            HitBuilders.EventBuilder eventBuilder = new HitBuilders.EventBuilder();
+            eventBuilder.setCategory(category);
+            eventBuilder.setAction(action);
+
+            for (String lable: labels)
+                eventBuilder.setLabel(lable);
+
+            MainActivity.tracker.send(eventBuilder.build());
+        }
+    }
+
 
     /**
      *  If user login with any social site like facebook and stream and level has conflict
@@ -3712,6 +3746,9 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(requestType, url, params);
             return;
         }else if(requestType.equals(Constants.WIDGET_TEST_CALENDAR)){
+            this.mMakeNetworkCall(requestType,url,null);
+            return;
+        }else if(requestType.equals(Constants.TAG_MY_ALERTS)){
             this.mMakeNetworkCall(requestType,url,null);
             return;
         }

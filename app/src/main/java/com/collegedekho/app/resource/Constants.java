@@ -19,7 +19,7 @@ public class Constants
     public static final String KEY_USER = "user_id";
     public static final String TAG_CREATE_USER = "create_user";
     public static final String TAG_CREATE_ANONY_USER = "create_anony_user";
-    public static final String TAG_CREATE_FACEBOOK_ANONY_USER_ = "create_facebook_anony_user";
+    public static final String TAG_CREATE_FACEBOOK_ANONY_USER = "create_facebook_anony_user";
     public static final String TAG_SKIP_LOGIN = "skip_login";
     public static final String TAG_USER_SIGNUP = "user_sign_up";
     public static final String TAG_USER_FACEBOOK_LOGIN = "user_facebook_login";
@@ -287,6 +287,7 @@ public class Constants
     public static final String ACTION_USER_IS_PREPARING = "action_is_preparing";
     public static final String ACTION_USER_PREFERENCE = "action_user_preference";
     public static final String ACTION_USER_EXAM_SELECTED = "action_user_exam_selected";
+    public static final String ACTION_INSTITUTE_SELECTED = "action_institute_selected";
 
 
 

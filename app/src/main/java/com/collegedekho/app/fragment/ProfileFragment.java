@@ -238,10 +238,9 @@ public class ProfileFragment extends BaseFragment
                     mProfileWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
                 break;
             case R.id.important_date_layout_RL:
-
                 if(this.mExamDetail != null)
-                this.mProfileWidgetSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/"+mExamDetail.getId()+"/calendar/", null);
-                  break;
+                    this.mProfileWidgetSelected(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", null);
+                break;
             default:
                 break;
         }
