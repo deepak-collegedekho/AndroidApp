@@ -239,9 +239,11 @@ public class ProfileFragment extends BaseFragment
                 break;
             case R.id.important_date_layout_RL:
 
-                if(this.mExamDetail != null)
-                this.mProfileWidgetSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/"+mExamDetail.getId()+"/calendar/", null);
-                  break;
+                if(this.mExamDetail != null) {
+                    this.mProfileWidgetSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/calendar/", null);
+                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  mExamDetail.getId()).commit();
+                }
+                    break;
             default:
                 break;
         }
