@@ -159,6 +159,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
                 isNotified = true;
             }
         }
+        holder.dotView.removeAllViews();
         for (int j = 0; j < count; j++) {
             View dot = inflater.inflate(R.layout.dot_view, holder.dotView, false);
 

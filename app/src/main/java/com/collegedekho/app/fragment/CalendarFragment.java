@@ -158,17 +158,19 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
 
     @Override
     public void onItemSelect(int position, int startPosition, int endPosition, String itemKey) {
-        String keys = mYearCalendar.get(itemKey);
-        if (keys != null) {
-            String[] subject_keys = keys.split(",");
-            ArrayList<ChapterDetails> chaptersList = new ArrayList<>();
-            for (int i = 0; i < subject_keys.length; i++) {
-                ArrayList<ChapterDetails> chapters = chaptersDetailsList.get(subject_keys[i]);
-                if (chapters != null && !chapters.isEmpty()) {
-                    chaptersList.add(chapters.get(0));
+        ArrayList<ChapterDetails> chaptersList = new ArrayList<>();
+        if (itemKey != null) {
+            String keys = mYearCalendar.get(itemKey);
+            if (keys != null) {
+                String[] subject_keys = keys.split(",");
+                for (int i = 0; i < subject_keys.length; i++) {
+                    ArrayList<ChapterDetails> chapters = chaptersDetailsList.get(subject_keys[i]);
+                    if (chapters != null && !chapters.isEmpty()) {
+                        chaptersList.add(chapters.get(0));
+                    }
                 }
             }
-            calendarItemDetailsAdapter = new CalendarItemDetailsAdapter(getActivity(), chaptersList,mListener);
+            calendarItemDetailsAdapter = new CalendarItemDetailsAdapter(getActivity(), chaptersList, mListener);
             detailsRecyclerView.setAdapter(calendarItemDetailsAdapter);
         }
 
