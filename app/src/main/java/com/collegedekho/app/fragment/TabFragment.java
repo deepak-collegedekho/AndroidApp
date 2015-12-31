@@ -158,6 +158,8 @@ public class TabFragment extends  BaseFragment{
                 v.setVisibility(View.GONE);
                 IS_TUTE_COMPLETED = true;
                 getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.PREP_BUDDY_SCREEN_TUTE, true).apply();
+                getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
+
                 return true;
             }
         });
@@ -179,6 +181,7 @@ public class TabFragment extends  BaseFragment{
             mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);*/
 
         this.mUpdateSubMenuItem();
+        if(IS_TUTE_COMPLETED)
         getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
 
     }
@@ -254,10 +257,14 @@ public class TabFragment extends  BaseFragment{
         if(this.selectedTabPosition == 1){
             IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PREP_BUDDY_SCREEN_TUTE, false);
             if(view != null ){
-                if(!IS_TUTE_COMPLETED)
+                if(!IS_TUTE_COMPLETED) {
                     view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
-                else
+                    getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.INVISIBLE);
+                } else {
                     view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+                    getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
+                }
+
             }
             firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
             secondSubMenuIV.setImageResource(R.drawable.ic_syllabus);
@@ -277,7 +284,9 @@ public class TabFragment extends  BaseFragment{
 
         }else   if(this.selectedTabPosition == 2){
             if(view != null ){
-                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+                view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+                getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
+
             }
             firstSubMenuIV.setImageResource(R.drawable.ic_institute);
             secondSubMenuIV.setImageResource(R.drawable.ic_news);
