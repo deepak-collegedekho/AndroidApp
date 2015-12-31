@@ -71,7 +71,7 @@ public class ProfileFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        IS_TUTE_COMPLETED = false;//getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PROFILE_SCREEN_TUTE, false);
+        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PROFILE_SCREEN_TUTE, false);
 
 
         mProfileName  = (TextView)rootView.findViewById(R.id.user_name);
