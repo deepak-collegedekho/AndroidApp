@@ -210,6 +210,12 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        loading=false;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 

@@ -230,6 +230,11 @@ public class NewsFragment extends BaseFragment  {
     }
 
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        loading=false;
+    }
 
     private void mUpdateNewsListAdapter(View view){
         if(view == null)return;

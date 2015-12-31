@@ -1510,6 +1510,7 @@ public class MainActivity extends AppCompatActivity
             this.mFilterCount = this.mFilterKeywords.size();
 
                 //save preferences.
+            getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.PROFILE_SCREEN_TUTE, true).apply();
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
 
             //move to profile
@@ -2242,6 +2243,7 @@ public class MainActivity extends AppCompatActivity
         hashMap.put(Constants.USER_LEVEL, Constants.BASE_URL + "level/" + (level + 1) + "/");
         hashMap.put(Constants.USER_STREAM_NAME, streamName);
         hashMap.put(Constants.USER_DEVICE_ID, deviceId);
+        getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.PROFILE_SCREEN_TUTE, true).apply();
 
         if (streamName != null || streamName != "")
             MainActivity.user.setStream_name(streamName);

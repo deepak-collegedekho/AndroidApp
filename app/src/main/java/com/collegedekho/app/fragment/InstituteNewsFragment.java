@@ -210,7 +210,11 @@ public class InstituteNewsFragment extends BaseFragment  {
         mNextUrl = next;
     }
 
-
+    @Override
+    public void onPause() {
+        super.onPause();
+        loading=false;
+    }
 
     private void mUpdateNewsListAdapter(View view){
         if(view == null)return;

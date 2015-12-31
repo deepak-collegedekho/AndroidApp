@@ -158,7 +158,7 @@ public class TabFragment extends  BaseFragment{
                 v.setVisibility(View.GONE);
                 IS_TUTE_COMPLETED = true;
                 getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.PREP_BUDDY_SCREEN_TUTE, true).apply();
-                return false;
+                return true;
             }
         });
 
@@ -276,6 +276,9 @@ public class TabFragment extends  BaseFragment{
             fourthSubMenuTV.setText("Prep Path");
 
         }else   if(this.selectedTabPosition == 2){
+            if(view != null ){
+                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+            }
             firstSubMenuIV.setImageResource(R.drawable.ic_institute);
             secondSubMenuIV.setImageResource(R.drawable.ic_news);
             thirdSubMenuIV.setImageResource(R.drawable.ic_article);

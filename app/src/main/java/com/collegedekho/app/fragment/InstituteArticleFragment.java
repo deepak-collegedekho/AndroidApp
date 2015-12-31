@@ -142,6 +142,12 @@ public class InstituteArticleFragment extends BaseFragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        loading=false;
+    }
+
+    @Override
     public void onClick(View view) {
         super.onClick(view);
         switch (view.getId())

@@ -128,6 +128,12 @@ public class ArticleFragment extends BaseFragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        loading=false;
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(ARG_ARCTICLE, this.mArticlesList);

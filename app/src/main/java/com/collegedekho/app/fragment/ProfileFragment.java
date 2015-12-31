@@ -242,6 +242,7 @@ public class ProfileFragment extends BaseFragment
 
         View view =  getView();
         if(view != null ){
+            IS_TUTE_COMPLETED= getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PROFILE_SCREEN_TUTE, false);
             if(!IS_TUTE_COMPLETED) {
 
                 getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.GONE);

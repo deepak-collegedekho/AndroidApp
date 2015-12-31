@@ -122,6 +122,7 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
+        loading=false;
     }
 
     @Override

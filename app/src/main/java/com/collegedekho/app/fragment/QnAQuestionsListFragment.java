@@ -203,6 +203,12 @@ public class QnAQuestionsListFragment extends BaseFragment {
         this.mNextUrl = next;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        loading=false;
+    }
+
     public QnAQuestions validateData(View rootView)
     {
         EditText check = (EditText)rootView.findViewById(R.id.institute_qna_question_title);

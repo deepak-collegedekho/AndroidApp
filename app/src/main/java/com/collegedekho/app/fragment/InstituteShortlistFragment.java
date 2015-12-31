@@ -199,6 +199,12 @@ public class InstituteShortlistFragment extends BaseFragment {
         this.mNextUrl = next;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        loading=false;
+    }
+
     public void updateLikeButtons(int position) {
         mAdapter.updateLikeButtons(position);
     }
