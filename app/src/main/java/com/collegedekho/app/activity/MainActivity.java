@@ -1841,7 +1841,7 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment instanceof InstituteListFragment) {
             int position = Integer.parseInt(extraTag);
             boolean isFilterAllowed = ((InstituteListFragment) currentFragment).getFilterAllowed();
-            if(!isFilterAllowed){
+            if(!isFilterAllowed &&  !Constants.IS_RECOMENDED_COLLEGE){
                 if(mInstituteList != null && mInstituteList.size() >position )
                 {
                     mInstituteList.remove(position);
