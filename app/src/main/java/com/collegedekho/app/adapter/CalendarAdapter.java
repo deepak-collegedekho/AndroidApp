@@ -74,6 +74,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         String day_key=String.valueOf(cal.get(Calendar.YEAR)+"_"+String.valueOf(cal.get(Calendar.DAY_OF_YEAR)));
         if(day==1 && !isCurrentMonth){
             isCurrentMonth =true;
+            isActiveCell=false;
         }
         if (year == mCalendar.get(Calendar.YEAR)) {     //current year
             if (month == mCalendar.get(Calendar.MONTH) && isCurrentMonth) {       //current month
@@ -107,7 +108,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             }
         }else {  //outside current year
 
-            if (day == 1) {
+            if (day == 1 && isCurrentMonth) {
                 holder.monthView.setText(monthNames[cal.get(Calendar.MONTH)]);
                 holder.monthView.setVisibility(View.VISIBLE);
 
@@ -119,6 +120,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 }else {
                     endCellPosition=position-1;
                     isActiveCell = false;
+                    isCurrentMonth=false;
                 }
 
             } else {
@@ -146,6 +148,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 dot.setBackgroundDrawable(mDrawable);
                 holder.dotView.addView(dot);
             }
+        }else{
+            holder.dotView.setVisibility(View.INVISIBLE);
         }
         holder.dateView.setTag(key);
         holder.dateView.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));

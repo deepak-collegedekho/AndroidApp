@@ -81,8 +81,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/m1dp"
-        android:layout_marginRight="@dimen/m1dp"
-        android:layout_weight=".65">
+        android:layout_marginRight="@dimen/m1dp">
 
     </android.support.v7.widget.RecyclerView>
 
@@ -90,8 +89,7 @@
         android:id="@+id/calendar_details_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/m4dp"
-        android:layout_weight="1.2">
+        android:layout_marginTop="@dimen/m4dp">
 
     </android.support.v7.widget.RecyclerView>
 

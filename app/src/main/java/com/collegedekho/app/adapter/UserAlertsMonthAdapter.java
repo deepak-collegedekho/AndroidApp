@@ -89,6 +89,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
         }
         if(day==1 &&! isCurrentMonth){
             isCurrentMonth=true;
+            isActiveCell=false;
         }
         String day_key = year + "-" + mth + "-" + dy;
         if (year == mCalendar.get(Calendar.YEAR)) {     //current year
@@ -123,7 +124,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
             }
         } else {  //outside current year
 
-            if (day == 1) {
+            if (day == 1 && isCurrentMonth) {
                 holder.monthView.setText(monthNames[cal.get(Calendar.MONTH)]);
                 holder.monthView.setVisibility(View.VISIBLE);
 
@@ -135,6 +136,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
                 } else {
                     endCellPosition = position - 1;
                     isActiveCell = false;
+                    isCurrentMonth=false;
                 }
 
             } else {

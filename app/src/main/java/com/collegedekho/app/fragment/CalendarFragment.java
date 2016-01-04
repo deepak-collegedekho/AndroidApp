@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.CalendarAdapter;
 import com.collegedekho.app.adapter.CalendarItemDetailsAdapter;
+import com.collegedekho.app.display.CustomGridLayoutManager;
 import com.collegedekho.app.entities.ChapterDetails;
 import com.collegedekho.app.entities.Chapters;
 
@@ -44,7 +45,7 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
     // current displayed month
     private Calendar currentDate;
 
-    private GridLayoutManager calendarLayoutManager;
+    private CustomGridLayoutManager calendarLayoutManager;
     private LinearLayoutManager detailsLayoutManager;
     private static CalendarItemDetailsAdapter.OnItemStateChangeListener mListener;
 //    private static LinkedHashMap<String, ArrayList<ChapterDetails>> mChaptersDetailsList=new LinkedHashMap<>();
@@ -93,7 +94,7 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
         super.onViewCreated(view, savedInstanceState);
         calendarRecyclerView = (RecyclerView) view.findViewById(R.id.calendar_recycler);
         detailsRecyclerView = (RecyclerView) view.findViewById(R.id.calendar_details_recycler);
-        calendarLayoutManager = new GridLayoutManager(getActivity(), 7);
+        calendarLayoutManager = new CustomGridLayoutManager(getActivity(), 7);
 
         detailsLayoutManager = new LinearLayoutManager(getActivity());
         detailsLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
