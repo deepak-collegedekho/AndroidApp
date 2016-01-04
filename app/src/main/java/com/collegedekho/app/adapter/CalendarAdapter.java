@@ -127,15 +127,17 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 holder.monthView.setVisibility(View.GONE);
             }
         }
+        String key=mYearCalendar.get(day_key);
         if (isActiveCell) {
             holder.dotView.setVisibility(View.VISIBLE);
             holder.dateView.setTextColor(0xff000000);
         } else {
             holder.dotView.setVisibility(View.INVISIBLE);
             holder.dateView.setTextColor(0xffcccccc);
+            key=null;
         }
 
-        String key=mYearCalendar.get(day_key);
+
         if(key!=null){
             String[] keyArray=key.split(",");
             holder.dotView.removeAllViews();

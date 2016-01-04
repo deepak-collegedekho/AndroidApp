@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,10 +30,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -549,6 +552,7 @@ public class MainActivity extends AppCompatActivity
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
         AppsFlyerLib.onActivityResume(this);
+        adjustFontScale(getResources().getConfiguration());
         System.gc();
     }
 
@@ -4158,6 +4162,17 @@ public class MainActivity extends AppCompatActivity
 
     private void displayAlerts(ArrayList<MyAlertDate>dates){
         this.mDisplayFragment(UserAlertsFragment.newInstance(dates),true,UserAlertsFragment.class.toString());
+    }
+
+    public void adjustFontScale(Configuration configuration) {
+        if (configuration.fontScale > 1.15) {
+            configuration.fontScale = 1.20f;
+            DisplayMetrics metrics = getResources().getDisplayMetrics();
+            WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+            wm.getDefaultDisplay().getMetrics(metrics);
+            metrics.scaledDensity = configuration.fontScale * metrics.density;
+            getBaseContext().getResources().updateConfiguration(configuration, metrics);
+        }
     }
 
 }
