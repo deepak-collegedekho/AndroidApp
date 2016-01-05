@@ -755,19 +755,19 @@ public class MainActivity extends AppCompatActivity
     /**
      * This method is used to update shorlist institutes list of next page
      * @param response
-     */
+     *//*
     private void updateNextShortListedInstitutes(String response) {
         try {
             List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
             this.mShortlistedInstituteList.addAll(institutes);
 
-          /*  if (currentFragment instanceof InstituteShortlistFragment) {
+          *//*  if (currentFragment instanceof InstituteShortlistFragment) {
                 ((InstituteShortlistFragment) currentFragment).updateList(institutes, next);
-            }*/
+            }*//*
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
-    }
+    }*/
     /**
      * This method is used to update news list of next page
      * @param response
@@ -815,6 +815,13 @@ public class MainActivity extends AppCompatActivity
      * @param response
      */
     private void updateNextQnaList(String response) {
+        ArrayList<QnAQuestions> qnaQuestionsList = parseAndReturnQnAList(response);
+
+        if(currentFragment instanceof QnAQuestionsListFragment){
+            ((QnAQuestionsListFragment) currentFragment).updateList(new ArrayList<>(qnaQuestionsList), next);
+
+        }
+
     }
     /**
      * This method is used to update qna list of next page
@@ -825,9 +832,9 @@ public class MainActivity extends AppCompatActivity
             List<MyFutureBuddiesEnumeration> forumsList = JSON.std.listOfFrom(MyFutureBuddiesEnumeration.class, extractResults(response));
             this.mFbEnumeration.addAll(forumsList);
 
-            if (currentFragment instanceof MyFutureBuddiesEnumerationFragment) {
+            if (currentFragment instanceof MyFutureBuddiesEnumerationFragment)
                 ((MyFutureBuddiesEnumerationFragment) currentFragment).updateList(forumsList, next);
-            }
+
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1201,9 +1208,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_NEXT_INSTITUTE:
                 this.updateNextInstituteList(response);
                 break;
-            case Constants.TAG_NEXT_SHORTLIST_INSTITUTE:
+           /* case Constants.TAG_NEXT_SHORTLIST_INSTITUTE:
                 this.updateNextShortListedInstitutes(response);
-                break;
+                break;*/
             case Constants.TAG_NEXT_NEWS:
                 this.updateNextNewsList(response);
                 break;
@@ -1925,7 +1932,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mShowQnAQuestions(String response) {
-        this.mDisplayFragment(QnAQuestionsListFragment.newInstance((this.parseAndReturnQnAList(response)), next), true, Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
+        ArrayList<QnAQuestions> qnaQuestionList = parseAndReturnQnAList(response);
+        this.mDisplayFragment(QnAQuestionsListFragment.newInstance(new ArrayList<>(qnaQuestionList), next), true, Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
     }
 
 
@@ -2175,7 +2183,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onEndReached(String next, int listType) {
-        if (next == null) return;
+        if (next == null || next.equalsIgnoreCase("null")) return;
         if (listType == Constants.INSTITUTE_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_INSTITUTE, next, this.mFilterKeywords);
         else if (listType == Constants.SHORTLIST_TYPE)
@@ -2880,11 +2888,10 @@ public class MainActivity extends AppCompatActivity
 
     public ArrayList<QnAQuestions> parseAndReturnQnAList(String qnaString) {
         try {
-            mQnAQuestions.clear();
-
             QnAQuestions qnaQuestion;
 
             JSONObject qnaResult = new JSONObject(qnaString);
+            next = qnaResult.getString("next");
             JSONArray resultArray = qnaResult.getJSONArray("results");
 
             for (int i = 0; i < resultArray.length(); i++) {

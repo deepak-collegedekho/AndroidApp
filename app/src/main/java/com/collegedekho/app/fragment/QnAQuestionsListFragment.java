@@ -58,6 +58,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
         if (getArguments() != null) {
             mQnAQuestionsList = getArguments().getParcelableArrayList(ARG_PARAM1);
             mNextUrl = getArguments().getString(ARG_NEXT);
+            listType = Constants.QNA_LIST_TYPE;
         }
     }
 
@@ -72,20 +73,16 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_questions_list);
 
-        if(this.mViewType == Constants.VIEW_INTO_GRID) {
+        if(this.mViewType == Constants.VIEW_INTO_GRID)
             layoutManager = new GridLayoutManager(getActivity(), 2);
-           // recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
-        }
-        else {
+        else
             layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-           // recyclerView.setItemAnimator(new DefaultItemAnimator());
-        }
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
         this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestionsList, this.mViewType);
         recyclerView.setAdapter(this.mAdapter);
-        //recyclerView.addOnScrollListener(scrollListener);
+        recyclerView.addOnScrollListener(scrollListener);
         updateViewTypeIcon(rootView, this.mViewType);
 
         if (mQnAQuestionsList.size() == 0)
@@ -118,6 +115,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
         try {
             if(context instanceof  MainActivity)
                 mListener = (OnQnAQuestionSelectedListener)context;
+            listener = mListener;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnArticleSelectedListener");
@@ -128,6 +126,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
     public void onDetach() {
         super.onDetach();
         listener = null;
+        mListener = null;
         System.gc();
     }
 
@@ -154,9 +153,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
                     recyclerView.setLayoutManager(layoutManager);
                     this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestionsList, Constants.VIEW_INTO_GRID);
                     recyclerView.setAdapter(this.mAdapter);
-                    recyclerView.setHasFixedSize(true);
-                   // recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, true));
-                   // recyclerView.addOnScrollListener(scrollListener);
+                    recyclerView.addOnScrollListener(scrollListener);
                 }
 
                 break;
@@ -168,9 +165,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
                     recyclerView1.setLayoutManager(layoutManager);
                     this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestionsList, Constants.VIEW_INTO_LIST);
                     recyclerView1.setAdapter(this.mAdapter);
-                    recyclerView1.setHasFixedSize(true);
-                   // recyclerView1.setItemAnimator(new DefaultItemAnimator());
-                    //recyclerView1.addOnScrollListener(scrollListener);
+                    recyclerView1.addOnScrollListener(scrollListener);
                 }
                 break;
             case R.id.question_ask_button:
@@ -196,10 +191,10 @@ public class QnAQuestionsListFragment extends BaseFragment {
         updateViewTypeIcon(getView(), this.mViewType);
     }
 
-    public void updateList(List<QnAQuestions> institutes, String next) {
+    public void updateList(ArrayList<QnAQuestions> qnaQuestionList, String next) {
         this.progressBarLL.setVisibility(View.GONE);
-        this.mQnAQuestionsList.addAll(institutes);
-        this.mAdapter.notifyDataSetChanged();
+        this.mQnAQuestionsList = qnaQuestionList;
+        this.mAdapter.updateAdapter(qnaQuestionList);
         this.loading = false;
         this.mNextUrl = next;
     }

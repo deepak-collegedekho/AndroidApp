@@ -47,7 +47,7 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
             if ((!loading) && ((visibleItemCount + pastVisiblesItems) >= totalItemCount)) {
                 loading = true;
 
-                if(mNextUrl != null && progressBarLL != null)
+                if(mNextUrl != null && !mNextUrl.equalsIgnoreCase("null") && progressBarLL != null)
                     progressBarLL.setVisibility(View.VISIBLE);
 
                 if(listener != null)
@@ -97,6 +97,7 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
         void onFilterApplied();
 
         void onInstituteLikedDisliked(int position, int liked);
+
     }
 
 }

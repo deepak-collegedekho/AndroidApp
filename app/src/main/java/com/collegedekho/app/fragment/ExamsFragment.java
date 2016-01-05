@@ -93,8 +93,8 @@ public class ExamsFragment extends BaseFragment {
         recyclerView.setAdapter(mAdapter);
         rootView.findViewById(R.id.exams_submit_button).setOnClickListener(this);
 
-        Animation pulse = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse);
-        rootView.findViewById(R.id.exams_submit_button).startAnimation(pulse);
+//        Animation pulse = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse);
+//        rootView.findViewById(R.id.exams_submit_button).startAnimation(pulse);zr
 
         rootView.findViewById(R.id.exam_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -103,9 +103,9 @@ public class ExamsFragment extends BaseFragment {
                 v.setVisibility(View.GONE);
                 IS_TUTE_COMPLETED = true;
                 getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.EXAMS_SCREEN_TUTE, true).apply();
-                return false;
-            }
+                return false;            }
         });
+
 
         return rootView;
     }

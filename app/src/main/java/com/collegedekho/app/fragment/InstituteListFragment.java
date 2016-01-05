@@ -113,14 +113,10 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         progressBarLL     =   (LinearLayout)rootView.findViewById(R.id.progressBarLL);
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_list);
 
-        if(this.mViewType == Constants.VIEW_INTO_GRID) {
+        if(this.mViewType == Constants.VIEW_INTO_GRID)
             layoutManager = new GridLayoutManager(getActivity(), 2);
-            //recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
-        }
-        else {
+        else
             layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-            //recyclerView.setItemAnimator(new DefaultItemAnimator());
-        }
 
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
         recyclerView.setLayoutManager(layoutManager);
@@ -349,8 +345,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                     recyclerView.setLayoutManager(layoutManager);
                     this.mAdapter = new InstituteListAdapter(getActivity(), this.mInstitutes, Constants.VIEW_INTO_GRID);
                     recyclerView.setAdapter(this.mAdapter);
-                    recyclerView.setHasFixedSize(true);
-                    //recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 10, true));
                     recyclerView.addOnScrollListener(scrollListener);
                 }
 
@@ -364,8 +358,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                     recyclerView1.setLayoutManager(layoutManager);
                     this.mAdapter = new InstituteListAdapter(getActivity(), this.mInstitutes, Constants.VIEW_INTO_LIST);
                     recyclerView1.setAdapter(this.mAdapter);
-                    recyclerView1.setHasFixedSize(true);
-                    //recyclerView1.setItemAnimator(new DefaultItemAnimator());
                     recyclerView1.addOnScrollListener(scrollListener);
                 }
                 break;

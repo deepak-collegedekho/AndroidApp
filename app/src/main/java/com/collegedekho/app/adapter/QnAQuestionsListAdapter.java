@@ -147,6 +147,13 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         this.notifyDataSetChanged();
     }
 
+    public void updateAdapter(ArrayList<QnAQuestions> qnaQuestionList) {
+        if(qnaQuestionList == null)return;
+        this.mQnAQuestions = qnaQuestionList;
+        this.notifyDataSetChanged();
+    }
+
+
     @Override
     public int getItemCount() {
         return mQnAQuestions.size();
