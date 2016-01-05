@@ -23,8 +23,8 @@ android {
                 applicationId "com.collegedekho.app"
                 minSdkVersion 15
                 targetSdkVersion 22
-                versionCode 5
-                versionName "0.2.3"
+                versionCode 6
+                versionName "0.2.4"
                 multiDexEnabled true
             }
     buildTypes {
