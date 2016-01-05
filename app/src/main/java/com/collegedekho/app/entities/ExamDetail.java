@@ -17,6 +17,16 @@ public class ExamDetail implements Parcelable
     private String exam_short_name="";
     private boolean isSelected;
 
+    public boolean is_preparing() {
+        return is_preparing;
+    }
+
+    public void setIs_preparing(boolean is_preparing) {
+        this.is_preparing = is_preparing;
+    }
+
+    private boolean is_preparing;
+
     public ExamDetail(){
         // required empty cons
     }
@@ -30,6 +40,7 @@ public class ExamDetail implements Parcelable
         exam_tag = in.readString();
         exam_short_name = in.readString();
         result_out = in.readByte() != 0;
+        is_preparing=in.readByte()!=0;
     }
 
     public static final Creator<ExamDetail> CREATOR = new Creator<ExamDetail>() {
@@ -58,6 +69,7 @@ public class ExamDetail implements Parcelable
         dest.writeString(exam_tag);
         dest.writeString(exam_short_name);
         dest.writeByte((byte) (result_out ? 1 : 0));
+        dest.writeByte((byte) (is_preparing ? 1 : 0));
     }
 
     public String getId() {

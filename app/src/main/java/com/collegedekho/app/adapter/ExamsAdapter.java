@@ -47,6 +47,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
     public void onBindViewHolder(final ExamHolderView holder, final int position) {
 
         final Exam exam = this.mExamList.get(position);
+        int selectedPosition=-1;
         if(exam != null) {
             holder.mExamName.setText(exam.getExam_name());
             ArrayList<ExamDetail> examDetail = exam.getExam_details();
@@ -58,6 +59,9 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                     if(obj == null)continue;
                     if(i==0)obj.setSelected(true);
                     year[i] = obj.getYear();
+                    if(obj.is_preparing()){
+                        selectedPosition=i;
+                    }
                 }
                 holder.mYearSpinner.setAdapter(new ArrayAdapter<>(this.mContext, R.layout.spinner_drop_down_item, year));
                 holder.mYearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -93,7 +97,13 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                         }
                     }
                 });
-
+                if (selectedPosition >= 0) {
+                    examDetail.get(position).setSelected(true);
+                    holder.mYearSpinner.setSelection(selectedPosition);
+                    holder.mYearSpinner.setSelected(true);
+                    holder.mExamName.setSelected(true);
+                    holder.mExamName.setTextColor(ExamsAdapter.this.mContext.getResources().getColor(R.color.white));
+                }
                 holder.mExamName.setOnClickListener(new View.OnClickListener(){
                     @Override
                     public void onClick(View v) {
