@@ -74,14 +74,15 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
         if(this.mViewType == Constants.VIEW_INTO_GRID) {
             layoutManager = new GridLayoutManager(getActivity(), 2);
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
+           // recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
         }
         else {
             layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
+           // recyclerView.setItemAnimator(new DefaultItemAnimator());
         }
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
         this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestionsList, this.mViewType);
         recyclerView.setAdapter(this.mAdapter);
         //recyclerView.addOnScrollListener(scrollListener);
@@ -154,7 +155,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
                     this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestionsList, Constants.VIEW_INTO_GRID);
                     recyclerView.setAdapter(this.mAdapter);
                     recyclerView.setHasFixedSize(true);
-                    recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, true));
+                   // recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, true));
                    // recyclerView.addOnScrollListener(scrollListener);
                 }
 
@@ -168,7 +169,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
                     this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestionsList, Constants.VIEW_INTO_LIST);
                     recyclerView1.setAdapter(this.mAdapter);
                     recyclerView1.setHasFixedSize(true);
-                    recyclerView1.setItemAnimator(new DefaultItemAnimator());
+                   // recyclerView1.setItemAnimator(new DefaultItemAnimator());
                     //recyclerView1.addOnScrollListener(scrollListener);
                 }
                 break;

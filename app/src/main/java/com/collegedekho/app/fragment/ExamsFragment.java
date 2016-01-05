@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -90,6 +92,9 @@ public class ExamsFragment extends BaseFragment {
         ExamsAdapter mAdapter = new ExamsAdapter(getActivity(), this.mExamList);
         recyclerView.setAdapter(mAdapter);
         rootView.findViewById(R.id.exams_submit_button).setOnClickListener(this);
+
+        Animation pulse = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse);
+        rootView.findViewById(R.id.exams_submit_button).startAnimation(pulse);
 
         rootView.findViewById(R.id.exam_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
             @Override

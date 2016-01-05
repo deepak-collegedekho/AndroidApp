@@ -56,11 +56,7 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
         return rootView;
     }
 
-    public void onStreamUpdated(String uri, String name) {
-        if (mListener != null) {
-            mListener.onStreamUpdated(uri, name);
-        }
-    }
+
     public void onStreamSelected(String uri, String name) {
         if (mListener != null) {
             mListener.onStreamSelected(uri, name);
@@ -100,7 +96,7 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
     public interface OnStreamInteractionListener {
         void onStreamSelected(String stream, String streamName);
 
-        void onStreamUpdated(String stream, String streamName);
+        //void onStreamUpdated(String stream, String streamName);
     }
 
 

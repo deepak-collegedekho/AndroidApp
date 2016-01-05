@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
@@ -16,15 +17,16 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
-import com.collegedekho.app.fragment.InstituteShortlistFragment;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 
 import java.util.ArrayList;
 
+*/
 /**
  * Created by sureshsaini on 30/10/15.
- */
+ *//*
+
 public class InstituteShortListAdapter extends RecyclerView.Adapter {
 
     private ArrayList<Institute> mInstitueList;
@@ -239,3 +241,4 @@ public class InstituteShortListAdapter extends RecyclerView.Adapter {
          }
      }
 }
+*/

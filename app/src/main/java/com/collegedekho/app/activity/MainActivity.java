@@ -85,7 +85,6 @@ import com.collegedekho.app.fragment.InstituteDetailFragment;
 import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
-import com.collegedekho.app.fragment.InstituteShortlistFragment;
 import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.LoginFragment1;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
@@ -94,7 +93,6 @@ import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.NotPreparingFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
-import com.collegedekho.app.fragment.ProfileFragment1;
 import com.collegedekho.app.fragment.PsychometricTestParentFragment;
 import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
@@ -106,7 +104,6 @@ import com.collegedekho.app.fragment.TabFragment;
 import com.collegedekho.app.fragment.UserAlertsFragment;
 import com.collegedekho.app.fragment.UserAlertsParentFragment;
 import com.collegedekho.app.fragment.UserEducationFragment;
-import com.collegedekho.app.fragment.WidgetListFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.listener.DataLoadListener;
@@ -183,23 +180,18 @@ SOFTWARE.*/
 public class MainActivity extends AppCompatActivity
         implements  LoaderManager.LoaderCallbacks<Cursor>,ExamsFragment.OnExamsSelectListener,
         ProfileFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
-        DataLoadListener,
-        StreamFragment.OnStreamInteractionListener,AdapterView.OnItemSelectedListener,
-        InstituteListFragment.OnInstituteSelectedListener,
-        InstituteShortlistFragment.OnShortlistedInstituteSelectedListener,
-        OnApplyClickedListener, WidgetListFragment.OnWidgetInteractionListener,
-        OnNewsSelectListener, InstituteQnAFragment.OnQuestionAskedListener,
-        FilterFragment.OnFilterInteractionListener, InstituteOverviewFragment.OnInstituteShortlistedListener,
-        QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
-        QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener,
-        MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
+        DataLoadListener, StreamFragment.OnStreamInteractionListener,AdapterView.OnItemSelectedListener,
+        InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener,
+        OnNewsSelectListener,
+        InstituteQnAFragment.OnQuestionAskedListener, FilterFragment.OnFilterInteractionListener,
+        InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
+        QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener,OnArticleSelectListener,
-        ProfileFragment1.onProfileUpdateListener,
-        LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener,
-        InstituteDetailFragment.OnInstituteFooterItemSelected, UserEducationFragment.OnUserEducationInteractionListener,
-        PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
+        LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener, InstituteDetailFragment.OnInstituteFooterItemSelected,
+        UserEducationFragment.OnUserEducationInteractionListener, PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData,
-        NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,UserAlertsFragment.OnAlertItemSelectListener
+        NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
+        UserAlertsFragment.OnAlertItemSelectListener
 
 {
 
@@ -337,6 +329,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         this.setContentView(R.layout.activity_main);
+        this.networkUtils = new NetworkUtils(this, this);
         getSupportLoaderManager().initLoader(0, null, this);
 
         this.connecto = Connecto.with(MainActivity.this);
@@ -556,12 +549,6 @@ public class MainActivity extends AppCompatActivity
         System.gc();
     }
 
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
-        AppsFlyerLib.onActivityResume(this);
-    }
 
     @Override
     protected void onPause() {
@@ -572,6 +559,12 @@ public class MainActivity extends AppCompatActivity
         System.gc();
     }
 
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        AppsFlyerLib.onActivityResume(this);
+    }
     @Override
     protected void onStop() {
         super.onStop();
@@ -586,7 +579,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void init() {
-        this.networkUtils = new NetworkUtils(this, this);
         SharedPreferences sp = this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
         try {
             if (sp.contains(Constants.KEY_USER)) {
@@ -630,7 +622,8 @@ public class MainActivity extends AppCompatActivity
             this.mLoadUserStatusScreen();
 
         }else{
-            disconnectFromFacebook();
+
+             disconnectFromFacebook();
              MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
         }
     }
@@ -768,9 +761,9 @@ public class MainActivity extends AppCompatActivity
             List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
             this.mShortlistedInstituteList.addAll(institutes);
 
-            if (currentFragment instanceof InstituteShortlistFragment) {
+          /*  if (currentFragment instanceof InstituteShortlistFragment) {
                 ((InstituteShortlistFragment) currentFragment).updateList(institutes, next);
-            }
+            }*/
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1048,7 +1041,7 @@ public class MainActivity extends AppCompatActivity
         }
         else
         {
-            if(currentFragment instanceof  LoginFragment || currentFragment instanceof LoginFragment1 || currentFragment instanceof ProfileFragment1)
+            if(currentFragment instanceof  LoginFragment || currentFragment instanceof LoginFragment1)
                 currentFragment.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -1232,13 +1225,6 @@ public class MainActivity extends AppCompatActivity
                 if (tags.length == 2)
                     extraTag = tags[1];
                 this.updateShortlistInstitute(null, extraTag);
-                break;
-            case Constants.TAG_UNSHORTLIST_INSTITUTE:
-                if (tags.length == 2) {
-                    extraTag = tags[1];
-                    if (currentFragment instanceof InstituteShortlistFragment)
-                        ((InstituteShortlistFragment) currentFragment).updateShortlistButton(Integer.parseInt(extraTag));
-                }
                 break;
             case Constants.TAG_INSTITUTE_LIKE_DISLIKE:
                 if (tags.length == 2)
@@ -1676,11 +1662,11 @@ public class MainActivity extends AppCompatActivity
 
 
     private void updateLikeButton(String response, String extraTag, int like) {
-        Institute institute = null;
+    /*    Institute institute = null;
         if(currentFragment instanceof InstituteShortlistFragment)
             institute = this.mShortlistedInstituteList.get(Integer.parseInt(extraTag));
-        else
-            institute = this.mInstituteList.get(Integer.parseInt(extraTag));
+        else*/
+          Institute  institute = this.mInstituteList.get(Integer.parseInt(extraTag));
         if (like == Constants.NEITHER_LIKE_NOR_DISLIKE)
         {
             institute.setCurrent_user_vote_type(Constants.NEITHER_LIKE_NOR_DISLIKE);
@@ -1745,59 +1731,9 @@ public class MainActivity extends AppCompatActivity
                 Log.e(TAG, e.getMessage());
             }
         }
-        if (currentFragment instanceof InstituteListFragment || currentFragment instanceof  InstituteShortlistFragment) {
+        if (currentFragment instanceof InstituteListFragment) {
             currentFragment.updateLikeButtons(Integer.parseInt(extraTag));
         }
-    }
-
-    /*private void updateShortlistInstitute(String response, String extraTag)
-    {
-        Institute institute = this.mInstituteList.get(Integer.parseInt(extraTag));
-        String message = null;
-
-        if (response == null) {
-            institute.setIs_shortlisted(Constants.SHORTLISTED_NO);
-            message = " removed from your shortlist";
-            //GA Event for institute shortlisting removed
-            MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_SHORTLISTED_REMOVED, "Institute Shortlisting Removed : " + String.valueOf(institute.getResource_uri()) + " Institute Name: " + institute.getName() + " Institute City: " + institute.getCity_name());
-            //CONNECTO Event for institute shortlisting removed
-            this.connecto.track(Constants.ACTION_INSTITUTE_SHORTLISTED_REMOVED, new Properties().putValue(Constants.ACTION_INSTITUTE_SHORTLISTED, Constants.SHORTLISTED_NO).putValue(institute.getShort_name(), Constants.SHORTLISTED_NO).putValue(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri()));
-        } else {
-            try {
-                institute.setIs_shortlisted(Constants.SHORTLISTED_YES);
-                message = " added to your shortlist";
-                //GA Event for institute shortlisted
-                MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_SHORTLISTED, "Institute Shortlisted : " + String.valueOf(institute.getResource_uri()) + " Institute Name: " + institute.getName() + " Institute City: " + institute.getCity_name());
-                //CONNECTO Event for institute shortlisting removed
-                this.connecto.track(Constants.ACTION_INSTITUTE_SHORTLISTED, new Properties().putValue(Constants.ACTION_INSTITUTE_SHORTLISTED, Constants.SHORTLISTED_YES).putValue(institute.getShort_name(), Constants.SHORTLISTED_YES).putValue(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri()));
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-            }
-        }
-        if (Integer.parseInt(extraTag) == currentInstitute)
-            if (currentFragment instanceof InstituteDetailFragment)
-                ((InstituteDetailFragment) currentFragment).updateInstituteShortlist();
-
-        Toast.makeText(this, institute.getShort_name() + message, Toast.LENGTH_SHORT).show();
-    }*/
-
-    private void updateUnShortlistInstitute(String response, String extraTag)
-    {
-        Institute institute = this.mShortlistedInstituteList.get(Integer.parseInt(extraTag));
-        String message = null;
-                 try {
-                institute.setIs_shortlisted(Constants.SHORTLISTED_YES);
-                message = " added to your shortlist";
-                //GA Event for institute shortlisted
-                MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_SHORTLISTED, "Institute Shortlisted : " + String.valueOf(institute.getResource_uri()) + " Institute Name: " + institute.getName() + " Institute City: " + institute.getCity_name());
-                //CONNECTO Event for institute shortlisting removed
-                this.connecto.track(Constants.ACTION_INSTITUTE_SHORTLISTED, new Properties().putValue(Constants.ACTION_INSTITUTE_SHORTLISTED, Constants.SHORTLISTED_YES).putValue(institute.getShort_name(), Constants.SHORTLISTED_YES).putValue(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri()));
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-            }
-        if (currentFragment instanceof InstituteShortlistFragment)
-            ((InstituteShortlistFragment) currentFragment).updateShortlistButton(Integer.parseInt(extraTag));
-        //Toast.makeText(this, institute.getShort_name() + message, Toast.LENGTH_SHORT).show();
     }
 
     private void updateShortlistInstitute(String response, String extraTag)
@@ -1846,7 +1782,6 @@ public class MainActivity extends AppCompatActivity
                 {
                     mInstituteList.remove(position);
                 }
-
             }
             ((InstituteListFragment) currentFragment).updateShortlistButton(Integer.parseInt(extraTag));
         }
@@ -1989,34 +1924,6 @@ public class MainActivity extends AppCompatActivity
         return null;
     }
 
-    /**
-     * This method is used to load Home screen of this application
-     * @param response
-     */
-    private void mUpdateHome(String response) {
-        try {
-            // unlock navigation drawer when home screen come
-            ((DrawerLayout)findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-
-            //  show appBarLayout and toolBar
-            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
-            params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
-            findViewById(R.id.container).setLayoutParams(params);
-
-            this.mWidgets = JSON.std.listOfFrom(Widget.class, extractResults(response));
-            Fragment widgetListFragment = WidgetListFragment.newInstance(new ArrayList<>(this.mWidgets));
-            if (MainActivity.type != null && MainActivity.type.length() > 0)
-            {
-                //add to backstack without displaying
-                MainActivity.this.mhandleNotifications();
-                MainActivity.type = "";
-            }
-            this.mDisplayFragment(widgetListFragment, false, Constants.TAG_FRAGMENT_WIDGET_LIST);
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
-
     private void mShowQnAQuestions(String response) {
         this.mDisplayFragment(QnAQuestionsListFragment.newInstance((this.parseAndReturnQnAList(response)), next), true, Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
     }
@@ -2136,17 +2043,10 @@ public class MainActivity extends AppCompatActivity
                         ((InstituteDetailFragment) currentFragment).updateInstituteShortlist();
                 break;
             }
-            case Constants.TAG_UNSHORTLIST_INSTITUTE: {
-                if (tags.length == 2)
-                    extraTag = tags[1];
-                    if (currentFragment instanceof InstituteShortlistFragment)
-                        (currentFragment).updateLikeButtons(Integer.parseInt(extraTag));
-                break;
-            }
-            case Constants.TAG_INSTITUTE_LIKE_DISLIKE: {
+           case Constants.TAG_INSTITUTE_LIKE_DISLIKE: {
                 if (tags.length >= 2)
                     extraTag = tags[1];
-                if (currentFragment instanceof InstituteListFragment || currentFragment instanceof  InstituteShortlistFragment) {
+                if (currentFragment instanceof InstituteListFragment) {
                     currentFragment.updateLikeButtons(Integer.parseInt(extraTag));
                 }
                 break;
@@ -2182,7 +2082,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
+
+  /*  @Override
     public void unShortListInstituteFailed(String[] tags) {
         if(tags != null && tags.length >= 2) {
             if (currentFragment instanceof InstituteShortlistFragment)
@@ -2191,7 +2092,7 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-    }
+    }*/
 
     @Override
     public void onStreamSelected(final String stream, final String streamName) {
@@ -2208,32 +2109,6 @@ public class MainActivity extends AppCompatActivity
                 .show();
     }
 
-    @Override
-    public void onStreamClicked() {
-        this.mMakeNetworkCall(Constants.TAG_UPDATE_STREAM, Constants.BASE_URL + "streams/", null);
-    }
-
-    @Override
-    public void onStreamUpdated(final String uri, final String streamName) {
-        getSupportFragmentManager().popBackStack();
-
-        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
-
-        if (fragment == null)
-            this.mDisplayFragment(ProfileFragment1.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
-        else {
-
-            this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
-            if (fragment instanceof ProfileFragment1) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((ProfileFragment1) fragment).updateStream(uri, streamName);
-                    }
-                });
-            }
-        }
-    }
 
     private void mOnCourseLevelSelected(int level, String streamURI, String streamName) {
         //get device id
@@ -2260,11 +2135,11 @@ public class MainActivity extends AppCompatActivity
         this.currentInstitute = position;
         this.mDisplayInstitute(position);
     }
-    @Override
+    /*@Override
     public void onShortListInstituteSelected(int position) {
         this.currentInstitute = position;
         this.mDisplayInstitute(position);
-    }
+    }*/
     @Override
     public void onInstituteLikedDisliked(int position, int liked) {
         Institute   institute = this.mInstituteList.get(position);
@@ -2462,34 +2337,14 @@ public class MainActivity extends AppCompatActivity
         MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_COURSE_APPLIED, eventValue);
     }
 
-    public ArrayList<String> getYears(){
+    public ArrayList<String> getYears() {
         ArrayList<String> years = new ArrayList<>();
         int year = Calendar.getInstance().get(Calendar.YEAR);
-        for(int i=0; i<5; i++){
-            years.add(""+(year+i));
+        for (int i = 0; i < 5; i++) {
+            years.add("" + (year + i));
         }
         mYear = years.get(0);
         return years;
-    }
-
-    @Override
-    public void onWidgetSelected(Widget widget, int position) {
-        this.mCurrentTitle = widget.getTitle();
-        if (widget.getType().equals(Constants.WIDGET_INSTITUTES)) {
-            this.mFilterKeywords = this.mGetTheFilters();
-
-            this.mMakeNetworkCall(widget.getType(), widget.getAction_url(), this.mFilterKeywords);
-            return;
-        }
-
-        switch (widget.getAction_method()) {
-            case Constants.METHOD_GET:
-                this.mMakeNetworkCall(widget.getType(), widget.getAction_url(), null);
-                break;
-            case Constants.METHOD_POST:
-                this.mMakeNetworkCall(widget.getType(), widget.getAction_url(), null);
-                break;
-        }
     }
 
     /**
@@ -2648,12 +2503,12 @@ public class MainActivity extends AppCompatActivity
         else
             this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
     }
-    @Override
+   /* @Override
     public void onInstituteUnShortlisted(int position) {
 
         Institute institute = this.mShortlistedInstituteList.get(position);
         this.mMakeNetworkCall(Constants.TAG_UNSHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
-    }
+    }*/
 
     @Override
     public void onFilterCanceled(boolean clearAll) {
@@ -3005,7 +2860,7 @@ public class MainActivity extends AppCompatActivity
             this.connecto.track(Constants.ACTION_QNA_QUESTION_ASKED, new Properties().putValue(Constants.QNA_QUESTION_RESOURCE_URI, qnaQuestion.getResource_uri()));
 
             //Appsflyer events
-            Map<String, Object> eventValue = new HashMap<String, Object>();
+            Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_RESOURCE_URI, qnaQuestion.getResource_uri());
 
             MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_QNA_QUESTION_ASKED, eventValue);
@@ -3091,47 +2946,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-   /* *//**
-     * This mthod used to show user profile fragment UI
-     *//*
-    private void mDisplayPofile()
-    {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
-        if (fragment == null)
-            mDisplayFragment(ProfileFragment1.newInstance(user), true, Constants.TAG_FRAGMENT_PROFILE);
-        else
-            mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_PROFILE);
-
-    }*/
-
-    /**
-     * This method is used to update User Profile
-     * @param hashMap user request data
-     */
-
-    @Override
-    public void onProfileUpdated(HashMap<String, String> hashMap) {
-
-        //reset the filters in preferences and update institueLists
-        //TODO:: SURESH: stream and level comes selected, check if deselecting it here makes it deselected forever.
-        if (this.mFolderList != null && !this.mFolderList.isEmpty()) {
-            for (Folder f : this.mFolderList) {
-                for (Facet ft : f.getFacets())
-                    ft.deselect();
-            }
-
-            this.mFilterCount = 0;
-            this.mFilterKeywords = new HashMap<>();
-
-            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
-            this.mMakeNetworkCall(Constants.TAG_UPDATE_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", null);
-        }
-        this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, Constants.BASE_URL + "preferences/", hashMap);
-
-    }
-
-
-    /**
+  /**
      * This method is called when user change anything in Institute List
      * @param response server response
      */
@@ -3159,8 +2974,6 @@ public class MainActivity extends AppCompatActivity
             baskpressHandler.postDelayed(backpressRunnable,1500);
         }
         else {
-//            if(currentFragment instanceof SyllabusSubjectsListFragment)
-//                ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
             super.onBackPressed();
         }
     }
@@ -3772,7 +3585,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onExamTabSelected(ExamDetail examDetailObj) {
-         if(examDetailObj == null)return;
+        if(examDetailObj == null)return;
         String id = examDetailObj.getId();
         Map<String , String> params = this.mGetTheFilters();
         if(params == null)

@@ -20,5 +20,5 @@ public interface DataLoadListener {
 
     public void onJsonObjectRequestError(String tag, String response, String url, JSONObject params, int method);
 
-    void unShortListInstituteFailed(String[] tags);
+   // void unShortListInstituteFailed(String[] tags);
 }

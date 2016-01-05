@@ -115,12 +115,14 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
         if(this.mViewType == Constants.VIEW_INTO_GRID) {
             layoutManager = new GridLayoutManager(getActivity(), 2);
-            recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
+            //recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
         }
         else {
             layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            //recyclerView.setItemAnimator(new DefaultItemAnimator());
         }
+
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
         recyclerView.setLayoutManager(layoutManager);
         updateViewTypeIcon(rootView, this.mViewType);
         mAdapter = new InstituteListAdapter(getActivity(), mInstitutes, this.mViewType);
@@ -348,7 +350,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                     this.mAdapter = new InstituteListAdapter(getActivity(), this.mInstitutes, Constants.VIEW_INTO_GRID);
                     recyclerView.setAdapter(this.mAdapter);
                     recyclerView.setHasFixedSize(true);
-                    recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 10, true));
+                    //recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 10, true));
                     recyclerView.addOnScrollListener(scrollListener);
                 }
 
@@ -363,7 +365,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                     this.mAdapter = new InstituteListAdapter(getActivity(), this.mInstitutes, Constants.VIEW_INTO_LIST);
                     recyclerView1.setAdapter(this.mAdapter);
                     recyclerView1.setHasFixedSize(true);
-                    recyclerView1.setItemAnimator(new DefaultItemAnimator());
+                    //recyclerView1.setItemAnimator(new DefaultItemAnimator());
                     recyclerView1.addOnScrollListener(scrollListener);
                 }
                 break;
