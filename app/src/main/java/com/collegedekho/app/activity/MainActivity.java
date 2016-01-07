@@ -273,7 +273,7 @@ public class MainActivity extends AppCompatActivity
     private boolean IS_PROFILE_LOADED;
     private boolean IS_USER_CREATED;
     private List<MyAlertDate> myAlertsList;
-
+    private boolean isFromNotification;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -410,6 +410,7 @@ public class MainActivity extends AppCompatActivity
     private void mhandleNotifications()
     {
         //Toast.makeText(MainActivity.this, type + " " + resource_uri, Toast.LENGTH_LONG).show();
+        isFromNotification=true;
         switch (MainActivity.type)
         {
             case Constants.TAG_FRAGMENT_INSTITUTE_LIST:
@@ -466,9 +467,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.WIDGET_SYLLABUS:
                 this.mMakeNetworkCall(Constants.WIDGET_SYLLABUS, MainActivity.resource_uri, null);
                 break;
-
-
             default:
+                isFromNotification=false;
+                mLoadUserStatusScreen();
                 break;
         }
         MainActivity.type="";
@@ -680,8 +681,10 @@ public class MainActivity extends AppCompatActivity
      */
 
     private void mLoadUserStatusScreen() {
-
-        if(MainActivity.user.getEducation_set() == 1 &&  MainActivity.user.getExams_set() == 1 || IS_PROFILE_LOADED)
+        if(MainActivity.type!=null && !MainActivity.type.matches("")){
+            mhandleNotifications();
+        }
+        else if(MainActivity.user.getEducation_set() == 1 &&  MainActivity.user.getExams_set() == 1 || IS_PROFILE_LOADED)
             this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
         else if(MainActivity.user.getEducation_set() == 1 &&  MainActivity.user.getExams_set() == 0)
             this.mMakeNetworkCall(Constants.TAG_LOAD_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
@@ -854,7 +857,7 @@ public class MainActivity extends AppCompatActivity
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
 
             if (fragment == null)
-                this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount), true, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+                this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount), !isFromNotification, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
             else {
                 if (fragment instanceof InstituteListFragment) {
                     ((InstituteListFragment) fragment).clearList();
@@ -895,7 +898,7 @@ public class MainActivity extends AppCompatActivity
     private void mShowMyFBEnumeration(String response) {
         try {
             this.mFbEnumeration = JSON.std.listOfFrom(MyFutureBuddiesEnumeration.class, this.extractResults(response));
-            this.mDisplayFragment(MyFutureBuddiesEnumerationFragment.newInstance(new ArrayList<>(this.mFbEnumeration), next), true, Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
+            this.mDisplayFragment(MyFutureBuddiesEnumerationFragment.newInstance(new ArrayList<>(this.mFbEnumeration), next), !isFromNotification, Constants.TAG_FRAGMENT_MY_FB_ENUMERATION);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1531,7 +1534,7 @@ public class MainActivity extends AppCompatActivity
             FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment fragment = fragmentManager.findFragmentByTag(SyllabusSubjectsListFragment.class.getSimpleName());
             if (fragment == null) {
-                this.mDisplayFragment(SyllabusSubjectsListFragment.newInstance(subjectsList), true, SyllabusSubjectsListFragment.class.getSimpleName());
+                this.mDisplayFragment(SyllabusSubjectsListFragment.newInstance(subjectsList), !isFromNotification, SyllabusSubjectsListFragment.class.getSimpleName());
             }
             else {
                 this.mDisplayFragment(fragment, false, SyllabusSubjectsListFragment.class.getSimpleName());
@@ -1798,7 +1801,7 @@ public class MainActivity extends AppCompatActivity
         try {
             this.mNewsList = JSON.std.listOfFrom(News.class, extractResults(response));
             this.mParseSimilarNews(this.mNewsList);
-            this.mDisplayFragment(NewsFragment.newInstance(new ArrayList<>(this.mNewsList), this.mCurrentTitle, this.next), true, Constants.TAG_FRAGMENT_NEWS_LIST);
+            this.mDisplayFragment(NewsFragment.newInstance(new ArrayList<>(this.mNewsList), this.mCurrentTitle, this.next), !isFromNotification, Constants.TAG_FRAGMENT_NEWS_LIST);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1834,7 +1837,7 @@ public class MainActivity extends AppCompatActivity
         try {
             this.mArticlesList = JSON.std.listOfFrom(Articles.class, extractResults(response));
             this.mParseSimilarArticle(mArticlesList);
-            this.mDisplayFragment(ArticleFragment.newInstance(new ArrayList<>(this.mArticlesList), this.mCurrentTitle, this.next), true, Constants.TAG_FRAGMENT_ARTICLES_LIST);
+            this.mDisplayFragment(ArticleFragment.newInstance(new ArrayList<>(this.mArticlesList), this.mCurrentTitle, this.next), !isFromNotification, Constants.TAG_FRAGMENT_ARTICLES_LIST);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1933,7 +1936,7 @@ public class MainActivity extends AppCompatActivity
 
     private void mShowQnAQuestions(String response) {
         ArrayList<QnAQuestions> qnaQuestionList = parseAndReturnQnAList(response);
-        this.mDisplayFragment(QnAQuestionsListFragment.newInstance(new ArrayList<>(qnaQuestionList), next), true, Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
+        this.mDisplayFragment(QnAQuestionsListFragment.newInstance(new ArrayList<>(qnaQuestionList), next), !isFromNotification, Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
     }
 
 
@@ -2974,13 +2977,18 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
-        int backStackCount=getSupportFragmentManager().getBackStackEntryCount();
-      if(backStackCount == 0 && !Constants.READY_TO_CLOSE) {
+        int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+
+        if (backStackCount == 0 && !Constants.READY_TO_CLOSE) {
+            if (isFromNotification) {
+                isFromNotification = false;
+                mLoadUserStatusScreen();
+                return;
+            }
             Constants.READY_TO_CLOSE = true;
             Utils.DisplayToast(getApplicationContext(), "Press again to close CollegeDekho");
-            baskpressHandler.postDelayed(backpressRunnable,1500);
-        }
-        else {
+            baskpressHandler.postDelayed(backpressRunnable, 1500);
+        } else {
             super.onBackPressed();
         }
     }
@@ -3880,7 +3888,7 @@ public class MainActivity extends AppCompatActivity
 
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(CalendarParentFragment.class.getSimpleName() );
             if(fragment == null)
-                this.mDisplayFragment(CalendarParentFragment.newInstance(new ArrayList(this.chaptersList)), true, CalendarParentFragment.class.getSimpleName() );
+                this.mDisplayFragment(CalendarParentFragment.newInstance(new ArrayList(this.chaptersList)), !isFromNotification, CalendarParentFragment.class.getSimpleName() );
             else {
                 if (currentFragment instanceof CalendarParentFragment)
                     ((CalendarParentFragment) currentFragment).updateCalander(new ArrayList(this.chaptersList));
@@ -3981,7 +3989,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void displayAlerts(ArrayList<MyAlertDate>dates){
-        this.mDisplayFragment(UserAlertsFragment.newInstance(dates),true,UserAlertsFragment.class.toString());
+        this.mDisplayFragment(UserAlertsFragment.newInstance(dates),!isFromNotification,UserAlertsFragment.class.toString());
     }
 
     public void adjustFontScale(Configuration configuration) {
