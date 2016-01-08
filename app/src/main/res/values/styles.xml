@@ -1,5 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools"
-    xmlns:fab="http://schemas.android.com/apk/res-auto">
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
 
@@ -11,6 +10,7 @@
         <item name="colorAccent">@color/text_subhead_blue</item>
         <item name="android:scrollbars">none</item>
         <item name="android:activatedBackgroundIndicator">@drawable/bg_navigation_activated</item>
+        <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
     </style>
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -18,6 +18,13 @@
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+    <!-- Style to replace actionbar overflow icon. set item 'android:actionOverflowButtonStyle' in AppTheme -->
+    <style name="MyActionButtonOverflow" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
+        <item name="android:background">?android:attr/actionBarItemBackground</item>
+        <item name="android:contentDescription">"Lala"</item>
+    </style>
 
     <style name="AppTheme.BlueButton">
         <item name="android:layout_width">wrap_content</item>
@@ -486,6 +493,8 @@
         <item name="android:background">@drawable/rounded_bottom_menu_item</item>
 
     </style>
+    Declaration
+    <style name="Widget.GifView" parent="@android:style/Widget"></style>
 
 
 </resources>

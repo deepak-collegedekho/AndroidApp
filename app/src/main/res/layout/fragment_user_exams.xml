@@ -24,6 +24,13 @@
               android:layout_height="wrap_content"
               android:layout_below="@id/exam_textview"
               android:src="@drawable/ic_exams_user"/>
+    <!--<com.andexert.library.RippleView
+        android:id="@+id/more"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        android:layout_alignParentBottom="true"
+        rv_centered="true">-->
+
         <TextView
             style="@style/AppTheme.OrangeButton"
             android:background="@color/primary_orange"
@@ -31,11 +38,13 @@
             android:layout_width="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_height="wrap_content"
+            android:textSize="21sp"
             android:paddingBottom="@dimen/m9dp"
             android:paddingTop="@dimen/m9dp"
-            android:textSize="21sp"
             android:foregroundGravity="center"
             android:text="SUBMIT"/>
+
+    <!--</com.andexert.library.RippleView>-->
 
        <android.support.v7.widget.RecyclerView
             android:id="@+id/exams_recycle_view"
@@ -59,6 +68,7 @@
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:clickable="true"
+            android:visibility="gone"
             android:src="@drawable/ic_exam_tute" />
 
     </FrameLayout>

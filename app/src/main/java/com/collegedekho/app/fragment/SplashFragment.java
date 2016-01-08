@@ -47,7 +47,7 @@ public class SplashFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        final View view = getView();
+       final View view = getView();
         if(view != null)
         {
             FrameLayout layout =(FrameLayout) getActivity().findViewById(R.id.container);
@@ -100,7 +100,7 @@ public class SplashFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        stopMainAnimation();
+        //stopMainAnimation();
     }
 
 

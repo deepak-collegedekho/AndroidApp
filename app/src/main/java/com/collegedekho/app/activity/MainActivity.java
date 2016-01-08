@@ -34,6 +34,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -92,6 +93,7 @@ import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.NotPreparingFragment;
+import com.collegedekho.app.fragment.ProfileEditFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.PsychometricTestParentFragment;
 import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
@@ -114,6 +116,7 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
+import com.collegedekho.app.widget.GifView;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -182,7 +185,7 @@ public class MainActivity extends AppCompatActivity
         ProfileFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
         DataLoadListener, StreamFragment.OnStreamInteractionListener,AdapterView.OnItemSelectedListener,
         InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener,
-        OnNewsSelectListener,
+        OnNewsSelectListener,ProfileEditFragment.onProfileUpdateListener,
         InstituteQnAFragment.OnQuestionAskedListener, FilterFragment.OnFilterInteractionListener,
         InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
@@ -191,7 +194,7 @@ public class MainActivity extends AppCompatActivity
         UserEducationFragment.OnUserEducationInteractionListener, PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
-        UserAlertsFragment.OnAlertItemSelectListener
+        UserAlertsFragment.OnAlertItemSelectListener, GifView.onGifCompletedListener
 
 {
 
@@ -330,6 +333,16 @@ public class MainActivity extends AppCompatActivity
 
         this.setContentView(R.layout.activity_main);
         this.networkUtils = new NetworkUtils(this, this);
+
+        prepBuddies       = (TextView)findViewById(R.id.prep_buddies);
+        resourceBuddies   = (TextView)findViewById(R.id.resources_buddies);
+        futureBuddies     = (TextView)findViewById(R.id.future_buddies);
+        myAlerts          = (TextView)findViewById(R.id.my_alerts);
+
+        prepBuddies.setOnClickListener(mClickListener);
+        resourceBuddies.setOnClickListener(mClickListener);
+        futureBuddies.setOnClickListener(mClickListener);
+        myAlerts.setOnClickListener(mClickListener);
         getSupportLoaderManager().initLoader(0, null, this);
 
         this.connecto = Connecto.with(MainActivity.this);
@@ -360,21 +373,17 @@ public class MainActivity extends AppCompatActivity
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
 
-        prepBuddies       = (TextView)findViewById(R.id.prep_buddies);
-        resourceBuddies   = (TextView)findViewById(R.id.resources_buddies);
-        futureBuddies     = (TextView)findViewById(R.id.future_buddies);
-        myAlerts          = (TextView)findViewById(R.id.my_alerts);
-
-        prepBuddies.setOnClickListener(mClickListener);
-        resourceBuddies.setOnClickListener(mClickListener);
-        futureBuddies.setOnClickListener(mClickListener);
-        myAlerts.setOnClickListener(mClickListener);
         //init();
         //this.mDisplayFragment(MyAlertFragment.newInstance(null), false, MyAlertFragment.class.getName());
         // show appBarLayout and toolBar
 
         // TODO: Move this to where you establish a user session
         logUser();
+    }
+
+   @Override
+    public void onGifCompleted() {
+        loadInItData();
     }
 
     private void mSetUpAPPToolBar() {
@@ -579,6 +588,43 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        this.menu = menu;
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (currentFragment instanceof ProfileEditFragment)
+            menu.getItem(0).setVisible(false);
+        else
+            menu.getItem(0).setVisible(true);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    public void showOverflowMenu(boolean showMenu){
+        if(menu == null)
+            return;
+        menu.setGroupVisible(R.id.main_menu_group, showMenu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        int id = item.getItemId();
+        if (id == R.id.action_profile) {
+            mPofileEditFragment();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
     public void init() {
         SharedPreferences sp = this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE);
         try {
@@ -620,14 +666,14 @@ public class MainActivity extends AppCompatActivity
             // if user is anonymous  then logout from facebook
             if(user.is_anony())
                 disconnectFromFacebook();
+
             this.mLoadUserStatusScreen();
-
         }else{
-
              disconnectFromFacebook();
              MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
         }
     }
+
 
     /**
      * This method is called when first time anonymous user is created
@@ -690,6 +736,19 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_LOAD_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
         else
             this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION,  Constants.BASE_URL + "user-education/", null);
+    }
+
+    /**
+    * This mthod used to show user profile fragment UI
+    */
+    private void mPofileEditFragment()
+    {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileEditFragment.class.getSimpleName());
+        if (fragment == null)
+            mDisplayFragment(ProfileEditFragment.newInstance(), true, ProfileEditFragment.class.getSimpleName());
+        else
+            mDisplayFragment(fragment, false, ProfileEditFragment.class.getSimpleName());
+
     }
 
     /**
@@ -1548,21 +1607,23 @@ public class MainActivity extends AppCompatActivity
 
     private void mStreamAndLevelUpdated(String response)
     {
-        String token = user.getToken();
-        String image = user.getImage();
-
+        User tempUser = MainActivity.user;
         try {
-            user = JSON.std.beanFrom(User.class, response);
+            MainActivity.user = JSON.std.beanFrom(User.class, response);
         }
         catch (IOException e) {
             e.printStackTrace();
-        }
+       }
 
         //save the preferences locally
-        user.setPref(User.Prefs.STREAMKNOWN);
-        user.setToken(token);
-        user.setImage(image);
-
+        MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
+        if(tempUser != null) {
+            MainActivity.user.setToken(tempUser.getToken());
+            MainActivity.user.setImage(tempUser.getImage());
+            MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+            MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+            MainActivity.user.profileData = tempUser.profileData;
+        }
         try {
             String u = null;
             u = JSON.std.asString(user);
@@ -3063,7 +3124,7 @@ public class MainActivity extends AppCompatActivity
     {
         User tempUser = this.user;
         try {
-            this.user = JSON.std.beanFrom(User.class, json);
+            MainActivity.user = JSON.std.beanFrom(User.class, json);
           //  this.user.setPref(this.userPref);
             this.networkUtils.setToken(this.user.getToken());
             if (tempUser != null){
@@ -3779,6 +3840,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override
         public void onContainerAvailable(ContainerHolder containerHolder, String containerVersion) {
@@ -4001,6 +4063,13 @@ public class MainActivity extends AppCompatActivity
             metrics.scaledDensity = configuration.fontScale * metrics.density;
             getBaseContext().getResources().updateConfiguration(configuration, metrics);
         }
+    }
+
+
+    @Override
+    public void onProfileUpdated(HashMap<String, String> hashMap) {
+        this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, Constants.BASE_URL + "preferences/", hashMap);
+
     }
 
 }

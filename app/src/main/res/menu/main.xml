@@ -1,10 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" >
-       <item
-        android:id="@+id/action_home"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:visible="false"
-        android:title="@string/action_home"/>
-
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+       <group
+           android:id="@+id/main_menu_group">
+              <item
+               android:id="@+id/action_profile"
+               android:orderInCategory="100"
+               app:showAsAction="never"
+               android:visible="false"
+               android:title="@string/action_profile"/>
+     </group>
 </menu>

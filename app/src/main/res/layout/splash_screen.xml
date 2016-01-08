@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_splash"
-    android:gravity="center_horizontal"
-    >
+    android:gravity="center_horizontal">
     <LinearLayout
         android:id="@+id/splash_logoLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center|bottom">
+
+      <!--  <com.collegedekho.app.widget.GifView
+            android:id="@+id/coffe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            custom:gif="@mipmap/cd_splash"/>-->
 
        <ImageView
             android:id="@+id/splash_logo_view"
@@ -40,7 +45,7 @@
         android:textStyle="bold"
         android:gravity="center"
         android:text="You Are Not Connected To Internet. Please connect and come back."
-        android:visibility="gone"
+        android:visibility="visible"
         />
 
 </RelativeLayout>
