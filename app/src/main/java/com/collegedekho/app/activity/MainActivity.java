@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity
         UserEducationFragment.OnUserEducationInteractionListener, PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
-        UserAlertsFragment.OnAlertItemSelectListener, GifView.onGifCompletedListener
+        UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener
 
 {
 
@@ -383,7 +383,14 @@ public class MainActivity extends AppCompatActivity
 
    @Override
     public void onGifCompleted() {
-        loadInItData();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //loadInItData();
+                if(currentFragment instanceof SplashFragment)
+                    ((SplashFragment) currentFragment).isInternetAvailable();
+            }
+        },10);
     }
 
     private void mSetUpAPPToolBar() {

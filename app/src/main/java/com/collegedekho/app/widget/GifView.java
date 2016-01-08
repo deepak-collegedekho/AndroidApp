@@ -48,6 +48,7 @@ public class GifView extends View {
 
    // private volatile boolean mPaused = false;
     private boolean mVisible = true;
+    private boolean mPaused = false;
 
     public GifView(Context context) {
         this(context, null);
@@ -192,13 +193,13 @@ public class GifView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         if (mMovie != null) {
-            //if (!mPaused) {
+            if(!mPaused) {
                 updateAnimationTime();
                 drawMovieFrame(canvas);
                 invalidateView();
-           // } else {
-             //   drawMovieFrame(canvas);
-            //}
+            } else {
+               // drawMovieFrame(canvas);
+            }
         }
     }
 
@@ -225,7 +226,6 @@ public class GifView extends View {
 
     private void updateAnimationTime() {
         long now = android.os.SystemClock.uptimeMillis();
-
         if (mMovieStart == 0) {
             mMovieStart = now;
         }
@@ -236,15 +236,6 @@ public class GifView extends View {
         }
 
         mCurrentAnimationTime = (int) ((now - mMovieStart) % dur);
-
-
-         if(mCurrentAnimationTime  >=( mMovie.duration()-500))
-         {
-             MainActivity  activity = (MainActivity)this.context;
-             if(activity != null ){
-                 activity.onGifCompleted();
-             }
-         }
     }
 
     /**
@@ -258,6 +249,16 @@ public class GifView extends View {
         canvas.scale(mScale, mScale);
         mMovie.draw(canvas, mLeft / mScale, mTop / mScale);
         canvas.restore();
+
+        if(mCurrentAnimationTime  >= (mMovie.duration()-250))
+        {
+            mPaused = true;
+            mMovie.setTime(0);
+            OnGifCompletedListener  listener = (OnGifCompletedListener)this.context;
+            if(listener != null ){
+                listener.onGifCompleted();
+            }
+        }
     }
 
     @SuppressLint("NewApi")
@@ -283,7 +284,7 @@ public class GifView extends View {
         invalidateView();
     }
 
-    public interface onGifCompletedListener{
+    public interface OnGifCompletedListener{
                 void onGifCompleted();
     }
 }

@@ -11,22 +11,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingTop="@dimen/m100dp"
+        android:paddingBottom="@dimen/m10dp"
+        android:paddingLeft="@dimen/m50dp"
+        android:paddingRight="@dimen/m50dp"
         android:gravity="center|bottom">
 
-      <!--  <com.collegedekho.app.widget.GifView
-            android:id="@+id/coffe"
+      <com.collegedekho.app.widget.GifView
+            android:id="@+id/splash_gif_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            custom:gif="@mipmap/cd_splash"/>-->
+            custom:gif="@mipmap/cd_splash"/>
 
-       <ImageView
+       <!--<ImageView
             android:id="@+id/splash_logo_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center"
             android:background="@drawable/file69"
             android:layout_marginTop="100dp"
-            />
+            />-->
    <!-- <WebView
             android:id="@+id/spalsh_logo_animation"
             android:layout_width="match_parent"
@@ -45,7 +49,7 @@
         android:textStyle="bold"
         android:gravity="center"
         android:text="You Are Not Connected To Internet. Please connect and come back."
-        android:visibility="visible"
+        android:visibility="gone"
         />
 
 </RelativeLayout>

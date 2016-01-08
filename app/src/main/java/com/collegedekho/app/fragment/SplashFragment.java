@@ -47,7 +47,7 @@ public class SplashFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-       final View view = getView();
+      /* final View view = getView();
         if(view != null)
         {
             FrameLayout layout =(FrameLayout) getActivity().findViewById(R.id.container);
@@ -94,7 +94,7 @@ public class SplashFragment extends BaseFragment {
                         view.findViewById(R.id.splash_no_internet_info_layout).setVisibility(View.VISIBLE);
                 }
             }, splashTime);
-        }
+        }*/
     }
 
     @Override
@@ -103,6 +103,17 @@ public class SplashFragment extends BaseFragment {
         //stopMainAnimation();
     }
 
+    public void isInternetAvailable(){
+        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.loadInItData();
+            }
+        }else{
+            getView().findViewById(R.id.splash_no_internet_info_layout).setVisibility(View.VISIBLE);
+        }
+    }
 
     public void stopMainAnimation()
     {
