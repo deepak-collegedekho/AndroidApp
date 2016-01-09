@@ -28,5 +28,6 @@
         android:background="@drawable/submit_button_states"
         android:textColor="@color/white"
         android:enabled="false"
+        android:textSize="21sp"
         android:text="@string/submit"/>
 </RelativeLayout>

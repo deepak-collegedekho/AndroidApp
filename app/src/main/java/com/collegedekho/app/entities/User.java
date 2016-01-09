@@ -241,11 +241,10 @@ public class User
         if(cursor == null)return;
 
         Pattern emailPattern = Patterns.EMAIL_ADDRESS;
-
         if(emailPattern == null)return;
 
         cursor.moveToFirst();
-        if(this.profileData==null)
+        if(this.profileData == null)
             this.profileData = new String[3];
         this.profileData[1] = "[";
         this.profileData[2] = "[";

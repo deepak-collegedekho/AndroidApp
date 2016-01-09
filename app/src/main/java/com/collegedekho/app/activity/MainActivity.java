@@ -277,6 +277,7 @@ public class MainActivity extends AppCompatActivity
     private boolean IS_USER_CREATED;
     private List<MyAlertDate> myAlertsList;
     private boolean isFromNotification;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -734,7 +735,7 @@ public class MainActivity extends AppCompatActivity
      */
 
     private void mLoadUserStatusScreen() {
-        if(MainActivity.type!=null && !MainActivity.type.matches("")){
+        if(MainActivity.type != null && !MainActivity.type.matches("")){
             mhandleNotifications();
         }
         else if(MainActivity.user.getEducation_set() == 1 &&  MainActivity.user.getExams_set() == 1 || IS_PROFILE_LOADED)
@@ -4035,7 +4036,7 @@ public class MainActivity extends AppCompatActivity
         else
             prepBuddies.setVisibility(View.VISIBLE);
 
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName() );
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
         if(fragment == null)
             this.mDisplayFragment(TabFragment.newInstance(tabPosition,new ArrayList<>(mUserExamsList)), true, TabFragment.class.getSimpleName() );
         else {

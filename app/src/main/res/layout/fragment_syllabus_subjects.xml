@@ -33,6 +33,7 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/bg_button_orange"
         android:textColor="@color/white"
-        android:visibility="gone"
+        android:visibility="visible"
+        android:textSize="21sp"
         android:text="@string/submit"/>
 </RelativeLayout>

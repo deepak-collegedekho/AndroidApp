@@ -30,5 +30,6 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/bg_button_orange"
         android:textColor="@color/white"
+        android:textSize="21sp"
         android:text="save"/>
 </RelativeLayout>
