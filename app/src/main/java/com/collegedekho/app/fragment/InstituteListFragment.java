@@ -105,7 +105,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         mCompletionView.allowDuplicates(false);
         mCompletionView.setTokenClickStyle(TokenCompleteTextView.TokenClickStyle.Delete);
 
-
         (rootView).findViewById(R.id.view_into_grid).setOnClickListener(this);
         (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
 
@@ -128,7 +127,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             rootView.findViewById(R.id.viewType).setVisibility(View.GONE);
         else
             rootView.findViewById(R.id.viewType).setVisibility(View.VISIBLE);
-
 
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);

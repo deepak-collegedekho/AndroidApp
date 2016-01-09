@@ -1142,12 +1142,14 @@ public class MainActivity extends AppCompatActivity
 
             fragmentTransaction.commit();
 
-            if ( this.currentFragment instanceof  ProfileFragment) {
+            if ( this.currentFragment instanceof ProfileFragment) {
                 if (findViewById(R.id.app_bar_layout).getVisibility() != View.VISIBLE)
                     findViewById(R.id.app_bar_layout).setVisibility(View.VISIBLE);
-                findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
-            }
 
+                View bottomMenu = findViewById(R.id.bottom_tab_layout);
+                bottomMenu.animate().translationY(0);
+                bottomMenu.setVisibility(View.VISIBLE);
+            }
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
         }
@@ -3024,7 +3026,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-  /**
+    /**
      * This method is called when user change anything in Institute List
      * @param response server response
      */
@@ -3977,7 +3979,7 @@ public class MainActivity extends AppCompatActivity
         this.mMakeJsonObjectNetworkCall(Constants.TAG_PSYCHOMETRIC_RESPONSE,Constants.BASE_URL+url,object,1);
         String examId = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
         if(!examId.isEmpty())
-        this.onHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/"+examId+"/calendar/", null);
+            this.onHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/"+examId+"/calendar/", null);
     }
     Handler baskpressHandler=new Handler();
     Runnable backpressRunnable = new Runnable() {
@@ -4007,11 +4009,10 @@ public class MainActivity extends AppCompatActivity
    };
 
     public void mUpdateTabMenuItem(int tabPosition){
-       prepBuddies.setSelected(false);
+        prepBuddies.setSelected(false);
         resourceBuddies.setSelected(false);
         futureBuddies.setSelected(false);
         myAlerts.setSelected(false);
-
 
         if(tabPosition == 1)
             prepBuddies.setSelected(true);

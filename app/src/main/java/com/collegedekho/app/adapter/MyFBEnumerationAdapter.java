@@ -90,7 +90,6 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
         }
     }
 
-
     @Override
     public int getItemCount() {
         return this.mMyFBEnumeration.size();

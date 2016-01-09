@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -26,10 +28,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-/**
- * @author Mayank Gautam
- *         Created: 07/07/15
- */
 public class NewsListAdapter extends RecyclerView.Adapter {
 
     private static final String TAG = "NewsListAdapter";
@@ -112,7 +110,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
                 this.mNewsChangedPosition = position;
             }
 
-            // this.setAnimation(newsHolder.container, position);
+            //this.mSetAnimation(newsHolder.container, position);
         }
     }
 

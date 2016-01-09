@@ -17,6 +17,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.CoverFlowAdapter;
 import com.collegedekho.app.adapter.InstitutePagerAdapter;
+import com.collegedekho.app.display.DepthPageTransformer;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.GameEntity;
 import com.collegedekho.app.entities.Institute;
@@ -106,6 +107,7 @@ public class InstituteDetailFragment extends BaseFragment {
         }
         this.mDetailsPager = (ViewPager) rootView.findViewById(R.id.college_detail_pager);
         this.mDetailsPager.setAdapter(this.mDetailsAdapter);
+        //this.mDetailsPager.setPageTransformer(true, new DepthPageTransformer());
         this.mDetailsPager.setOffscreenPageLimit(5);
 
         //this.mFooterAdapter = new FooterPagerAdapter(this.mInstitute, this.getContext());

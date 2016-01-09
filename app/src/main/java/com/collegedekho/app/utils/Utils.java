@@ -2,9 +2,13 @@ package com.collegedekho.app.utils;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.animation.TypeEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.Patterns;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.collegedekho.app.resource.TypeFaceTypes;
@@ -123,6 +127,25 @@ public class Utils {
         return subjectColors[colorIndex];
     }
 
+    public static void SetCounterAnimation(final TextView textView, int count, final String suffix, long duration)
+    {
+        ValueAnimator animator = new ValueAnimator();
 
+        animator.setObjectValues(0, count);
 
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                textView.setText(String.valueOf(animation.getAnimatedValue()) + suffix);
+            }
+        });
+
+        animator.setEvaluator(new TypeEvaluator<Integer>() {
+            public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
+                return Math.round(startValue + (endValue - startValue) * fraction);
+            }
+        });
+
+        animator.setDuration(duration);
+        animator.start();
+    }
 }

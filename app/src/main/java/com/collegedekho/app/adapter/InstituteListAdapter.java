@@ -2,10 +2,13 @@ package com.collegedekho.app.adapter;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -100,6 +103,44 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             instituteHolder.likeButton.setColorFilter(ContextCompat.getColor(this.mContext, R.color.like_green_selected));
         else
             instituteHolder.likeButton.setColorFilter(ContextCompat.getColor(this.mContext, R.color.subheading_color));
+
+        this.mSetAnimation(instituteHolder.instituteCard, position);
+    }
+
+    /**
+     * Here is the key method to apply the animation
+     */
+    private void mSetAnimation(View viewToAnimate, int position)
+    {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            if (this.mViewType == Constants.VIEW_INTO_GRID)
+            {
+                if (position % 2 == 0)
+                {
+                    Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_left);
+                    viewToAnimate.startAnimation(animation);
+                }
+                else
+                {
+                    Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_right);
+                    viewToAnimate.startAnimation(animation);
+                }
+            }
+            else
+            {
+                Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_left);
+                viewToAnimate.startAnimation(animation);
+            }
+            lastPosition = position;
+        }
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        holder.itemView.clearAnimation();
+        super.onViewDetachedFromWindow(holder);
     }
 
     @Override
@@ -138,6 +179,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
 
     class InstituteHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView instiName;
+        CardView instituteCard;
         TextView instiLocation;
         TextView instiCourses;
         ImageView likeButton;
@@ -152,6 +194,12 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
 
         public InstituteHolder(View itemView, InstituteListFragment.OnInstituteSelectedListener listener) {
             super(itemView);
+
+            if (mViewType == Constants.VIEW_INTO_LIST)
+                instituteCard = (CardView) itemView.findViewById(R.id.institute_list_card);
+            else
+                instituteCard = (CardView) itemView.findViewById(R.id.institute_grid_card);
+
             instiName = (TextView) itemView.findViewById(R.id.card_institute_name);
             instiLocation = (TextView) itemView.findViewById(R.id.card_institute_location);
             instiCourses = (TextView) itemView.findViewById(R.id.card_institute_courses);

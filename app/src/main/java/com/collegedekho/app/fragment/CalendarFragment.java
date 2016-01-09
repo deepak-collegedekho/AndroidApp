@@ -109,8 +109,8 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
 //        params.weight=0.75f;
 //        detailsRecyclerView.setLayoutParams(params);
         updateCalendar(currentDate);
-
     }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -164,7 +164,6 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
             calendarItemDetailsAdapter = new CalendarItemDetailsAdapter(getActivity(), chaptersList, mListener);
             detailsRecyclerView.setAdapter(calendarItemDetailsAdapter);
         }
-
     }
 
     private void initCalendar() {

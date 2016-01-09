@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamDetailAdapter;
+import com.collegedekho.app.display.ZoomPageTransformer;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.listener.OnSwipeTouchListener;
@@ -74,7 +75,8 @@ public class TabFragment extends  BaseFragment{
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
 
 
-        mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
+        this.mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
+        //this.mExamTabPager.setPageTransformer(true, new ZoomPageTransformer());
         TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
         TextView mStreamName = (TextView) rootView.findViewById(R.id.user_stream);
         CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
@@ -158,7 +160,11 @@ public class TabFragment extends  BaseFragment{
                 v.setVisibility(View.GONE);
                 IS_TUTE_COMPLETED = true;
                 getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.PREP_BUDDY_SCREEN_TUTE, true).apply();
-                getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
+
+                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+                bottomMenu.animate().translationY(0);
+                bottomMenu.setVisibility(View.VISIBLE);
+
 
                 return true;
             }
@@ -182,14 +188,22 @@ public class TabFragment extends  BaseFragment{
 
         this.mUpdateSubMenuItem();
         if(IS_TUTE_COMPLETED)
-        getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
+        {
+            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+            bottomMenu.animate().translationY(0);
+            bottomMenu.setVisibility(View.VISIBLE);
+        }
 
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.GONE);
+
+        View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+        bottomMenu.animate().translationY(bottomMenu.getHeight());
+        bottomMenu.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -216,7 +230,7 @@ public class TabFragment extends  BaseFragment{
     public void onClick(View view) {
         super.onClick(view);
         try{
-        this.selectedSubMenuPosition =Integer.parseInt((String)view.getTag());
+        this.selectedSubMenuPosition = Integer.parseInt((String)view.getTag());
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -239,7 +253,7 @@ public class TabFragment extends  BaseFragment{
     }
 
     private void mUpdateSubMenuItem(){
-        View view = getView();
+        final View view = getView();
         if(view ==   null)
             return;
 
@@ -253,65 +267,98 @@ public class TabFragment extends  BaseFragment{
         ImageView thirdSubMenuIV      = (ImageView)view.findViewById(R.id.home_widget_image_third);
         ImageView fourthSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_fourth);
 
-
         if(this.selectedTabPosition == 1){
             IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PREP_BUDDY_SCREEN_TUTE, false);
             if(view != null ){
+                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                 if(!IS_TUTE_COMPLETED) {
                     view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
-                    getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.INVISIBLE);
+                    bottomMenu.animate().translationY(bottomMenu.getHeight());
+                    bottomMenu.setVisibility(View.GONE);
                 } else {
                     view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
-                    getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
+                    bottomMenu.animate().translationY(0);
+                    bottomMenu.setVisibility(View.VISIBLE);
                 }
-
             }
-            firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
-            secondSubMenuIV.setImageResource(R.drawable.ic_syllabus);
-            thirdSubMenuIV.setImageResource(R.drawable.ic_challenges);
-            fourthSubMenuIV.setImageResource(R.drawable.ic_prep_path);
 
             LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, 0, 1.0f);
             ll.setLayoutParams(lp);
-            view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
+
+            //this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.GONE);
+
+            firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
+            secondSubMenuIV.setImageResource(R.drawable.ic_syllabus);
+            thirdSubMenuIV.setImageResource(R.drawable.ic_challenges);
+            fourthSubMenuIV.setImageResource(R.drawable.ic_prep_path);
 
             firstSubMenuTV.setText("Test Calendar");
             secondSubMenuTV.setText("Syllabus");
             thirdSubMenuTV.setText("Challenges");
             fourthSubMenuTV.setText("Prep Path");
 
+            this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
+
         }else   if(this.selectedTabPosition == 2){
             if(view != null ){
                 view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
-                getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
 
+                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+                bottomMenu.animate().translationY(0);
+                bottomMenu.setVisibility(View.VISIBLE);
             }
-            firstSubMenuIV.setImageResource(R.drawable.ic_institute);
-            secondSubMenuIV.setImageResource(R.drawable.ic_news);
-            thirdSubMenuIV.setImageResource(R.drawable.ic_article);
-            fourthSubMenuIV.setImageResource(R.drawable.ic_qna);
 
             LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, 0, .5f);
             ll.setLayoutParams(lp);
-            view.findViewById(R.id.home_widget_second_layout).setVisibility(View.VISIBLE);
+
+            //this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.GONE);
+
+            firstSubMenuIV.setImageResource(R.drawable.ic_institute);
+            secondSubMenuIV.setImageResource(R.drawable.ic_news);
+            thirdSubMenuIV.setImageResource(R.drawable.ic_article);
+            fourthSubMenuIV.setImageResource(R.drawable.ic_qna);
 
             firstSubMenuTV.setText("Institutes");
             secondSubMenuTV.setText("News");
             thirdSubMenuTV.setText("Article");
             fourthSubMenuTV.setText("Qna");
 
+            this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
         }else   if(this.selectedTabPosition == 3){
 
         }else   if(this.selectedTabPosition == 4){
         }
     }
 
-    private void mSubMenuItemClickListener(){
+    private void mtoggleView(LinearLayout linearLayout1, LinearLayout linearLayout2, int visibility)
+    {
+        if (visibility == View.VISIBLE)
+        {
+            linearLayout1.animate().setDuration(Constants.ANIM_LONG_DURATION).alpha(1.0f);
+            linearLayout1.animate().setDuration(Constants.ANIM_LONG_DURATION).translationY(0);
+            linearLayout1.setVisibility(View.VISIBLE);
 
+            linearLayout2.animate().setDuration(Constants.ANIM_LONG_DURATION).alpha(1.0f);
+            linearLayout2.animate().setDuration(Constants.ANIM_LONG_DURATION).translationY(0);
+            linearLayout2.setVisibility(View.VISIBLE);
+        }
+        else if (visibility == View.GONE)
+        {
+            linearLayout1.animate().setDuration(Constants.ANIM_LONG_DURATION).alpha(0.0f);
+            linearLayout1.animate().setDuration(Constants.ANIM_LONG_DURATION).translationY(linearLayout1.getHeight());
+            linearLayout1.setVisibility(View.GONE);
+
+            linearLayout2.animate().setDuration(Constants.ANIM_LONG_DURATION).alpha(0.0f);
+            linearLayout2.animate().setDuration(Constants.ANIM_LONG_DURATION).translationY(linearLayout2.getHeight());
+            linearLayout2.setVisibility(View.GONE);
+        }
+    }
+
+    private void mSubMenuItemClickListener(){
         if(selectedTabPosition == 1){
 
             if(selectedSubMenuPosition == 2) {
@@ -327,7 +374,6 @@ public class TabFragment extends  BaseFragment{
                 }
             }else
                 Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
-
         }
         else if(selectedTabPosition == 2){
              if(selectedSubMenuPosition == 1){
@@ -343,7 +389,6 @@ public class TabFragment extends  BaseFragment{
                  this.mHomeWidgetSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna", null);
              }
         }
-
     }
 
     public void updateTabFragment(int tabPosition){
@@ -353,10 +398,11 @@ public class TabFragment extends  BaseFragment{
 
     public void updateExamSummary(ExamSummary examSummary) {
         View view = getView();
+
         if(view == null || examSummary == null)
             return;
-         CircularProgressBar profileCompleted =  (CircularProgressBar) view.findViewById(R.id.profile_image_circular_progressbar);
 
+         CircularProgressBar profileCompleted =  (CircularProgressBar) view.findViewById(R.id.profile_image_circular_progressbar);
 
         //TODO:: showing progress as a profile circle
         //if(examSummary.getSyllabus_covered() ==0)
@@ -380,7 +426,6 @@ public class TabFragment extends  BaseFragment{
             if (currentPosition > 0)
                 mExamTabPager.setCurrentItem(currentPosition - 1);
         }
-
     };
 
 

@@ -20,6 +20,7 @@ import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.listener.OnSwipeTouchListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
 
@@ -147,7 +148,11 @@ public class ProfileFragment extends BaseFragment
                 }else {
                     v.setVisibility(View.GONE);
                     IS_TUTE_COMPLETED = true;
-                    getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
+                    //getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
+                    View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+                    bottomMenu.animate().translationY(0);
+                    bottomMenu.setVisibility(View.VISIBLE);
+
                     getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.PROFILE_SCREEN_TUTE, true).apply();
                 }
             }
@@ -193,7 +198,10 @@ public class ProfileFragment extends BaseFragment
     public void onPause() {
         super.onPause();
         Constants.READY_TO_CLOSE = true;
-        getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.GONE);
+        View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+        bottomMenu.animate().translationY(bottomMenu.getHeight());
+        bottomMenu.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -243,12 +251,17 @@ public class ProfileFragment extends BaseFragment
         View view =  getView();
         if(view != null ){
             IS_TUTE_COMPLETED= getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PROFILE_SCREEN_TUTE, false);
+            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
             if(!IS_TUTE_COMPLETED) {
 
-                getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.GONE);
+                bottomMenu.animate().translationY(bottomMenu.getHeight());
+                bottomMenu.setVisibility(View.GONE);
+
                 view.findViewById(R.id.profile_guide_image).setVisibility(View.VISIBLE);
             }else {
-                getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
+                bottomMenu.animate().translationY(0);
+                bottomMenu.setVisibility(View.VISIBLE);
+
                 view.findViewById(R.id.profile_guide_image).setVisibility(View.GONE);
             }
         }
@@ -338,11 +351,16 @@ public class ProfileFragment extends BaseFragment
         TextView covered_syllabus =  (TextView)view.findViewById(R.id.covered_syllabus);
         CircularProgressBar profileCompleted =  (CircularProgressBar) view.findViewById(R.id.profile_image_circular_progressbar);
 
-        backup_countTV.setText(""+this.mExamSummary.getBackup_count());
-        wishList_countTV.setText(""+this.mExamSummary.getShortlist_count());
-        recommended_countTV.setText(""+this.mExamSummary.getRecommended_count());
+        Utils.SetCounterAnimation(covered_syllabus, this.mExamSummary.getSyllabus_covered(), "%", Constants.ANIM_SHORT_DURATION);
+        Utils.SetCounterAnimation(recommended_countTV, this.mExamSummary.getRecommended_count(), "", Constants.ANIM_SHORT_DURATION);
+        Utils.SetCounterAnimation(wishList_countTV, this.mExamSummary.getShortlist_count(), "", Constants.ANIM_SHORT_DURATION);
+        Utils.SetCounterAnimation(backup_countTV, this.mExamSummary.getBackup_count(), "", Constants.ANIM_SHORT_DURATION);
+
+        //backup_countTV.setText(""+this.mExamSummary.getBackup_count());
+        //wishList_countTV.setText(""+this.mExamSummary.getShortlist_count());
+        //recommended_countTV.setText(""+this.mExamSummary.getRecommended_count());
         important_dateTV.setText(""+this.mExamSummary.getNext_important_date());
-        covered_syllabus.setText(""+this.mExamSummary.getSyllabus_covered()+"%");
+        //covered_syllabus.setText(""+this.mExamSummary.getSyllabus_covered()+"%");
 
         //TODO:: showing progress as a profile circle
         //if(this.mExamSummary.getSyllabus_covered() ==0)
@@ -380,20 +398,20 @@ public class ProfileFragment extends BaseFragment
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public  interface OnTabSelectListener {
+    public interface OnTabSelectListener {
 
         void onExamTabSelected(ExamDetail tabPosition);
 
         void onHomeItemSelected(String requestType, String url, String examTag);
     }
 
-            Handler updateExamSummaryHandler=new Handler();
-            Runnable updateExamSummaryRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    int currentPosition = mExamTabPager.getCurrentItem();
-                    mExamTabSelected(currentPosition);
-                }
-            };
+    Handler updateExamSummaryHandler=new Handler();
+    Runnable updateExamSummaryRunnable = new Runnable() {
+        @Override
+        public void run() {
+            int currentPosition = mExamTabPager.getCurrentItem();
+            mExamTabSelected(currentPosition);
+        }
+    };
 
 }

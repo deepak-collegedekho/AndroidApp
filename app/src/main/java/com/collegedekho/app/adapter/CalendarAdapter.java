@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,6 +35,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     private boolean isCurrentMonth =false;
     LayoutInflater inflater;
     int selectedPosition=-1;
+    private int lastPosition = -1;
     private LinkedHashMap<String,String> mYearCalendar;
     // today
     Date today;
@@ -63,9 +66,22 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         return new CalendarViewHolder(itemView);
     }
 
+    /**
+     * Here is the key method to apply the animation
+     */
+    private void setAnimation(View viewToAnimate, int position)
+    {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            Animation animation = AnimationUtils.loadAnimation(this.mContext, android.R.anim.slide_in_left);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
+    }
+
     @Override
     public void onBindViewHolder(CalendarViewHolder holder, int position) {
-
         Date date = itemList.get(position);
         cal.setTime(date);
         int day = cal.get(Calendar.DAY_OF_MONTH);
@@ -84,6 +100,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                         startCellPosition = position;
                         mListener.onItemSelect(position, startCellPosition,endCellPosition,day_key);
                     }
+                    //TODO: Bashir remove the hard coding
                     holder.dateView.setTextColor(0xff0066ff);
                 }
             }else { //outside current month
@@ -137,7 +154,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             key=null;
         }
 
-
         if(key!=null){
             String[] keyArray=key.split(",");
             holder.dotView.removeAllViews();
@@ -161,7 +177,23 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         }else {
             holder.view.setCardBackgroundColor(0xffffffff);
         }
+
+        this.setAnimation(holder.view, position);
     }
+
+    @Override
+    public void onViewAttachedToWindow(CalendarViewHolder holder) {
+        holder.itemView.clearAnimation();
+        super.onViewAttachedToWindow(holder);
+    }
+
+    /*
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        holder.itemView.clearAnimation();
+        super.onViewDetachedFromWindow(holder);
+    }
+*/
 
     @Override
     public int getItemCount() {

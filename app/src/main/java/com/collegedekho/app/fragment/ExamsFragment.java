@@ -15,6 +15,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -42,6 +43,7 @@ public class ExamsFragment extends BaseFragment {
     private ArrayList<Exam> mExamList ;
     private OnExamsSelectListener mListener;
     private boolean IS_TUTE_COMPLETED = true;
+    private TextView mExamSubmitButton;
 
     public ExamsFragment() {
         // required empty Constructor
@@ -70,10 +72,12 @@ public class ExamsFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_user_exams, container, false);
+        this.mExamSubmitButton = (TextView) rootView.findViewById(R.id.exams_submit_button);
+
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.EXAMS_SCREEN_TUTE, false);
 
         //((TextView)rootView.findViewById(R.id.points_test_view)).setText("YOU HAVE EARNED FOR SHARING YOUR DETAIL");
-        RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.exams_recycle_view);
+        final RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.exams_recycle_view);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),6,GridLayoutManager.VERTICAL,false);
         layoutManager.setSpanSizeLookup( new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -93,8 +97,6 @@ public class ExamsFragment extends BaseFragment {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 8, true));
         //recyclerView.setHasFixedSize(true);
 
-        ExamsAdapter mAdapter = new ExamsAdapter(getActivity(), this.mExamList);
-        recyclerView.setAdapter(mAdapter);
         rootView.findViewById(R.id.exams_submit_button).setOnClickListener(this);
 
 //        Animation pulse = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse);
@@ -113,6 +115,8 @@ public class ExamsFragment extends BaseFragment {
         animation.addAnimation(fadeOut);
         rootView.findViewById(R.id.exams_submit_button).setAnimation(animation);*/
 
+        final ExamsAdapter mAdapter = new ExamsAdapter(getActivity(), mExamList);
+
         rootView.findViewById(R.id.exam_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -120,9 +124,25 @@ public class ExamsFragment extends BaseFragment {
                 v.setVisibility(View.GONE);
                 IS_TUTE_COMPLETED = true;
                 getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.EXAMS_SCREEN_TUTE, true).apply();
-                return false;            }
+
+                recyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
+
+                mExamSubmitButton.animate().translationY(0).setDuration(Constants.ANIM_LONG_DURATION);
+                mExamSubmitButton.setVisibility(View.VISIBLE);
+
+                return false;
+            }
         });
 
+        if (IS_TUTE_COMPLETED)
+        {
+            recyclerView.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
+
+            mExamSubmitButton.animate().translationY(0).setDuration(Constants.ANIM_LONG_DURATION);
+            mExamSubmitButton.setVisibility(View.VISIBLE);
+        }
 
         return rootView;
     }
@@ -145,6 +165,7 @@ public class ExamsFragment extends BaseFragment {
         super.onDetach();
         this.mListener = null;
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -153,7 +174,6 @@ public class ExamsFragment extends BaseFragment {
 
         if (mainActivity != null)
             mainActivity.currentFragment = this;
-
 
         View view =  getView();
         if(view != null ){
@@ -165,6 +185,7 @@ public class ExamsFragment extends BaseFragment {
         }
 
     }
+
     @Override
     public void onClick(View view) {
         super.onClick(view);

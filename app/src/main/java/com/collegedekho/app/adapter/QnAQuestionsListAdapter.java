@@ -54,11 +54,11 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         int viewID = R.layout.card_qna_grid_view;
         if (this.mViewType == Constants.VIEW_INTO_LIST)
             viewID = R.layout.card_qna_list_view;
-        View rootView = LayoutInflater.from(mContext).inflate(viewID, parent, false);
+        View rootView = LayoutInflater.from(this.mContext).inflate(viewID, parent, false);
         try {
-            return new QnAQuestionHolder(rootView, (QnAQuestionsListFragment.OnQnAQuestionSelectedListener) mContext);
+            return new QnAQuestionHolder(rootView, (QnAQuestionsListFragment.OnQnAQuestionSelectedListener) this.mContext);
         } catch (ClassCastException e) {
-            throw new ClassCastException(mContext.toString()
+            throw new ClassCastException(this.mContext.toString()
                     + " must implement OnQnAQuestionSelectedListener");
         }
     }
@@ -81,6 +81,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         qnAQuestionHolder.likeButton.setClickable(true);
         qnAQuestionHolder.likeButton.setVisibility(View.VISIBLE);
         qnAQuestionHolder.likeProgressBar.setVisibility(View.GONE);
+
         if (qnAQuestionHolder.likeButton.isSelected())
             qnAQuestionHolder.likeButton.setColorFilter(ContextCompat.getColor(this.mContext, R.color.like_green_selected));
         else
@@ -120,7 +121,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
 
                 qnAQuestionHolder.tagsContainer.addView(tv);
             }*/
-        // this.setAnimation(qnAQuestionHolder.container, position);
+         this.mSetAnimation(qnAQuestionHolder.container, position);
     }
 
     @Override
@@ -128,19 +129,6 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         holder.itemView.clearAnimation();
         super.onViewDetachedFromWindow(holder);
     }
-
-    /**
-     * Here is the key method to apply the animation
-     */
-    private void setAnimation(View viewToAnimate, int position) {
-        // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition) {
-            Animation animation = AnimationUtils.loadAnimation(this.mContext, android.R.anim.slide_in_left);
-            viewToAnimate.startAnimation(animation);
-            lastPosition = position;
-        }
-    }
-
 
     public void updateLikeButtons(int position) {
         this.notifyItemChanged(position);
@@ -153,6 +141,37 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         this.notifyDataSetChanged();
     }
 
+
+    /**
+     * Here is the key method to apply the animation
+     */
+    private void mSetAnimation(View viewToAnimate, int position)
+    {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            if (this.mViewType == Constants.VIEW_INTO_GRID)
+            {
+                if (position % 2 == 0)
+                {
+                    Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_left);
+                    viewToAnimate.startAnimation(animation);
+                }
+                else
+                {
+                    Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_right);
+                    viewToAnimate.startAnimation(animation);
+                }
+            }
+            else
+            {
+                Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_left);
+                viewToAnimate.startAnimation(animation);
+            }
+
+            lastPosition = position;
+        }
+    }
 
     @Override
     public int getItemCount() {
@@ -185,9 +204,16 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
             this.likeProgressBar = (ProgressBar) itemView.findViewById(R.id.card_item_like_progressBar);
             this.likeButton.setOnClickListener(this);
             this.mListener = listener;
-           itemView.findViewById(R.id.card_item_like_layout).setOnClickListener(this);
-           itemView.findViewById(R.id.layout_item_expand).setOnClickListener(this);
-           itemView.findViewById(R.id.qna_card_view).setOnClickListener(this);
+
+            if (mViewType == Constants.VIEW_INTO_LIST)
+                this.container = (CardView) itemView.findViewById(R.id.qna_card_list_view);
+            else
+                this.container = (CardView) itemView.findViewById(R.id.qna_card_grid_view);
+
+            container.setOnClickListener(this);
+
+            itemView.findViewById(R.id.card_item_like_layout).setOnClickListener(this);
+            itemView.findViewById(R.id.layout_item_expand).setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
 
@@ -212,7 +238,8 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
                     }
                     break;
                 case R.id.layout_item_expand:
-                case R.id.qna_card_view:
+                case R.id.qna_card_list_view:
+                case R.id.qna_card_grid_view:
                     mListener.onQnAQuestionSelected(mQnAQuestions.get(getAdapterPosition()));
                     break;
             }

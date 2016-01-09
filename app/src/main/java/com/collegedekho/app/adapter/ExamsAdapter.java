@@ -8,10 +8,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -30,6 +33,8 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
     private Context mContext;
     private ArrayList<Exam> mExamList;
     private int lastExamPosition=-1;
+    private int lastPosition=-1;
+
 
     public ExamsAdapter(Context context, ArrayList<Exam> examList){
         this.mContext = context;
@@ -142,6 +147,28 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                 });
             }
         }
+
+        this.setAnimation(holder.examCard, position);
+    }
+
+    @Override
+    public void onViewAttachedToWindow(ExamHolderView holder) {
+        holder.itemView.clearAnimation();
+        super.onViewAttachedToWindow(holder);
+    }
+
+    /**
+     * Here is the key method to apply the animation
+     */
+    private void setAnimation(View viewToAnimate, int position)
+    {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            Animation animation = AnimationUtils.loadAnimation(this.mContext, android.R.anim.slide_in_left);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
     }
 
     @Override
@@ -151,10 +178,12 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
 
     class ExamHolderView extends RecyclerView.ViewHolder{
 
+        LinearLayout examCard;
         TextView mExamName;
         Spinner mYearSpinner;
         public ExamHolderView(View itemView) {
             super(itemView);
+            examCard = (LinearLayout) itemView.findViewById(R.id.exam_card);
             mExamName = (TextView)itemView.findViewById(R.id.exam_name);
             mYearSpinner = (Spinner)itemView.findViewById(R.id.exam_year_spinner);
 

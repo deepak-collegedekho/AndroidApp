@@ -2,5 +2,4 @@
 <resources>
     <integer name="slide_time">200</integer>
     <integer name="layout_weight">1</integer>
-
 </resources>

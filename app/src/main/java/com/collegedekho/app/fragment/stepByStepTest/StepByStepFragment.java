@@ -13,7 +13,9 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.StepByStepAdapter;
+import com.collegedekho.app.display.DepthPageTransformer;
 import com.collegedekho.app.display.NonSwipeableViewPager;
+import com.collegedekho.app.display.ZoomPageTransformer;
 import com.collegedekho.app.entities.StepByStepQuestion;
 import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.listener.PsychometricAnalysisPageListener;
@@ -119,6 +121,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
         View rootView = inflater.inflate(R.layout.fragment_step_by_step, container, false);
         this.mViewPager = (NonSwipeableViewPager) rootView.findViewById(R.id.sbs_pager);
         this.mViewPager.setHapticFeedbackEnabled(true);
+        this.mViewPager.setPageTransformer(true, new ZoomPageTransformer());
         this.mNextButton = (FloatingActionButton) rootView.findViewById(R.id.sbs_button_next);
 
         this.mQuestionAdapter = new StepByStepAdapter(getActivity().getSupportFragmentManager(), getActivity().getApplicationContext(), this.mStepByStepQuestions);

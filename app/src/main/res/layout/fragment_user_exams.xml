@@ -42,6 +42,7 @@
             android:paddingBottom="@dimen/m9dp"
             android:paddingTop="@dimen/m9dp"
             android:foregroundGravity="center"
+            android:visibility="gone"
             android:text="SUBMIT"/>
 
     <!--</com.andexert.library.RippleView>-->
@@ -70,7 +71,6 @@
             android:clickable="true"
             android:visibility="gone"
             android:src="@drawable/ic_exam_tute" />
-
     </FrameLayout>
 
 </RelativeLayout>

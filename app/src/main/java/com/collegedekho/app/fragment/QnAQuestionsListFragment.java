@@ -32,6 +32,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
     private ArrayList<QnAQuestions> mQnAQuestionsList;
     private TextView mEmptyTextView;
+    private TextView mAskButton;
     private QnAQuestionsListAdapter mAdapter;
     private int mViewType = Constants.VIEW_INTO_LIST;
     private OnQnAQuestionSelectedListener mListener;
@@ -42,7 +43,6 @@ public class QnAQuestionsListFragment extends BaseFragment {
         Bundle args = new Bundle();
         args.putParcelableArrayList(ARG_PARAM1, qnaQuestions);
         args.putString(ARG_NEXT, next);
-        fragment.setArguments(args);
         fragment.setArguments(args);
 
         return fragment;
@@ -56,9 +56,9 @@ public class QnAQuestionsListFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mQnAQuestionsList = getArguments().getParcelableArrayList(ARG_PARAM1);
-            mNextUrl = getArguments().getString(ARG_NEXT);
-            listType = Constants.QNA_LIST_TYPE;
+            this.mQnAQuestionsList = getArguments().getParcelableArrayList(this.ARG_PARAM1);
+            this.mNextUrl = getArguments().getString(this.ARG_NEXT);
+            this.listType = Constants.QNA_LIST_TYPE;
         }
     }
 
@@ -68,43 +68,46 @@ public class QnAQuestionsListFragment extends BaseFragment {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_qna_questions_list, container, false);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
-        progressBarLL = (LinearLayout) rootView.findViewById(R.id.progressBarLL);
-
+        this.mAskButton = (TextView) rootView.findViewById(R.id.question_ask_button);
+        this.progressBarLL = (LinearLayout) rootView.findViewById(R.id.progressBarLL);
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_questions_list);
 
         if(this.mViewType == Constants.VIEW_INTO_GRID)
-            layoutManager = new GridLayoutManager(getActivity(), 2);
+            this.layoutManager = new GridLayoutManager(getActivity(), 2);
         else
-            layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            this.layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
 
-        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(this.layoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 5, false));
         this.mAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestionsList, this.mViewType);
         recyclerView.setAdapter(this.mAdapter);
-        recyclerView.addOnScrollListener(scrollListener);
+        recyclerView.addOnScrollListener(this.scrollListener);
         updateViewTypeIcon(rootView, this.mViewType);
 
         if (mQnAQuestionsList.size() == 0)
         {
+            this.mAskButton.setEnabled(false);
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setText("Couldn't find related questions for you. Like and Shortlist college");
             recyclerView.setVisibility(View.GONE);
-            rootView.findViewById(R.id.question_ask_button).setVisibility(View.GONE);
+            this.mToggleAskButtonVisiblity(View.GONE);
+
         }
         else
         {
             this.mEmptyTextView.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.question_ask_button).setVisibility(View.VISIBLE);
+
+            this.mToggleAskButtonVisiblity(View.VISIBLE);
+            this.mAskButton.setEnabled(true);
         }
 
+        this.mAskButton.setOnClickListener(this);
         rootView.findViewById(R.id.view_into_grid).setOnClickListener(this);
         rootView.findViewById(R.id.view_into_list).setOnClickListener(this);
-        rootView.findViewById(R.id.question_ask_button).setOnClickListener(this);
         rootView.findViewById(R.id.question_ask_cross).setOnClickListener(this);
         rootView.findViewById(R.id.institute_qna_button_ask_submit).setOnClickListener(this);
-
 
         return rootView;
     }
@@ -172,13 +175,13 @@ public class QnAQuestionsListFragment extends BaseFragment {
                 if(rootView != null) {
                     if ((rootView.findViewById(R.id.qna_ask_layout)).getVisibility() == View.GONE) {
                         (rootView.findViewById(R.id.qna_ask_layout)).setVisibility(View.VISIBLE);
-                        rootView.findViewById(R.id.question_ask_button).setVisibility(View.GONE);
+                        this.mToggleAskButtonVisiblity(View.GONE);
                     }
                 }
                 break;
             case R.id.question_ask_cross:
                 if(rootView != null)  {
-                    rootView.findViewById(R.id.question_ask_button).setVisibility(View.VISIBLE);
+                    this.mToggleAskButtonVisiblity(View.VISIBLE);
                     (rootView.findViewById(R.id.qna_ask_layout)).setVisibility(View.GONE);
                 }
                 break;
@@ -203,6 +206,16 @@ public class QnAQuestionsListFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         loading=false;
+    }
+
+    private void mToggleAskButtonVisiblity(int visibility)
+    {
+        if (visibility == View.GONE)
+            this.mAskButton.animate().translationY(this.mAskButton.getHeight());
+        else if (visibility == View.VISIBLE)
+            this.mAskButton.animate().translationY(0);
+
+        this.mAskButton.setVisibility(visibility);
     }
 
     public QnAQuestions validateData(View rootView)
@@ -261,7 +274,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
                ((RecyclerView) view.findViewById(R.id.institute_questions_list)).scrollToPosition(mQnAQuestionsList.size() - 1);
 
                 view.findViewById(R.id.qna_ask_layout).setVisibility(View.GONE);
-                view.findViewById(R.id.question_ask_button).setVisibility(View.VISIBLE);
+                this.mToggleAskButtonVisiblity(View.VISIBLE);
             }
 
 

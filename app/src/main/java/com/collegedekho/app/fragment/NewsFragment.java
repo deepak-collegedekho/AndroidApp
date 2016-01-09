@@ -97,9 +97,9 @@ public class NewsFragment extends BaseFragment  {
 
         }
         else {
-             layoutManager =new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            layoutManager =new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
             rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
-             progressBarLL.setGravity(Gravity.CENTER);
+            progressBarLL.setGravity(Gravity.CENTER);
             progressBarLL.setPadding(0, 0, 0, 0);
         }
         recyclerView.setLayoutManager(layoutManager);
