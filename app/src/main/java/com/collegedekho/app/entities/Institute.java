@@ -378,9 +378,9 @@ public class Institute implements Parcelable {
             if (facility instanceof DeferredMap) {
                 DeferredMap fdm = (DeferredMap) facility;
                 Facility f = new Facility();
-                if (fdm.containsKey("name"))
+                if (fdm.containsKey("name") && fdm.get("name")!=null)
                     f.tag = fdm.get("name").toString();
-                if (fdm.containsKey("image"))
+                if (fdm.containsKey("image") && fdm.get("image")!=null)
                     f.image = fdm.get("image").toString();
                 if (f.image != null)
                     this.facilities.add(f);

@@ -43,6 +43,11 @@ public class Constants
     public static final String USER_CREATED = "user_created";
     public static final String USER_PROFILE_LOADED = "user_profile_loaded";
     public static final String WIDGET_INSTITUTES = "institutes";
+    public static final String PNS_INSTITUTES = "pns_institutes";
+    public static final String PNS_NEWS = "pns_news";
+    public static final String PNS_FORUM = "pns_forum";
+    public static final String PNS_QNA = "pns_qna";
+    public static final String PNS_ARTICLES="pns_articles";
     public static final String WIDGET_RECOMMENDED_INSTITUTES = "recommended_institutes";
     public static final String WIDGET_SHORTLIST_INSTITUTES = "shortlist_institutes";
     public static final String WIDGET_SYLLABUS = "syllabus";

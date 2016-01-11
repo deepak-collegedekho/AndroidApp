@@ -433,43 +433,57 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_FRAGMENT_INSTITUTE_LIST:
             {
                 this.mCurrentTitle = "Institute List";
-
-                this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, MainActivity.resource_uri, null);
+                if(Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
+                    this.mMakeNetworkCall(Constants.PNS_INSTITUTES, MainActivity.resource_uri, null);
+                }else {
+                    this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, MainActivity.resource_uri, null);
+                }
                 break;
             }
             case Constants.TAG_FRAGMENT_NEWS_LIST:
             {
                 this.mCurrentTitle = "News";
-
-                this.mMakeNetworkCall(Constants.WIDGET_NEWS, MainActivity.resource_uri, null);
+                if(Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
+                    this.mMakeNetworkCall(Constants.PNS_NEWS, MainActivity.resource_uri, null);
+                }else {
+                    this.mMakeNetworkCall(Constants.WIDGET_NEWS, MainActivity.resource_uri, null);
+                }
                 break;
             }
             case Constants.TAG_FRAGMENT_ARTICLES_LIST:
             {
                 this.mCurrentTitle = "Articles";
-
-                this.mMakeNetworkCall(Constants.WIDGET_ARTICES, MainActivity.resource_uri, null);
+                if(Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
+                    this.mMakeNetworkCall(Constants.PNS_ARTICLES, MainActivity.resource_uri, null);
+                }else {
+                    this.mMakeNetworkCall(Constants.WIDGET_ARTICES, MainActivity.resource_uri, null);
+                }
                 break;
             }
             case Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE:
             {
                 this.mCurrentTitle = "My Shortlist";
-
                 this.mMakeNetworkCall(Constants.WIDGET_SHORTLIST_INSTITUTES, MainActivity.resource_uri, null);
                 break;
             }
             case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST:
             {
                 this.mCurrentTitle = "QnA";
-
-                this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, MainActivity.resource_uri, null);
+                if(Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
+                    this.mMakeNetworkCall(Constants.PNS_QNA, MainActivity.resource_uri, null);
+                }else {
+                    this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, MainActivity.resource_uri, null);
+                }
                 break;
             }
             case Constants.TAG_FRAGMENT_MY_FB_ENUMERATION:
             {
                 this.mCurrentTitle = "My Future Buddies";
-
-                this.mMakeNetworkCall(Constants.WIDGET_FORUMS, MainActivity.resource_uri, null);
+                if(Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
+                    this.mMakeNetworkCall(Constants.PNS_FORUM, MainActivity.resource_uri, null);
+                }else {
+                    this.mMakeNetworkCall(Constants.WIDGET_FORUMS, MainActivity.resource_uri, null);
+                }
                 break;
             }
 
@@ -1460,6 +1474,21 @@ public class MainActivity extends AppCompatActivity
 
             case Constants.TAG_MY_ALERTS:
                 this.onMyAlertsLoaded(response);
+                break;
+            case Constants.PNS_FORUM:
+                this.onPnsMyFutureBuddy(response);
+                break;
+            case Constants.PNS_NEWS:
+                this.onPNSNews(response);
+                break;
+            case Constants.PNS_QNA:
+                this.onPnsQnA(response);
+                break;
+            case Constants.PNS_INSTITUTES:
+                this.onPnsInstituteNews(response);
+                    break;
+            case Constants.PNS_ARTICLES:
+                this.onPnsArticles(response);
                 break;
         }
 
@@ -4048,7 +4077,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onMyAlertsLoaded(String response) {
-//        response="{\"results\":[{\"count\":1,\"dates\":[{\"date\":\"2015-09-30\",\"exam_id\":1,\"type\":\"Advertisement Opening Date\"}],\"year\":2015,\"month\":9},{\"count\":2,\"dates\":[{\"date\":\"2015-05-19\",\"exam_id\":265,\"type\":\"Advertisement Opening Date\"},{\"date\":\"2015-05-20\",\"exam_id\":265,\"type\":\"Registration Start Date\"}],\"year\":2015,\"month\":5},{\"count\":5,\"dates\":[{\"date\":\"2015-06-08\",\"exam_id\":265,\"type\":\"Admit Card Start Date\"},{\"date\":\"2015-06-10\",\"exam_id\":265,\"type\":\"Admit Card End Date\"},{\"date\":\"2015-06-14\",\"exam_id\":265,\"type\":\"Test Date\"},{\"date\":\"2015-06-14\",\"exam_id\":265,\"type\":\"Test Start Date\"},{\"date\":\"2015-06-14\",\"exam_id\":265,\"type\":\"Test End Date\"}],\"year\":2015,\"month\":6},{\"count\":1,\"dates\":[{\"date\":\"2015-07-03\",\"exam_id\":265,\"type\":\"Test Results Date\"}],\"year\":2015,\"month\":7}]}";
         try {
             Map<String, Object> map = JSON.std.mapFrom(response);
             String result = JSON.std.asString(map.get("results"));
@@ -4080,5 +4108,130 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, Constants.BASE_URL + "preferences/", hashMap);
 
     }
+    private void onPNSNews(String response){
+        try {
+            this.mNewsList = JSON.std.listOfFrom(News.class, "["+response+"]");
+            this.mParseSimilarNews(this.mNewsList);
+            if(this.mNewsList!=null && !this.mNewsList.isEmpty()) {
+                this.mDisplayFragment(NewsDetailFragment.newInstance(this.mNewsList.get(0), new ArrayList<>(this.mNewsList)), false, Constants.PNS_NEWS);
+            }else {
+                isFromNotification=false;
+                mLoadUserStatusScreen();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            isFromNotification=false;
+            mLoadUserStatusScreen();
+        }
+    }
 
+    private void onPnsArticles(String response){
+        try {
+            this.mArticlesList = JSON.std.listOfFrom(Articles.class, "["+response+"]");
+            this.mParseSimilarArticle(mArticlesList);
+            if(this.mArticlesList!=null && !this.mArticlesList.isEmpty()) {
+                this.mDisplayFragment(ArticleDetailFragment.newInstance(mArticlesList.get(0), this.mArticlesList), false, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
+            }else {
+                isFromNotification=false;
+                mLoadUserStatusScreen();
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+            isFromNotification=false;
+            mLoadUserStatusScreen();
+        }
+    }
+
+    private void onPnsInstituteNews(String response) {
+        try {
+            this.mInstituteList = JSON.std.listOfFrom(Institute.class, "[" + response + "]");
+            if (this.mInstituteList != null && !this.mInstituteList.isEmpty()) {
+                this.mInstitute = this.mInstituteList.get(0);
+                int id = this.mInstituteList.get(0).getId();
+                    this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute), false, Constants.TAG_FRAGMENT_INSTITUTE);
+
+                this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
+                this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id) , null);
+                this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id) , null);
+
+            }else{
+                isFromNotification=false;
+                mLoadUserStatusScreen();
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            isFromNotification=false;
+            mLoadUserStatusScreen();
+        }
+    }
+
+    private void onPnsMyFutureBuddy(String response){
+        try {
+            this.mFB = this.mParseAndPopulateMyFB(response, 0);
+            this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, 0), false, Constants.TAG_FRAGMENT_MY_FB);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            isFromNotification=false;
+            mLoadUserStatusScreen();
+        }
+    }
+
+    private void onPnsQnA(String response) {
+        try {
+            QnAQuestions qnaQuestion = new QnAQuestions();
+            ArrayList<String> tagArrayList = new ArrayList<>();
+            ArrayList<QnAAnswers> qnaAnswers = new ArrayList<>();
+
+            JSONObject qns = new JSONObject(response);
+
+            qnaQuestion.setUser(qns.getString("user"));
+            qnaQuestion.setView_count(qns.getInt("view_count"));
+            qnaQuestion.setTitle(qns.getString("title"));
+            qnaQuestion.setDesc(qns.getString("desc"));
+            qnaQuestion.setDownvotes(qns.getInt("downvotes"));
+            qnaQuestion.setUpvotes(qns.getInt("upvotes"));
+            qnaQuestion.setCurrent_user_vote_type(qns.getInt("current_user_vote_type"));
+            qnaQuestion.setResource_uri(qns.getString("resource_uri"));
+            qnaQuestion.setAdded_on(qns.getString("added_on"));
+            qnaQuestion.setAnswers_count(qns.getInt("answers_count"));
+            qnaQuestion.setIndex(0);
+
+            JSONArray answerList = qns.getJSONArray("answer_set");
+
+            for (int j = 0; j < answerList.length(); j++) {
+                JSONObject ans = answerList.getJSONObject(j);
+
+                QnAAnswers qnaAnswer = new QnAAnswers();
+
+                qnaAnswer.setUser(ans.getString("user"));
+                qnaAnswer.setDownvotes(ans.getInt("downvotes"));
+                qnaAnswer.setUpvotes(ans.getInt("upvotes"));
+                qnaAnswer.setCurrent_user_vote_type(ans.getInt("current_user_vote_type"));
+                qnaAnswer.setAnswer_text(ans.getString("answer_text"));
+                qnaAnswer.setAdded_on(ans.getString("added_on"));
+                qnaAnswer.setId(ans.getLong("id"));
+                qnaAnswer.setQuestion(ans.getString("question"));
+                qnaAnswer.setResource_uri(ans.getString("resource_uri"));
+                qnaAnswer.setIndex(j);
+                qnaAnswer.setQuestionIndex(0);
+
+                qnaAnswers.add(qnaAnswer);
+            }
+
+            JSONArray tagsList = qns.getJSONArray("tags");
+
+            for (int k = 0; k < tagsList.length(); k++) {
+                tagArrayList.add(tagsList.getString(k));
+            }
+
+            qnaQuestion.setAnswer_set(qnaAnswers);
+            qnaQuestion.setTags(tagArrayList);
+            this.mDisplayFragment(new QnAQuestionsAndAnswersFragment().newInstance(qnaQuestion), false, Constants.TAG_FRAGMENT_QNA_ANSWERS_LIST);
+        } catch (Exception e) {
+            e.printStackTrace();
+            isFromNotification=false;
+            mLoadUserStatusScreen();
+        }
+    }
 }

@@ -126,6 +126,11 @@ public class Utils {
         int colorIndex = subjectId % 15;
         return subjectColors[colorIndex];
     }
+    public static boolean isUriEndsWithNumber(String resourceUri){
+        if (resourceUri!=null && resourceUri.length()>1)
+        return resourceUri.substring(0,resourceUri.length()-1).matches("^.*\\d");
+        return false;
+    }
 
     public static void SetCounterAnimation(final TextView textView, int count, final String suffix, long duration)
     {

@@ -180,12 +180,16 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
                 totalVotes++;
                 this.mUpvoteButton.setSelected(true);
                 this.mDownvoteButton.setSelected(false);
+                this.mQnAQuestion.setCurrent_user_vote_type(Constants.LIKE_THING);
+                this.mQnAQuestion.setUpvotes(mQnAQuestion.getUpvotes()+1);
             }
             else
             {
                 totalVotes--;
                 this.mUpvoteButton.setSelected(false);
                 this.mDownvoteButton.setSelected(true);
+                this.mQnAQuestion.setCurrent_user_vote_type(Constants.DISLIKE_THING);
+                this.mQnAQuestion.setDownvotes(mQnAQuestion.getDownvotes()+1);
             }
 
             this.mVoteCounts.setText(String.valueOf(totalVotes));
