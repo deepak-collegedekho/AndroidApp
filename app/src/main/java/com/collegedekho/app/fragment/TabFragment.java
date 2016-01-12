@@ -74,7 +74,6 @@ public class TabFragment extends  BaseFragment{
 
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
 
-
         this.mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
         //this.mExamTabPager.setPageTransformer(true, new ZoomPageTransformer());
         TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
@@ -116,7 +115,6 @@ public class TabFragment extends  BaseFragment{
         }
 
         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
-
             mExamTabPager.setVisibility(View.VISIBLE);
             this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
             mExamTabPager.setAdapter(this.mDetailsAdapter);
@@ -138,6 +136,7 @@ public class TabFragment extends  BaseFragment{
                     Log.e("","");
                 }
            });
+
            rootView.findViewById(R.id.exam_swipe_listener_layout).setOnTouchListener(onSwipeTouchListener);
            rootView.findViewById(R.id.include_layout_home_widget).setOnTouchListener(onSwipeTouchListener);
 

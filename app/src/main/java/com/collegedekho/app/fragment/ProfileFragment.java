@@ -74,7 +74,6 @@ public class ProfileFragment extends BaseFragment
         final View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PROFILE_SCREEN_TUTE, false);
 
-
         mProfileName  = (TextView)rootView.findViewById(R.id.user_name);
         mStreamName   = (TextView)rootView.findViewById(R.id.user_profile_stream);
         mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
@@ -82,14 +81,13 @@ public class ProfileFragment extends BaseFragment
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
 
-
         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
 
             rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.VISIBLE);
-            mExamTabPager.setVisibility(View.VISIBLE);
+            this.mExamTabPager.setVisibility(View.VISIBLE);
             this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
-            mExamTabPager.setAdapter(this.mDetailsAdapter);
+            this.mExamTabPager.setAdapter(this.mDetailsAdapter);
 
             mExamTabPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override

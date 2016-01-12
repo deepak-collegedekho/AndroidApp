@@ -5,7 +5,11 @@ import android.accounts.AccountManager;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.TextView;
@@ -152,5 +156,18 @@ public class Utils {
 
         animator.setDuration(duration);
         animator.start();
+    }
+
+    public static Drawable ApplyThemeToDrawable(Drawable image, int color) {
+        if (image != null) {
+            PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(color,
+                    PorterDuff.Mode.SRC_ATOP);
+
+            image.setColorFilter(porterDuffColorFilter);
+
+            return image;
+        }
+        else
+            return null;
     }
 }

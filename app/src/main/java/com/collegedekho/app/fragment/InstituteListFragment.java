@@ -26,6 +26,7 @@ import com.collegedekho.app.entities.Facet;
 import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
 import com.collegedekho.app.widget.tag.textview.ContactsCompletionView;
 import com.collegedekho.app.widget.tag.textview.FilteredArrayAdapter;
@@ -95,8 +96,11 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_institute_listing, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_institute_listing, container, false);
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.INSTITUTE_LIST_SCREEN_TUTE, false);
+
+        if (IS_TUTE_COMPLETED)
+            rootView.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
 
         mCompletionView = (ContactsCompletionView)rootView.findViewById(R.id.searchView);
         mCompletionView.setAdapter(tolenAdapter);
@@ -168,6 +172,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                 v.setVisibility(View.GONE);
                 IS_TUTE_COMPLETED = true;
                 getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.INSTITUTE_LIST_SCREEN_TUTE, true).apply();
+                rootView.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
                 return false;
             }
         });
@@ -271,16 +276,17 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     public void updateFilterButton(int filterCount)
     {
         if(!filterAllowed) return;// do not need on my shortlist page
+
         View v = getView();
         if (v != null) {
             this.filterCount = filterCount;
             if (filterCount <= 2) {
                 getView().findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
-                ((ImageView) v.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter);
+                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter), this.getActivity().getResources().getColor(R.color.white)));
             }
             else {
                 getView().findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
-                ((ImageView) v.findViewById(R.id.button_filter)).setImageResource(R.drawable.ic_filter_selected);
+                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter), this.getActivity().getResources().getColor(R.color.primary_orange)));
             }
        }
     }

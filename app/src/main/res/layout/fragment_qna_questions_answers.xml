@@ -88,7 +88,7 @@
             style="@style/AppTheme.Divider1"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp" />
-        <TextView
+        -<TextView
             android:id="@+id/qna_description"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"

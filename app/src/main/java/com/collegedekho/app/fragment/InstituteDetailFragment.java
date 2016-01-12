@@ -90,15 +90,6 @@ public class InstituteDetailFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_institute_detail, container, false);
-        /*if (mInstitute.getBanner() != null) {
-            ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
-            NetworkImageView imageView = ((NetworkImageView) rootView.findViewById(R.id.image_college_banner));
-            imageView.setErrorImageResId(R.drawable.default_banner);
-            imageView.setDefaultImageResId(R.drawable.default_banner);
-            imageView.setImageUrl(this.mInstitute.getBanner(), imageLoader);
-        } else {
-            ((NetworkImageView) rootView.findViewById(R.id.image_college_banner)).setDefaultImageResId(R.drawable.default_banner);
-        }*/
         if(this.mDetailsAdapter == null) {
             this.mDetailsAdapter = new InstitutePagerAdapter(getChildFragmentManager(), this.mInstitute);
         }
@@ -107,7 +98,7 @@ public class InstituteDetailFragment extends BaseFragment {
         }
         this.mDetailsPager = (ViewPager) rootView.findViewById(R.id.college_detail_pager);
         this.mDetailsPager.setAdapter(this.mDetailsAdapter);
-        //this.mDetailsPager.setPageTransformer(true, new DepthPageTransformer());
+        this.mDetailsPager.setPageTransformer(true, new DepthPageTransformer());
         this.mDetailsPager.setOffscreenPageLimit(5);
 
         //this.mFooterAdapter = new FooterPagerAdapter(this.mInstitute, this.getContext());
@@ -128,7 +119,6 @@ public class InstituteDetailFragment extends BaseFragment {
 
         this.mAdapter = new CoverFlowAdapter(this.getContext());
         this.mAdapter.setData(this.mData);
-
 
         //this.tabLayout = (TabLayout) rootView.findViewById(R.id.college_tabs_layout);
         //this.tabLayout.setTabTextColors(getResources().getColor(R.color.white), getResources().getColor(R.color.light_grey_background));
