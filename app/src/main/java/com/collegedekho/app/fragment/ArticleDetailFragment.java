@@ -21,6 +21,7 @@ import com.collegedekho.app.adapter.ArticleListAdapter;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.MyImageGetter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -101,7 +102,12 @@ public class ArticleDetailFragment extends BaseFragment {
             return;
         }
         ((TextView) rootView.findViewById(R.id.textview_article_title)).setText(mArticle.title);
-        ((TextView) rootView.findViewById(R.id.textview_article_content)).setText(Html.fromHtml(mArticle.content));
+//        ((TextView) rootView.findViewById(R.id.textview_article_content)).setText(Html.fromHtml(mArticle.content));
+        TextView contentView=(TextView) rootView.findViewById(R.id.textview_article_content);
+//        HtmlSpanner htmlspanner = new HtmlSpanner();
+//        Spannable text = htmlspanner.fromHtml(mArticle.content);
+//        contentView.setText(text);
+        contentView.setText(Html.fromHtml(mArticle.content,new MyImageGetter(getActivity(),contentView),null));
         if (mArticle.image != null && !mArticle.image.isEmpty())
             ((NetworkImageView) rootView.findViewById(R.id.image_article_expanded)).setImageUrl(mArticle.image, MySingleton.getInstance(getActivity()).getImageLoader());
         else

@@ -52,5 +52,6 @@
     <color name="dark_blue">#272369</color>
     <color name="app_background">#e8eaee</color>
     <color name="transparent">#00000000</color>
+    <color name="primary_text_default_material_dark">#adacac</color>
 
 </resources>

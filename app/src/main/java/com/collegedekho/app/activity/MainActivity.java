@@ -2,6 +2,7 @@ package com.collegedekho.app.activity;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +31,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -35,6 +39,7 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -398,6 +403,8 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_navigation_icon);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -609,11 +616,36 @@ public class MainActivity extends AppCompatActivity
 
         super.onDestroy();
     }
-
+    SearchView searchView = null;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         this.menu = menu;
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchManager searchManager = (SearchManager) MainActivity.this.getSystemService(Context.SEARCH_SERVICE);
+
+
+        if (searchItem != null) {
+            searchView = (SearchView) searchItem.getActionView();
+            SearchView.SearchAutoComplete autoComplete = (SearchView.SearchAutoComplete)searchView.findViewById(R.id.search_src_text);
+            // set the hint text color
+            autoComplete.setHintTextColor(Color.GRAY);
+            // set the text color
+            autoComplete.setTextColor(Color.BLUE);
+        }
+        if (searchView != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(MainActivity.this.getComponentName()));
+        }
+        if (searchView != null )
+        {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            searchView.setIconifiedByDefault(true);
+            searchView.setQueryHint("Search Institutes");
+            searchView.setOnQueryTextListener(queryTextListener);
+            searchView.setOnCloseListener(queryCloseListener);
+            searchView.clearFocus();
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -623,6 +655,7 @@ public class MainActivity extends AppCompatActivity
             menu.getItem(0).setVisible(false);
         else
             menu.getItem(0).setVisible(true);
+        setSearchAvailable(menu);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -632,6 +665,41 @@ public class MainActivity extends AppCompatActivity
         menu.setGroupVisible(R.id.main_menu_group, showMenu);
     }
 
+    private void setSearchAvailable(Menu menu) {
+        if (currentFragment != null) {
+            if (currentFragment instanceof ProfileFragment ) {
+                menu.setGroupVisible(R.id.search_menu_group, true);
+                if (searchView != null) {
+                    searchView.setQueryHint("Search Institutes");
+                }
+            }
+            else if( currentFragment instanceof ArticleFragment) {
+                menu.setGroupVisible(R.id.search_menu_group, true);
+                if(searchView!=null){
+                    searchView.setQueryHint("Search Articles");
+                }
+            }else if(currentFragment instanceof NewsFragment){
+                menu.setGroupVisible(R.id.search_menu_group, true);
+                if(searchView!=null){
+                    searchView.setQueryHint("Search News");
+                }
+
+            }else if(currentFragment instanceof QnAQuestionsListFragment) {
+
+                menu.setGroupVisible(R.id.search_menu_group, true);
+                if(searchView!=null){
+                    searchView.setQueryHint("Search Questions");
+                }
+            }else if(currentFragment instanceof InstituteListFragment) {
+                menu.setGroupVisible(R.id.search_menu_group, true);
+                if(searchView!=null){
+                    searchView.setQueryHint("Search Institutes");
+                }
+            } else {
+                menu.setGroupVisible(R.id.search_menu_group, false);
+            }
+        }
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -1186,6 +1254,7 @@ public class MainActivity extends AppCompatActivity
             MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_SCREEN_SELECTED, eventValue);
             this.connecto.track(Constants.ACTION_SCREEN_SELECTED, new Properties().putValue(Constants.SCREEN_NAME, tag).putValue(Constants.LAST_SCREEN_NAME, this.mLastScreenName).putValue(Constants.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS, new Date().getTime() - this.mTimeScreenClicked.getTime()));
         }
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -1489,6 +1558,18 @@ public class MainActivity extends AppCompatActivity
                     break;
             case Constants.PNS_ARTICLES:
                 this.onPnsArticles(response);
+                break;
+            case Constants.SEARCH_INSTITUTES:
+                this.onInstituteSearchResult(response);
+                break;
+            case Constants.SEARCH_ARTICLES:
+                this.onArticleSearchResult(response);
+                break;
+            case Constants.SEARCH_QNA:
+                this.onQnASearchResult(response);
+                break;
+            case Constants.SEARCH_NEWS:
+                this.onNewsSearchResult(response);
                 break;
         }
 
@@ -2990,9 +3071,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     public ArrayList<QnAQuestions> parseAndReturnQnAList(String qnaString) {
+        return parseAndReturnQnAList(qnaString,false);
+    }
+    public ArrayList<QnAQuestions> parseAndReturnQnAList(String qnaString,boolean isNewList) {
         try {
             QnAQuestions qnaQuestion;
-
+                if(isNewList){
+                    mQnAQuestions.clear();
+                }
             JSONObject qnaResult = new JSONObject(qnaString);
             next = qnaResult.getString("next");
             JSONArray resultArray = qnaResult.getJSONArray("results");
@@ -3091,6 +3177,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+        invalidateOptionsMenu();
     }
 
     /**
@@ -4233,5 +4320,157 @@ public class MainActivity extends AppCompatActivity
             isFromNotification=false;
             mLoadUserStatusScreen();
         }
+    }
+
+    SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener()
+    {
+        String mSearchString="";
+        public boolean onQueryTextChange(String newText)
+        {
+            mSearchString = newText;
+            if(!mSearchString.trim().matches(""))
+            doSearches(mSearchString);
+            return true;
+        }
+
+        public boolean onQueryTextSubmit(String query)
+        {
+            mSearchString = query;
+            if(!mSearchString.trim().matches(""))
+            doSearches(mSearchString);
+            return true;
+        }
+    };
+
+    SearchView.OnCloseListener queryCloseListener=new SearchView.OnCloseListener() {
+        @Override
+        public boolean onClose() {
+            closeSearch();
+            return false;
+        }
+    };
+
+    private void doSearch(String searchString) {
+
+        if (currentFragment != null && currentFragment instanceof InstituteListFragment) {
+
+            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/search=" + searchString, null);
+        } else if (currentFragment != null && currentFragment instanceof QnAQuestionsListFragment) {
+
+            this.mMakeNetworkCall(Constants.SEARCH_QNA, Constants.BASE_URL + "questions/search=" + searchString + "/", null);
+        } else if (currentFragment != null && currentFragment instanceof NewsFragment) {
+
+            this.mMakeNetworkCall(Constants.SEARCH_NEWS, Constants.BASE_URL + "news/search=" + searchString + "/", null);
+        } else if (currentFragment != null && currentFragment instanceof ArticleFragment) {
+
+            this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, Constants.BASE_URL + "articles/search=" + searchString + "/", null);
+        } else if (currentFragment != null && currentFragment instanceof ProfileFragment) {
+
+            this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "colleges/search=" + searchString + "/", null);
+        }
+    }
+
+    private void closeSearch() {
+
+        if (currentFragment != null && currentFragment instanceof InstituteListFragment) {
+
+            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL+"personalize/institutes/", null);
+        } else if (currentFragment != null && currentFragment instanceof QnAQuestionsListFragment) {
+            this.mMakeNetworkCall(Constants.SEARCH_QNA, Constants.BASE_URL + "personalize/qna/" , null);
+
+        } else if (currentFragment != null && currentFragment instanceof NewsFragment) {
+
+            this.mMakeNetworkCall(Constants.SEARCH_NEWS, Constants.BASE_URL+"personalize/news", null);
+        } else if (currentFragment != null && currentFragment instanceof ArticleFragment) {
+
+            this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, Constants.BASE_URL+"personalize/articles", null);
+        } else {
+            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL+"personalize/institutes/", null);
+        }
+
+    }
+
+    Runnable searchRunnable;
+    private void doSearches(final String query) {
+        if (searchRunnable != null) {
+            searchHandler.removeCallbacks(searchRunnable);
+        }
+        searchRunnable = new Runnable() {
+            @Override
+            public void run() {
+                doSearch(query);
+            }
+        };
+        searchHandler.postDelayed(searchRunnable, 750);
+    }
+    Handler searchHandler=new Handler();
+    private void onNewsSearchResult(String response) {
+        try {
+            this.mNewsList = JSON.std.listOfFrom(News.class, extractResults(response));
+            this.mParseSimilarNews(this.mNewsList);
+
+            if (this.mNewsList != null &&   currentFragment instanceof NewsFragment) {
+                ((NewsFragment) currentFragment).updateNewsList(new ArrayList<>(this.mNewsList), this.next);
+            }
+            if (this.mNewsList != null && currentFragment instanceof InstituteDetailFragment) {
+                ((InstituteDetailFragment) currentFragment).updateInstituteNews(new ArrayList<>(this.mNewsList) , this.next);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    private void onQnASearchResult(String response) {
+        ArrayList<QnAQuestions> qnaQuestionsList = parseAndReturnQnAList(response,true);
+
+        if(currentFragment instanceof QnAQuestionsListFragment){
+            ((QnAQuestionsListFragment) currentFragment).updateList(new ArrayList<>(qnaQuestionsList), next);
+
+        }
+    }
+
+    private void onInstituteSearchResult(String response) {
+        try {
+            this.mInstituteList = JSON.std.listOfFrom(Institute.class, extractResults(response));
+
+            if (currentFragment instanceof InstituteListFragment) {
+                ((InstituteListFragment) currentFragment).updateSearchList(this.mInstituteList, next);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+    private void onArticleSearchResult(String response) {
+        try {
+            this.mArticlesList = JSON.std.listOfFrom(Articles.class, extractResults(response));
+
+            this.mParseSimilarArticle(this.mArticlesList);
+            if (this.mArticlesList != null && currentFragment instanceof ArticleFragment) {
+                ((ArticleFragment) currentFragment).updateArticleList(new ArrayList<>(this.mArticlesList), next);
+            }
+
+            if (this.mArticlesList != null && currentFragment instanceof InstituteDetailFragment) {
+                ((InstituteDetailFragment) currentFragment).updateInstituteArticle(new ArrayList<>(this.mArticlesList) , this.next);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if ( v instanceof EditText || v instanceof SearchView.SearchAutoComplete) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event);
     }
 }

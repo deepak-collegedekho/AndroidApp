@@ -60,7 +60,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private  int mViewType = Constants.VIEW_INTO_LIST;
     private ContactsCompletionView mCompletionView;
     private ArrayAdapter<String> tolenAdapter;
-
+View instituteView;
 
     public InstituteListFragment() {
         // Required empty public constructor
@@ -126,7 +126,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         updateViewTypeIcon(rootView, this.mViewType);
         mAdapter = new InstituteListAdapter(getActivity(), mInstitutes, this.mViewType);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
-
+        instituteView=rootView.findViewById(R.id.viewType);
         if (mInstitutes.size() == 0)
             rootView.findViewById(R.id.viewType).setVisibility(View.GONE);
         else
@@ -256,6 +256,32 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         mAdapter.notifyDataSetChanged();
         loading = false;
         mNextUrl = next;
+        if(filterAllowed) {
+            if (mCompletionView != null && mCompletionView.getObjects().size() > 0) {
+                mCompletionView.clear();
+            }
+            this.mSetFilterList();
+        }
+    }
+
+    public void updateSearchList(List<Institute> institutes, String next) {
+        progressBarLL.setVisibility(View.GONE);
+        mAdapter.lastPosition = -1;
+        clearList();
+        mInstitutes.addAll(institutes);
+        mAdapter.notifyDataSetChanged();
+        loading = false;
+        mNextUrl = next;
+
+        if (mInstitutes.size() == 0) {
+            instituteView.setVisibility(View.GONE);
+            this.mEmptyTextView.setText("Opps! No Search Result Found!");
+            this.mEmptyTextView.setVisibility(View.VISIBLE);
+        }
+        else {
+            instituteView.setVisibility(View.VISIBLE);
+            this.mEmptyTextView.setVisibility(View.GONE);
+        }
         if(filterAllowed) {
             if (mCompletionView != null && mCompletionView.getObjects().size() > 0) {
                 mCompletionView.clear();

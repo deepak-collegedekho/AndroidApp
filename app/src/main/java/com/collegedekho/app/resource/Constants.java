@@ -142,6 +142,11 @@ public class Constants
     public static final String TAG_USER_EDUCATION_SET = "user_education_set";
     public static final String TAG_USER_EXAMS_SET = "user_exams_set";
     public static final String SELECTED_EXAM_ID = "selected_exam_id";
+    public static final String SEARCH_INSTITUTES = "search_institutes";
+    public static final String SEARCH_ARTICLES = "search_articles";
+    public static final String SEARCH_NEWS = "search_news";
+    public static final String SEARCH_QNA = "search_qna";
+
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET;
     public static final int MY_FB_REFRESH_RATE = 5000;
