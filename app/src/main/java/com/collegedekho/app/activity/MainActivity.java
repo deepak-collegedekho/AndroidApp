@@ -409,17 +409,17 @@ public class MainActivity extends AppCompatActivity
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currentFragment instanceof SyllabusSubjectsListFragment)
+                if (currentFragment instanceof SyllabusSubjectsListFragment)
                     ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
                 else if (currentFragment instanceof CalendarParentFragment)
                     ((CalendarParentFragment)currentFragment).submitCalendarData();
                 mClearBackStack();
+                invalidateOptionsMenu();
             }
         });
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
-
 
     private void logUser() {
         // You can call any combination of these three methods
@@ -3227,6 +3227,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSkipUserLogin() {
         this.mMakeNetworkCall(Constants.TAG_SKIP_LOGIN, Constants.BASE_URL + "users/anonymous/", new HashMap<String, String>());
+
+        //send skip event
+        //Send GA Session
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_USER_LOGIN, Constants.TAG_SKIP_LOGIN);
+
+        //Appsflyer events
+        HashMap<String, Object> eventValue = new HashMap<String, Object>();
+
+        eventValue.put(Constants.TAG_USER_LOGIN, Constants.TAG_SKIP_LOGIN);
+
+        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_USER_LOGIN, eventValue);
+        this.connecto.track(Constants.ACTION_USER_LOGIN, new Properties().putValue(Constants.TAG_USER_LOGIN, Constants.TAG_SKIP_LOGIN));
     }
 
 
@@ -3239,6 +3251,18 @@ public class MainActivity extends AppCompatActivity
         this.userPref = User.Prefs.STREAMKNOWN;
         this.mMakeNetworkCall(Constants.TAG_CREATE_FACEBOOK_ANONY_USER, Constants.BASE_URL + "users/anonymous/", params);
         this.mUserSignUPParams = params;
+
+        //send FB event
+        //Send GA Session
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_USER_LOGIN, Constants.TAG_USER_FACEBOOK_LOGIN);
+
+        //Appsflyer events
+        HashMap<String, Object> eventValue = new HashMap<String, Object>();
+
+        eventValue.put(Constants.TAG_USER_LOGIN, Constants.TAG_USER_FACEBOOK_LOGIN);
+
+        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_USER_LOGIN, eventValue);
+        this.connecto.track(Constants.ACTION_USER_LOGIN, new Properties().putValue(Constants.TAG_USER_LOGIN, Constants.TAG_USER_FACEBOOK_LOGIN));
     }
 
     /**

@@ -7,11 +7,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,9 +23,13 @@ import com.collegedekho.app.adapter.QnAAnswersListAdapter;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
-import com.melnykov.fab.FloatingActionButton;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class QnAQuestionsAndAnswersFragment extends BaseFragment{
     private static final String ARG_PARAM1 = "param1";
@@ -36,6 +42,7 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
     private TextView mVoteCounts;
     private RecyclerView mAnswersListView;
     private TextView mEmptyTextView;
+    private volatile SimpleDateFormat mSDF;
 
     public static QnAQuestionsAndAnswersFragment newInstance(QnAQuestions qnaQuestionAnswers) {
         QnAQuestionsAndAnswersFragment fragment = new QnAQuestionsAndAnswersFragment();
@@ -55,31 +62,65 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
         if (getArguments() != null) {
             mQnAQuestion = getArguments().getParcelable(ARG_PARAM1);
             mQnAAnswersSet = mQnAQuestion.getAnswer_set();
+            mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+            mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        LinearLayout tagsContainer;
+        TextView questionUser;
+        TextView questionAskedDate;
         // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_qna_questions_answers, container, false);
+        // final View rootView = inflater.inflate(R.layout.fragment_qna_questions_answers, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_qna_question_detail, container, false);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
+        questionUser = (TextView) rootView.findViewById(R.id.question_user);
+        questionAskedDate = (TextView) rootView.findViewById(R.id.question_time);
+        String simpleDate = "";
+        try {
+            mSDF.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
+            Date date = mSDF.parse(this.mQnAQuestion.getAdded_on());
+            mSDF.applyPattern("MMMM d, yyyy KK:mm a");
+            simpleDate = mSDF.format(date);
+        } catch (ParseException e) {
+            Log.e(TAG, "Date format unknown: " + this.mQnAQuestion.getAdded_on());
+        }
 
-        if (mQnAAnswersSet.size() == 0)
+        if (this.mQnAAnswersSet.size() == 0)
             (this.mEmptyTextView).setText("Be the first one to answer.");
 
-        ((TextView) rootView.findViewById(R.id.qna_title)).setText(mQnAQuestion.getTitle());
-        ((TextView) rootView.findViewById(R.id.qna_description)).setText(mQnAQuestion.getDesc());
-        mVoteCounts = ((TextView) rootView.findViewById(R.id.qna_votes_Count));
-        mVoteCounts.setText(String.valueOf(mQnAQuestion.getUpvotes() - mQnAQuestion.getDownvotes()));
+        tagsContainer = (LinearLayout) rootView.findViewById(R.id.tags_container);
+        questionUser.setText(this.mQnAQuestion.getUser());
+        questionAskedDate.setText(simpleDate);
+        ArrayList<String> tags = this.mQnAQuestion.getTags();
+
+        if(tags != null && tags.size() > 0)
+            for(int i = 0; i < tags.size(); i++)
+            {
+                TextView tv = (TextView) LayoutInflater.from(this.getContext()).inflate(R.layout.item_tag, null);
+
+                tv.setText(tags.get(i));
+
+                tagsContainer.addView(tv);
+            }
+        else
+            tagsContainer.setVisibility(View.GONE);
+
+        ((TextView) rootView.findViewById(R.id.qna_title)).setText(this.mQnAQuestion.getTitle());
+        ((TextView) rootView.findViewById(R.id.qna_description)).setText(this.mQnAQuestion.getDesc());
+        this.mVoteCounts = ((TextView) rootView.findViewById(R.id.qna_votes_Count));
+        this.mVoteCounts.setText(String.valueOf(this.mQnAQuestion.getUpvotes() - this.mQnAQuestion.getDownvotes()));
 
         this.mUpvoteButton = (ImageView) rootView.findViewById(R.id.qna_button_upvote);
         this.mDownvoteButton = (ImageView) rootView.findViewById(R.id.qna_button_downvote);
 
-        this.mUpvoteButton.setSelected(mQnAQuestion.getCurrent_user_vote_type() == Constants.LIKE_THING);
-        this.mDownvoteButton.setSelected(mQnAQuestion.getCurrent_user_vote_type() == Constants.DISLIKE_THING);
+        this.mUpvoteButton.setSelected(this.mQnAQuestion.getCurrent_user_vote_type() == Constants.LIKE_THING);
+        this.mDownvoteButton.setSelected(this.mQnAQuestion.getCurrent_user_vote_type() == Constants.DISLIKE_THING);
 
-        ((FloatingActionButton) rootView.findViewById(R.id.answer_reply)).setOnClickListener(new View.OnClickListener() {
+        (rootView.findViewById(R.id.answer_reply)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
@@ -103,7 +144,6 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
                             mListener.onQnAAnswerSubmitted(mQnAQuestion.getResource_uri(), input.getText().toString(), mQnAQuestion.getIndex(), mQnAAnswersSet.size());
                             input.setText("");
                         }
-
                     }
                 });
 

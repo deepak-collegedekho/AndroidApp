@@ -44,6 +44,7 @@ public class LoginFragment extends  BaseFragment{
         fragment.setArguments(args);
         return  fragment;
     }
+
     public LoginFragment(){
         // required empty constructor
     }
@@ -67,7 +68,7 @@ public class LoginFragment extends  BaseFragment{
      * This method is used to register this fragment with  facebook login account
      *  and callback methods call when  try to login with facebook
      */
-    private  void mFacebookCallbackListener(LoginButton loginButton)
+    private void mFacebookCallbackListener(LoginButton loginButton)
     {
         loginButton.registerCallback(MainActivity.callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -93,7 +94,6 @@ public class LoginFragment extends  BaseFragment{
 
                 Log.e(TAG, "facebook login on error");
                 Toast.makeText(getActivity(), "Facebook SignIn has some error", Toast.LENGTH_LONG).show();
-
             }
         });
     }

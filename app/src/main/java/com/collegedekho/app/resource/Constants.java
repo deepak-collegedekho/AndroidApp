@@ -290,8 +290,7 @@ public class Constants
     public static final String ACTION_USER_EXAM_SELECTED = "action_user_exam_selected";
     public static final String ACTION_INSTITUTE_SELECTED = "action_institute_selected";
     public static final String ACTION_WHEN_NOT_PREPARING = "action_when_not_preparing";
-
-
+    public static final String ACTION_USER_LOGIN = "action_user_login";
 
     //String messages
     public static final String EMAIL_PASSOWRD_NOT_EXISTS ="The e-mail address and/or password you specified are not correct.";

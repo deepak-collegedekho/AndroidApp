@@ -117,8 +117,6 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         qnaAnswerHolder.dateAddedOn.setText(simpleDate);
         qnaAnswerHolder.time.setText(String.valueOf(time));
 
-
-
         //set comment
         qnaAnswerHolder.commentText.setText(myFBComment.getComment());
 
@@ -149,16 +147,11 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         }
         else
         {
-           // qnaAnswerHolder.time.setGravity(Gravity.RIGHT);
-
-           //qnaAnswerHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 qnaAnswerHolder.myFbCard.setBackgroundResource(R.drawable.ic_chat_inline_others);
             }
             else{
-
                 qnaAnswerHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
-
            }
             int left = Utils.getPadding(mContext,10);
             int right = Utils.getPadding(mContext,10);

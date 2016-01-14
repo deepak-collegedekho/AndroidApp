@@ -1,6 +1,7 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,7 +44,8 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(mContext).inflate(R.layout.card_qna_answer, parent, false);
+        //View rootView = LayoutInflater.from(mContext).inflate(R.layout.card_qna_answer, parent, false);
+        View rootView = LayoutInflater.from(mContext).inflate(R.layout.card_qna_answer_new_design, parent, false);
         try {
             return new QnAAnswerHolder(rootView, (QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener) mContext);
         } catch (ClassCastException e) {
@@ -69,9 +71,15 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
         qnaAnswerHolder.answerText.setText(qnaAnswer.getAnswer_text());
         qnaAnswerHolder.answerVotes.setText(String.valueOf(qnaAnswer.getUpvotes() - qnaAnswer.getDownvotes()));
         if (qnaAnswer.getUser() != MainActivity.user.getUsername())
+        {
             qnaAnswerHolder.userName.setText(qnaAnswer.getUser());
+            qnaAnswerHolder.answerCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
+        }
         else
+        {
+            qnaAnswerHolder.answerCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.self_comment_card_background));
             qnaAnswerHolder.userName.setText("Me");
+        }
 
         qnaAnswerHolder.dateAddedOn.setText(simpleDate);
 
@@ -92,11 +100,13 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
         TextView dateAddedOn;
         ImageButton answerUpvoteButton;
         ImageButton answerDownvoteButton;
+        CardView answerCard;
         QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener mListener;
 
         public QnAAnswerHolder(View itemView, QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener listener) {
             super(itemView);
 
+            answerCard = (CardView) itemView.findViewById(R.id.card_qna_answer);
             answerText = (TextView) itemView.findViewById(R.id.qna_answer_text);
             answerVotes = (TextView) itemView.findViewById(R.id.qna_answer_votes);
             userName = (TextView) itemView.findViewById(R.id.qna_answer_user_name);

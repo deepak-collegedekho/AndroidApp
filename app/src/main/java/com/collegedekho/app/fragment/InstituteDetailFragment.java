@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.adapter.CoverFlowAdapter;
 import com.collegedekho.app.adapter.InstitutePagerAdapter;
 import com.collegedekho.app.display.DepthPageTransformer;
 import com.collegedekho.app.entities.Articles;
@@ -32,7 +31,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,7 +50,6 @@ public class InstituteDetailFragment extends BaseFragment {
     private Institute mInstitute;
     private InstitutePagerAdapter mDetailsAdapter;
     private ViewPager mDetailsPager;
-    private CoverFlowAdapter mAdapter;
     private ArrayList<GameEntity> mData = new ArrayList<>(4);
     private String nextArticleUrl;
     private String nextNewsUrl;
@@ -107,18 +104,22 @@ public class InstituteDetailFragment extends BaseFragment {
         //this.mFooterPager.setAdapter(this.mFooterAdapter);
         //this.mFooterPager.setPageMargin(this.getResources().getDisplayMetrics().widthPixels /-7);
 
+/*
         this.mData.add(new GameEntity(R.drawable.ic_carousel_video, R.string.videos_title));
         this.mData.add(new GameEntity(R.drawable.ic_carousel_qna, R.string.qna_title));
         this.mData.add(new GameEntity(R.drawable.ic_carousel_news, R.string.news_title));
         this.mData.add(new GameEntity(R.drawable.ic_carousel_articles, R.string.article_title));
+*/
 
         /*this.mData.add(new GameEntity(R.drawable.image_1, R.string.videos_title));
         this.mData.add(new GameEntity(R.drawable.image_2, R.string.qna_title));
         this.mData.add(new GameEntity(R.drawable.image_3, R.string.news_title));
         this.mData.add(new GameEntity(R.drawable.image_4, R.string.article_title));*/
 
+/*
         this.mAdapter = new CoverFlowAdapter(this.getContext());
         this.mAdapter.setData(this.mData);
+*/
 
         //this.tabLayout = (TabLayout) rootView.findViewById(R.id.college_tabs_layout);
         //this.tabLayout.setTabTextColors(getResources().getColor(R.color.white), getResources().getColor(R.color.light_grey_background));
