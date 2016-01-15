@@ -10,8 +10,8 @@
     <LinearLayout
         android:id="@+id/qna_question_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight=".1"
+        android:layout_height="0dp"
+        android:layout_weight=".5"
         android:orientation="vertical"
         android:textColor="@color/white"
         android:weightSum="1"
@@ -19,8 +19,8 @@
         <LinearLayout
             android:id="@+id/qna_title_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".2"
+            android:layout_height="0dp"
+            android:layout_weight=".43"
             android:orientation="horizontal"
             android:textSize="14sp"
             android:textColor="@color/white"
@@ -30,7 +30,7 @@
                 android:id="@+id/qna_question_vote_container"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight=".15"
+                android:layout_weight=".17"
                 android:gravity="center"
                 android:weightSum="1"
                 android:orientation="vertical"
@@ -51,7 +51,7 @@
                     android:maxLines="@integer/int1"
                     android:gravity="center"
                     android:layout_gravity="center"
-                    android:text="2552"
+                    android:text="..."
                     android:textSize="20sp"
                     android:textColor="@color/text_lightest_grey"
                     android:layout_marginTop="@dimen/activity_vertical_margin_small"
@@ -63,14 +63,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_arrow_down"
-                    android:background="@drawable/bg_upvote"
+                    android:background="@drawable/bg_downvote"
                     />
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/qna_title_info_container"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight=".8"
+                android:layout_weight=".83"
                 android:weightSum="@integer/int1"
                 android:orientation="vertical"
                 >
@@ -116,12 +116,13 @@
             android:layout_marginRight="0dp" />
         <TextView
             android:id="@+id/qna_description"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_width="match_parent"
-            android:layout_weight=".5"
+            android:layout_weight=".35"
             android:text="Question Decription"
             android:textSize="15sp"
-            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin_small"
+            android:paddingTop="@dimen/activity_vertical_margin_small"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:textColor="@color/black"
@@ -133,9 +134,10 @@
             android:layout_marginRight="0dp" />
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".2"
-            android:paddingTop="@dimen/activity_vertical_margin_small"
+            android:layout_height="0dp"
+            android:layout_weight=".22"
+            android:paddingBottom="@dimen/m5dp"
+            android:paddingTop="@dimen/m5dp"
             android:paddingLeft="@dimen/activity_horizontal_margin_small"
             android:paddingRight="@dimen/activity_horizontal_margin_small"
             android:gravity="center_vertical"
@@ -146,31 +148,52 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="..."
+                android:text="question_user"
                 android:textColor="@color/primary_color"
                 android:textStyle="bold"
                 android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:textSize="12sp"
                 />
-            <LinearLayout
+            <TextView
+                android:id="@+id/answers_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:text="..."
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="@dimen/m3dp"
+                android:gravity="bottom"
+                />
+            <TextView
+                android:id="@+id/answers_count_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Answers"
+                android:textSize="12sp"
+                android:layout_toRightOf="@+id/answers_count"
+                android:layout_alignParentBottom="true"
+                />
+            <TextView
+                android:id="@+id/question_time_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Asked on:"
+                android:textSize="12sp"
                 android:layout_alignParentRight="true"
-                android:gravity="center_horizontal"
-                >
-                <TextView
-                    android:id="@+id/question_time_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Asked on:"
-                    />
-                <TextView
-                    android:id="@+id/question_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="..."
-                    />
-            </LinearLayout>
+                android:layout_alignParentTop="true"
+                />
+            <TextView
+                android:id="@+id/question_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="..."
+                android:textSize="12sp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                />
         </RelativeLayout>
     </LinearLayout>
     <View
@@ -179,9 +202,10 @@
         android:layout_marginRight="0dp" />
     <RelativeLayout
         android:id="@+id/qna_answers_container"
+        android:layout_marginTop="@dimen/m5dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".9"
+        android:layout_weight=".51"
         >
         <TextView
             android:id="@android:id/empty"

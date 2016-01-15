@@ -18,6 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:weightSum="@integer/int1"
         >
         <LinearLayout
             android:id="@+id/qna_answer_container"
@@ -30,7 +31,7 @@
                 android:id="@+id/qna_answer_vote_controller"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".15"
+                android:layout_weight=".19"
                 android:gravity="center"
                 android:weightSum="1"
                 android:orientation="vertical"
@@ -69,7 +70,7 @@
                 android:id="@+id/qna_answer_text"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
-                android:layout_weight=".95"
+                android:layout_weight=".81"
                 android:layout_gravity="center"
                 android:gravity="top"
                 android:text="Hi Everyone,
@@ -109,6 +110,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="..."
+                android:textSize="12sp"
                 android:textColor="@color/primary_color"
                 android:textStyle="bold"
                 android:layout_alignParentLeft="true"
@@ -125,11 +127,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Answered on:"
+                    android:textSize="12sp"
                     />
                 <TextView android:id="@+id/qna_answer_date_added_on"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="..."
+                    android:textSize="12sp"
                     android:gravity="center_vertical"
                     />
             </LinearLayout>

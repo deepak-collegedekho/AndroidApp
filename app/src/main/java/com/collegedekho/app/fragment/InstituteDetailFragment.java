@@ -95,7 +95,7 @@ public class InstituteDetailFragment extends BaseFragment {
         }
         this.mDetailsPager = (ViewPager) rootView.findViewById(R.id.college_detail_pager);
         this.mDetailsPager.setAdapter(this.mDetailsAdapter);
-        this.mDetailsPager.setPageTransformer(true, new DepthPageTransformer());
+        //this.mDetailsPager.setPageTransformer(true, new DepthPageTransformer());
         this.mDetailsPager.setOffscreenPageLimit(5);
 
         //this.mFooterAdapter = new FooterPagerAdapter(this.mInstitute, this.getContext());

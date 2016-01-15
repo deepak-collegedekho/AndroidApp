@@ -73,12 +73,14 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
         LinearLayout tagsContainer;
         TextView questionUser;
         TextView questionAskedDate;
+        TextView answersCount;
         // Inflate the layout for this fragment
         // final View rootView = inflater.inflate(R.layout.fragment_qna_questions_answers, container, false);
         final View rootView = inflater.inflate(R.layout.fragment_qna_question_detail, container, false);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
         questionUser = (TextView) rootView.findViewById(R.id.question_user);
         questionAskedDate = (TextView) rootView.findViewById(R.id.question_time);
+        answersCount = (TextView) rootView.findViewById(R.id.answers_count);
         String simpleDate = "";
         try {
             mSDF.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
@@ -94,6 +96,7 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
 
         tagsContainer = (LinearLayout) rootView.findViewById(R.id.tags_container);
         questionUser.setText(this.mQnAQuestion.getUser());
+        answersCount.setText(String.valueOf(this.mQnAQuestion.getAnswers_count()));
         questionAskedDate.setText(simpleDate);
         ArrayList<String> tags = this.mQnAQuestion.getTags();
 

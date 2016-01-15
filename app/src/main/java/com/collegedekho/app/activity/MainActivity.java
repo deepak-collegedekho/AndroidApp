@@ -2364,7 +2364,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     @Override
     public void onEndReached(String next, int listType) {
         if (next == null || next.equalsIgnoreCase("null")) return;
