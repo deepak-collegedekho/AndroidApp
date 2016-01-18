@@ -225,7 +225,7 @@ public class Utils {
                         } else {
                             TextView textView = new TextView(context);
                             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                            layoutParams.setMargins(0, 0, 0, -45);
+//                            layoutParams.setMargins(0, 0, 0, -25);
                             textView.setLayoutParams(layoutParams);
 //                            textView.setMovementMethod(LinkMovementMethod.getInstance());
                             textView.setText(spanner.fromTagNode(childNode, null));
@@ -234,7 +234,7 @@ public class Utils {
                     } else {
                         TextView textView = new TextView(context);
                         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        layoutParams.setMargins(0, 0, 0, -45);
+//                        layoutParams.setMargins(0, 0, 0, -25);
                         textView.setLayoutParams(layoutParams);
 //                        textView.setMovementMethod(LinkMovementMethod.getInstance());
                         textView.setText(spanner.fromTagNode(childNode, null));
@@ -244,7 +244,7 @@ public class Utils {
             } else {
                 TextView textView = new TextView(context);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                layoutParams.setMargins(0, 0, 0, -45);
+//                layoutParams.setMargins(0, 0, 0, -25);
                 textView.setLayoutParams(layoutParams);
 //                textView.setMovementMethod(LinkMovementMethod.getInstance());
                 textView.setText(spanner.fromTagNode(node, null));
