@@ -186,64 +186,65 @@ public class Utils {
     }
 
     public static void renderHtml(Context context, LinearLayout parentLayout, String sourceHtml) {
-        HtmlCleaner cleaner=new HtmlCleaner();
-        HtmlSpanner spanner =new HtmlSpanner();
-        TagNode result= cleaner.clean(sourceHtml);
-        List<TagNode> list=result.getChildTagList();
+        if (parentLayout == null || context == null || sourceHtml == null || sourceHtml.isEmpty()) {
+            return;
+        }
+        HtmlCleaner cleaner = new HtmlCleaner();
+        HtmlSpanner spanner = new HtmlSpanner();
+        TagNode result = cleaner.clean(sourceHtml);
+        List<TagNode> list = result.getChildTagList();
         parentLayout.removeAllViews();
-        for(TagNode node:list) {
-            if(node.getName().matches("body")){
-                List<TagNode> childList=node.getChildTagList();
-                for (TagNode childNode:childList){
-                    if(childNode.getName().matches("img")) {
+        for (TagNode node : list) {
+            if (node.getName().matches("body")) {
+                List<TagNode> childList = node.getChildTagList();
+                for (TagNode childNode : childList) {
+                    if (childNode.getName().matches("img")) {
                         Log.i("DEBUG", "Image found");
-                        NetworkImageView imageView=new NetworkImageView(context);
-                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                        layoutParams.gravity= Gravity.CENTER;
+                        NetworkImageView imageView = new NetworkImageView(context);
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParams.gravity = Gravity.CENTER;
                         imageView.setLayoutParams(layoutParams);
                         parentLayout.addView(imageView);
                         String src = childNode.getAttributeByName("src");
-                        if(src!=null){
+                        if (src != null) {
                             imageView.setImageUrl(src, MySingleton.getInstance(context).getImageLoader());
                         }
-                    }else
-                    if (childNode.getName().matches("p")) {
+                    } else if (childNode.getName().matches("p")) {
                         TagNode att = childNode.findElementByName("img", false);
                         if (att != null) {
                             Log.i("DEBUG", "Image found");
-                            NetworkImageView imageView=new NetworkImageView(context);
-                            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                            layoutParams.gravity= Gravity.CENTER;
+                            NetworkImageView imageView = new NetworkImageView(context);
+                            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            layoutParams.gravity = Gravity.CENTER;
                             imageView.setLayoutParams(layoutParams);
                             parentLayout.addView(imageView);
                             String src = att.getAttributeByName("src");
-                            if(src!=null){
+                            if (src != null) {
                                 imageView.setImageUrl(src, MySingleton.getInstance(context).getImageLoader());
                             }
                         } else {
                             TextView textView = new TextView(context);
-                            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                            layoutParams.setMargins(0,0,0,-45);
+                            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            layoutParams.setMargins(0, 0, 0, -45);
                             textView.setLayoutParams(layoutParams);
 //                            textView.setMovementMethod(LinkMovementMethod.getInstance());
                             textView.setText(spanner.fromTagNode(childNode, null));
                             parentLayout.addView(textView);
                         }
-                    }   else {
+                    } else {
                         TextView textView = new TextView(context);
-                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                        layoutParams.setMargins(0,0,0,-45);
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParams.setMargins(0, 0, 0, -45);
                         textView.setLayoutParams(layoutParams);
 //                        textView.setMovementMethod(LinkMovementMethod.getInstance());
                         textView.setText(spanner.fromTagNode(childNode, null));
                         parentLayout.addView(textView);
                     }
                 }
-            }
-          else {
+            } else {
                 TextView textView = new TextView(context);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                layoutParams.setMargins(0,0,0,-45);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams.setMargins(0, 0, 0, -45);
                 textView.setLayoutParams(layoutParams);
 //                textView.setMovementMethod(LinkMovementMethod.getInstance());
                 textView.setText(spanner.fromTagNode(node, null));
