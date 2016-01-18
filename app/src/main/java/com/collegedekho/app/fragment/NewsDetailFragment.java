@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -21,6 +22,7 @@ import com.collegedekho.app.adapter.NewsListAdapter;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -95,7 +97,9 @@ public class NewsDetailFragment extends BaseFragment {
         if(rootView == null) return;
 
         ((TextView) rootView.findViewById(R.id.textview_news_title)).setText(mNews.title);
-        ((TextView) rootView.findViewById(R.id.textview_news_content)).setText(Html.fromHtml(mNews.content));
+//        ((TextView) rootView.findViewById(R.id.textview_news_content)).setText(Html.fromHtml(mNews.content));
+        LinearLayout newsLayout=(LinearLayout)rootView.findViewById(R.id.news_content_layout);
+        Utils.renderHtml(getActivity(),newsLayout,mNews.content);
         if (mNews.image != null && !mNews.image.isEmpty())
             ((NetworkImageView) rootView.findViewById(R.id.image_news_expanded)).setImageUrl(mNews.image, MySingleton.getInstance(getActivity()).getImageLoader());
         else

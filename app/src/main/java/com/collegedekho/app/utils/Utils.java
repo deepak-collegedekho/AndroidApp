@@ -4,19 +4,33 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
+import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.util.Patterns;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.NetworkImageView;
+import com.collegedekho.app.htmlparser.HtmlSpanner;
+import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.resource.TypeFaceTypes;
 
+import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.TagNode;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -169,5 +183,72 @@ public class Utils {
         }
         else
             return null;
+    }
+
+    public static void renderHtml(Context context, LinearLayout parentLayout, String sourceHtml) {
+        HtmlCleaner cleaner=new HtmlCleaner();
+        HtmlSpanner spanner =new HtmlSpanner();
+        TagNode result= cleaner.clean(sourceHtml);
+        List<TagNode> list=result.getChildTagList();
+        parentLayout.removeAllViews();
+        for(TagNode node:list) {
+            if(node.getName().matches("body")){
+                List<TagNode> childList=node.getChildTagList();
+                for (TagNode childNode:childList){
+                    if(childNode.getName().matches("img")) {
+                        Log.i("DEBUG", "Image found");
+                        NetworkImageView imageView=new NetworkImageView(context);
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParams.gravity= Gravity.CENTER;
+                        imageView.setLayoutParams(layoutParams);
+                        parentLayout.addView(imageView);
+                        String src = childNode.getAttributeByName("src");
+                        if(src!=null){
+                            imageView.setImageUrl(src, MySingleton.getInstance(context).getImageLoader());
+                        }
+                    }else
+                    if (childNode.getName().matches("p")) {
+                        TagNode att = childNode.findElementByName("img", false);
+                        if (att != null) {
+                            Log.i("DEBUG", "Image found");
+                            NetworkImageView imageView=new NetworkImageView(context);
+                            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                            layoutParams.gravity= Gravity.CENTER;
+                            imageView.setLayoutParams(layoutParams);
+                            parentLayout.addView(imageView);
+                            String src = att.getAttributeByName("src");
+                            if(src!=null){
+                                imageView.setImageUrl(src, MySingleton.getInstance(context).getImageLoader());
+                            }
+                        } else {
+                            TextView textView = new TextView(context);
+                            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                            layoutParams.setMargins(0,0,0,-45);
+                            textView.setLayoutParams(layoutParams);
+//                            textView.setMovementMethod(LinkMovementMethod.getInstance());
+                            textView.setText(spanner.fromTagNode(childNode, null));
+                            parentLayout.addView(textView);
+                        }
+                    }   else {
+                        TextView textView = new TextView(context);
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParams.setMargins(0,0,0,-45);
+                        textView.setLayoutParams(layoutParams);
+//                        textView.setMovementMethod(LinkMovementMethod.getInstance());
+                        textView.setText(spanner.fromTagNode(childNode, null));
+                        parentLayout.addView(textView);
+                    }
+                }
+            }
+          else {
+                TextView textView = new TextView(context);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams.setMargins(0,0,0,-45);
+                textView.setLayoutParams(layoutParams);
+//                textView.setMovementMethod(LinkMovementMethod.getInstance());
+                textView.setText(spanner.fromTagNode(node, null));
+                parentLayout.addView(textView);
+            }
+        }
     }
 }

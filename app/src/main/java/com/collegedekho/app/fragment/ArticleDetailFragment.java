@@ -6,11 +6,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -21,7 +21,7 @@ import com.collegedekho.app.adapter.ArticleListAdapter;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.MyImageGetter;
+import com.collegedekho.app.utils.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,7 +50,7 @@ public class ArticleDetailFragment extends BaseFragment {
     private ArrayList<Articles> mArticlesList;
     private ArticleListAdapter mAdapter;
     private View rootView;
-
+    LinearLayoutManager layoutManager;
 
     public ArticleDetailFragment() {
         // Required empty public constructor
@@ -101,13 +101,19 @@ public class ArticleDetailFragment extends BaseFragment {
         {
             return;
         }
+        LinearLayout newsLayout=(LinearLayout)rootView.findViewById(R.id.news_content_layout);
+        Utils.renderHtml(getActivity(),newsLayout,mArticle.content);
         ((TextView) rootView.findViewById(R.id.textview_article_title)).setText(mArticle.title);
 //        ((TextView) rootView.findViewById(R.id.textview_article_content)).setText(Html.fromHtml(mArticle.content));
         TextView contentView=(TextView) rootView.findViewById(R.id.textview_article_content);
 //        HtmlSpanner htmlspanner = new HtmlSpanner();
 //        Spannable text = htmlspanner.fromHtml(mArticle.content);
 //        contentView.setText(text);
-        contentView.setText(Html.fromHtml(mArticle.content,new MyImageGetter(getActivity(),contentView),null));
+//        contentView.setAutoLinkMask(Linkify.WEB_URLS);
+//        contentView.setMovementMethod(LinkMovementMethod.getInstance());
+////        contentView.setText(Html.fromHtml(mArticle.content,new MyImageGetter(getActivity(),contentView),null));
+//        contentView.setText(new HtmlSpanner().fromHtml(mArticle.content));
+
         if (mArticle.image != null && !mArticle.image.isEmpty())
             ((NetworkImageView) rootView.findViewById(R.id.image_article_expanded)).setImageUrl(mArticle.image, MySingleton.getInstance(getActivity()).getImageLoader());
         else
