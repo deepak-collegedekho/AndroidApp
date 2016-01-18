@@ -4,14 +4,18 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
-import android.app.ActionBar;
+
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.text.method.LinkMovementMethod;
+import android.os.Build;
+
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Gravity;
@@ -38,6 +42,9 @@ import java.util.regex.Pattern;
  * Created by sureshsaini on 12/10/15.
  */
 public class Utils {
+
+    private static BroadcastReceiver mPowerKeyReceiver;
+    private static boolean screenGotOff;
 
     public static void DisplayToast(Context context, String text){
         Toast.makeText(context, text, Toast.LENGTH_LONG).show();
@@ -251,5 +258,55 @@ public class Utils {
                 parentLayout.addView(textView);
             }
         }
+    }
+
+    public static void RegisterBroadcastReceiver(Context context) {
+        final IntentFilter theFilter = new IntentFilter();
+        /** System Defined Broadcast */
+        //theFilter.addAction(Intent.ACTION_SCREEN_ON);
+        theFilter.addAction(Intent.ACTION_SCREEN_OFF);
+
+        mPowerKeyReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String strAction = intent.getAction();
+
+                if (strAction.equals(Intent.ACTION_SCREEN_OFF)) {
+                    Log.v("","Screen OFF");
+                    Utils.screenGotOff = true;
+                }
+                if (strAction.equals(Intent.ACTION_SCREEN_ON)) {
+                    Log.v("","Screen ON");
+                    //Utils.screenGotOff = false;
+                }
+            }
+        };
+
+        context.registerReceiver(mPowerKeyReceiver, theFilter);
+    }
+
+    public static void UnregisterReceiver(Context context) {
+        int apiLevel = Build.VERSION.SDK_INT;
+
+        if (apiLevel >= 7) {
+            try {
+                context.unregisterReceiver(mPowerKeyReceiver);
+            }
+            catch (IllegalArgumentException e) {
+                mPowerKeyReceiver = null;
+            }
+        }
+        else {
+            context.unregisterReceiver(mPowerKeyReceiver);
+            mPowerKeyReceiver = null;
+        }
+    }
+
+    public static boolean isScreenGotOff() {
+        return screenGotOff;
+    }
+
+    public static void setScreenGotOff(boolean screenGotOff) {
+        Utils.screenGotOff = screenGotOff;
     }
 }

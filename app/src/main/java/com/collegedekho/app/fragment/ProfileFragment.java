@@ -3,6 +3,7 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,13 +18,16 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamDetailAdapter;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ExamSummary;
+import com.collegedekho.app.entities.User;
 import com.collegedekho.app.listener.OnSwipeTouchListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
+import com.fasterxml.jackson.jr.ob.JSON;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -44,9 +48,9 @@ public class ProfileFragment extends BaseFragment
     private ExamSummary mExamSummary;  // exam summary gives info about the colleges of user
     private ViewPager mExamTabPager  = null;
     private boolean IS_TUTE_COMPLETED = true;
-            private int i=0;
-
-
+    private int i = 0;
+    private static boolean IS_COMING_FROM_ON_CREATE = false;
+    private static String SavedExamSummary = "saved_exam_summary";
 
     public static ProfileFragment newInstance(ArrayList<ExamDetail> examList) {
         ProfileFragment fragment = new ProfileFragment();
@@ -66,11 +70,14 @@ public class ProfileFragment extends BaseFragment
         Bundle args = getArguments();
         if(args != null) {
             this.mExamDetailList = args.getParcelableArrayList(PARAM1);
-        } }
+        }
+        //ProfileFragment.IS_COMING_FROM_ON_CREATE = true;
+
+        Utils.RegisterBroadcastReceiver(this.getActivity());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         final View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PROFILE_SCREEN_TUTE, false);
 
@@ -118,6 +125,7 @@ public class ProfileFragment extends BaseFragment
                 this.mExamDetail.setId("0");
                 this.mListener.onExamTabSelected(this.mExamDetail);
             }
+
             rootView.findViewById(R.id.pager_strip).setVisibility(View.GONE);
             rootView.findViewById(R.id.prep_buddies).setVisibility(View.GONE);
             rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.GONE);
@@ -156,55 +164,78 @@ public class ProfileFragment extends BaseFragment
             }
         });
 
-/*        rootView.findViewById(R.id.profile_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(i ==0){
-                    i++;
-                    v.setBackgroundResource(R.drawable.ic_profile_tute2);
-                }else if(i ==1) {
-                    i++;
-                    v.setBackgroundResource(R.drawable.ic_profile_tute3);
-                }
-                else if(i ==2) {
-                    i++;
-                    v.setBackgroundResource(R.drawable.ic_profile_tute4);
-                }
-                else if(i ==3) {
-                    i++;
-                    v.setBackgroundResource(R.drawable.ic_profile_tute5);
-                }else {
-                    v.setVisibility(View.GONE);
-                    IS_TUTE_COMPLETED = true;
-                    getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
-                   getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.PROFILE_SCREEN_TUTE, true).apply();
-                }
-                return false;
-            }
-        });*/
-
         rootView.findViewById(R.id.backup_colleges_layout_RL).setOnClickListener(this);
         rootView.findViewById(R.id.wishList_colleges_layout_RL).setOnClickListener(this);
         rootView.findViewById(R.id.recommended_colleges_layout_RL).setOnClickListener(this);
         rootView.findViewById(R.id.important_date_layout_RL).setOnClickListener(this);
         rootView.findViewById(R.id.profile_syllabus_statusLL).setOnClickListener(this);
 
+/*
+        if (savedInstanceState != null)
+        {
+            try {
+                ExamSummary examSummary = JSON.std.beanFrom(ExamSummary.class, savedInstanceState.get(ProfileFragment.SavedExamSummary).toString());
+
+                if (examSummary != null)
+                    this.updateExamSummary(examSummary);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+*/
         return rootView;
     }
 
     @Override
     public void onPause() {
+        //save the current examsummary
+/*
+        Bundle bundle = new Bundle();
+        try {
+            bundle.putString(ProfileFragment.SavedExamSummary, JSON.std.asString(this.mExamSummary));
+            this.getActivity().getIntent().putExtras(bundle);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+*/
+
         super.onPause();
         Constants.READY_TO_CLOSE = true;
         View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
         bottomMenu.animate().translationY(bottomMenu.getHeight());
         bottomMenu.setVisibility(View.GONE);
-
     }
 
     @Override
+    public void onDestroy() {
+        Utils.UnregisterReceiver(this.getActivity());
+        super.onDestroy();
+    }
+
+            @Override
     public void onResume() {
         super.onResume();
+
+        View view =  getView();
+        if(view != null ){
+            IS_TUTE_COMPLETED= getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PROFILE_SCREEN_TUTE, false);
+            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+            if(!IS_TUTE_COMPLETED) {
+
+                bottomMenu.animate().translationY(bottomMenu.getHeight());
+                bottomMenu.setVisibility(View.GONE);
+
+                view.findViewById(R.id.profile_guide_image).setVisibility(View.VISIBLE);
+            }else {
+                bottomMenu.animate().translationY(0);
+                bottomMenu.setVisibility(View.VISIBLE);
+
+                view.findViewById(R.id.profile_guide_image).setVisibility(View.GONE);
+            }
+        }
+
         Constants.READY_TO_CLOSE = false;
 
         if(MainActivity.user != null)
@@ -244,25 +275,33 @@ public class ProfileFragment extends BaseFragment
             mainActivity.mUpdateTabMenuItem(-1);
         }
 
-        updateExamSummaryHandler.postDelayed(updateExamSummaryRunnable,300);
-
-        View view =  getView();
-        if(view != null ){
-            IS_TUTE_COMPLETED= getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PROFILE_SCREEN_TUTE, false);
-            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-            if(!IS_TUTE_COMPLETED) {
-
-                bottomMenu.animate().translationY(bottomMenu.getHeight());
-                bottomMenu.setVisibility(View.GONE);
-
-                view.findViewById(R.id.profile_guide_image).setVisibility(View.VISIBLE);
-            }else {
-                bottomMenu.animate().translationY(0);
-                bottomMenu.setVisibility(View.VISIBLE);
-
-                view.findViewById(R.id.profile_guide_image).setVisibility(View.GONE);
-            }
+        if (Utils.isScreenGotOff() == true)
+        {
+            Utils.setScreenGotOff(false);
+            return;
         }
+/*        else
+        {
+            //save the current examsummary
+
+            Bundle bundle = this.getActivity().getIntent().getExtras();
+            if (bundle != null && bundle.containsKey(ProfileFragment.SavedExamSummary))
+            {
+                ExamSummary examSummary = null;
+                try {
+                    examSummary = JSON.std.beanFrom(ExamSummary.class, bundle.getString(ProfileFragment.SavedExamSummary));
+                    if (examSummary != null)
+                        this.updateExamSummary(examSummary);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            return;
+        }
+*/
+        updateExamSummaryHandler.postDelayed(updateExamSummaryRunnable,300);
     }
 
 
@@ -285,6 +324,10 @@ public class ProfileFragment extends BaseFragment
         this.mListener = null;
     }
 
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+    }
 
     @Override
     public void onClick(View view) {
@@ -321,7 +364,6 @@ public class ProfileFragment extends BaseFragment
         }
     }
 
-
     private void mProfileWidgetSelected(String requestType, String url, String examTag)
     {
         if(mListener != null)
@@ -332,13 +374,21 @@ public class ProfileFragment extends BaseFragment
         if(this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() >position)
         {
            this.mExamDetail = this.mExamDetailList.get(position);
-           this.mListener.onExamTabSelected(mExamDetail);
+           this.mListener.onExamTabSelected(this.mExamDetail);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(ProfileFragment.SavedExamSummary, this.mExamSummary.toString());
+        super.onSaveInstanceState(outState);
     }
 
     public void updateExamSummary(ExamSummary examSummary) {
         this.mExamSummary = examSummary;
+
         View view = getView();
+
         if(view == null || this.mExamSummary == null)
             return;
 
@@ -367,26 +417,25 @@ public class ProfileFragment extends BaseFragment
          //profileCompleted.setProgress(this.mExamSummary.getSyllabus_covered());
     }
 
-            OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {
-                @Override
-                public void onSwipeLeft() {
-                    int currentPosition = mExamTabPager.getCurrentItem();
-                    if (mExamDetailList.size()-1 >= currentPosition)
-                        mExamTabPager.setCurrentItem(currentPosition + 1);
-                }
+    OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {
+        @Override
+        public void onSwipeLeft() {
+            int currentPosition = mExamTabPager.getCurrentItem();
+            if (mExamDetailList.size()-1 >= currentPosition)
+                mExamTabPager.setCurrentItem(currentPosition + 1);
+        }
 
-                @Override
-                public void onSwipeRight() {
-                    super.onSwipeRight();
+        @Override
+        public void onSwipeRight() {
+            super.onSwipeRight();
 
-                    int currentPosition = mExamTabPager.getCurrentItem();
-                    if (currentPosition > 0)
-                        mExamTabPager.setCurrentItem(currentPosition - 1);
-                }
+            int currentPosition = mExamTabPager.getCurrentItem();
+            if (currentPosition > 0)
+                mExamTabPager.setCurrentItem(currentPosition - 1);
+        }
+    };
 
-            };
-
-            /**
+    /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that

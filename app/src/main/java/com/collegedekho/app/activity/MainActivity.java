@@ -3813,8 +3813,10 @@ public class MainActivity extends AppCompatActivity
         if(examDetailObj == null)return;
         String id = examDetailObj.getId();
         Map<String , String> params = this.mGetTheFilters();
+
         if(params == null)
             params = new HashMap<>();
+
         params.put("tag_uris[" + (params.size()) + "]",examDetailObj.getExam_tag());
 
         this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/"+id+"/summary/",params);
