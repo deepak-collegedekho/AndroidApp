@@ -4,23 +4,18 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Gravity;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +28,6 @@ import com.collegedekho.app.resource.TypeFaceTypes;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -232,7 +226,7 @@ public class Utils {
                         } else {
                             TextView textView = new TextView(context);
                             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-//                            layoutParams.setMargins(0, 0, 0, -25);
+                            layoutParams.setMargins(0, 0, 0, -30);
                             textView.setLayoutParams(layoutParams);
 //                            textView.setMovementMethod(LinkMovementMethod.getInstance());
                             textView.setText(spanner.fromTagNode(childNode, null));
@@ -241,7 +235,7 @@ public class Utils {
                     } else {
                         TextView textView = new TextView(context);
                         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-//                        layoutParams.setMargins(0, 0, 0, -25);
+                        layoutParams.setMargins(0, 0, 0, -30);
                         textView.setLayoutParams(layoutParams);
 //                        textView.setMovementMethod(LinkMovementMethod.getInstance());
                         textView.setText(spanner.fromTagNode(childNode, null));
@@ -251,7 +245,7 @@ public class Utils {
             } else {
                 TextView textView = new TextView(context);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-//                layoutParams.setMargins(0, 0, 0, -25);
+                layoutParams.setMargins(0, 0, 0, -30);
                 textView.setLayoutParams(layoutParams);
 //                textView.setMovementMethod(LinkMovementMethod.getInstance());
                 textView.setText(spanner.fromTagNode(node, null));

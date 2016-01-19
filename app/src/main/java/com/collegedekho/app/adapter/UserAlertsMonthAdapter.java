@@ -34,7 +34,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
     private boolean isCurrentMonth=false;
     LayoutInflater inflater;
     private HashMap<String, Integer> keys = new HashMap<>();
-    private HashMap<String, Integer>codes=new HashMap<>();
+    private HashMap<String, ArrayList<Integer>>codes=new HashMap<>();
     boolean isNotified;
     Calendar mCalendar;
     Calendar cal;
@@ -52,9 +52,12 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
         for (int i = 0; i < size; i++) {
             if (keys.get(dateDesc.get(i).getDate()) == null) {
                 keys.put(dateDesc.get(i).getDate(), 1);
-                codes.put(dateDesc.get(i).getDate(),dateDesc.get(i).getExam_id());
+                ArrayList<Integer>codesArray=new ArrayList<>();
+                codesArray.add(dateDesc.get(i).getExam_id());
+                codes.put(dateDesc.get(i).getDate(),codesArray);
             } else {
                 keys.put(dateDesc.get(i).getDate(), keys.get(dateDesc.get(i).getDate()) + 1);
+                codes.get(dateDesc.get(i).getDate()).add(dateDesc.get(i).getExam_id());
             }
         }
         inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -162,14 +165,18 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
         }
         holder.dotView.removeAllViews();
         for (int j = 0; j < count; j++) {
-            View dot = inflater.inflate(R.layout.dot_view, holder.dotView, false);
+            try {
+                View dot = inflater.inflate(R.layout.dot_view, holder.dotView, false);
 
-            Drawable mDrawable = mContext.getResources().getDrawable(R.drawable.bg_button_blue);
-            mDrawable.setColorFilter(new
-                    PorterDuffColorFilter(Utils.getSubjectColor(codes.get(day_key)), PorterDuff.Mode.SRC_IN));
-            dot.setBackgroundDrawable(mDrawable);
-            holder.dotView.addView(dot);
-            holder.dotView.setVisibility(View.VISIBLE);
+                Drawable mDrawable = mContext.getResources().getDrawable(R.drawable.bg_button_blue);
+                mDrawable.setColorFilter(new
+                        PorterDuffColorFilter(Utils.getSubjectColor(codes.get(day_key).get(j)), PorterDuff.Mode.SRC_IN));
+                dot.setBackgroundDrawable(mDrawable);
+                holder.dotView.addView(dot);
+                holder.dotView.setVisibility(View.VISIBLE);
+            }catch (Exception e){
+
+            }
         }
         if (position==selectedPosition){
             holder.view.setCardBackgroundColor(0xffcccccc);

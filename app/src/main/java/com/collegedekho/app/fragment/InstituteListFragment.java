@@ -66,7 +66,7 @@ View instituteView;
         // Required empty public constructor
     }
 
-    public static InstituteListFragment newInstance(ArrayList<Institute> institutes, String title, String next, boolean filterAllowed, int filterCount) {
+    public static InstituteListFragment newInstance(ArrayList<Institute> institutes, String title, String next, boolean filterAllowed, int filterCount,int listType) {
         InstituteListFragment fragment = new InstituteListFragment();
         Bundle args = new Bundle();
 
@@ -75,7 +75,7 @@ View instituteView;
         args.putString(ARG_NEXT, next);
         args.putBoolean(ARG_FILTER_ALLOWED, filterAllowed);
         args.putInt(ARG_FILTER_COUNT, filterCount);
-
+        args.putInt("list_type",listType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -89,7 +89,10 @@ View instituteView;
             mNextUrl = getArguments().getString(ARG_NEXT);
             filterAllowed = getArguments().getBoolean(ARG_FILTER_ALLOWED);
             filterCount = getArguments().getInt(ARG_FILTER_COUNT);
-            listType = Constants.INSTITUTE_TYPE;
+            listType = getArguments().getInt("list_type");//Constants.INSTITUTE_TYPE;
+            if(listType==0){
+                listType=Constants.INSTITUTE_TYPE;
+            }
         }
     }
 
@@ -265,6 +268,7 @@ View instituteView;
     }
 
     public void updateSearchList(List<Institute> institutes, String next) {
+        this.listType=Constants.INSTITUTE_SEARCH_TYPE;
         progressBarLL.setVisibility(View.GONE);
         mAdapter.lastPosition = -1;
         clearList();

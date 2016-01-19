@@ -146,6 +146,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -993,11 +995,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mDisplayInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl) {
+        mDisplayInstituteList(response, filterAllowed, isHavingNextUrl,Constants.INSTITUTE_TYPE);
+    }
+    private void mDisplayInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl,int listType) {
         try {
             String val = this.extractResults(response);
             this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
 
-            if (this.mFilterKeywords.size() > 0)
+            if (this.mFilterKeywords!=null && this.mFilterKeywords.size() > 0)
                 this.mFilterCount = this.mFilterKeywords.size();
 
             if(!isHavingNextUrl)
@@ -1006,7 +1011,7 @@ public class MainActivity extends AppCompatActivity
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
 
             if (fragment == null)
-                this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount), !isFromNotification, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+                this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount,listType), !isFromNotification, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
             else {
                 if (fragment instanceof InstituteListFragment) {
                     ((InstituteListFragment) fragment).clearList();
@@ -2379,6 +2384,8 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_NEXT_QNA_LIST, next, null);
         else if (listType == Constants.FORUM_LIST_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_FORUMS_LIST, next, null);
+        else if (listType == Constants.INSTITUTE_SEARCH_TYPE)
+            this.mMakeNetworkCall(Constants.TAG_NEXT_INSTITUTE, next, null);
     }
 
     @Override
@@ -4353,16 +4360,28 @@ public class MainActivity extends AppCompatActivity
         public boolean onQueryTextChange(String newText)
         {
             mSearchString = newText;
-            if(!mSearchString.trim().matches(""))
-            doSearches(mSearchString);
+            if(!mSearchString.trim().matches("")) {
+                try {
+                    mSearchString= URLEncoder.encode(newText,"UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                doSearches(mSearchString);
+            }
             return true;
         }
 
         public boolean onQueryTextSubmit(String query)
         {
             mSearchString = query;
-            if(!mSearchString.trim().matches(""))
-            doSearches(mSearchString);
+            if(!mSearchString.trim().matches("")) {
+                try {
+                    mSearchString= URLEncoder.encode(query,"UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                doSearches(mSearchString);
+            }
             return true;
         }
     };
@@ -4391,7 +4410,7 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, Constants.BASE_URL + "articles/search=" + searchString + "/", null);
         } else if (currentFragment != null && currentFragment instanceof ProfileFragment) {
 
-            this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "colleges/search=" + searchString + "/", null);
+            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/search=" + searchString + "/", null);
         }
     }
 
@@ -4460,6 +4479,8 @@ public class MainActivity extends AppCompatActivity
 
             if (currentFragment instanceof InstituteListFragment) {
                 ((InstituteListFragment) currentFragment).updateSearchList(this.mInstituteList, next);
+            }else {
+                mDisplayInstituteList(response,false,true,Constants.INSTITUTE_SEARCH_TYPE);
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());

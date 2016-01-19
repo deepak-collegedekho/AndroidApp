@@ -187,6 +187,7 @@ public class Constants
     public static final int SHORTLIST_TYPE   = 4 ;
     public static final int QNA_LIST_TYPE    = 5 ;
     public static final int FORUM_LIST_TYPE  = 6 ;
+    public static final int INSTITUTE_SEARCH_TYPE   = 7 ;
 
     //User Attributes
     public static final String USER_NAME        = "name";
