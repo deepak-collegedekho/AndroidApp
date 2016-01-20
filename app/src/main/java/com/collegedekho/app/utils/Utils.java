@@ -4,15 +4,18 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Gravity;
@@ -186,12 +189,12 @@ public class Utils {
             return null;
     }
 
-    public static void renderHtml(Context context, LinearLayout parentLayout, String sourceHtml) {
+    public static void renderHtml(Activity context, LinearLayout parentLayout, String sourceHtml) {
         if (parentLayout == null || context == null || sourceHtml == null || sourceHtml.isEmpty()) {
             return;
         }
         HtmlCleaner cleaner = new HtmlCleaner();
-        HtmlSpanner spanner = new HtmlSpanner();
+        HtmlSpanner spanner = new HtmlSpanner(context);
         TagNode result = cleaner.clean(sourceHtml);
         List<TagNode> list = result.getChildTagList();
         parentLayout.removeAllViews();
@@ -200,7 +203,6 @@ public class Utils {
                 List<TagNode> childList = node.getChildTagList();
                 for (TagNode childNode : childList) {
                     if (childNode.getName().matches("img")) {
-                        Log.i("DEBUG", "Image found");
                         NetworkImageView imageView = new NetworkImageView(context);
                         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         layoutParams.gravity = Gravity.CENTER;
@@ -213,7 +215,6 @@ public class Utils {
                     } else if (childNode.getName().matches("p")) {
                         TagNode att = childNode.findElementByName("img", false);
                         if (att != null) {
-                            Log.i("DEBUG", "Image found");
                             NetworkImageView imageView = new NetworkImageView(context);
                             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                             layoutParams.gravity = Gravity.CENTER;
@@ -302,5 +303,47 @@ public class Utils {
 
     public static void setScreenGotOff(boolean screenGotOff) {
         Utils.screenGotOff = screenGotOff;
+    }
+
+    public static int getDeviceWidth(Activity activity) {
+
+        int screenWidth;
+        if (Build.VERSION.SDK_INT >= 17) {
+            Point size = new Point();
+            try {
+                activity.getWindowManager().getDefaultDisplay().getRealSize(size);
+                screenWidth = size.x;
+            } catch (NoSuchMethodError e) {
+                screenWidth = activity.getWindowManager().getDefaultDisplay().getWidth();
+            }
+
+        } else {
+            DisplayMetrics metrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            screenWidth = metrics.widthPixels;
+        }
+        return screenWidth;
+
+    }
+
+    public static int getDeviceHeight(Activity activity) {
+
+        int screenHeight;
+        if (Build.VERSION.SDK_INT >= 17) {
+            Point size = new Point();
+            try {
+                activity.getWindowManager().getDefaultDisplay().getRealSize(size);
+                screenHeight = size.y;
+            } catch (NoSuchMethodError e) {
+                screenHeight = activity.getWindowManager().getDefaultDisplay().getHeight();
+            }
+
+        } else {
+            DisplayMetrics metrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            screenHeight = metrics.heightPixels;
+        }
+        return screenHeight;
+
     }
 }

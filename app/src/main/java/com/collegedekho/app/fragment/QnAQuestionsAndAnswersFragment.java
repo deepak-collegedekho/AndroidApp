@@ -223,7 +223,7 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
                 totalVotes++;
                 this.mUpvoteButton.setSelected(true);
                 this.mDownvoteButton.setSelected(false);
-                this.mQnAQuestion.setCurrent_user_vote_type(Constants.LIKE_THING);
+//                this.mQnAQuestion.setCurrent_user_vote_type(Constants.LIKE_THING);
                 this.mQnAQuestion.setUpvotes(mQnAQuestion.getUpvotes()+1);
             }
             else
@@ -231,11 +231,14 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
                 totalVotes--;
                 this.mUpvoteButton.setSelected(false);
                 this.mDownvoteButton.setSelected(true);
-                this.mQnAQuestion.setCurrent_user_vote_type(Constants.DISLIKE_THING);
+//                this.mQnAQuestion.setCurrent_user_vote_type(Constants.DISLIKE_THING);
                 this.mQnAQuestion.setDownvotes(mQnAQuestion.getDownvotes()+1);
             }
 
+            this.mQnAQuestion.setCurrent_user_vote_type(voteType);
             this.mVoteCounts.setText(String.valueOf(totalVotes));
+            this.mUpvoteButton.setSelected(voteType == Constants.LIKE_THING);
+            this.mDownvoteButton.setSelected(voteType == Constants.DISLIKE_THING);
         }
         else
         {
@@ -245,20 +248,21 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
 
             if (voteType == Constants.LIKE_THING)
             {
-                if (qnaAns.getCurrent_user_vote_type() == Constants.DISLIKE_THING)
-                    qnaAns.setDownvotes(qnaAns.getDownvotes() - 1);
+//                if (qnaAns.getCurrent_user_vote_type() == Constants.DISLIKE_THING)
+//                    qnaAns.setDownvotes(qnaAns.getDownvotes() - 1);
 
-                qnaAns.setCurrent_user_vote_type(Constants.LIKE_THING);
+//                qnaAns.setCurrent_user_vote_type(Constants.LIKE_THING);
                 qnaAns.setUpvotes(qnaAns.getUpvotes() + 1);
             }
             else
             {
-                if (qnaAns.getCurrent_user_vote_type() == Constants.LIKE_THING)
-                    qnaAns.setUpvotes(qnaAns.getUpvotes() - 1);
+//                if (qnaAns.getCurrent_user_vote_type() == Constants.LIKE_THING)
+//                    qnaAns.setUpvotes(qnaAns.getUpvotes() - 1);
 
-                qnaAns.setCurrent_user_vote_type(Constants.DISLIKE_THING);
+//                qnaAns.setCurrent_user_vote_type(Constants.DISLIKE_THING);
                 qnaAns.setDownvotes(qnaAns.getDownvotes() + 1);
             }
+            qnaAns.setCurrent_user_vote_type(voteType);
 
             this.mQnAAnswersSet.remove(answerIndex);
             this.mQnAAnswersSet.add(answerIndex, qnaAns);

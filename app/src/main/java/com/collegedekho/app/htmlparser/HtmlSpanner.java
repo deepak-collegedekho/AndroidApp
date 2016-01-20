@@ -16,6 +16,7 @@
 
 package com.collegedekho.app.htmlparser;
 
+import android.app.Activity;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 
@@ -36,6 +37,7 @@ import com.collegedekho.app.htmlparser.handlers.attributes.BorderAttributeHandle
 import com.collegedekho.app.htmlparser.handlers.attributes.StyleAttributeHandler;
 import com.collegedekho.app.htmlparser.style.Style;
 import com.collegedekho.app.htmlparser.style.StyleValue;
+import com.collegedekho.app.utils.Utils;
 
 import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.ContentNode;
@@ -93,6 +95,9 @@ public class HtmlSpanner {
         this(createHtmlCleaner(), new SystemFontResolver());
     }
 
+    public HtmlSpanner(Activity activity) {
+        this(activity,createHtmlCleaner(), new SystemFontResolver());
+    }
     /**
      * Creates a new HtmlSpanner using the given HtmlCleaner instance.
      *
@@ -106,6 +111,14 @@ public class HtmlSpanner {
         this.handlers = new HashMap<String, TagNodeHandler>();
 
         registerBuiltInHandlers();
+    }
+
+    public HtmlSpanner(Activity activity,HtmlCleaner cleaner, FontResolver fontResolver) {
+        this.htmlCleaner = cleaner;
+        this.fontResolver = fontResolver;
+        this.handlers = new HashMap<String, TagNodeHandler>();
+
+        registerBuiltInHandlers(activity);
     }
 
     public FontResolver getFontResolver() {
@@ -357,8 +370,10 @@ public class HtmlSpanner {
     private static StyledTextHandler wrap( StyledTextHandler handler ) {
         return new StyleAttributeHandler(new AlignmentAttributeHandler(handler));
     }
-
     private void registerBuiltInHandlers() {
+        registerBuiltInHandlers(null);
+    }
+    private void registerBuiltInHandlers(Activity activity) {
 
         TagNodeHandler italicHandler = new StyledTextHandler(
                 new Style().setFontStyle(Style.FontStyle.ITALIC));
@@ -444,7 +459,11 @@ public class HtmlSpanner {
 //        registerHandler("img", new ImageHandler());
 
         registerHandler("font", new FontHandler() );
-        registerHandler("table", new TableHandler());
+        TableHandler tableHandler=new TableHandler();
+        if(activity!=null) {
+            tableHandler.setTableWidth(Utils.getDeviceWidth(activity) - 100);
+        }
+        registerHandler("table", tableHandler);
 
     }
 
