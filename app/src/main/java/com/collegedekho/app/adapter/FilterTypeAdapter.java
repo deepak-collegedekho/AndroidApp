@@ -22,7 +22,15 @@ public class FilterTypeAdapter extends RecyclerView.Adapter {
     private static final int NORMAL_VIEW = 1;
     private final ArrayList<Folder> mFolderList;
     Context mContext;
-    int currentSelection;
+    private int currentSelection;
+
+    public int getCurrentSelection() {
+        return currentSelection;
+    }
+
+    public void setCurrentSelection(int currentSelection) {
+        this.currentSelection = currentSelection;
+    }
 
     public FilterTypeAdapter(Context context, ArrayList<Folder> folderList)
     {

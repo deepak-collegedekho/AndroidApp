@@ -31,8 +31,10 @@ public class ApplyReceiver extends BroadcastReceiver {
                 Intent in = new Intent(context, ApplyService.class);
                 context.startService(in);
             }
+
         }
 
+        Constants.IS_CONNECTED_TO_INTERNET = !intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
     }
 
 }

@@ -122,6 +122,14 @@ public class Facet implements Parcelable {
         this.parent = parent;
     }
 
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -148,4 +156,6 @@ public class Facet implements Parcelable {
     {
         mListener = listener;
     }  */
+
+
 }

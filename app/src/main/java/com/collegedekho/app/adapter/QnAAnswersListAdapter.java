@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.QnAAnswers;
-import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
+import com.collegedekho.app.fragment.QnAQuestionDetailFragment;
 import com.collegedekho.app.resource.Constants;
 
 import java.text.ParseException;
@@ -47,7 +47,7 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
         //View rootView = LayoutInflater.from(mContext).inflate(R.layout.card_qna_answer, parent, false);
         View rootView = LayoutInflater.from(mContext).inflate(R.layout.card_qna_answer_new_design, parent, false);
         try {
-            return new QnAAnswerHolder(rootView, (QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener) mContext);
+            return new QnAAnswerHolder(rootView, (QnAQuestionDetailFragment.OnQnAAnswerInteractionListener) mContext);
         } catch (ClassCastException e) {
             throw new ClassCastException(mContext.toString()
                     + " must implement OnQnAQuestionSelectedListener");
@@ -101,9 +101,9 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
         ImageButton answerUpvoteButton;
         ImageButton answerDownvoteButton;
         CardView answerCard;
-        QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener mListener;
+        QnAQuestionDetailFragment.OnQnAAnswerInteractionListener mListener;
 
-        public QnAAnswerHolder(View itemView, QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener listener) {
+        public QnAAnswerHolder(View itemView, QnAQuestionDetailFragment.OnQnAAnswerInteractionListener listener) {
             super(itemView);
 
             answerCard = (CardView) itemView.findViewById(R.id.card_qna_answer);

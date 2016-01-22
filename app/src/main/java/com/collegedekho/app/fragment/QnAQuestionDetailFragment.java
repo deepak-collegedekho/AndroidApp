@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class QnAQuestionsAndAnswersFragment extends BaseFragment{
+public class QnAQuestionDetailFragment extends BaseFragment{
     private static final String ARG_PARAM1 = "param1";
     private QnAQuestions mQnAQuestion;
     private ArrayList<QnAAnswers> mQnAAnswersSet;
@@ -44,15 +44,15 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
     private TextView mEmptyTextView;
     private volatile SimpleDateFormat mSDF;
 
-    public static QnAQuestionsAndAnswersFragment newInstance(QnAQuestions qnaQuestionAnswers) {
-        QnAQuestionsAndAnswersFragment fragment = new QnAQuestionsAndAnswersFragment();
+    public static QnAQuestionDetailFragment newInstance(QnAQuestions qnaQuestionAnswers) {
+        QnAQuestionDetailFragment fragment = new QnAQuestionDetailFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_PARAM1, qnaQuestionAnswers);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public QnAQuestionsAndAnswersFragment() {
+    public QnAQuestionDetailFragment() {
         // Required empty public constructor
     }
 
@@ -215,7 +215,7 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
         if (answerIndex < 0)
         {
             //update question vote
-            //Log.e(QnAQuestionsAndAnswersFragment.class.getName(), String.valueOf(questionIndex));
+            //Log.e(QnAQuestionDetailFragment.class.getName(), String.valueOf(questionIndex));
             int totalVotes = Integer.parseInt(this.mVoteCounts.getText().toString());
 
             if (voteType == Constants.LIKE_THING)
@@ -243,7 +243,7 @@ public class QnAQuestionsAndAnswersFragment extends BaseFragment{
         else
         {
             //update answer vote
-            //Log.e(QnAQuestionsAndAnswersFragment.class.getName(), String.valueOf(questionIndex) + " and " + String.valueOf(answerIndex));
+            //Log.e(QnAQuestionDetailFragment.class.getName(), String.valueOf(questionIndex) + " and " + String.valueOf(answerIndex));
             QnAAnswers qnaAns = mQnAAnswersSet.get(answerIndex);
 
             if (voteType == Constants.LIKE_THING)

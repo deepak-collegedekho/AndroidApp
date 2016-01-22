@@ -5,8 +5,6 @@
     android:orientation="horizontal"
     tools:context="com.collegedekho.app.fragment.FilterFragment">
 
-
-
     <TextView
         android:id="@+id/textview_page_title"
         style="@style/AppTheme.TextView.page_title"
@@ -89,12 +87,28 @@
         android:elevation="5dp"
         />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/filter_list"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/filter_container"
         android:layout_height="match_parent"
+        android:layout_width="match_parent"
         android:layout_below="@id/textview_page_title"
-        android:layout_toRightOf="@id/filter_type_list" />
+        android:layout_toRightOf="@id/filter_type_list"
+        android:weightSum="@integer/int1"
+        android:orientation="vertical"
+        >
+        <android.support.v7.widget.SearchView
+            android:id="@+id/filter_search"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".09"
+            />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/filter_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".91"
+            />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/button_filter_apply"

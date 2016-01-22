@@ -12,6 +12,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Facet;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FacetListAdapter extends RecyclerView.Adapter<FacetListAdapter.FacetHolder> {
     private ArrayList<Facet> mFacets;
@@ -52,6 +53,57 @@ public class FacetListAdapter extends RecyclerView.Adapter<FacetListAdapter.Face
         notifyDataSetChanged();
     }
 
+    public void animateTo(ArrayList<Facet> models) {
+        applyAndAnimateRemovals(models);
+        applyAndAnimateAdditions(models);
+        applyAndAnimateMovedItems(models);
+    }
+
+    private void applyAndAnimateRemovals(ArrayList<Facet> newModels) {
+        for (int i = mFacets.size() - 1; i >= 0; i--) {
+            final Facet model = mFacets.get(i);
+            if (!newModels.contains(model)) {
+                removeItem(i);
+            }
+        }
+    }
+
+    private void applyAndAnimateAdditions(ArrayList<Facet> newModels) {
+        for (int i = 0, count = newModels.size(); i < count; i++) {
+            final Facet model = newModels.get(i);
+            if (!mFacets.contains(model)) {
+                addItem(i, model);
+            }
+        }
+    }
+
+    private void applyAndAnimateMovedItems(ArrayList<Facet> newModels) {
+        for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
+            final Facet model = newModels.get(toPosition);
+            final int fromPosition = mFacets.indexOf(model);
+            if (fromPosition >= 0 && fromPosition != toPosition) {
+                moveItem(fromPosition, toPosition);
+            }
+        }
+    }
+
+    public Facet removeItem(int position) {
+        final Facet model = mFacets.remove(position);
+        notifyItemRemoved(position);
+        return model;
+    }
+
+    public void addItem(int position, Facet model) {
+        mFacets.add(position, model);
+        notifyItemInserted(position);
+    }
+
+    public void moveItem(int fromPosition, int toPosition) {
+        final Facet model = mFacets.remove(fromPosition);
+        mFacets.add(toPosition, model);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
     class FacetHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         CheckBox label;
         Facet f;
@@ -76,5 +128,4 @@ public class FacetListAdapter extends RecyclerView.Adapter<FacetListAdapter.Face
                 f.select();
         }
     }
-
 }

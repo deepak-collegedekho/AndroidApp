@@ -71,12 +71,17 @@ public class SyllabusSubjectListAdapter extends RecyclerView.Adapter {
             examPercent=(TextView)itemView.findViewById(R.id.exam_percentage);
             mListener = listener;
 
+            itemView.setOnClickListener(this);
+/*
             mSubjectName.setOnClickListener(this);
+            examPercent.setOnClickListener(this);
             mProgressBar.setOnClickListener(this);
+*/
         }
 
         @Override
         public void onClick(View v) {
+/*
             switch (v.getId()) {
                 case R.id.syllabus_subject_progress_bar:
                 case R.id.syllabus_subject_name:
@@ -85,6 +90,9 @@ public class SyllabusSubjectListAdapter extends RecyclerView.Adapter {
                 default:
                     break;
             }
+*/
+            this.mListener.onSubjectSelected(SyllabusSubjectListAdapter.this.mSubjects.get(getAdapterPosition()), getAdapterPosition());
+
         }
     }
 }

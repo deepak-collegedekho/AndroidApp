@@ -35,8 +35,8 @@ public class TabFragment extends  BaseFragment{
     private static String PARAM1 = "param1";
     private static String PARAM2 = "param2";
 
-    private int selectedTabPosition =0;
-    private int selectedSubMenuPosition =0;
+    private int selectedTabPosition = 0;
+    private int selectedSubMenuPosition = 0;
     private  OnHomeItemSelectListener mListener;
     private ArrayList<ExamDetail> mExamDetailList;
     private ExamDetailAdapter mDetailsAdapter;

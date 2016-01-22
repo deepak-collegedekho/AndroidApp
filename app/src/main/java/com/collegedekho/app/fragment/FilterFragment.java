@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.FacetListAdapter;
 import com.collegedekho.app.adapter.FilterTypeAdapter;
+import com.collegedekho.app.entities.Facet;
 import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.DividerItemDecoration;
@@ -30,11 +32,12 @@ import java.util.ArrayList;
  * Use the {@link FilterFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FilterFragment extends BaseFragment implements View.OnClickListener {
+public class FilterFragment extends BaseFragment implements View.OnClickListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener {
     private static final String ARG_FOLDER_LIST = "param1";
 
     private ArrayList<Folder> mFolderList;
     private ArrayList<Folder> mCurrentFolders;
+    private ArrayList<Facet> mCurrentFacets;
 
     private OnFilterInteractionListener mListener;
     private FacetListAdapter mFacetAdapter;
@@ -49,6 +52,8 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
     private TextView mCategoryButtonLocation;
     private TextView mCategoryButtonCampusAndHousing;
     private TextView mCategoryButtonTypeAndSupportServices;
+
+    private SearchView mSearchView;
 
     public FilterFragment() {
         // Required empty public constructor
@@ -84,6 +89,9 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_filter, container, false);
 
+        this.mSearchView = (SearchView) rootView.findViewById(R.id.filter_search);
+        this.mSearchView.setOnQueryTextListener(this);
+
         this.mCategoryButtonCourseAndSpeciality = (TextView) rootView.findViewById(R.id.filter_category_c_and_s);
         this.mCategoryButtonLocation = (TextView) rootView.findViewById(R.id.filter_category_location);
         this.mCategoryButtonTypeAndSupportServices = (TextView) rootView.findViewById(R.id.filter_category_t_and_ss);
@@ -106,7 +114,8 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
         this.mFilterTypeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         this.mFilterTypeRecyclerView.setAdapter(this.mFilterTypeAdapter);
 
-        this.mFacetAdapter = new FacetListAdapter(getActivity(), new ArrayList<>(this.mCurrentFolders.get(this.currentPos).getFacets()));
+        this.mCurrentFacets = new ArrayList<>(this.mCurrentFolders.get(this.currentPos).getFacets());
+        this.mFacetAdapter = new FacetListAdapter(getActivity(), this.mCurrentFacets);
 
         this.mFilterRecyclerView = (RecyclerView) rootView.findViewById(R.id.filter_list);
         this.mFilterRecyclerView.setAdapter(this.mFacetAdapter);
@@ -135,6 +144,14 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
         return rootView;
     }
 
+    public void clearSearchView()
+    {
+        if (this.mSearchView != null)
+        {
+            this.mSearchView.setQuery("", false);
+        }
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -155,6 +172,7 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
     }
 
     public void updateFilterType(int position) {
+        this.clearSearchView();
         this.currentPos = position;
         this.mFacetAdapter.updateFilters(this.mCurrentFolders.get(position).getFacets());
     }
@@ -186,10 +204,12 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
                 break;
         }
 
-        this.mFilterTypeAdapter.notifyDataSetChanged();
+        if (this.mFilterTypeAdapter != null)
+            this.mFilterTypeAdapter.notifyDataSetChanged();
 
         this.updateFilterType(0);
         //this.mFacetAdapter.updateFilters(this.mCurrentFolders.get(0).getFacets());
+        this.clearSearchView();
     }
 
     private void mDeselectAll()
@@ -211,7 +231,39 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
                     currentFolders.add(f);
         }
 
+        if (this.mFilterTypeAdapter != null)
+            this.mFilterTypeAdapter.setCurrentSelection(0);
+
         return currentFolders;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        if (newText.isEmpty() || newText.contentEquals(""))
+        {
+            this.mFacetAdapter.animateTo(this.mCurrentFolders.get(this.currentPos).getFacets());
+            this.mFilterRecyclerView.scrollToPosition(0);
+
+            return true;
+        }
+        else {
+            final ArrayList<Facet> filteredModelList = filter(this.mCurrentFolders.get(this.currentPos).getFacets(), newText);
+            mFacetAdapter.animateTo(filteredModelList);
+            mFilterRecyclerView.scrollToPosition(0);
+            return true;
+        }
+    }
+
+    @Override
+    public boolean onClose() {
+        mFacetAdapter.animateTo(this.mCurrentFacets);
+        mFilterRecyclerView.scrollToPosition(0);
+        return true;
     }
 
     /**
@@ -240,5 +292,18 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
 
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
+    }
+
+    private ArrayList<Facet> filter(ArrayList<Facet> models, String query) {
+        query = query.toLowerCase();
+
+        final ArrayList<Facet> filteredModelList = new ArrayList<>();
+        for (Facet model : models) {
+            final String text = model.getUri().toLowerCase();
+            if (text.contains(query)) {
+                filteredModelList.add(model);
+            }
+        }
+        return filteredModelList;
     }
 }

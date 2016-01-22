@@ -119,7 +119,7 @@ public class Constants
     public static final String TAG_FRAGMENT_MY_FB_ENUMERATION = "fragment_my_fb_enumeration";
     public static final String TAG_FRAGMENT_STREAMS = "fragment_streams";
     public static final String TAG_FRAGMENT_PROFILE = "fragment_profile1";
-    public static final String TAG_FRAGMENT_QNA_ANSWERS_LIST = "fragment_qna_answers_list";
+    public static final String TAG_FRAGMENT_QNA_QUESTION_DETAIL = "fragment_qna_question_detail";
     public static final String TAG_FRAGMENT_USER_EDUCATION = "fragment_user_education";
     public static final String TAG_FRAGMENT_SIGNIN = "fragment_signin";
     public static final String TAG_FRAGMENT_LOGIN= "fragment_login";
@@ -148,8 +148,8 @@ public class Constants
     public static final String SEARCH_QNA = "search_qna";
 
     public static boolean SEND_REQUEST = true;
-    public static volatile boolean IS_CONNECTED_TO_INTERNET;
-    public static final int MY_FB_REFRESH_RATE = 5000;
+    public static volatile boolean IS_CONNECTED_TO_INTERNET = true;
+    public static final int MY_FB_REFRESH_RATE = 10000;
     public static final int TYPE_WIFI = 1;
     public static final int TYPE_MOBILE = 2;
     public static final int TYPE_NOT_CONNECTED = 0;

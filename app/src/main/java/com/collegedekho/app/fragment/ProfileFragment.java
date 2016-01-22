@@ -71,7 +71,6 @@ public class ProfileFragment extends BaseFragment
         if(args != null) {
             this.mExamDetailList = args.getParcelableArrayList(PARAM1);
         }
-        //ProfileFragment.IS_COMING_FROM_ON_CREATE = true;
 
         Utils.RegisterBroadcastReceiver(this.getActivity());
     }
@@ -190,17 +189,6 @@ public class ProfileFragment extends BaseFragment
 
     @Override
     public void onPause() {
-        //save the current examsummary
-/*
-        Bundle bundle = new Bundle();
-        try {
-            bundle.putString(ProfileFragment.SavedExamSummary, JSON.std.asString(this.mExamSummary));
-            this.getActivity().getIntent().putExtras(bundle);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-*/
-
         super.onPause();
         Constants.READY_TO_CLOSE = true;
         View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
@@ -214,7 +202,7 @@ public class ProfileFragment extends BaseFragment
         super.onDestroy();
     }
 
-            @Override
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -280,27 +268,7 @@ public class ProfileFragment extends BaseFragment
             Utils.setScreenGotOff(false);
             return;
         }
-/*        else
-        {
-            //save the current examsummary
 
-            Bundle bundle = this.getActivity().getIntent().getExtras();
-            if (bundle != null && bundle.containsKey(ProfileFragment.SavedExamSummary))
-            {
-                ExamSummary examSummary = null;
-                try {
-                    examSummary = JSON.std.beanFrom(ExamSummary.class, bundle.getString(ProfileFragment.SavedExamSummary));
-                    if (examSummary != null)
-                        this.updateExamSummary(examSummary);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            return;
-        }
-*/
         updateExamSummaryHandler.postDelayed(updateExamSummaryRunnable,300);
     }
 
@@ -322,11 +290,6 @@ public class ProfileFragment extends BaseFragment
     public void onDetach() {
         super.onDetach();
         this.mListener = null;
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
@@ -376,12 +339,6 @@ public class ProfileFragment extends BaseFragment
            this.mExamDetail = this.mExamDetailList.get(position);
            this.mListener.onExamTabSelected(this.mExamDetail);
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(ProfileFragment.SavedExamSummary, this.mExamSummary.toString());
-        super.onSaveInstanceState(outState);
     }
 
     public void updateExamSummary(ExamSummary examSummary) {

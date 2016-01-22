@@ -101,7 +101,7 @@ import com.collegedekho.app.fragment.NotPreparingFragment;
 import com.collegedekho.app.fragment.ProfileEditFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.PsychometricTestParentFragment;
-import com.collegedekho.app.fragment.QnAQuestionsAndAnswersFragment;
+import com.collegedekho.app.fragment.QnAQuestionDetailFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.fragment.SplashFragment;
 import com.collegedekho.app.fragment.StreamFragment;
@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity
         OnNewsSelectListener,ProfileEditFragment.onProfileUpdateListener,
         InstituteQnAFragment.OnQuestionAskedListener, FilterFragment.OnFilterInteractionListener,
         InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
-        QnAQuestionsAndAnswersFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
+        QnAQuestionDetailFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener,OnArticleSelectListener,
         LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener, InstituteDetailFragment.OnInstituteFooterItemSelected,
         UserEducationFragment.OnUserEducationInteractionListener, PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
@@ -893,7 +893,6 @@ public class MainActivity extends AppCompatActivity
      * This method is used to update institutes list of next page
      * @param response
      */
-
     private void updateNextInstituteList(String response) {
         try {
             List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
@@ -2795,7 +2794,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onQnAQuestionSelected(QnAQuestions qnaQuestion) {
-        this.mDisplayFragment(new QnAQuestionsAndAnswersFragment().newInstance(qnaQuestion), true, Constants.TAG_FRAGMENT_QNA_ANSWERS_LIST);
+        this.mDisplayFragment(new QnAQuestionDetailFragment().newInstance(qnaQuestion), true, Constants.TAG_FRAGMENT_QNA_QUESTION_DETAIL);
     }
 
     @Override
@@ -2825,8 +2824,8 @@ public class MainActivity extends AppCompatActivity
     private void mQnAQuestionVoteUpdated(int questionIndex, int voteType) {
         try
         {
-            if (currentFragment instanceof QnAQuestionsAndAnswersFragment)
-                ((QnAQuestionsAndAnswersFragment) currentFragment).onVotingFeedback(questionIndex, -1, voteType);
+            if (currentFragment instanceof QnAQuestionDetailFragment)
+                ((QnAQuestionDetailFragment) currentFragment).onVotingFeedback(questionIndex, -1, voteType);
 
             Map<String, Object> eventValue = new HashMap<String, Object>();
 
@@ -2864,7 +2863,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mQnAAnswerVoteUpdated(int questionIndex, int answerIndex, int voteType) {
-        ((QnAQuestionsAndAnswersFragment) currentFragment).onVotingFeedback(questionIndex, answerIndex, voteType);
+        ((QnAQuestionDetailFragment) currentFragment).onVotingFeedback(questionIndex, answerIndex, voteType);
         try
         {
             Map<String, Object> eventValue = new HashMap<String, Object>();
@@ -2917,8 +2916,8 @@ public class MainActivity extends AppCompatActivity
             qnaAnswer.setIndex(index);
             qnaAnswer.setQuestionIndex(questionIndex);
 
-            if (currentFragment instanceof QnAQuestionsAndAnswersFragment)
-                ((QnAQuestionsAndAnswersFragment) currentFragment).answerAdded(qnaAnswer);
+            if (currentFragment instanceof QnAQuestionDetailFragment)
+                ((QnAQuestionDetailFragment) currentFragment).answerAdded(qnaAnswer);
             else if (currentFragment instanceof InstituteQnAFragment)
                 ((InstituteQnAFragment) currentFragment).instituteQnAAnswerUpdated(qnaAnswer);
         } catch (JSONException e) {
@@ -3215,6 +3214,7 @@ public class MainActivity extends AppCompatActivity
         else
             mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_SIGNIN);
     }
+
     /**
      * This method is used to sign Up
      * @param url social site url
@@ -3276,7 +3276,7 @@ public class MainActivity extends AppCompatActivity
      * while facebook login
      * @param json
      */
-    private void  mCreatedFacebookAnonymousUser(String json)
+    private void mCreatedFacebookAnonymousUser(String json)
     {
         User tempUser = this.user;
         try {
@@ -3310,7 +3310,6 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
                 MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
                 MainActivity.user.profileData = tempUser.profileData;
-
             }
             MainActivity.user.setPref(this.userPref);
             String u = JSON.std.asString(this.user);
@@ -3499,13 +3498,12 @@ public class MainActivity extends AppCompatActivity
             eventBuilder.setCategory(category);
             eventBuilder.setAction(action);
 
-            for (String lable: labels)
-                eventBuilder.setLabel(lable);
+            for (String label: labels)
+                eventBuilder.setLabel(label);
 
             MainActivity.tracker.send(eventBuilder.build());
         }
     }
-
 
     /**
      *  If user login with any social site like facebook and stream and level has conflict
@@ -3515,7 +3513,6 @@ public class MainActivity extends AppCompatActivity
      * @param jsonObj response json
      * @param params request data send to api
      */
-
     public void showDialogForStreamLevel(final String tag, final String URL, JSONObject jsonObj, final Map<String, String> params)
     {
         final Dialog dialog = new Dialog(this);
@@ -3950,7 +3947,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSubmitPsychometricTest(JSONObject params) {
-        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM,Constants.BASE_URL + "psychometric/",params, 1);
+        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM, Constants.BASE_URL + "psychometric/", params, 1);
     }
 
     public void onSubjectSelected(Subjects subject, int position) {
@@ -4346,7 +4343,7 @@ public class MainActivity extends AppCompatActivity
 
             qnaQuestion.setAnswer_set(qnaAnswers);
             qnaQuestion.setTags(tagArrayList);
-            this.mDisplayFragment(new QnAQuestionsAndAnswersFragment().newInstance(qnaQuestion), false, Constants.TAG_FRAGMENT_QNA_ANSWERS_LIST);
+            this.mDisplayFragment(new QnAQuestionDetailFragment().newInstance(qnaQuestion), false, Constants.TAG_FRAGMENT_QNA_QUESTION_DETAIL);
         } catch (Exception e) {
             e.printStackTrace();
             isFromNotification=false;
