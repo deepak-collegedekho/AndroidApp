@@ -164,7 +164,8 @@ public class NewsListAdapter extends RecyclerView.Adapter {
             boolean flag = false;
             if(mViewType == Constants.VIEW_INTO_LIST)
                 flag = true;
-            mListener.onNewsSelected(mNewsList.get(getAdapterPosition()), flag);
+            if (getAdapterPosition() < mNewsList.size())
+                mListener.onNewsSelected(mNewsList.get(getAdapterPosition()), flag);
         }
     }
 }

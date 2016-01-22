@@ -165,8 +165,8 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
             boolean flag = false;
             if(mViewType == Constants.VIEW_INTO_LIST)
                 flag = true;
-
-            mListener.onArticleSelected(mArticles.get(getAdapterPosition()), flag);
+            if (getAdapterPosition() < mArticles.size())
+                mListener.onArticleSelected(mArticles.get(getAdapterPosition()), flag);
         }
     }
 }
