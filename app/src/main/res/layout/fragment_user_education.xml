@@ -83,7 +83,7 @@
         android:layout_marginBottom="@dimen/m1dp"
         android:weightSum="1">
 
-        <TextView
+        <TextView android:id="@+id/preparing_msg"
             android:layout_width="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_height="wrap_content"

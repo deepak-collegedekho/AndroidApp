@@ -163,20 +163,30 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         this.mUpvoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (v.isSelected())
+                if (v.isSelected()) {
                     Toast.makeText(getActivity(), "You can't upvote the upvoted", Toast.LENGTH_SHORT).show();
-                else
-                    mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri(), Constants.LIKE_THING, mQnAQuestion.getIndex());
+                }else {
+                    if(mQnAQuestion.getCurrent_user_vote_type()==Constants.DISLIKE_THING) {
+                        mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri()+ "upvote/", Constants.NOTINTERESTED_THING, mQnAQuestion.getIndex());
+                    }else{
+                        mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri(), Constants.LIKE_THING, mQnAQuestion.getIndex());
+                    }
+                }
             }
         });
 
         this.mDownvoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (v.isSelected())
+                if (v.isSelected()) {
                     Toast.makeText(getActivity(), "You can't downvote the downvoted", Toast.LENGTH_SHORT).show();
-                else
-                    mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri(), Constants.DISLIKE_THING, mQnAQuestion.getIndex());
+                }else {
+                    if(mQnAQuestion.getCurrent_user_vote_type()==Constants.LIKE_THING) {
+                        mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri()+ "downvote/", Constants.NOTINTERESTED_THING, mQnAQuestion.getIndex());
+                    }else {
+                        mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri(), Constants.DISLIKE_THING, mQnAQuestion.getIndex());
+                    }
+                }
             }
         });
 
@@ -226,13 +236,19 @@ public class QnAQuestionDetailFragment extends BaseFragment{
 //                this.mQnAQuestion.setCurrent_user_vote_type(Constants.LIKE_THING);
                 this.mQnAQuestion.setUpvotes(mQnAQuestion.getUpvotes()+1);
             }
-            else
+            else if(voteType == Constants.DISLIKE_THING)
             {
                 totalVotes--;
                 this.mUpvoteButton.setSelected(false);
                 this.mDownvoteButton.setSelected(true);
 //                this.mQnAQuestion.setCurrent_user_vote_type(Constants.DISLIKE_THING);
                 this.mQnAQuestion.setDownvotes(mQnAQuestion.getDownvotes()+1);
+            }else {
+                if(mQnAQuestion.getCurrent_user_vote_type()== Constants.LIKE_THING){
+                    totalVotes--;
+                }else{
+                    totalVotes++;
+                }
             }
 
             this.mQnAQuestion.setCurrent_user_vote_type(voteType);
@@ -254,13 +270,15 @@ public class QnAQuestionDetailFragment extends BaseFragment{
 //                qnaAns.setCurrent_user_vote_type(Constants.LIKE_THING);
                 qnaAns.setUpvotes(qnaAns.getUpvotes() + 1);
             }
-            else
+            else if(voteType == Constants.DISLIKE_THING)
             {
 //                if (qnaAns.getCurrent_user_vote_type() == Constants.LIKE_THING)
 //                    qnaAns.setUpvotes(qnaAns.getUpvotes() - 1);
 
 //                qnaAns.setCurrent_user_vote_type(Constants.DISLIKE_THING);
                 qnaAns.setDownvotes(qnaAns.getDownvotes() + 1);
+            }else {
+
             }
             qnaAns.setCurrent_user_vote_type(voteType);
 

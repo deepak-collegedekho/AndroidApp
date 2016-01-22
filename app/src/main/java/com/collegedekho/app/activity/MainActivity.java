@@ -653,7 +653,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (currentFragment instanceof ProfileEditFragment)
+        if (currentFragment instanceof ProfileEditFragment || currentFragment instanceof ExamsFragment || currentFragment instanceof UserEducationFragment)
             menu.getItem(0).setVisible(false);
         else
             menu.getItem(0).setVisible(true);
@@ -822,7 +822,7 @@ public class MainActivity extends AppCompatActivity
         if(MainActivity.type != null && !MainActivity.type.matches("")){
             mhandleNotifications();
         }
-        else if(MainActivity.user.getEducation_set() == 1 &&  MainActivity.user.getExams_set() == 1 || IS_PROFILE_LOADED)
+        else if(MainActivity.user.getEducation_set() == 1 && (MainActivity.user.getExams_set() == 1 || MainActivity.user.getIs_preparing().equals("0")) /*|| IS_PROFILE_LOADED*/)
             this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
         else if(MainActivity.user.getEducation_set() == 1 &&  MainActivity.user.getExams_set() == 0)
             this.mMakeNetworkCall(Constants.TAG_LOAD_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
@@ -882,7 +882,9 @@ public class MainActivity extends AppCompatActivity
             Map<String, Object> map = JSON.std.mapFrom(response);
             String results=JSON.std.asString(map.get("results"));
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
-            this.mClearBackStack();
+            if(!isUpdateStreams) {
+                this.mClearBackStack();
+            }
             this.mDisplayFragment(StreamFragment.newInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -1260,7 +1262,7 @@ public class MainActivity extends AppCompatActivity
         }
         invalidateOptionsMenu();
     }
-
+private boolean isUpdateStreams;
     @Override
     public void onDataLoaded(String tag, String response) {
         String extraTag = null;
@@ -1283,8 +1285,17 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_USER_EDUCATION:
                 this.mDisplayUserEducationFragment(response);
                 break;
+            case Constants.TAG_EDIT_USER_EDUCATION:
+                this.mDisplayEditUserEducationFragment(response);
+                break;
             case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
                 this.mOnUserEducationResponse(response);
+                break;
+            case Constants.TAG_EDIT_EDUCATION_DETAILS_SUBMIT:
+                this.onUserEducationEdited(response);
+                break;
+            case Constants.TAG_NOT_PREPARING_EDUCATION_DETAILS_SUBMIT:
+                this.onNotPreperingEducationResponse(response);
                 break;
             case Constants.TAG_USER_EDUCATION_SET:
                 this.mUserEducationStepCompleted(response);
@@ -1292,11 +1303,17 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_EXAMS_LIST:
                 this.mOnExamsLoaded(response,true);
                 break;
+            case Constants.TAG_EDIT_EXAMS_LIST:
+                this.mOnEditExamsLoaded(response,true);
+                break;
             case Constants.TAG_LOAD_EXAMS_LIST:
                 this.mOnExamsLoaded(response,false);
                 break;
             case Constants.TAG_SUBMIT_EXAMS_LIST:
                 this.mOnUserExamsSelected(response);
+                break;
+            case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
+                this.onUserExamsEdited(response);
                 break;
             case Constants.TAG_USER_EXAMS_SET:
                 this.mUserExamStepCompleted(response);
@@ -1480,7 +1497,7 @@ public class MainActivity extends AppCompatActivity
 
                     this.mStreamAndLevelSelected(response, parentIndex, childIndex, extraTag);
                 }
-                this.mLoadUserProfile(null);
+
                 break;
             case Constants.TAG_UPDATE_PREFRENCES:
                 this.mStreamAndLevelUpdated(response);
@@ -1524,8 +1541,18 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
                 this.onPsychometricTestResponse(response);
                 break;
+
+            case Constants.TAG_EDIT_PSYCHOMETRIC_QUESTIONS:
+                isUpdateStreams=true;
+                this.onPsychometricTestResponse(response);
+                break;
+
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
-                this.mDisplayStreamsSelection(response, false);
+                if(!isUpdateStreams) {
+                    this.mDisplayStreamsSelection(response, false);
+                }else {
+                    this.mDisplayStreamsSelection(response, true);
+                }
                 break;
             case Constants.TAG_PSYCHOMETRIC_TEXT_COMPLETED:
                 if (tags.length > 2) {
@@ -1583,21 +1610,24 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    private void mOnPsychometricTestCompleted(String streamId, String streaName, String response) {
+    private void mOnPsychometricTestCompleted(String streamId, String streamName, String response) {
 
         try {
             User userObj = JSON.std.beanFrom(User.class,response);
             if(MainActivity.user != null){
-                MainActivity.user.setStream_name(streaName);
+                MainActivity.user.setStream_name(streamName);
                 MainActivity.user.setStream(streamId);
                 MainActivity.user.setLevel_name(userObj.getLevel_name());
                 MainActivity.user.setLevel(userObj.getLevel());
+                MainActivity.user.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-       this.mClearBackStack();
+        if(!isUpdateStreams) {
+            this.mClearBackStack();
+        }
         this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
 
     }
@@ -1771,43 +1801,65 @@ public class MainActivity extends AppCompatActivity
 
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.USER_CREATED, true).commit();
         User tempUser = MainActivity.user;
+    if(!isUpdateStreams) {
 
+    try {
+        MainActivity.user = JSON.std.beanFrom(User.class, response);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    //save the preferences locally
+    MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
+    if (tempUser != null) {
+        MainActivity.user.setToken(tempUser.getToken());
+        MainActivity.user.setImage(tempUser.getImage());
+        MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+        MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+        MainActivity.user.profileData = tempUser.profileData;
+    }
+
+    if (streamName != "" && streamName != null)
+        MainActivity.user.setStream_name(streamName);
+
+    try {
+        String user = "";
+        user = JSON.std.asString(MainActivity.user);
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, user).commit();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    //GA Event for Stream and Level update
+    MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_STREAM_SELECTED, user.getStream_name());
+    MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_LEVEL_SELECTED, user.getLevel_name());
+
+    //Send event to connecto for stream and level selection
+    this.connecto.track("Stream Selected", new Properties().putValue(Constants.USER_STREAM_NAME, user.getStream_name()));
+    this.connecto.track("Level Selected", new Properties().putValue(Constants.USER_LEVEL_NAME, user.getLevel_name()));
+    this.mClearBackStack();
+        this.mLoadUserProfile(null);
+    } else {
+        isUpdateStreams=false;
         try {
-            MainActivity.user = JSON.std.beanFrom(User.class, response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //save the preferences locally
-        MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
-        if (tempUser != null)
-        {
+            User user = JSON.std.beanFrom(User.class, response);
+            if (streamName != "" && streamName != null)
+                MainActivity.user.setStream_name(streamName);
+                MainActivity.user.setPsychometric_given(user.getPsychometric_given());
             MainActivity.user.setToken(tempUser.getToken());
             MainActivity.user.setImage(tempUser.getImage());
             MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
             MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
             MainActivity.user.profileData = tempUser.profileData;
-        }
-
-        if (streamName != "" && streamName != null)
-            MainActivity.user.setStream_name(streamName);
-
-        try
-        {
-            String user = "";
-            user = JSON.std.asString(MainActivity.user);
-            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, user).commit();
+            String u = "";
+            u = JSON.std.asString(MainActivity.user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+            onBackPressed();
+            onBackPressed();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        //GA Event for Stream and Level update
-        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_STREAM_SELECTED, user.getStream_name());
-        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_LEVEL_SELECTED, user.getLevel_name());
-
-        //Send event to connecto for stream and level selection
-        this.connecto.track("Stream Selected", new Properties().putValue(Constants.USER_STREAM_NAME, user.getStream_name()));
-        this.connecto.track("Level Selected", new Properties().putValue(Constants.USER_LEVEL_NAME, user.getLevel_name()));
-        this.mClearBackStack();
     }
 
     private void updateQuestionLikeButton(String response, String extraTag, int like) {
@@ -2800,18 +2852,24 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onQnAQuestionVote(String resourceURI, int voteType, int position) {
         Utils.DisplayToast(this, "Thanks for your vote");
-        if (voteType == Constants.LIKE_THING)
+        if (voteType == Constants.LIKE_THING) {
             this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
-        else
+        } else if (voteType == Constants.DISLIKE_THING) {
             this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
+        } else {
+            this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI, null, Request.Method.POST);
+        }
     }
 
     @Override
     public void onQnAAnswerVote(String resourceURI, int voteType, int answerPosition, int questionPosition) {
-        if (voteType == Constants.LIKE_THING)
+        if (voteType == Constants.LIKE_THING) {
             this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
-        else
+        } else if (voteType == Constants.DISLIKE_THING) {
             this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
+        } else {
+            this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType), resourceURI, null, Request.Method.POST);
+        }
     }
 
     @Override
@@ -3428,11 +3486,29 @@ public class MainActivity extends AppCompatActivity
         mLoadUserProfile(response);
     }
 
+    private void onUserExamsEdited(String response) {
+        try {
+            List<ExamDetail>exams = JSON.std.listOfFrom(ExamDetail.class, extractResults(response));
+            MainActivity.user.setUser_exams(new ArrayList<>(exams));
+            String u = JSON.std.asString(MainActivity.user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+            onBackPressed();
+            if (currentFragment instanceof UserEducationFragment) {
+                onBackPressed();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void mUserExamStepCompleted(String responseJson) {
 
         try {
             User userObj = JSON.std.beanFrom(User.class, responseJson);
             MainActivity.user.setExams_set(userObj.getExams_set());
+            MainActivity.user.setUser_exams(userObj.getUser_exams());
+            MainActivity.user.setUser_education(userObj.getUser_education());
+            MainActivity.user.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
             String u = JSON.std.asString(MainActivity.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
 
@@ -3711,6 +3787,23 @@ public class MainActivity extends AppCompatActivity
         this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_CURRENT_STREAM_SELECTED, user.getStream_name()).putValue(Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing()));
     }
 
+    private void onUserEducationEdited(String response){
+        try {
+            if(this.user.getIs_preparing().equals("0")) {
+                UserEducation userEducation = JSON.std.beanFrom(UserEducation.class, response);
+                MainActivity.user.setUser_education(userEducation);
+                String u = JSON.std.asString(MainActivity.user);
+                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+                onBackPressed();
+            }else{
+//                this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
+                onEditUserExams();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * This method is used to handle response having exams list
      * after user education detail is submitted to server.
@@ -3720,6 +3813,15 @@ public class MainActivity extends AppCompatActivity
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
             this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)),addToBackStack,ExamsFragment.class.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void mOnEditExamsLoaded(String responseJson,boolean addToBackStack) {
+        try {
+            List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
+            this.mDisplayFragment(ExamsFragment.newEditableInstance(new ArrayList<>(mExamList)),addToBackStack,ExamsFragment.class.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -3735,29 +3837,53 @@ public class MainActivity extends AppCompatActivity
         this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "yearly-exams/",params,1);
     }
 
+    @Override
+    public void onExamsEdited(JSONObject params) {
+        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST,Constants.BASE_URL + "yearly-exams/",params,1);
+    }
     /**
      * This method is used to send user's current education
      * details to server like current level, stream and marks
      */
     @Override
-    public void onUserNotPreparingSelected() {
-        this.mDisplayFragment(NotPreparingFragment.newInstance(),true,NotPreparingFragment.class.toString());
+    public void onUserNotPreparingSelected(HashMap<String, String> map) {
+        this.mMakeNetworkCall(Constants.TAG_NOT_PREPARING_EDUCATION_DETAILS_SUBMIT, Constants.BASE_URL + "user-education/", map);
 
-        //Appsflyer events
-        Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(Constants.USER_CURRENT_SUBLEVEL, user.getSublevel());
-        eventValue.put(Constants.USER_IS_PREPARING, user.getIs_preparing());
-
-        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_USER_PREFERENCE, eventValue);
-
-        //GA Event
-        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_CURRENT_STREAM_SELECTED, user.getSublevel());
-        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing());
-
-        //Send event to connecto
-        this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_CURRENT_STREAM_SELECTED, user.getStream_name()).putValue(Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing()));
+//        this.mDisplayFragment(NotPreparingFragment.newInstance(),true,NotPreparingFragment.class.toString());
+//
+//        //Appsflyer events
+//        Map<String, Object> eventValue = new HashMap<>();
+//        eventValue.put(Constants.USER_CURRENT_SUBLEVEL, user.getSublevel());
+//        eventValue.put(Constants.USER_IS_PREPARING, user.getIs_preparing());
+//
+//        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_USER_PREFERENCE, eventValue);
+//
+//        //GA Event
+//        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_CURRENT_STREAM_SELECTED, user.getSublevel());
+//        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing());
+//
+//        //Send event to connecto
+//        this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_CURRENT_STREAM_SELECTED, user.getStream_name()).putValue(Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing()));
     }
 
+private void onNotPreperingEducationResponse(String response){
+    this.mDisplayFragment(NotPreparingFragment.newInstance(),true,NotPreparingFragment.class.toString());
+
+    //Appsflyer events
+    Map<String, Object> eventValue = new HashMap<>();
+    eventValue.put(Constants.USER_CURRENT_SUBLEVEL, user.getSublevel());
+    eventValue.put(Constants.USER_IS_PREPARING, user.getIs_preparing());
+
+    MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_USER_PREFERENCE, eventValue);
+
+    //GA Event
+    MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_CURRENT_STREAM_SELECTED, user.getSublevel());
+    MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing());
+
+    //Send event to connecto
+    this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_CURRENT_STREAM_SELECTED, user.getStream_name()).putValue(Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing()));
+
+}
     /**
      * This method is load user profile after
      */
@@ -3871,6 +3997,11 @@ public class MainActivity extends AppCompatActivity
 
         //Send event to connecto
         this.connecto.track(Constants.ACTION_WHEN_NOT_PREPARING, new Properties().putValue(Constants.CHOOSEN_ACTION_WHEN_NOT_PREPARING, PsychometricTestQuestion.class.getSimpleName()));
+    }
+
+    @Override
+    public void onSubmitEditedEducation(HashMap<String, String> params) {
+        this.mMakeNetworkCall(Constants.TAG_EDIT_EDUCATION_DETAILS_SUBMIT, Constants.BASE_URL + "user-education/", params);
     }
 
     private void onPsychometricTestResponse(String response){
@@ -4224,6 +4355,44 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, Constants.BASE_URL + "preferences/", hashMap);
 
     }
+
+    @Override
+    public void onEditUserEducation() {
+        this.mMakeNetworkCall(Constants.TAG_EDIT_USER_EDUCATION,  Constants.BASE_URL + "user-education/", null);
+        Toast.makeText(this, "Edit Education", Toast.LENGTH_SHORT).show();
+    }
+    private void mDisplayEditUserEducationFragment(String response){
+        try {
+            response = response.substring(10, response.length() - 1);
+            ArrayList<UserEducation> userEducationList = (ArrayList<UserEducation>) JSON.std.listOfFrom(UserEducation.class, response);
+            Fragment fragment=getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_USER_EDUCATION);
+//            if(fragment!=null && fragment instanceof UserEducationFragment){
+//                ((UserEducationFragment)fragment).setForEditEducation();
+//                this.mDisplayFragment(fragment, true, Constants.TAG_FRAGMENT_USER_EDUCATION);
+//
+//            }else {
+                this.mDisplayFragment(UserEducationFragment.newEditableInstance(userEducationList), true, Constants.TAG_FRAGMENT_USER_EDUCATION);
+//            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void onEditUserStreams() {
+        Toast.makeText(this,"Edit Streams",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onEditUserExams() {
+        this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
+        Toast.makeText(this,"Edit Exams",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onTakePsychometric() {
+        this.mMakeNetworkCall(Constants.TAG_EDIT_PSYCHOMETRIC_QUESTIONS,Constants.BASE_URL+"psychometric/",null);
+    }
+
     private void onPNSNews(String response){
         try {
             this.mNewsList = JSON.std.listOfFrom(News.class, "["+response+"]");

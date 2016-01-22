@@ -44,7 +44,7 @@ public class ExamsFragment extends BaseFragment {
     private OnExamsSelectListener mListener;
     private boolean IS_TUTE_COMPLETED = true;
     private TextView mExamSubmitButton;
-
+    private boolean isEditMode=false;
     public ExamsFragment() {
         // required empty Constructor
     }
@@ -57,6 +57,14 @@ public class ExamsFragment extends BaseFragment {
         return fragment;
     }
 
+    public static ExamsFragment newEditableInstance(ArrayList<Exam> examsList){
+        ExamsFragment fragment = new ExamsFragment();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(PARAM1,examsList);
+        args.putBoolean("is_edit_mode",true);
+        fragment.setArguments(args);
+        return fragment;
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +72,7 @@ public class ExamsFragment extends BaseFragment {
         if(args != null)
         {
             this.mExamList = args.getParcelableArrayList(PARAM1);
+            this.isEditMode=args.getBoolean("is_edit_mode");
         }
 
     }
@@ -233,11 +242,15 @@ public class ExamsFragment extends BaseFragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if(!isExamSelected){
+            if(!isExamSelected && !isEditMode){
                 Utils.DisplayToast(getActivity(),"Please Select a Exam");
                 return;
             }
-            this.mListener.onExamsSelected(parentJsonObject);
+            if(!isEditMode) {
+                this.mListener.onExamsSelected(parentJsonObject);
+            }else {
+                this.mListener.onExamsEdited(parentJsonObject);
+            }
         }
     }
 
@@ -253,5 +266,7 @@ public class ExamsFragment extends BaseFragment {
      */
     public  interface OnExamsSelectListener {
         void onExamsSelected(JSONObject params);
+        void onExamsEdited(JSONObject params);
+
     }
 }

@@ -11,8 +11,46 @@ import java.util.ArrayList;
 public class UserEducation implements Parcelable {
     private String name;
     private int value;
+    private String sublevel;
+    private boolean is_preparing;
+    private String stream;
+
+    private String marks;
     private ArrayList<UserEducationStreams> streams;
     private ArrayList<UserEducationSublevels> sublevels;
+
+    public String getMarks() {
+        return marks;
+    }
+
+    public void setMarks(String marks) {
+        this.marks = marks;
+    }
+
+    public String getSublevel() {
+        return sublevel;
+    }
+
+    public void setSublevel(String sublevel) {
+        this.sublevel = sublevel;
+    }
+
+    public boolean is_preparing() {
+        return is_preparing;
+    }
+
+    public void setIs_preparing(boolean is_preparing) {
+        this.is_preparing = is_preparing;
+    }
+
+    public String getStream() {
+        return stream;
+    }
+
+    public void setStream(String stream) {
+        this.stream = stream;
+    }
+
 
     @Override
     public int describeContents() {
@@ -34,6 +72,9 @@ public class UserEducation implements Parcelable {
         dest.writeInt(value);
         dest.writeTypedList(streams);
         dest.writeTypedList(sublevels);
+        dest.writeString(sublevel);
+        dest.writeString(stream);
+        dest.writeByte((byte) (is_preparing ? 1 : 0));
     }
 
     public UserEducation() {
@@ -48,6 +89,9 @@ public class UserEducation implements Parcelable {
 
         sublevels = new ArrayList<>();
         source.readTypedList(sublevels, UserEducationSublevels.CREATOR);
+        is_preparing=source.readByte()!=0;
+        stream=source.readString();
+        sublevel=source.readString();
     }
 
     public String getName() {

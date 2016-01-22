@@ -103,7 +103,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                     }
                 });
                 if (selectedPosition >= 0) {
-                    examDetail.get(position).setSelected(true);
+//                    examDetail.get(selectedPosition).setSelected(true);
                     holder.mYearSpinner.setSelection(selectedPosition);
                     holder.mYearSpinner.setSelected(true);
                     holder.mExamName.setSelected(true);

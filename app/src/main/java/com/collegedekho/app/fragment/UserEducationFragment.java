@@ -49,7 +49,7 @@ public class UserEducationFragment extends BaseFragment {
     private OnUserEducationInteractionListener mListener;
     private RelativeLayout.LayoutParams layoutParams;
     private RadioGroup examRadioGroup;
-
+    private TextView btnSubmit,preparingMsg;
     private ArrayList<UserEducation> mUserEducationList;
     private ArrayList<UserEducationSublevels> mUserExamSubLevelsList;
     private ArrayList<ArrayList<UserEducationStreams>> mUserStreamLists;
@@ -62,7 +62,7 @@ public class UserEducationFragment extends BaseFragment {
     final String[] marks_arrays = {"30-40%", "40-50%","50-60%","60-70%", "70-80%", "80-90%", "90-100%",};
 
     private boolean IS_TUTE_COMPLETED = true;
-
+    private boolean isEditMode=false;
     public UserEducationFragment() {
         // Required empty public constructor
     }
@@ -83,12 +83,22 @@ public class UserEducationFragment extends BaseFragment {
 
         return fragment;
     }
+    public static UserEducationFragment newEditableInstance(ArrayList<UserEducation> userEducationList) {
+        UserEducationFragment fragment = new UserEducationFragment();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(USER_EDUCATION_LIST, userEducationList);
+        args.putBoolean("is_edit_mode",true);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mUserEducationList = getArguments().getParcelableArrayList(USER_EDUCATION_LIST);
+            this.isEditMode=getArguments().getBoolean("is_edit_mode");
             makeArraysForPicker();
         }
     }
@@ -104,7 +114,8 @@ public class UserEducationFragment extends BaseFragment {
         TextView cdTextView = (TextView) rootView.findViewById(R.id.user_cd_recommendation_text);
         Spanned text = Html.fromHtml("GET <b><font color='#ff8d00'>C</font><font color='#1f2560'>D</font></b> <br>RECOMMEDATIONS");
         cdTextView.setText(text);
-
+        btnSubmit=(TextView)rootView.findViewById(R.id.education_submit_button);
+        preparingMsg=(TextView)rootView.findViewById(R.id.preparing_msg);
         examRadioGroup=(RadioGroup)rootView.findViewById(R.id.exam_rd_group);
         examRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -161,16 +172,21 @@ public class UserEducationFragment extends BaseFragment {
         rootView.findViewById(R.id.is_preparing_for_exam).setOnClickListener(this);
         rootView.findViewById(R.id.is_not_preparing_for_exam).setOnClickListener(this);
         rootView.findViewById(R.id.education_submit_button).setOnClickListener(this);
-        rootView.findViewById(R.id.education_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
+        if(isEditMode){
+            rootView.findViewById(R.id.education_tour_guide_image).setVisibility(View.GONE);
+            setForEditEducation();
+        }else {
+            rootView.findViewById(R.id.education_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
 
                     v.setVisibility(View.GONE);
                     IS_TUTE_COMPLETED = true;
                     getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.EDUCATION_SCREEN_TUTE, true).apply();
-                return false;
-            }
-        });
+                    return false;
+                }
+            });
+        }
         return rootView;
     }
 
@@ -311,7 +327,7 @@ public class UserEducationFragment extends BaseFragment {
     private void mUserPreparingForExam() {
         if (this.mListener != null) {
 
-            if(isUserPreparing) {
+
                 HashMap<String, String> map = new HashMap<>();
 
                 int examPosition = mExamPicker.getValue();
@@ -327,11 +343,21 @@ public class UserEducationFragment extends BaseFragment {
                 map.put("sublevel", UserEducationFragment.this.mSubLevelID);
                 map.put("stream", UserEducationFragment.this.mStreamID);
                 map.put("marks", UserEducationFragment.this.mMarks);
-                map.put("is_preparing", "1");
 
-                mListener.onEducationSelected(map);
+            if(isUserPreparing) {
+                map.put("is_preparing", "1");
+                if(isEditMode) {
+                    mListener.onSubmitEditedEducation(map);
+                }else {
+                    mListener.onEducationSelected(map);
+                }
             }else{
-                mUserNotPreparingForExam();
+                map.put("is_preparing", "0");
+                if (isEditMode){
+                    mListener.onSubmitEditedEducation(map);
+                }else {
+                    mUserNotPreparingForExam(map);
+                }
 //                displayAlert(getActivity());
             }
         }
@@ -357,9 +383,9 @@ public class UserEducationFragment extends BaseFragment {
    }
 
 
-    private void mUserNotPreparingForExam() {
+    private void mUserNotPreparingForExam(HashMap<String, String> map) {
         if(this.mListener !=  null){
-            this.mListener.onUserNotPreparingSelected();
+            this.mListener.onUserNotPreparingSelected(map);
         }
 
     }
@@ -376,10 +402,11 @@ public class UserEducationFragment extends BaseFragment {
      */
     public interface OnUserEducationInteractionListener {
         void onEducationSelected(HashMap<String, String> map);
-        void onUserNotPreparingSelected();
+        void onUserNotPreparingSelected(HashMap<String, String> map);
         void onStepByStep();
         void onIknowWhatIWant();
         void onPsychometricTest();
+        void onSubmitEditedEducation(HashMap<String, String> map);
     }
 
     private void displayAlert(final Context context){
@@ -417,5 +444,11 @@ public class UserEducationFragment extends BaseFragment {
         });
 
         alertDialog.show();
+    }
+    public void setForEditEducation(){
+        btnSubmit.setVisibility(View.VISIBLE);
+        examRadioGroup.check(R.id.rd_btn_yes);
+        examRadioGroup.setVisibility(View.GONE);
+        preparingMsg.setVisibility(View.GONE);
     }
 }

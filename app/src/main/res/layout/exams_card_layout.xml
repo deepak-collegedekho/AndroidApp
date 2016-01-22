@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/m20dp"
+    card_view:cardPreventCornerOverlap="false"
+    app:cardElevation="@dimen/m2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="@dimen/m10dp">
+
+        <TextView
+            android:id="@+id/exam_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="exam" />
+
+        <TextView
+            android:id="@+id/exam_year"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="right"
+            android:text="year" />
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

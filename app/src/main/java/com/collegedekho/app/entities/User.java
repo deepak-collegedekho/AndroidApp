@@ -7,6 +7,7 @@ import android.util.Patterns;
 
 import com.collegedekho.app.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
@@ -35,10 +36,39 @@ public class User
     private int education_set = 0;
     private int exams_set = 0;
     private int progress = 0;
+    private ArrayList<ExamDetail> user_exams;
+    private UserEducation user_education;
+
+    public ArrayList<String> getCollegedekho_recommended_streams() {
+        return collegedekho_recommended_streams;
+    }
+
+    public void setCollegedekho_recommended_streams(ArrayList<String> collegedekho_recommended_streams) {
+        this.collegedekho_recommended_streams = collegedekho_recommended_streams;
+    }
+
+    private ArrayList<String>collegedekho_recommended_streams;
+    private int psychometric_given;
 
     private String primaryEmail;
     private String primaryPhone;
     public String[] profileData = new String[3];
+
+    public ArrayList<ExamDetail> getUser_exams() {
+        return user_exams;
+    }
+
+    public void setUser_exams(ArrayList<ExamDetail> user_exams) {
+        this.user_exams = user_exams;
+    }
+
+    public UserEducation getUser_education() {
+        return user_education;
+    }
+
+    public void setUser_education(UserEducation user_education) {
+        this.user_education = user_education;
+    }
 
     public interface ProfileQuery {
         String[] PROJECTION = {
@@ -52,6 +82,14 @@ public class User
         int IS_PRIMARY = 2;
     }
 
+
+    public int getPsychometric_given() {
+        return psychometric_given;
+    }
+
+    public void setPsychometric_given(int psychometric_given) {
+        this.psychometric_given = psychometric_given;
+    }
 
     public String getId() {
         return id;
