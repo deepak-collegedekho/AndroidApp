@@ -1847,6 +1847,7 @@ private boolean isUpdateStreams;
                 MainActivity.user.setPsychometric_given(user.getPsychometric_given());
             MainActivity.user.setToken(tempUser.getToken());
             MainActivity.user.setImage(tempUser.getImage());
+            MainActivity.user.setCollegedekho_recommended_streams(user.getCollegedekho_recommended_streams());
             MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
             MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
             MainActivity.user.profileData = tempUser.profileData;
