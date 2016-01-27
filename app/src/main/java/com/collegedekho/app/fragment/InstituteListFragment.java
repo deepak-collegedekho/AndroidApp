@@ -56,7 +56,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private int filterCount;
     private TextView mEmptyTextView;
     private boolean IS_TUTE_COMPLETED = true;
-
+private View filterBtn,filters;
     private  int mViewType = Constants.VIEW_INTO_LIST;
     private ContactsCompletionView mCompletionView;
     private ArrayAdapter<String> tolenAdapter;
@@ -92,6 +92,8 @@ View instituteView;
             listType = getArguments().getInt("list_type");//Constants.INSTITUTE_TYPE;
             if(listType==0){
                 listType=Constants.INSTITUTE_TYPE;
+            }else if (listType==Constants.INSTITUTE_SEARCH_TYPE){
+                filterAllowed=false;
             }
         }
     }
@@ -152,6 +154,8 @@ View instituteView;
             rootView.findViewById(R.id.button_filter).setVisibility(View.GONE);
             rootView.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
         }
+        filterBtn=rootView.findViewById(R.id.button_filter);
+        filters=rootView.findViewById(R.id.filter_tokenLL);
 
         tolenAdapter = new FilteredArrayAdapter<String>(getActivity(), R.layout.contact_token, new String[]{}) {
             @Override
@@ -269,6 +273,9 @@ View instituteView;
 
     public void updateSearchList(List<Institute> institutes, String next) {
         this.listType=Constants.INSTITUTE_SEARCH_TYPE;
+        filterAllowed=false;
+        filterBtn.setVisibility(View.GONE);
+        filters.setVisibility(View.GONE);
         progressBarLL.setVisibility(View.GONE);
         mAdapter.lastPosition = -1;
         clearList();

@@ -364,19 +364,19 @@ public class UserEducationFragment extends BaseFragment {
     }
 
    private String mGetMarks(int position){
-       if(position == 1 ){
+       if(position == 0 ){
           return "35";
-       }else if(position == 2 ){
+       }else if(position == 1 ){
           return "45";
-       }else if(position == 3 ){
+       }else if(position == 2 ){
           return "55";
-       }else if(position == 4 ){
+       }else if(position == 3 ){
            return "65";
-       }else if(position == 5 ){
+       }else if(position == 4 ){
            return "75";
-       }else if(position == 6 ){
+       }else if(position == 5 ){
           return "85";
-       }else if(position == 7 ){
+       }else if(position == 6 ){
           return "95";
        }
        return "45";

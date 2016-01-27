@@ -102,7 +102,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
                 articleHolder.setIsRecyclable(false);
             }
             else if (articles.getStream() == null && !this.mArticleStreamChanged) {
-                articleHolder.streamTypeHeader.setText("Other News");
+                articleHolder.streamTypeHeader.setText("Other Articles");
                 articleHolder.streamTypeHeader.setVisibility(View.VISIBLE);
                 articleHolder.setIsRecyclable(false);
 
@@ -156,7 +156,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
             articleImage.setDefaultImageResId(R.drawable.ic_default_image);
             articleImage.setErrorImageResId(R.drawable.ic_default_image);
             mListener = listener;
-
             itemView.setOnClickListener(this);
         }
 
@@ -165,8 +164,13 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
             boolean flag = false;
             if(mViewType == Constants.VIEW_INTO_LIST)
                 flag = true;
-            if (getAdapterPosition() < mArticles.size())
-                mListener.onArticleSelected(mArticles.get(getAdapterPosition()), flag);
+            if (getAdapterPosition() < mArticles.size()) {
+                try {
+                    mListener.onArticleSelected(mArticles.get(getAdapterPosition()), flag);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

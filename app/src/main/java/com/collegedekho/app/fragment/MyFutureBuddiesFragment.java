@@ -85,7 +85,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             public void onClick(View v) {
 
                 final String value = mChatText.getText().toString();
-                if (value.equals("") || value.equals(" "))
+                if (value.trim().equals(""))
                 {
                     Toast.makeText(getActivity(), "Please enter your message", Toast.LENGTH_SHORT).show();
                 }
@@ -100,7 +100,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                         if(user.profileData[0] != null){
                             HashMap<String, String> hashMap = new HashMap<>();
                             hashMap.put(Constants.USER_NAME, user.profileData[0]);
-                            mListener.onNameUpdated(hashMap, value);
+                            mListener.onNameUpdated(hashMap, value.trim());
                             return;
                         }
 

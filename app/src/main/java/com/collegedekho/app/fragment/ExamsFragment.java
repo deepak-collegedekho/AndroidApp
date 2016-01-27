@@ -242,9 +242,14 @@ public class ExamsFragment extends BaseFragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if(!isExamSelected && !isEditMode){
-                Utils.DisplayToast(getActivity(),"Please Select a Exam");
-                return;
+            if(!isExamSelected){
+                if(!isEditMode) {
+                    Utils.DisplayToast(getActivity(), "Please Select a Exam");
+                    return;
+                }else {
+                    mListener.onCancelExamSubmission();
+                    return;
+                }
             }
             if(!isEditMode) {
                 this.mListener.onExamsSelected(parentJsonObject);
@@ -267,6 +272,6 @@ public class ExamsFragment extends BaseFragment {
     public  interface OnExamsSelectListener {
         void onExamsSelected(JSONObject params);
         void onExamsEdited(JSONObject params);
-
+        void onCancelExamSubmission();
     }
 }

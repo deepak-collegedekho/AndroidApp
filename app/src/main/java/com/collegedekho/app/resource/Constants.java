@@ -10,7 +10,7 @@ import java.util.HashMap;
  */
 public class Constants
 {
-
+    public static final int RC_HANDLE_SMS_PERM =2;
     public static final int[] headImages = {R.drawable.ic_question, 0, R.drawable.ic_cap};
     public static final String[] headLabels = {"I am not sure where to start", "",
             "College majors are my top priority"};
@@ -35,6 +35,7 @@ public class Constants
     public static final String TAG_SUBMIT_EXAMS_LIST = "submit_exams_list";
     public static final String TAG_SUBMIT_EDITED_EXAMS_LIST = "submit_edited_exams_list";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_EXAM = "submit_psychometric_exam";
+    public static final String TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM = "submit_edit_psychometric_exam";
     public static final String TAG_SUBMIT_SBS_EXAM = "submit_sbs_exam";
 
     public static final String TAG_LOAD_STREAM = "load_stream";
@@ -111,6 +112,7 @@ public class Constants
     public static final String TAG_REFRESH_MY_FB = "refresh_my_fb";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_TEST = "submit_psychometric_test";
     public static final String TAG_SUBMIT_PREFRENCES = "submit_prefrences";
+    public static final String TAG_SUBMIT_EDITED_PREFRENCES = "submit_edited_prefrences";
     public static final String TAG_UPDATE_PREFRENCES = "update_prefrences";
     public static final String TAG_UPDATE_INSTITUTES = "update_institutes";
     public static final String TAG_FRAGMENT_FILTER_LIST = "fragment_filter_list";

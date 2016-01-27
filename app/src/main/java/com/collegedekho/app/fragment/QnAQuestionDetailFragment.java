@@ -138,13 +138,13 @@ public class QnAQuestionDetailFragment extends BaseFragment{
                 alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String value = input.getText().toString();
-                        if (value.equals("") || value.equals(" "))
+                        if (value.trim().equals(""))
                         {
                             Toast.makeText(getActivity(),"Please enter your answer", Toast.LENGTH_SHORT).show();
                         }
                         else
                         {
-                            mListener.onQnAAnswerSubmitted(mQnAQuestion.getResource_uri(), input.getText().toString(), mQnAQuestion.getIndex(), mQnAAnswersSet.size());
+                            mListener.onQnAAnswerSubmitted(mQnAQuestion.getResource_uri(), input.getText().toString().trim(), mQnAQuestion.getIndex(), mQnAAnswersSet.size());
                             input.setText("");
                         }
                     }

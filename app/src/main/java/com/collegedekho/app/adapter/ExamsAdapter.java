@@ -108,6 +108,11 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                     holder.mYearSpinner.setSelected(true);
                     holder.mExamName.setSelected(true);
                     holder.mExamName.setTextColor(ExamsAdapter.this.mContext.getResources().getColor(R.color.white));
+                    holder.mExamName.setEnabled(false);
+                    holder.mYearSpinner.setEnabled(false);
+                }else {
+                    holder.mExamName.setEnabled(true);
+                    holder.mYearSpinner.setEnabled(true);
                 }
                 holder.mExamName.setOnClickListener(new View.OnClickListener(){
                     @Override

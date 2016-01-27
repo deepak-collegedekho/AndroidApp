@@ -5,7 +5,8 @@
               <item
                android:id="@+id/action_profile"
                android:orderInCategory="100"
-               app:showAsAction="never"
+               app:showAsAction="ifRoom"
+                  android:icon="@drawable/edit_profile"
                android:visible="true"
                android:title="@string/action_profile"/>
      </group>

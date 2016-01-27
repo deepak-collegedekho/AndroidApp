@@ -270,6 +270,11 @@ public class ProfileFragment extends BaseFragment
         }
 
         updateExamSummaryHandler.postDelayed(updateExamSummaryRunnable,300);
+        if(((MainActivity)getActivity()).isReloadProfile && this.mListener!=null){
+            ((MainActivity)getActivity()).isReloadProfile=false;
+            mListener.onReloadProfile();
+
+        }
     }
 
 
@@ -407,6 +412,8 @@ public class ProfileFragment extends BaseFragment
         void onExamTabSelected(ExamDetail tabPosition);
 
         void onHomeItemSelected(String requestType, String url, String examTag);
+
+        void onReloadProfile();
     }
 
     Handler updateExamSummaryHandler=new Handler();

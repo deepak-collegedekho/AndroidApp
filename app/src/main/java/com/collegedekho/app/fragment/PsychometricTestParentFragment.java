@@ -31,11 +31,21 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
     private int numPages = 1;
     private ArrayList<PsychometricTestQuestion> mQuestionsList;
     private OnPsychometricTestSubmitListener mListener;
-
+    private boolean isEditMoce;
     public static PsychometricTestParentFragment newInstance(ArrayList<PsychometricTestQuestion> questionsList) {
 
         Bundle args = new Bundle();
         args.putParcelableArrayList("questions_list", questionsList);
+        PsychometricTestParentFragment fragment = new PsychometricTestParentFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static PsychometricTestParentFragment newEditableInstance(ArrayList<PsychometricTestQuestion> questionsList) {
+
+        Bundle args = new Bundle();
+        args.putParcelableArrayList("questions_list", questionsList);
+        args.putBoolean("is_edit_mode",true);
         PsychometricTestParentFragment fragment = new PsychometricTestParentFragment();
         fragment.setArguments(args);
         return fragment;
@@ -47,6 +57,7 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
         Bundle bundle = getArguments();
         if (bundle != null) {
             mQuestionsList = bundle.getParcelableArrayList("questions_list");
+            isEditMoce=bundle.getBoolean("is_edit_mode");
         }
     }
 
@@ -132,14 +143,15 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
         try {
             mapArrayList.add(questionResponse);
             object.putOpt("questions",new JSONArray(mapArrayList));
-            mListener.onSubmitPsychometricTest(object);
+            mListener.onSubmitPsychometricTest(object,isEditMoce);
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
     public interface OnPsychometricTestSubmitListener {
-        void onSubmitPsychometricTest(JSONObject object);
+        void onSubmitPsychometricTest(JSONObject object,boolean isFromEditProfile);
+
     }
 
     @Override

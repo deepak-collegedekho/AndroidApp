@@ -1,5 +1,6 @@
 package com.collegedekho.app.activity;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -21,10 +22,13 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
@@ -37,15 +41,18 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -147,6 +154,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -252,7 +260,7 @@ public class MainActivity extends AppCompatActivity
     private List<Widget> mWidgets;
     public static CallbackManager callbackManager;
     private Date mTimeScreenClicked = new Date();
-
+    public boolean isReloadProfile=false;
     private String mGTMContainerId = "www.collegedekho.com";
     private Connecto connecto = null;
     // Get SENDER_ID fom GCM.
@@ -635,6 +643,20 @@ public class MainActivity extends AppCompatActivity
             autoComplete.setHintTextColor(Color.GRAY);
             // set the text color
             autoComplete.setTextColor(Color.BLUE);
+            try {
+                Field searchField = SearchView.class.getDeclaredField("mCloseButton");
+                searchField.setAccessible(true);
+                ImageView mSearchCloseButton = (ImageView) searchField.get(searchView);
+                if (mSearchCloseButton != null) {
+                    mSearchCloseButton.setEnabled(true);
+                    AppBarLayout.LayoutParams  lp=new AppBarLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    lp.gravity=Gravity.CENTER;
+                    mSearchCloseButton.setLayoutParams(lp);
+                    mSearchCloseButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_close_search));
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error finding close button", e);
+            }
         }
         if (searchView != null) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(MainActivity.this.getComponentName()));
@@ -653,8 +675,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (currentFragment instanceof ProfileEditFragment || currentFragment instanceof ExamsFragment || currentFragment instanceof UserEducationFragment)
-            menu.getItem(0).setVisible(false);
+        if (currentFragment instanceof ProfileEditFragment || currentFragment instanceof ExamsFragment || currentFragment instanceof UserEducationFragment ||currentFragment instanceof StreamFragment || currentFragment instanceof PsychometricTestParentFragment)
+            menu.setGroupVisible(R.id.main_menu_group, false);
         else
             menu.getItem(0).setVisible(true);
         setSearchAvailable(menu);
@@ -664,7 +686,7 @@ public class MainActivity extends AppCompatActivity
     public void showOverflowMenu(boolean showMenu){
         if(menu == null)
             return;
-        menu.setGroupVisible(R.id.main_menu_group, showMenu);
+//        menu.setGroupVisible(R.id.main_menu_group, showMenu);
     }
 
     private void setSearchAvailable(Menu menu) {
@@ -819,6 +841,7 @@ public class MainActivity extends AppCompatActivity
      */
 
     private void mLoadUserStatusScreen() {
+
         if(MainActivity.type != null && !MainActivity.type.matches("")){
             mhandleNotifications();
         }
@@ -882,10 +905,19 @@ public class MainActivity extends AppCompatActivity
             Map<String, Object> map = JSON.std.mapFrom(response);
             String results=JSON.std.asString(map.get("results"));
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
-            if(!isUpdateStreams) {
-                this.mClearBackStack();
-            }
+            this.mClearBackStack();
             this.mDisplayFragment(StreamFragment.newInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    private void mDisplayStreamsEditSelection(String response, boolean addToBackstack) {
+        try {
+            Map<String, Object> map = JSON.std.mapFrom(response);
+            String results=JSON.std.asString(map.get("results"));
+            List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
+            this.mDisplayFragment(StreamFragment.newEditableInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1327,7 +1359,7 @@ private boolean isUpdateStreams;
             case Constants.WIDGET_SHORTLIST_INSTITUTES:
                 this.mCurrentTitle = "WishList Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
-                this.mDisplayInstituteList(response, false, true);
+                this.mDisplayInstituteList(response, false, true,Constants.SHORTLIST_TYPE);
                 break;
             case Constants.WIDGET_INSTITUTES:
                 this.mCurrentTitle = "Institutes";
@@ -1384,9 +1416,9 @@ private boolean isUpdateStreams;
             case Constants.TAG_NEXT_INSTITUTE:
                 this.updateNextInstituteList(response);
                 break;
-           /* case Constants.TAG_NEXT_SHORTLIST_INSTITUTE:
-                this.updateNextShortListedInstitutes(response);
-                break;*/
+            case Constants.TAG_NEXT_SHORTLIST_INSTITUTE:
+                this.updateNextInstituteList(response);
+                break;
             case Constants.TAG_NEXT_NEWS:
                 this.updateNextNewsList(response);
                 break;
@@ -1499,6 +1531,19 @@ private boolean isUpdateStreams;
                 }
 
                 break;
+
+            case Constants.TAG_SUBMIT_EDITED_PREFRENCES:
+                if (tags.length > 1) {
+                    parentIndex = tags[1];
+                    childIndex = tags[2];
+
+                    if (tags.length > 3)
+                        extraTag = tags[3];
+
+                    this.mStreamAndLevelSelected(response, parentIndex, childIndex, extraTag,true);
+                }
+
+                break;
             case Constants.TAG_UPDATE_PREFRENCES:
                 this.mStreamAndLevelUpdated(response);
                 this.mClearBackStack();
@@ -1539,20 +1584,20 @@ private boolean isUpdateStreams;
                 }
                 break;
             case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
+                isUpdateStreams=false;
                 this.onPsychometricTestResponse(response);
                 break;
 
             case Constants.TAG_EDIT_PSYCHOMETRIC_QUESTIONS:
                 isUpdateStreams=true;
-                this.onPsychometricTestResponse(response);
+                this.onEditPsychometricTestResponse(response);
                 break;
 
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
-                if(!isUpdateStreams) {
                     this.mDisplayStreamsSelection(response, false);
-                }else {
-                    this.mDisplayStreamsSelection(response, true);
-                }
+                break;
+            case Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM:
+                    this.mDisplayStreamsEditSelection(response, true);
                 break;
             case Constants.TAG_PSYCHOMETRIC_TEXT_COMPLETED:
                 if (tags.length > 2) {
@@ -1619,6 +1664,7 @@ private boolean isUpdateStreams;
                 MainActivity.user.setStream(streamId);
                 MainActivity.user.setLevel_name(userObj.getLevel_name());
                 MainActivity.user.setLevel(userObj.getLevel());
+                MainActivity.user.setUser_education(userObj.getUser_education());
                 MainActivity.user.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
             }
 
@@ -1627,9 +1673,10 @@ private boolean isUpdateStreams;
         }
         if(!isUpdateStreams) {
             this.mClearBackStack();
+            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
+        }else {
+            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST, Constants.BASE_URL + "user-exams/", null, 0);
         }
-        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
-
     }
 
 
@@ -1794,72 +1841,74 @@ private boolean isUpdateStreams;
         this.connecto.track(Constants.ACTION_STREAM_UPDATED, new Properties().putValue(Constants.USER_STREAM_NAME, MainActivity.user.getStream_name()));
         this.connecto.track(Constants.ACTION_LEVEL_UPDATED, new Properties().putValue(Constants.USER_LEVEL_NAME, MainActivity.user.getLevel_name()));
     }
-
-    //Saved on DB, now save it in shared preferences.
     private void mStreamAndLevelSelected(String response, String level, String stream, String streamName) {
+        this.mStreamAndLevelSelected(response,level,stream,streamName,false);
+    }
+    //Saved on DB, now save it in shared preferences.
+    private void mStreamAndLevelSelected(String response, String level, String stream, String streamName,boolean isUpdateStreams) {
         //Retrieve token from pref to save it across the pref updates
 
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.USER_CREATED, true).commit();
         User tempUser = MainActivity.user;
-    if(!isUpdateStreams) {
+        if (!isUpdateStreams) {
 
-    try {
-        MainActivity.user = JSON.std.beanFrom(User.class, response);
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-    //save the preferences locally
-    MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
-    if (tempUser != null) {
-        MainActivity.user.setToken(tempUser.getToken());
-        MainActivity.user.setImage(tempUser.getImage());
-        MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
-        MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
-        MainActivity.user.profileData = tempUser.profileData;
-    }
+            try {
+                MainActivity.user = JSON.std.beanFrom(User.class, response);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //save the preferences locally
+            MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
+            if (tempUser != null) {
+                MainActivity.user.setToken(tempUser.getToken());
+                MainActivity.user.setImage(tempUser.getImage());
+                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+                MainActivity.user.profileData = tempUser.profileData;
+            }
 
-    if (streamName != "" && streamName != null)
-        MainActivity.user.setStream_name(streamName);
-
-    try {
-        String user = "";
-        user = JSON.std.asString(MainActivity.user);
-        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, user).commit();
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-
-    //GA Event for Stream and Level update
-    MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_STREAM_SELECTED, user.getStream_name());
-    MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_LEVEL_SELECTED, user.getLevel_name());
-
-    //Send event to connecto for stream and level selection
-    this.connecto.track("Stream Selected", new Properties().putValue(Constants.USER_STREAM_NAME, user.getStream_name()));
-    this.connecto.track("Level Selected", new Properties().putValue(Constants.USER_LEVEL_NAME, user.getLevel_name()));
-    this.mClearBackStack();
-        this.mLoadUserProfile(null);
-    } else {
-        isUpdateStreams=false;
-        try {
-            User user = JSON.std.beanFrom(User.class, response);
             if (streamName != "" && streamName != null)
                 MainActivity.user.setStream_name(streamName);
+
+            try {
+                String user = "";
+                user = JSON.std.asString(MainActivity.user);
+                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, user).commit();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //GA Event for Stream and Level update
+            MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_STREAM_SELECTED, user.getStream_name());
+            MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_LEVEL_SELECTED, user.getLevel_name());
+
+            //Send event to connecto for stream and level selection
+            this.connecto.track("Stream Selected", new Properties().putValue(Constants.USER_STREAM_NAME, user.getStream_name()));
+            this.connecto.track("Level Selected", new Properties().putValue(Constants.USER_LEVEL_NAME, user.getLevel_name()));
+            this.mClearBackStack();
+            this.mLoadUserProfile(null);
+        } else {
+            try {
+                User user = JSON.std.beanFrom(User.class, response);
+                if (streamName != "" && streamName != null)
+                    MainActivity.user.setStream_name(streamName);
                 MainActivity.user.setPsychometric_given(user.getPsychometric_given());
-            MainActivity.user.setToken(tempUser.getToken());
-            MainActivity.user.setImage(tempUser.getImage());
-            MainActivity.user.setCollegedekho_recommended_streams(user.getCollegedekho_recommended_streams());
-            MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
-            MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
-            MainActivity.user.profileData = tempUser.profileData;
-            String u = "";
-            u = JSON.std.asString(MainActivity.user);
-            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
-            onBackPressed();
-            onBackPressed();
-        } catch (IOException e) {
-            e.printStackTrace();
+                MainActivity.user.setToken(tempUser.getToken());
+                MainActivity.user.setImage(tempUser.getImage());
+                MainActivity.user.setUser_education(user.getUser_education());
+                MainActivity.user.setCollegedekho_recommended_streams(user.getCollegedekho_recommended_streams());
+                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+                MainActivity.user.profileData = tempUser.profileData;
+                String u = "";
+                u = JSON.std.asString(MainActivity.user);
+                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+                onBackPressed();
+                onBackPressed();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-    }
 
     }
 
@@ -2112,6 +2161,9 @@ private boolean isUpdateStreams;
 
             case Constants.TAG_SKIP_LOGIN:
             case Constants.TAG_CREATE_ANONY_USER:
+            case Constants.TAG_EDIT_EXAMS_LIST:
+            case Constants.TAG_EDIT_PSYCHOMETRIC_QUESTIONS:
+            case Constants.TAG_EDIT_USER_EDUCATION:
                 return "Loading....";
             case Constants.TAG_USER_REGISTRATION :
                 return "Creating User Please Wait";
@@ -2123,6 +2175,7 @@ private boolean isUpdateStreams;
             case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
                 return "Loading Exams...";
             case Constants.TAG_EXAM_SUMMARY:
+            case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
                 return "Loading....";
             case Constants.TAG_SUBMIT_EXAMS_LIST:
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
@@ -2168,6 +2221,8 @@ private boolean isUpdateStreams;
                 return "Loading your plan...";
             case Constants.TAG_MY_ALERTS:
                 return "Loading important events...";
+//            default:
+//                return "Loading...";
         }
         return null;
     }
@@ -2358,8 +2413,25 @@ private boolean isUpdateStreams;
                 .show();
     }
 
+    @Override
+    public void onEditedStreamSelected(final String stream, final String streamName) {
+        new AlertDialog.Builder(this)
+                .setTitle("Please select a level")
+                .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        MainActivity.this.mOnCourseLevelSelected(which, stream, streamName,true);
+                        dialog.dismiss();
+                    }
+                })
+//                .setCancelable(false)
+                .show();
+    }
 
     private void mOnCourseLevelSelected(int level, String streamURI, String streamName) {
+        this.mOnCourseLevelSelected(level, streamURI, streamName, false);
+    }
+        private void mOnCourseLevelSelected(int level, String streamURI, String streamName,boolean isEdited) {
         //get device id
         String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -2375,8 +2447,12 @@ private boolean isUpdateStreams;
 
         if (streamName != null || streamName != "")
             MainActivity.user.setStream_name(streamName);
+            if (!isEdited) {
+                this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, Constants.BASE_URL + "preferences/", hashMap);
+            } else {
+                this.mMakeNetworkCall(Constants.TAG_SUBMIT_EDITED_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, Constants.BASE_URL + "preferences/", hashMap);
 
-        this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, Constants.BASE_URL + "preferences/", hashMap);
+            }
           }
 
     @Override
@@ -2832,6 +2908,10 @@ private boolean isUpdateStreams;
         this.networkUtils.networkData(tag, url, params);
     }
 
+    private void mMakePreferenceNetworkCall(String tag, String url, Map<String, String> params) {
+        this.showProgress(tag);
+        this.networkUtils.putData(tag, url, params);
+    }
     private void mMakeJsonObjectNetworkCall(String tag, String url, JSONObject params, int method) {
         this.showProgress(tag);
         this.networkUtils.networkDataWithObjectParam(tag, url, params, method);
@@ -3488,6 +3568,7 @@ private boolean isUpdateStreams;
     }
 
     private void onUserExamsEdited(String response) {
+        isReloadProfile=true;
         try {
             List<ExamDetail>exams = JSON.std.listOfFrom(ExamDetail.class, extractResults(response));
             MainActivity.user.setUser_exams(new ArrayList<>(exams));
@@ -3790,11 +3871,11 @@ private boolean isUpdateStreams;
 
     private void onUserEducationEdited(String response){
         try {
-            if(this.user.getIs_preparing().equals("0")) {
                 UserEducation userEducation = JSON.std.beanFrom(UserEducation.class, response);
                 MainActivity.user.setUser_education(userEducation);
                 String u = JSON.std.asString(MainActivity.user);
                 this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+            if(this.user.getIs_preparing().equals("0")) {
                 onBackPressed();
             }else{
 //                this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
@@ -3842,6 +3923,15 @@ private boolean isUpdateStreams;
     public void onExamsEdited(JSONObject params) {
         this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST,Constants.BASE_URL + "yearly-exams/",params,1);
     }
+
+    @Override
+    public void onCancelExamSubmission() {
+        onBackPressed();
+        if(currentFragment !=null && currentFragment instanceof UserEducationFragment){
+            onBackPressed();
+        }
+    }
+
     /**
      * This method is used to send user's current education
      * details to server like current level, stream and marks
@@ -3984,6 +4074,11 @@ private void onNotPreperingEducationResponse(String response){
     }
 
     @Override
+    public void onReloadProfile() {
+        mLoadUserStatusScreen();
+    }
+
+    @Override
     public void onPsychometricTest() {
         this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_QUESTIONS,Constants.BASE_URL+"psychometric/",null);
 
@@ -4013,6 +4108,18 @@ private void onNotPreperingEducationResponse(String response){
             this.psychometricQuestionsList = JSON.std.listOfFrom(PsychometricTestQuestion.class, val);
             this.mDisplayFragment(PsychometricTestParentFragment.newInstance(new ArrayList(this.psychometricQuestionsList)),true,PsychometricTestParentFragment.class.toString() );
 
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    private void onEditPsychometricTestResponse(String response){
+
+        try {
+            Map<String, Object> map = JSON.std.mapFrom(response);
+            String val = JSON.std.asString(map.get("questions"));
+            this.psychometricQuestionsList = JSON.std.listOfFrom(PsychometricTestQuestion.class, val);
+            this.mDisplayFragment(PsychometricTestParentFragment.newEditableInstance(new ArrayList(this.psychometricQuestionsList)),true,PsychometricTestParentFragment.class.toString() );
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -4078,8 +4185,12 @@ private void onNotPreperingEducationResponse(String response){
     }
 
     @Override
-    public void onSubmitPsychometricTest(JSONObject params) {
-        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM, Constants.BASE_URL + "psychometric/", params, 1);
+    public void onSubmitPsychometricTest(JSONObject params,boolean fromEditProfile) {
+        if(fromEditProfile){
+            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM, Constants.BASE_URL + "psychometric/", params, 1);
+        }else {
+            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM, Constants.BASE_URL + "psychometric/", params, 1);
+        }
     }
 
     public void onSubjectSelected(Subjects subject, int position) {
@@ -4360,7 +4471,6 @@ private void onNotPreperingEducationResponse(String response){
     @Override
     public void onEditUserEducation() {
         this.mMakeNetworkCall(Constants.TAG_EDIT_USER_EDUCATION,  Constants.BASE_URL + "user-education/", null);
-        Toast.makeText(this, "Edit Education", Toast.LENGTH_SHORT).show();
     }
     private void mDisplayEditUserEducationFragment(String response){
         try {
@@ -4386,7 +4496,6 @@ private void onNotPreperingEducationResponse(String response){
     @Override
     public void onEditUserExams() {
         this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
-        Toast.makeText(this,"Edit Exams",Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -4596,7 +4705,7 @@ private void onNotPreperingEducationResponse(String response){
 
             this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, Constants.BASE_URL+"personalize/articles", null);
         } else {
-            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL+"personalize/institutes/", null);
+//            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL+"personalize/institutes/", null);
         }
 
     }
@@ -4682,8 +4791,90 @@ private void onNotPreperingEducationResponse(String response){
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
+                if(v instanceof SearchView.SearchAutoComplete){
+                    ((SearchView.SearchAutoComplete)v).performCompletion();
+                }
             }
         }
         return super.dispatchTouchEvent(event);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode != Constants.RC_HANDLE_SMS_PERM) {
+            Log.d(TAG, "Got unexpected permission result: " + requestCode);
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            return;
+        }
+
+        if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "SMS permission granted -");
+
+            return;
+        }
+
+        Log.e(TAG, "Permission not granted: results len = " + grantResults.length +
+                " Result code = " + (grantResults.length > 0 ? grantResults[0] : "(empty)"));
+
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                finish();
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("GPT")
+                .setMessage("Permission Not Granted, OTP will not be read automatically")
+                .setPositiveButton("Ok", listener)
+                .show();
+    }
+    private void requestInternetPermission() {
+        Log.w(TAG, "Internet permission is not granted. Requesting permission");
+
+        final String[] permissions = new String[]{android.Manifest.permission.CAMERA};
+
+        if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.RECEIVE_SMS)) {
+            ActivityCompat.requestPermissions(this, permissions, Constants.RC_HANDLE_SMS_PERM);
+            return;
+        }
+
+//        final Activity thisActivity = getActivity();
+
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityCompat.requestPermissions(MainActivity.this, permissions,Constants.RC_HANDLE_SMS_PERM);
+            }
+        };
+
+        Snackbar.make(null, "Internet permission required.",
+                Snackbar.LENGTH_INDEFINITE)
+                .setAction("OK", listener)
+                .show();
+    }
+
+    private void checkSMSPermission(){
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECEIVE_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+//                    Manifest.permission.RECEIVE_SMS)) {
+//
+//                // Show an expanation to the user *asynchronously* -- don't block
+//                // this thread waiting for the user's response! After the user
+//                // sees the explanation, try again to request the permission.
+//
+//            } else {
+
+            // No explanation needed, we can request the permission.
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.RECEIVE_SMS},
+                    Constants.RC_HANDLE_SMS_PERM);
+//            }
+        }
     }
 }

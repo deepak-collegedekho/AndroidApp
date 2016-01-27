@@ -14,7 +14,7 @@ public class ExamDetail implements Parcelable
     private String exam_marks="";
     private String exam_name="";
     private String exam_tag="";
-    private String exam_short_name="";
+    private String exam_short_name="Exam";
     private boolean isSelected;
 
     public boolean is_preparing() {
@@ -121,6 +121,8 @@ public class ExamDetail implements Parcelable
     }
 
     public String getExam_short_name() {
+        if(exam_short_name==null || exam_short_name.matches(""))
+        return exam_name;
         return exam_short_name;
     }
 

@@ -23,6 +23,7 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
 
     private OnStreamInteractionListener mListener;
     private static boolean isStreamUpdate;
+    private boolean isEditMode;
 
     public StreamFragment() {
         // Required empty public constructor
@@ -37,12 +38,23 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
         return streamFragment;
     }
 
+    public static StreamFragment newEditableInstance(ArrayList<Stream> streams , boolean isForUpdate) {
+        StreamFragment streamFragment = new StreamFragment();
+        Bundle b = new Bundle();
+        b.putParcelableArrayList(ARG_STREAMS, streams);
+        b.putBoolean(ARG_STREAM_UPDATE, isForUpdate);
+        b.putBoolean("is_edit_mode",true);
+        streamFragment.setArguments(b);
+        return streamFragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             streams = getArguments().getParcelableArrayList(ARG_STREAMS);
             isStreamUpdate = getArguments().getBoolean(ARG_STREAM_UPDATE);
+            isEditMode=getArguments().getBoolean("is_edit_mode");
         }
     }
 
@@ -59,7 +71,11 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
 
     public void onStreamSelected(String uri, String name) {
         if (mListener != null) {
-            mListener.onStreamSelected(uri, name);
+            if (!isEditMode) {
+                mListener.onStreamSelected(uri, name);
+            }else {
+                mListener.onEditedStreamSelected(uri,name);
+            }
         }
     }
 
@@ -95,7 +111,7 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
 
     public interface OnStreamInteractionListener {
         void onStreamSelected(String stream, String streamName);
-
+        void onEditedStreamSelected(String stream, String streamName);
         //void onStreamUpdated(String stream, String streamName);
     }
 

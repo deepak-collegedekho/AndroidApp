@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <include
@@ -10,8 +11,25 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_centerHorizontal="true" />
-
-    <ScrollView
+    <android.support.v4.view.ViewPager
+        android:id="@+id/profile_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/include_edit_image_layout"
+        >
+        <android.support.v4.view.PagerTabStrip
+            android:id="@+id/profile_pager_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:textColor="#fff"
+            android:background="@color/primaryColor"
+            android:scrollbars="none"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:tabMode="scrollable"
+            />
+    </android.support.v4.view.ViewPager>
+   <!-- <ScrollView
         android:id="@+id/profile_scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -73,48 +91,6 @@
                     android:inputType="textEmailAddress" />
             </android.support.design.widget.TextInputLayout>
 
-            <LinearLayout android:id="@+id/user_exams_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/drawable_layout_border"
-                android:layout_marginTop="@dimen/m20dp"
-                android:paddingBottom="@dimen/m5dp"
-                android:orientation="vertical">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="@dimen/m4dp"
-                    android:background="@drawable/bg_button_blue"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:text="Exams"
-                        android:padding="@dimen/m5dp"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:layout_marginLeft="@dimen/m6dp"
-                        android:layout_weight=".8"
-                        android:textColor="@color/white" />
-
-                    <ImageView  android:id="@+id/btn_edit_exams"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:padding="@dimen/m10dp"
-                        android:layout_weight="0.2"
-                        android:src="@drawable/edit_icon" />
-                </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/exams_list_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"></LinearLayout>
-
-            </LinearLayout>
-
             <LinearLayout android:id="@+id/user_education_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -157,7 +133,47 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"></LinearLayout>
             </LinearLayout>
+            <LinearLayout android:id="@+id/user_exams_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/drawable_layout_border"
+                android:layout_marginTop="@dimen/m20dp"
+                android:paddingBottom="@dimen/m5dp"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="@dimen/m4dp"
+                    android:background="@drawable/bg_button_blue"
+                    android:orientation="horizontal">
 
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="Exams"
+                        android:padding="@dimen/m5dp"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:layout_marginLeft="@dimen/m6dp"
+                        android:layout_weight=".8"
+                        android:textColor="@color/white" />
+
+                    <ImageView  android:id="@+id/btn_edit_exams"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/m10dp"
+                        android:layout_weight="0.2"
+                        android:src="@drawable/edit_icon" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/exams_list_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"></LinearLayout>
+
+            </LinearLayout>
             <LinearLayout android:id="@+id/user_streams_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -189,6 +205,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:padding="@dimen/m10dp"
+                        android:visibility="gone"
                         android:layout_weight="0.2"
                         android:src="@drawable/edit_icon" />
                 </LinearLayout>
@@ -266,9 +283,9 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </ScrollView>-->
 
-    <TextView
+   <!-- <TextView
         android:id="@+id/profile_save_button"
         style="@style/AppTheme.OrangeButton"
         android:layout_width="match_parent"
@@ -279,6 +296,6 @@
         android:paddingBottom="@dimen/m9dp"
         android:paddingTop="@dimen/m9dp"
         android:text="SAVE"
-        android:textSize="21sp" />
+        android:textSize="21sp" />-->
 
 </RelativeLayout>
