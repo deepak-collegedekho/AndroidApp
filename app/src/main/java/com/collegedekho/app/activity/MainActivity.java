@@ -680,6 +680,11 @@ public class MainActivity extends AppCompatActivity
         else
             menu.getItem(0).setVisible(true);
         setSearchAvailable(menu);
+        if(!getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PROFILE_SCREEN_TUTE, false)){
+            menu.setGroupVisible(R.id.main_menu_group, false);
+            menu.setGroupVisible(R.id.search_menu_group, false);
+        }
+
         return super.onPrepareOptionsMenu(menu);
     }
 

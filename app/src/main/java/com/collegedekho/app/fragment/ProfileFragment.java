@@ -157,7 +157,7 @@ public class ProfileFragment extends BaseFragment
                     View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                     bottomMenu.animate().translationY(0);
                     bottomMenu.setVisibility(View.VISIBLE);
-
+                    getActivity().invalidateOptionsMenu();
                     getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.PROFILE_SCREEN_TUTE, true).apply();
                 }
             }
