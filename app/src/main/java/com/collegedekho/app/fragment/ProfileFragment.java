@@ -205,7 +205,11 @@ public class ProfileFragment extends BaseFragment
     @Override
     public void onResume() {
         super.onResume();
+        try {
+            getActivity().invalidateOptionsMenu();
+        }catch (Exception e){
 
+        }
         View view =  getView();
         if(view != null ){
             IS_TUTE_COMPLETED= getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PROFILE_SCREEN_TUTE, false);
@@ -272,11 +276,46 @@ public class ProfileFragment extends BaseFragment
         updateExamSummaryHandler.postDelayed(updateExamSummaryRunnable,300);
         if(((MainActivity)getActivity()).isReloadProfile && this.mListener!=null){
             ((MainActivity)getActivity()).isReloadProfile=false;
-            mListener.onReloadProfile();
-
+            this.mExamDetailList=MainActivity.user.getUser_exams();
+//            mListener.onReloadProfile();
+//            getActivity().getSupportFragmentManager().beginTransaction().detach(this).attach(this).commit();
+            updateUserProfile(this.mExamDetailList);
         }
     }
 
+public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
+    this.mExamDetailList=userExamsList;
+    View rootView=getView();
+    if(rootView==null){
+        return;
+    }
+    if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
+        rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.VISIBLE);
+        rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.VISIBLE);
+        this.mExamTabPager.setVisibility(View.VISIBLE);
+        this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
+        this.mExamTabPager.setAdapter(this.mDetailsAdapter);
+        rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
+        rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
+        rootView.findViewById(R.id.pager_strip).setVisibility(View.VISIBLE);
+
+    }else{
+
+        if(this.mListener != null)
+        {
+            this.mExamDetail = new ExamDetail();
+            this.mExamDetail.setId("0");
+            this.mListener.onExamTabSelected(this.mExamDetail);
+        }
+
+        rootView.findViewById(R.id.pager_strip).setVisibility(View.GONE);
+        rootView.findViewById(R.id.prep_buddies).setVisibility(View.GONE);
+        rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.GONE);
+        rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.GONE);
+        rootView.findViewById(R.id.backup_colleges_layout_RL).setVisibility(View.GONE);
+    }
+
+}
 
     @Override
     public void onAttach(Context context) {
@@ -336,6 +375,7 @@ public class ProfileFragment extends BaseFragment
     {
         if(mListener != null)
             mListener.onHomeItemSelected(requestType, url, examTag);
+        Utils.UnregisterReceiver(this.getActivity());
     }
 
     private void mExamTabSelected(int position) {
@@ -408,12 +448,8 @@ public class ProfileFragment extends BaseFragment
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnTabSelectListener {
-
         void onExamTabSelected(ExamDetail tabPosition);
-
         void onHomeItemSelected(String requestType, String url, String examTag);
-
-        void onReloadProfile();
     }
 
     Handler updateExamSummaryHandler=new Handler();

@@ -28,6 +28,16 @@ public class Articles implements Parcelable{
     public String similar_articles;
     public int id;
     public String stream;
+
+    public int getNews_source() {
+        return news_source;
+    }
+
+    public void setNews_source(int news_source) {
+        this.news_source = news_source;
+    }
+
+    public int news_source;
     private ArrayList<String> similarArticlesIds ;
 
      public  Articles() {
@@ -42,6 +52,7 @@ public class Articles implements Parcelable{
         similar_articles = source.readString();
         stream = source.readString();
         id  =   source.readInt();
+        news_source=source.readInt();
     }
     @Override
     public int describeContents() {   return 0;  }
@@ -56,6 +67,7 @@ public class Articles implements Parcelable{
         dest.writeString(similar_articles);
         dest.writeString(stream);
         dest.writeInt(id);
+        dest.writeInt(news_source);
     }
 
 

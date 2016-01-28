@@ -1327,7 +1327,7 @@ private boolean isUpdateStreams;
                 this.onUserEducationEdited(response);
                 break;
             case Constants.TAG_NOT_PREPARING_EDUCATION_DETAILS_SUBMIT:
-                this.onNotPreperingEducationResponse(response);
+                this.onNotPreparingEducationResponse(response);
                 break;
             case Constants.TAG_USER_EDUCATION_SET:
                 this.mUserEducationStepCompleted(response);
@@ -1810,20 +1810,18 @@ private boolean isUpdateStreams;
     {
         User tempUser = MainActivity.user;
         try {
-            MainActivity.user = JSON.std.beanFrom(User.class, response);
+            tempUser= JSON.std.beanFrom(User.class, response);
+
         }
         catch (IOException e) {
             e.printStackTrace();
        }
 
         //save the preferences locally
-        MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
+//        MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
         if(tempUser != null) {
-            MainActivity.user.setToken(tempUser.getToken());
-            MainActivity.user.setImage(tempUser.getImage());
-            MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
-            MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
-            MainActivity.user.profileData = tempUser.profileData;
+            MainActivity.user.setPhone_no(tempUser.getPhone_no());
+            MainActivity.user.setName(tempUser.getName());
         }
         try {
             String u = null;
@@ -3308,7 +3306,9 @@ private boolean isUpdateStreams;
     @Override
     public void onBackPressed() {
         int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
-
+        if (currentFragment != null && currentFragment instanceof SyllabusSubjectsListFragment) {
+            ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
+        }
         if (backStackCount == 0 && !Constants.READY_TO_CLOSE) {
             if (isFromNotification) {
                 isFromNotification = false;
@@ -3848,9 +3848,17 @@ private boolean isUpdateStreams;
         }
 
         if(userObj != null && user != null){
-          this.user.setSublevel(userObj.getSublevel());
-          this.user.setIs_preparing(userObj.getIs_preparing());
+            try {
+                UserEducation education=JSON.std.beanFrom(UserEducation.class,response);
+                this.user.setSublevel(userObj.getSublevel());
+                this.user.setStream(userObj.getStream());
+                this.user.setIs_preparing(userObj.getIs_preparing());
+                this.user.setUser_education(education);
+                String u = JSON.std.asString(this.user);
+                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+            }catch (Exception e){
 
+            }
         }
         this.mMakeNetworkCall(Constants.TAG_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
 
@@ -3957,9 +3965,20 @@ private boolean isUpdateStreams;
 //        this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_CURRENT_STREAM_SELECTED, user.getStream_name()).putValue(Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing()));
     }
 
-private void onNotPreperingEducationResponse(String response){
+private void onNotPreparingEducationResponse(String response){
     this.mDisplayFragment(NotPreparingFragment.newInstance(),true,NotPreparingFragment.class.toString());
+    try {
+        UserEducation education = JSON.std.beanFrom(UserEducation.class, response);
+        MainActivity.user.setIs_preparing("0");
+        MainActivity.user.setEducation_set(1);
+        MainActivity.user.setSublevel(education.getSublevel());
+        MainActivity.user.setUser_education(education);
+        MainActivity.user.setStream(education.getStream());
+        String u = JSON.std.asString(user);
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+    }catch (Exception e){
 
+    }
     //Appsflyer events
     Map<String, Object> eventValue = new HashMap<>();
     eventValue.put(Constants.USER_CURRENT_SUBLEVEL, user.getSublevel());
@@ -4071,11 +4090,6 @@ private void onNotPreperingEducationResponse(String response){
             params.put("tag_uris[" + (0) + "]",tag);
 
        this.mMakeNetworkCall(requestType,url, params);
-    }
-
-    @Override
-    public void onReloadProfile() {
-        mLoadUserStatusScreen();
     }
 
     @Override

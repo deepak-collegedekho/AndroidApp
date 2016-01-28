@@ -267,8 +267,8 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_submit_subjects:
-                submitSyllabusStatus();
-                ((MainActivity)getActivity()).onBackPressed();
+//                submitSyllabusStatus();
+                getActivity().onBackPressed();
                 break;
         }
     }

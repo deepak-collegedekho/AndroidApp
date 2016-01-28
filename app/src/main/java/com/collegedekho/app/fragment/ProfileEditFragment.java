@@ -336,7 +336,11 @@ public class ProfileEditFragment extends BaseFragment {
             addRecommended(getActivity(),recommendedLayout,MainActivity.user.getCollegedekho_recommended_streams());
             addEducation(getActivity(),educationLayout,MainActivity.user.getUser_education());
 //            btnEditStreams.setVisibility(View.GONE);
-            addStreams(getActivity(), streamsLayout, MainActivity.user.getStream_name());
+            String streamName=MainActivity.user.getStream_name();
+//            if(streamName==null||streamName.isEmpty()){
+//                streamName=MainActivity.user.getStream();
+//            }
+            addStreams(getActivity(), streamsLayout, streamName);
 
             if(MainActivity.user.getIs_preparing().equals("1")) {
 //                btnEditStreams.setVisibility(View.VISIBLE);

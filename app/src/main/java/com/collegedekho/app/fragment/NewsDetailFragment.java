@@ -99,7 +99,11 @@ public class NewsDetailFragment extends BaseFragment {
         ((TextView) rootView.findViewById(R.id.textview_news_title)).setText(mNews.title);
 //        ((TextView) rootView.findViewById(R.id.textview_news_content)).setText(Html.fromHtml(mNews.content));
         LinearLayout newsLayout=(LinearLayout)rootView.findViewById(R.id.news_content_layout);
-        Utils.renderHtml(getActivity(),newsLayout,mNews.content);
+        if(mNews.getNews_source()==2){
+            ((TextView) rootView.findViewById(R.id.textview_news_content)).setText(Html.fromHtml(mNews.content));
+        }else {
+            Utils.renderHtml(getActivity(), newsLayout, mNews.content);
+        }
         if (mNews.image != null && !mNews.image.isEmpty())
             ((NetworkImageView) rootView.findViewById(R.id.image_news_expanded)).setImageUrl(mNews.image, MySingleton.getInstance(getActivity()).getImageLoader());
         else

@@ -222,14 +222,14 @@ public class QnAQuestionsListFragment extends BaseFragment {
     {
         EditText check = (EditText)rootView.findViewById(R.id.institute_qna_question_title);
               String title =  check.getText().toString();
-        if (title == null || title.length() <= 0) {
+        if (title == null || title.trim().length() <= 0) {
             Utils.DisplayToast(getActivity(), "Question title cannot be empty.");
              return null;
         }
         EditText check1 = (EditText)rootView.findViewById(R.id.institute_qna_question_desc);
 
         String desc =  check1.getText().toString();
-        if (desc == null || desc.length() <= 0) {
+        if (desc == null || desc.trim().length() <= 0) {
             Utils.DisplayToast(getActivity(), "Question text cannot be empty.");
              return null;
         }

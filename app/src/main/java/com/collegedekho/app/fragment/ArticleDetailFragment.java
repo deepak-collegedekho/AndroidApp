@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -102,7 +103,11 @@ public class ArticleDetailFragment extends BaseFragment {
             return;
         }
         LinearLayout newsLayout=(LinearLayout)rootView.findViewById(R.id.news_content_layout);
-        Utils.renderHtml(getActivity(),newsLayout,mArticle.content);
+        if(mArticle.getNews_source()==2){
+            ((TextView) rootView.findViewById(R.id.textview_article_content)).setText(Html.fromHtml(mArticle.content));
+        }else{
+            Utils.renderHtml(getActivity(),newsLayout,mArticle.content);
+        }
         ((TextView) rootView.findViewById(R.id.textview_article_title)).setText(mArticle.title);
 //        ((TextView) rootView.findViewById(R.id.textview_article_content)).setText(Html.fromHtml(mArticle.content));
         TextView contentView=(TextView) rootView.findViewById(R.id.textview_article_content);
