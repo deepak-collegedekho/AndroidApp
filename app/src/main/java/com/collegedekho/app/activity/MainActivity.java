@@ -1818,7 +1818,7 @@ private boolean isUpdateStreams;
        }
 
         //save the preferences locally
-//        MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
+        MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
         if(tempUser != null) {
             MainActivity.user.setPhone_no(tempUser.getPhone_no());
             MainActivity.user.setName(tempUser.getName());

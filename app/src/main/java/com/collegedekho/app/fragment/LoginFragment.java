@@ -91,7 +91,7 @@ public class LoginFragment extends  BaseFragment{
 
             @Override
             public void onError(FacebookException e) {
-
+//                e.printStackTrace();
                 Log.e(TAG, "facebook login on error");
                 Toast.makeText(getActivity(), "Facebook SignIn has some error", Toast.LENGTH_LONG).show();
             }
