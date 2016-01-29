@@ -821,7 +821,7 @@ public class MainActivity extends AppCompatActivity
                     hashMap.put(Constants.USER_NAME, user.profileData[0]);
                     hashMap.put(Constants.USER_DEVICE_ID, deviceId);
 
-                    this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED, Constants.BASE_URL + "preferences/", hashMap);
+                    this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED, MainActivity.user.getResource_uri(), hashMap, Request.Method.PUT);
                 }
             }
 
@@ -2451,9 +2451,9 @@ private boolean isUpdateStreams;
         if (streamName != null || streamName != "")
             MainActivity.user.setStream_name(streamName);
             if (!isEdited) {
-                this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, Constants.BASE_URL + "preferences/", hashMap);
+                this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, MainActivity.user.getResource_uri(), hashMap, Request.Method.PUT);
             } else {
-                this.mMakeNetworkCall(Constants.TAG_SUBMIT_EDITED_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, Constants.BASE_URL + "preferences/", hashMap);
+                this.mMakeNetworkCall(Constants.TAG_SUBMIT_EDITED_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, MainActivity.user.getResource_uri(), hashMap, Request.Method.PUT);
 
             }
           }
@@ -3557,11 +3557,11 @@ private boolean isUpdateStreams;
     private void mOnUserExamsSelected(String response) {
         String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        Map<String, String> params = new HashMap<>();
-        params.put(Constants.USER_EXAMS_SET,"1");
-        params.put(Constants.USER_DEVICE_ID, deviceId);
-
-        this.mMakeNetworkCall(Constants.TAG_USER_EXAMS_SET,Constants.BASE_URL + "preferences/", params);
+//        Map<String, String> params = new HashMap<>();
+//        params.put(Constants.USER_EXAMS_SET,"1");
+//        params.put(Constants.USER_DEVICE_ID, deviceId);
+//
+        this.mMakeNetworkCall(Constants.TAG_USER_EXAMS_SET,Constants.BASE_URL + "preferences/", null);
         this.mClearBackStack();
         mLoadUserProfile(response);
     }
@@ -3585,16 +3585,27 @@ private boolean isUpdateStreams;
     private void mUserExamStepCompleted(String responseJson) {
 
         try {
-            User userObj = JSON.std.beanFrom(User.class, responseJson);
+            JSONObject prefObject=new JSONObject(responseJson);
+            User userObj = JSON.std.beanFrom(User.class, prefObject.optJSONArray("results").get(0).toString());
             MainActivity.user.setExams_set(userObj.getExams_set());
             MainActivity.user.setUser_exams(userObj.getUser_exams());
             MainActivity.user.setUser_education(userObj.getUser_education());
             MainActivity.user.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
+            MainActivity.user.setLevel(userObj.getLevel());
+            MainActivity.user.setLevel_name(userObj.getLevel_name());
+            MainActivity.user.setEducation_set(userObj.getEducation_set());
+            MainActivity.user.setPsychometric_given(userObj.getPsychometric_given());
+            MainActivity.user.setStream_name(userObj.getStream_name());
+            MainActivity.user.setPhone_no(userObj.getPhone_no());
+            MainActivity.user.setIs_preparing(userObj.getIs_preparing());
+            MainActivity.user.setResource_uri(userObj.getResource_uri());
             String u = JSON.std.asString(MainActivity.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
 
         }catch(IOException e) {
 
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -3607,6 +3618,13 @@ private boolean isUpdateStreams;
             this.user.setLevel(userObj.getLevel());
             this.user.setLevel_name(userObj.getLevel_name());
             this.user.setEducation_set(userObj.getEducation_set());
+            this.user.setUser_exams(userObj.getUser_exams());
+            this.user.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
+            this.user.setPsychometric_given(userObj.getPsychometric_given());
+            this.user.setStream_name(userObj.getStream_name());
+            this.user.setPhone_no(userObj.getPhone_no());
+            this.user.setIs_preparing(userObj.getIs_preparing());
+            this.user.setExams_set(userObj.getExams_set());
             String u = JSON.std.asString(this.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
         }catch(IOException e) {
@@ -3833,11 +3851,11 @@ private boolean isUpdateStreams;
         String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
 
-        Map<String, String> params = new HashMap<>();
-        params.put(Constants.USER_EDUCATION_SET,"1");
-        params.put(Constants.USER_DEVICE_ID, deviceId);
-
-        this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION_SET,Constants.BASE_URL + "preferences/", params);
+//        Map<String, String> params = new HashMap<>();
+//        params.put(Constants.USER_EDUCATION_SET,"1");
+//        params.put(Constants.USER_DEVICE_ID, deviceId);
+//
+//        this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION_SET,Constants.BASE_URL + "preferences/", params);
 
         User userObj = null;
         try {
@@ -4001,7 +4019,9 @@ private void onNotPreparingEducationResponse(String response){
         if(responseJson != null && !responseJson.isEmpty()) {
             try {
                 this.mUserExamsList = JSON.std.listOfFrom(ExamDetail.class, extractResults(responseJson));
-
+                MainActivity.user.setUser_exams(new ArrayList<ExamDetail>(mUserExamsList));
+                String u = JSON.std.asString(MainActivity.user);
+                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
                 Map<String, Object> eventValue = new HashMap<String, Object>();
                 String[] examNames = new String[this.mUserExamsList.size()];
                 for (int n = 0; n < this.mUserExamsList.size(); n++)
@@ -4314,7 +4334,7 @@ private void onNotPreparingEducationResponse(String response){
 
     @Override
     public void onNameUpdated(HashMap params, String msg) {
-        this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED + "#" + msg, Constants.BASE_URL + "preferences/", params);
+        this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED + "#" + msg, MainActivity.user.getResource_uri(), params, Request.Method.PUT);
     }
 
     private void onNameUpdatedResponse(String response , String msg) {
@@ -4477,7 +4497,7 @@ private void onNotPreparingEducationResponse(String response){
 
     @Override
     public void onProfileUpdated(HashMap<String, String> hashMap) {
-        this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, Constants.BASE_URL + "preferences/", hashMap);
+        this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, MainActivity.user.getResource_uri(), hashMap, Request.Method.PUT);
 
     }
 

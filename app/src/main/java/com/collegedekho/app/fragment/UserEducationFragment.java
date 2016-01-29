@@ -174,6 +174,8 @@ public class UserEducationFragment extends BaseFragment {
         rootView.findViewById(R.id.education_submit_button).setOnClickListener(this);
         if(isEditMode){
             rootView.findViewById(R.id.education_tour_guide_image).setVisibility(View.GONE);
+            IS_TUTE_COMPLETED = true;
+            getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.EDUCATION_SCREEN_TUTE, true).apply();
             setForEditEducation();
         }else {
             rootView.findViewById(R.id.education_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
