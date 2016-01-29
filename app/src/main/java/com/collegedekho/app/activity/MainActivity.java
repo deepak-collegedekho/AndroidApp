@@ -1886,8 +1886,8 @@ private boolean isUpdateStreams;
             MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_LEVEL_SELECTED, user.getLevel_name());
 
             //Send event to connecto for stream and level selection
-            this.connecto.track("Stream Selected", new Properties().putValue(Constants.USER_STREAM_NAME, user.getStream_name()));
-            this.connecto.track("Level Selected", new Properties().putValue(Constants.USER_LEVEL_NAME, user.getLevel_name()));
+            this.connecto.track(Constants.ACTION_STREAM_SELECTED, new Properties().putValue(Constants.USER_STREAM_NAME, user.getStream_name()));
+            this.connecto.track(Constants.ACTION_LEVEL_SELECTED, new Properties().putValue(Constants.USER_LEVEL_NAME, user.getLevel_name()));
             this.mClearBackStack();
             this.mLoadUserProfile(null);
         } else {
@@ -2654,7 +2654,7 @@ private boolean isUpdateStreams;
                         "Institute ID: " + String.valueOf(mInstitute.getId()) +
                         "Institute Name: " + mInstitute.getName());
 
-        this.connecto.track(Constants.CATEGORY_INSTITUTES, new Properties().putValue(Constants.APPLY_COURSE_ID, String.valueOf(instituteCourse.getId())).
+        this.connecto.track(Constants.ACTION_COURSE_APPLIED, new Properties().putValue(Constants.APPLY_COURSE_ID, String.valueOf(instituteCourse.getId())).
                 putValue(Constants.APPLY_COURSE, instituteCourse.getName()).
                 putValue(Constants.APPLY_INSTITUTE, mInstitute.getResource_uri()));
 
@@ -2977,7 +2977,7 @@ private boolean isUpdateStreams;
             {
                 //GA and Connecto Event for question vote up
                 MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_QUESTION_UPVOTED, "Question Voted : " + String.valueOf(voteType));
-                this.connecto.track(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, new Properties().putValue(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.LIKE_THING).putValue(question.getResource_uri(), Constants.LIKE_THING));
+                this.connecto.track(Constants.ACTION_VOTE_QNA_QUESTION_UPVOTED, new Properties().putValue(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.LIKE_THING).putValue(question.getResource_uri(), Constants.LIKE_THING));
 
                 //Appsflyer events
                 eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(question.getResource_uri()));
@@ -2987,7 +2987,7 @@ private boolean isUpdateStreams;
             {
                 //GA and Connecto Event for question vote down
                 MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_QUESTION_DOWNVOTED, "Question Voted : " + String.valueOf(voteType));
-                this.connecto.track(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, new Properties().putValue(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.DISLIKE_THING).putValue(question.getResource_uri(), Constants.DISLIKE_THING));
+                this.connecto.track(Constants.ACTION_VOTE_QNA_QUESTION_DOWNVOTED, new Properties().putValue(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.DISLIKE_THING).putValue(question.getResource_uri(), Constants.DISLIKE_THING));
 
                 //Appsflyer events
                 eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(question.getResource_uri()));
@@ -3000,8 +3000,6 @@ private boolean isUpdateStreams;
         {
             Log.e("QnA question voting", e.getMessage());
         }
-
-
     }
 
     private void mQnAAnswerVoteUpdated(int questionIndex, int answerIndex, int voteType) {
@@ -3015,29 +3013,25 @@ private boolean isUpdateStreams;
             {
                 //GA and Connecto Event for answer vote up
                 MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_ANSWER_UPVOTED, "Answer Voted : " + String.valueOf(voteType));
-                this.connecto.track(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, new Properties().putValue(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, Constants.LIKE_THING).putValue(answer.getResource_uri(), Constants.LIKE_THING));
+                this.connecto.track(Constants.ACTION_VOTE_QNA_ANSWER_UPVOTED, new Properties().putValue(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, Constants.LIKE_THING).putValue(answer.getResource_uri(), Constants.LIKE_THING));
                 eventValue.put(Constants.TAG_RESOURCE_URI, answer.getResource_uri());
                 eventValue.put(Constants.VOTE_TYPE, Constants.LIKE_THING);
+                MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_VOTE_QNA_ANSWER_UPVOTED, eventValue);
             }
             else if (voteType == Constants.DISLIKE_THING)
             {
                 //GA and Connecto Event for answer vote down
                 MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_ANSWER_DOWNVOTED, "Answer Voted : " + String.valueOf(voteType));
-                this.connecto.track(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, new Properties().putValue(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, Constants.DISLIKE_THING).putValue(answer.getResource_uri(), Constants.DISLIKE_THING));
+                this.connecto.track(Constants.ACTION_VOTE_QNA_ANSWER_DOWNVOTED, new Properties().putValue(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, Constants.DISLIKE_THING).putValue(answer.getResource_uri(), Constants.DISLIKE_THING));
                 eventValue.put(Constants.TAG_RESOURCE_URI, answer.getResource_uri());
                 eventValue.put(Constants.VOTE_TYPE, Constants.DISLIKE_THING);
+                MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_VOTE_QNA_ANSWER_DOWNVOTED, eventValue);
             }
-
-            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, eventValue);
-
-            //GA Event for answer vote
-            MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, "Answer Voted : " + String.valueOf(voteType));
         }
         catch (Exception e)
         {
             Log.e("QnA answer voting", e.getMessage());
         }
-
     }
 
     private void mOnAnswerAdded(String response, int questionIndex, int index) {

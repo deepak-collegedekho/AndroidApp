@@ -73,7 +73,6 @@ public class NewsFragment extends BaseFragment  {
             this.mTitle = getArguments().getString(ARG_TITLE);
             this.mNextUrl = getArguments().getString(ARG_NEXT);
             listType = Constants.NEWS_TYPE;
-            
         }
     }
 
@@ -94,7 +93,6 @@ public class NewsFragment extends BaseFragment  {
             int padd = Utils.getPadding(getContext(), 60);
             progressBarLL.setGravity(Gravity.RIGHT);
             progressBarLL.setPadding(0, 0, 0, padd);
-
         }
         else {
             layoutManager =new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -172,6 +170,7 @@ public class NewsFragment extends BaseFragment  {
                     this.mViewType = Constants.VIEW_INTO_GRID;
                     rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
                     RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.news_list_recyclerView);
+                    recyclerView.setVisibility(View.VISIBLE);
                     layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
                     recyclerView.setLayoutManager(layoutManager);
                     this.mAdapter = new NewsListAdapter(getActivity(), this.mNewsList, Constants.VIEW_INTO_GRID);
@@ -191,7 +190,7 @@ public class NewsFragment extends BaseFragment  {
                     this.mViewType = Constants.VIEW_INTO_LIST;
                     rootView1.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
                     RecyclerView recyclerView1 = (RecyclerView) rootView1.findViewById(R.id.news_list_recyclerView);
-                   layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+                    layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
                     recyclerView1.setLayoutManager(layoutManager);
                     this.mAdapter = new NewsListAdapter(getActivity(), this.mNewsList, Constants.VIEW_INTO_LIST);
                     recyclerView1.setAdapter(this.mAdapter);
@@ -243,6 +242,7 @@ public class NewsFragment extends BaseFragment  {
             view.findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
             view.findViewById(R.id.news_detail_scrollView).setVisibility(View.GONE);
             view.findViewById(R.id.view_into_grid_list).setVisibility(View.GONE);
+            view.findViewById(R.id.news_list_recyclerView).setVisibility(View.GONE);
         }else{
             view.findViewById(android.R.id.empty).setVisibility(View.GONE);
             view.findViewById(R.id.view_into_grid_list).setVisibility(View.VISIBLE);
@@ -250,6 +250,7 @@ public class NewsFragment extends BaseFragment  {
             if(this.mViewType == Constants.VIEW_INTO_GRID)
             {
                 view.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
+                view.findViewById(R.id.news_list_recyclerView).setVisibility(View.VISIBLE);
                 if(mNewsList != null && !mNewsList.isEmpty())
                     mUpdateNewsDetail(view, mNewsList.get(0));
             }
