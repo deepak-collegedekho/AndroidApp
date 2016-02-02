@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.collegedekho.app.BuildConfig;
 import com.collegedekho.app.htmlparser.HtmlSpanner;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.resource.TypeFaceTypes;
@@ -31,7 +32,9 @@ import com.collegedekho.app.resource.TypeFaceTypes;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.Timer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -345,5 +348,25 @@ public class Utils {
         }
         return screenHeight;
 
+    }
+
+    public static void logApiResponseTime(Calendar calendar, String tag){
+        if(!BuildConfig.DEBUG){
+            return;
+        }
+        if(calendar !=null){
+            try {
+                Calendar cal = Calendar.getInstance();
+                long diff = cal.getTimeInMillis() - calendar.getTimeInMillis();
+                int milliSecs = (int) diff % (1000);
+                int seconds = (int) (diff / 1000) % 60;
+                int minutes = (int) ((diff / (1000 * 60)) % 60);
+//            int hours   = (int) ((diff / (1000*60*60)) % 24);
+
+                Log.e("API_PROFILE", tag + " Started : " + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND) + ":" + calendar.get(Calendar.MILLISECOND) + " Stopped : " + cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND) + ":" + cal.get(Calendar.MILLISECOND) + " Time: " + minutes + ":" + seconds + ":" + milliSecs);
+            }catch (Exception e){
+
+            }
+        }
     }
 }

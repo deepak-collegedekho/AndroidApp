@@ -33,6 +33,8 @@ public class Constants
     public static final String TAG_LOAD_EXAMS_LIST = "load_exams_list";
 
     public static final String TAG_SUBMIT_EXAMS_LIST = "submit_exams_list";
+    public static final String TAG_LOAD_USER_PREFERENCES = "load_user_preferences";
+    public static final String TAG_LAUNCH_HOME = "launch_application_home";
     public static final String TAG_SUBMIT_EDITED_EXAMS_LIST = "submit_edited_exams_list";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_EXAM = "submit_psychometric_exam";
     public static final String TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM = "submit_edit_psychometric_exam";

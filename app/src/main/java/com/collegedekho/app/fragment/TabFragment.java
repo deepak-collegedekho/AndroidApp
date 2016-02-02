@@ -178,8 +178,15 @@ public class TabFragment extends  BaseFragment{
         super.onResume();
         MainActivity mainActivity = (MainActivity)getActivity();
         if (mainActivity != null) {
+            this.mExamDetailList=MainActivity.user.getUser_exams();
             mainActivity.currentFragment = this;
+            this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
+            mExamTabPager.setAdapter(this.mDetailsAdapter);
             mainActivity.mUpdateTabMenuItem(this.selectedTabPosition);
+            if(selectedTabPosition<mExamDetailList.size())
+
+            mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
+
         }
 /*
         if (mExamDetailList.size() >= EXAM_TAB_POSITION)
@@ -408,6 +415,12 @@ public class TabFragment extends  BaseFragment{
             profileCompleted.setProgress(100);
         //else
            // profileCompleted.setProgress(examSummary.getSyllabus_covered());
+    }
+
+    public void updateExamsList(ArrayList<ExamDetail>examsList){
+        this.mExamDetailList=examsList;
+        this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
+        mExamTabPager.setAdapter(this.mDetailsAdapter);
     }
     OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {
         @Override

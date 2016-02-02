@@ -17,6 +17,16 @@ public class ExamSummary implements Parcelable {
     private int  recommended_count;
     private String  next_important_date;
 
+    public String getPreference_uri() {
+        return preference_uri;
+    }
+
+    public void setPreference_uri(String preference_uri) {
+        this.preference_uri = preference_uri;
+    }
+
+    private String preference_uri;
+
     public ExamSummary(){
         // required empty constructor
     }
@@ -29,6 +39,7 @@ public class ExamSummary implements Parcelable {
         shortlist_count = in.readInt();
         recommended_count = in.readInt();
         next_important_date = in.readString();
+        preference_uri=in.readString();
     }
 
     public static final Creator<ExamSummary> CREATOR = new Creator<ExamSummary>() {
@@ -56,6 +67,7 @@ public class ExamSummary implements Parcelable {
         dest.writeInt(shortlist_count);
         dest.writeInt(recommended_count);
         dest.writeString(next_important_date);
+        dest.writeString(preference_uri);
     }
 
     public String getYearly_exam_id() {

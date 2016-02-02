@@ -39,7 +39,7 @@ public class UserEducationFragment extends BaseFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String USER_EDUCATION_LIST = "user_education_list";
-
+private int selectedValue=0;
     // TODO: Rename and change types of parameters
     private String mLevelID;
     private String mSubLevelID = "";
@@ -162,7 +162,7 @@ public class UserEducationFragment extends BaseFragment {
             @Override
             public void onValueChange(android.widget.NumberPicker picker, int oldVal, int newVal) {
                 mUpdateStreamPicker(newVal);
-
+selectedValue=newVal;
                 mStreamPicker.setValue(0);
                 mMarksPicker.setValue(0);
             }
@@ -212,7 +212,7 @@ public class UserEducationFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mUpdateStreamPicker(0);
+        mUpdateStreamPicker(selectedValue);
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null)
             mainActivity.currentFragment = this;
@@ -328,10 +328,7 @@ public class UserEducationFragment extends BaseFragment {
 
     private void mUserPreparingForExam() {
         if (this.mListener != null) {
-
-
                 HashMap<String, String> map = new HashMap<>();
-
                 int examPosition = mExamPicker.getValue();
                 int streamPosition = mStreamPicker.getValue();
                 int marksPosition = mMarksPicker.getValue();
@@ -340,24 +337,24 @@ public class UserEducationFragment extends BaseFragment {
                 UserEducationFragment.this.mSubLevelID = "" + mUserExamSubLevelsList.get(examPosition).getId();
                 UserEducationFragment.this.mStreamID = "" + tempStreamList.get(streamPosition).getId();
                 UserEducationFragment.this.mMarks = this.mGetMarks(marksPosition);
-
-
                 map.put("sublevel", UserEducationFragment.this.mSubLevelID);
                 map.put("stream", UserEducationFragment.this.mStreamID);
                 map.put("marks", UserEducationFragment.this.mMarks);
 
             if(isUserPreparing) {
-                map.put("is_preparing", "1");
                 if(isEditMode) {
+                    map.put("is_preparing", MainActivity.user.getIs_preparing());
                     mListener.onSubmitEditedEducation(map);
                 }else {
+                    map.put("is_preparing", "1");
                     mListener.onEducationSelected(map);
                 }
             }else{
-                map.put("is_preparing", "0");
                 if (isEditMode){
+                    map.put("is_preparing", MainActivity.user.getIs_preparing());
                     mListener.onSubmitEditedEducation(map);
                 }else {
+                    map.put("is_preparing", "0");
                     mUserNotPreparingForExam(map);
                 }
 //                displayAlert(getActivity());

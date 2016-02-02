@@ -42,7 +42,7 @@ public class ExamDetailAdapter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         ExamDetail examDetailObj =  mExamDetailList.get(position);
         if(examDetailObj != null)
-            return examDetailObj.getExam_name();
+            return examDetailObj.getExam_short_name();
         return "EXam";
     }
 

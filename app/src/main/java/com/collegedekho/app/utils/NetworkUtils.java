@@ -26,6 +26,7 @@ import com.crashlytics.android.Crashlytics;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -77,12 +78,14 @@ public class NetworkUtils {
 
     public void getOrDeleteData(@Nullable final String tag, final String url, final int method)
     {
+        final Calendar calendar=Calendar.getInstance();
         StringRequest request = new StringRequest(method, url,
                 new Response.Listener<String>()
         {
             @Override
             public void onResponse(String response)
             {
+                Utils.logApiResponseTime(calendar,tag+" "+url);
                 mListener.onDataLoaded(tag, response);
             }
         },
@@ -91,6 +94,7 @@ public class NetworkUtils {
             @Override
             public void onErrorResponse(VolleyError error)
             {
+                Utils.logApiResponseTime(calendar,tag+" "+url);
                 Crashlytics.logException(error);
 
                 String json = null;
@@ -147,11 +151,13 @@ public class NetworkUtils {
 
     public void postOrPutData(final String tag, final String url, final Map<String, String> params, final int method)
     {
+        final Calendar calendar=Calendar.getInstance();
         StringRequest request = new StringRequest(method, url, new Response.Listener<String>()
             {
                 @Override
                 public void onResponse(String response)
                 {
+                    Utils.logApiResponseTime(calendar,tag+" "+url);
                     mListener.onDataLoaded(tag, response);
                 }
             },
@@ -160,6 +166,7 @@ public class NetworkUtils {
                 @Override
                 public void onErrorResponse(VolleyError error)
                 {
+                    Utils.logApiResponseTime(calendar,tag+" "+url);
                     Crashlytics.logException(error);
 
                     String json = null;
@@ -252,6 +259,7 @@ public class NetworkUtils {
 
     private void postOrPutData(final String tag, final String url, final JSONObject params, final int method)
     {
+        final Calendar calendar=Calendar.getInstance();
         JsonObjectRequest request = new JsonObjectRequest(method,
                 url, params,
                 new Response.Listener<JSONObject>()
@@ -259,6 +267,7 @@ public class NetworkUtils {
             @Override
             public void onResponse(JSONObject response)
             {
+                Utils.logApiResponseTime(calendar,tag+" "+url);
                 mListener.onDataLoaded(tag, response.toString());
             }
         },
@@ -267,6 +276,7 @@ public class NetworkUtils {
                     @Override
                     public void onErrorResponse(VolleyError error)
                     {
+                        Utils.logApiResponseTime(calendar,tag+" "+url);
                         Crashlytics.logException(error);
 
                         String json = null;

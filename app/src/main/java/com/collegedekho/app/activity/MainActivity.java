@@ -821,7 +821,7 @@ public class MainActivity extends AppCompatActivity
                     hashMap.put(Constants.USER_NAME, user.profileData[0]);
                     hashMap.put(Constants.USER_DEVICE_ID, deviceId);
 
-                    this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED, MainActivity.user.getResource_uri(), hashMap, Request.Method.PUT);
+                    this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#name", Constants.BASE_URL + "preferences/", hashMap);
                 }
             }
 
@@ -1689,6 +1689,11 @@ private boolean isUpdateStreams;
     private void mUpdateExamDetail(String responseJson) {
         try {
             ExamSummary examSummary = JSON.std.beanFrom(ExamSummary.class, responseJson);
+            if(examSummary.getPreference_uri()!=null) {
+                MainActivity.user.setResource_uri(examSummary.getPreference_uri());
+                String u = JSON.std.asString(MainActivity.user);
+                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+            }
                 currentFragment.updateExamSummary(examSummary );
             if(MainActivity.type!=null && !MainActivity.type.matches("") && MainActivity.resource_uri!=null && !MainActivity.resource_uri.matches("")){
                 mhandleNotifications();
@@ -3305,9 +3310,13 @@ private boolean isUpdateStreams;
     @Override
     public void onBackPressed() {
         int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
-        if (currentFragment != null && currentFragment instanceof SyllabusSubjectsListFragment) {
-            ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
+        if (currentFragment != null) {
+            if (currentFragment instanceof SyllabusSubjectsListFragment) {
+                ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
+            }
+
         }
+
         if (backStackCount == 0 && !Constants.READY_TO_CLOSE) {
             if (isFromNotification) {
                 isFromNotification = false;
@@ -3570,6 +3579,7 @@ private boolean isUpdateStreams;
         isReloadProfile=true;
         try {
             List<ExamDetail>exams = JSON.std.listOfFrom(ExamDetail.class, extractResults(response));
+            this.mUserExamsList=new ArrayList<>(exams);
             MainActivity.user.setUser_exams(new ArrayList<>(exams));
             String u = JSON.std.asString(MainActivity.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
@@ -3599,6 +3609,7 @@ private boolean isUpdateStreams;
             MainActivity.user.setPhone_no(userObj.getPhone_no());
             MainActivity.user.setIs_preparing(userObj.getIs_preparing());
             MainActivity.user.setResource_uri(userObj.getResource_uri());
+            this.mUserExamsList=MainActivity.user.getUser_exams();
             String u = JSON.std.asString(MainActivity.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
 
@@ -4340,24 +4351,25 @@ private void onNotPreparingEducationResponse(String response){
     private void onNameUpdatedResponse(String response , String msg) {
         User tempuser = MainActivity.user;
         try {
-            user = JSON.std.beanFrom(User.class, response);
+            tempuser = JSON.std.beanFrom(User.class, response);
         } catch (IOException e) {
             e.printStackTrace();
         }
         //save the preferences locally
         user.setPref(User.Prefs.STREAMKNOWN);
         if (tempuser != null){
-            user.setToken(tempuser.getToken());
-            user.setImage(tempuser.getImage());
-            user.setLevel_name(tempuser.getLevel_name());
-            user.setStream_name(tempuser.getStream_name());
-            user.setStream(tempuser.getStream());
-            user.setLevel(tempuser.getLevel());
+//            user.setToken(tempuser.getToken());
+//            user.setImage(tempuser.getImage());
+//            user.setLevel_name(tempuser.getLevel_name());
+//            user.setStream_name(tempuser.getStream_name());
+//            user.setStream(tempuser.getStream());
+//            user.setLevel(tempuser.getLevel());
             user.setPrimaryEmail(tempuser.getPrimaryEmail());
             user.setPrimaryPhone(tempuser.getPrimaryPhone());
-            user.setSublevel(tempuser.getSublevel());
-            user.setIs_preparing(tempuser.getIs_preparing());
-            user.profileData = tempuser.profileData;
+//            user.setSublevel(tempuser.getSublevel());
+//            user.setIs_preparing(tempuser.getIs_preparing());
+            user.setResource_uri(tempuser.getResource_uri());
+//            user.profileData = tempuser.profileData;
         }
 
         String u = null;
