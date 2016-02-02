@@ -719,7 +719,7 @@ public class MainActivity extends AppCompatActivity
                 if(searchView!=null){
                     searchView.setQueryHint("Search Questions");
                 }
-            }else if(currentFragment instanceof InstituteListFragment) {
+            }else if(currentFragment instanceof InstituteListFragment &&!(mCurrentTitle.equals("WishList Institutes") || mCurrentTitle.equals("Recommended Institutes"))) {
                 menu.setGroupVisible(R.id.search_menu_group, true);
                 if(searchView!=null){
                     searchView.setQueryHint("Search Institutes");
