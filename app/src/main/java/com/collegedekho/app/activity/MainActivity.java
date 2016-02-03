@@ -812,18 +812,21 @@ public class MainActivity extends AppCompatActivity
             if(MainActivity.user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous user")) {
 
                 // get name from my profile me
-                if (user.profileData[0] != null) {
+
                     //get device id
                     String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
                     HashMap<String, String> hashMap = new HashMap<>();
+
+                if (user.profileData[0] != null) {
                     user.setName( user.profileData[0]);
                     hashMap.put(Constants.USER_NAME, user.profileData[0]);
+                }
                     hashMap.put(Constants.USER_DEVICE_ID, deviceId);
 
                     this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#name", Constants.BASE_URL + "preferences/", hashMap);
                 }
-            }
+
 
             this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()));
 
@@ -851,7 +854,8 @@ public class MainActivity extends AppCompatActivity
             mhandleNotifications();
         }
         else if(MainActivity.user.getEducation_set() == 1 && (MainActivity.user.getExams_set() == 1 || MainActivity.user.getIs_preparing().equals("0")) /*|| IS_PROFILE_LOADED*/)
-            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
+//            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
+            this.mMakeNetworkCall(Constants.TAG_LAUNCH_USER_HOME,Constants.BASE_URL + "preferences/", null);
         else if(MainActivity.user.getEducation_set() == 1 &&  MainActivity.user.getExams_set() == 0)
             this.mMakeNetworkCall(Constants.TAG_LOAD_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
         else
@@ -1354,6 +1358,14 @@ private boolean isUpdateStreams;
                 break;
             case Constants.TAG_USER_EXAMS_SET:
                 this.mUserExamStepCompleted(response);
+                break;
+            case Constants.TAG_LAUNCH_USER_HOME:
+                this.onUpdateUserPreferences(response);
+                this.mClearBackStack();
+                mLoadUserProfile(null);
+                break;
+            case Constants.TAG_LOAD_USER_PREFERENCES:
+                this.onUpdateUserPreferences(response);
                 break;
             case Constants.TAG_EXAM_SUMMARY:
                 this.mUpdateExamDetail(response);
@@ -3456,6 +3468,15 @@ private boolean isUpdateStreams;
                 MainActivity.user.setImage(tempUser.getImage());
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
                 MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+               if(MainActivity.user.getPreference_uri()==null) {
+                   //get device id
+                   String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+                   HashMap<String, String> hashMap = new HashMap<>();
+                   hashMap.put(Constants.USER_DEVICE_ID, deviceId);
+                   this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#name", Constants.BASE_URL + "preferences/", hashMap);
+               }else{
+                   MainActivity.user.setResource_uri(MainActivity.user.getPreference_uri());
+               }
                 MainActivity.user.profileData = tempUser.profileData;
             }
             MainActivity.user.setPref(this.userPref);
@@ -3578,11 +3599,12 @@ private boolean isUpdateStreams;
     private void onUserExamsEdited(String response) {
         isReloadProfile=true;
         try {
-            List<ExamDetail>exams = JSON.std.listOfFrom(ExamDetail.class, extractResults(response));
-            this.mUserExamsList=new ArrayList<>(exams);
-            MainActivity.user.setUser_exams(new ArrayList<>(exams));
-            String u = JSON.std.asString(MainActivity.user);
-            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+//            List<ExamDetail>exams = JSON.std.listOfFrom(ExamDetail.class, extractResults(response));
+//            this.mUserExamsList=new ArrayList<>(exams);
+//            MainActivity.user.setUser_exams(new ArrayList<>(exams));
+//            String u = JSON.std.asString(MainActivity.user);
+//            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+            onUpdateUserExams(response);
             onBackPressed();
             if (currentFragment instanceof UserEducationFragment) {
                 onBackPressed();
@@ -3621,6 +3643,59 @@ private boolean isUpdateStreams;
         }
     }
 
+    private void onUpdateUserPreferences(String responseJson) {
+
+        try {
+            JSONObject prefObject=new JSONObject(responseJson);
+            User userObj = JSON.std.beanFrom(User.class, prefObject.optJSONArray("results").get(0).toString());
+            MainActivity.user.setExams_set(userObj.getExams_set());
+            MainActivity.user.setUser_exams(userObj.getUser_exams());
+            MainActivity.user.setUser_education(userObj.getUser_education());
+            MainActivity.user.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
+            MainActivity.user.setLevel(userObj.getLevel());
+            MainActivity.user.setLevel_name(userObj.getLevel_name());
+            MainActivity.user.setEducation_set(userObj.getEducation_set());
+            MainActivity.user.setPsychometric_given(userObj.getPsychometric_given());
+            MainActivity.user.setStream_name(userObj.getStream_name());
+            MainActivity.user.setPhone_no(userObj.getPhone_no());
+            MainActivity.user.setIs_preparing(userObj.getIs_preparing());
+            MainActivity.user.setResource_uri(userObj.getResource_uri());
+            this.mUserExamsList=MainActivity.user.getUser_exams();
+            String u = JSON.std.asString(MainActivity.user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+
+        }catch(IOException e) {
+
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void onUpdateUserExams(String response) throws IOException{
+            this.mUserExamsList = JSON.std.listOfFrom(ExamDetail.class, extractResults(response));
+            MainActivity.user.setUser_exams(new ArrayList<>(mUserExamsList));
+            String u = JSON.std.asString(MainActivity.user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+            Map<String, Object> eventValue = new HashMap<String, Object>();
+            String[] examNames = new String[this.mUserExamsList.size()];
+            for (int n = 0; n < this.mUserExamsList.size(); n++)
+            {
+                ExamDetail examDetail = this.mUserExamsList.get(n);
+
+                //GA Event
+                MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_USER_EXAM_SELECTED, examDetail.getExam_name());
+                //Connecto Event
+                this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_USER_EXAM_SELECTED, examDetail.getExam_name()));
+
+                examNames[n] = examDetail.getExam_name() + "#" + examDetail.getExam_date();
+            }
+
+            eventValue.put(Constants.USER_EXAMS_SET, examNames);
+
+            //Appsflyer events
+            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_USER_EXAM_SELECTED, eventValue);
+    }
 
     private void mUserEducationStepCompleted(String responseJson){
 
@@ -4029,30 +4104,9 @@ private void onNotPreparingEducationResponse(String response){
 
         if(responseJson != null && !responseJson.isEmpty()) {
             try {
-                this.mUserExamsList = JSON.std.listOfFrom(ExamDetail.class, extractResults(responseJson));
-                MainActivity.user.setUser_exams(new ArrayList<ExamDetail>(mUserExamsList));
-                String u = JSON.std.asString(MainActivity.user);
-                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
-                Map<String, Object> eventValue = new HashMap<String, Object>();
-                String[] examNames = new String[this.mUserExamsList.size()];
-                for (int n = 0; n < this.mUserExamsList.size(); n++)
-                {
-                    ExamDetail examDetail = this.mUserExamsList.get(n);
+                onUpdateUserExams(responseJson);
+            }catch (IOException e){
 
-                    //GA Event
-                    MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_USER_EXAM_SELECTED, examDetail.getExam_name());
-                    //Connecto Event
-                    this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_USER_EXAM_SELECTED, examDetail.getExam_name()));
-
-                    examNames[n] = examDetail.getExam_name() + "#" + examDetail.getExam_date();
-                }
-
-                eventValue.put(Constants.USER_EXAMS_SET, examNames);
-
-                //Appsflyer events
-                MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_USER_EXAM_SELECTED, eventValue);
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
 
@@ -4060,6 +4114,7 @@ private void onNotPreparingEducationResponse(String response){
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
         params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
         findViewById(R.id.container).setLayoutParams(params);
+        mUserExamsList=MainActivity.user.getUser_exams();
         if(mUserExamsList == null)
             mUserExamsList = new ArrayList<>();
         if(this.mUserExamsList.size() <=0)

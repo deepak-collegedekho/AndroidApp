@@ -38,6 +38,15 @@ public class User
     private int progress = 0;
     private ArrayList<ExamDetail> user_exams;
     private UserEducation user_education;
+    private String preference_uri;
+
+    public String getPreference_uri() {
+        return preference_uri;
+    }
+
+    public void setPreference_uri(String preference_uri) {
+        this.preference_uri = preference_uri;
+    }
 
     public ArrayList<String> getCollegedekho_recommended_streams() {
         return collegedekho_recommended_streams;
