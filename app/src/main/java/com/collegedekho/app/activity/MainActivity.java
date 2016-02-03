@@ -719,7 +719,7 @@ public class MainActivity extends AppCompatActivity
                 if(searchView!=null){
                     searchView.setQueryHint("Search Questions");
                 }
-            }else if(currentFragment instanceof InstituteListFragment &&!(mCurrentTitle.equals("WishList Institutes") || mCurrentTitle.equals("Recommended Institutes"))) {
+            }else if(currentFragment instanceof InstituteListFragment &&mCurrentTitle!=null &&!(mCurrentTitle.equals("WishList Institutes") || mCurrentTitle.equals("Recommended Institutes"))) {
                 menu.setGroupVisible(R.id.search_menu_group, true);
                 if(searchView!=null){
                     searchView.setQueryHint("Search Institutes");
@@ -1356,9 +1356,9 @@ private boolean isUpdateStreams;
             case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
                 this.onUserExamsEdited(response);
                 break;
-            case Constants.TAG_USER_EXAMS_SET:
-                this.mUserExamStepCompleted(response);
-                break;
+//            case Constants.TAG_USER_EXAMS_SET:
+//                this.mUserExamStepCompleted(response);
+//                break;
             case Constants.TAG_LAUNCH_USER_HOME:
                 this.onUpdateUserPreferences(response);
                 this.mClearBackStack();
@@ -3585,13 +3585,7 @@ private boolean isUpdateStreams;
     }
 
     private void mOnUserExamsSelected(String response) {
-        String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-
-//        Map<String, String> params = new HashMap<>();
-//        params.put(Constants.USER_EXAMS_SET,"1");
-//        params.put(Constants.USER_DEVICE_ID, deviceId);
-//
-        this.mMakeNetworkCall(Constants.TAG_USER_EXAMS_SET,Constants.BASE_URL + "preferences/", null);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_USER_PREFERENCES,Constants.BASE_URL + "preferences/", null);
         this.mClearBackStack();
         mLoadUserProfile(response);
     }
@@ -3599,11 +3593,6 @@ private boolean isUpdateStreams;
     private void onUserExamsEdited(String response) {
         isReloadProfile=true;
         try {
-//            List<ExamDetail>exams = JSON.std.listOfFrom(ExamDetail.class, extractResults(response));
-//            this.mUserExamsList=new ArrayList<>(exams);
-//            MainActivity.user.setUser_exams(new ArrayList<>(exams));
-//            String u = JSON.std.asString(MainActivity.user);
-//            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
             onUpdateUserExams(response);
             onBackPressed();
             if (currentFragment instanceof UserEducationFragment) {
@@ -3614,34 +3603,34 @@ private boolean isUpdateStreams;
         }
     }
 
-    private void mUserExamStepCompleted(String responseJson) {
-
-        try {
-            JSONObject prefObject=new JSONObject(responseJson);
-            User userObj = JSON.std.beanFrom(User.class, prefObject.optJSONArray("results").get(0).toString());
-            MainActivity.user.setExams_set(userObj.getExams_set());
-            MainActivity.user.setUser_exams(userObj.getUser_exams());
-            MainActivity.user.setUser_education(userObj.getUser_education());
-            MainActivity.user.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
-            MainActivity.user.setLevel(userObj.getLevel());
-            MainActivity.user.setLevel_name(userObj.getLevel_name());
-            MainActivity.user.setEducation_set(userObj.getEducation_set());
-            MainActivity.user.setPsychometric_given(userObj.getPsychometric_given());
-            MainActivity.user.setStream_name(userObj.getStream_name());
-            MainActivity.user.setPhone_no(userObj.getPhone_no());
-            MainActivity.user.setIs_preparing(userObj.getIs_preparing());
-            MainActivity.user.setResource_uri(userObj.getResource_uri());
-            this.mUserExamsList=MainActivity.user.getUser_exams();
-            String u = JSON.std.asString(MainActivity.user);
-            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
-
-        }catch(IOException e) {
-
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void mUserExamStepCompleted(String responseJson) {
+//
+//        try {
+//            JSONObject prefObject=new JSONObject(responseJson);
+//            User userObj = JSON.std.beanFrom(User.class, prefObject.optJSONArray("results").get(0).toString());
+//            MainActivity.user.setExams_set(userObj.getExams_set());
+//            MainActivity.user.setUser_exams(userObj.getUser_exams());
+//            MainActivity.user.setUser_education(userObj.getUser_education());
+//            MainActivity.user.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
+//            MainActivity.user.setLevel(userObj.getLevel());
+//            MainActivity.user.setLevel_name(userObj.getLevel_name());
+//            MainActivity.user.setEducation_set(userObj.getEducation_set());
+//            MainActivity.user.setPsychometric_given(userObj.getPsychometric_given());
+//            MainActivity.user.setStream_name(userObj.getStream_name());
+//            MainActivity.user.setPhone_no(userObj.getPhone_no());
+//            MainActivity.user.setIs_preparing(userObj.getIs_preparing());
+//            MainActivity.user.setResource_uri(userObj.getResource_uri());
+//            this.mUserExamsList=MainActivity.user.getUser_exams();
+//            String u = JSON.std.asString(MainActivity.user);
+//            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+//
+//        }catch(IOException e) {
+//
+//            e.printStackTrace();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private void onUpdateUserPreferences(String responseJson) {
 
@@ -4851,6 +4840,7 @@ private void onNotPreparingEducationResponse(String response){
 
     private void onInstituteSearchResult(String response) {
         try {
+            mCurrentTitle="Institutes";
             this.mInstituteList = JSON.std.listOfFrom(Institute.class, extractResults(response));
 
             if (currentFragment instanceof InstituteListFragment) {
