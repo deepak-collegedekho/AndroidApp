@@ -9,12 +9,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -45,6 +39,7 @@ public class ExamsFragment extends BaseFragment {
     private boolean IS_TUTE_COMPLETED = true;
     private TextView mExamSubmitButton;
     private boolean isEditMode=false;
+    private boolean isPreSelected=false;
     public ExamsFragment() {
         // required empty Constructor
     }
@@ -174,16 +169,38 @@ public class ExamsFragment extends BaseFragment {
         super.onDetach();
         this.mListener = null;
     }
-
+    MainActivity mainActivity;
     @Override
     public void onResume() {
         super.onResume();
 
-        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity = (MainActivity) getActivity();
 
-        if (mainActivity != null)
+        if (mainActivity != null) {
             mainActivity.currentFragment = this;
-
+            if(isEditMode){
+                mainActivity.isBackPressEnabled=false;
+                if(mExamList != null && !mExamList.isEmpty()) {
+                    for (Exam exam:mExamList) {
+                        if(exam == null)continue;
+                        if(!exam.isSelected()){
+                            ArrayList<ExamDetail> detailList = exam.getExam_details();
+                            if(detailList != null && !detailList.isEmpty()) {
+                                for (ExamDetail examDetailObj:detailList) {
+                                    if (examDetailObj.is_preparing()){
+                                        isPreSelected=true;
+                                        if(mainActivity!=null){
+                                            mainActivity.isBackPressEnabled=true;
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         View view =  getView();
         if(view != null ){
             if(!IS_TUTE_COMPLETED) {
@@ -210,25 +227,29 @@ public class ExamsFragment extends BaseFragment {
 
     private void onExamsSelected() {
         boolean isExamSelected = false;
+        boolean isPreSelected=false;
         if(this.mListener != null) {
             JSONObject parentJsonObject=new JSONObject();
             JSONArray parentArray=new JSONArray();
             if(mExamList != null && !mExamList.isEmpty()) {
                 for (Exam exam:mExamList) {
                     if(exam == null)continue;
-                    if(!exam.isSelected())continue;
+                    if(!exam.isSelected()){
+                       continue;
+                    }
                     ArrayList<ExamDetail> detailList = exam.getExam_details();
                     if(detailList != null && !detailList.isEmpty()) {
                         for (ExamDetail examDetailObj:detailList) {
                             if(!examDetailObj.isSelected())continue;
                             JSONObject examHash = new JSONObject();
                             try {
-
                                 examHash.putOpt(Constants.EXAM_ID,examDetailObj.getId());
                                 examHash.putOpt(Constants.MARKS,examDetailObj.getExam_marks());
                                 parentArray.put(examHash);
-                               isExamSelected = true;
-
+                                isExamSelected = true;
+                                if(mainActivity!=null){
+                                    mainActivity.isBackPressEnabled=true;
+                                }
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
@@ -244,10 +265,15 @@ public class ExamsFragment extends BaseFragment {
             }
             if(!isExamSelected){
                 if(!isEditMode) {
-                    Utils.DisplayToast(getActivity(), "Please Select a Exam");
+                    Utils.DisplayToast(getActivity(), "Select at least one Exam");
                     return;
                 }else {
-                    mListener.onCancelExamSubmission();
+                    if(isPreSelected) {
+                        mListener.onCancelExamSubmission();
+                    }else {
+                        Utils.DisplayToast(getActivity(), "Select at least one Exam");
+                        return;
+                    }
                     return;
                 }
             }

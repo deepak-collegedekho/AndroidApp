@@ -184,7 +184,6 @@ public class TabFragment extends  BaseFragment{
             mExamTabPager.setAdapter(this.mDetailsAdapter);
             mainActivity.mUpdateTabMenuItem(this.selectedTabPosition);
             if(selectedTabPosition<mExamDetailList.size())
-
             mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
 
         }

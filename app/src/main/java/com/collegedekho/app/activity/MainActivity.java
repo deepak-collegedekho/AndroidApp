@@ -261,6 +261,7 @@ public class MainActivity extends AppCompatActivity
     public static CallbackManager callbackManager;
     private Date mTimeScreenClicked = new Date();
     public boolean isReloadProfile=false;
+    public boolean isBackPressEnabled=true;
     private String mGTMContainerId = "www.collegedekho.com";
     private Connecto connecto = null;
     // Get SENDER_ID fom GCM.
@@ -1367,6 +1368,14 @@ private boolean isUpdateStreams;
             case Constants.TAG_LOAD_USER_PREFERENCES:
                 this.onUpdateUserPreferences(response);
                 break;
+            case Constants.TAG_LOAD_USER_PREFERENCES_N_BACK:
+                isReloadProfile=true;
+                this.onUpdateUserPreferences(response);
+                onBackPressed();
+                if(currentFragment !=null && currentFragment instanceof UserEducationFragment){
+                    onBackPressed();
+                }
+                break;
             case Constants.TAG_EXAM_SUMMARY:
                 this.mUpdateExamDetail(response);
                 break;
@@ -2184,6 +2193,8 @@ private boolean isUpdateStreams;
             case Constants.TAG_EDIT_EXAMS_LIST:
             case Constants.TAG_EDIT_PSYCHOMETRIC_QUESTIONS:
             case Constants.TAG_EDIT_USER_EDUCATION:
+            case Constants.TAG_LOAD_USER_PREFERENCES:
+            case Constants.TAG_LOAD_USER_PREFERENCES_N_BACK:
                 return "Loading....";
             case Constants.TAG_USER_REGISTRATION :
                 return "Creating User Please Wait";
@@ -3321,6 +3332,9 @@ private boolean isUpdateStreams;
      */
     @Override
     public void onBackPressed() {
+        if(!isBackPressEnabled){
+            return;
+        }
         int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
         if (currentFragment != null) {
             if (currentFragment instanceof SyllabusSubjectsListFragment) {
@@ -4026,10 +4040,7 @@ private boolean isUpdateStreams;
 
     @Override
     public void onCancelExamSubmission() {
-        onBackPressed();
-        if(currentFragment !=null && currentFragment instanceof UserEducationFragment){
-            onBackPressed();
-        }
+        this.mMakeNetworkCall(Constants.TAG_LOAD_USER_PREFERENCES_N_BACK,Constants.BASE_URL + "preferences/", null);
     }
 
     /**
