@@ -189,13 +189,14 @@ public class ExamsFragment extends BaseFragment {
                                 for (ExamDetail examDetailObj:detailList) {
                                     if (examDetailObj.is_preparing()){
                                         isPreSelected=true;
-                                        if(mainActivity!=null){
-                                            mainActivity.isBackPressEnabled=true;
-                                        }
+                                        mainActivity.isBackPressEnabled=true;
                                         break;
                                     }
                                 }
                             }
+                        }
+                        if (isPreSelected){
+                            break;
                         }
                     }
                 }
