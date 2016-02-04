@@ -227,7 +227,6 @@ public class ExamsFragment extends BaseFragment {
 
     private void onExamsSelected() {
         boolean isExamSelected = false;
-        boolean isPreSelected=false;
         if(this.mListener != null) {
             JSONObject parentJsonObject=new JSONObject();
             JSONArray parentArray=new JSONArray();
