@@ -91,6 +91,7 @@ import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.BaseFragment;
+import com.collegedekho.app.fragment.CDRecommendedInstituteListFragment;
 import com.collegedekho.app.fragment.CalendarParentFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FilterFragment;
@@ -209,7 +210,7 @@ public class MainActivity extends AppCompatActivity
         UserEducationFragment.OnUserEducationInteractionListener, PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
-        UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener
+        UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteListFragment.OnCDRecommendedInstituteListener
 
 {
 
@@ -293,6 +294,7 @@ public class MainActivity extends AppCompatActivity
     private boolean IS_USER_CREATED;
     private List<MyAlertDate> myAlertsList;
     private boolean isFromNotification;
+    private String mExamTag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -388,7 +390,6 @@ public class MainActivity extends AppCompatActivity
 
         this.mSetUpAPPToolBar();
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
-
 
         //init();
         //this.mDisplayFragment(MyAlertFragment.newInstance(null), false, MyAlertFragment.class.getName());
@@ -805,29 +806,35 @@ public class MainActivity extends AppCompatActivity
             MainActivity.user = JSON.std.beanFrom(User.class, json);
             MainActivity.user.setPref(this.userPref);
             this.networkUtils.setToken(MainActivity.user.getToken());
+
             if (tempUser != null){
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
-            MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
-            MainActivity.user.profileData = tempUser.profileData;
-           }
-            if(MainActivity.user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous user")) {
+                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+                MainActivity.user.profileData = tempUser.profileData;
+            }
 
-                // get name from my profile me
+            if(MainActivity.user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous user"))
+            {
+                //get name from my profile me
+                //get device id
+                String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-                    //get device id
-                    String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-
-                    HashMap<String, String> hashMap = new HashMap<>();
+                HashMap<String, String> hashMap = new HashMap<>();
 
                 if (user.profileData[0] != null) {
-                    user.setName( user.profileData[0]);
+                    user.setName(user.profileData[0]);
                     hashMap.put(Constants.USER_NAME, user.profileData[0]);
                 }
-                    hashMap.put(Constants.USER_DEVICE_ID, deviceId);
 
-                    this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#name", Constants.BASE_URL + "preferences/", hashMap);
+                if (user.profileData[1] != null) {
+                    user.setEmail(user.profileData[1]);
+                    hashMap.put(Constants.USER_EMAIL, user.profileData[1]);
                 }
 
+                hashMap.put(Constants.USER_DEVICE_ID, deviceId);
+
+                this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED + "#name", Constants.BASE_URL + "preferences/", hashMap);
+            }
 
             this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(Constants.USER_NAME, MainActivity.user.getName()));
 
@@ -848,7 +855,6 @@ public class MainActivity extends AppCompatActivity
      * if both are not selected then load education screen
      *
      */
-
     private void mLoadUserStatusScreen() {
 
         if(MainActivity.type != null && !MainActivity.type.matches("")){
@@ -873,7 +879,6 @@ public class MainActivity extends AppCompatActivity
             mDisplayFragment(ProfileEditFragment.newInstance(), true, ProfileEditFragment.class.getSimpleName());
         else
             mDisplayFragment(fragment, false, ProfileEditFragment.class.getSimpleName());
-
     }
 
     /**
@@ -1038,9 +1043,33 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mDisplayInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl) {
-        mDisplayInstituteList(response, filterAllowed, isHavingNextUrl,Constants.INSTITUTE_TYPE);
+        this.mDisplayInstituteList(response, filterAllowed, isHavingNextUrl, Constants.INSTITUTE_TYPE);
     }
-    private void mDisplayInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl,int listType) {
+    private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl) {
+        try {
+            String val = this.extractResults(response);
+            this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
+
+            if(!isHavingNextUrl)
+                next = null;
+
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
+
+            if (fragment == null)
+                this.mDisplayFragment(CDRecommendedInstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next), !isFromNotification, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
+            else {
+                if (fragment instanceof CDRecommendedInstituteListFragment) {
+                    //((CDRecommendedInstituteListFragment) fragment).clearList();
+                    ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next);
+                }
+
+                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+    private void mDisplayInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl, int listType) {
         try {
             String val = this.extractResults(response);
             this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
@@ -1177,13 +1206,19 @@ public class MainActivity extends AppCompatActivity
             this.mDisplayFragment(fragment, false, SyllabusUnitListFragment.class.getSimpleName());
     }
 
-    private void mDisplayInstitute(int position) {
+    private void mDisplayInstituteByPosition(int position) {
         this.mInstitute = this.mInstituteList.get(position);
-        int  id = this.mInstituteList.get(position).getId();
+        this.mDisplayInstituteByEntity(this.mInstitute);
+    }
+
+    private void mDisplayInstituteByEntity(Institute institute)
+    {
+        int id = institute.getId();
 
         final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE);
+
         if (fragment == null)
-            this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute), true, Constants.TAG_FRAGMENT_INSTITUTE);
+            this.mDisplayFragment(InstituteDetailFragment.newInstance(institute), true, Constants.TAG_FRAGMENT_INSTITUTE);
         else
             this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE);
 
@@ -1193,7 +1228,7 @@ public class MainActivity extends AppCompatActivity
 
         //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(Constants.INSTITUTE_RESOURCE_URI, this.mInstitute.getResource_uri());
+        eventValue.put(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri());
         eventValue.put(Constants.INSTITUTE_ID, String.valueOf(id));
 
         MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_INSTITUTE_SELECTED, eventValue);
@@ -1201,12 +1236,12 @@ public class MainActivity extends AppCompatActivity
         //GA Event
         String[] lables = new String[2];
         lables[0] = String.valueOf(id);
-        lables[1] = this.mInstitute.getResource_uri();
+        lables[1] = institute.getResource_uri();
 
         MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_INSTITUTE_SELECTED, lables);
 
         //Send event to connecto
-        this.connecto.track(Constants.ACTION_INSTITUTE_SELECTED, new Properties().putValue(Constants.INSTITUTE_RESOURCE_URI, this.mInstitute.getResource_uri()).putValue(Constants.INSTITUTE_ID, String.valueOf(id)));
+        this.connecto.track(Constants.ACTION_INSTITUTE_SELECTED, new Properties().putValue(Constants.INSTITUTE_RESOURCE_URI, institute.getResource_uri()).putValue(Constants.INSTITUTE_ID, String.valueOf(id)));
     }
 
     private void loadPyschometricTest(String response) {
@@ -1395,14 +1430,13 @@ private boolean isUpdateStreams;
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
                 this.mCurrentTitle = "Recommended Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = true;
-                this.mDisplayInstituteList(response, false, false );
+                this.mDisplayCDRecommendedInstituteList(response, true);
                 break;
             case Constants.SEARCHED_INSTITUTES:
                 this.mCurrentTitle = "Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 this.mDisplayInstituteList(response, true, true);
                 break;
-
             case Constants.WIDGET_NEWS:
                 this.mDisplayNews(response);
                 break;
@@ -1488,12 +1522,10 @@ private boolean isUpdateStreams;
             case Constants.TAG_LOAD_PSYCHOMETRIC_TEST:
                 this.loadPyschometricTest(response);
                 break;
-
             case Constants.ACTION_VOTE_QNA_QUESTION_ENTITY:
                 if (tags.length == 3) {
                     parentIndex = tags[1];
                     voteType = Integer.parseInt(tags[2]);
-
                     this.mQnAQuestionVoteUpdated(Integer.parseInt(parentIndex), voteType);
                 }
                 break;
@@ -1504,7 +1536,6 @@ private boolean isUpdateStreams;
                     voteType = Integer.parseInt(tags[3]);
 
                     this.mQnAAnswerVoteUpdated(Integer.parseInt(parentIndex), Integer.parseInt(childIndex), voteType);
-
                     //GA Event for answer vote
                     MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, "Answer Voted : " + String.valueOf(voteType));
                 }
@@ -1679,8 +1710,6 @@ private boolean isUpdateStreams;
             this.progressDialog.dismiss();
     }
 
-
-
     private void mOnPsychometricTestCompleted(String streamId, String streamName, String response) {
 
         try {
@@ -1704,8 +1733,6 @@ private boolean isUpdateStreams;
             this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST, Constants.BASE_URL + "user-exams/", null, 0);
         }
     }
-
-
 
     private void mUpdateExamDetail(String responseJson) {
         try {
@@ -2489,28 +2516,33 @@ private boolean isUpdateStreams;
     @Override
     public void onInstituteSelected(int position) {
         this.currentInstitute = position;
-        this.mDisplayInstitute(position);
+        this.mDisplayInstituteByPosition(position);
     }
     /*@Override
     public void onShortListInstituteSelected(int position) {
         this.currentInstitute = position;
-        this.mDisplayInstitute(position);
+        this.mDisplayInstituteByPosition(position);
     }*/
     @Override
     public void onInstituteLikedDisliked(int position, int liked) {
-        Institute   institute = this.mInstituteList.get(position);
+        Institute institute = this.mInstituteList.get(position);
+        this.onInstituteLikedDislikedByEntity(institute, liked, Constants.TAG_INSTITUTE_LIKE_DISLIKE + "#" + position);
+    }
+
+    public void onInstituteLikedDislikedByEntity(Institute institute, int liked, String tag) {
         if (institute.getCurrent_user_vote_type() == Constants.NEITHER_LIKE_NOR_DISLIKE) {
             //neither liked nor disliked case
             if (liked == Constants.LIKE_THING)
-                this.mMakeNetworkCall(Constants.TAG_INSTITUTE_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getResource_uri() + "upvote/", null, Request.Method.POST);
+                this.mMakeNetworkCall(tag + "#" + liked, institute.getResource_uri() + "upvote/", null, Request.Method.POST);
             else
-                this.mMakeNetworkCall(Constants.TAG_INSTITUTE_LIKE_DISLIKE + "#" + position + "#" + liked, institute.getResource_uri() + "downvote/", null, Request.Method.POST);
-        } else if (institute.getCurrent_user_vote_type() != Constants.NEITHER_LIKE_NOR_DISLIKE && liked != Constants.NEITHER_LIKE_NOR_DISLIKE) {
+                this.mMakeNetworkCall(tag + "#" + liked, institute.getResource_uri() + "downvote/", null, Request.Method.POST);
+        }
+        else if (institute.getCurrent_user_vote_type() != Constants.NEITHER_LIKE_NOR_DISLIKE && liked != Constants.NEITHER_LIKE_NOR_DISLIKE) {
             //either already liked or disliked case
             if (liked == Constants.LIKE_THING)
-                this.mMakeNetworkCall(Constants.TAG_INSTITUTE_LIKE_DISLIKE + "#" + position + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, institute.getResource_uri() + "upvote/", null, Request.Method.POST);
+                this.mMakeNetworkCall(tag + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, institute.getResource_uri() + "upvote/", null, Request.Method.POST);
             else
-                this.mMakeNetworkCall(Constants.TAG_INSTITUTE_LIKE_DISLIKE + "#" + position + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, institute.getResource_uri() + "downvote/", null, Request.Method.POST);
+                this.mMakeNetworkCall(tag + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, institute.getResource_uri() + "downvote/", null, Request.Method.POST);
         }
     }
 
@@ -3454,7 +3486,7 @@ private boolean isUpdateStreams;
         User tempUser = this.user;
         try {
             MainActivity.user = JSON.std.beanFrom(User.class, json);
-          //  this.user.setPref(this.userPref);
+            //this.user.setPref(this.userPref);
             this.networkUtils.setToken(this.user.getToken());
             if (tempUser != null){
                 MainActivity.user.setImage(tempUser.getImage());
@@ -3482,12 +3514,19 @@ private boolean isUpdateStreams;
                 MainActivity.user.setImage(tempUser.getImage());
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
                 MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+                MainActivity.user.profileData = tempUser.profileData;
                if(MainActivity.user.getPreference_uri()==null) {
                    //get device id
                    String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
                    HashMap<String, String> hashMap = new HashMap<>();
                    hashMap.put(Constants.USER_DEVICE_ID, deviceId);
-                   this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#name", Constants.BASE_URL + "preferences/", hashMap);
+                   //get user email id from play store
+                   if (user.profileData[1] != null)
+                   {
+                       user.setEmail(user.profileData[1]);
+                       hashMap.put(Constants.USER_EMAIL, user.profileData[1]);
+                   }
+                   this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED + "#name", Constants.BASE_URL + "preferences/", hashMap);
                }else{
                    MainActivity.user.setResource_uri(MainActivity.user.getPreference_uri());
                }
@@ -3497,7 +3536,6 @@ private boolean isUpdateStreams;
             String u = JSON.std.asString(this.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putBoolean(Constants.USER_CREATED, true).commit();
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -3518,7 +3556,6 @@ private boolean isUpdateStreams;
             @Override
             public void onCompleted(GraphResponse graphResponse) {
                 LoginManager.getInstance().logOut();
-
             }
         }).executeAsync();
     }
@@ -4153,10 +4190,13 @@ private void onNotPreparingEducationResponse(String response){
                 || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES)){
                 //|| requestType.equalsIgnoreCase(Constants.WIDGET_SHORTLIST_INSTITUTES)) {
 
-           Map<String , String> params = this.mGetTheFilters();
-            if(tag != null && !tag.isEmpty())
-            params.put("tag_uris[" + (params.size()) + "]",tag);
+            Map<String , String> params = this.mGetTheFilters();
 
+            if(tag != null && !tag.isEmpty())
+            {
+                params.put("tag_uris[" + (params.size()) + "]",tag);
+                this.mExamTag = tag;
+            }
             this.mMakeNetworkCall(requestType, url, params);
             return;
         }else if(requestType.equals(Constants.WIDGET_TEST_CALENDAR)){
@@ -4174,12 +4214,12 @@ private void onNotPreparingEducationResponse(String response){
         if(tag != null && !tag.isEmpty())
             params.put("tag_uris[" + (0) + "]",tag);
 
-       this.mMakeNetworkCall(requestType,url, params);
+       this.mMakeNetworkCall(requestType, url, params);
     }
 
     @Override
     public void onPsychometricTest() {
-        this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_QUESTIONS,Constants.BASE_URL+"psychometric/",null);
+        this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_QUESTIONS,Constants.BASE_URL + "psychometric/", null);
 
         //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
@@ -4337,6 +4377,31 @@ private void onNotPreparingEducationResponse(String response){
         }
     }
 
+    @Override
+    public void OnCDRecommendedLoadNext(String nextURL) {
+
+        Map<String , String> params = this.mGetTheFilters();
+
+        if(this.mExamTag != null && !this.mExamTag.isEmpty())
+            params.put("tag_uris[" + (params.size()) + "]", this.mExamTag);
+
+        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES + "#" + "next", nextURL, params);
+    }
+
+    @Override
+    public void OnCDRecommendedInstituteSelected(Institute institute) {
+        this.mDisplayInstituteByEntity(institute);
+    }
+
+    @Override
+    public void OnCDRecommendedInstituteLiked(Institute institute) {
+        this.onInstituteLikedDislikedByEntity(institute, Constants.LIKE_THING, "");
+    }
+
+    @Override
+    public void OnCDRecommendedInstituteDislike(Institute institute) {
+        this.onInstituteLikedDislikedByEntity(institute, Constants.DISLIKE_THING, "");
+    }
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override
@@ -4435,9 +4500,9 @@ private void onNotPreparingEducationResponse(String response){
         }
         this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
 
-        if(currentFragment instanceof  MyFutureBuddiesFragment)
+        if(currentFragment instanceof MyFutureBuddiesFragment)
         {
-            ((MyFutureBuddiesFragment)currentFragment).sendChatRequest(msg);
+            ((MyFutureBuddiesFragment) currentFragment).sendChatRequest(msg);
         }
     }
     private void onTestCalendarResponse(String response){

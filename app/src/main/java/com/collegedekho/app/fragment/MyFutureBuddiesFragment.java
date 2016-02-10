@@ -86,15 +86,12 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
                 final String value = mChatText.getText().toString();
                 if (value.trim().equals(""))
-                {
                     Toast.makeText(getActivity(), "Please enter your message", Toast.LENGTH_SHORT).show();
-                }
                 else
                 {
                     User user =MainActivity.user;
-                    if( user == null || user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous user"))
+                    if (user == null || user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous user"))
                     {
-
                         mChatText.setText("");
                          // get name from my profile me
                         if(user.profileData[0] != null){
@@ -115,7 +112,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                             @Override
                             public void onClick(View v) {
 
-                                String name =   ((EditText)dialog.findViewById(R.id.user_name)).getText().toString();
+                                String name =   ((EditText) dialog.findViewById(R.id.user_name)).getText().toString();
                                 if(name == null || name.length() <= 0)
                                 {
                                     Utils.DisplayToast(getActivity(), Constants.NAME_EMPTY);
@@ -124,7 +121,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                                 else if(!Utils.isValidName(name)){
                                     Utils.DisplayToast(getActivity(), Constants.NAME_INVALID);
                                     return;
-
                                 }
 
                                 dialog.dismiss();
@@ -133,6 +129,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                                 mListener.onNameUpdated(hashMap, value);
                             }
                         });
+
                         return;
                     }
                     mSubmittedChat(value);
@@ -154,6 +151,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
         return rootView;
     }
+
     private void mSubmittedChat(String value)
     {
         this.setmSubmittingState(true);

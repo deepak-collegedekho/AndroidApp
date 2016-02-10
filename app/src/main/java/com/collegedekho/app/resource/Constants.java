@@ -103,6 +103,7 @@ public class Constants
     public static final String TAG_MY_ALERTS = "my_alerts";
     public static final String TAG_LOAD_INSTITUTE_QNA_QUESTIONS = "institute_qna";
     public static final String TAG_FRAGMENT_INSTITUTE_LIST = "fragment_institute_list";
+    public static final String TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST = "fragment_cd_recommended_institute_list";
     public static final String TAG_FRAGMENT_SHORTLISTED_INSTITUTE_LIST = "fragment_shortlisted_institute_list";
     public static final String TAG_FRAGMENT_PYSCHOMETRIC_TEST_QUESTION_LIST = "fragment_pyschometric_test_question_list";
     public static final String QTYPE_SINGLE = "single";
@@ -345,6 +346,7 @@ public class Constants
     public static final String EXAMS_SCREEN_TUTE        = "exams_tute";
     public static final String PREP_BUDDY_SCREEN_TUTE   = "prep_tute";
     public static final String INSTITUTE_LIST_SCREEN_TUTE = "institute_tute";
+    public static final String RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE = "recommended_institute_tute";
     public static final String MY_FB_SCREEN_TUTE        = "myfb_tute";
 
     public static boolean IS_RECOMENDED_COLLEGE = false;

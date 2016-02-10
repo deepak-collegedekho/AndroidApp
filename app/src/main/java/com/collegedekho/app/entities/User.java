@@ -288,13 +288,18 @@ public class User
         if(cursor == null)return;
 
         Pattern emailPattern = Patterns.EMAIL_ADDRESS;
-        if(emailPattern == null)return;
+
+        if(emailPattern == null)
+            return;
 
         cursor.moveToFirst();
+
         if(this.profileData == null)
             this.profileData = new String[3];
-        this.profileData[1] = "[";
+
+        this.profileData[1] = "";
         this.profileData[2] = "[";
+
         while (!cursor.isAfterLast()) {
             this.profileData[0] = cursor.getString(ProfileQuery.NAME);
             String data = cursor.getString(ProfileQuery.PHONE_NUMBER);
@@ -315,9 +320,9 @@ public class User
         if(this.primaryEmail==null){
             this.primaryEmail = Utils.getDeviceEmail(context);
             if(this.primaryEmail!=null && !this.profileData[1].contains(this.primaryEmail))
-                this.profileData[1]+="\""+this.primaryEmail+"\",";
+                this.profileData[1]+=this.primaryEmail;
         }
-        profileData[1]+="]";
+/*        profileData[1]+="]";*/
         profileData[2]+="]";
     }
 

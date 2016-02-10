@@ -76,7 +76,8 @@ public class CourseListAdapter extends RecyclerView.Adapter {
             cDegree.setText(":  " + c.getDegree_name());
             cStream.setText(":  " + c.getStream_name());
             if(c.getDuration() ==0){
-                cDuration.setText("n/a");
+                cDuration.setText(": n/a");
+                cDuration.setVisibility(View.GONE);
             }else {
                 cDuration.setText(":  " + c.getDuration() + " " + c.duration_type_display);
             }

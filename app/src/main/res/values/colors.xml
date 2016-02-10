@@ -54,4 +54,11 @@
     <color name="transparent">#00000000</color>
     <color name="primary_text_default_material_dark">#adacac</color>
 
+    //swipeble card colors
+    <color name="card_bg">#EBEBEB</color>
+    <color name="card_outline">#D0D0CE</color>
+    //gradient colors
+    <color name="end_gradient">#87737272</color>
+    <color name="start_gradient">#53adb3ad</color>
+
 </resources>

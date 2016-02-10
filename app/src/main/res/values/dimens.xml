@@ -52,6 +52,20 @@
     <dimen name="m170dp">170dp</dimen>
     <dimen name="m180dp">180dp</dimen>
 
+    //font sizes
+    <dimen name="m10sp">10sp</dimen>
+    <dimen name="m11sp">11sp</dimen>
+    <dimen name="m12sp">12sp</dimen>
+    <dimen name="m13sp">13sp</dimen>
+    <dimen name="m14sp">14sp</dimen>
+    <dimen name="m15sp">15sp</dimen>
+    <dimen name="m16sp">16sp</dimen>
+    <dimen name="m18sp">18sp</dimen>
+    <dimen name="m20sp">20sp</dimen>
+    <dimen name="m22sp">22sp</dimen>
+    <dimen name="m24sp">24sp</dimen>
+    <dimen name="m26sp">26sp</dimen>
+
     <dimen name="activity_horizontal_margin_small">10dp</dimen>
     <dimen name="activity_vertical_margin_small">10dp</dimen>
 

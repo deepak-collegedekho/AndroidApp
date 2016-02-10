@@ -46,7 +46,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int viewID =  R.layout.card_institute_list_grid_view;
         if(this.mViewType == Constants.VIEW_INTO_LIST)
-            viewID = R.layout.card__institute_list_view;
+            viewID = R.layout.card_institute_list_view;
         View rootView = LayoutInflater.from(mContext).inflate(viewID, parent, false);
         try {
             return new InstituteHolder(rootView, (InstituteListFragment.OnInstituteSelectedListener) this.mContext);
@@ -165,15 +165,12 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             this.mShortListTV.setText("Delete " + mInstitute.getShort_name() + " from your shortlist");
             this.mShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
         }*/
-        if(!isFilterAllowed &&  !Constants.IS_RECOMENDED_COLLEGE){
+        if(!isFilterAllowed &&  !Constants.IS_RECOMENDED_COLLEGE)
             if(mInstitutes != null && mInstitutes.size() > position)
-            {
                 mInstitutes.remove(position);
-            }
-
-        }else {
+        else
             this.notifyItemChanged(position);
-        }
+
         this.notifyDataSetChanged();
     }
 

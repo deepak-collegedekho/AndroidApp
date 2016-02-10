@@ -344,23 +344,23 @@ public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
         {
             case R.id.profile_syllabus_statusLL:
                 if(this.mExamDetail != null)
-                this.mProfileWidgetSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/"+ this.mExamDetail.getId()+"/syllabus/",null);
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  mExamDetail.getId()).commit();
+                    this.mProfileWidgetSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/"+ this.mExamDetail.getId()+"/syllabus/",null);
+                this.getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  mExamDetail.getId()).commit();
                 break;
             case R.id.backup_colleges_layout_RL:
                if(this.mExamDetail != null)
-                   mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mExamDetail.getExam_tag());
+                   this.mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mExamDetail.getExam_tag());
                else
-               mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/",null);
+                   this.mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/",null);
                break;
             case R.id.wishList_colleges_layout_RL:
-                mProfileWidgetSelected(Constants.WIDGET_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+                this.mProfileWidgetSelected(Constants.WIDGET_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
                 break;
             case R.id.recommended_colleges_layout_RL:
                 if(this.mExamDetail != null)
-                    mProfileWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",this.mExamDetail.getExam_tag());
-                    else
-                    mProfileWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
+                    this.mProfileWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",this.mExamDetail.getExam_tag());
+                else
+                    this.mProfileWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
                 break;
             case R.id.important_date_layout_RL:
                 if(this.mExamDetail != null)
@@ -373,8 +373,8 @@ public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
 
     private void mProfileWidgetSelected(String requestType, String url, String examTag)
     {
-        if(mListener != null)
-            mListener.onHomeItemSelected(requestType, url, examTag);
+        if(this.mListener != null)
+            this.mListener.onHomeItemSelected(requestType, url, examTag);
         Utils.UnregisterReceiver(this.getActivity());
     }
 

@@ -24,4 +24,11 @@
     <declare-styleable name="CustomTheme">
         <attr name="gifViewStyle" format="reference" />
     </declare-styleable>
+    <declare-styleable name="CardContainer">
+        <attr name="android:gravity"/>
+        <attr name="orientationType" format="enum">
+            <enum name="ordered" value="0"/>
+            <enum name="disordered" value="1"/>
+        </attr>
+    </declare-styleable>
 </resources>

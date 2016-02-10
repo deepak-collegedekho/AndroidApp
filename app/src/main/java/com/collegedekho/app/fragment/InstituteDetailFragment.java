@@ -147,6 +147,7 @@ public class InstituteDetailFragment extends BaseFragment {
 
             }
         });
+
         return rootView;
     }
 
