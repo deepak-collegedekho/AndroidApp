@@ -30,6 +30,7 @@ public class Units implements Parcelable {
     public String subject_name;
     public ArrayList<Chapters> chapters;
     public int is_done = -1;
+    private int total_weight;
 
     public Units() {
 
@@ -40,6 +41,7 @@ public class Units implements Parcelable {
         unit_done_percent = source.readFloat();
         unit_name = source.readString();
         chapters = new ArrayList<Chapters>();
+        total_weight=source.readInt();
         source.readTypedList(chapters, Chapters.CREATOR);
     }
 
@@ -54,6 +56,7 @@ public class Units implements Parcelable {
         dest.writeFloat(unit_done_percent);
         dest.writeString(unit_name);
         dest.writeTypedList(chapters);
+        dest.writeInt(total_weight);
     }
 
     public int getUnit_id() {
@@ -110,5 +113,13 @@ public class Units implements Parcelable {
 
     public void setIs_done(int is_done) {
         this.is_done = is_done;
+    }
+
+    public int getTotal_weight() {
+        return total_weight;
+    }
+
+    public void setTotal_weight(int total_weight) {
+        this.total_weight = total_weight;
     }
 }

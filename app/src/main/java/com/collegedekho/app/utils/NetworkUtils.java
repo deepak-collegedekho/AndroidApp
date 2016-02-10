@@ -135,6 +135,47 @@ public class NetworkUtils {
         mQueue.add(request);
     }
 
+    public void simpleGetData(@Nullable final String tag, final String url) {
+        simpleGetData(tag, url, Request.Method.GET);
+    }
+    public void simpleGetData(@Nullable final String tag, final String url, final int method) {
+        final Calendar calendar = Calendar.getInstance();
+        StringRequest request = new StringRequest(method, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Utils.logApiResponseTime(calendar, tag + " " + url);
+                        mListener.onDataLoaded(tag, response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Utils.logApiResponseTime(calendar, tag + " " + url);
+                        Crashlytics.logException(error);
+
+                        String json = null;
+                        NetworkResponse response = error.networkResponse;
+                        if (response != null && response.data != null) {
+                            json = new String(response.data);
+                            json = trimMessage(json, "detail");
+                        }
+                        if (json != null)
+                            mListener.onError(tag, Constants.SERVER_FAULT, url, null, method);
+                        else
+                            mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, null, method);
+                    }
+                }) {
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        request.setShouldCache(true);
+        if (tag != null)
+            request.setTag(tag);
+        mQueue.add(request);
+    }
     public void postData(final String tag, final String url, final Map<String, String> params) {
         postOrPutData(tag, url, params, Request.Method.POST);
     }

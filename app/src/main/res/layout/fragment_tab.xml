@@ -11,6 +11,7 @@
     android:weightSum="1">
 
     <include layout="@layout/layout_exam_tabs"
+        android:id="@+id/exams_tab_layout"
         android:layout_height="0dp"
         android:layout_weight=".05"
         android:layout_width="match_parent"/>

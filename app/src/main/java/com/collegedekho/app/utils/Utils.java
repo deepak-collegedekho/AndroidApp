@@ -369,4 +369,22 @@ public class Utils {
             }
         }
     }
+
+    public static long getVideoDuration(String time) {
+        if(time==null || time.trim().matches("")){
+            return 0;
+        }
+        time = "PT15H12M46S".substring(2);
+        long duration = 0L;
+        Object[][] indexs = new Object[][]{{"H", 3600}, {"M", 60}, {"S", 1}};
+        for(int i = 0; i < indexs.length; i++) {
+            int index = time.indexOf((String) indexs[i][0]);
+            if(index != -1) {
+                String value = time.substring(0, index);
+                duration += Integer.parseInt(value) * (int) indexs[i][1] * 1000;
+                time = time.substring(value.length() + 1);
+            }
+        }
+        return duration;
+    }
 }

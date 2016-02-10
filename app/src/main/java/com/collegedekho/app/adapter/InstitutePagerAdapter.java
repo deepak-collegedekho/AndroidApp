@@ -15,6 +15,7 @@ import com.collegedekho.app.fragment.InstituteInfrastructureFragment;
 import com.collegedekho.app.fragment.InstituteNewsFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstitutePlacementFragment;
+import com.collegedekho.app.fragment.VideosFragment;
 
 import java.util.ArrayList;
 
@@ -29,10 +30,11 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
     private static final int INFRA_POSITION = 3;
     private static final int NEWS_POSITION = 4;
     private static final int ARTICLE_POSITION = 5;
+    private static final int VIDEOS_POSITION = 6;
 
     private Institute mInstitute;
     private Placements p;
-    private int count = 6;
+    private int count = 7;
     private InstituteCoursesFragment mCourseFragment;
     private InstituteOverviewFragment mOverViewFragment;
     private InstituteNewsFragment mNewsFragment;
@@ -73,6 +75,9 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
             case INFRA_POSITION:
                 InstituteInfrastructureFragment instituteInfrastructureFragment = InstituteInfrastructureFragment.newInstance(this.mInstitute);
                 return instituteInfrastructureFragment;
+            case VIDEOS_POSITION:
+                VideosFragment videosFragment = VideosFragment.newInstance(this.mInstitute.getVideos());
+                return videosFragment;
         }
         return null;
     }
@@ -98,6 +103,8 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
                 return "NEWS";
             case ARTICLE_POSITION:
                 return "ARTICLES";
+            case VIDEOS_POSITION:
+                return "VIDEOS";
         }
         return super.getPageTitle(position);
     }

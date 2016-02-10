@@ -116,7 +116,7 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
         ChildViewHolder childViewHolder = new ChildViewHolder();
 
@@ -124,7 +124,9 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
         childViewHolder.childChapterLabel = (TextView) convertView.findViewById(R.id.syllabus_chapters_name);
         childViewHolder.childChapterCheckBox = (CheckBox) convertView.findViewById(R.id.syllabus_chapters_checkbox);
 
-        final Chapters  chapters = this.getChild(groupPosition, childPosition).get(childPosition);
+        final Units units=this.getGroup(groupPosition);
+        final ArrayList<Chapters>  allChapters = units.getChapters();
+        final Chapters chapters=allChapters.get(childPosition);
 
         childViewHolder.childChapterLabel.setText(chapters.getName());
         childViewHolder.childChapterCheckBox.setChecked(chapters.getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
@@ -179,14 +181,27 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
                    /* boolean getChecked[] = mChildCheckStates.get(mGroupPosition);
                     getChecked[mChildPosition] = isChecked;
                     mChildCheckStates.put(mGroupPosition, getChecked);*/
-                    chapters.setIs_done(1);
+                    getGroup(groupPosition).getChapters().get(childPosition).setIs_done(1);
 
                 } else {
-                    chapters.setIs_done(0);
+                    getGroup(groupPosition).getChapters().get(childPosition).setIs_done(0);
                    /* boolean getChecked[] = mChildCheckStates.get(mGroupPosition);
                     getChecked[mChildPosition] = isChecked;
                     mChildCheckStates.put(mGroupPosition, getChecked);*/
                 }
+                float totalWeight=0;
+                float doneWeight=0;
+                for(Chapters chapter:allChapters){
+                    if(chapter.getIs_done()==1){
+                        doneWeight+=chapter.getWeightage();
+                    }
+                    totalWeight+=chapter.getWeightage();
+                }
+                if(totalWeight>0) {
+                    float donePercentage = ((doneWeight/totalWeight) * 100);
+                    getGroup(groupPosition).setUnit_done_percent(donePercentage);
+                }
+                notifyDataSetChanged();
             }
         });
 

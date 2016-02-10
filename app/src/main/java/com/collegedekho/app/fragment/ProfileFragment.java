@@ -3,14 +3,11 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -18,16 +15,13 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamDetailAdapter;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ExamSummary;
-import com.collegedekho.app.entities.User;
 import com.collegedekho.app.listener.OnSwipeTouchListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
-import com.fasterxml.jackson.jr.ob.JSON;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -235,7 +229,7 @@ public class ProfileFragment extends BaseFragment
             String name = MainActivity.user.getName();
             if(name.contains("Anonymous User"))
             {
-                if(MainActivity.user.profileData[0] != null)
+                if(MainActivity.user.profileData[0] != null && !MainActivity.user.profileData[0].equals(Constants.ANONYMOUS_USER))
                 {
                     mProfileName.setText(MainActivity.user.profileData[0]);
                     mProfileName.setVisibility(View.VISIBLE);

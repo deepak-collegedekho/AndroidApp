@@ -44,7 +44,7 @@ public class TabFragment extends  BaseFragment{
     private ViewPager mExamTabPager  = null;
     private boolean isFistTime = false;
     private boolean IS_TUTE_COMPLETED = true;
-
+private View mExamsTabLayout;
     public static TabFragment newInstance(int tabPosoition,ArrayList<ExamDetail> examList) {
         TabFragment fragment = new TabFragment();
         Bundle args = new Bundle();
@@ -75,6 +75,7 @@ public class TabFragment extends  BaseFragment{
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
 
         this.mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
+        mExamsTabLayout=rootView.findViewById(R.id.exams_tab_layout);
         //this.mExamTabPager.setPageTransformer(true, new ZoomPageTransformer());
         TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
         TextView mStreamName = (TextView) rootView.findViewById(R.id.user_stream);
@@ -178,14 +179,18 @@ public class TabFragment extends  BaseFragment{
         super.onResume();
         MainActivity mainActivity = (MainActivity)getActivity();
         if (mainActivity != null) {
-            this.mExamDetailList=MainActivity.user.getUser_exams();
             mainActivity.currentFragment = this;
-            this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
-            mExamTabPager.setAdapter(this.mDetailsAdapter);
-            mainActivity.mUpdateTabMenuItem(this.selectedTabPosition);
-            if(selectedTabPosition<mExamDetailList.size())
-            mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
-
+            if (MainActivity.user.getUser_exams() != null && MainActivity.user.getUser_exams().size()>0) {
+                mExamsTabLayout.setVisibility(View.VISIBLE);
+                this.mExamDetailList = MainActivity.user.getUser_exams();
+                this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
+                mExamTabPager.setAdapter(this.mDetailsAdapter);
+                mainActivity.mUpdateTabMenuItem(this.selectedTabPosition);
+                if (selectedTabPosition < mExamDetailList.size())
+                    mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
+            }else {
+                mExamsTabLayout.setVisibility(View.GONE);
+            }
         }
 /*
         if (mExamDetailList.size() >= EXAM_TAB_POSITION)

@@ -20,7 +20,7 @@
     android:layout_height="match_parent">
 
   <fragment
-      class="com.collegedekho.app.activity.VideoListActivity$VideoListFragment"
+      class="com.collegedekho.app.fragment.VideosFragment$VideoListFragment"
       android:id="@+id/list_fragment"
       android:layout_width="match_parent"
       android:layout_height="match_parent"/>
@@ -36,12 +36,15 @@
         android:id="@+id/close_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:src="@android:drawable/btn_dialog"
+        android:layout_gravity="right"
+        android:layout_marginRight="@dimen/m2dp"
+        android:layout_marginBottom="@dimen/m2dp"
+        android:background="@drawable/bg_black_circle"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
         android:onClick="onClickClose"/>
 
     <fragment
-        class="com.collegedekho.app.activity.VideoListActivity$VideoFragment"
+        class="com.collegedekho.app.fragment.VideosFragment$VideoFragment"
         android:id="@+id/video_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

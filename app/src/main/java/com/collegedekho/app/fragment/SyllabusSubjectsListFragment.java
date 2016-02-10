@@ -147,6 +147,8 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
             this.mEmptyTextView.setText("");
             this.mEmptyTextView.setVisibility(View.GONE);
         }
+        updateSubjectProgress();
+        mAdapter.notifyDataSetChanged();
     }
 
     private void storeChaptersStatus(){
@@ -202,64 +204,111 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
         JSONArray chapterJsonArray = new JSONArray();
         JSONArray subjectJsonArray = new JSONArray();
         HashMap<String, String> subjetIdsMap = new HashMap<>();
-        for (Subjects subjectObj:mSubjects) {
-            for (Subjects subject :mSubjectsLastStatus){
-                if(subject.getSubject_id() != subjectObj.getSubject_id())continue;
+        int size=mSubjects.size();
+        for (int i=0;i<size;i++) {
+            Subjects subjectObj = mSubjects.get(i);
+            Subjects subject = mSubjectsLastStatus.get(i);
+            if (subject.getSubject_id() != subjectObj.getSubject_id()) {
+                continue;
+            }
+            ArrayList<Units> originalUnitsList = subjectObj.getUnits();
+            ArrayList<Units> unitList = subject.getUnits();
 
-                ArrayList<Units> originalUnitsList = subjectObj.getUnits();
-                ArrayList<Units> unitList = subject.getUnits();
+            int unitsSize = originalUnitsList.size();
+            for (int j = 0; j < unitsSize; j++) {
+                Units unitObj = originalUnitsList.get(j);
+                Units unit = unitList.get(j);
 
-                 if (originalUnitsList != null || !originalUnitsList.isEmpty()
-                     ||unitList != null || !unitList.isEmpty()) {
+                if (unitObj.getUnit_id() != unit.getUnit_id()) {
+                    continue;
+                }
 
-                     for (Units unitObj : originalUnitsList) {
-                         for (Units unit : unitList) {
-                             if (unitObj.getUnit_id() != unit.getUnit_id()) continue;
+                ArrayList<Chapters> originalChapterList = unitObj.getChapters();
+                ArrayList<Chapters> chapterList = unit.getChapters();
 
-                             ArrayList<Chapters> originalChapterList = unitObj.getChapters();
-                             ArrayList<Chapters> chapterList = unit.getChapters();
+                if (originalChapterList != null || !originalChapterList.isEmpty()
+                        || chapterList != null || !chapterList.isEmpty()) {
 
-                             if (originalChapterList != null || !originalChapterList.isEmpty()
-                                     || chapterList != null || !chapterList.isEmpty()) {
+                    int chapterSize = originalChapterList.size();
+                    for (int k = 0; k < chapterSize; k++) {
+                        Chapters chapterObj = originalChapterList.get(k);
+                        Chapters chapter = chapterList.get(k);
+                        if (chapterObj.getId() != chapter.getId()) continue;
 
-                                 for (Chapters chapterObj : originalChapterList) {
-                                     for (Chapters chapter : chapterList) {
-                                         if (chapterObj.getId() != chapter.getId()) continue;
+                        try {
+                            if (chapterObj.getIs_done() != chapter.getIs_done()) {
+                                subjetIdsMap.put("" + unit.getSubject_id(), "" + chapter.getId());
+                            }
+                            if (chapterObj.getIs_done() == 1)
+                                chapterJsonArray.put(chapter.getId());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
 
-                                         try {
-                                             if (chapterObj.getIs_done() != chapter.getIs_done()) ;
-                                             subjetIdsMap.put(""+unit.getSubject_id(),""+chapter.getId());
-
-                                             if (chapterObj.getIs_done() == 1)
-                                                 chapterJsonArray.put(chapter.getId());
-                                         }catch (Exception e){
-                                             e.printStackTrace();
-                                         }
-
-                                     }
-                                 }
-                             }
-
-                         }
-                     }
-                 }
             }
         }
+//        for (Subjects subjectObj:mSubjects) {
+//            for (Subjects subject :mSubjectsLastStatus){
+//                if(subject.getSubject_id() != subjectObj.getSubject_id())continue;
+//
+//                ArrayList<Units> originalUnitsList = subjectObj.getUnits();
+//                ArrayList<Units> unitList = subject.getUnits();
+//
+//                 if (originalUnitsList != null || !originalUnitsList.isEmpty()
+//                     ||unitList != null || !unitList.isEmpty()) {
+//
+//                     for (Units unitObj : originalUnitsList) {
+//                         for (Units unit : unitList) {
+//                             if (unitObj.getUnit_id() != unit.getUnit_id()) continue;
+//
+//                             ArrayList<Chapters> originalChapterList = unitObj.getChapters();
+//                             ArrayList<Chapters> chapterList = unit.getChapters();
+//
+//                             if (originalChapterList != null || !originalChapterList.isEmpty()
+//                                     || chapterList != null || !chapterList.isEmpty()) {
+//
+//                                 for (Chapters chapterObj : originalChapterList) {
+//                                     for (Chapters chapter : chapterList) {
+//                                         if (chapterObj.getId() != chapter.getId()) continue;
+//
+//                                         try {
+//                                             if (chapterObj.getIs_done() != chapter.getIs_done()) {
+//                                                 subjetIdsMap.put("" + unit.getSubject_id(), "" + chapter.getId());
+//                                             }
+//                                             if (chapterObj.getIs_done() == 1)
+//                                                 chapterJsonArray.put(chapter.getId());
+//                                         }catch (Exception e){
+//                                             e.printStackTrace();
+//                                         }
+//
+//                                     }
+//                                 }
+//                             }
+//
+//                         }
+//                     }
+//                 }
+//            }
+//        }
 
-        Iterator it = subjetIdsMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            subjectJsonArray.put(pair.getKey());
-        }
+        if(subjetIdsMap.size()>0) {
+            Iterator it = subjetIdsMap.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                subjectJsonArray.put(pair.getKey());
+            }
 
-        try {
-            parentJsonObj.put(Constants.CHAPTERS,chapterJsonArray);
-            parentJsonObj.put(Constants.SUBJECTS,subjectJsonArray);
-        } catch (JSONException e) {
-            e.printStackTrace();
+            try {
+                parentJsonObj.put(Constants.CHAPTERS, chapterJsonArray);
+                parentJsonObj.put(Constants.SUBJECTS, subjectJsonArray);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (listener != null)
+                listener.onSyllabusChanged(parentJsonObj);
         }
-        if(listener != null)
-            listener.onSyllabusChanged(parentJsonObj);
 
     }
 
@@ -270,6 +319,22 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
 //                submitSyllabusStatus();
                 getActivity().onBackPressed();
                 break;
+        }
+    }
+
+    private void updateSubjectProgress() {
+        if (this.mSubjects != null && !this.mSubjects.isEmpty()) {
+            for (Subjects subject : mSubjects) {
+                float donePercent = 0;
+                ArrayList<Units> unites = subject.getUnits();
+                if (unites != null && !unites.isEmpty()) {
+                    for (Units unit : unites) {
+                        donePercent += unit.getUnit_done_percent();
+                    }
+                    donePercent = donePercent / unites.size();
+                }
+                subject.setSubject_done_percent(donePercent);
+            }
         }
     }
 

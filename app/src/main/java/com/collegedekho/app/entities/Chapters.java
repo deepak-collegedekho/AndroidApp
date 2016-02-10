@@ -12,7 +12,7 @@ public class Chapters implements Parcelable {
     String exam_date;
     String yearly_exam_id;
     String days_left;
-    public int weightage;
+    public float weightage;
     public int should_be_done;
     public int is_done;
     public int id;
@@ -56,7 +56,7 @@ public class Chapters implements Parcelable {
         dest.writeString(exam_date);
         dest.writeString(yearly_exam_id);
         dest.writeString(days_left);
-        dest.writeInt(weightage);
+        dest.writeFloat(weightage);
         dest.writeInt(should_be_done);
         dest.writeInt(is_done);
         dest.writeInt(id);
@@ -88,7 +88,7 @@ public class Chapters implements Parcelable {
         this.days_left = days_left;
     }
 
-    public int getWeightage() {
+    public float getWeightage() {
         return weightage;
     }
 

@@ -47,6 +47,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -73,6 +74,7 @@ import com.collegedekho.app.entities.Facet;
 import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
+import com.collegedekho.app.entities.Item;
 import com.collegedekho.app.entities.MyAlertDate;
 import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
 import com.collegedekho.app.entities.MyFutureBuddy;
@@ -88,6 +90,7 @@ import com.collegedekho.app.entities.Subjects;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.entities.Widget;
+import com.collegedekho.app.entities.YoutubeVideoDetails;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.BaseFragment;
@@ -119,6 +122,7 @@ import com.collegedekho.app.fragment.TabFragment;
 import com.collegedekho.app.fragment.UserAlertsFragment;
 import com.collegedekho.app.fragment.UserAlertsParentFragment;
 import com.collegedekho.app.fragment.UserEducationFragment;
+import com.collegedekho.app.fragment.VideosFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.listener.DataLoadListener;
@@ -148,6 +152,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.tagmanager.Container;
 import com.google.android.gms.tagmanager.ContainerHolder;
 import com.google.android.gms.tagmanager.TagManager;
+import com.google.android.youtube.player.YouTubePlayer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -210,7 +215,8 @@ public class MainActivity extends AppCompatActivity
         UserEducationFragment.OnUserEducationInteractionListener, PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
-        UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteListFragment.OnCDRecommendedInstituteListener
+        UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteListFragment.OnCDRecommendedInstituteListener,
+        VideosFragment.OnTitleUpdateListener
 
 {
 
@@ -276,7 +282,7 @@ public class MainActivity extends AppCompatActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     // private CharSequence mTitle;
-    private List<ExamDetail> mUserExamsList = null;
+    private List<ExamDetail> mUserExamsList = new ArrayList<>();
     public static User user;
     private User.Prefs userPref;
     static String type = "";
@@ -731,6 +737,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -829,6 +836,7 @@ public class MainActivity extends AppCompatActivity
                 if (user.profileData[1] != null) {
                     user.setEmail(user.profileData[1]);
                     hashMap.put(Constants.USER_EMAIL, user.profileData[1]);
+                    this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#"+Constants.ANONYMOUS_USER, Constants.BASE_URL + "preferences/", hashMap);
                 }
 
                 hashMap.put(Constants.USER_DEVICE_ID, deviceId);
@@ -860,10 +868,10 @@ public class MainActivity extends AppCompatActivity
         if(MainActivity.type != null && !MainActivity.type.matches("")){
             mhandleNotifications();
         }
-        else if(MainActivity.user.getEducation_set() == 1 && (MainActivity.user.getExams_set() == 1 || MainActivity.user.getIs_preparing().equals("0")) /*|| IS_PROFILE_LOADED*/)
+        else if((MainActivity.user.getEducation_set() == 1 && (MainActivity.user.getExams_set() == 1) || (MainActivity.user.getIs_preparing().equals("0")) && IS_PROFILE_LOADED))
 //            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
             this.mMakeNetworkCall(Constants.TAG_LAUNCH_USER_HOME,Constants.BASE_URL + "preferences/", null);
-        else if(MainActivity.user.getEducation_set() == 1 &&  MainActivity.user.getExams_set() == 0)
+        else if(MainActivity.user.getEducation_set() == 1 &&  MainActivity.user.getExams_set() == 0 && !MainActivity.user.getIs_preparing().equals("0"))
             this.mMakeNetworkCall(Constants.TAG_LOAD_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
         else
             this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION,  Constants.BASE_URL + "user-education/", null);
@@ -1703,6 +1711,9 @@ private boolean isUpdateStreams;
                 break;
             case Constants.SEARCH_NEWS:
                 this.onNewsSearchResult(response);
+                break;
+            case Constants.TAG_UPDATE_VIDEO_TITLE:
+                this.onUpdateTitleResponse(response);
                 break;
         }
 
@@ -3526,7 +3537,7 @@ private boolean isUpdateStreams;
                        user.setEmail(user.profileData[1]);
                        hashMap.put(Constants.USER_EMAIL, user.profileData[1]);
                    }
-                   this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED + "#name", Constants.BASE_URL + "preferences/", hashMap);
+                   this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#"+Constants.ANONYMOUS_USER, Constants.BASE_URL + "preferences/", hashMap);
                }else{
                    MainActivity.user.setResource_uri(MainActivity.user.getPreference_uri());
                }
@@ -3910,7 +3921,7 @@ private boolean isUpdateStreams;
         }
 
         Bundle bundle = new Bundle();
-        bundle.putStringArrayList(VideoListActivity.VIDEO_LIST_ACTIVITY, videos);
+        bundle.putStringArrayList(VideosFragment.VIDEO_LIST_ACTIVITY, videos);
 
         Intent activityIntent = new Intent(MainActivity.this, VideoListActivity.class);
         activityIntent.putExtras(bundle);
@@ -4403,6 +4414,48 @@ private void onNotPreparingEducationResponse(String response){
         this.onInstituteLikedDislikedByEntity(institute, Constants.DISLIKE_THING, "");
     }
 
+    private List<VideosFragment.VideoEntry> videoList;
+    private VideosFragment.VideoListFragment videosFragment;
+    @Override
+    public void onUpdate(List<VideosFragment.VideoEntry> videoList,String url,VideosFragment.VideoListFragment fragment) {
+        videosFragment=fragment;
+        if(videoList!=null && !videoList.isEmpty()){
+            this.videoList=videoList;
+            networkUtils.simpleGetData(Constants.TAG_UPDATE_VIDEO_TITLE,url);
+        }
+    }
+
+    public void onClickClose(@SuppressWarnings("unused") View view) {
+        if(videosFragment!=null){
+            videosFragment.onClickClose(view);
+        }
+    }
+
+    private void onUpdateTitleResponse(String response) {
+        if (this.videoList != null && response != null) {
+
+            try {
+                YoutubeVideoDetails details = JSON.std.beanFrom(YoutubeVideoDetails.class, response);
+                ArrayList<Item> items = details.getItems();
+                int detailsSize = items.size();
+                int listSize = videoList.size();
+
+                if (detailsSize == listSize) {
+                    for (int i = 0; i < listSize; i++) {
+                        Item item = items.get(i);
+                        videoList.get(i).text = item.getSnippet().getTitle();
+                        Log.e("DEBUG", " Duration " + Utils.getVideoDuration(item.getContentDetails().getDuration()));
+                    }
+                }
+                if (videosFragment != null) {
+                    videosFragment.updateVideosList(videoList);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override
         public void onContainerAvailable(ContainerHolder containerHolder, String containerVersion) {
@@ -4469,12 +4522,9 @@ private void onNotPreparingEducationResponse(String response){
     }
 
     private void onNameUpdatedResponse(String response , String msg) {
-        User tempuser = MainActivity.user;
         try {
-            tempuser = JSON.std.beanFrom(User.class, response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            User tempuser = JSON.std.beanFrom(User.class, response);
+
         //save the preferences locally
         user.setPref(User.Prefs.STREAMKNOWN);
         if (tempuser != null){
@@ -4486,10 +4536,18 @@ private void onNotPreparingEducationResponse(String response){
 //            user.setLevel(tempuser.getLevel());
             user.setPrimaryEmail(tempuser.getPrimaryEmail());
             user.setPrimaryPhone(tempuser.getPrimaryPhone());
+            String userName=tempuser.getName();
+            if(userName!=null && !userName.trim().matches("")&& !userName.equals(Constants.ANONYMOUS_USER)) {
+                user.setName(userName);
+                user.profileData[0]=userName;
+            }
 //            user.setSublevel(tempuser.getSublevel());
 //            user.setIs_preparing(tempuser.getIs_preparing());
             user.setResource_uri(tempuser.getResource_uri());
 //            user.profileData = tempuser.profileData;
+        }
+        }catch (IOException e) {
+            e.printStackTrace();
         }
 
         String u = null;

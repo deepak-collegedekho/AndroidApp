@@ -18,6 +18,7 @@ public class Constants
     public static final String PREFS = "sharedprefs";
     public static final String KEY_USER = "user_id";
     public static final String TAG_CREATE_USER = "create_user";
+    public static final String ANONYMOUS_USER = "Anonymous User";
     public static final String TAG_CREATE_ANONY_USER = "create_anony_user";
     public static final String TAG_CREATE_FACEBOOK_ANONY_USER = "create_facebook_anony_user";
     public static final String TAG_SKIP_LOGIN = "skip_login";
@@ -257,6 +258,8 @@ public class Constants
     public static final String KEY_APPLY_STATUS = "apply_status";
     public static String INSTITUTE_ID ="institute_id_set";
     public static String YOUTUBE_DEVELOPER_KEY = "AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk";
+//    public static String YOUTUBE_DEVELOPER_KEY = "AIzaSyBIu-yzOCq2pg237na2kAGUqzlrb9su-6c";
+    public static final String TAG_UPDATE_VIDEO_TITLE = "update_video_title";
 
     //GA Categories
     public static final String CATEGORY_PREFERENCE = "category_preference";
