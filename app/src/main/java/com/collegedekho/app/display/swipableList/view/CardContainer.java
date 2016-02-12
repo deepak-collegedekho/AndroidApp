@@ -308,13 +308,13 @@ public class CardContainer extends AdapterView<ListAdapter> {
                     likeImageView.setVisibility(VISIBLE);
                     params.gravity = Gravity.RIGHT;
                     likeImageView.setLayoutParams(params);
-                    likeImageView.setImageResource(R.drawable.ic_dislike);
+                    likeImageView.setImageResource(R.drawable.ic_dislike_50dp);
                     likeImageView.setColorFilter(mContext.getResources().getColor(R.color.dislike_red_selected));
                 } else if(dx >= 5){
                     likeImageView.setVisibility(VISIBLE);
                     params.gravity = Gravity.LEFT;
                     likeImageView.setLayoutParams(params);
-                    likeImageView.setImageResource(R.drawable.ic_like);
+                    likeImageView.setImageResource(R.drawable.ic_like_50dp);
                     likeImageView.setColorFilter(mContext.getResources().getColor(R.color.like_green_selected));
                 }
 
