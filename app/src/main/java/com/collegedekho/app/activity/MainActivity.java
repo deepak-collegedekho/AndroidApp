@@ -1053,6 +1053,7 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl) {
         this.mDisplayInstituteList(response, filterAllowed, isHavingNextUrl, Constants.INSTITUTE_TYPE);
     }
+
     private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl) {
         try {
             String val = this.extractResults(response);
@@ -2537,23 +2538,26 @@ private boolean isUpdateStreams;
     @Override
     public void onInstituteLikedDisliked(int position, int liked) {
         Institute institute = this.mInstituteList.get(position);
-        this.onInstituteLikedDislikedByEntity(institute, liked, Constants.TAG_INSTITUTE_LIKE_DISLIKE + "#" + position);
+        this.onInstituteLikedDislikedByEntity(institute, liked, Constants.TAG_INSTITUTE_LIKE_DISLIKE + "#" + position, Constants.INSTITUTE_LIKE_DISLIKE);
     }
 
-    public void onInstituteLikedDislikedByEntity(Institute institute, int liked, String tag) {
+    public void onInstituteLikedDislikedByEntity(Institute institute, int liked, String tag, int source) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("source", String.valueOf(source));
+
         if (institute.getCurrent_user_vote_type() == Constants.NEITHER_LIKE_NOR_DISLIKE) {
             //neither liked nor disliked case
             if (liked == Constants.LIKE_THING)
-                this.mMakeNetworkCall(tag + "#" + liked, institute.getResource_uri() + "upvote/", null, Request.Method.POST);
+                this.mMakeNetworkCall(tag + "#" + liked, institute.getResource_uri() + "upvote/", params, Request.Method.POST);
             else
-                this.mMakeNetworkCall(tag + "#" + liked, institute.getResource_uri() + "downvote/", null, Request.Method.POST);
+                this.mMakeNetworkCall(tag + "#" + liked, institute.getResource_uri() + "downvote/", params, Request.Method.POST);
         }
         else if (institute.getCurrent_user_vote_type() != Constants.NEITHER_LIKE_NOR_DISLIKE && liked != Constants.NEITHER_LIKE_NOR_DISLIKE) {
             //either already liked or disliked case
             if (liked == Constants.LIKE_THING)
-                this.mMakeNetworkCall(tag + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, institute.getResource_uri() + "upvote/", null, Request.Method.POST);
+                this.mMakeNetworkCall(tag + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, institute.getResource_uri() + "upvote/", params, Request.Method.POST);
             else
-                this.mMakeNetworkCall(tag + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, institute.getResource_uri() + "downvote/", null, Request.Method.POST);
+                this.mMakeNetworkCall(tag + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, institute.getResource_uri() + "downvote/", params, Request.Method.POST);
         }
     }
 
@@ -4406,12 +4410,12 @@ private void onNotPreparingEducationResponse(String response){
 
     @Override
     public void OnCDRecommendedInstituteLiked(Institute institute) {
-        this.onInstituteLikedDislikedByEntity(institute, Constants.LIKE_THING, "");
+        this.onInstituteLikedDislikedByEntity(institute, Constants.LIKE_THING, "", Constants.REMOMMENDED_INSTITUTE_LIKE_DISLIKE);
     }
 
     @Override
     public void OnCDRecommendedInstituteDislike(Institute institute) {
-        this.onInstituteLikedDislikedByEntity(institute, Constants.DISLIKE_THING, "");
+        this.onInstituteLikedDislikedByEntity(institute, Constants.DISLIKE_THING, "", Constants.REMOMMENDED_INSTITUTE_LIKE_DISLIKE);
     }
 
     private List<VideosFragment.VideoEntry> videoList;

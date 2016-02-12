@@ -191,7 +191,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
             }
             requestLayout();
         }
-
     }
 
     private float getDisorderedRotation() {

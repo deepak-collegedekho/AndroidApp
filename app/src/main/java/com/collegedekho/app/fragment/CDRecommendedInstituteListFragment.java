@@ -3,6 +3,7 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.collegedekho.app.display.swipableList.view.SimpleCardStackAdapter;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.tag.textview.ContactsCompletionView;
+import com.google.android.youtube.player.internal.e;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +43,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     private OnCDRecommendedInstituteListener mListener;
     private TextView mEmptyTextView;
     private boolean IS_TUTE_COMPLETED = true;
-    private ContactsCompletionView mCompletionView;
-    private ArrayAdapter<String> tolenAdapter;
-    private View instituteView;
     private CardContainer mCardContainer;
 
     public CDRecommendedInstituteListFragment() {
@@ -92,11 +91,11 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
 
     private void mAddCardInAdapter(List<Institute> list)
     {
-        for (Institute institute : list)
+        for (int i = list.size() - 1; i >= 0; i--)
         {
             CardModel model;
 
-            model = new CardModel(institute, this.getActivity());
+            model = new CardModel(list.get(i), this.getActivity());
 
             this.mAdapter.add(model);
         }
@@ -163,22 +162,23 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     }
 
     public void clearList() {
-        if(this.mInstitutes == null || this.mInstitutes.size() == 0)return;
-        mInstitutes.clear();
-        mAdapter.notifyDataSetChanged();
+        if(this.mInstitutes == null || this.mInstitutes.size() == 0)
+            return;
+
+        for (int i = 0; i < this.mInstitutes.size(); i++)
+            this.mAdapter.pop();
+
+        this.mInstitutes = new ArrayList<>();
     }
 
     public void updateList(List<Institute> institutes, String next) {
-        this.mAdapter.setLoadingNext(false);
-        //progressBarLL.setVisibility(View.GONE);
-        //mAdapter.lastPosition = this.mInstitutes.size() - 1;
-        //mInstitutes.addAll(institutes);
         //this.clearList();
         this.mInstitutes.addAll(institutes);
-        //this.mAddCardInAdapter(this.mInstitutes);
+        //this.mAddCardInAdapter(institutes);
         this.mAdapter.notifyDataSetChanged();
-        this.loading = false;
         this.mNextUrl = next;
+        this.mAdapter.setLoadingNext(false);
+        this.loading = false;
     }
 
     @Override
@@ -195,12 +195,26 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
 
     @Override
     public void OnInstituteLiked(Institute institute) {
+        this.mRemoveInstituteFromList(this.mInstitutes.size() - 1);
+        //this.mAdapter.pop();
         this.mListener.OnCDRecommendedInstituteLiked(institute);
     }
 
     @Override
     public void OnInstituteDislike(Institute institute) {
+        this.mRemoveInstituteFromList(this.mInstitutes.size() - 1);
+        //this.mAdapter.pop();
         this.mListener.OnCDRecommendedInstituteDislike(institute);
+    }
+
+    private void mRemoveInstituteFromList(int index)
+    {
+        try {
+            this.mInstitutes.remove(index);
+        }
+        catch (Exception e){
+            Log.e(TITLE, e.getMessage());
+        }
     }
 
     public interface OnCDRecommendedInstituteListener extends BaseListener{

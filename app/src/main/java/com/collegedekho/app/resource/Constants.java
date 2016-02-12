@@ -353,6 +353,9 @@ public class Constants
     public static final String MY_FB_SCREEN_TUTE        = "myfb_tute";
 
     public static boolean IS_RECOMENDED_COLLEGE = false;
+    public static final int REMOMMENDED_INSTITUTE_LIKE_DISLIKE = 1;
+    public static final int INSTITUTE_LIKE_DISLIKE = 0;
+
 
     public static long ANIM_SHORT_DURATION = 200;
     public static long ANIM_AVERAGE_DURATION = 500;

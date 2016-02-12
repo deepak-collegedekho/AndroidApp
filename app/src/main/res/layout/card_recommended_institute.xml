@@ -5,6 +5,7 @@
     android:id="@+id/card_recommended_institute"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="false"
     >
     <RelativeLayout
         android:id="@+id/card_recommended_institute_container"
@@ -25,7 +26,6 @@
             android:textStyle="bold"
             android:fontFamily="sans-serif-light"
             />
-
         <com.collegedekho.app.widget.FadeInImageView
             android:id="@+id/card_recommended_institute_image"
             android:layout_width="match_parent"
@@ -38,7 +38,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/like_textview"

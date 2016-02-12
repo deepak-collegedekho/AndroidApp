@@ -94,6 +94,14 @@ public abstract class CardStackAdapter extends BaseCardStackAdapter {
 		return model;
 	}
 
+	public void clear()
+	{
+		synchronized (mLock) {
+			mData.clear();
+		}
+		notifyDataSetChanged();
+	}
+
 	@Override
 	public Object getItem(int position) {
 		return getCardModel(position);
