@@ -11,7 +11,6 @@ import android.database.DataSetObserver;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -22,10 +21,12 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -33,7 +34,7 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.display.swipableList.model.CardModel;
 import com.collegedekho.app.display.swipableList.model.Orientations;
-import com.collegedekho.app.utils.Utils;
+import com.collegedekho.app.resource.Constants;
 
 import java.util.Random;
 
@@ -75,10 +76,11 @@ public class CardContainer extends AdapterView<ListAdapter> {
     private int mGravity;
     private int mNextAdapterPosition;
     private boolean mDragging;
+    private Context mContext;
 
     public CardContainer(Context context) {
         super(context);
-
+        mContext = context;
         setOrientation(Orientations.OrientationType.Disordered);
         setGravity(Gravity.CENTER);
         init();
@@ -87,6 +89,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
     public CardContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
         initFromXml(attrs);
         init();
     }
@@ -94,6 +97,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
     public CardContainer(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        mContext = context;
         initFromXml(attrs);
         init();
     }
@@ -295,23 +299,25 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 dx = x - mLastTouchX;
                 dy = y - mLastTouchY;
 
-                TextView likeTextView = (TextView)mTopCard.findViewById(R.id.like_textview);
+               final  ImageView likeImageView = (ImageView)mTopCard.findViewById(R.id.like_textview);
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                         LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
-                params.setMargins(30, 50, 30,0 );
-                if(dx <= -10){
-                    likeTextView.setVisibility(VISIBLE);
+                params.setMargins(30, 60, 30,0 );
+                if(dx <= -5){
+                    likeImageView.setVisibility(VISIBLE);
                     params.gravity = Gravity.RIGHT;
-                    likeTextView.setLayoutParams(params);
-                    likeTextView.setText("DISLIKE");
-                }
-                else if(dx >=10){
-                    likeTextView.setVisibility(VISIBLE);
+                    likeImageView.setLayoutParams(params);
+                    likeImageView.setImageResource(R.drawable.ic_dislike);
+                    likeImageView.setColorFilter(mContext.getResources().getColor(R.color.dislike_red_selected));
+                } else if(dx >= 5){
+                    likeImageView.setVisibility(VISIBLE);
                     params.gravity = Gravity.LEFT;
-                    likeTextView.setLayoutParams(params);
-                    likeTextView.setText("LIKE");
+                    likeImageView.setLayoutParams(params);
+                    likeImageView.setImageResource(R.drawable.ic_like);
+                    likeImageView.setColorFilter(mContext.getResources().getColor(R.color.like_green_selected));
                 }
+
 
                 if (Math.abs(dx) > mTouchSlop || Math.abs(dy) > mTouchSlop) {
                     mDragging = true;
@@ -332,9 +338,24 @@ public class CardContainer extends AdapterView<ListAdapter> {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
 
-                mTopCard.findViewById(R.id.like_textview).setVisibility(GONE);
+               mTopCard.findViewById(R.id.like_textview).setVisibility(GONE);
+               /*final  TextView tv = (TextView)mTopCard.findViewById(R.id.like_textview);
+                tv.animate()
+                        .alpha(5)
+                        .setDuration(200)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                tv.setVisibility(GONE);
+                                tv.setAlpha(10);
+
+                            }
+                        });*/
+
                 if (!mDragging) {
                     return true;
+
                 }
                 mDragging = false;
                 mActivePointerId = INVALID_POINTER_ID;

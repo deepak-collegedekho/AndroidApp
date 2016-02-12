@@ -23,25 +23,25 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
     private boolean mLoadingNext;
 
     public SimpleCardStackAdapter(Context mContext, OnCDRecommendedAdapterInterface listener) {
-		super(mContext);
+        super(mContext);
         this.imageLoader = MySingleton.getInstance(mContext).getImageLoader();
         this.mListener = listener;
     }
 
-	@Override
-	public View getCardView(final int position, CardModel model, View convertView, ViewGroup parent) {
-		if(convertView == null) {
-			LayoutInflater inflater = LayoutInflater.from(getContext());
-			convertView = inflater.inflate(R.layout.card_recommended_institute, parent, false);
-			assert convertView != null;
-		}
+    @Override
+    public View getCardView(final int position, CardModel model, View convertView, ViewGroup parent) {
+        if(convertView == null) {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            convertView = inflater.inflate(R.layout.card_recommended_institute, parent, false);
+            assert convertView != null;
+        }
 
         Institute institute;
 
         institute = model.getInstitute();
 
         //setting institute name
-		((TextView) convertView.findViewById(R.id.card_recommended_institute_title)).setText(institute.getName());
+        ((TextView) convertView.findViewById(R.id.card_recommended_institute_title)).setText(institute.getName());
 
         //setting institute image
         ((FadeInImageView) convertView.findViewById(R.id.card_recommended_institute_image)).setDefaultImageResId(R.drawable.default_banner);
@@ -51,11 +51,11 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
             ((FadeInImageView) convertView.findViewById(R.id.card_recommended_institute_image)).setImageUrl(institute.getImages().get("Banner"), this.imageLoader);
 
         //setting location
-		String text = "";
-		if (model.getInstitute().getCity_name() != null)
-			text += institute.getCity_name() + ", ";
-		if (model.getInstitute().getState_name() != null)
-			text += institute.getState_name();
+        String text = "";
+        if (model.getInstitute().getCity_name() != null)
+            text += institute.getCity_name() + ", ";
+        if (model.getInstitute().getState_name() != null)
+            text += institute.getState_name();
 
         if (text == "" || text.isEmpty())
             ((TextView) convertView.findViewById(R.id.card_recommended_geolocation)).setVisibility(View.GONE);
@@ -90,7 +90,7 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
                     SimpleCardStackAdapter.this.mListener.OnInstituteSelected(((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute());
                 }
 
-                return false;
+                return true;
             }
         });
 
@@ -100,7 +100,7 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
                 Log.i("Swipeable Cards","I like the card");
                 SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute());
                 //load next if on last position
-                if (position < 5 && !SimpleCardStackAdapter.this.isLoadingNext())
+                if (position < 4 && !SimpleCardStackAdapter.this.isLoadingNext())
                     SimpleCardStackAdapter.this.mListener.OnLoadNext();
             }
 
@@ -109,13 +109,13 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
                 Log.i("Swipeable Cards","I dislike the card");
                 SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute());
                 //load next if on last position
-                if (position < 5 && !SimpleCardStackAdapter.this.isLoadingNext())
+                if (position < 4 && !SimpleCardStackAdapter.this.isLoadingNext())
                     SimpleCardStackAdapter.this.mListener.OnLoadNext();
             }
         });
 
         return convertView;
-	}
+    }
 
     public boolean isLoadingNext() {
         return mLoadingNext;
