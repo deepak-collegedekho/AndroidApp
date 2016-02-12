@@ -11,6 +11,7 @@ import android.database.DataSetObserver;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.os.Build;
+import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -23,12 +24,16 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.display.swipableList.model.CardModel;
 import com.collegedekho.app.display.swipableList.model.Orientations;
+import com.collegedekho.app.utils.Utils;
 
 import java.util.Random;
 
@@ -255,6 +260,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
         final int pointerIndex;
         final float x, y;
         final float dx, dy;
+        int oldRight;
+        int oldLeft;
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mTopCard.getHitRect(childRect);
@@ -277,6 +284,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 mTopCard.setPivotX(points[0]);
                 mTopCard.setPivotY(points[1]);
 
+
                 break;
             case MotionEvent.ACTION_MOVE:
 
@@ -286,6 +294,24 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
                 dx = x - mLastTouchX;
                 dy = y - mLastTouchY;
+
+                TextView likeTextView = (TextView)mTopCard.findViewById(R.id.like_textview);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+
+                params.setMargins(30, 50, 30,0 );
+                if(dx <= -10){
+                    likeTextView.setVisibility(VISIBLE);
+                    params.gravity = Gravity.RIGHT;
+                    likeTextView.setLayoutParams(params);
+                    likeTextView.setText("DISLIKE");
+                }
+                else if(dx >=10){
+                    likeTextView.setVisibility(VISIBLE);
+                    params.gravity = Gravity.LEFT;
+                    likeTextView.setLayoutParams(params);
+                    likeTextView.setText("LIKE");
+                }
 
                 if (Math.abs(dx) > mTouchSlop || Math.abs(dy) > mTouchSlop) {
                     mDragging = true;
@@ -305,6 +331,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+
+                mTopCard.findViewById(R.id.like_textview).setVisibility(GONE);
                 if (!mDragging) {
                     return true;
                 }

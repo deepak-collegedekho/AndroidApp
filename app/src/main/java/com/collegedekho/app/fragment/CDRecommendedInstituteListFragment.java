@@ -79,42 +79,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         final View rootView = inflater.inflate(R.layout.fragment_recommended_institute_listing, container, false);
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE, false);
 
-        /*((TextView) rootView.findViewById(R.id.textview_page_title)).setText(mTitle);
-        progressBarLL     =   (LinearLayout)rootView.findViewById(R.id.progressBarLL);
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_list);
-        layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
-        recyclerView.setLayoutManager(layoutManager);
-        updateViewTypeIcon(rootView, this.mViewType);
-        mAdapter = new InstituteListAdapter(getActivity(), mInstitutes, this.mViewType);
-        this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
-        this.instituteView=rootView.findViewById(R.id.viewType);
-
-        if (mInstitutes.size() == 0)
-            rootView.findViewById(R.id.viewType).setVisibility(View.GONE);
-        else
-            rootView.findViewById(R.id.viewType).setVisibility(View.VISIBLE);
-
-        recyclerView.setAdapter(mAdapter);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addOnScrollListener(scrollListener);
-
-        rootView.findViewById(R.id.institute_list_tour_guide_image).setOnTouchListener(new View.OnTouchListener()
-        {
-            @Override
-            public boolean onTouch(View v, MotionEvent event)
-            {
-                v.setVisibility(View.GONE);
-                IS_TUTE_COMPLETED = true;
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE, true).apply();
-                rootView.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
-
-                return false;
-            }
-        });*/
-
         this.mCardContainer = (CardContainer) rootView.findViewById(R.id.layoutview);
 
         this.mAdapter = new SimpleCardStackAdapter(this.getContext(), this);
