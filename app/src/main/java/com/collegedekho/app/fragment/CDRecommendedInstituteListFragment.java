@@ -91,7 +91,8 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
 
     private void mAddCardInAdapter(List<Institute> list)
     {
-        for (int i = 0; i < list.size(); i++)
+
+        for (int i = list.size() - 1; i >= 0; i--)
         {
             CardModel model;
 
@@ -103,6 +104,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
 
     private void mAddNextCardInAdapter(List<Institute> list, SimpleCardStackAdapter adapter)
     {
+
         for (int i = list.size() - 1; i >= 0; i--)
         {
             CardModel model;
@@ -185,7 +187,12 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
 
     public void updateList(List<Institute> institutes, String next) {
 
+        ArrayList<Institute> tempList = new ArrayList<>();
+        tempList.addAll(mInstitutes);
+
+        this.mInstitutes.clear();
         this.mInstitutes.addAll(institutes);
+        this.mInstitutes.addAll(tempList);
 
         SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this.getContext(), this);
         this.mAddNextCardInAdapter(this.mInstitutes, adapter);

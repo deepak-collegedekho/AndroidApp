@@ -107,9 +107,9 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
             @Override
             public void onDislike() {
                 Log.i("Swipeable Cards","I dislike the card");
-               Institute i =  model.getInstitute();
-                Institute i2 = ((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute();
-                SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute());
+              // Institute i =  model.getInstitute();
+                //Institute i2 = ((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute();
+                SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute());
                 //load next if on last position
                 if (position < 4 && !SimpleCardStackAdapter.this.isLoadingNext())
                     SimpleCardStackAdapter.this.mListener.OnLoadNext();
