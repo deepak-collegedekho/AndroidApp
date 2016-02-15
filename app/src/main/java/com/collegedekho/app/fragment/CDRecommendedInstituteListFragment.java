@@ -64,11 +64,12 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+                      super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mInstitutes = this.getArguments().getParcelableArrayList(ARG_INSTITUTE);
             this.mTitle = this.getArguments().getString(ARG_TITLE);
             this.mNextUrl = this.getArguments().getString(ARG_NEXT);
+
         }
     }
 
@@ -77,7 +78,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_recommended_institute_listing, container, false);
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE, false);
-
         this.mCardContainer = (CardContainer) rootView.findViewById(R.id.layoutview);
 
         this.mAdapter = new SimpleCardStackAdapter(this.getContext(), this);
@@ -91,13 +91,25 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
 
     private void mAddCardInAdapter(List<Institute> list)
     {
-        for (int i = list.size() - 1; i >= 0; i--)
+        for (int i = 0; i < list.size(); i++)
         {
             CardModel model;
 
             model = new CardModel(list.get(i), this.getActivity());
 
             this.mAdapter.add(model);
+        }
+    }
+
+    private void mAddNextCardInAdapter(List<Institute> list, SimpleCardStackAdapter adapter)
+    {
+        for (int i = list.size() - 1; i >= 0; i--)
+        {
+            CardModel model;
+
+            model = new CardModel(list.get(i), this.getActivity());
+
+            adapter.add(model);
         }
     }
 
@@ -172,12 +184,15 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     }
 
     public void updateList(List<Institute> institutes, String next) {
-        //this.clearList();
+
         this.mInstitutes.addAll(institutes);
-        //this.mAddCardInAdapter(institutes);
-        this.mAdapter.notifyDataSetChanged();
+
+        SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this.getContext(), this);
+        this.mAddNextCardInAdapter(this.mInstitutes, adapter);
+        this.mCardContainer.setAdapter(adapter);
+        this.mAdapter = adapter;
         this.mNextUrl = next;
-        this.mAdapter.setLoadingNext(false);
+       this.mAdapter.setLoadingNext(false);
         this.loading = false;
     }
 
@@ -195,22 +210,21 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
 
     @Override
     public void OnInstituteLiked(Institute institute) {
-        this.mRemoveInstituteFromList(this.mInstitutes.size() - 1);
-        //this.mAdapter.pop();
+        this.mRemoveInstituteFromList(institute);
         this.mListener.OnCDRecommendedInstituteLiked(institute);
     }
 
     @Override
     public void OnInstituteDislike(Institute institute) {
-        this.mRemoveInstituteFromList(this.mInstitutes.size() - 1);
-        //this.mAdapter.pop();
+        this.mRemoveInstituteFromList(institute);
         this.mListener.OnCDRecommendedInstituteDislike(institute);
     }
 
-    private void mRemoveInstituteFromList(int index)
+    private void mRemoveInstituteFromList(Institute institute)
     {
         try {
-            this.mInstitutes.remove(index);
+            if(this.mInstitutes.contains(institute))
+            this.mInstitutes.remove(institute);
         }
         catch (Exception e){
             Log.e(TITLE, e.getMessage());

@@ -29,7 +29,7 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
     }
 
     @Override
-    public View getCardView(final int position, CardModel model, View convertView, ViewGroup parent) {
+    public View getCardView(final int position, final CardModel model, View convertView, ViewGroup parent) {
         if(convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.card_recommended_institute, parent, false);
@@ -107,6 +107,8 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
             @Override
             public void onDislike() {
                 Log.i("Swipeable Cards","I dislike the card");
+               Institute i =  model.getInstitute();
+                Institute i2 = ((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute();
                 SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute());
                 //load next if on last position
                 if (position < 4 && !SimpleCardStackAdapter.this.isLoadingNext())

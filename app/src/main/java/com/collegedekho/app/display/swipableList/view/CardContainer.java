@@ -64,7 +64,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
 
     //TODO: determine max dynamically based on device speed
-    private int mMaxVisible = 10;
+    private int mMaxVisible = 20;
     private GestureDetector mGestureDetector;
     private int mFlingSlop;
     private Orientations.OrientationType mOrientation;
@@ -137,8 +137,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
         adapter.registerDataSetObserver(mDataSetObserver);
 
         ensureFull();
-
-        if (getChildCount() != 0) {
+        int childCount = getChildCount();
+        if (childCount != 0) {
             mTopCard = getChildAt(getChildCount() - 1);
             mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
         }
@@ -147,7 +147,12 @@ public class CardContainer extends AdapterView<ListAdapter> {
     }
 
     private void ensureFull() {
+
         while (mNextAdapterPosition < mListAdapter.getCount() && getChildCount() < mMaxVisible) {
+            //TODO:: delete these count
+            //int childCount1 = getChildCount();
+            //int adapterCount = mListAdapter.getCount();
+
             View view = mListAdapter.getView(mNextAdapterPosition, null, this);
             view.setLayerType(LAYER_TYPE_SOFTWARE, null);
             if(mOrientation == Orientations.OrientationType.Disordered) {
@@ -162,7 +167,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
         }
     }
 
-    private void clearStack() {
+    public void clearStack() {
         removeAllViewsInLayout();
         mNextAdapterPosition = 0;
         mTopCard = null;
@@ -263,8 +268,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
         final int pointerIndex;
         final float x, y;
         final float dx, dy;
-        int oldRight;
-        int oldLeft;
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mTopCard.getHitRect(childRect);
@@ -338,19 +341,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
             case MotionEvent.ACTION_CANCEL:
 
                mTopCard.findViewById(R.id.like_textview).setVisibility(GONE);
-               /*final  TextView tv = (TextView)mTopCard.findViewById(R.id.like_textview);
-                tv.animate()
-                        .alpha(5)
-                        .setDuration(200)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                tv.setVisibility(GONE);
-                                tv.setAlpha(10);
-
-                            }
-                        });*/
 
                 if (!mDragging) {
                     return true;
@@ -510,6 +500,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
                         cardModel.getOnCardDismissedListener().onDislike();
                     }
                 }
+
 
                 topCard.animate()
                         .setDuration(duration)
