@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2012 Google Inc. All Rights Reserved.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,38 +14,87 @@
   limitations under the License.
 -->
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/m4dp"
-    >
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="95dp"
-    android:orientation="horizontal"
-    android:gravity="center"
-    android:background="#fff">
+    android:padding="@dimen/m4dp">
 
-  <com.google.android.youtube.player.YouTubeThumbnailView
-      android:id="@+id/thumbnail"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:src="@drawable/no_thumbnail"
-      android:adjustViewBounds="true"
-      android:padding="@dimen/m4dp"
-      android:scaleType="centerInside"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="95dp"
+        android:background="#fff"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-  <TextView
-      android:id="@+id/text"
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_weight="1"
-      android:layout_gravity="top"
-      android:layout_marginLeft="5dp"
-      android:textAppearance="?android:attr/textAppearanceSmall"
-      android:padding="@dimen/m4dp"
-      android:text="Video"
-      android:textColor="#000000"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
 
-</LinearLayout>
+            <com.google.android.youtube.player.YouTubeThumbnailView
+                android:id="@+id/thumbnail"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:padding="@dimen/m4dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/no_thumbnail" />
+
+            <TextView
+                android:id="@+id/duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/m5dp"
+                android:layout_marginLeft="104dp"
+                android:background="@drawable/bg_youtube_time"
+                android:padding="@dimen/m4dp"
+                android:text="00:00:00"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:padding="@dimen/m4dp">
+
+            <TextView
+                android:id="@+id/published"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true" />
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="Video"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#000000" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:orientation="horizontal"
+                android:padding="@dimen/m4dp">
+
+                <TextView
+                    android:id="@+id/views_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" views" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
 </android.support.v7.widget.CardView>

@@ -451,7 +451,11 @@ public final class VideosFragment extends BaseFragment {
                 }
             }
             TextView label = ((TextView) view.findViewById(R.id.text));
+            TextView duration=(TextView)view.findViewById(R.id.duration);
+            TextView viewsCount=(TextView)view.findViewById(R.id.views_count);
             label.setText(entry.text);
+            duration.setText(entry.duration);
+            viewsCount.setText(entry.viewCount);
             label.setVisibility(labelsVisible ? View.VISIBLE : View.GONE);
             return view;
         }
@@ -552,7 +556,8 @@ public final class VideosFragment extends BaseFragment {
     public static final class VideoEntry {
         public String text;
         public String videoId;
-
+        public String duration;
+        public String viewCount;
         public VideoEntry(String text, String videoId) {
             this.text = text;
             this.videoId = videoId;

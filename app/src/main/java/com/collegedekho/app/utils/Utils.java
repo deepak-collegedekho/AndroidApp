@@ -32,9 +32,19 @@ import com.collegedekho.app.resource.TypeFaceTypes;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TimeZone;
 import java.util.Timer;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -370,21 +380,96 @@ public class Utils {
         }
     }
 
-    public static long getVideoDuration(String time) {
-        if(time==null || time.trim().matches("")){
-            return 0;
+    public static String getTimeFromString(String duration) {
+        // TODO Auto-generated method stub
+        String time = "";
+        boolean hourexists = false, minutesexists = false, secondsexists = false;
+        if (duration.contains("H"))
+            hourexists = true;
+        if (duration.contains("M"))
+            minutesexists = true;
+        if (duration.contains("S"))
+            secondsexists = true;
+        if (hourexists) {
+            String hour = "";
+            hour = duration.substring(duration.indexOf("T") + 1,
+                    duration.indexOf("H"));
+            if (hour.length() == 1)
+                hour = "0" + hour;
+            time += hour + ":";
+        }else {
+            time += "00:";
         }
-        time = "PT15H12M46S".substring(2);
-        long duration = 0L;
-        Object[][] indexs = new Object[][]{{"H", 3600}, {"M", 60}, {"S", 1}};
-        for(int i = 0; i < indexs.length; i++) {
-            int index = time.indexOf((String) indexs[i][0]);
-            if(index != -1) {
-                String value = time.substring(0, index);
-                duration += Integer.parseInt(value) * (int) indexs[i][1] * 1000;
-                time = time.substring(value.length() + 1);
-            }
+        if (minutesexists) {
+            String minutes = "";
+            if (hourexists)
+                minutes = duration.substring(duration.indexOf("H") + 1,
+                        duration.indexOf("M"));
+            else
+                minutes = duration.substring(duration.indexOf("T") + 1,
+                        duration.indexOf("M"));
+            if (minutes.length() == 1)
+                minutes = "0" + minutes;
+            time += minutes + ":";
+        } else {
+            time += "00:";
         }
-        return duration;
+        if (secondsexists) {
+            String seconds = "";
+            if (hourexists) {
+                if (minutesexists)
+                    seconds = duration.substring(duration.indexOf("M") + 1,
+                            duration.indexOf("S"));
+                else
+                    seconds = duration.substring(duration.indexOf("H") + 1,
+                            duration.indexOf("S"));
+            } else if (minutesexists)
+                seconds = duration.substring(duration.indexOf("M") + 1,
+                        duration.indexOf("S"));
+            else
+                seconds = duration.substring(duration.indexOf("T") + 1,
+                        duration.indexOf("S"));
+            if (seconds.length() == 1)
+                seconds = "0" + seconds;
+            time += seconds;
+        }else {
+            time += "00";
+        }
+        return time;
+    }
+//    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
+//    static {
+//        suffixes.put(1_000L, "k");
+//        suffixes.put(1_000_000L, "M");
+//        suffixes.put(1_000_000_000L, "G");
+//        suffixes.put(1_000_000_000_000L, "T");
+//        suffixes.put(1_000_000_000_000_000L, "P");
+//        suffixes.put(1_000_000_000_000_000_000L, "E");
+//    }
+//    public static String formatCount(long value) {
+//        //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
+//        if (value == Long.MIN_VALUE) return formatCount(Long.MIN_VALUE + 1);
+//        if (value < 0) return "-" + formatCount(-value);
+//        if (value < 1000) return Long.toString(value); //deal with easy case
+//
+//        Map.Entry<Long, String> e = suffixes.floorEntry(value);
+//        Long divideBy = e.getKey();
+//        String suffix = e.getValue();
+//
+//        long truncated = value / (divideBy / 10); //the number part of the output times 10
+//        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
+//        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
+//    }
+
+    public static String formatCount(double n, int iteration) {
+        char[] c = new char[]{'k', 'm', 'b', 't'};
+        double d = ((long) n / 100) / 10.0;
+        boolean isRound = (d * 10) %10 == 0;//true if the decimal part is equal to 0 (then it's trimmed anyway)
+        return (d < 1000? //this determines the class, i.e. 'k', 'm' etc
+                ((d > 99.9 || isRound || (!isRound && d > 9.99)? //this decides whether to trim the decimals
+                        (int) d * 10 / 10 : d + "" // (int) d * 10 / 10 drops the decimal
+                ) + "" + c[iteration])
+                : formatCount(d, iteration+1));
+
     }
 }

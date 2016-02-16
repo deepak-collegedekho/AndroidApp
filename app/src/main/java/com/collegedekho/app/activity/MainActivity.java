@@ -22,7 +22,6 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -47,7 +46,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -89,6 +87,7 @@ import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.Subjects;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.entities.UserEducation;
+import com.collegedekho.app.entities.VideoEntry;
 import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.entities.YoutubeVideoDetails;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
@@ -102,6 +101,7 @@ import com.collegedekho.app.fragment.InstituteDetailFragment;
 import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
+import com.collegedekho.app.fragment.InstituteVideosFragment;
 import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.LoginFragment1;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
@@ -152,7 +152,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.tagmanager.Container;
 import com.google.android.gms.tagmanager.ContainerHolder;
 import com.google.android.gms.tagmanager.TagManager;
-import com.google.android.youtube.player.YouTubePlayer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -216,7 +215,7 @@ public class MainActivity extends AppCompatActivity
         SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
         UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteListFragment.OnCDRecommendedInstituteListener,
-        VideosFragment.OnTitleUpdateListener
+        InstituteVideosFragment.OnTitleUpdateListener
 
 {
 
@@ -368,8 +367,11 @@ public class MainActivity extends AppCompatActivity
         resourceBuddies.setOnClickListener(mClickListener);
         futureBuddies.setOnClickListener(mClickListener);
         myAlerts.setOnClickListener(mClickListener);
-        getSupportLoaderManager().initLoader(0, null, this);
-
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CONTACTS)
+                == PackageManager.PERMISSION_GRANTED) {
+            getSupportLoaderManager().initLoader(0, null, this);
+        }
         this.connecto = Connecto.with(MainActivity.this);
         //this.connecto.identify("Harsh1234Vardhan", new Traits().putValue("name", "HarshVardhan"));
         //You can also track any event if you want
@@ -790,6 +792,10 @@ public class MainActivity extends AppCompatActivity
 
     public void loadInItData()
     {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CONTACTS)
+                == PackageManager.PERMISSION_GRANTED) {
+            getSupportLoaderManager().initLoader(0, null, this);
         if (IS_USER_CREATED) {
             // if user is anonymous  then logout from facebook
             if(user.is_anony())
@@ -800,9 +806,11 @@ public class MainActivity extends AppCompatActivity
              disconnectFromFacebook();
              MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
         }
+
+        }else {
+            getContactsPermission();
+        }
     }
-
-
     /**
      * This method is called when first time anonymous user is created
      * @param json
@@ -4418,10 +4426,10 @@ private void onNotPreparingEducationResponse(String response){
         this.onInstituteLikedDislikedByEntity(institute, Constants.DISLIKE_THING, "", Constants.REMOMMENDED_INSTITUTE_LIKE_DISLIKE);
     }
 
-    private List<VideosFragment.VideoEntry> videoList;
-    private VideosFragment.VideoListFragment videosFragment;
+    private List<VideoEntry> videoList;
+    private InstituteVideosFragment videosFragment;
     @Override
-    public void onUpdate(List<VideosFragment.VideoEntry> videoList,String url,VideosFragment.VideoListFragment fragment) {
+    public void onUpdate(List<VideoEntry> videoList, String url, InstituteVideosFragment fragment) {
         videosFragment=fragment;
         if(videoList!=null && !videoList.isEmpty()){
             this.videoList=videoList;
@@ -4431,7 +4439,7 @@ private void onNotPreparingEducationResponse(String response){
 
     public void onClickClose(@SuppressWarnings("unused") View view) {
         if(videosFragment!=null){
-            videosFragment.onClickClose(view);
+//            videosFragment.onClickClose(view);
         }
     }
 
@@ -4447,8 +4455,11 @@ private void onNotPreparingEducationResponse(String response){
                 if (detailsSize == listSize) {
                     for (int i = 0; i < listSize; i++) {
                         Item item = items.get(i);
-                        videoList.get(i).text = item.getSnippet().getTitle();
-                        Log.e("DEBUG", " Duration " + Utils.getVideoDuration(item.getContentDetails().getDuration()));
+                        VideoEntry entry = videoList.get(i);
+                        entry.setText(item.getSnippet().getTitle());
+                        entry.setDuration(Utils.getTimeFromString(item.getContentDetails().getDuration()));
+                        entry.setViewCount(Utils.formatCount(item.getStatistics().getViewCount(), 0));
+                        entry.setPublishedOn(item.getSnippet().getPublishedAt());
                     }
                 }
                 if (videosFragment != null) {
@@ -4501,21 +4512,21 @@ private void onNotPreparingEducationResponse(String response){
     }
 
     private CursorLoader getProfileLoader() {
-        return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(
-                        ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
-                User.ProfileQuery.PROJECTION,
+            return new CursorLoader(this,
+                    // Retrieve data rows for the device user's 'profile' contact.
+                    Uri.withAppendedPath(
+                            ContactsContract.Profile.CONTENT_URI,
+                            ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
+                    User.ProfileQuery.PROJECTION,
 
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE + " = ? OR "+ContactsContract.Contacts.Data.MIMETYPE + " = ?",
-                new String[]{ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
-                        ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE},
+                    // Select only email addresses.
+                    ContactsContract.Contacts.Data.MIMETYPE + " = ? OR " + ContactsContract.Contacts.Data.MIMETYPE + " = ?",
+                    new String[]{ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                            ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE},
 
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
+                    // Show primary email addresses first. Note that there won't be
+                    // a primary email address if the user hasn't specified one.
+                    ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
 
@@ -5029,15 +5040,16 @@ private void onNotPreparingEducationResponse(String response){
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode != Constants.RC_HANDLE_SMS_PERM) {
+        if (requestCode != Constants.RC_HANDLE_CONTACTS_PERM) {
             Log.d(TAG, "Got unexpected permission result: " + requestCode);
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             return;
         }
 
         if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "SMS permission granted -");
-
+            Log.d(TAG, "Read Contacts permission granted -");
+//            loadInItData();
+            restartApplication();
             return;
         }
 
@@ -5051,40 +5063,22 @@ private void onNotPreparingEducationResponse(String response){
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("GPT")
-                .setMessage("Permission Not Granted, OTP will not be read automatically")
+        builder.setTitle("CollegeDekho")
+                .setMessage("Permission Not Granted, Application will quit now.")
                 .setPositiveButton("Ok", listener)
                 .show();
     }
-    private void requestInternetPermission() {
-        Log.w(TAG, "Internet permission is not granted. Requesting permission");
 
-        final String[] permissions = new String[]{android.Manifest.permission.CAMERA};
-
-        if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.RECEIVE_SMS)) {
-            ActivityCompat.requestPermissions(this, permissions, Constants.RC_HANDLE_SMS_PERM);
-            return;
-        }
-
-//        final Activity thisActivity = getActivity();
-
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ActivityCompat.requestPermissions(MainActivity.this, permissions,Constants.RC_HANDLE_SMS_PERM);
-            }
-        };
-
-        Snackbar.make(null, "Internet permission required.",
-                Snackbar.LENGTH_INDEFINITE)
-                .setAction("OK", listener)
-                .show();
+    private void restartApplication() {
+        Intent appIntent = getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage(getBaseContext().getPackageName());
+        appIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(appIntent);
     }
 
-    private void checkSMSPermission(){
+    private void getContactsPermission(){
         if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.RECEIVE_SMS)
+                    Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
@@ -5100,8 +5094,8 @@ private void onNotPreparingEducationResponse(String response){
             // No explanation needed, we can request the permission.
 
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.RECEIVE_SMS},
-                    Constants.RC_HANDLE_SMS_PERM);
+                    new String[]{Manifest.permission.READ_CONTACTS},
+                    Constants.RC_HANDLE_CONTACTS_PERM);
 //            }
         }
     }

@@ -42,12 +42,12 @@
         android:background="@drawable/bg_black_circle"
         android:src="@android:drawable/ic_menu_close_clear_cancel"
         android:onClick="onClickClose"/>
-
+<!--
     <fragment
         class="com.collegedekho.app.fragment.VideosFragment$VideoFragment"
         android:id="@+id/video_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"/>-->
 
   </LinearLayout>
 
