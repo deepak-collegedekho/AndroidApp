@@ -134,11 +134,11 @@ public class CardContainer extends AdapterView<ListAdapter> {
         adapter.registerDataSetObserver(mDataSetObserver);
 
         ensureFull();
-        int childCount = getChildCount();
+        /*int childCount = getChildCount();
         if (childCount != 0) {
             mTopCard = getChildAt(getChildCount() - 1);
             mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
-        }
+        }*/
         mNumberOfCards = getAdapter().getCount();
         requestLayout();
     }
@@ -158,6 +158,11 @@ public class CardContainer extends AdapterView<ListAdapter> {
             requestLayout();
 
             mNextAdapterPosition += 1;
+        }
+        int childCount = getChildCount();
+        if (childCount != 0) {
+            mTopCard = getChildAt(getChildCount() - 1);
+            mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
         }
     }
 
@@ -420,7 +425,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
     @Override
     public View getSelectedView() {
-        throw new UnsupportedOperationException();
+       return  mTopCard;
+        //throw new UnsupportedOperationException();
     }
 
     @Override

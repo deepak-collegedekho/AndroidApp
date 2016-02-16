@@ -80,6 +80,15 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE, false);
         this.mCardContainer = (CardContainer) rootView.findViewById(R.id.layoutview);
 
+        TextView empty = (TextView)rootView.findViewById(android.R.id.empty);
+        if (mInstitutes == null || mInstitutes.size() <= 0) {
+            empty.setVisibility(View.VISIBLE);
+            empty.setText("No Recommended colleges found");
+        }
+        else
+            empty.setVisibility(View.GONE);
+
+
         this.mAdapter = new SimpleCardStackAdapter(this.getContext(), this);
 
         this.mAddCardInAdapter(this.mInstitutes);
@@ -111,7 +120,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
 
             model = new CardModel(list.get(i), this.getActivity());
 
-            adapter.add(model);
+            mAdapter.add(model);
         }
     }
 
@@ -190,11 +199,11 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
 
         this.mInstitutes.addAll(institutes);
-
-        SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this.getContext(), this);
-        this.mAddNextCardInAdapter(this.mInstitutes, adapter);
-        this.mCardContainer.setAdapter(adapter);
-        this.mAdapter = adapter;
+        this.mAdapter.clear();
+        //SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this.getContext(), this);
+        this.mAddNextCardInAdapter(this.mInstitutes, null);
+        //this.mCardContainer.setAdapter(adapter);
+        //this.mAdapter = adapter;
         this.mNextUrl = next;
         this.mAdapter.setLoadingNext(false);
         this.loading = false;
@@ -217,12 +226,14 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     @Override
     public void OnInstituteLiked(Institute institute) {
         this.mRemoveInstituteFromList(institute);
+        //this.mAdapter.pop();
         this.mListener.OnCDRecommendedInstituteLiked(institute);
     }
 
     @Override
     public void OnInstituteDislike(Institute institute) {
         this.mRemoveInstituteFromList(institute);
+        //this.mAdapter.pop();
         this.mListener.OnCDRecommendedInstituteDislike(institute);
     }
 
