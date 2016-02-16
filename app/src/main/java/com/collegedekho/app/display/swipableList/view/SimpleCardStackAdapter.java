@@ -98,7 +98,7 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
             @Override
             public void onLike() {
                 Log.i("Swipeable Cards","I like the card");
-                SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute());
+                SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute());
                 //load next if on last position
                 if (position < 4 && !SimpleCardStackAdapter.this.isLoadingNext())
                     SimpleCardStackAdapter.this.mListener.OnLoadNext();

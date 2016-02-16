@@ -196,7 +196,6 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
 
     public void updateList(List<Institute> institutes, String next) {
 
-        getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
 
         this.mInstitutes.addAll(institutes);
         this.mAdapter.clear();
@@ -204,6 +203,8 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         this.mAddNextCardInAdapter(this.mInstitutes, null);
         //this.mCardContainer.setAdapter(adapter);
         //this.mAdapter = adapter;
+
+        getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
         this.mNextUrl = next;
         this.mAdapter.setLoadingNext(false);
         this.loading = false;
@@ -241,8 +242,8 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     {
         try {
 
-            if(this.mInstitutes.contains(institute))
-            this.mInstitutes.remove(institute);
+            //if(this.mInstitutes.contains(institute))
+            this.mInstitutes.remove(0);
 
             if(mInstitutes.size() <= 0) {
                 if (mNextUrl == null || mNextUrl.equalsIgnoreCase("null")) {
