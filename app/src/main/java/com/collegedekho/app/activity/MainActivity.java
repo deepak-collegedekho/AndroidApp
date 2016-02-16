@@ -63,6 +63,7 @@ import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
 import com.appsflyer.DebugLogQueue;
 import com.collegedekho.app.R;
+import com.collegedekho.app.database.DataBaseHelper;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Chapters;
 import com.collegedekho.app.entities.Exam;
@@ -267,6 +268,7 @@ public class MainActivity extends AppCompatActivity
     public static CallbackManager callbackManager;
     private Date mTimeScreenClicked = new Date();
     public boolean isReloadProfile=false;
+    private boolean isSyllabusUpdated=false;
     public boolean isBackPressEnabled=true;
     private String mGTMContainerId = "www.collegedekho.com";
     private Connecto connecto = null;
@@ -1429,7 +1431,7 @@ private boolean isUpdateStreams;
                 }
                 break;
             case Constants.TAG_EXAM_SUMMARY:
-                this.mUpdateExamDetail(response);
+                this.mUpdateExamDetail(response,true);
                 break;
             case Constants.TAG_LOAD_STREAM:
                 this.mDisplayStreams(response, true);
@@ -1754,12 +1756,18 @@ private boolean isUpdateStreams;
         }
     }
 
-    private void mUpdateExamDetail(String responseJson) {
+    private void mUpdateExamDetail(String responseJson,boolean update) {
         try {
             ExamSummary examSummary = JSON.std.beanFrom(ExamSummary.class, responseJson);
             if(examSummary.getPreference_uri()!=null) {
                 MainActivity.user.setResource_uri(examSummary.getPreference_uri());
                 String u = JSON.std.asString(MainActivity.user);
+                String stringSummary=JSON.std.asString(examSummary);
+                if(!DataBaseHelper.getInstance(this).isExamSummaryExists(Integer.parseInt(examSummary.getYearly_exam_id()))){
+                    DataBaseHelper.getInstance(this).addExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()),stringSummary);
+                }else if(update){
+                    DataBaseHelper.getInstance(this).updateExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()),stringSummary);
+                }
                 this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
             }
                 currentFragment.updateExamSummary(examSummary );
@@ -2242,6 +2250,7 @@ private boolean isUpdateStreams;
             case Constants.TAG_EDIT_USER_EDUCATION:
             case Constants.TAG_LOAD_USER_PREFERENCES:
             case Constants.TAG_LOAD_USER_PREFERENCES_N_BACK:
+            case Constants.TAG_PSYCHOMETRIC_RESPONSE:
                 return "Loading....";
             case Constants.TAG_USER_REGISTRATION :
                 return "Creating User Please Wait";
@@ -4197,6 +4206,11 @@ private void onNotPreparingEducationResponse(String response){
     public void onExamTabSelected(ExamDetail examDetailObj) {
         if(examDetailObj == null)return;
         String id = examDetailObj.getId();
+        if(!isSyllabusUpdated && DataBaseHelper.getInstance(this).isExamSummaryExists(Integer.parseInt(id))){
+            mUpdateExamDetail(DataBaseHelper.getInstance(this).getExamSummary(Integer.parseInt(id)),false);
+            return;
+        }
+        isSyllabusUpdated=false;
         Map<String , String> params = this.mGetTheFilters();
 
         if(params == null)
@@ -4368,9 +4382,10 @@ private void onNotPreparingEducationResponse(String response){
     public void onSyllabusChanged(JSONObject jsonObject) {
 
        String examId = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
-       if(!examId.isEmpty())
-           this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS, Constants.BASE_URL+"yearly-exams/"+examId+"/syllabus/",jsonObject,1);
-
+       if(!examId.isEmpty()) {
+           isSyllabusUpdated=true;
+           this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS, Constants.BASE_URL + "yearly-exams/" + examId + "/syllabus/", jsonObject, 1);
+       }
     }
 
     @Override
@@ -4603,10 +4618,12 @@ private void onNotPreparingEducationResponse(String response){
 
     @Override
     public void onSubmitCalendarData(JSONObject object,String url) {
+        isSyllabusUpdated=true;
         this.mMakeJsonObjectNetworkCall(Constants.TAG_PSYCHOMETRIC_RESPONSE,Constants.BASE_URL+url,object,1);
         String examId = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
-        if(!examId.isEmpty())
-            this.onHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL+"yearly-exams/"+examId+"/calendar/", null);
+        if(!examId.isEmpty()) {
+            this.onHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + examId + "/calendar/", null);
+        }
     }
     Handler baskpressHandler=new Handler();
     Runnable backpressRunnable = new Runnable() {
