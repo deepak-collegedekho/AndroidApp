@@ -21,14 +21,11 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
-import android.widget.TextView;
 
 
 import com.collegedekho.app.R;
@@ -64,7 +61,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
 
     //TODO: determine max dynamically based on device speed
-    private int mMaxVisible = 20;
+    private int mMaxVisible = 24 ;
     private GestureDetector mGestureDetector;
     private int mFlingSlop;
     private Orientations.OrientationType mOrientation;
@@ -149,9 +146,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
     private void ensureFull() {
 
         while (mNextAdapterPosition < mListAdapter.getCount() && getChildCount() < mMaxVisible) {
-            //TODO:: delete these count
-            //int childCount1 = getChildCount();
-            //int adapterCount = mListAdapter.getCount();
 
             View view = mListAdapter.getView(mNextAdapterPosition, null, this);
             view.setLayerType(LAYER_TYPE_SOFTWARE, null);

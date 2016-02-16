@@ -32,7 +32,7 @@ import java.util.List;
  * Use the {@link CDRecommendedInstituteListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CDRecommendedInstituteListFragment extends BaseFragment implements SimpleCardStackAdapter.OnCDRecommendedAdapterInterface{
+public class  CDRecommendedInstituteListFragment extends BaseFragment implements SimpleCardStackAdapter.OnCDRecommendedAdapterInterface{
     public static final String TITLE = "CDRecommendedInstitutes";
     private static final String ARG_INSTITUTE = "cdrecommendedinstitute";
     private static final String ARG_FILTER_ALLOWED = "filter_allowed";
@@ -187,24 +187,23 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
 
     public void updateList(List<Institute> institutes, String next) {
 
-        ArrayList<Institute> tempList = new ArrayList<>();
-        tempList.addAll(mInstitutes);
+        getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
 
-        this.mInstitutes.clear();
         this.mInstitutes.addAll(institutes);
-        this.mInstitutes.addAll(tempList);
 
         SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this.getContext(), this);
         this.mAddNextCardInAdapter(this.mInstitutes, adapter);
         this.mCardContainer.setAdapter(adapter);
         this.mAdapter = adapter;
         this.mNextUrl = next;
-       this.mAdapter.setLoadingNext(false);
+        this.mAdapter.setLoadingNext(false);
         this.loading = false;
     }
 
     @Override
     public void OnLoadNext() {
+        if (mNextUrl == null || mNextUrl.equalsIgnoreCase("null"))
+            return;
         this.loading = true;
         this.mAdapter.setLoadingNext(true);
         this.mListener.OnCDRecommendedLoadNext(this.mNextUrl);
@@ -230,8 +229,22 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     private void mRemoveInstituteFromList(Institute institute)
     {
         try {
+
             if(this.mInstitutes.contains(institute))
             this.mInstitutes.remove(institute);
+
+            if(mInstitutes.size() <= 0) {
+                if (mNextUrl == null || mNextUrl.equalsIgnoreCase("null")) {
+                    TextView tv = (TextView) getView().findViewById(android.R.id.empty);
+                    tv.setText("No Recommended colleges found");
+                    tv.setVisibility(View.VISIBLE);
+                    return;
+                } else {
+                    TextView tv = (TextView) getView().findViewById(android.R.id.empty);
+                    tv.setText("Loading...");
+                    tv.setVisibility(View.VISIBLE);
+                }
+            }
         }
         catch (Exception e){
             Log.e(TITLE, e.getMessage());
