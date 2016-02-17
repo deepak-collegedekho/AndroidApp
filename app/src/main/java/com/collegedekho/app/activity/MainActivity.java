@@ -268,7 +268,6 @@ public class MainActivity extends AppCompatActivity
     public static CallbackManager callbackManager;
     private Date mTimeScreenClicked = new Date();
     public boolean isReloadProfile=false;
-    private boolean isSyllabusUpdated=false;
     public boolean isBackPressEnabled=true;
     private String mGTMContainerId = "www.collegedekho.com";
     private Connecto connecto = null;
@@ -1651,7 +1650,9 @@ private boolean isUpdateStreams;
                 this.onTestCalendarResponse(response);
                 break;
             case Constants.TAG_PSYCHOMETRIC_RESPONSE:
-
+                if(tags[1]!=null) {
+                    DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(tags[1]));
+                }
                 break;
             case Constants.TAG_NAME_UPDATED:
                 if (tags.length > 1) {
@@ -1762,11 +1763,11 @@ private boolean isUpdateStreams;
             if(examSummary.getPreference_uri()!=null) {
                 MainActivity.user.setResource_uri(examSummary.getPreference_uri());
                 String u = JSON.std.asString(MainActivity.user);
-                String stringSummary=JSON.std.asString(examSummary);
-                if(!DataBaseHelper.getInstance(this).isExamSummaryExists(Integer.parseInt(examSummary.getYearly_exam_id()))){
-                    DataBaseHelper.getInstance(this).addExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()),stringSummary);
+                String dbSummary=DataBaseHelper.getInstance(this).getExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()));
+                if(dbSummary==null){
+                    DataBaseHelper.getInstance(this).addExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()),responseJson);
                 }else if(update){
-                    DataBaseHelper.getInstance(this).updateExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()),stringSummary);
+                    DataBaseHelper.getInstance(this).updateExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()),responseJson);
                 }
                 this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
             }
@@ -2047,7 +2048,8 @@ private boolean isUpdateStreams;
         if(currentFragment instanceof InstituteShortlistFragment)
             institute = this.mShortlistedInstituteList.get(Integer.parseInt(extraTag));
         else*/
-          Institute  institute = this.mInstituteList.get(Integer.parseInt(extraTag));
+        DataBaseHelper.getInstance(this).deleteAllExamSummary();
+        Institute  institute = this.mInstituteList.get(Integer.parseInt(extraTag));
         if (like == Constants.NEITHER_LIKE_NOR_DISLIKE)
         {
             institute.setCurrent_user_vote_type(Constants.NEITHER_LIKE_NOR_DISLIKE);
@@ -2121,7 +2123,7 @@ private boolean isUpdateStreams;
     {
         Institute institute = this.mInstituteList.get(Integer.parseInt(extraTag));
         String message = null;
-
+        DataBaseHelper.getInstance(this).deleteAllExamSummary();
         if (response == null) {
             institute.setIs_shortlisted(Constants.SHORTLISTED_NO);
             message = " removed from your shortlist";
@@ -2258,6 +2260,7 @@ private boolean isUpdateStreams;
                 return "Signing User Please Wait.....";
             case Constants.TAG_LOAD_STREAM:
             case Constants.TAG_UPDATE_STREAM:
+            case Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM:
                 return "Loading Streams...";
             case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
                 return "Loading Exams...";
@@ -2561,7 +2564,7 @@ private boolean isUpdateStreams;
     public void onInstituteLikedDislikedByEntity(Institute institute, int liked, String tag, int source) {
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(source));
-
+        DataBaseHelper.getInstance(this).deleteAllExamSummary();
         if (institute.getCurrent_user_vote_type() == Constants.NEITHER_LIKE_NOR_DISLIKE) {
             //neither liked nor disliked case
             if (liked == Constants.LIKE_THING)
@@ -2885,6 +2888,7 @@ private boolean isUpdateStreams;
     @Override
     public void onFilterApplied() {
 
+        DataBaseHelper.getInstance(this).deleteAllExamSummary();
         int count = 0;
         Map<String, String> mFilterKeywords = new HashMap<>();
         for (Folder f : this.mFolderList) {
@@ -2933,6 +2937,8 @@ private boolean isUpdateStreams;
 
     @Override
     public void onFilterCanceled(boolean clearAll) {
+
+        DataBaseHelper.getInstance(this).deleteAllExamSummary();
         onBackPressed();
 
         if (clearAll) {
@@ -4206,11 +4212,11 @@ private void onNotPreparingEducationResponse(String response){
     public void onExamTabSelected(ExamDetail examDetailObj) {
         if(examDetailObj == null)return;
         String id = examDetailObj.getId();
-        if(!isSyllabusUpdated && DataBaseHelper.getInstance(this).isExamSummaryExists(Integer.parseInt(id))){
-            mUpdateExamDetail(DataBaseHelper.getInstance(this).getExamSummary(Integer.parseInt(id)),false);
+        String dbSummary=DataBaseHelper.getInstance(this).getExamSummary(Integer.parseInt(id));
+        if(dbSummary!=null){
+            mUpdateExamDetail(dbSummary,false);
             return;
         }
-        isSyllabusUpdated=false;
         Map<String , String> params = this.mGetTheFilters();
 
         if(params == null)
@@ -4383,8 +4389,8 @@ private void onNotPreparingEducationResponse(String response){
 
        String examId = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
        if(!examId.isEmpty()) {
-           isSyllabusUpdated=true;
-           this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS, Constants.BASE_URL + "yearly-exams/" + examId + "/syllabus/", jsonObject, 1);
+           DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(examId));
+           this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS+"#"+examId, Constants.BASE_URL + "yearly-exams/" + examId + "/syllabus/", jsonObject, 1);
        }
     }
 
@@ -4618,9 +4624,8 @@ private void onNotPreparingEducationResponse(String response){
 
     @Override
     public void onSubmitCalendarData(JSONObject object,String url) {
-        isSyllabusUpdated=true;
-        this.mMakeJsonObjectNetworkCall(Constants.TAG_PSYCHOMETRIC_RESPONSE,Constants.BASE_URL+url,object,1);
         String examId = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
+        this.mMakeJsonObjectNetworkCall(Constants.TAG_PSYCHOMETRIC_RESPONSE+"#"+examId,Constants.BASE_URL+url,object,1);
         if(!examId.isEmpty()) {
             this.onHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + examId + "/calendar/", null);
         }

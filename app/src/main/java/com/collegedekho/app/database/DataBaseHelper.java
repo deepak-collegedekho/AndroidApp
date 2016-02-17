@@ -70,7 +70,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public String getExamSummary(int yearlyExamId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String examSummary=null;
+        String examSummary = null;
         try {
             String getQuery = "SELECT * FROM exams_summary WHERE yearly_exam_id = " + yearlyExamId;
             Cursor cursor = db.rawQuery(getQuery, null);
@@ -78,7 +78,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 do {
                     examSummary = cursor.getString(cursor.getColumnIndex("summary"));
 //                    examSummary = JSON.std.beanFrom(ExamSummary.class, summary);
-                    Log.e("DEBUG", "Exam Summary from DB " + examSummary);
+//                    Log.e("DEBUG", "Exam Summary from DB " + examSummary);
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
@@ -107,4 +107,29 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return isExists;
     }
 
+    public void deleteExamSummary(int yearlyExamId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            String updateQuery = "DELETE FROM exams_summary WHERE yearly_exam_id = " + yearlyExamId;
+            db.execSQL(updateQuery);
+        } catch (Exception e) {
+
+        } finally {
+            db.close();
+        }
+    }
+
+    public void deleteAllExamSummary() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            String updateQuery = "DELETE FROM exams_summary";
+            db.execSQL(updateQuery);
+        } catch (Exception e) {
+
+        } finally {
+            db.close();
+        }
+    }
 }
