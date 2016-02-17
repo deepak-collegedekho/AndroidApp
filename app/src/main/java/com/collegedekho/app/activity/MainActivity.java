@@ -878,7 +878,6 @@ public class MainActivity extends AppCompatActivity
             mhandleNotifications();
         }
         else if((MainActivity.user.getEducation_set() == 1 && (MainActivity.user.getExams_set() == 1) || (MainActivity.user.getIs_preparing().equals("0")) && IS_PROFILE_LOADED))
-//            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
             this.mMakeNetworkCall(Constants.TAG_LAUNCH_USER_HOME,Constants.BASE_URL + "preferences/", null);
         else if(MainActivity.user.getEducation_set() == 1 &&  MainActivity.user.getExams_set() == 0 && !MainActivity.user.getIs_preparing().equals("0"))
             this.mMakeNetworkCall(Constants.TAG_LOAD_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
@@ -1231,6 +1230,7 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplayInstituteByEntity(Institute institute)
     {
+        this.mInstitute=institute;
         int id = institute.getId();
 
         final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE);
