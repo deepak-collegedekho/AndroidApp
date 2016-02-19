@@ -10,7 +10,9 @@ import java.util.HashMap;
  */
 public class Constants
 {
+    public static final int RC_HANDLE_ALL_PERM =1;
     public static final int RC_HANDLE_CONTACTS_PERM =2;
+    public static final int RC_HANDLE_STORAGE_PERM =3;
     public static final int[] headImages = {R.drawable.ic_question, 0, R.drawable.ic_cap};
     public static final String[] headLabels = {"I am not sure where to start", "",
             "College majors are my top priority"};

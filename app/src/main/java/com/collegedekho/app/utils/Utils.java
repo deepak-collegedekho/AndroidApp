@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.BuildConfig;
+import com.collegedekho.app.filelogger.FileLogger;
 import com.collegedekho.app.htmlparser.HtmlSpanner;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.resource.TypeFaceTypes;
@@ -372,8 +373,9 @@ public class Utils {
                 int seconds = (int) (diff / 1000) % 60;
                 int minutes = (int) ((diff / (1000 * 60)) % 60);
 //            int hours   = (int) ((diff / (1000*60*60)) % 24);
-
-                Log.e("API_PROFILE", tag + " Started : " + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND) + ":" + calendar.get(Calendar.MILLISECOND) + " Stopped : " + cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND) + ":" + cal.get(Calendar.MILLISECOND) + " Time: " + minutes + ":" + seconds + ":" + milliSecs);
+                String log=tag + " Started : " + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND) + ":" + calendar.get(Calendar.MILLISECOND) + " Stopped : " + cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND) + ":" + cal.get(Calendar.MILLISECOND) + " Time: " + minutes + ":" + seconds + ":" + milliSecs;
+                Log.e("API_PROFILE", log);
+                FileLogger.writeLog(log);
             }catch (Exception e){
 
             }

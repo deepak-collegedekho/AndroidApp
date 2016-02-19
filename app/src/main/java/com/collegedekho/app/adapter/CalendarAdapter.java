@@ -38,7 +38,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     private int lastPosition = -1;
     private LinkedHashMap<String,String> mYearCalendar;
     // today
-    Date today;
     Calendar mCalendar;
     Calendar cal;
     private int mOffSet;
@@ -88,62 +87,52 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         int month = cal.get(Calendar.MONTH);
         int year = cal.get(Calendar.YEAR);
         String day_key=String.valueOf(cal.get(Calendar.YEAR)+"_"+String.valueOf(cal.get(Calendar.DAY_OF_YEAR)));
+
         if(day==1 && !isCurrentMonth){
-            isCurrentMonth =true;
-            isActiveCell=false;
+            isCurrentMonth=true;
+        }else if (day==1){
+            isCurrentMonth=false;
+            isActiveCell =false;
         }
+        if(isCurrentMonth) {
+            if (month != mCalendar.get(Calendar.MONTH) || year != mCalendar.get(Calendar.YEAR)) {
+                if (day == 1 && !isActiveCell) {
+                    isActiveCell = true;
+                    startCellPosition = position;
+                    mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
+                } else if (day == 1 && isActiveCell) {
+                    isActiveCell = false;
+                    endCellPosition = position - 1;
+                }
+            } else if (month == mCalendar.get(Calendar.MONTH) && year == mCalendar.get(Calendar.YEAR)) {
+                if (day == mCalendar.get(Calendar.DAY_OF_MONTH) && !isActiveCell) {
+                    isActiveCell = true;
+                    startCellPosition = position;
+                    mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
+                } else if (day == 1 && isActiveCell) {
+                    isActiveCell = false;
+                    endCellPosition = position - 1;
+                }
+            }
+        }
+
         if (year == mCalendar.get(Calendar.YEAR)) {     //current year
-            if (month == mCalendar.get(Calendar.MONTH) && isCurrentMonth) {       //current month
+            if (month == mCalendar.get(Calendar.MONTH)) {       //current month
                 if (day == mCalendar.get(Calendar.DAY_OF_MONTH)) {      //today
-                    if(!isActiveCell) {
-                        isActiveCell = true;
-                        startCellPosition = position;
-                        mListener.onItemSelect(position, startCellPosition,endCellPosition,day_key);
-                    }
                     //TODO: Bashir remove the hard coding
                     holder.dateView.setTextColor(0xff0066ff);
                 }
-            }else { //outside current month
-                if(day==1){
-                    if(!isActiveCell) {
-                        isActiveCell = true;
-                        startCellPosition = position;
-                        mListener.onItemSelect(position, startCellPosition,endCellPosition,day_key);
-                    }else {
-                        endCellPosition=position-1;
-                        isActiveCell =false;
-                    }
-                }
-
-            }
-            if (day == 1) {
-                holder.monthView.setText(monthNames[cal.get(Calendar.MONTH)]);
-                holder.monthView.setVisibility(View.VISIBLE);
-
-            } else {
-                holder.monthView.setVisibility(View.GONE);
-            }
-        }else {  //outside current year
-
-            if (day == 1 && isCurrentMonth) {
-                holder.monthView.setText(monthNames[cal.get(Calendar.MONTH)]);
-                holder.monthView.setVisibility(View.VISIBLE);
-
-                if(!isActiveCell) {
-                    isActiveCell = true;
-                    startCellPosition = position;
-                    mListener.onItemSelect(position, startCellPosition,endCellPosition,day_key);
-
-                }else {
-                    endCellPosition=position-1;
-                    isActiveCell = false;
-                    isCurrentMonth=false;
-                }
-
-            } else {
-                holder.monthView.setVisibility(View.GONE);
             }
         }
+
+        if (day == 1) {
+            holder.monthView.setText(monthNames[cal.get(Calendar.MONTH)]);
+            holder.monthView.setVisibility(View.VISIBLE);
+
+        } else {
+            holder.monthView.setVisibility(View.GONE);
+        }
+
         String key=mYearCalendar.get(day_key);
         if (isActiveCell) {
             holder.dotView.setVisibility(View.VISIBLE);
@@ -220,7 +209,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             String key=(String) (v.findViewById(R.id.txt_date)).getTag();
             if(key!=null) {
                 selectedPosition = getLayoutPosition();
-                isCurrentMonth = false;
                 notifyDataSetChanged();
             }
             mListener.onItemSelect(getLayoutPosition(), startCellPosition, endCellPosition, key);

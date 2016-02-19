@@ -18,6 +18,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static DataBaseHelper DB_INSTANCE;
     private String CREATE_EXAMS_TABLE = "CREATE TABLE IF NOT EXISTS user_exams(id INTEGER AUTO INCREMENT PRIMARY KEY,exam_id INTEGER,exam_data TEXT)";
     private String CREATE_EXAMS_SUMMARY = "CREATE TABLE IF NOT EXISTS exams_summary(id INTEGER AUTO INCREMENT PRIMARY KEY,yearly_exam_id INTEGER,summary TEXT)";
+    private String CREATE_USER_TABLE = "CREATE TABLE IF NOT EXISTS user(id INTEGER AUTO INCREMENT PRIMARY KEY,user_id INTEGER,user_data TEXT)";
 
     public static DataBaseHelper getInstance(Context context) {
         if (DB_INSTANCE == null) {
@@ -32,8 +33,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_EXAMS_TABLE);
+//        db.execSQL(CREATE_EXAMS_TABLE);
         db.execSQL(CREATE_EXAMS_SUMMARY);
+        db.execSQL(CREATE_USER_TABLE);
 
     }
 
@@ -49,6 +51,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             String insertQuery = "INSERT INTO exams_summary (yearly_exam_id,summary) VALUES (" + yearlyExamId + ",'" + summary + "')";
             db.execSQL(insertQuery);
         } catch (Exception e) {
+            e.printStackTrace();
 
         } finally {
             db.close();
@@ -62,6 +65,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             String updateQuery = "UPDATE exams_summary SET summary= '" + summary + "' WHERE yearly_exam_id = " + yearlyExamId;
             db.execSQL(updateQuery);
         } catch (Exception e) {
+            e.printStackTrace();
 
         } finally {
             db.close();
@@ -82,6 +86,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
+            e.printStackTrace();
 
         } finally {
             db.close();
@@ -100,6 +105,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 isExists = true;
             }
         } catch (Exception e) {
+            e.printStackTrace();
 
         } finally {
             db.close();
@@ -114,6 +120,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             String updateQuery = "DELETE FROM exams_summary WHERE yearly_exam_id = " + yearlyExamId;
             db.execSQL(updateQuery);
         } catch (Exception e) {
+            e.printStackTrace();
 
         } finally {
             db.close();
@@ -127,9 +134,87 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             String updateQuery = "DELETE FROM exams_summary";
             db.execSQL(updateQuery);
         } catch (Exception e) {
+            e.printStackTrace();
 
         } finally {
             db.close();
         }
+    }
+
+    private void addUser(int userId, String userData) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            String insertQuery = "INSERT INTO user (user_id,user_data) VALUES (" + userId + ",'" + userData + "')";
+            db.execSQL(insertQuery);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            db.close();
+        }
+    }
+
+    public void addUser(String userData) {
+        this.addUser(1, userData);
+    }
+
+    private String getUser(int userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String user = null;
+        try {
+            String getQuery = "SELECT * FROM user WHERE user_id = " + userId;
+            Cursor cursor = db.rawQuery(getQuery, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    user = cursor.getString(cursor.getColumnIndex("user_data"));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            db.close();
+        }
+        return user;
+    }
+
+    public String getUser() {
+        return this.getUser(1);
+    }
+
+    private void updateUser(int userId, String userData) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            String updateQuery = "UPDATE user SET user_data= '" + userData + "' WHERE user_id = " + userId;
+            db.execSQL(updateQuery);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
+    }
+
+    public void updateUser(String userData) {
+        this.updateUser(1, userData);
+    }
+
+    private void deleteUser(int userId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            String updateQuery = "DELETE FROM user WHERE user_id = " + userId;
+            db.execSQL(updateQuery);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            db.close();
+        }
+    }
+
+    public void deleteUser() {
+        this.deleteUser(1);
     }
 }

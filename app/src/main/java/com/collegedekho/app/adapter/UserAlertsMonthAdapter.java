@@ -90,62 +90,53 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
         if (dy.length() < 2) {
             dy = "0" + dy;
         }
-        if(day==1 &&! isCurrentMonth){
-            isCurrentMonth=true;
-            isActiveCell=false;
-        }
         String day_key = year + "-" + mth + "-" + dy;
-        if (year == mCalendar.get(Calendar.YEAR)) {     //current year
-            if (month == mCalendar.get(Calendar.MONTH) && isCurrentMonth) {       //current month
-                if (day == mCalendar.get(Calendar.DAY_OF_MONTH)) {      //today
-                    if (!isActiveCell) {
-                        isActiveCell = true;
-                        startCellPosition = position;
-                        mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
-                    }
-                    holder.dateView.setTextColor(0xff0066ff);
-                }
-            } else { //outside current month
-                if (day == 1) {
-                    if (!isActiveCell) {
-                        isActiveCell = true;
-                        startCellPosition = position;
-                        mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
-                    } else {
-                        endCellPosition = position - 1;
-                        isActiveCell = false;
-                    }
-                }
 
-            }
-            if (day == 1) {
-                holder.monthView.setText(monthNames[cal.get(Calendar.MONTH)]);
-                holder.monthView.setVisibility(View.VISIBLE);
-
-            } else {
-                holder.monthView.setVisibility(View.GONE);
-            }
-        } else {  //outside current year
-
-            if (day == 1 && isCurrentMonth) {
-                holder.monthView.setText(monthNames[cal.get(Calendar.MONTH)]);
-                holder.monthView.setVisibility(View.VISIBLE);
-
-                if (!isActiveCell) {
+        if(day==1 && !isCurrentMonth){
+            isCurrentMonth=true;
+        }else if (day==1){
+            isCurrentMonth=false;
+            isActiveCell =false;
+        }
+        if(isCurrentMonth) {
+            if (month != mCalendar.get(Calendar.MONTH) || year != mCalendar.get(Calendar.YEAR)) {
+                if (day == 1 && !isActiveCell) {
                     isActiveCell = true;
                     startCellPosition = position;
                     mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
-
-                } else {
-                    endCellPosition = position - 1;
+                } else if (day == 1 && isActiveCell) {
                     isActiveCell = false;
-                    isCurrentMonth=false;
+                    endCellPosition = position - 1;
                 }
-
-            } else {
-                holder.monthView.setVisibility(View.GONE);
+            } else if (month == mCalendar.get(Calendar.MONTH) && year == mCalendar.get(Calendar.YEAR)) {
+                if (day == mCalendar.get(Calendar.DAY_OF_MONTH) && !isActiveCell) {
+                    isActiveCell = true;
+                    startCellPosition = position;
+                    mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
+                } else if (day == 1 && isActiveCell) {
+                    isActiveCell = false;
+                    endCellPosition = position - 1;
+                }
             }
         }
+
+        if (year == mCalendar.get(Calendar.YEAR)) {     //current year
+            if (month == mCalendar.get(Calendar.MONTH) && isCurrentMonth) {       //current month
+                if (day == mCalendar.get(Calendar.DAY_OF_MONTH)) {      //today
+                    holder.dateView.setTextColor(0xff0066ff);
+                }
+            }
+
+        }
+
+        if (day == 1) {
+            holder.monthView.setText(monthNames[cal.get(Calendar.MONTH)]);
+            holder.monthView.setVisibility(View.VISIBLE);
+
+        } else {
+            holder.monthView.setVisibility(View.GONE);
+        }
+
         if (isActiveCell) {
             holder.dotView.setVisibility(View.VISIBLE);
             holder.dateView.setTextColor(0xff000000);

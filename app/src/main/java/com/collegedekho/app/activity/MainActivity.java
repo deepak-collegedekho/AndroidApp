@@ -795,6 +795,8 @@ public class MainActivity extends AppCompatActivity
     {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS)
+                == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
             getSupportLoaderManager().initLoader(0, null, this);
         if (IS_USER_CREATED) {
@@ -809,7 +811,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         }else {
-            getContactsPermission();
+            getUserPermissions();
         }
     }
     /**
@@ -2253,6 +2255,7 @@ private boolean isUpdateStreams;
             case Constants.TAG_LOAD_USER_PREFERENCES:
             case Constants.TAG_LOAD_USER_PREFERENCES_N_BACK:
             case Constants.TAG_PSYCHOMETRIC_RESPONSE:
+            case Constants.TAG_EDIT_EDUCATION_DETAILS_SUBMIT:
                 return "Loading....";
             case Constants.TAG_USER_REGISTRATION :
                 return "Creating User Please Wait";
@@ -2266,6 +2269,7 @@ private boolean isUpdateStreams;
                 return "Loading Exams...";
             case Constants.TAG_EXAM_SUMMARY:
             case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
+            case Constants.WIDGET_SYLLABUS:
                 return "Loading....";
             case Constants.TAG_SUBMIT_EXAMS_LIST:
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
@@ -2311,10 +2315,21 @@ private boolean isUpdateStreams;
                 return "Loading your plan...";
             case Constants.TAG_MY_ALERTS:
                 return "Loading important events...";
-//            default:
-//                return "Loading...";
+            case Constants.TAG_NEXT_ARTICLES:
+            case Constants.TAG_NEXT_FORUMS_LIST:
+            case Constants.TAG_NEXT_INSTITUTE:
+            case Constants.TAG_NEXT_NEWS:
+            case Constants.TAG_NEXT_QNA_LIST:
+            case Constants.TAG_NEXT_SHORTLIST_INSTITUTE:
+            case Constants.TAG_INSTITUTE_LIKE_DISLIKE:
+            case Constants.TAG_QUESTION_LIKE_DISLIKE:
+            case Constants.ACTION_INSTITUTE_DISLIKED:
+            case "":
+                return null;
+            default:
+                return "Loading...";
         }
-        return null;
+//        return null;
     }
 
     private void mShowQnAQuestions(String response) {
@@ -5062,18 +5077,36 @@ private void onNotPreparingEducationResponse(String response){
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode != Constants.RC_HANDLE_CONTACTS_PERM) {
-            Log.d(TAG, "Got unexpected permission result: " + requestCode);
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            return;
+
+        switch (requestCode) {
+            case Constants.RC_HANDLE_ALL_PERM:
+                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Read Contacts permission granted -");
+                    restartApplication();
+                    return;
+                }
+                break;
+            case Constants.RC_HANDLE_CONTACTS_PERM:
+                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Read Contacts permission granted -");
+                    restartApplication();
+                    return;
+                }
+                break;
+
+            case Constants.RC_HANDLE_STORAGE_PERM:
+                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Read Contacts permission granted -");
+                    restartApplication();
+                    return;
+                }
+                break;
+
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                return;
         }
 
-        if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "Read Contacts permission granted -");
-//            loadInItData();
-            restartApplication();
-            return;
-        }
 
         Log.e(TAG, "Permission not granted: results len = " + grantResults.length +
                 " Result code = " + (grantResults.length > 0 ? grantResults[0] : "(empty)"));
@@ -5098,9 +5131,11 @@ private void onNotPreparingEducationResponse(String response){
         startActivity(appIntent);
     }
 
-    private void getContactsPermission(){
+    private void getUserPermissions(){
         if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
@@ -5116,9 +5151,20 @@ private void onNotPreparingEducationResponse(String response){
             // No explanation needed, we can request the permission.
 
             ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    Constants.RC_HANDLE_ALL_PERM);
+        }else if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.READ_CONTACTS},
                     Constants.RC_HANDLE_CONTACTS_PERM);
-//            }
+        }else if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    Constants.RC_HANDLE_STORAGE_PERM);
         }
     }
 }

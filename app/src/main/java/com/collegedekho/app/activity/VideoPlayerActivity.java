@@ -239,7 +239,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements YouTubePla
     @Override
     public void onFullscreen(boolean isFullscreen) {
         this.isFullscreen = isFullscreen;
-
-//        layout();
+        if(videoFragment!=null && videoFragment.player!=null) {
+            videoFragment.player.setFullscreen(isFullscreen);
+        }
     }
 }
