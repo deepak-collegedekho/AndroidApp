@@ -39,6 +39,7 @@ public class User
     private ArrayList<ExamDetail> user_exams;
     private UserEducation user_education;
     private String preference_uri;
+    private int is_otp_verified;
 
     public String getPreference_uri() {
         return preference_uri;
@@ -326,4 +327,11 @@ public class User
         profileData[2]+="]";
     }
 
+    public int getIs_otp_verified() {
+        return is_otp_verified;
+    }
+
+    public void setIs_otp_verified(int is_otp_verified) {
+        this.is_otp_verified = is_otp_verified;
+    }
 }

@@ -13,6 +13,8 @@ public class Constants
     public static final int RC_HANDLE_ALL_PERM =1;
     public static final int RC_HANDLE_CONTACTS_PERM =2;
     public static final int RC_HANDLE_STORAGE_PERM =3;
+    public static final int RC_HANDLE_SMS_PERM=4;
+
     public static final int[] headImages = {R.drawable.ic_question, 0, R.drawable.ic_cap};
     public static final String[] headLabels = {"I am not sure where to start", "",
             "College majors are my top priority"};
@@ -73,8 +75,8 @@ public class Constants
     public static final String WIDGET_FORUMS = "forums";
     public static final String TAG_LOAD_QNA_QUESTIONS = "qna";
     //public static final String IP = "http://10.0.3.2";
-    //public static final String IP = "http://www.launch.collegedekho.com";
-    public static final String IP = "http://www.collegedekho.com";
+    public static final String IP = "http://www.launch.collegedekho.com";
+//    public static final String IP = "http://www.collegedekho.com";
     //public static final String IP = "http://192.168.8.101";
     //public static final String IP = "http://192.168.56.1";
     //public static final String BASE_URL = IP + ":8000/api/1/";
@@ -311,6 +313,14 @@ public class Constants
     public static final String ACTION_INSTITUTE_SELECTED = "action_institute_selected";
     public static final String ACTION_WHEN_NOT_PREPARING = "action_when_not_preparing";
     public static final String ACTION_USER_LOGIN = "action_user_login";
+    public static final String TAG_USER_PHONE_ADDED = "user_phone_added";
+    public static final String TAG_VERIFY_USER_PHONE = "action_user_login";
+    public static final String USER_OTP = "user_otp";
+    public static final String OTP_INTENT_FILTER = "com.cld.user.otp.filter";
+    public static final String OTP_BODY = "Dear User,\nYour OTP for college app verification is-";
+    public static final String OTP_CODE = "code";
+
+
 
     //String messages
     public static final String EMAIL_PASSOWRD_NOT_EXISTS ="The e-mail address and/or password you specified are not correct.";

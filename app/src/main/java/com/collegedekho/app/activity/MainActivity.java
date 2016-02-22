@@ -4,9 +4,11 @@ import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -30,17 +32,22 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -301,6 +308,7 @@ public class MainActivity extends AppCompatActivity
     private List<MyAlertDate> myAlertsList;
     private boolean isFromNotification;
     private String mExamTag;
+    private String user_phone_number;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -370,7 +378,7 @@ public class MainActivity extends AppCompatActivity
         myAlerts.setOnClickListener(mClickListener);
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS)
-                == PackageManager.PERMISSION_GRANTED) {
+                == PackageManager.PERMISSION_GRANTED ) {
             getSupportLoaderManager().initLoader(0, null, this);
         }
         this.connecto = Connecto.with(MainActivity.this);
@@ -797,6 +805,8 @@ public class MainActivity extends AppCompatActivity
                 Manifest.permission.READ_CONTACTS)
                 == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED  && ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECEIVE_SMS)
                 == PackageManager.PERMISSION_GRANTED) {
             getSupportLoaderManager().initLoader(0, null, this);
         if (IS_USER_CREATED) {
@@ -1074,15 +1084,21 @@ public class MainActivity extends AppCompatActivity
 
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
 
-            if (fragment == null)
+            if (fragment == null) {
                 this.mDisplayFragment(CDRecommendedInstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next), !isFromNotification, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
-            else {
+                if(MainActivity.user.getIs_otp_verified()==0) {
+                    displayOTPAlert(this);
+                }
+            }else {
                 if (fragment instanceof CDRecommendedInstituteListFragment) {
                     //((CDRecommendedInstituteListFragment) fragment).clearList();
                     ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next);
                 }
 
                 this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
+                if(MainActivity.user.getIs_otp_verified()==0) {
+                    displayOTPAlert(this);
+                }
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -1728,6 +1744,13 @@ private boolean isUpdateStreams;
                 break;
             case Constants.TAG_UPDATE_VIDEO_TITLE:
                 this.onUpdateTitleResponse(response);
+                break;
+            case Constants.TAG_USER_PHONE_ADDED:
+                displayGetOTPAlert(this);
+                break;
+            case Constants.TAG_VERIFY_USER_PHONE:
+                Utils.DisplayToast(this,"OTP successfully Verified");
+                this.onOTPVerified();
                 break;
         }
 
@@ -3753,6 +3776,7 @@ private boolean isUpdateStreams;
             MainActivity.user.setPhone_no(userObj.getPhone_no());
             MainActivity.user.setIs_preparing(userObj.getIs_preparing());
             MainActivity.user.setResource_uri(userObj.getResource_uri());
+            MainActivity.user.setIs_otp_verified(userObj.getIs_otp_verified());
             this.mUserExamsList=MainActivity.user.getUser_exams();
             String u = JSON.std.asString(MainActivity.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
@@ -5101,7 +5125,13 @@ private void onNotPreparingEducationResponse(String response){
                     return;
                 }
                 break;
-
+            case Constants.RC_HANDLE_SMS_PERM:
+                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Read Contacts permission granted -");
+                    restartApplication();
+                    return;
+                }
+                break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 return;
@@ -5136,6 +5166,8 @@ private void onNotPreparingEducationResponse(String response){
                     Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED&& ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECEIVE_SMS)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
@@ -5151,7 +5183,7 @@ private void onNotPreparingEducationResponse(String response){
             // No explanation needed, we can request the permission.
 
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    new String[]{Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.RECEIVE_SMS},
                     Constants.RC_HANDLE_ALL_PERM);
         }else if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS)
@@ -5165,6 +5197,189 @@ private void onNotPreparingEducationResponse(String response){
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     Constants.RC_HANDLE_STORAGE_PERM);
+        }else if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECEIVE_SMS)
+                != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.RECEIVE_SMS},
+                    Constants.RC_HANDLE_SMS_PERM);
+        }
+    }
+
+//    @Override
+    public void onPhoneAdded(HashMap params) {
+        this.mMakeNetworkCall(Constants.TAG_USER_PHONE_ADDED, Constants.BASE_URL + "send-otp/", params);
+    }
+
+//    @Override
+    public void onUserPhoneVerified(HashMap params) {
+        this.mMakeNetworkCall(Constants.TAG_VERIFY_USER_PHONE, Constants.BASE_URL + "verify-otp/", params);
+    }
+
+
+    private void displayOTPAlert(final Context context){
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final boolean[] gotUserResponse=new boolean[1];
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+        View dialogView = inflater.inflate(R.layout.otp_dialog_layout, null);
+        dialogBuilder.setView(dialogView);
+
+        TextView dialog_ok=(TextView)dialogView.findViewById(R.id.btn_dialog_positive);
+        TextView dialog_cancel=(TextView)dialogView.findViewById(R.id.btn_dialog_negative);
+        final EditText edt_phone_number=(EditText)dialogView.findViewById(R.id.user_phone_number);
+        edt_phone_number.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                edt_phone_number.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        final AlertDialog alertDialog = dialogBuilder.create();
+        dialog_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String marks=edt_phone_number.getText().toString();
+                if(marks!=null&&!marks.trim().equals("") && marks.trim().length()==10) {
+                    gotUserResponse[0]=true;
+                    alertDialog.dismiss();
+                    user_phone_number =marks;
+                }else{
+                    edt_phone_number.setError("Enter Valid Mobile Number.");
+                }
+            }
+        });
+        dialog_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotUserResponse[0]=false;
+                alertDialog.dismiss();
+            }
+        });
+        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(!gotUserResponse[0]){
+
+                }else {
+                    HashMap<String , String> params = new HashMap<>();
+                    params.put(Constants.USER_PHONE,edt_phone_number.getText().toString());
+//                    if(mListener != null)
+                    MainActivity.this.onPhoneAdded(params);
+                }
+            }
+        });
+        alertDialog.show();
+    }
+
+    private void displayGetOTPAlert(final Context context) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final int[] gotUserResponse = new int[1];
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+        View dialogView = inflater.inflate(R.layout.otp_dialog_layout, null);
+        dialogBuilder.setView(dialogView);
+        ((TextView) dialogView.findViewById(R.id.dialog_title)).setText("OTP Verification");
+        ((TextView) dialogView.findViewById(R.id.dialog_message)).setText("Enter 6 digit OTP:");
+        final EditText edt_phone_number = (EditText) dialogView.findViewById(R.id.user_phone_number);
+        final BroadcastReceiver otpReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String otp = intent.getStringExtra(Constants.USER_OTP);
+                edt_phone_number.setText(otp);
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter(Constants.OTP_INTENT_FILTER);
+        LocalBroadcastManager.getInstance(context).registerReceiver(otpReceiver, intentFilter);
+        InputFilter[] FilterArray = new InputFilter[1];
+        FilterArray[0] = new InputFilter.LengthFilter(6);
+        edt_phone_number.setFilters(FilterArray);
+
+        final TextView dialog_ok = (TextView) dialogView.findViewById(R.id.btn_dialog_positive);
+        TextView dialog_cancel = (TextView) dialogView.findViewById(R.id.btn_dialog_negative);
+        TextView dialog_neural = (TextView) dialogView.findViewById(R.id.btn_dialog_nutral);
+        dialog_neural.setVisibility(View.VISIBLE);
+        edt_phone_number.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                edt_phone_number.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        final AlertDialog alertDialog = dialogBuilder.create();
+        dialog_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String marks = edt_phone_number.getText().toString();
+                if (marks != null && !marks.trim().equals("") && marks.trim().length() == 6) {
+                    gotUserResponse[0] = 1;
+                    alertDialog.dismiss();
+                } else {
+                    edt_phone_number.setError("Invalid OTP");
+                }
+            }
+        });
+        dialog_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotUserResponse[0] = 0;
+                alertDialog.dismiss();
+            }
+        });
+        dialog_neural.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotUserResponse[0] = 2;
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if (gotUserResponse[0] == 0) {
+
+                } else if (gotUserResponse[0] == 1) {
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put(Constants.USER_PHONE, user_phone_number);
+                    params.put(Constants.OTP_CODE, edt_phone_number.getText().toString());
+                    MainActivity.this.onUserPhoneVerified(params);
+                } else {
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put(Constants.USER_PHONE, user_phone_number);
+                    MainActivity.this.onPhoneAdded(params);
+
+                }
+                LocalBroadcastManager.getInstance(context).unregisterReceiver(otpReceiver);
+            }
+        });
+        alertDialog.show();
+    }
+
+    private void onOTPVerified(){
+        try {
+            MainActivity.user.setIs_otp_verified(1);
+            this.mUserExamsList = MainActivity.user.getUser_exams();
+            String u = JSON.std.asString(MainActivity.user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+        }catch (Exception e){
+
         }
     }
 }
