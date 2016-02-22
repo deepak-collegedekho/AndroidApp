@@ -39,7 +39,7 @@ public class OTPReceiver extends BroadcastReceiver {
                         }
                         if (otp!=null && !otp.matches("") && otp.length()>0) {
 
-                            Toast.makeText(context, sender+": "+otp, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(context, sender+": "+otp, Toast.LENGTH_SHORT).show();
                             Intent otpIntent=new Intent(Constants.OTP_INTENT_FILTER);
                             otpIntent.putExtra(Constants.USER_OTP,otp);
                             LocalBroadcastManager.getInstance(context).sendBroadcast(otpIntent);

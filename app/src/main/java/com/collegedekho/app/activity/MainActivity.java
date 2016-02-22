@@ -5356,10 +5356,12 @@ private void onNotPreparingEducationResponse(String response){
                 if (gotUserResponse[0] == 0) {
 
                 } else if (gotUserResponse[0] == 1) {
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put(Constants.USER_PHONE, user_phone_number);
-                    params.put(Constants.OTP_CODE, edt_phone_number.getText().toString());
-                    MainActivity.this.onUserPhoneVerified(params);
+                    if(user_phone_number!=null && !user_phone_number.matches("")) {
+                        HashMap<String, String> params = new HashMap<>();
+                        params.put(Constants.USER_PHONE, user_phone_number);
+                        params.put(Constants.OTP_CODE, edt_phone_number.getText().toString());
+                        MainActivity.this.onUserPhoneVerified(params);
+                    }
                 } else {
                     HashMap<String, String> params = new HashMap<>();
                     params.put(Constants.USER_PHONE, user_phone_number);
