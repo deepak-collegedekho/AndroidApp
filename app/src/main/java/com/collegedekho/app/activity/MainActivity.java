@@ -5377,7 +5377,6 @@ private void onNotPreparingEducationResponse(String response){
     private void onOTPVerified(){
         try {
             MainActivity.user.setIs_otp_verified(1);
-            this.mUserExamsList = MainActivity.user.getUser_exams();
             String u = JSON.std.asString(MainActivity.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
         }catch (Exception e){
