@@ -1,15 +1,25 @@
 package com.collegedekho.app.fragment;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.renderscript.Allocation;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.display.swipableList.model.CardModel;
@@ -100,7 +110,6 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
 
     private void mAddCardInAdapter(List<Institute> list)
     {
-
         for (int i = list.size() - 1; i >= 0; i--)
         {
             CardModel model;
@@ -113,7 +122,6 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
 
     private void mAddNextCardInAdapter(List<Institute> list, SimpleCardStackAdapter adapter)
     {
-
         for (int i = list.size() - 1; i >= 0; i--)
         {
             CardModel model;
@@ -204,7 +212,9 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         //this.mCardContainer.setAdapter(adapter);
         //this.mAdapter = adapter;
 
-        getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
+        if(getView() != null)
+            getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
+
         this.mNextUrl = next;
         this.mAdapter.setLoadingNext(false);
         this.loading = false;
@@ -238,6 +248,13 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         this.mListener.OnCDRecommendedInstituteDislike(institute);
     }
 
+    @Override
+    public void OnDecideLater(Institute institute) {
+        this.mRemoveInstituteFromList(institute);
+        //this.mAdapter.pop();
+        this.mListener.OnCDRecommendedInstituteDecideLater(institute);
+    }
+
     private void mRemoveInstituteFromList(Institute institute)
     {
         try {
@@ -263,10 +280,24 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         }
     }
 
+    @Override
+    public String toString() {
+        return "RenderScript";
+    }
+
+    private TextView addStatusText(ViewGroup container) {
+        TextView result = new TextView(getActivity());
+        result.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        result.setTextColor(0xFFFFFFFF);
+        container.addView(result);
+        return result;
+    }
+
     public interface OnCDRecommendedInstituteListener extends BaseListener{
         void OnCDRecommendedLoadNext(String nextURL);
         void OnCDRecommendedInstituteSelected(Institute institute);
         void OnCDRecommendedInstituteLiked(Institute institute);
         void OnCDRecommendedInstituteDislike(Institute institute);
+        void OnCDRecommendedInstituteDecideLater(Institute institute);
     }
 }

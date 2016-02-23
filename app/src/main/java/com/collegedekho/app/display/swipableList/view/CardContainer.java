@@ -31,7 +31,6 @@ import android.widget.ListAdapter;
 import com.collegedekho.app.R;
 import com.collegedekho.app.display.swipableList.model.CardModel;
 import com.collegedekho.app.display.swipableList.model.Orientations;
-import com.collegedekho.app.resource.Constants;
 
 import java.util.Random;
 
@@ -81,7 +80,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
         setOrientation(Orientations.OrientationType.Disordered);
         setGravity(Gravity.CENTER);
         init();
-
     }
 
     public CardContainer(Context context, AttributeSet attrs) {
@@ -305,20 +303,28 @@ public class CardContainer extends AdapterView<ListAdapter> {
                         LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
                 params.setMargins(30, 60, 30,0 );
-                if(dx <= -5){
+                Log.v("CardContainer", "Xtranslation is :" + mTopCard.getTranslationX());
+                Log.v("CardContainer", "Ytranslation is :" + mTopCard.getTranslationY());
+                if(mTopCard.getTranslationX() <= -110){
+                    //Log.v("CardContainer", "Dislike dx is :" + dx);
                     likeImageView.setVisibility(VISIBLE);
                     params.gravity = Gravity.RIGHT;
                     likeImageView.setLayoutParams(params);
                     likeImageView.setImageResource(R.drawable.ic_dislike_50dp);
                     likeImageView.setColorFilter(mContext.getResources().getColor(R.color.dislike_red_selected));
-                } else if(dx >= 5){
+                } else if(mTopCard.getTranslationX() >= 110){
+                    //Log.v("CardContainer", "Like dx is :" + dx);
                     likeImageView.setVisibility(VISIBLE);
                     params.gravity = Gravity.LEFT;
                     likeImageView.setLayoutParams(params);
                     likeImageView.setImageResource(R.drawable.ic_like_50dp);
                     likeImageView.setColorFilter(mContext.getResources().getColor(R.color.like_green_selected));
                 }
-
+                else if(mTopCard.getTranslationX() >= -100 && mTopCard.getTranslationX() <= 100)
+                {
+                    //Log.v("CardContainer", "dx is :" + dx);
+                    likeImageView.setVisibility(GONE);
+                }
 
                 if (Math.abs(dx) > mTouchSlop || Math.abs(dy) > mTouchSlop) {
                     mDragging = true;
@@ -338,7 +344,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-
                mTopCard.findViewById(R.id.like_textview).setVisibility(GONE);
 
                 if (!mDragging) {
@@ -470,6 +475,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
             Log.d("Fling", "Fling with " + velocityX + ", " + velocityY);
             final View topCard = mTopCard;
             float dx = e2.getX() - e1.getX();
+            float dy = e2.getY() - e1.getY();
             if (Math.abs(dx) > mTouchSlop &&
                     Math.abs(velocityX) > Math.abs(velocityY) &&
                     Math.abs(velocityX) > mFlingSlop * 3) {
@@ -501,7 +507,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
                     }
                 }
 
-
                 topCard.animate()
                         .setDuration(duration)
                         .alpha(.75f)
@@ -521,6 +526,73 @@ public class CardContainer extends AdapterView<ListAdapter> {
                                 onAnimationEnd(animation);
                             }
                         });
+                return true;
+            }
+            else if (Math.abs(dy) > mTouchSlop &&
+                    Math.abs(velocityY) > Math.abs(velocityX) &&
+                    Math.abs(velocityY) > mFlingSlop * 3) {
+                Log.d("CardContainer", "I want to swipe up and down");
+                float targetX = topCard.getX();
+                float targetY = topCard.getY();
+                long duration = 0;
+
+                boundsRect.set(0 - topCard.getWidth() - 100, 0 - topCard.getHeight() - 100, getWidth() + 100, getHeight() + 100);
+
+                while (boundsRect.contains((int) targetX, (int) targetY)) {
+                    targetX += velocityX / 10;
+                    targetY += velocityY / 10;
+                    duration += 100;
+                }
+
+                duration = Math.min(500, duration);
+
+                CardModel cardModel = (CardModel)getAdapter().getItem(getChildCount() - 1);
+
+                if (cardModel.getOnCardDismissedListener() != null) {
+                    if ( targetY < 0 ) {
+                        cardModel.getOnCardDismissedListener().onUpSwipe();
+                    }
+                    else
+                    {
+                        ValueAnimator animator = ObjectAnimator.ofPropertyValuesHolder(mTopCard,
+                                PropertyValuesHolder.ofFloat("translationX", 0),
+                                PropertyValuesHolder.ofFloat("translationY", 0),
+                                PropertyValuesHolder.ofFloat("rotation", (float) Math.toDegrees(mRandom.nextGaussian() * DISORDERED_MAX_ROTATION_RADIANS)),
+                                PropertyValuesHolder.ofFloat("pivotX", mTopCard.getWidth() / 2.f),
+                                PropertyValuesHolder.ofFloat("pivotY", mTopCard.getHeight() / 2.f)
+                        ).setDuration(250);
+                        animator.setInterpolator(new AccelerateInterpolator());
+                        animator.start();
+
+                        return false;
+                    }
+                }
+
+                mTopCard = getChildAt(getChildCount() - 2);
+
+                if(mTopCard != null)
+                    mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
+
+                topCard.animate()
+                        .setDuration(duration)
+                        .alpha(.75f)
+                        .setInterpolator(new LinearInterpolator())
+                        .x(targetX)
+                        .y(targetY)
+                        .rotation(Math.copySign(45, velocityY))
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                removeViewInLayout(topCard);
+                                ensureFull();
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+                                onAnimationEnd(animation);
+                            }
+                        });
+
                 return true;
             } else
                 return false;

@@ -352,7 +352,7 @@ public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
                 break;
             case R.id.recommended_colleges_layout_RL:
                 if(this.mExamDetail != null)
-                    this.mProfileWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",this.mExamDetail.getExam_tag());
+                    this.mProfileWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/", this.mExamDetail.getExam_tag());
                 else
                     this.mProfileWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
                 break;

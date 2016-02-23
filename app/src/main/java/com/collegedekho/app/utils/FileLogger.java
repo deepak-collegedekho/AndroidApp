@@ -1,4 +1,4 @@
-package com.collegedekho.app.filelogger;
+package com.collegedekho.app.utils;
 
 import android.os.Environment;
 import android.util.Log;

@@ -7,13 +7,13 @@ import android.util.AttributeSet;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.collegedekho.app.resource.Constants;
 
 /**
  * @author Mayank Gautam
  *         Created: 16/07/15
  */
 public class FadeInImageView extends NetworkImageView {
-    private static final long ANIM_DURATION = 500;
     private boolean shouldAnimate;
 
     public FadeInImageView(Context context) {
@@ -32,7 +32,7 @@ public class FadeInImageView extends NetworkImageView {
     public void setImageBitmap(Bitmap bm) {
         super.setImageBitmap(bm);
         if (shouldAnimate) {
-            ObjectAnimator.ofFloat(this, "alpha", 0, 1).setDuration(ANIM_DURATION).start();
+            ObjectAnimator.ofFloat(this, "alpha", 0, 1).setDuration(Constants.ANIM_AVERAGE_DURATION).start();
         }
     }
 

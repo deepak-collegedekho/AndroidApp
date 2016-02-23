@@ -42,6 +42,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.telecom.Call;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -313,6 +314,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //getCallPermission();
+        //startActivity(new Intent("android.intent.action.CALL",Uri.parse("tel:*282" + Uri.encode("#"))));
 
         //Send GA Session
         MainActivity.GASessionEvent(MainActivity.TAG);
@@ -653,7 +656,6 @@ public class MainActivity extends AppCompatActivity
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) MainActivity.this.getSystemService(Context.SEARCH_SERVICE);
-
 
         if (searchItem != null) {
             searchView = (SearchView) searchItem.getActionView();
@@ -2925,7 +2927,6 @@ private boolean isUpdateStreams;
 
     @Override
     public void onFilterApplied() {
-
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
         int count = 0;
         Map<String, String> mFilterKeywords = new HashMap<>();
@@ -2959,13 +2960,13 @@ private boolean isUpdateStreams;
 
     @Override
     public void onInstituteShortlisted(int position) {
-
         Institute institute = this.mInstituteList.get(position);
         if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
             this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
         else
             this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
     }
+
    /* @Override
     public void onInstituteUnShortlisted(int position) {
 
@@ -3008,17 +3009,13 @@ private boolean isUpdateStreams;
         this.mUpdateFilterButton();
     }
 
-
-
     private void mUpdateFilterButton() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
         if (fragment instanceof InstituteListFragment) {
             ((InstituteListFragment) fragment).updateFilterButton(mFilterCount);
-
         }
     }
-
 
     @Override
     public void onFilterTypeChanged(int position) {
@@ -4461,14 +4458,14 @@ private void onNotPreparingEducationResponse(String response){
     }
 
     @Override
-    public void OnCDRecommendedLoadNext(String nextURL) {
-
+    public void OnCDRecommendedLoadNext(String nextURL)
+    {
         Map<String , String> params = this.mGetTheFilters();
 
         if(this.mExamTag != null && !this.mExamTag.isEmpty())
             params.put("tag_uris[" + (params.size()) + "]", this.mExamTag);
 
-        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES + "#" + "next", nextURL, params);
+        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES + "#" + "next", Constants.BASE_URL + "personalize/recommended-institutes/", params);
     }
 
     @Override
@@ -4478,12 +4475,29 @@ private void onNotPreparingEducationResponse(String response){
 
     @Override
     public void OnCDRecommendedInstituteLiked(Institute institute) {
-        this.onInstituteLikedDislikedByEntity(institute, Constants.LIKE_THING, "", Constants.REMOMMENDED_INSTITUTE_LIKE_DISLIKE);
+        HashMap<String, String> params = new HashMap<>();
+        params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
+        params.put("action", String.valueOf("1"));
+
+        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + Constants.ACTION_RECOMMENDED_INSTITUTE_SHORTLISTED, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
 
     @Override
     public void OnCDRecommendedInstituteDislike(Institute institute) {
-        this.onInstituteLikedDislikedByEntity(institute, Constants.DISLIKE_THING, "", Constants.REMOMMENDED_INSTITUTE_LIKE_DISLIKE);
+        HashMap<String, String> params = new HashMap<>();
+        params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
+        params.put("action", String.valueOf("2"));
+
+        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + Constants.ACTION_RECOMMENDED_INSTITUTE_NOT_INTERESTED, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+    }
+
+    @Override
+    public void OnCDRecommendedInstituteDecideLater(Institute institute) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
+        params.put("action", String.valueOf("3"));
+
+        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + Constants.ACTION_RECOMMENDED_INSTITUTE_DECIDE_LATER, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
 
     private List<VideoEntry> videoList;
@@ -5383,4 +5397,28 @@ private void onNotPreparingEducationResponse(String response){
 
         }
     }
+
+    private void getCallPermission(){
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+//                    Manifest.permission.RECEIVE_SMS)) {
+//
+//                // Show an expanation to the user *asynchronously* -- don't block
+//                // this thread waiting for the user's response! After the user
+//                // sees the explanation, try again to request the permission.
+//
+//            } else {
+
+            // No explanation needed, we can request the permission.
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CALL_PHONE}, Call.STATE_NEW);
+//            }
+        }
+    }
+
 }

@@ -9,12 +9,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
@@ -25,7 +30,6 @@ import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.BuildConfig;
-import com.collegedekho.app.filelogger.FileLogger;
 import com.collegedekho.app.htmlparser.HtmlSpanner;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.resource.TypeFaceTypes;
@@ -33,19 +37,8 @@ import com.collegedekho.app.resource.TypeFaceTypes;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -472,6 +465,49 @@ public class Utils {
                         (int) d * 10 / 10 : d + "" // (int) d * 10 / 10 drops the decimal
                 ) + "" + c[iteration])
                 : formatCount(d, iteration+1));
+    }
 
+    public static Bitmap blurRenderScript(Context context, Bitmap smallBitmap, int radius) {
+        try {
+            smallBitmap = RGB565toARGB888(smallBitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(
+                smallBitmap.getWidth(), smallBitmap.getHeight(),
+                Bitmap.Config.ARGB_8888);
+
+        RenderScript renderScript = RenderScript.create(context);
+
+        Allocation blurInput = Allocation.createFromBitmap(renderScript, smallBitmap);
+        Allocation blurOutput = Allocation.createFromBitmap(renderScript, bitmap);
+
+        ScriptIntrinsicBlur blur = ScriptIntrinsicBlur.create(renderScript,
+                Element.U8_4(renderScript));
+        blur.setInput(blurInput);
+        blur.setRadius(radius); // radius must be 0 < r <= 25
+        blur.forEach(blurOutput);
+
+        blurOutput.copyTo(bitmap);
+        renderScript.destroy();
+
+        return bitmap;
+    }
+
+    private static Bitmap RGB565toARGB888(Bitmap img) throws Exception {
+        int numPixels = img.getWidth() * img.getHeight();
+        int[] pixels = new int[numPixels];
+
+        //Get JPEG pixels.  Each int is the color values for one pixel.
+        img.getPixels(pixels, 0, img.getWidth(), 0, 0, img.getWidth(), img.getHeight());
+
+        //Create a Bitmap of the appropriate format.
+        Bitmap result = Bitmap.createBitmap(img.getWidth(), img.getHeight(), Bitmap.Config.ARGB_8888);
+
+        //Set RGB pixels.
+        result.setPixels(pixels, 0, result.getWidth(), 0, 0, result.getWidth(), result.getHeight());
+
+        return result;
     }
 }

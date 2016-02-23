@@ -76,7 +76,7 @@ public class Constants
     public static final String TAG_LOAD_QNA_QUESTIONS = "qna";
     //public static final String IP = "http://10.0.3.2";
     public static final String IP = "http://www.launch.collegedekho.com";
-//    public static final String IP = "http://www.collegedekho.com";
+    //public static final String IP = "http://www.collegedekho.com";
     //public static final String IP = "http://192.168.8.101";
     //public static final String IP = "http://192.168.56.1";
     //public static final String BASE_URL = IP + ":8000/api/1/";
@@ -100,6 +100,9 @@ public class Constants
     public static final String TAG_NEXT_FORUMS_LIST = "next_forums_list";
     public static final String TAG_INSTITUTE_LIKE_DISLIKE = "institute_like_dislike";
     public static final String TAG_SHORTLIST_INSTITUTE = "shortlist";
+    public static final String TAG_RECOMMENDED_SHORTLIST_INSTITUTE = "recommended_shortlist";
+    public static final String TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE = "recommended_not_interested";
+    public static final String TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE = "recommended_decide_later";
     public static final String TAG_DELETESHORTLIST_INSTITUTE = "delete";
     public static final String TAG_UNSHORTLIST_INSTITUTE = "unshortlist_institute";
     public static final int NEITHER_LIKE_NOR_DISLIKE = -1;
@@ -293,6 +296,9 @@ public class Constants
     public static final String ACTION_MY_FB_COMMENT_SUBMITTED = "action_my_fb_comment_submitted";
     public static final String MY_FB_URI = "action_my_fb_comment_uri";
     public static final String ACTION_INSTITUTE_SHORTLISTED = "action_institute_shortlisted";
+    public static final String ACTION_RECOMMENDED_INSTITUTE_SHORTLISTED = "action_recommended_institute_shortlisted";
+    public static final String ACTION_RECOMMENDED_INSTITUTE_NOT_INTERESTED = "action_recommended_institute_not_interested";
+    public static final String ACTION_RECOMMENDED_INSTITUTE_DECIDE_LATER = "action_recommended_institute_decide_later";
     public static final String ACTION_INSTITUTE_SHORTLISTED_REMOVED = "action_institute_shortlisting_removed";
     public static final String ACTION_INSTITUTE_LIKED = "action_institute_like";
     public static final String ACTION_INSTITUTE_DISLIKED = "action_institute_disliked";
@@ -365,7 +371,7 @@ public class Constants
     public static final String MY_FB_SCREEN_TUTE        = "myfb_tute";
 
     public static boolean IS_RECOMENDED_COLLEGE = false;
-    public static final int REMOMMENDED_INSTITUTE_LIKE_DISLIKE = 1;
+    public static final int REMOMMENDED_INSTITUTE_ACTION = 1;
     public static final int INSTITUTE_LIKE_DISLIKE = 0;
 
 
