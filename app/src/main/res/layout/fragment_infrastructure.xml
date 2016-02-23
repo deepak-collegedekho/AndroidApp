@@ -15,27 +15,36 @@
             android:scaleType="centerCrop"
             android:src="@drawable/default_banner"
             />
-        <HorizontalScrollView
+
+
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/m50dp">
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/m25dp"
+            android:background="@color/primaryColor"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:paddingTop="@dimen/m3dp"
+            android:paddingBottom="@dimen/m3dp"
+            android:text="Facilities"/>
 
-            <LinearLayout
-                android:id="@+id/infrastructure_college_facility_list"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:paddingBottom="5dp"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="5dp">
-            </LinearLayout>
+        <GridLayout
+            android:id="@+id/infrastructure_college_facility_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/m10dp"
+            android:paddingTop="@dimen/m10dp"
+            android:paddingRight="@dimen/m5dp"
+            android:layout_gravity="center"
+            android:scrollbars="none"
+            android:columnCount="2" />
 
-        </HorizontalScrollView>
         <TextView
             android:id="@+id/infra_about"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/AppTheme.TextView.AboutTextView"
             />
+
     </LinearLayout>
 </ScrollView>
