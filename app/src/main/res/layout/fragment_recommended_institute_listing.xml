@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
-
-   <include layout="@layout/layout_empty"/>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
 
     <com.collegedekho.app.display.swipableList.view.CardContainer
         android:id="@+id/layoutview"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
     <include layout="@layout/layout_empty"/>
+    <TextView
+        style="@style/AppTheme.BlackBorderButton"
+        android:id="@+id/fragment_recommended_institute_undecided_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Undecided Count - ..."
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:textSize="@dimen/m14sp"
+        android:fontFamily="sans-serif-light"
+        />
 </LinearLayout>

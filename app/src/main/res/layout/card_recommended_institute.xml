@@ -9,8 +9,6 @@
     >
     <RelativeLayout
         android:id="@+id/card_recommended_institute_container"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         >
@@ -38,20 +36,18 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="395dp"
+            android:translationZ="@dimen/m5dp"
             >
-
             <ImageView
                 android:id="@+id/like_textview"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="60dp"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:tint="@color/like_green_selected"
-                android:visibility="visible"/>
-
+                android:visibility="visible"
+                />
         </FrameLayout>
+
         <RelativeLayout
             android:id="@+id/card_recommended_institute_info_container"
             android:layout_width="match_parent"
@@ -72,27 +68,40 @@
                 android:drawableLeft="@drawable/ic_geolocation"
                 android:textColor="@color/white"
                 android:text="Pune, Maharastra"
-                android:textSize="@dimen/m24sp"
+                android:textSize="@dimen/m16sp"
                 android:textStyle="normal"
                 android:paddingBottom="@dimen/activity_vertical_margin_small"
                 android:fontFamily="sans-serif-light"
                 android:textAlignment="center"
+                android:translationZ="@dimen/m5dp"
                 />
-
             <TextView
                 android:id="@+id/card_recommended_streams_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:text="Streams :"
-                android:textSize="@dimen/m24sp"
+                android:textSize="@dimen/m16sp"
                 android:textStyle="normal"
-                android:paddingBottom="@dimen/activity_vertical_margin_small"
                 android:layout_below="@id/card_recommended_geolocation"
                 android:fontFamily="sans-serif-light"
                 android:textAlignment="center"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="@dimen/m2dp"
+                />
+            <TextView
+                android:id="@+id/card_recommended_streams"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="Engineering"
+                android:textSize="@dimen/m16sp"
+                android:layout_toRightOf="@id/card_recommended_streams_label"
+                android:layout_alignTop="@id/card_recommended_streams_label"
+                android:fontFamily="sans-serif-light"
                 />
 
+<!--
             <LinearLayout
                 android:id="@+id/card_recommended_streams_container"
                 android:layout_height="wrap_content"
@@ -104,7 +113,7 @@
                 android:layout_marginTop="@dimen/m2dp"
                 android:layout_marginLeft="@dimen/m5dp"
                 >
-                <!--<TextView
+                &lt;!&ndash;<TextView
                     android:id="@+id/card_recommended_streams_lab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -119,22 +128,25 @@
                     android:textColor="@color/white"
                     android:text="Engineering"
                     android:textSize="@dimen/m22sp"
-                    />-->
+                    />&ndash;&gt;
             </LinearLayout>
+-->
 
             <TextView
                 android:id="@+id/card_recommended_institute_detail"
-                style="@style/AppTheme.GreyButton"
+                style="@style/AppTheme.Bottom_Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerInParent="true"
                 android:textColor="@color/white"
-                android:text="View Details"
+                android:text="View College Details"
                 android:textSize="@dimen/m12sp"
                 android:textStyle="normal"
                 android:fontFamily="sans-serif-light"
-                />
+                android:paddingLeft="@dimen/m15dp"
+                android:paddingRight="@dimen/m15dp"
+            />
 
         </RelativeLayout>
     </RelativeLayout>

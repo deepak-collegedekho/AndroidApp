@@ -35,7 +35,6 @@ public class OTPReceiver extends BroadcastReceiver {
                         }else {
                             Log.e("DEBUG",body);
                             return;
-
                         }
                         if (otp!=null && !otp.matches("") && otp.length()>0) {
 

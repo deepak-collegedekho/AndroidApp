@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 
 
 import com.collegedekho.app.R;
@@ -298,27 +299,39 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 dx = x - mLastTouchX;
                 dy = y - mLastTouchY;
 
-               final  ImageView likeImageView = (ImageView)mTopCard.findViewById(R.id.like_textview);
+               final ImageView likeImageView = (ImageView)mTopCard.findViewById(R.id.like_textview);
+               final TextView textView = (TextView) mTopCard.findViewById(R.id.card_recommended_institute_detail);
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                         LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
-                params.setMargins(30, 60, 30,0 );
+                //params.setMargins(30, 60, 30, 0);
                 Log.v("CardContainer", "Xtranslation is :" + mTopCard.getTranslationX());
                 Log.v("CardContainer", "Ytranslation is :" + mTopCard.getTranslationY());
-                if(mTopCard.getTranslationX() <= -110){
+                if(mTopCard.getTranslationX() <= -80){
                     //Log.v("CardContainer", "Dislike dx is :" + dx);
                     likeImageView.setVisibility(VISIBLE);
-                    params.gravity = Gravity.RIGHT;
+                    params.gravity = Gravity.RIGHT|Gravity.CENTER_VERTICAL;
                     likeImageView.setLayoutParams(params);
-                    likeImageView.setImageResource(R.drawable.ic_dislike_50dp);
+                    likeImageView.setImageResource(R.drawable.ic_not_interested);
                     likeImageView.setColorFilter(mContext.getResources().getColor(R.color.dislike_red_selected));
-                } else if(mTopCard.getTranslationX() >= 110){
+                } else if(mTopCard.getTranslationX() >= 80){
                     //Log.v("CardContainer", "Like dx is :" + dx);
                     likeImageView.setVisibility(VISIBLE);
-                    params.gravity = Gravity.LEFT;
+                    params.gravity = Gravity.LEFT|Gravity.CENTER_VERTICAL;
                     likeImageView.setLayoutParams(params);
-                    likeImageView.setImageResource(R.drawable.ic_like_50dp);
+                    likeImageView.setImageResource(R.drawable.ic_shortlist);
                     likeImageView.setColorFilter(mContext.getResources().getColor(R.color.like_green_selected));
+                }
+                else if (mTopCard.getTranslationY() <= -40)
+                {
+                    likeImageView.setVisibility(VISIBLE);
+                    params.gravity = Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL;
+                    likeImageView.setLayoutParams(params);
+                    likeImageView.setImageResource(R.drawable.ic_undecided);
+                    likeImageView.setColorFilter(mContext.getResources().getColor(R.color.white));
+
+                    textView.setEnabled(false);
+                    textView.setVisibility(GONE);
                 }
                 else if(mTopCard.getTranslationX() >= -100 && mTopCard.getTranslationX() <= 100)
                 {
@@ -344,11 +357,12 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-               mTopCard.findViewById(R.id.like_textview).setVisibility(GONE);
+                mTopCard.findViewById(R.id.like_textview).setVisibility(GONE);
+                mTopCard.findViewById(R.id.card_recommended_institute_detail).setVisibility(VISIBLE);
+                mTopCard.findViewById(R.id.card_recommended_institute_detail).setEnabled(true);
 
                 if (!mDragging) {
                     return true;
-
                 }
                 mDragging = false;
                 mActivePointerId = INVALID_POINTER_ID;

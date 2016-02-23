@@ -68,10 +68,13 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
         fadeInImageView.setErrorImageResId(R.drawable.default_banner);
 
         //viewToBlur = (RelativeLayout) convertView.findViewById(R.id.card_recommended_institute_info_container);
-        streamsContainer = (LinearLayout) convertView.findViewById(R.id.card_recommended_streams_container);
+        //streamsContainer = (LinearLayout) convertView.findViewById(R.id.card_recommended_streams_container);
 
         if (institute.getStreams() != null && institute.getStreams().size() > 0)
         {
+            TextView streamTV = ((TextView) convertView.findViewById(R.id.card_recommended_streams));
+            String streamText = "";
+
             if (institute.getStreams().size() == 1)
                 ((TextView) convertView.findViewById(R.id.card_recommended_streams_label)).setText("Stream :");
 
@@ -80,25 +83,16 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
 
             for (String stream : institute.getStreams())
             {
-                TextView tv;
-                tv = new TextView(this.getContext());
-                tv.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
-                tv.setLayoutParams(lparams);
-                tv.setTextSize(24);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    tv.setTextColor(this.getContext().getColor(R.color.white));
-                else
-                    tv.setTextColor(this.getContext().getResources().getColor(R.color.white));
-
-                tv.setText(stream);
-
-                streamsContainer.addView(tv);
+                streamText += stream;
+                streamText += "/";
             }
+
+            streamTV.setText(streamText.substring(0, streamText.length() - 1));
         }
         else
         {
             ((TextView) convertView.findViewById(R.id.card_recommended_streams_label)).setVisibility(View.GONE);
-            streamsContainer.setVisibility(View.GONE);
+            //streamsContainer.setVisibility(View.GONE);
         }
 
 /*

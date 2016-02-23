@@ -98,7 +98,6 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         else
             empty.setVisibility(View.GONE);
 
-
         this.mAdapter = new SimpleCardStackAdapter(this.getContext(), this);
 
         this.mAddCardInAdapter(this.mInstitutes);
