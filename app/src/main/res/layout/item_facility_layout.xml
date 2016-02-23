@@ -6,10 +6,12 @@
 
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/item_facility_icon"
-        android:layout_width="@dimen/m32dp"
-        android:layout_height="@dimen/m32dp"
-        android:layout_marginLeft="20dp"
+        android:layout_width="@dimen/m35dp"
+        android:layout_height="@dimen/m35dp"
+        android:layout_marginLeft="30dp"
         android:layout_marginRight="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:tint="@color/subheading_color"
         android:layout_gravity="center"
         />

@@ -34,7 +34,6 @@
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/m10dp"
             android:paddingTop="@dimen/m10dp"
-            android:paddingLeft="@dimen/m5dp"
             android:paddingRight="@dimen/m5dp"
             android:layout_gravity="center"
             android:scrollbars="none"
