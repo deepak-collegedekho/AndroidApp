@@ -57,6 +57,7 @@ public class Institute implements Parcelable {
     private String current_user_shortlist_url;
     private String current_user_vote_url;
     private int is_shortlisted;
+    private int partner_status;
     private boolean isSelected = false;
     private int upvotes;
     private int downvotes;
@@ -106,6 +107,7 @@ public class Institute implements Parcelable {
         downvotes = source.readInt();
         videos = source.readArrayList(ArrayList.class.getClassLoader());
         streams = source.readArrayList(ArrayList.class.getClassLoader());
+        partner_status=source.readInt();
         source.readMap(images, Map.class.getClassLoader());
     }
 
@@ -249,6 +251,7 @@ public class Institute implements Parcelable {
         dest.writeStringList(videos);
         dest.writeStringList(streams);
         dest.writeMap(images);
+        dest.writeInt(partner_status);
     }
 
     public String getLogo() {
@@ -513,5 +516,13 @@ public class Institute implements Parcelable {
     @Override
     public String toString() {
         return "Institute [uri_id = " + uri_id + ", short_name = " + short_name + ", id = " + id + ", name = " + name + ", estb_date = " + estb_date + "]";
+    }
+
+    public int getPartner_status() {
+        return partner_status;
+    }
+
+    public void setPartner_status(int partner_status) {
+        this.partner_status = partner_status;
     }
 }

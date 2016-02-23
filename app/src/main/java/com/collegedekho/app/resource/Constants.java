@@ -14,6 +14,7 @@ public class Constants
     public static final int RC_HANDLE_CONTACTS_PERM =2;
     public static final int RC_HANDLE_STORAGE_PERM =3;
     public static final int RC_HANDLE_SMS_PERM=4;
+    public static final int RC_QUIT_VIDEO_PLAYER=5;
 
     public static final int[] headImages = {R.drawable.ic_question, 0, R.drawable.ic_cap};
     public static final String[] headLabels = {"I am not sure where to start", "",
@@ -67,6 +68,8 @@ public class Constants
     public static final String WIDGET_SHORTLIST_INSTITUTES = "shortlist_institutes";
     public static final String WIDGET_SYLLABUS = "syllabus";
     public static final String WIDGET_TEST_CALENDAR = "test_calendar";
+    public static final String PLAY_VIDEO_NOTIFICATION = "play_video_notification";
+
 
     public static final String SEARCHED_INSTITUTES = "searched_institutes";
     public static final String WIDGET_COURSES = "courses";

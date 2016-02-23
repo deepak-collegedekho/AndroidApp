@@ -325,7 +325,10 @@ public class MainActivity extends AppCompatActivity
         {
             MainActivity.type = extras.getString("screen");
             MainActivity.resource_uri = extras.getString("resource_uri");
-        }
+        }/*else {
+            MainActivity.type ="play_video_notification";
+            MainActivity.resource_uri = "aGe9Hr_9YEU";
+        }*/
 
         Uri targetUrl =
                 AppLinks.getTargetUrlFromInboundIntent(this, getIntent());
@@ -536,6 +539,14 @@ public class MainActivity extends AppCompatActivity
 
             case Constants.WIDGET_SYLLABUS:
                 this.mMakeNetworkCall(Constants.WIDGET_SYLLABUS, MainActivity.resource_uri, null);
+                break;
+            case Constants.PLAY_VIDEO_NOTIFICATION:
+                if(MainActivity.resource_uri!=null && !MainActivity.resource_uri.trim().matches(""))
+                {
+                    Intent intent = new Intent(this, VideoPlayerActivity.class);
+                    intent.putExtra("video_id", MainActivity.resource_uri);
+                    startActivityForResult(intent,Constants.RC_QUIT_VIDEO_PLAYER);
+                }
                 break;
             default:
                 isFromNotification=false;
@@ -1088,19 +1099,15 @@ public class MainActivity extends AppCompatActivity
 
             if (fragment == null) {
                 this.mDisplayFragment(CDRecommendedInstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next), !isFromNotification, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
-                if(MainActivity.user.getIs_otp_verified()==0) {
-                    displayOTPAlert(this);
-                }
-            }else {
+            } else {
                 if (fragment instanceof CDRecommendedInstituteListFragment) {
                     //((CDRecommendedInstituteListFragment) fragment).clearList();
                     ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next);
                 }
-
                 this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
-                if(MainActivity.user.getIs_otp_verified()==0) {
-                    displayOTPAlert(this);
-                }
+            }
+            if (MainActivity.user.getIs_otp_verified() == 0 && MainActivity.user.getPartner_shortlist_count() > 0) {
+                displayOTPAlert(this);
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -1129,6 +1136,11 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+            }
+            if(listType==Constants.SHORTLIST_TYPE){
+                if(MainActivity.user.getIs_otp_verified()==0 && MainActivity.user.getPartner_shortlist_count()>0) {
+                    displayOTPAlert(this);
+                }
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -1318,6 +1330,12 @@ public class MainActivity extends AppCompatActivity
                     this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_TEST, Constants.BASE_URL + "psychometrictests/", answersObject, Request.Method.POST);
                 }
             }
+        }else if(requestCode==Constants.RC_QUIT_VIDEO_PLAYER){
+            if(currentFragment instanceof SplashFragment){
+                isFromNotification=false;
+             mLoadUserStatusScreen();
+            }
+
         }
         else
         {
@@ -1753,6 +1771,11 @@ private boolean isUpdateStreams;
             case Constants.TAG_VERIFY_USER_PHONE:
                 Utils.DisplayToast(this,"OTP successfully Verified");
                 this.onOTPVerified();
+                break;
+            case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
+            case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
+            case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 break;
         }
 
@@ -3774,6 +3797,7 @@ private boolean isUpdateStreams;
             MainActivity.user.setIs_preparing(userObj.getIs_preparing());
             MainActivity.user.setResource_uri(userObj.getResource_uri());
             MainActivity.user.setIs_otp_verified(userObj.getIs_otp_verified());
+            MainActivity.user.setPartner_shortlist_count(userObj.getPartner_shortlist_count());
             this.mUserExamsList=MainActivity.user.getUser_exams();
             String u = JSON.std.asString(MainActivity.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
@@ -4478,7 +4502,9 @@ private void onNotPreparingEducationResponse(String response){
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("1"));
-
+        if (MainActivity.user.getIs_otp_verified()==0 && institute.getPartner_status() > 0) {
+            displayOTPAlert(this);
+        }
         this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + Constants.ACTION_RECOMMENDED_INSTITUTE_SHORTLISTED, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
 

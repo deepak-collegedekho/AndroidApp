@@ -40,6 +40,7 @@ public class User
     private UserEducation user_education;
     private String preference_uri;
     private int is_otp_verified;
+    private int partner_shortlist_count;
 
     public String getPreference_uri() {
         return preference_uri;
@@ -333,5 +334,13 @@ public class User
 
     public void setIs_otp_verified(int is_otp_verified) {
         this.is_otp_verified = is_otp_verified;
+    }
+
+    public int getPartner_shortlist_count() {
+        return partner_shortlist_count;
+    }
+
+    public void setPartner_shortlist_count(int partner_shortlist_count) {
+        this.partner_shortlist_count = partner_shortlist_count;
     }
 }
