@@ -452,6 +452,8 @@ public class MainActivity extends AppCompatActivity
                     ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
                 else if (currentFragment instanceof CalendarParentFragment)
                     ((CalendarParentFragment)currentFragment).submitCalendarData();
+                else if (currentFragment instanceof ExamsFragment)
+                    return;
                 mClearBackStack();
                 invalidateOptionsMenu();
             }
@@ -3868,6 +3870,7 @@ private boolean isUpdateStreams;
     private void onUpdateUserExams(String response) throws IOException{
             this.mUserExamsList = JSON.std.listOfFrom(ExamDetail.class, extractResults(response));
             MainActivity.user.setUser_exams(new ArrayList<>(mUserExamsList));
+            MainActivity.user.setExams_set(1);
             String u = JSON.std.asString(MainActivity.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
             Map<String, Object> eventValue = new HashMap<String, Object>();

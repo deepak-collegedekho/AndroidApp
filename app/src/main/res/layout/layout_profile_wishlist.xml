@@ -213,18 +213,22 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_centerVertical="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/m8dp"
                 android:src="@drawable/ic_important_dates"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/important_dates_image"
+                android:layout_marginLeft="@dimen/m2dp"
+                android:layout_toRightOf="@id/important_dates_image"
                 android:layout_alignParentBottom="true"
-                android:text="IMPORTANT DATE"
+                android:text="IMPORTANT DATES"
+                android:layout_marginBottom="@dimen/m4dp"
                 android:gravity="left"
                 android:textSize="16sp"
                 android:textColor="@color/white"/>
-            <LinearLayout
+            <LinearLayout android:id="@+id/counts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/important_dates_image"

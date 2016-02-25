@@ -19,6 +19,7 @@ import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
+import com.fasterxml.jackson.jr.ob.JSON;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -200,6 +201,16 @@ public class ExamsFragment extends BaseFragment {
                         }
                     }
                 }
+            }
+            if(!isPreSelected){
+                try {
+                    MainActivity.user.setExams_set(0);
+                    String u = JSON.std.asString(MainActivity.user);
+                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+                }catch (Exception e){
+
+                }
+
             }
         }
         View view =  getView();

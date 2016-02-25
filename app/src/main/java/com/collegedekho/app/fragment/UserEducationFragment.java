@@ -162,7 +162,7 @@ private int selectedValue=0;
             @Override
             public void onValueChange(android.widget.NumberPicker picker, int oldVal, int newVal) {
                 mUpdateStreamPicker(newVal);
-selectedValue=newVal;
+                selectedValue=newVal;
                 mStreamPicker.setValue(0);
                 mMarksPicker.setValue(0);
             }
@@ -212,7 +212,7 @@ selectedValue=newVal;
     @Override
     public void onResume() {
         super.onResume();
-        mUpdateStreamPicker(selectedValue);
+        mUpdateStreamPicker(0);
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null)
             mainActivity.currentFragment = this;
