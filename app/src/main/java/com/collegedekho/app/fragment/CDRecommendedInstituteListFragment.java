@@ -45,6 +45,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     private int mUndecidedCount;
     private TextView mUndecidedCountTV;
     private TextView mEmptyTextView;
+    private boolean IS_UNDECIDED_INSTITUTES = false;
 
     public CDRecommendedInstituteListFragment() {
         // Required empty public constructor
@@ -81,16 +82,8 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         final View rootView = inflater.inflate(R.layout.fragment_recommended_institute_listing, container, false);
 
         this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE, false);
-
         this.mCardContainer = (CardContainer) rootView.findViewById(R.id.layoutview);
-
-        this.mUndecidedCountTV = (TextView) rootView.findViewById(R.id.fragment_recommended_institute_undecided_count);
-        this.mUndecidedCountTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CDRecommendedInstituteListFragment.this.mListener.OnCDRecommendedLoadUndecidedInstitutes();
-            }
-        });
+        this.mUndecidedCountTV = (TextView)rootView.findViewById(R.id.fragment_recommended_institute_undecided_count);
 
         Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count : ", "", Constants.ANIM_SHORT_DURATION);
 
@@ -108,9 +101,12 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         this.mAddCardInAdapter(this.mInstitutes);
 
         this.mCardContainer.setAdapter(this.mAdapter);
+         this.mUndecidedCountTV.setOnClickListener(this);
 
         return rootView;
     }
+
+
 
     private void mAddCardInAdapter(List<Institute> list)
     {
@@ -157,10 +153,16 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         super.onSaveInstanceState(outState);
     }
 
-    public void mUpdateUndecidedCount(int undecidedCount)
+    public void mUpdateUndecidedCount(int undecidedCount,boolean isIncrement)
     {
-        this.mUndecidedCount = undecidedCount;
+        if(!IS_UNDECIDED_INSTITUTES && !isIncrement) {
+            this.mUndecidedCount = undecidedCount;
+            }
+        else if(IS_UNDECIDED_INSTITUTES && isIncrement){
+            this.mUndecidedCount = mUndecidedCount-1;
+        }
         Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count : ", "", Constants.ANIM_SHORT_DURATION);
+
     }
 
     @Override
@@ -203,19 +205,21 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         */
     }
 
-    public void clearList() {
-        if(this.mInstitutes == null || this.mInstitutes.size() == 0)
-            return;
-
-        for (int i = 0; i < this.mInstitutes.size(); i++)
-            this.mAdapter.pop();
-
-        this.mInstitutes = new ArrayList<>();
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()){
+            case R.id.fragment_recommended_institute_undecided_count:
+                this.mListener.OnCDRecommendedLoadUndecidedInstitutes();
+                break;
+            default:
+                break;
+        }
     }
 
     public void updateList(List<Institute> institutes, String next) {
         this.mInstitutes.addAll(institutes);
-
+        IS_UNDECIDED_INSTITUTES = false;
         if (this.mInstitutes.size() == 0)
         {
             this.mEmptyTextView.setText("No Recommended colleges found");
@@ -225,11 +229,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         {
             this.mEmptyTextView.setVisibility(View.GONE);
             this.mAdapter.clear();
-            //SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this.getContext(), this);
             this.mAddNextCardInAdapter(this.mInstitutes, null);
-            //this.mCardContainer.setAdapter(adapter);
-            //this.mAdapter = adapter;
-
             this.mNextUrl = next;
             this.mAdapter.setLoadingNext(false);
             this.loading = false;
@@ -238,6 +238,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
 
     public void showUndecidedInstitutes(List<Institute> institutes) {
         this.mInstitutes.clear();
+        IS_UNDECIDED_INSTITUTES = true;
         this.mInstitutes.addAll(institutes);
 
         if (this.mInstitutes.size() == 0)
@@ -249,11 +250,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         {
             this.mEmptyTextView.setVisibility(View.GONE);
             this.mAdapter.clear();
-            //SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this.getContext(), this);
             this.mAddNextCardInAdapter(this.mInstitutes, null);
-            //this.mCardContainer.setAdapter(adapter);
-            //this.mAdapter = adapter;
-
             this.mAdapter.setLoadingNext(false);
             this.loading = false;
         }
@@ -275,19 +272,19 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
 
     @Override
     public void OnInstituteLiked(Institute institute, boolean isLastCard) {
-        this.mRemoveInstituteFromList(institute);
+        this.mRemoveInstituteFromList();
         this.mListener.OnCDRecommendedInstituteLiked(institute, isLastCard);
     }
 
     @Override
     public void OnInstituteDislike(Institute institute, boolean isLastCard) {
-        this.mRemoveInstituteFromList(institute);
+        this.mRemoveInstituteFromList();
         this.mListener.OnCDRecommendedInstituteDislike(institute, isLastCard);
     }
 
     @Override
     public void OnDecideLater(Institute institute, boolean isLastCard) {
-        this.mRemoveInstituteFromList(institute);
+        this.mRemoveInstituteFromList();
         this.mListener.OnCDRecommendedInstituteDecideLater(institute, isLastCard);
     }
 
@@ -296,7 +293,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         this.mEmptyTextView.setText(message);
     }
 
-    private void mRemoveInstituteFromList(Institute institute)
+    private void mRemoveInstituteFromList()
     {
         try {
             this.mInstitutes.remove(0);

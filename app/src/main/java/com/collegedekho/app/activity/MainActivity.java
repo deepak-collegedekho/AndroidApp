@@ -1801,6 +1801,8 @@ private boolean isUpdateStreams;
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 if (tags.length == 2)
                 {
+
+                    this.mUpdateUndecidedCount(this.mUndecidedCount, true);
                     parentIndex = tags[1];
                     if (parentIndex.equals("true"))
                         OnCDRecommendedLoadNext("");
@@ -1811,7 +1813,7 @@ private boolean isUpdateStreams;
                 if (tags.length == 2)
                 {
                     ++this.mUndecidedCount;
-                    this.mUpdateUndecidedCount(this.mUndecidedCount);
+                    this.mUpdateUndecidedCount(this.mUndecidedCount, false);
 
                     parentIndex = tags[1];
                     if (parentIndex.equals("true"))
@@ -1828,9 +1830,9 @@ private boolean isUpdateStreams;
             this.progressDialog.dismiss();
     }
 
-    private void mUpdateUndecidedCount(int i) {
+    private void mUpdateUndecidedCount(int i ,boolean isIncremented) {
         if (currentFragment instanceof CDRecommendedInstituteListFragment)
-            ((CDRecommendedInstituteListFragment) currentFragment).mUpdateUndecidedCount(i);
+            ((CDRecommendedInstituteListFragment) currentFragment).mUpdateUndecidedCount(i, isIncremented);
     }
 
     private void mOnPsychometricTestCompleted(String streamId, String streamName, String response) {
@@ -2503,7 +2505,6 @@ private boolean isUpdateStreams;
 
         if (!MainActivity.this.isFinishing())
         {
-            //show dialog
             new AlertDialog.Builder(this)
                     .setMessage(response)
                     .setPositiveButton("Retry", new DialogInterface.OnClickListener() {

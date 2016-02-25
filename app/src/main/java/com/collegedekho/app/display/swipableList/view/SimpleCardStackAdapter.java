@@ -98,8 +98,10 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
 
             streamTV.setText(streamText.substring(0, streamText.length() - 1));
         }
-        else
-            ((TextView) convertView.findViewById(R.id.card_recommended_streams_label)).setVisibility(View.GONE);
+        else {
+            convertView.findViewById(R.id.card_recommended_streams_label).setVisibility(View.GONE);
+            convertView.findViewById(R.id.card_recommended_streams).setVisibility(View.GONE);
+        }
 
 /*
         if (institute.getImages().get("Banner") != null)
