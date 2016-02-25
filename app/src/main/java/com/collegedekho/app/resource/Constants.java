@@ -58,6 +58,7 @@ public class Constants
     public static final String KEY_STREAMS = "streams";
     public static final String USER_CREATED = "user_created";
     public static final String USER_PROFILE_LOADED = "user_profile_loaded";
+    public static final String CAN_ASK_OTP_TODAY = "can_ask_otp_today";
     public static final String WIDGET_INSTITUTES = "institutes";
     public static final String PNS_INSTITUTES = "pns_institutes";
     public static final String PNS_NEWS = "pns_news";
@@ -323,6 +324,7 @@ public class Constants
     public static final String ACTION_WHEN_NOT_PREPARING = "action_when_not_preparing";
     public static final String ACTION_USER_LOGIN = "action_user_login";
     public static final String TAG_USER_PHONE_ADDED = "user_phone_added";
+    public static final String TAG_RESEND_OTP = "resend_otp";
     public static final String TAG_VERIFY_USER_PHONE = "action_user_login";
     public static final String USER_OTP = "user_otp";
     public static final String OTP_INTENT_FILTER = "com.cld.user.otp.filter";

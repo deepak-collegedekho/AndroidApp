@@ -118,6 +118,7 @@ import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
 import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.NotPreparingFragment;
+import com.collegedekho.app.fragment.OTPVerificationFragment;
 import com.collegedekho.app.fragment.ProfileEditFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.PsychometricTestParentFragment;
@@ -172,6 +173,7 @@ import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -224,7 +226,7 @@ public class MainActivity extends AppCompatActivity
         SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
         UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteListFragment.OnCDRecommendedInstituteListener,
-        InstituteVideosFragment.OnTitleUpdateListener
+        InstituteVideosFragment.OnTitleUpdateListener,OTPVerificationFragment.OTPVerificationListener
 
 {
 
@@ -421,6 +423,7 @@ public class MainActivity extends AppCompatActivity
 
         // TODO: Move this to where you establish a user session
         logUser();
+        setupOtpRequest(true);
     }
 
    @Override
@@ -829,6 +832,7 @@ public class MainActivity extends AppCompatActivity
                 disconnectFromFacebook();
 
             this.mLoadUserStatusScreen();
+
         }else{
              disconnectFromFacebook();
              MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
@@ -967,6 +971,8 @@ public class MainActivity extends AppCompatActivity
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
             this.mClearBackStack();
             this.mDisplayFragment(StreamFragment.newInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
+//                displayOTPAlert(this);
+                requestOtp();
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -978,6 +984,8 @@ public class MainActivity extends AppCompatActivity
             String results=JSON.std.asString(map.get("results"));
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
             this.mDisplayFragment(StreamFragment.newEditableInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
+//                displayOTPAlert(this);
+                requestOtp();
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1115,8 +1123,9 @@ public class MainActivity extends AppCompatActivity
 
                 this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
             }
-            if (MainActivity.user.getIs_otp_verified() == 0 && MainActivity.user.getPartner_shortlist_count() > 0) {
-                this.displayOTPAlert(this);
+            if (MainActivity.user.getPartner_shortlist_count() > 0) {
+//                displayOTPAlert(this);
+                requestOtp();
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -1148,8 +1157,9 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
             }
             if(listType==Constants.SHORTLIST_TYPE){
-                if(MainActivity.user.getIs_otp_verified()==0 && MainActivity.user.getPartner_shortlist_count()>0) {
-                    displayOTPAlert(this);
+                if(MainActivity.user.getPartner_shortlist_count()>0) {
+//                    displayOTPAlert(this);
+                requestOtp();
                 }
             }
         } catch (IOException e) {
@@ -1774,11 +1784,11 @@ private boolean isUpdateStreams;
                 this.onUpdateTitleResponse(response);
                 break;
             case Constants.TAG_USER_PHONE_ADDED:
-                displayGetOTPAlert(this);
+                onMobileNumberSubmitted();
+//                displayGetOTPAlert(this);
                 break;
             case Constants.TAG_VERIFY_USER_PHONE:
-                Utils.DisplayToast(this, "OTP successfully Verified");
-                this.onOTPVerified();
+                this.onOTPVerified(response);
                 break;
             case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
             case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
@@ -2405,6 +2415,12 @@ private boolean isUpdateStreams;
             case Constants.TAG_INSTITUTE_LIKE_DISLIKE:
             case Constants.TAG_QUESTION_LIKE_DISLIKE:
             case Constants.ACTION_INSTITUTE_DISLIKED:
+            case Constants.TAG_APPLIED_COURSE:
+            case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
+            case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
+            case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
+            case Constants.TAG_SHORTLIST_INSTITUTE:
+            case Constants.TAG_DELETESHORTLIST_INSTITUTE:
             case "":
                 return null;
             default:
@@ -2586,32 +2602,32 @@ private boolean isUpdateStreams;
 
     @Override
     public void onStreamSelected(final String stream, final String streamName) {
-        new AlertDialog.Builder(this)
-                .setTitle("Please select a level")
-                .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        MainActivity.this.mOnCourseLevelSelected(which, stream, streamName);
-                        dialog.dismiss();
-                    }
-                })
-//                .setCancelable(false)
-                .show();
+//        new AlertDialog.Builder(this)
+//                .setTitle("Please select a level")
+//                .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+                        MainActivity.this.mOnCourseLevelSelected(/*which*/0, stream, streamName);
+//                        dialog.dismiss();
+//                    }
+//                })
+////                .setCancelable(false)
+//                .show();
     }
 
     @Override
     public void onEditedStreamSelected(final String stream, final String streamName) {
-        new AlertDialog.Builder(this)
-                .setTitle("Please select a level")
-                .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        MainActivity.this.mOnCourseLevelSelected(which, stream, streamName,true);
-                        dialog.dismiss();
-                    }
-                })
-//                .setCancelable(false)
-                .show();
+//        new AlertDialog.Builder(this)
+//                .setTitle("Please select a level")
+//                .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+                        MainActivity.this.mOnCourseLevelSelected(/*which*/0, stream, streamName,true);
+//                        dialog.dismiss();
+//                    }
+//                })
+////                .setCancelable(false)
+//                .show();
     }
 
     private void mOnCourseLevelSelected(int level, String streamURI, String streamName) {
@@ -2626,7 +2642,7 @@ private boolean isUpdateStreams;
 //        hashMap.put("status", user.getPref().name().toLowerCase());
         hashMap.put("user", user.getResource_uri());
         hashMap.put(Constants.USER_STREAM, streamURI);
-        hashMap.put(Constants.USER_LEVEL, Constants.BASE_URL + "level/" + (level + 1) + "/");
+//        hashMap.put(Constants.USER_LEVEL, Constants.BASE_URL + "level/" + (MainActivity.user.getLevel()) + "/");
         hashMap.put(Constants.USER_STREAM_NAME, streamName);
         hashMap.put(Constants.USER_DEVICE_ID, deviceId);
         getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.PROFILE_SCREEN_TUTE, true).apply();
@@ -3017,9 +3033,13 @@ private boolean isUpdateStreams;
     @Override
     public void onInstituteShortlisted(int position) {
         Institute institute = this.mInstituteList.get(position);
-        if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
+        if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
+            if (institute.getPartner_status() > 0) {
+//                displayOTPAlert(this);
+                requestOtp();
+            }
             this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
-        else
+        }else
             this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
     }
 
@@ -3500,6 +3520,8 @@ private boolean isUpdateStreams;
         if (currentFragment != null) {
             if (currentFragment instanceof SyllabusSubjectsListFragment) {
                 ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
+            }else if (currentFragment instanceof OTPVerificationFragment && MainActivity.user.getIs_otp_verified()==0){
+                setupOtpRequest(false);
             }
 
         }
@@ -4535,10 +4557,10 @@ private void onNotPreparingEducationResponse(String response){
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("1"));
-
-        if (MainActivity.user.getIs_otp_verified()==0 && institute.getPartner_status() > 0)
-            displayOTPAlert(this);
-
+        if (institute.getPartner_status() > 0) {
+//            displayOTPAlert(this);
+            requestOtp();
+        }
         this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
 
@@ -4607,6 +4629,28 @@ private void onNotPreparingEducationResponse(String response){
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void onSubmitMobileNumber(String mobileNumber) {
+        HashMap<String , String> params = new HashMap<>();
+        params.put(Constants.USER_PHONE,mobileNumber);
+        this.mMakeNetworkCall(Constants.TAG_USER_PHONE_ADDED, Constants.BASE_URL + "send-otp/", params);
+    }
+
+    @Override
+    public void onSubmitOTP(String mobileNumber,String otp) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put(Constants.USER_PHONE, mobileNumber);
+        params.put(Constants.OTP_CODE, otp);
+        this.mMakeNetworkCall(Constants.TAG_VERIFY_USER_PHONE, Constants.BASE_URL + "verify-otp/", params);
+    }
+
+    @Override
+    public void onResendOTP(String mobileNumber) {
+        HashMap<String , String> params = new HashMap<>();
+        params.put(Constants.USER_PHONE,mobileNumber);
+        this.mMakeNetworkCall(Constants.TAG_RESEND_OTP, Constants.BASE_URL + "send-otp/", params);
     }
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
@@ -5284,17 +5328,6 @@ private void onNotPreparingEducationResponse(String response){
         }
     }
 
-//    @Override
-    public void onPhoneAdded(HashMap params) {
-        this.mMakeNetworkCall(Constants.TAG_USER_PHONE_ADDED, Constants.BASE_URL + "send-otp/", params);
-    }
-
-//    @Override
-    public void onUserPhoneVerified(HashMap params) {
-        this.mMakeNetworkCall(Constants.TAG_VERIFY_USER_PHONE, Constants.BASE_URL + "verify-otp/", params);
-    }
-
-
     private void displayOTPAlert(final Context context){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final boolean[] gotUserResponse=new boolean[1];
@@ -5304,6 +5337,7 @@ private void onNotPreparingEducationResponse(String response){
 
         TextView dialog_ok=(TextView)dialogView.findViewById(R.id.btn_dialog_positive);
         TextView dialog_cancel=(TextView)dialogView.findViewById(R.id.btn_dialog_negative);
+        ((TextView)dialogView.findViewById(R.id.plus_nine_one)).setVisibility(View.VISIBLE);
         final EditText edt_phone_number=(EditText)dialogView.findViewById(R.id.user_phone_number);
         edt_phone_number.addTextChangedListener(new TextWatcher() {
             @Override
@@ -5331,7 +5365,7 @@ private void onNotPreparingEducationResponse(String response){
                     alertDialog.dismiss();
                     user_phone_number =marks;
                 }else{
-                    edt_phone_number.setError("Enter Valid Mobile Number.");
+                    edt_phone_number.setError("Enter Valid Mobile Number");
                 }
             }
         });
@@ -5346,12 +5380,9 @@ private void onNotPreparingEducationResponse(String response){
             @Override
             public void onDismiss(DialogInterface dialog) {
                 if(!gotUserResponse[0]){
-
+                    setupOtpRequest(false);
                 }else {
-                    HashMap<String , String> params = new HashMap<>();
-                    params.put(Constants.USER_PHONE,edt_phone_number.getText().toString());
-//                    if(mListener != null)
-                    MainActivity.this.onPhoneAdded(params);
+                    MainActivity.this.onSubmitMobileNumber(edt_phone_number.getText().toString());
                 }
             }
         });
@@ -5365,7 +5396,7 @@ private void onNotPreparingEducationResponse(String response){
         View dialogView = inflater.inflate(R.layout.otp_dialog_layout, null);
         dialogBuilder.setView(dialogView);
         ((TextView) dialogView.findViewById(R.id.dialog_title)).setText("OTP Verification");
-        ((TextView) dialogView.findViewById(R.id.dialog_message)).setText("Enter 6 digit OTP:");
+        ((TextView) dialogView.findViewById(R.id.dialog_message)).setText("Enter 6 digit OTP");
         final EditText edt_phone_number = (EditText) dialogView.findViewById(R.id.user_phone_number);
         final BroadcastReceiver otpReceiver = new BroadcastReceiver() {
             @Override
@@ -5383,7 +5414,8 @@ private void onNotPreparingEducationResponse(String response){
         final TextView dialog_ok = (TextView) dialogView.findViewById(R.id.btn_dialog_positive);
         TextView dialog_cancel = (TextView) dialogView.findViewById(R.id.btn_dialog_negative);
         TextView dialog_neural = (TextView) dialogView.findViewById(R.id.btn_dialog_nutral);
-        dialog_neural.setVisibility(View.VISIBLE);
+        ((View)dialogView.findViewById(R.id.resend_otp_layout)).setVisibility(View.VISIBLE);
+        dialog_ok.setText("VERIFY");
         edt_phone_number.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -5435,15 +5467,10 @@ private void onNotPreparingEducationResponse(String response){
 
                 } else if (gotUserResponse[0] == 1) {
                     if(user_phone_number!=null && !user_phone_number.matches("")) {
-                        HashMap<String, String> params = new HashMap<>();
-                        params.put(Constants.USER_PHONE, user_phone_number);
-                        params.put(Constants.OTP_CODE, edt_phone_number.getText().toString());
-                        MainActivity.this.onUserPhoneVerified(params);
+                        MainActivity.this.onSubmitOTP(user_phone_number,edt_phone_number.getText().toString());
                     }
                 } else {
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put(Constants.USER_PHONE, user_phone_number);
-                    MainActivity.this.onPhoneAdded(params);
+                   MainActivity.this.onSubmitMobileNumber(user_phone_number);
 
                 }
                 LocalBroadcastManager.getInstance(context).unregisterReceiver(otpReceiver);
@@ -5452,37 +5479,54 @@ private void onNotPreparingEducationResponse(String response){
         alertDialog.show();
     }
 
-    private void onOTPVerified(){
+    private void onOTPVerified(String response){
         try {
-            MainActivity.user.setIs_otp_verified(1);
-            String u = JSON.std.asString(MainActivity.user);
-            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+            JSONObject responseObject=new JSONObject(response);
+            if(responseObject.optBoolean("verified")) {
+                Utils.DisplayToast(this,"OTP successfully Verified");
+                MainActivity.user.setIs_otp_verified(1);
+                String u = JSON.std.asString(MainActivity.user);
+                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+                onBackPressed();
+            }else {
+                if(currentFragment!=null &&  currentFragment instanceof OTPVerificationFragment){
+                    ((OTPVerificationFragment)currentFragment).onInvalidOtp();
+                }
+            }
         }catch (Exception e){
 
         }
     }
 
-    private void getCallPermission(){
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CALL_PHONE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-//                    Manifest.permission.RECEIVE_SMS)) {
-//
-//                // Show an expanation to the user *asynchronously* -- don't block
-//                // this thread waiting for the user's response! After the user
-//                // sees the explanation, try again to request the permission.
-//
-//            } else {
-
-            // No explanation needed, we can request the permission.
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CALL_PHONE}, Call.STATE_NEW);
-//            }
+    private void onMobileNumberSubmitted(){
+        if(currentFragment instanceof OTPVerificationFragment){
+            ((OTPVerificationFragment)currentFragment).displayOTPLayout();
         }
+    }
+
+    private void requestOtp(){
+        if(MainActivity.user.getIs_otp_verified() == 0 && setupOtpRequest(true)) {
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(OTPVerificationFragment.class.getSimpleName());
+            if (fragment == null)
+                mDisplayFragment(OTPVerificationFragment.newInstance(), true, OTPVerificationFragment.class.getSimpleName());
+            else
+                mDisplayFragment(fragment, false, OTPVerificationFragment.class.getSimpleName());
+        }
+    }
+
+    private boolean setupOtpRequest(boolean canRequest){
+        Calendar calendar=Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        String today = df.format(calendar.getTime());
+        String oldDate=getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(Constants.CAN_ASK_OTP_TODAY,null);
+        if(oldDate!=null && oldDate.equals(today)) {
+            return false;
+        }else {
+            if(!canRequest) {
+                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.CAN_ASK_OTP_TODAY, today).commit();
+            }
+        }
+        return true;
     }
 
 }

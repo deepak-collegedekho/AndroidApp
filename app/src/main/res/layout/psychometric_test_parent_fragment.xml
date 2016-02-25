@@ -2,9 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/psychometric_test_layout_container"
     android:weightSum="1"
     android:orientation="vertical">
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Psychometric Profiling"
+        android:background="@color/primary_color"
+        android:textColor="@color/white"
+        android:padding="@dimen/m10dp"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        />
     <com.collegedekho.app.display.NonSwipeableViewPager
         android:id="@+id/psychometric_test_viewpager"
         android:layout_width="match_parent"
