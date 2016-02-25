@@ -198,7 +198,7 @@ public class NetworkUtils {
                 @Override
                 public void onResponse(String response)
                 {
-                    Utils.logApiResponseTime(calendar,tag+" "+url);
+                    Utils.logApiResponseTime(calendar, tag + " " + url);
                     mListener.onDataLoaded(tag, response);
                 }
             },
@@ -207,7 +207,7 @@ public class NetworkUtils {
                 @Override
                 public void onErrorResponse(VolleyError error)
                 {
-                    Utils.logApiResponseTime(calendar,tag+" "+url);
+                    Utils.logApiResponseTime(calendar, tag + " " + url);
                     Crashlytics.logException(error);
 
                     String json = null;

@@ -161,7 +161,7 @@ public class Utils {
         return false;
     }
 
-    public static void SetCounterAnimation(final TextView textView, int count, final String suffix, long duration)
+    public static void SetCounterAnimation(final TextView textView, int count, final String prefix, final String suffix, long duration)
     {
         ValueAnimator animator = new ValueAnimator();
 
@@ -169,7 +169,7 @@ public class Utils {
 
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
-                textView.setText(String.valueOf(animation.getAnimatedValue()) + suffix);
+                textView.setText(prefix + String.valueOf(animation.getAnimatedValue()) + suffix);
             }
         });
 

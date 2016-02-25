@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.renderscript.Allocation;
@@ -12,7 +11,6 @@ import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -21,7 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
@@ -61,6 +58,18 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
         //setting institute name
         ((TextView) convertView.findViewById(R.id.card_recommended_institute_title)).setText(institute.getName());
 
+        //setting location
+        String text = "";
+        if (model.getInstitute().getCity_name() != null)
+            text += institute.getCity_name() + ", ";
+        if (model.getInstitute().getState_name() != null)
+            text += institute.getState_name();
+
+        if (text == "" || text.isEmpty())
+            ((TextView) convertView.findViewById(R.id.card_recommended_geolocation)).setVisibility(View.GONE);
+        else
+            ((TextView) convertView.findViewById(R.id.card_recommended_geolocation)).setText(text);
+
         //setting institute image
         fadeInImageView = ((FadeInImageView) convertView.findViewById(R.id.card_recommended_institute_image));
 
@@ -90,10 +99,7 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
             streamTV.setText(streamText.substring(0, streamText.length() - 1));
         }
         else
-        {
             ((TextView) convertView.findViewById(R.id.card_recommended_streams_label)).setVisibility(View.GONE);
-            //streamsContainer.setVisibility(View.GONE);
-        }
 
 /*
         if (institute.getImages().get("Banner") != null)
@@ -118,18 +124,6 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
 
         if (institute.getImages().get("Banner") != null)
             fadeInImageView.setImageUrl(institute.getImages().get("Banner"), this.imageLoader);
-
-        //setting location
-        String text = "";
-        if (model.getInstitute().getCity_name() != null)
-            text += institute.getCity_name() + ", ";
-        if (model.getInstitute().getState_name() != null)
-            text += institute.getState_name();
-
-        if (text == "" || text.isEmpty())
-            ((TextView) convertView.findViewById(R.id.card_recommended_geolocation)).setVisibility(View.GONE);
-        else
-            ((TextView) convertView.findViewById(R.id.card_recommended_geolocation)).setText(text);
 
         //card_recommended_institute_container
         //setting likes
@@ -174,38 +168,37 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
         model.setOnCardDismissedListener(new CardModel.OnCardDismissedListener() {
             @Override
             public void onLike() {
-                Log.i("Swipeable Cards","I like the card");
-                SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute());
-                //load next if on last position
-                if (position < 4 && !SimpleCardStackAdapter.this.isLoadingNext())
-                    SimpleCardStackAdapter.this.mListener.OnLoadNext();
+                if (position > 0)
+                    SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute(), false);
+                if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext())
+                {
+                    SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute(), true);
+                    SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
+                }
             }
 
             @Override
             public void onDislike() {
-                Log.i("Swipeable Cards","I dislike the card");
-                //Institute i =  model.getInstitute();
-                //Institute i2 = ((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute();
-                SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute());
-                //load next if on last position
-                if (position < 4 && !SimpleCardStackAdapter.this.isLoadingNext())
-                    SimpleCardStackAdapter.this.mListener.OnLoadNext();
+                if (position > 0)
+                    SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute(), false);
+                if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext())
+                {
+                    SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute(), true);
+                    SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
+                }
             }
 
             @Override
             public void onUpSwipe() {
-                Log.i("Swipeable Cards","I dislike the card");
-                //Institute i =  model.getInstitute();
-                //Institute i2 = ((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute();
-                SimpleCardStackAdapter.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute());
-                //load next if on last position
-                if (position < 4 && !SimpleCardStackAdapter.this.isLoadingNext())
-                    SimpleCardStackAdapter.this.mListener.OnLoadNext();
+                if (position > 0)
+                    SimpleCardStackAdapter.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute(), false);
+                if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext())
+                {
+                    SimpleCardStackAdapter.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute(), true);
+                    SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
+                }
             }
-
         });
-
-        //this.applyBlur(fadeInImageView, convertView.findViewById(R.id.card_recommended_institute_info_container));
 
         return convertView;
     }
@@ -272,8 +265,9 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
     {
         void OnLoadNext();
         void OnInstituteSelected(Institute institute);
-        void OnInstituteLiked(Institute institute);
-        void OnInstituteDislike(Institute institute);
-        void OnDecideLater(Institute institute);
+        void OnInstituteLiked(Institute institute, boolean isLastCard);
+        void OnInstituteDislike(Institute institute, boolean isLastCard);
+        void OnDecideLater(Institute institute, boolean isLastCard);
+        void OnShowMessage(String message);
     }
 }

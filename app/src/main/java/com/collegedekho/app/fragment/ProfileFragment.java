@@ -395,16 +395,12 @@ public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
         TextView covered_syllabus =  (TextView)view.findViewById(R.id.covered_syllabus);
         CircularProgressBar profileCompleted =  (CircularProgressBar) view.findViewById(R.id.profile_image_circular_progressbar);
 
-        Utils.SetCounterAnimation(covered_syllabus, this.mExamSummary.getSyllabus_covered(), "%", Constants.ANIM_SHORT_DURATION);
-        Utils.SetCounterAnimation(recommended_countTV, this.mExamSummary.getRecommended_count(), "", Constants.ANIM_SHORT_DURATION);
-        Utils.SetCounterAnimation(wishList_countTV, this.mExamSummary.getShortlist_count(), "", Constants.ANIM_SHORT_DURATION);
-        Utils.SetCounterAnimation(backup_countTV, this.mExamSummary.getBackup_count(), "", Constants.ANIM_SHORT_DURATION);
+        Utils.SetCounterAnimation(covered_syllabus, this.mExamSummary.getSyllabus_covered(), "" , "%", Constants.ANIM_SHORT_DURATION);
+        Utils.SetCounterAnimation(recommended_countTV, this.mExamSummary.getRecommended_count(), "" , "", Constants.ANIM_SHORT_DURATION);
+        Utils.SetCounterAnimation(wishList_countTV, this.mExamSummary.getShortlist_count(), "" , "", Constants.ANIM_SHORT_DURATION);
+        Utils.SetCounterAnimation(backup_countTV, this.mExamSummary.getBackup_count(), "" , "", Constants.ANIM_SHORT_DURATION);
 
-        //backup_countTV.setText(""+this.mExamSummary.getBackup_count());
-        //wishList_countTV.setText(""+this.mExamSummary.getShortlist_count());
-        //recommended_countTV.setText(""+this.mExamSummary.getRecommended_count());
         important_dateTV.setText(""+this.mExamSummary.getNext_important_date());
-        //covered_syllabus.setText(""+this.mExamSummary.getSyllabus_covered()+"%");
 
         //TODO:: showing progress as a profile circle
         //if(this.mExamSummary.getSyllabus_covered() ==0)

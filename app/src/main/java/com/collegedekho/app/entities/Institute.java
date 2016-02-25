@@ -26,9 +26,6 @@ public class Institute implements Parcelable {
     };
     private int id;
     private int course_count;
-    private int shortlist_count;
-    private int not_interested_count;
-    private int undecided_count;
     private String logo;
     private String acronym;
     private String main_address;
@@ -70,9 +67,6 @@ public class Institute implements Parcelable {
 
     public Institute(Parcel source) {
         id = source.readInt();
-        shortlist_count = source.readInt();
-        not_interested_count = source.readInt();
-        undecided_count = source.readInt();
         course_count = source.readInt();
         logo = source.readString();
         acronym = source.readString();
@@ -215,9 +209,6 @@ public class Institute implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
-        dest.writeInt(shortlist_count);
-        dest.writeInt(not_interested_count);
-        dest.writeInt(undecided_count);
         dest.writeInt(course_count);
         dest.writeString(logo);
         dest.writeString(acronym);
@@ -487,30 +478,6 @@ public class Institute implements Parcelable {
 
     public void setStreams(ArrayList<String> streams) {
         this.streams = streams;
-    }
-
-    public int getShortlist_count() {
-        return shortlist_count;
-    }
-
-    public void setShortlist_count(int shortlist_count) {
-        this.shortlist_count = shortlist_count;
-    }
-
-    public int getNot_interested_count() {
-        return not_interested_count;
-    }
-
-    public void setNot_interested_count(int not_interested_count) {
-        this.not_interested_count = not_interested_count;
-    }
-
-    public int getUndecided_count() {
-        return undecided_count;
-    }
-
-    public void setUndecided_count(int undecided_count) {
-        this.undecided_count = undecided_count;
     }
 
     @Override

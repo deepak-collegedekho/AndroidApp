@@ -61,10 +61,6 @@ public class CardModel {
 
     public CardModel(Institute institute, Context context) {
         this.institute = institute;
-		//this.cardDislikeImageDrawable = ContextCompat.getDrawable(context, R.drawable.ic_carousel_video);
-		//this.cardLikeImageDrawable = ContextCompat.getDrawable(context, R.drawable.ic_carousel_articles);
-        this.setCardDislikeImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_carousel_video));
-        this.setCardLikeImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_carousel_articles));
     }
 
     public CardModel(String title, String description, Drawable cardImage) {

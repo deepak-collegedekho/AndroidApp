@@ -116,11 +116,11 @@ private View mExamsTabLayout;
         }
 
         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
-            mExamTabPager.setVisibility(View.VISIBLE);
+            this.mExamTabPager.setVisibility(View.VISIBLE);
             this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
-            mExamTabPager.setAdapter(this.mDetailsAdapter);
+            this.mExamTabPager.setAdapter(this.mDetailsAdapter);
 
-            mExamTabPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            this.mExamTabPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                     Log.e("","");
@@ -128,8 +128,8 @@ private View mExamsTabLayout;
 
                 @Override
                 public void onPageSelected(int position) {
-                    EXAM_TAB_POSITION =position;
-                    mExamTabSelected(position);
+                    TabFragment.this.EXAM_TAB_POSITION = position;
+                    TabFragment.this.mExamTabSelected(position);
                 }
 
                 @Override
@@ -138,15 +138,15 @@ private View mExamsTabLayout;
                 }
            });
 
-           rootView.findViewById(R.id.exam_swipe_listener_layout).setOnTouchListener(onSwipeTouchListener);
-           rootView.findViewById(R.id.include_layout_home_widget).setOnTouchListener(onSwipeTouchListener);
+           rootView.findViewById(R.id.exam_swipe_listener_layout).setOnTouchListener(this.onSwipeTouchListener);
+           rootView.findViewById(R.id.include_layout_home_widget).setOnTouchListener(this.onSwipeTouchListener);
 
             if(this.isFistTime) {
                 this.isFistTime = false;
-                int currentPosition = mExamTabPager.getCurrentItem();
-                mExamTabSelected(currentPosition);
+                int currentPosition = this.mExamTabPager.getCurrentItem();
+                this.mExamTabSelected(currentPosition);
             }
-            mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
+            this.mExamTabPager.setCurrentItem(this.EXAM_TAB_POSITION);
         }
         rootView.findViewById(R.id.home_widget_first).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_second).setOnClickListener(this);

@@ -377,8 +377,11 @@ public class Constants
     public static final int REMOMMENDED_INSTITUTE_ACTION = 1;
     public static final int INSTITUTE_LIKE_DISLIKE = 0;
 
-
     public static long ANIM_SHORT_DURATION = 200;
     public static long ANIM_AVERAGE_DURATION = 500;
     public static long ANIM_LONG_DURATION =  1000;
+
+    public enum CDRecommendedInstituteType {
+        UNDECIDED, SHORTLISTED, NOT_INERESTED, UNBAISED
+    }
 }

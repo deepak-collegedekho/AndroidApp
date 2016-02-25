@@ -310,6 +310,7 @@ public class MainActivity extends AppCompatActivity
     private boolean isFromNotification;
     private String mExamTag;
     private String user_phone_number;
+    private int mUndecidedCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -939,6 +940,9 @@ public class MainActivity extends AppCompatActivity
             if (map.containsKey("filters"))
                 this.mFilters = JSON.std.asString(map.get("filters"));
 
+            if (map.containsKey("undecided_count"))
+                this.mUndecidedCount = Integer.valueOf(JSON.std.asString(map.get("undecided_count")));
+
             return JSON.std.asString(map.get("results"));
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -1053,6 +1057,7 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
+
     /**
      * This method is used to update qna list of next page
      * @param response
@@ -1062,10 +1067,9 @@ public class MainActivity extends AppCompatActivity
 
         if(currentFragment instanceof QnAQuestionsListFragment){
             ((QnAQuestionsListFragment) currentFragment).updateList(new ArrayList<>(qnaQuestionsList), next);
-
         }
-
     }
+
     /**
      * This method is used to update qna list of next page
      * @param response
@@ -1087,9 +1091,10 @@ public class MainActivity extends AppCompatActivity
         this.mDisplayInstituteList(response, filterAllowed, isHavingNextUrl, Constants.INSTITUTE_TYPE);
     }
 
-    private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl) {
+    private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl, Constants.CDRecommendedInstituteType cdRecommendedInstituteType) {
         try {
             String val = this.extractResults(response);
+
             this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
 
             if(!isHavingNextUrl)
@@ -1098,21 +1103,26 @@ public class MainActivity extends AppCompatActivity
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
 
             if (fragment == null) {
-                this.mDisplayFragment(CDRecommendedInstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next), !isFromNotification, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
+                this.mDisplayFragment(CDRecommendedInstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, this.mUndecidedCount), !isFromNotification, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
             } else {
-                if (fragment instanceof CDRecommendedInstituteListFragment) {
-                    //((CDRecommendedInstituteListFragment) fragment).clearList();
-                    ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next);
+                if (fragment instanceof CDRecommendedInstituteListFragment)
+                {
+                    if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED)
+                        ((CDRecommendedInstituteListFragment) fragment).showUndecidedInstitutes(this.mInstituteList);
+                    else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED)
+                        ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next);
                 }
+
                 this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
             }
             if (MainActivity.user.getIs_otp_verified() == 0 && MainActivity.user.getPartner_shortlist_count() > 0) {
-                displayOTPAlert(this);
+                this.displayOTPAlert(this);
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
+
     private void mDisplayInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl, int listType) {
         try {
             String val = this.extractResults(response);
@@ -1486,7 +1496,7 @@ private boolean isUpdateStreams;
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
                 this.mCurrentTitle = "Recommended Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = true;
-                this.mDisplayCDRecommendedInstituteList(response, true);
+                this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED);
                 break;
             case Constants.SEARCHED_INSTITUTES:
                 this.mCurrentTitle = "Institutes";
@@ -1679,8 +1689,6 @@ private boolean isUpdateStreams;
                 }
                 this.onUserSignInResponse(response, parentIndex);
                 break;
-
-
             case Constants.WIDGET_SYLLABUS:
                 this.mDisplayExamSyllabusFragment(response);
                 break;
@@ -1718,7 +1726,7 @@ private boolean isUpdateStreams;
                 if (tags.length > 2) {
                     parentIndex = tags[1];
                     childIndex = tags[2];
-                    mOnPsychometricTestCompleted(parentIndex, childIndex, response);
+                    this.mOnPsychometricTestCompleted(parentIndex, childIndex, response);
                 }
                 break;
             case Constants.TAG_LOAD_STEP_BY_STEP:
@@ -1769,13 +1777,34 @@ private boolean isUpdateStreams;
                 displayGetOTPAlert(this);
                 break;
             case Constants.TAG_VERIFY_USER_PHONE:
-                Utils.DisplayToast(this,"OTP successfully Verified");
+                Utils.DisplayToast(this, "OTP successfully Verified");
                 this.onOTPVerified();
                 break;
             case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
             case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
+                if (tags.length == 2)
+                {
+                    parentIndex = tags[1];
+                    if (parentIndex.equals("true"))
+                        OnCDRecommendedLoadNext("");
+                }
+                break;
             case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
+                if (tags.length == 2)
+                {
+                    ++this.mUndecidedCount;
+                    this.mUpdateUndecidedCount(this.mUndecidedCount);
+
+                    parentIndex = tags[1];
+                    if (parentIndex.equals("true"))
+                        this.OnCDRecommendedLoadNext("");
+                }
+                else if (tags.length == 1)
+                {
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNDECIDED);
+                }
                 break;
         }
 
@@ -1783,8 +1812,12 @@ private boolean isUpdateStreams;
             this.progressDialog.dismiss();
     }
 
-    private void mOnPsychometricTestCompleted(String streamId, String streamName, String response) {
+    private void mUpdateUndecidedCount(int i) {
+        if (currentFragment instanceof CDRecommendedInstituteListFragment)
+            ((CDRecommendedInstituteListFragment) currentFragment).mUpdateUndecidedCount(i);
+    }
 
+    private void mOnPsychometricTestCompleted(String streamId, String streamName, String response) {
         try {
             User userObj = JSON.std.beanFrom(User.class,response);
             if(MainActivity.user != null){
@@ -1801,7 +1834,7 @@ private boolean isUpdateStreams;
         }
         if(!isUpdateStreams) {
             this.mClearBackStack();
-            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST,Constants.BASE_URL + "user-exams/",null,0);
+            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST, Constants.BASE_URL + "user-exams/", null, 0);
         }else {
             this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST, Constants.BASE_URL + "user-exams/", null, 0);
         }
@@ -1821,7 +1854,7 @@ private boolean isUpdateStreams;
                 }
                 this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
             }
-                currentFragment.updateExamSummary(examSummary );
+                this.currentFragment.updateExamSummary(examSummary );
             if(MainActivity.type!=null && !MainActivity.type.matches("") && MainActivity.resource_uri!=null && !MainActivity.resource_uri.matches("")){
                 mhandleNotifications();
             }
@@ -1842,7 +1875,7 @@ private boolean isUpdateStreams;
             ArrayList<UserEducation> userEducationList = (ArrayList<UserEducation>) JSON.std.listOfFrom(UserEducation.class, response);
 
             this.mDisplayFragment(UserEducationFragment.newInstance(userEducationList), false, Constants.TAG_FRAGMENT_USER_EDUCATION);
-            //this.mDisplayFragment(MyAlertFragment.newInstance(userEducationList), false, MyAlertFragment.class.getName());
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -4498,32 +4531,38 @@ private void onNotPreparingEducationResponse(String response){
     }
 
     @Override
-    public void OnCDRecommendedInstituteLiked(Institute institute) {
+    public void OnCDRecommendedInstituteLiked(Institute institute, boolean isLastCard) {
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("1"));
-        if (MainActivity.user.getIs_otp_verified()==0 && institute.getPartner_status() > 0) {
+
+        if (MainActivity.user.getIs_otp_verified()==0 && institute.getPartner_status() > 0)
             displayOTPAlert(this);
-        }
-        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + Constants.ACTION_RECOMMENDED_INSTITUTE_SHORTLISTED, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+
+        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
 
     @Override
-    public void OnCDRecommendedInstituteDislike(Institute institute) {
+    public void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard) {
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("2"));
 
-        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + Constants.ACTION_RECOMMENDED_INSTITUTE_NOT_INTERESTED, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
 
     @Override
-    public void OnCDRecommendedInstituteDecideLater(Institute institute) {
+    public void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard) {
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("3"));
 
-        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + Constants.ACTION_RECOMMENDED_INSTITUTE_DECIDE_LATER, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+    }
+
+    @Override
+    public void OnCDRecommendedLoadUndecidedInstitutes() {
+        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE, Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3", null, Request.Method.GET);
     }
 
     private List<VideoEntry> videoList;
@@ -4545,7 +4584,6 @@ private void onNotPreparingEducationResponse(String response){
 
     private void onUpdateTitleResponse(String response) {
         if (this.videoList != null && response != null) {
-
             try {
                 YoutubeVideoDetails details = JSON.std.beanFrom(YoutubeVideoDetails.class, response);
                 ArrayList<Item> items = details.getItems();
