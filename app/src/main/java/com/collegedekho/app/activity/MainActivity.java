@@ -711,7 +711,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (currentFragment instanceof ProfileEditFragment || currentFragment instanceof ExamsFragment || currentFragment instanceof UserEducationFragment ||currentFragment instanceof StreamFragment || currentFragment instanceof PsychometricTestParentFragment)
+        if (currentFragment instanceof ProfileEditFragment || currentFragment instanceof ExamsFragment || currentFragment instanceof UserEducationFragment ||currentFragment instanceof StreamFragment || currentFragment instanceof PsychometricTestParentFragment || currentFragment instanceof OTPVerificationFragment)
             menu.setGroupVisible(R.id.main_menu_group, false);
         else
             menu.getItem(0).setVisible(true);

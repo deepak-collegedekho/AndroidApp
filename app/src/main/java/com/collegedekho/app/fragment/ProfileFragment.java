@@ -373,13 +373,17 @@ public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
     }
 
     private void mExamTabSelected(int position) {
-        if(this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() >position)
-        {
-           this.mExamDetail = this.mExamDetailList.get(position);
-           this.mListener.onExamTabSelected(this.mExamDetail);
+        if(this.mListener != null ) {
+           if(this.mExamDetailList != null && this.mExamDetailList.size() >position) {
+                this.mExamDetail = this.mExamDetailList.get(position);
+                this.mListener.onExamTabSelected(this.mExamDetail);
+            }else if (MainActivity.user.getIs_preparing().equals("0")) {
+                this.mListener.onExamTabSelected(this.mExamDetail);
+            }
         }
     }
 
+    @Override
     public void updateExamSummary(ExamSummary examSummary) {
         this.mExamSummary = examSummary;
 
