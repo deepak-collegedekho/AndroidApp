@@ -30,7 +30,7 @@ import com.collegedekho.app.utils.Utils;
  */
 public class OTPVerificationFragment extends BaseFragment {
     private LinearLayout mobileNumberLayout, otpLayout;
-    private TextView submitMobileNumber, submitOtp, btnResendOtp,btnTerms;
+    private TextView submitMobileNumber, submitOtp, btnResendOtp, btnTerms;
     private EditText edtMobileNumber, edtOTP;
     private CheckBox cbTerms;
     private OTPVerificationListener mListener;
@@ -67,7 +67,7 @@ public class OTPVerificationFragment extends BaseFragment {
         submitOtp.setOnClickListener(this);
         btnResendOtp = (TextView) view.findViewById(R.id.btn_resend_otp);
         btnResendOtp.setOnClickListener(this);
-        btnTerms=(TextView)view.findViewById(R.id.txt_terms);
+        btnTerms = (TextView) view.findViewById(R.id.txt_terms);
         btnTerms.setOnClickListener(this);
 //        btnTerms.setMovementMethod(LinkMovementMethod.getInstance());
 //        String text = "<a href='https://m.collegedekho.com/terms-and-conditions/'> terms and conditions </a>";
@@ -77,7 +77,7 @@ public class OTPVerificationFragment extends BaseFragment {
         edtOTP = (EditText) view.findViewById(R.id.edt_otp_number);
         edtMobileNumber.addTextChangedListener(mobileNumberWatcher);
         edtOTP.addTextChangedListener(otpWatcher);
-        cbTerms=(CheckBox)view.findViewById(R.id.cb_terms);
+        cbTerms = (CheckBox) view.findViewById(R.id.cb_terms);
         edtMobileNumber.requestFocus();
     }
 
@@ -116,17 +116,17 @@ public class OTPVerificationFragment extends BaseFragment {
         switch (v.getId()) {
             case R.id.btn_submit_mobile:
                 if (mListener != null) {
-                    if(cbTerms.isChecked()) {
-                        String number = edtMobileNumber.getText().toString();
-                        if (number != null && !number.trim().equals("") && number.trim().length() == 10) {
+
+                    String number = edtMobileNumber.getText().toString();
+                    if (number != null && !number.trim().equals("") && number.trim().length() == 10) {
+                        if (cbTerms.isChecked()) {
                             mListener.onSubmitMobileNumber(number);
                         } else {
-                            edtMobileNumber.setError("Enter Valid Mobile Number");
+                            Utils.DisplayToast(v.getContext(), "Please read and accept terms conditions.");
                         }
-                    }else {
-                        Utils.DisplayToast(v.getContext(),"Please read and accept terms conditions.");
+                    } else {
+                        edtMobileNumber.setError("Enter Valid Mobile Number");
                     }
-
                 }
                 break;
 
@@ -134,7 +134,7 @@ public class OTPVerificationFragment extends BaseFragment {
                 if (mListener != null) {
                     String otp = edtOTP.getText().toString();
                     if (otp != null && !otp.trim().equals("") && otp.trim().length() == 6) {
-                        mListener.onSubmitOTP(edtMobileNumber.getText().toString(),otp);
+                        mListener.onSubmitOTP(edtMobileNumber.getText().toString(), otp);
                     } else {
                         edtOTP.setError("Invalid OTP");
                     }
@@ -151,7 +151,7 @@ public class OTPVerificationFragment extends BaseFragment {
                 try {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.collegedekho.com/terms-and-conditions/"));
                     startActivity(browserIntent);
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
@@ -207,14 +207,15 @@ public class OTPVerificationFragment extends BaseFragment {
         otpLayout.setVisibility(View.VISIBLE);
         edtOTP.requestFocus();
     }
-    public void onInvalidOtp(){
+
+    public void onInvalidOtp() {
         edtOTP.setError("OTP is invalid");
     }
 
     public interface OTPVerificationListener {
         public void onSubmitMobileNumber(String mobileNumber);
 
-        public void onSubmitOTP(String mobileNumber,String otp);
+        public void onSubmitOTP(String mobileNumber, String otp);
 
         public void onResendOTP(String mobileNumber);
     }

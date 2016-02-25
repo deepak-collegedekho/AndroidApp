@@ -454,6 +454,10 @@ public class MainActivity extends AppCompatActivity
                     ((CalendarParentFragment)currentFragment).submitCalendarData();
                 else if (currentFragment instanceof ExamsFragment)
                     return;
+                else if (currentFragment instanceof OTPVerificationFragment)
+                    return;
+
+
                 mClearBackStack();
                 invalidateOptionsMenu();
             }
