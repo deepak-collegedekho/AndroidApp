@@ -1798,7 +1798,10 @@ private boolean isUpdateStreams;
             case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
                 this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.SHORTLISTED);
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                if (tags.length == 2)
+                if(tags.length ==3) {
+
+                    this.mUpdateUndecidedCount(this.mUndecidedCount, true);
+                }  if (tags.length == 2)
                 {
                     this.mUpdateUndecidedCount(this.mUndecidedCount, true);
                     parentIndex = tags[1];
@@ -1811,6 +1814,7 @@ private boolean isUpdateStreams;
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 if(tags.length ==3){
 
+                    this.mUpdateUndecidedCount(this.mUndecidedCount, true);
                 }
                 if (tags.length == 2)
                 {
@@ -4623,6 +4627,7 @@ private void onNotPreparingEducationResponse(String response){
     @Override
     public void OnCDRecommendedInstituteLiked(Institute institute, boolean isLastCard, boolean isUndecided) {
 
+        this.mInstitute = institute;
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("1"));
@@ -4631,34 +4636,38 @@ private void onNotPreparingEducationResponse(String response){
             requestOtp();
         }
         if(isUndecided)
-        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard+"#"+isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     else
-            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard+"#"+isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
 
     }
 
 
     @Override
     public void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard, boolean isUndecided) {
+
+        this.mInstitute = institute;
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("2"));
         if(isUndecided)
-            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-       else
             this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + isLastCard+"#"+isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+       else
+            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
 
     }
 
     @Override
     public void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard,boolean isUndecided) {
+
+        this.mInstitute = institute;
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("3"));
        if(isUndecided)
-           this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+           this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard+"#"+isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
         else
-           this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard+"#"+isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+           this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
 
     }
 

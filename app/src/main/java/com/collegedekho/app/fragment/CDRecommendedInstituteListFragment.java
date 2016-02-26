@@ -285,8 +285,16 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     @Override
     public void OnInstituteLiked(Institute institute, boolean isLastCard) {
         this.mRemoveInstituteFromList();
-        if(isLastCard && IS_UNDECIDED_INSTITUTES)
+        if(isLastCard && IS_UNDECIDED_INSTITUTES) {
+
+            if (mNextUrl != null && !mNextUrl.equalsIgnoreCase("null"))
             this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
+            else{
+
+                this.mEmptyTextView.setVisibility(View.VISIBLE);
+                this.mCardContainer.setVisibility(View.GONE);
+            }
+        }
 
 
         this.mListener.OnCDRecommendedInstituteLiked(institute, isLastCard,IS_UNDECIDED_INSTITUTES);
@@ -295,8 +303,15 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     @Override
     public void OnInstituteDislike(Institute institute, boolean isLastCard) {
         this.mRemoveInstituteFromList();
-        if(isLastCard && IS_UNDECIDED_INSTITUTES)
+        if(isLastCard && IS_UNDECIDED_INSTITUTES) {
+            if (mNextUrl != null && !mNextUrl.equalsIgnoreCase("null"))
             this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
+            else{
+
+                this.mEmptyTextView.setVisibility(View.VISIBLE);
+                this.mCardContainer.setVisibility(View.GONE);
+            }
+        }
 
         this.mListener.OnCDRecommendedInstituteDislike(institute, isLastCard,IS_UNDECIDED_INSTITUTES);
     }
@@ -304,8 +319,15 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     @Override
     public void OnDecideLater(Institute institute, boolean isLastCard) {
         this.mRemoveInstituteFromList();
-        if(isLastCard && IS_UNDECIDED_INSTITUTES)
+        if(isLastCard && IS_UNDECIDED_INSTITUTES) {
+            if (mNextUrl != null && !mNextUrl.equalsIgnoreCase("null"))
             this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
+            else{
+
+                this.mEmptyTextView.setVisibility(View.VISIBLE);
+                this.mCardContainer.setVisibility(View.GONE);
+            }
+        }
 
         this.mListener.OnCDRecommendedInstituteDecideLater(institute, isLastCard,IS_UNDECIDED_INSTITUTES);
     }

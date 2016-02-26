@@ -30,6 +30,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="9"/>
+
+
+        <include layout="@layout/layout_empty"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="9"/>
     <TextView
         android:id="@+id/fragment_recommended_institute_undecided_count"
         style="@style/AppTheme.BlackBorderButton"
@@ -42,7 +48,6 @@
         android:textSize="@dimen/m14sp"
         android:fontFamily="sans-serif-light"
         />
-        </LinearLayout>
-    <include layout="@layout/layout_empty"
-        />
+
+    </LinearLayout>
 </RelativeLayout>
