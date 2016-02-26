@@ -233,6 +233,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     public void updateList(List<Institute> institutes, String next) {
         this.mInstitutes.addAll(institutes);
         IS_UNDECIDED_INSTITUTES = false;
+        mUndecidedCountTV.setClickable(true);
         mPageTitleTV.setText("Recommended Colleges");
         if (this.mInstitutes.size() == 0)
         {

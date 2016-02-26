@@ -307,7 +307,7 @@ View instituteView;
 
     public void updateShortlistButton(int position)
     {
-        mAdapter.updateShortlistStatus(position, this.filterAllowed);
+        mAdapter.updateShortlistStatus(position, this.filterAllowed,listType);
     }
 
     public void updateFilterButton(int filterCount)

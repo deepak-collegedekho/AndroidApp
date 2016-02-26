@@ -41,6 +41,7 @@ public class User
     private String preference_uri;
     private int is_otp_verified;
     private int partner_shortlist_count;
+    private int blocking_otp;
 
     public String getPreference_uri() {
         return preference_uri;
@@ -342,5 +343,13 @@ public class User
 
     public void setPartner_shortlist_count(int partner_shortlist_count) {
         this.partner_shortlist_count = partner_shortlist_count;
+    }
+
+    public int getBlocking_otp() {
+        return blocking_otp;
+    }
+
+    public void setBlocking_otp(int blocking_otp) {
+        this.blocking_otp = blocking_otp;
     }
 }

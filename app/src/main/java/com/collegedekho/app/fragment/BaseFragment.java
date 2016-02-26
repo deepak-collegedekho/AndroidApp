@@ -28,7 +28,7 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
     protected LinearLayoutManager layoutManager;
     protected String mNextUrl;
     protected BaseListener listener;
-    protected  int listType;
+    public int listType;
     protected  static int EXAM_TAB_POSITION =0;
 
 

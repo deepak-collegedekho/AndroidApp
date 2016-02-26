@@ -23,7 +23,7 @@ public class Constants
     public static final String PREFS = "sharedprefs";
     public static final String KEY_USER = "user_id";
     public static final String TAG_CREATE_USER = "create_user";
-    public static final String ANONYMOUS_USER = "Anonymous User";
+    public static final String ANONYMOUS_USER = "Anonymous user";
     public static final String TAG_CREATE_ANONY_USER = "create_anony_user";
     public static final String TAG_CREATE_FACEBOOK_ANONY_USER = "create_facebook_anony_user";
     public static final String TAG_SKIP_LOGIN = "skip_login";

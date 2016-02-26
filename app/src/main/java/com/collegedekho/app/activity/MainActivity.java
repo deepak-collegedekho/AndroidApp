@@ -865,7 +865,7 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.user.profileData = tempUser.profileData;
             }
 
-            if(MainActivity.user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous user"))
+            if(MainActivity.user.getName().isEmpty() || user.getName().equalsIgnoreCase(Constants.ANONYMOUS_USER))
             {
                 //get name from my profile me
                 //get device id
@@ -1546,6 +1546,7 @@ private boolean isUpdateStreams;
                     extraTag = tags[1];
                     tabPosition = tags[2];
                 }
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 this.mUpdateAppliedCourses(response, extraTag, tabPosition);
                 break;
             case Constants.TAG_POST_QUESTION:
@@ -2261,7 +2262,7 @@ private boolean isUpdateStreams;
         if (currentFragment instanceof InstituteListFragment) {
             int position = Integer.parseInt(extraTag);
             boolean isFilterAllowed = ((InstituteListFragment) currentFragment).getFilterAllowed();
-            if(!isFilterAllowed &&  !Constants.IS_RECOMENDED_COLLEGE){
+            if(!isFilterAllowed &&  !Constants.IS_RECOMENDED_COLLEGE && currentFragment.listType!=Constants.INSTITUTE_SEARCH_TYPE){
                 if(mInstituteList != null && mInstituteList.size() >position )
                 {
                     mInstituteList.remove(position);
@@ -2767,17 +2768,17 @@ private boolean isUpdateStreams;
             String email = user.getEmail();
             String phone = user.getPhone_no();
 
-            if(name.equalsIgnoreCase("Anonymous user"))
+            if(name.equalsIgnoreCase(Constants.ANONYMOUS_USER))
                 name="";
 
-            if ((user.getName() == null || user.getName().isEmpty() || name.equalsIgnoreCase("Anonymous user")) &&  user.profileData[0] != null)
+            if ((user.getName() == null || user.getName().isEmpty() || name.equalsIgnoreCase(Constants.ANONYMOUS_USER)) &&  user.profileData[0] != null)
                 name = user.profileData[0];
             if(phone == null || phone.isEmpty())
                 phone = user.getPrimaryPhone();
             if (user.getEmail().contains("@anonymouscollegedekho.com"))
                 email = user.getPrimaryEmail();
 
-            if (name== null || name.isEmpty() || name.contains("Anonymous user") ||
+            if (name== null || name.isEmpty() || name.contains(Constants.ANONYMOUS_USER) ||
                     phone == null || phone.length() <= 6 ||
                     email == null || email.contains("@anonymouscollegedekho.com")) {
                 final View view = getLayoutInflater().inflate(R.layout.dialog_apply, null, false);
@@ -2847,6 +2848,7 @@ private boolean isUpdateStreams;
             }
         }
     }
+
     private void appplyCourse(InstituteCourse instituteCourse, HashMap params , int position, int tabPosition)
     {
         params.put(Constants.APPLY_COURSE, "" + instituteCourse.getId());
@@ -3525,6 +3527,9 @@ private boolean isUpdateStreams;
             if (currentFragment instanceof SyllabusSubjectsListFragment) {
                 ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
             }else if (currentFragment instanceof OTPVerificationFragment && MainActivity.user.getIs_otp_verified()==0){
+                if(MainActivity.user.getBlocking_otp()==1){
+                    return;
+                }
                 setupOtpRequest(false);
             }
 
@@ -3857,6 +3862,7 @@ private boolean isUpdateStreams;
             MainActivity.user.setResource_uri(userObj.getResource_uri());
             MainActivity.user.setIs_otp_verified(userObj.getIs_otp_verified());
             MainActivity.user.setPartner_shortlist_count(userObj.getPartner_shortlist_count());
+            MainActivity.user.setBlocking_otp(user.getBlocking_otp());
             this.mUserExamsList=MainActivity.user.getUser_exams();
             String u = JSON.std.asString(MainActivity.user);
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
