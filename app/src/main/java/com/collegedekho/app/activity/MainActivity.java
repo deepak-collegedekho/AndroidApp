@@ -1359,9 +1359,8 @@ public class MainActivity extends AppCompatActivity
         }else if(requestCode==Constants.RC_QUIT_VIDEO_PLAYER){
             if(currentFragment instanceof SplashFragment){
                 isFromNotification=false;
-             mLoadUserStatusScreen();
+                this.mLoadUserStatusScreen();
             }
-
         }
         else
         {

@@ -71,7 +71,6 @@ public class Constants
     public static final String WIDGET_TEST_CALENDAR = "test_calendar";
     public static final String PLAY_VIDEO_NOTIFICATION = "play_video_notification";
 
-
     public static final String SEARCHED_INSTITUTES = "searched_institutes";
     public static final String WIDGET_COURSES = "courses";
     public static final String WIDGET_NEWS = "news";
@@ -79,7 +78,7 @@ public class Constants
     public static final String WIDGET_FORUMS = "forums";
     public static final String TAG_LOAD_QNA_QUESTIONS = "qna";
     //public static final String IP = "http://10.0.3.2";
-//    public static final String IP = "http://www.launch.collegedekho.com";
+    //public static final String IP = "http://www.launch.collegedekho.com";
     public static final String IP = "http://www.collegedekho.com";
     //public static final String IP = "http://192.168.8.101";
     //public static final String IP = "http://192.168.56.1";

@@ -40,6 +40,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
     private int mActivePointerId = INVALID_POINTER_ID;
     private static final double DISORDERED_MAX_ROTATION_RADIANS = Math.PI / 64;
     private int mNumberOfCards = -1;
+    private ImageView mLikeImageView;
+    private TextView mTextView;
     private final DataSetObserver mDataSetObserver = new DataSetObserver() {
         @Override
         public void onChanged() {
@@ -89,7 +91,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
         initFromXml(attrs);
         init();
     }
-
 
     public CardContainer(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -161,6 +162,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
         int childCount = getChildCount();
         if (childCount != 0) {
             mTopCard = getChildAt(getChildCount() - 1);
+            mAssignUICOmponentsForTopCard();
+
             mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
         }
     }
@@ -299,39 +302,32 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 dx = x - mLastTouchX;
                 dy = y - mLastTouchY;
 
-               final ImageView likeImageView = (ImageView)mTopCard.findViewById(R.id.like_textview);
-               final TextView textView = (TextView) mTopCard.findViewById(R.id.card_recommended_institute_detail);
+               final ImageView likeImageView = mLikeImageView;
+               final TextView textView = mTextView;
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                         LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
                 //params.setMargins(30, 60, 30, 0);
-                Log.v("CardContainer", "Xtranslation is :" + mTopCard.getTranslationX());
-                Log.v("CardContainer", "Ytranslation is :" + mTopCard.getTranslationY());
-                if(mTopCard.getTranslationX() <= -80){
-                    //Log.v("CardContainer", "Dislike dx is :" + dx);
+                /*Log.v("CardContainer", "Xtranslation is :" + mTopCard.getTranslationX());
+                Log.v("CardContainer", "Ytranslation is :" + mTopCard.getTranslationY());*/
+                if(mTopCard.getTranslationX() <= -60){
                     likeImageView.setVisibility(VISIBLE);
-                    params.gravity = Gravity.RIGHT|Gravity.CENTER_VERTICAL;
+                    params.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
                     likeImageView.setLayoutParams(params);
                     likeImageView.setImageResource(R.drawable.ic_not_interested);
-                    likeImageView.setColorFilter(mContext.getResources().getColor(R.color.dislike_red_selected));
-                } else if(mTopCard.getTranslationX() >= 80){
-                    //Log.v("CardContainer", "Like dx is :" + dx);
+                } else if(mTopCard.getTranslationX() >= 60){
                     likeImageView.setVisibility(VISIBLE);
-                    params.gravity = Gravity.LEFT|Gravity.CENTER_VERTICAL;
+                    params.gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
                     likeImageView.setLayoutParams(params);
                     likeImageView.setImageResource(R.drawable.ic_shortlist);
-                    likeImageView.setColorFilter(mContext.getResources().getColor(R.color.like_green_selected));
                 }
                 else if (mTopCard.getTranslationY() <= -40)
                 {
                     likeImageView.setVisibility(VISIBLE);
-                    params.gravity = Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL;
+                    params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+                    params.setMargins(0, 0, 0, 90);
                     likeImageView.setLayoutParams(params);
                     likeImageView.setImageResource(R.drawable.ic_undecided);
-                    likeImageView.setColorFilter(mContext.getResources().getColor(R.color.white));
-
-                    textView.setEnabled(false);
-                    textView.setVisibility(GONE);
                 }
                 else if(mTopCard.getTranslationX() >= -100 && mTopCard.getTranslationX() <= 100)
                 {
@@ -357,9 +353,9 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                mTopCard.findViewById(R.id.like_textview).setVisibility(GONE);
-                mTopCard.findViewById(R.id.card_recommended_institute_detail).setVisibility(VISIBLE);
-                mTopCard.findViewById(R.id.card_recommended_institute_detail).setEnabled(true);
+                mLikeImageView.setVisibility(GONE);
+                //mTopCard.findViewById(R.id.card_recommended_institute_detail).setVisibility(VISIBLE);
+                //mTopCard.findViewById(R.id.card_recommended_institute_detail).setEnabled(true);
 
                 if (!mDragging) {
                     return true;
@@ -391,6 +387,12 @@ public class CardContainer extends AdapterView<ListAdapter> {
         }
 
         return true;
+    }
+
+    private void mAssignUICOmponentsForTopCard()
+    {
+        this.mLikeImageView = (ImageView)mTopCard.findViewById(R.id.like_textview);
+        this.mTextView = (TextView) mTopCard.findViewById(R.id.card_recommended_institute_detail);
     }
 
     @Override
@@ -508,6 +510,10 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 duration = Math.min(500, duration);
 
                 mTopCard = getChildAt(getChildCount() - 2);
+
+                if (mTopCard != null)
+                    mAssignUICOmponentsForTopCard();
+
                 CardModel cardModel = (CardModel)getAdapter().getItem(getChildCount() - 1);
 
                 if(mTopCard != null)
@@ -545,7 +551,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
             else if (Math.abs(dy) > mTouchSlop &&
                     Math.abs(velocityY) > Math.abs(velocityX) &&
                     Math.abs(velocityY) > mFlingSlop * 3) {
-                Log.d("CardContainer", "I want to swipe up and down");
                 float targetX = topCard.getX();
                 float targetY = topCard.getY();
                 long duration = 0;
@@ -585,7 +590,10 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 mTopCard = getChildAt(getChildCount() - 2);
 
                 if(mTopCard != null)
+                {
+                    mAssignUICOmponentsForTopCard();
                     mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
+                }
 
                 topCard.animate()
                         .setDuration(duration)

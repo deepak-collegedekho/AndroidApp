@@ -27,7 +27,6 @@ import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.widget.FadeInImageView;
 
-
 public final class SimpleCardStackAdapter extends CardStackAdapter {
 
     private ImageLoader imageLoader;
@@ -50,8 +49,8 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
 
         Institute institute;
         final FadeInImageView fadeInImageView;
-        final RelativeLayout viewToBlur;
-        final LinearLayout streamsContainer;
+        //final RelativeLayout viewToBlur;
+        //final LinearLayout streamsContainer;
 
         institute = model.getInstitute();
 

@@ -92,9 +92,15 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         if (this.mInstitutes == null || this.mInstitutes.size() <= 0) {
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setText("No Recommended colleges found");
+
+            this.mCardContainer.setVisibility(View.GONE);
         }
         else
+        {
+            this.mCardContainer.setVisibility(View.VISIBLE);
+
             this.mEmptyTextView.setVisibility(View.GONE);
+        }
 
         this.mAdapter = new SimpleCardStackAdapter(this.getContext(), this);
 
@@ -228,9 +234,11 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         {
             this.mEmptyTextView.setText("No Recommended colleges found");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
+            this.mCardContainer.setVisibility(View.GONE);
         }
         else
         {
+            this.mCardContainer.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
             this.mAdapter.clear();
             this.mAddNextCardInAdapter(this.mInstitutes, null);
@@ -250,9 +258,11 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         {
             this.mEmptyTextView.setText("No Undecided colleges found");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
+            this.mCardContainer.setVisibility(View.GONE);
         }
         else
         {
+            this.mCardContainer.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
             this.mAdapter.clear();
             this.mAddNextCardInAdapter(this.mInstitutes, null);
