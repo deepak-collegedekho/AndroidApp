@@ -103,6 +103,10 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         this.mCardContainer.setAdapter(this.mAdapter);
          this.mUndecidedCountTV.setOnClickListener(this);
 
+        if(IS_UNDECIDED_INSTITUTES)
+            mUndecidedCountTV.setClickable(false);
+
+
         return rootView;
     }
 
@@ -240,6 +244,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         this.mInstitutes.clear();
         IS_UNDECIDED_INSTITUTES = true;
         this.mInstitutes.addAll(institutes);
+        mUndecidedCountTV.setClickable(false);
 
         if (this.mInstitutes.size() == 0)
         {

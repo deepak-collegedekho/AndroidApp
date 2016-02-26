@@ -107,6 +107,7 @@ public class Constants
     public static final String TAG_RECOMMENDED_SHORTLIST_INSTITUTE = "recommended_shortlist";
     public static final String TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE = "recommended_not_interested";
     public static final String TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE = "recommended_decide_later";
+    public static final String TAG_LOAD_UNDECIDED_INSTITUTE = "load_undecided_later";
     public static final String TAG_DELETESHORTLIST_INSTITUTE = "delete";
     public static final String TAG_UNSHORTLIST_INSTITUTE = "unshortlist_institute";
     public static final int NEITHER_LIKE_NOR_DISLIKE = -1;

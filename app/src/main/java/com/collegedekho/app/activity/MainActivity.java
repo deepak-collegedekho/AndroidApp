@@ -1808,6 +1808,7 @@ private boolean isUpdateStreams;
                         OnCDRecommendedLoadNext("");
                 }
                 break;
+            case Constants.TAG_LOAD_UNDECIDED_INSTITUTE:
             case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 if (tags.length == 2)
@@ -2334,11 +2335,8 @@ private boolean isUpdateStreams;
                     similarArticlesIds.add(id);
                 }
             } catch (JSONException e) {
-
                 Log.e(MainActivity.class.getSimpleName(), e.getMessage() + e.getCause());
-
             }
-
             article.setSimilarArticlesIds(similarArticlesIds);
         }
     }
@@ -4592,7 +4590,7 @@ private void onNotPreparingEducationResponse(String response){
 
     @Override
     public void OnCDRecommendedLoadUndecidedInstitutes() {
-        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE, Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3", null, Request.Method.GET);
+        this.mMakeNetworkCall(Constants.TAG_LOAD_UNDECIDED_INSTITUTE, Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3", null, Request.Method.GET);
     }
 
     private List<VideoEntry> videoList;
