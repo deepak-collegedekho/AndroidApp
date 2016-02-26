@@ -27,7 +27,7 @@
         <com.collegedekho.app.widget.FadeInImageView
             android:id="@+id/card_recommended_institute_image"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="300dp"
             android:layout_below="@id/card_recommended_institute_title"
             android:src="@drawable/default_banner"
             android:contentDescription="instituteImage"
@@ -36,14 +36,13 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="395dp"
+            android:layout_height="345dp"
             android:translationZ="@dimen/m5dp"
             >
             <ImageView
                 android:id="@+id/like_textview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:tint="@color/like_green_selected"
                 android:visibility="visible"
                 />
         </FrameLayout>
@@ -51,7 +50,7 @@
         <RelativeLayout
             android:id="@+id/card_recommended_institute_info_container"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="300dp"
             android:layout_alignBottom="@id/card_recommended_institute_image"
             android:paddingRight="@dimen/activity_horizontal_margin_small"
             android:paddingLeft="@dimen/activity_horizontal_margin_small"

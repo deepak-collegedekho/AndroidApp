@@ -302,7 +302,7 @@ public class Constants
     public static final String ACTION_INSTITUTE_SHORTLISTED = "action_institute_shortlisted";
     public static final String ACTION_RECOMMENDED_INSTITUTE_SHORTLISTED = "action_recommended_institute_shortlisted";
     public static final String ACTION_RECOMMENDED_INSTITUTE_NOT_INTERESTED = "action_recommended_institute_not_interested";
-    public static final String ACTION_RECOMMENDED_INSTITUTE_DECIDE_LATER = "action_recommended_institute_decide_later";
+    public static final String ACTION_RECOMMENDED_INSTITUTE_UNDECIDED = "action_recommended_institute_undecided";
     public static final String ACTION_INSTITUTE_SHORTLISTED_REMOVED = "action_institute_shortlisting_removed";
     public static final String ACTION_INSTITUTE_LIKED = "action_institute_like";
     public static final String ACTION_INSTITUTE_DISLIKED = "action_institute_disliked";
@@ -321,6 +321,7 @@ public class Constants
     public static final String ACTION_USER_PREFERENCE = "action_user_preference";
     public static final String ACTION_USER_EXAM_SELECTED = "action_user_exam_selected";
     public static final String ACTION_INSTITUTE_SELECTED = "action_institute_selected";
+    public static final String ACTION_CD_RECOMMENDED_INSTITUTE_ACTION = "cd_recommended_institute_action";
     public static final String ACTION_WHEN_NOT_PREPARING = "action_when_not_preparing";
     public static final String ACTION_USER_LOGIN = "action_user_login";
     public static final String TAG_USER_PHONE_ADDED = "user_phone_added";
@@ -382,6 +383,8 @@ public class Constants
     public static long ANIM_SHORT_DURATION = 200;
     public static long ANIM_AVERAGE_DURATION = 500;
     public static long ANIM_LONG_DURATION =  1000;
+
+    public static final String CD_RECOMMENDED_INSTITUTE_ACTION_TYPE = "cd_recommended_institute_action_type";
 
     public enum CDRecommendedInstituteType {
         UNDECIDED, SHORTLISTED, NOT_INERESTED, UNBAISED

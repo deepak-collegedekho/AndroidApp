@@ -42,7 +42,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.telecom.Call;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -1122,7 +1121,7 @@ public class MainActivity extends AppCompatActivity
                 if (fragment instanceof CDRecommendedInstituteListFragment)
                 {
                     if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED)
-                        ((CDRecommendedInstituteListFragment) fragment).showUndecidedInstitutes(this.mInstituteList);
+                        ((CDRecommendedInstituteListFragment) fragment).showUndecidedInstitutes(this.mInstituteList, next);
                     else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED)
                         ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next);
                 }
@@ -1797,15 +1796,25 @@ private boolean isUpdateStreams;
                 this.onOTPVerified(response);
                 break;
             case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
-            case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
+                this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.SHORTLISTED);
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 if (tags.length == 2)
                 {
-
                     this.mUpdateUndecidedCount(this.mUndecidedCount, true);
                     parentIndex = tags[1];
                     if (parentIndex.equals("true"))
-                        OnCDRecommendedLoadNext("");
+                        this.OnCDRecommendedLoadNext("");
+                }
+                break;
+            case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
+                this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.NOT_INERESTED);
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
+                if (tags.length == 2)
+                {
+                    this.mUpdateUndecidedCount(this.mUndecidedCount, true);
+                    parentIndex = tags[1];
+                    if (parentIndex.equals("true"))
+                        this.OnCDRecommendedLoadNext("");
                 }
                 break;
             case Constants.TAG_LOAD_UNDECIDED_INSTITUTE:
@@ -1815,7 +1824,7 @@ private boolean isUpdateStreams;
                 {
                     ++this.mUndecidedCount;
                     this.mUpdateUndecidedCount(this.mUndecidedCount, false);
-
+                    this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.UNDECIDED);
                     parentIndex = tags[1];
                     if (parentIndex.equals("true"))
                         this.OnCDRecommendedLoadNext("");
@@ -1829,6 +1838,48 @@ private boolean isUpdateStreams;
 
         if (this.progressDialog != null && this.progressDialog.isShowing())
             this.progressDialog.dismiss();
+    }
+
+    private synchronized void mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType type)
+    {
+        //Appsflyer events
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(Constants.INSTITUTE_RESOURCE_URI, this.mInstitute.getResource_uri());
+        eventValue.put(Constants.INSTITUTE_ID, String.valueOf(this.mInstitute.getId()));
+
+        //GA Event
+        String[] lables = new String[3];
+        lables[0] = String.valueOf(this.mInstitute.getId());
+        lables[1] = this.mInstitute.getResource_uri();
+
+        //Connecto
+        Properties properties = new Properties();
+
+        switch (type)
+        {
+            case UNDECIDED:
+                eventValue.put(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.UNDECIDED.toString());
+                lables[2] = Constants.CDRecommendedInstituteType.UNDECIDED.toString();
+                properties.putValue(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.UNDECIDED.toString());
+                break;
+            case SHORTLISTED:
+                eventValue.put(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.SHORTLISTED.toString());
+                lables[2] = Constants.CDRecommendedInstituteType.SHORTLISTED.toString();
+                properties.putValue(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.SHORTLISTED.toString());
+                break;
+            case NOT_INERESTED:
+                eventValue.put(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.NOT_INERESTED.toString());
+                lables[2] = Constants.CDRecommendedInstituteType.NOT_INERESTED.toString();
+                properties.putValue(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.NOT_INERESTED.toString());
+                break;
+        }
+
+        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION, eventValue);
+
+        MainActivity.GATrackerEvent(Constants.CATEGORY_INSTITUTES, Constants.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION, lables);
+
+        //Send event to connecto
+        this.connecto.track(Constants.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION, properties.putValue(Constants.INSTITUTE_RESOURCE_URI, this.mInstitute.getResource_uri()).putValue(Constants.INSTITUTE_ID, String.valueOf(this.mInstitute.getId())));
     }
 
     private void mUpdateUndecidedCount(int i ,boolean isIncremented) {
@@ -4565,6 +4616,7 @@ private void onNotPreparingEducationResponse(String response){
 
     @Override
     public void OnCDRecommendedInstituteLiked(Institute institute, boolean isLastCard) {
+        this.mInstitute = institute;
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("1"));
@@ -4577,6 +4629,7 @@ private void onNotPreparingEducationResponse(String response){
 
     @Override
     public void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard) {
+        this.mInstitute = institute;
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("2"));
@@ -4586,6 +4639,7 @@ private void onNotPreparingEducationResponse(String response){
 
     @Override
     public void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard) {
+        this.mInstitute = institute;
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("3"));
