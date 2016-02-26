@@ -1799,6 +1799,9 @@ private boolean isUpdateStreams;
             case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
             case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
+                if(tags.length ==3){
+
+                }
                 if (tags.length == 2)
                 {
 
@@ -1811,6 +1814,9 @@ private boolean isUpdateStreams;
             case Constants.TAG_LOAD_UNDECIDED_INSTITUTE:
             case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
+                if(tags.length ==3){
+
+                }
                 if (tags.length == 2)
                 {
                     ++this.mUndecidedCount;
@@ -4564,7 +4570,7 @@ private void onNotPreparingEducationResponse(String response){
     }
 
     @Override
-    public void OnCDRecommendedInstituteLiked(Institute institute, boolean isLastCard) {
+    public void OnCDRecommendedInstituteLiked(Institute institute, boolean isLastCard, boolean isUndecided) {
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("1"));
@@ -4572,30 +4578,41 @@ private void onNotPreparingEducationResponse(String response){
 //            displayOTPAlert(this);
             requestOtp();
         }
+        if(isUndecided)
         this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+    else
+            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard+"#"+isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+
     }
 
+
     @Override
-    public void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard) {
+    public void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard, boolean isUndecided) {
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("2"));
+        if(isUndecided)
+            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+       else
+            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + isLastCard+"#"+isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
 
-        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
 
     @Override
-    public void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard) {
+    public void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard,boolean isUndecided) {
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("3"));
+       if(isUndecided)
+           this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+        else
+           this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard+"#"+isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
 
-        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
 
     @Override
-    public void OnCDRecommendedLoadUndecidedInstitutes() {
-        this.mMakeNetworkCall(Constants.TAG_LOAD_UNDECIDED_INSTITUTE, Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3", null, Request.Method.GET);
+    public void OnCDRecommendedLoadUndecidedInstitutes(String url) {
+        this.mMakeNetworkCall(Constants.TAG_LOAD_UNDECIDED_INSTITUTE, url, null, Request.Method.GET);
     }
 
     private List<VideoEntry> videoList;

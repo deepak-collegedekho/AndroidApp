@@ -223,7 +223,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         super.onClick(v);
         switch (v.getId()){
             case R.id.fragment_recommended_institute_undecided_count:
-                this.mListener.OnCDRecommendedLoadUndecidedInstitutes();
+                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
                 break;
             default:
                 break;
@@ -293,19 +293,29 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     @Override
     public void OnInstituteLiked(Institute institute, boolean isLastCard) {
         this.mRemoveInstituteFromList();
-        this.mListener.OnCDRecommendedInstituteLiked(institute, isLastCard);
+        if(isLastCard && IS_UNDECIDED_INSTITUTES)
+            this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
+
+
+        this.mListener.OnCDRecommendedInstituteLiked(institute, isLastCard,IS_UNDECIDED_INSTITUTES);
     }
 
     @Override
     public void OnInstituteDislike(Institute institute, boolean isLastCard) {
         this.mRemoveInstituteFromList();
-        this.mListener.OnCDRecommendedInstituteDislike(institute, isLastCard);
+        if(isLastCard && IS_UNDECIDED_INSTITUTES)
+            this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
+
+        this.mListener.OnCDRecommendedInstituteDislike(institute, isLastCard,IS_UNDECIDED_INSTITUTES);
     }
 
     @Override
     public void OnDecideLater(Institute institute, boolean isLastCard) {
         this.mRemoveInstituteFromList();
-        this.mListener.OnCDRecommendedInstituteDecideLater(institute, isLastCard);
+        if(isLastCard && IS_UNDECIDED_INSTITUTES)
+            this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
+
+        this.mListener.OnCDRecommendedInstituteDecideLater(institute, isLastCard,IS_UNDECIDED_INSTITUTES);
     }
 
     @Override
@@ -345,9 +355,9 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     public interface OnCDRecommendedInstituteListener extends BaseListener{
         void OnCDRecommendedLoadNext(String nextURL);
         void OnCDRecommendedInstituteSelected(Institute institute);
-        void OnCDRecommendedInstituteLiked(Institute institute, boolean isLastCard);
-        void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard);
-        void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard);
-        void OnCDRecommendedLoadUndecidedInstitutes();
+        void OnCDRecommendedInstituteLiked(Institute institute, boolean isLastCard, boolean isUndecided);
+        void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard, boolean isUndecided);
+        void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard, boolean isUndecided);
+        void OnCDRecommendedLoadUndecidedInstitutes(String url);
     }
 }
