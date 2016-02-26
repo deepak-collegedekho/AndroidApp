@@ -10,6 +10,17 @@
         android:orientation="vertical"
         android:gravity="bottom"
         >
+
+    <TextView
+        android:id="@+id/recommended_page_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Recommended Colleges"
+        android:textSize="14sp"
+        android:background="@color/primary_color_dark"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        />
     <com.collegedekho.app.display.swipableList.view.CardContainer
         android:id="@+id/layoutview"
         android:layout_width="match_parent"

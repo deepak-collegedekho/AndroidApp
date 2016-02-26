@@ -2,7 +2,6 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +43,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     private CardContainer mCardContainer;
     private int mUndecidedCount;
     private TextView mUndecidedCountTV;
+    private TextView mPageTitleTV;
     private TextView mEmptyTextView;
     private boolean IS_UNDECIDED_INSTITUTES = false;
 
@@ -84,6 +84,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE, false);
         this.mCardContainer = (CardContainer) rootView.findViewById(R.id.layoutview);
         this.mUndecidedCountTV = (TextView)rootView.findViewById(R.id.fragment_recommended_institute_undecided_count);
+        this.mPageTitleTV = (TextView)rootView.findViewById(R.id.recommended_page_title);
 
         Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count : ", "", Constants.ANIM_SHORT_DURATION);
 
@@ -109,8 +110,10 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         this.mCardContainer.setAdapter(this.mAdapter);
          this.mUndecidedCountTV.setOnClickListener(this);
 
-        if(IS_UNDECIDED_INSTITUTES)
+        if(IS_UNDECIDED_INSTITUTES) {
             mUndecidedCountTV.setClickable(false);
+            mPageTitleTV.setText(" Undecided Recommended Colleges");
+        }
 
 
         return rootView;
@@ -230,6 +233,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     public void updateList(List<Institute> institutes, String next) {
         this.mInstitutes.addAll(institutes);
         IS_UNDECIDED_INSTITUTES = false;
+        mPageTitleTV.setText("Recommended Colleges");
         if (this.mInstitutes.size() == 0)
         {
             this.mEmptyTextView.setText("No Recommended colleges found");
@@ -253,7 +257,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         IS_UNDECIDED_INSTITUTES = true;
         this.mInstitutes.addAll(institutes);
         mUndecidedCountTV.setClickable(false);
-
+        mPageTitleTV.setText(" Undecided Recommended Colleges");
         if (this.mInstitutes.size() == 0)
         {
             this.mEmptyTextView.setText("No Undecided colleges found");
