@@ -290,6 +290,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
             if (mNextUrl != null && !mNextUrl.equalsIgnoreCase("null"))
             this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
             else{
+                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
 
                 this.mEmptyTextView.setVisibility(View.VISIBLE);
                 this.mCardContainer.setVisibility(View.GONE);
@@ -307,6 +308,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
             if (mNextUrl != null && !mNextUrl.equalsIgnoreCase("null"))
             this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
             else{
+                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
 
                 this.mEmptyTextView.setVisibility(View.VISIBLE);
                 this.mCardContainer.setVisibility(View.GONE);
@@ -323,6 +325,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
             if (mNextUrl != null && !mNextUrl.equalsIgnoreCase("null"))
             this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
             else{
+                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
 
                 this.mEmptyTextView.setVisibility(View.VISIBLE);
                 this.mCardContainer.setVisibility(View.GONE);
@@ -346,10 +349,12 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
                 if (this.mNextUrl == null || this.mNextUrl.equalsIgnoreCase("null")) {
                     this.mEmptyTextView.setText("No Recommended colleges found");
                     this.mEmptyTextView.setVisibility(View.VISIBLE);
+                    this.mCardContainer.setVisibility(View.GONE);
                     return;
                 } else {
                     this.mEmptyTextView.setText("Loading...");
                     this.mEmptyTextView.setVisibility(View.VISIBLE);
+                    this.mCardContainer.setVisibility(View.GONE);
                 }
             }
         }
