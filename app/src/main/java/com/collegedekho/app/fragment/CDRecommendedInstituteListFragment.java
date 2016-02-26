@@ -21,14 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link OnCDRecommendedInstituteListener} interface
- * to handle interaction events.
- * Use the {@link CDRecommendedInstituteListFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class  CDRecommendedInstituteListFragment extends BaseFragment implements SimpleCardStackAdapter.OnCDRecommendedAdapterInterface{
     public static final String TITLE = "CDRecommendedInstitutes";
     private static final String ARG_INSTITUTE = "cdrecommendedinstitute";
@@ -108,13 +100,12 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         this.mAddCardInAdapter(this.mInstitutes);
 
         this.mCardContainer.setAdapter(this.mAdapter);
-         this.mUndecidedCountTV.setOnClickListener(this);
+        this.mUndecidedCountTV.setOnClickListener(this);
 
         if(IS_UNDECIDED_INSTITUTES) {
             mUndecidedCountTV.setClickable(false);
             mPageTitleTV.setText(" Undecided Recommended Colleges");
         }
-
 
         return rootView;
     }
@@ -253,7 +244,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         }
     }
 
-    public void showUndecidedInstitutes(List<Institute> institutes) {
+    public void showUndecidedInstitutes(List<Institute> institutes, String next) {
         this.mInstitutes.clear();
         IS_UNDECIDED_INSTITUTES = true;
         this.mInstitutes.addAll(institutes);
@@ -273,6 +264,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
             this.mAddNextCardInAdapter(this.mInstitutes, null);
             this.mAdapter.setLoadingNext(false);
             this.loading = false;
+            this.mNextUrl = next;
         }
     }
 
