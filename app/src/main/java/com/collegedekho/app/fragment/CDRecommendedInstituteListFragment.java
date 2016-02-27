@@ -78,6 +78,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         this.mUndecidedCountTV = (TextView)rootView.findViewById(R.id.fragment_recommended_institute_undecided_count);
         this.mPageTitleTV = (TextView)rootView.findViewById(R.id.recommended_page_title);
 
+        rootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
         Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count : ", "", Constants.ANIM_SHORT_DURATION);
 
         this.mEmptyTextView = (TextView)rootView.findViewById(android.R.id.empty);
@@ -165,6 +166,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         else if(IS_UNDECIDED_INSTITUTES && isIncrement){
             this.mUndecidedCount = mUndecidedCount-1;
         }
+        if(mUndecidedCount < 0)return;
         Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count : ", "", Constants.ANIM_SHORT_DURATION);
 
     }
@@ -190,23 +192,15 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
 
-/*
-        if (mInstitutes.size() == 0) {
-            this.mEmptyTextView.setText("Opps! Unable to find colleges for your preferences, please change your filters in ‘*Resource Buddy*’!");
-            this.mEmptyTextView.setVisibility(View.VISIBLE);
-        }
-        else {
-            this.mEmptyTextView.setVisibility(View.GONE);
-        }
+
 
         View view =  getView();
         if(view != null ){
             if(!IS_TUTE_COMPLETED)
-                view.findViewById(R.id.institute_list_tour_guide_image).setVisibility(View.VISIBLE);
+                view.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);
             else
-                view.findViewById(R.id.institute_list_tour_guide_image).setVisibility(View.GONE);
+                view.findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
         }
-        */
     }
 
     @Override
@@ -215,6 +209,10 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         switch (v.getId()){
             case R.id.fragment_recommended_institute_undecided_count:
                 this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
+                break;
+            case R.id.recommended_tute_image:
+                v.setVisibility(View.GONE);
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE, true).apply();
                 break;
             default:
                 break;
@@ -290,6 +288,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
             if (mNextUrl != null && !mNextUrl.equalsIgnoreCase("null"))
             this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
             else{
+                if(mUndecidedCount >1)
                 this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
 
                 this.mEmptyTextView.setVisibility(View.VISIBLE);
@@ -308,6 +307,8 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
             if (mNextUrl != null && !mNextUrl.equalsIgnoreCase("null"))
             this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
             else{
+
+                if(mUndecidedCount >1)
                 this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
 
                 this.mEmptyTextView.setVisibility(View.VISIBLE);
@@ -325,6 +326,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
             if (mNextUrl != null && !mNextUrl.equalsIgnoreCase("null"))
             this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
             else{
+
                 this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
 
                 this.mEmptyTextView.setVisibility(View.VISIBLE);
