@@ -16,7 +16,7 @@
             android:layout_height="@dimen/m50dp"
             android:layout_margin="@dimen/m10dp"
             android:gravity="center"
-            android:text="Verify Mobile Number"
+            android:text="Help us understand you better"
             android:textColor="@color/white"
             android:textSize="@dimen/m24sp"
             android:textStyle="bold" />
@@ -70,6 +70,7 @@
                     android:text="I accept the "
                     android:buttonTint="@color/white"
                     android:textColor="@color/white"
+                    android:checked="true"
                     android:textSize="@dimen/m18sp" />
 
                 <TextView android:id="@+id/txt_terms"
