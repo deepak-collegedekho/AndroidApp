@@ -79,7 +79,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         this.mPageTitleTV = (TextView)rootView.findViewById(R.id.recommended_page_title);
 
         rootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
-        Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count : ", "", Constants.ANIM_SHORT_DURATION);
+        Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Decided Later Count : ", "", Constants.ANIM_SHORT_DURATION);
 
         this.mEmptyTextView = (TextView)rootView.findViewById(android.R.id.empty);
 
@@ -105,7 +105,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
 
         if(IS_UNDECIDED_INSTITUTES) {
             mUndecidedCountTV.setClickable(false);
-            mPageTitleTV.setText(" Undecided Recommended Colleges");
+            mPageTitleTV.setText("CD Recommended Colleges - Decide Later");
         }
 
         return rootView;
@@ -167,7 +167,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
             this.mUndecidedCount = mUndecidedCount-1;
         }
         if(mUndecidedCount < 0)return;
-        Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count : ", "", Constants.ANIM_SHORT_DURATION);
+        Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Decided Later Count : ", "", Constants.ANIM_SHORT_DURATION);
 
     }
 
@@ -247,10 +247,10 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         IS_UNDECIDED_INSTITUTES = true;
         this.mInstitutes.addAll(institutes);
         mUndecidedCountTV.setClickable(false);
-        mPageTitleTV.setText(" Undecided Recommended Colleges");
+        mPageTitleTV.setText(" CD Recommended Colleges - Decide Later");
         if (this.mInstitutes.size() == 0)
         {
-            this.mEmptyTextView.setText("No Undecided colleges found");
+            this.mEmptyTextView.setText("No CD Recommended - Decide Later colleges found");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.mCardContainer.setVisibility(View.GONE);
         }
