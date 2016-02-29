@@ -99,6 +99,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 if (day == 1 && !isActiveCell) {
                     isActiveCell = true;
                     startCellPosition = position;
+                    if(selectedPosition==-1){
+                        selectedPosition=position;
+                    }
                     mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
                 } else if (day == 1 && isActiveCell) {
                     isActiveCell = false;
@@ -108,6 +111,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 if (day == mCalendar.get(Calendar.DAY_OF_MONTH) && !isActiveCell) {
                     isActiveCell = true;
                     startCellPosition = position;
+                    if(selectedPosition==-1){
+                        selectedPosition=position;
+                    }
                     mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
                 } else if (day == 1 && isActiveCell) {
                     isActiveCell = false;
@@ -130,7 +136,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             holder.monthView.setVisibility(View.VISIBLE);
 
         } else {
-            holder.monthView.setVisibility(View.GONE);
+            holder.monthView.setVisibility(View.INVISIBLE);
         }
 
         String key=mYearCalendar.get(day_key);
@@ -159,8 +165,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             holder.dotView.setVisibility(View.INVISIBLE);
         }
         holder.dateView.setTag(key);
-        holder.dateView.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));
-        if (position==selectedPosition){
+        String dateString=String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
+        if(dateString.length()<2){
+            dateString="0"+dateString;
+        }
+        holder.dateView.setText(dateString);
+        if (position==selectedPosition && key!=null){
             holder.view.setCardBackgroundColor(0xffcccccc);
             mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
         }else {
