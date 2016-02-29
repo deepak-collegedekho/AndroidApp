@@ -3,6 +3,8 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +33,10 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
     private int numPages = 1;
     private ArrayList<PsychometricTestQuestion> mQuestionsList;
     private OnPsychometricTestSubmitListener mListener;
-    private boolean isEditMoce;
+    private boolean isEditMode;
+    int preState = -1;
+    View appBar;
+
     public static PsychometricTestParentFragment newInstance(ArrayList<PsychometricTestQuestion> questionsList) {
 
         Bundle args = new Bundle();
@@ -57,7 +62,14 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
         Bundle bundle = getArguments();
         if (bundle != null) {
             mQuestionsList = bundle.getParcelableArrayList("questions_list");
-            isEditMoce=bundle.getBoolean("is_edit_mode");
+            isEditMode = bundle.getBoolean("is_edit_mode");
+        }
+        appBar=getActivity().findViewById(R.id.app_bar_layout);
+        if(appBar!=null) {
+            preState = appBar.getVisibility();
+            if (preState == View.GONE) {
+                appBar.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -78,6 +90,11 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
         initPsychometricTest();
         mAdapter = new PsychometricTestViewPagerAdapter(getChildFragmentManager(), numPages, mQuestionsList, this);
         mPager.setAdapter(mAdapter);
+        if(preState==View.GONE){
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getActivity().findViewById(R.id.container).getLayoutParams();
+            params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+            getActivity().findViewById(R.id.container).setLayoutParams(params);
+        }
     }
 
     private void initPsychometricTest() {
@@ -110,7 +127,13 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
     public void onDetach() {
         super.onDetach();
         this.mListener = null;
-
+        if(appBar!=null) {
+            if (preState == View.GONE) {
+                appBar.setVisibility(View.GONE);
+                CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                getActivity().findViewById(R.id.container).setLayoutParams(params);
+            }
+        }
     }
 
     @Override
@@ -143,7 +166,7 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
         try {
             mapArrayList.add(questionResponse);
             object.putOpt("questions",new JSONArray(mapArrayList));
-            mListener.onSubmitPsychometricTest(object,isEditMoce);
+            mListener.onSubmitPsychometricTest(object, isEditMode);
         }catch (Exception e){
             e.printStackTrace();
         }

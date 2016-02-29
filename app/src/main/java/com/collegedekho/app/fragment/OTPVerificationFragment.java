@@ -199,6 +199,9 @@ public class OTPVerificationFragment extends BaseFragment {
         public void onReceive(Context context, Intent intent) {
             String otp = intent.getStringExtra(Constants.USER_OTP);
             edtOTP.setText(otp);
+            if (otp != null && !otp.trim().equals("") && otp.trim().length() == 6) {
+                mListener.onSubmitOTP(edtMobileNumber.getText().toString(), otp);
+            }
         }
     };
 
