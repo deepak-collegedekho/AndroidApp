@@ -2478,6 +2478,10 @@ private boolean isUpdateStreams;
                 return "Loading your plan...";
             case Constants.TAG_MY_ALERTS:
                 return "Loading important events...";
+            case Constants.TAG_VERIFY_USER_PHONE:
+                return "Verifying OTP...";
+            case Constants.TAG_USER_PHONE_ADDED:
+                return "Requesting OTP...";
             case Constants.TAG_NEXT_ARTICLES:
             case Constants.TAG_NEXT_FORUMS_LIST:
             case Constants.TAG_NEXT_INSTITUTE:
