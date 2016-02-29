@@ -23,14 +23,99 @@
         android:orientation="vertical"
         android:gravity="bottom"
         >
+        <RelativeLayout
+            android:id="@+id/recommended_page_instuctions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:padding="@dimen/m5dp"
+            android:background="@color/bg_divider"
+            >
 
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                >
+                <ImageView
+                    android:id="@+id/recommended_tute_image_not_interested_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:src="@drawable/ic_redo"
+                    android:rotation="180"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerInParent="true"
+                    />
+                <TextView
+                    android:id="@+id/recommended_tute_image_not_interested"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:text="Not Interested"
+                    android:layout_below="@id/recommended_tute_image_not_interested_image"
+                    android:layout_marginTop="@dimen/m5dp"
+                    />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                >
+                <ImageView
+                    android:id="@+id/recommended_tute_image_not_decided_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:src="@drawable/ic_redo"
+                    android:rotation="270"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerInParent="true"
+                    />
+                <TextView
+                    android:id="@+id/recommended_tute_image_not_decided"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:text="Decide Later"
+                    android:layout_below="@id/recommended_tute_image_not_decided_image"
+                    android:layout_marginTop="@dimen/m5dp"
+                    />
 
-    <com.collegedekho.app.display.swipableList.view.CardContainer
-        android:id="@+id/layoutview"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="9"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                >
+                <ImageView
+                    android:id="@+id/recommended_tute_image_shortlisted_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:src="@drawable/ic_redo"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerInParent="true"
+                    />
+                <TextView
+                    android:id="@+id/recommended_tute_image_shortlisted"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:text="Shortlist"
+                    android:layout_below="@id/recommended_tute_image_shortlisted_image"
+                    android:layout_marginTop="@dimen/m5dp"
+                    />
+            </RelativeLayout>
+        </RelativeLayout>
 
+        <com.collegedekho.app.display.swipableList.view.CardContainer
+            android:id="@+id/layoutview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="9"
+            android:translationZ="@dimen/m5dp"
+            />
 
         <include layout="@layout/layout_empty"
             android:layout_width="match_parent"
@@ -54,7 +139,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
+        android:visibility="gone"
         >
         <ImageView
             android:id="@+id/recommended_tute_image"

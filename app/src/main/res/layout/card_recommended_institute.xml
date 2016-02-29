@@ -27,7 +27,7 @@
         <com.collegedekho.app.widget.FadeInImageView
             android:id="@+id/card_recommended_institute_image"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="275dp"
             android:layout_below="@id/card_recommended_institute_title"
             android:src="@drawable/default_banner"
             android:contentDescription="instituteImage"
@@ -36,21 +36,40 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="345dp"
+            android:layout_height="320dp"
             android:translationZ="@dimen/m5dp"
             >
             <ImageView
                 android:id="@+id/like_textview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="visible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_gravity="center_vertical|start"
+                android:src="@drawable/ic_shortlist"
+                />
+            <ImageView
+                android:id="@+id/dislike_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_gravity="center_vertical|end"
+                android:src="@drawable/ic_not_interested"
+                />
+            <ImageView
+                android:id="@+id/decide_later_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="50dp"
+                android:visibility="gone"
+                android:layout_gravity="center_horizontal|bottom"
+                android:src="@drawable/ic_undecided"
                 />
         </FrameLayout>
 
         <RelativeLayout
             android:id="@+id/card_recommended_institute_info_container"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="275dp"
             android:layout_alignBottom="@id/card_recommended_institute_image"
             android:paddingRight="@dimen/activity_horizontal_margin_small"
             android:paddingLeft="@dimen/activity_horizontal_margin_small"
@@ -99,38 +118,6 @@
                 android:layout_alignTop="@id/card_recommended_streams_label"
                 android:fontFamily="sans-serif-light"
                 />
-
-<!--
-            <LinearLayout
-                android:id="@+id/card_recommended_streams_container"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:layout_toRightOf="@id/card_recommended_streams_label"
-                android:layout_below="@id/card_recommended_geolocation"
-                android:layout_alignTop="@id/card_recommended_streams_label"
-                android:layout_marginTop="@dimen/m2dp"
-                android:layout_marginLeft="@dimen/m5dp"
-                >
-                &lt;!&ndash;<TextView
-                    android:id="@+id/card_recommended_streams_lab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:text="Engineering"
-                    android:textSize="@dimen/m22sp"
-                    />
-                <TextView
-                    android:id="@+id/card_recommended_streams_lab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:text="Engineering"
-                    android:textSize="@dimen/m22sp"
-                    />&ndash;&gt;
-            </LinearLayout>
--->
-
             <TextView
                 android:id="@+id/card_recommended_institute_detail"
                 style="@style/AppTheme.Bottom_Button"

@@ -1845,9 +1845,14 @@ private boolean isUpdateStreams;
                 }
                 break;
         }
-
-        if (this.progressDialog != null && this.progressDialog.isShowing())
-            this.progressDialog.dismiss();
+        try {
+            if (this.progressDialog != null && this.progressDialog.isShowing())
+                this.progressDialog.dismiss();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private synchronized void mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType type)
