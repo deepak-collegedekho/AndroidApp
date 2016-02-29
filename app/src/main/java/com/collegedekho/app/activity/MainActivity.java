@@ -3874,6 +3874,7 @@ private boolean isUpdateStreams;
     private void onUserExamsEdited(String response) {
         isReloadProfile=true;
         try {
+            DataBaseHelper.getInstance(this).deleteAllExamSummary();
             onUpdateUserExams(response);
             onBackPressed();
             if (currentFragment instanceof UserEducationFragment) {
