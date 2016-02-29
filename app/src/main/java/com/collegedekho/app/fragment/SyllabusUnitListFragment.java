@@ -66,7 +66,7 @@ public class SyllabusUnitListFragment extends BaseFragment {
         final ExpandableListView elv = (ExpandableListView) view.findViewById(R.id.units_expandable_list);
         btnSubmit=(Button)view.findViewById(R.id.btn_submit_units);
         btnSubmit.setOnClickListener(this);
-        btnSubmit.setVisibility(View.GONE);
+//        btnSubmit.setVisibility(View.GONE);
         if(elv != null) {
             mAdapter = new SyllabusUnitsExpandableListAdapter(this.getActivity(), this.mUnits);
 
