@@ -1,10 +1,12 @@
 package com.collegedekho.app.display.swipableList.view;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -100,6 +102,9 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
                 SimpleCardStackAdapter.this.mListener.OnInstituteSelected(((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute());
             }
         });
+
+        //To bring icons in front of everything
+        //convertView.findViewById(R.id.card_recommended_icon_container).bringToFront();
 
         model.setOnCardDismissedListener(new CardModel.OnCardDismissedListener() {
             @Override

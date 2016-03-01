@@ -58,7 +58,7 @@
     <color name="card_bg">#EBEBEB</color>
     <color name="card_outline">#D0D0CE</color>
     //gradient colors
-    <color name="start_gradient">#eb737272</color>
-    <color name="end_gradient">#64a7aca7</color>
+    <color name="start_gradient">#f7737272</color>
+    <color name="end_gradient">#96a7aca7</color>
 
 </resources>

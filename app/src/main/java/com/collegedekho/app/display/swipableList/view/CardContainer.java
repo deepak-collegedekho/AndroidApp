@@ -230,8 +230,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
             childHeight = requestedHeight;
         }*/
 
-        childWidth = requestedWidth;
-        childHeight = requestedHeight;
+        childWidth = requestedWidth - 100;
+        childHeight = requestedHeight - 40;
 
         int childWidthMeasureSpec, childHeightMeasureSpec;
         childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST);
@@ -276,6 +276,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
         final float x, y;
         final float dx, dy;
         mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
+        Log.e("CardContainer", mTopCard.isHardwareAccelerated() ? "it is Hardware Accelerated" : "it is not Hardware Accelerated");
+        Log.e("CardContainer", mTopCard.toString());
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mTopCard.getHitRect(childRect);
@@ -310,36 +312,37 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 dx = x - mLastTouchX;
                 dy = y - mLastTouchY;
 
-               final ImageView likeImageView = mLikeImageView;
-               final ImageView dislikeImageView = mDislikeImageView;
-               final ImageView undecidedImageView = mUndecidedImageView;
+                /*Log.e("CardContainer", "translationX :" + mTopCard.getTranslationX());
+                Log.e("CardContainer", "translationY :" + mTopCard.getTranslationY());*/
 
-
-                if(mTopCard.getTranslationX() <= -40){
-                    this.mfadeInOneFadeOutAllOthers(dislikeImageView.getId());
-                    /*likeImageView.setVisibility(GONE);
-                    dislikeImageView.setVisibility(VISIBLE);
-                    undecidedImageView.setVisibility(GONE);*/
-                } else if(mTopCard.getTranslationX() >= 40){
-                    this.mfadeInOneFadeOutAllOthers(likeImageView.getId());
-                    /*likeImageView.setVisibility(VISIBLE);
-                    dislikeImageView.setVisibility(GONE);
-                    undecidedImageView.setVisibility(GONE);*/
+                if(mTopCard.getTranslationX() <= -60){
+                    //Log.e("CardContainer", "IN translationX <= -60");
+                    //this.mfadeInOneFadeOutAllOthers(dislikeImageView.getId());
+                    mLikeImageView.setVisibility(GONE);
+                    mDislikeImageView.setVisibility(VISIBLE);
+                    mUndecidedImageView.setVisibility(GONE);
+                } else if(mTopCard.getTranslationX() >= 60){
+                    //Log.e("CardContainer", "IN translationX >= 60");
+                    //this.mfadeInOneFadeOutAllOthers(likeImageView.getId());
+                    mLikeImageView.setVisibility(VISIBLE);
+                    mDislikeImageView.setVisibility(GONE);
+                    mUndecidedImageView.setVisibility(GONE);
                 }
                 else if (mTopCard.getTranslationY() <= -50)
                 {
-                    this.mfadeInOneFadeOutAllOthers(undecidedImageView.getId());
-                    /*likeImageView.setVisibility(GONE);
-                    dislikeImageView.setVisibility(GONE);
-                    undecidedImageView.setVisibility(VISIBLE);*/
+                    //Log.e("CardContainer", "IN translationY <= -50");
+                    //this.mfadeInOneFadeOutAllOthers(undecidedImageView.getId());
+                    mLikeImageView.setVisibility(GONE);
+                    mDislikeImageView.setVisibility(GONE);
+                    mUndecidedImageView.setVisibility(VISIBLE);
                 }
-                else if(mTopCard.getTranslationX() >= -45 && mTopCard.getTranslationX() <= 45)
+                else if(mTopCard.getTranslationX() >= -40 && mTopCard.getTranslationX() <= 40)
                 {
-                    this.mfadeInOneFadeOutAllOthers(-1);
-                    //Log.v("CardContainer", "dx is :" + dx);
-                    /*likeImageView.setVisibility(GONE);
-                    dislikeImageView.setVisibility(GONE);
-                    undecidedImageView.setVisibility(GONE);*/
+                    //Log.e("CardContainer", "IN translationX() >= -40 && translationX() <= 40");
+                    //this.mfadeInOneFadeOutAllOthers(-1);
+                    mLikeImageView.setVisibility(GONE);
+                    mDislikeImageView.setVisibility(GONE);
+                    mUndecidedImageView.setVisibility(GONE);
                 }
 
                 if (Math.abs(dx) > mTouchSlop || Math.abs(dy) > mTouchSlop) {
