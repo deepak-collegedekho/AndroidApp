@@ -4,10 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-
-import com.collegedekho.app.entities.ExamSummary;
-import com.fasterxml.jackson.jr.ob.JSON;
 
 /**
  * Created by Bashir on 16/2/16.

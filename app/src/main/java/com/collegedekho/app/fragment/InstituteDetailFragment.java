@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.InstitutePagerAdapter;
-import com.collegedekho.app.display.DepthPageTransformer;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.GameEntity;
 import com.collegedekho.app.entities.Institute;

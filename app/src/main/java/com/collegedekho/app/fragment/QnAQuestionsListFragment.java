@@ -2,7 +2,6 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,7 +21,6 @@ import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class QnAQuestionsListFragment extends BaseFragment {
     public static final String TITLE = "QnA";

@@ -9,7 +9,6 @@ import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.Placements;
-import com.collegedekho.app.entities.VideoEntry;
 import com.collegedekho.app.fragment.InstituteArticleFragment;
 import com.collegedekho.app.fragment.InstituteCoursesFragment;
 import com.collegedekho.app.fragment.InstituteInfrastructureFragment;
@@ -17,7 +16,6 @@ import com.collegedekho.app.fragment.InstituteNewsFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstitutePlacementFragment;
 import com.collegedekho.app.fragment.InstituteVideosFragment;
-import com.collegedekho.app.fragment.VideosFragment;
 
 import java.util.ArrayList;
 

@@ -69,6 +69,7 @@
                     android:clickable="false"
                     android:src="@drawable/ic_redo"
                     android:rotation="270"
+                    android:scaleY="-1"
                     android:layout_alignParentTop="true"
                     android:layout_centerInParent="true"
                     />
@@ -139,7 +140,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         >
         <ImageView
             android:id="@+id/recommended_tute_image"

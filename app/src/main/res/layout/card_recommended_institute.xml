@@ -4,7 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_recommended_institute"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/m25dp"
+    android:layout_marginRight="@dimen/m25dp"
+    android:paddingLeft="@dimen/m25dp"
+    android:paddingRight="@dimen/m25dp"
     android:clickable="false"
     >
     <RelativeLayout

@@ -3,8 +3,6 @@ package com.collegedekho.app.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.collegedekho.app.fragment.VideosFragment;
-
 /**
  * Created by Bashir on 11/2/16.
  */

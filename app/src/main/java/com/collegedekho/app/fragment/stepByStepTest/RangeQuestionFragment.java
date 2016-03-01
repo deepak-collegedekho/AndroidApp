@@ -10,13 +10,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.entities.PsychometricQuestion;
 import com.collegedekho.app.entities.StepByStepChoice;
 import com.collegedekho.app.entities.StepByStepQuestion;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 
 
 /**

@@ -21,10 +21,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 
-import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Institute;
 
 public class CardModel {

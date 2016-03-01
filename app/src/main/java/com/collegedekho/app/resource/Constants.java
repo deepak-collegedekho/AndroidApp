@@ -321,7 +321,7 @@ public class Constants
     public static final String ACTION_USER_PREFERENCE = "action_user_preference";
     public static final String ACTION_USER_EXAM_SELECTED = "action_user_exam_selected";
     public static final String ACTION_INSTITUTE_SELECTED = "action_institute_selected";
-    public static final String ACTION_CD_RECOMMENDED_INSTITUTE_ACTION = "cd_recommended_institute_action";
+    public static final String ACTION_CD_RECOMMENDED_INSTITUTE_ACTION = "action_cd_recommended_institute_action";
     public static final String ACTION_WHEN_NOT_PREPARING = "action_when_not_preparing";
     public static final String ACTION_USER_LOGIN = "action_user_login";
     public static final String TAG_USER_PHONE_ADDED = "user_phone_added";

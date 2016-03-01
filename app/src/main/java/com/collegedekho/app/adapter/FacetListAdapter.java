@@ -12,7 +12,6 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Facet;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class FacetListAdapter extends RecyclerView.Adapter<FacetListAdapter.FacetHolder> {
     private ArrayList<Facet> mFacets;

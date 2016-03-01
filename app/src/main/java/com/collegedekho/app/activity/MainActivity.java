@@ -1106,6 +1106,9 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl, Constants.CDRecommendedInstituteType cdRecommendedInstituteType) {
         try {
+            //Suggesting System that its a good time to do GC
+            System.gc();
+            this.showProgressDialog("Rendering institutes cards..");
             String val = this.extractResults(response);
 
             this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
@@ -1128,11 +1131,12 @@ public class MainActivity extends AppCompatActivity
 
                 this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
             }
+
             if (MainActivity.user.getPartner_shortlist_count() > 0) {
-//                displayOTPAlert(this);
                 requestOtp();
             }
         } catch (IOException e) {
+            this.hideProgressDialog();
             Log.e(TAG, e.getMessage());
         }
     }
@@ -1839,8 +1843,7 @@ private boolean isUpdateStreams;
             case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
                 this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.SHORTLISTED);
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                if(tags.length ==3) {
-
+                if(tags.length == 3) {
                     this.mUpdateUndecidedCount(this.mUndecidedCount, true);
                 }  if (tags.length == 2)
                 {
@@ -1853,8 +1856,7 @@ private boolean isUpdateStreams;
             case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
                 this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.NOT_INERESTED);
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                if(tags.length ==3){
-
+                if(tags.length == 3){
                     this.mUpdateUndecidedCount(this.mUndecidedCount, true);
                 }
                 if (tags.length == 2)
@@ -1868,7 +1870,7 @@ private boolean isUpdateStreams;
             case Constants.TAG_LOAD_UNDECIDED_INSTITUTE:
             case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                if(tags.length ==3){
+                if(tags.length == 3){
 
                 }
                 if (tags.length == 2)
@@ -3027,6 +3029,7 @@ private boolean isUpdateStreams;
     }
 
     public void showProgressDialog(String message) {
+        Log.e("MainActivity", "Message to show is : " + message);
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
             progressDialog.setCancelable(false);
@@ -3037,6 +3040,7 @@ private boolean isUpdateStreams;
         }
         progressDialog.show();
     }
+
     public void hideProgressDialog() {
         if(progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
@@ -4470,6 +4474,8 @@ private void onNotPreparingEducationResponse(String response){
         if (requestType.equals(Constants.WIDGET_INSTITUTES)
                 || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES)){
                 //|| requestType.equalsIgnoreCase(Constants.WIDGET_SHORTLIST_INSTITUTES)) {
+            //Suggesting System that its a good time to do GC
+            System.gc();
 
             Map<String , String> params = this.mGetTheFilters();
 
@@ -4673,22 +4679,22 @@ private void onNotPreparingEducationResponse(String response){
     @Override
     public void OnCDRecommendedInstituteSelected(Institute institute) {
         this.mDisplayInstituteByEntity(institute);
+        Log.e("CD-RE", "Selected:CD Reco Institute is : " + institute.getId());
     }
 
     @Override
     public void OnCDRecommendedInstituteLiked(Institute institute, boolean isLastCard, boolean isUndecided) {
-
         this.mInstitute = institute;
+        Log.e("CD-RE", "Like:CD Reco Institute is : " + institute.getId());
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("1"));
         if (institute.getPartner_status() > 0) {
-//            displayOTPAlert(this);
             requestOtp();
         }
         if(isUndecided)
-        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard+"#"+isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-    else
+            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard+"#"+isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+        else
             this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
 
     }
@@ -4696,8 +4702,8 @@ private void onNotPreparingEducationResponse(String response){
 
     @Override
     public void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard, boolean isUndecided) {
-
         this.mInstitute = institute;
+        Log.e("CD-RE", "Dislike:CD Reco Institute is : " + institute.getId());
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("2"));
@@ -4710,16 +4716,16 @@ private void onNotPreparingEducationResponse(String response){
 
     @Override
     public void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard,boolean isUndecided) {
-
         this.mInstitute = institute;
+        Log.e("CD-RE", "Decide Later:CD Reco Institute is : " + institute.getId());
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("3"));
-       if(isUndecided)
-           this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard+"#"+isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-        else
-           this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
 
+        if(isUndecided)
+            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard+"#"+isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+        else
+            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
 
     @Override

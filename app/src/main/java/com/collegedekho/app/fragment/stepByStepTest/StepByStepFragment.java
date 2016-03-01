@@ -9,11 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.StepByStepAdapter;
-import com.collegedekho.app.display.DepthPageTransformer;
 import com.collegedekho.app.display.NonSwipeableViewPager;
 import com.collegedekho.app.display.ZoomPageTransformer;
 import com.collegedekho.app.entities.StepByStepQuestion;

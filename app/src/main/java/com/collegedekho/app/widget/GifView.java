@@ -8,11 +8,9 @@ import android.graphics.Movie;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
 
 
 /**

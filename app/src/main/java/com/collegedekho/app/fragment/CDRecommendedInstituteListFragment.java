@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class  CDRecommendedInstituteListFragment extends BaseFragment implements SimpleCardStackAdapter.OnCDRecommendedAdapterInterface{
+public class CDRecommendedInstituteListFragment extends BaseFragment implements SimpleCardStackAdapter.OnCDRecommendedAdapterInterface{
     public static final String TITLE = "CDRecommendedInstitutes";
     private static final String ARG_INSTITUTE = "cdrecommendedinstitute";
     private static final String ARG_FILTER_ALLOWED = "filter_allowed";
@@ -79,13 +79,13 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         this.mPageTitleTV = (TextView)rootView.findViewById(R.id.recommended_page_title);
 
         rootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
-        Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Decided Later Count : ", "", Constants.ANIM_SHORT_DURATION);
+        Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count - ", "", Constants.ANIM_SHORT_DURATION);
 
         this.mEmptyTextView = (TextView)rootView.findViewById(android.R.id.empty);
 
         if (this.mInstitutes == null || this.mInstitutes.size() <= 0) {
             this.mEmptyTextView.setVisibility(View.VISIBLE);
-            this.mEmptyTextView.setText("No Recommended colleges found");
+            this.mEmptyTextView.setText("No CD Recommended colleges found");
 
             this.mCardContainer.setVisibility(View.GONE);
         }
@@ -103,10 +103,13 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         this.mCardContainer.setAdapter(this.mAdapter);
         this.mUndecidedCountTV.setOnClickListener(this);
 
-        if(IS_UNDECIDED_INSTITUTES) {
+        if(this.IS_UNDECIDED_INSTITUTES) {
             mUndecidedCountTV.setClickable(false);
             mPageTitleTV.setText("CD Recommended Colleges - Decide Later");
         }
+
+        if (getActivity() != null)
+            ((MainActivity) getActivity()).hideProgressDialog();
 
         return rootView;
     }
@@ -160,15 +163,23 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
 
     public void mUpdateUndecidedCount(int undecidedCount,boolean isIncrement)
     {
-        if(!IS_UNDECIDED_INSTITUTES && !isIncrement) {
+        if (!IS_UNDECIDED_INSTITUTES && !isIncrement)
+        {
             this.mUndecidedCount = undecidedCount;
-            }
-        else if(IS_UNDECIDED_INSTITUTES && isIncrement){
+        }
+        else if (IS_UNDECIDED_INSTITUTES && isIncrement){
             this.mUndecidedCount = mUndecidedCount-1;
         }
-        if(mUndecidedCount < 0)return;
-        Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Decided Later Count : ", "", Constants.ANIM_SHORT_DURATION);
+        if (mUndecidedCount < 0)
+            return;
+        else if (IS_UNDECIDED_INSTITUTES && mUndecidedCount == 0)
+        {
+            this.mEmptyTextView.setText("No CD Recommended - Decide Later colleges found");
+            this.mEmptyTextView.setVisibility(View.VISIBLE);
+            this.mCardContainer.setVisibility(View.GONE);
+        }
 
+        Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count - ", "", Constants.ANIM_SHORT_DURATION);
     }
 
     @Override
@@ -180,6 +191,14 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     @Override
     public void onPause() {
         super.onPause();
+
+        MainActivity mMainActivity = (MainActivity) this.getActivity();
+        if (mMainActivity != null)
+            mMainActivity.currentFragment = null;
+
+        if (getView() != null)
+            getView().setLayerType(View.LAYER_TYPE_NONE, null);
+
         loading = false;
     }
 
@@ -187,15 +206,13 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     public void onResume() {
         super.onResume();
 
-       MainActivity mMainActivity = (MainActivity) this.getActivity();
-
+        MainActivity mMainActivity = (MainActivity) this.getActivity();
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
 
-
-
         View view =  getView();
         if(view != null ){
+            view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             if(!IS_TUTE_COMPLETED)
                 view.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);
             else
@@ -223,10 +240,10 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
         this.mInstitutes.addAll(institutes);
         IS_UNDECIDED_INSTITUTES = false;
         mUndecidedCountTV.setClickable(true);
-        mPageTitleTV.setText("Recommended Colleges");
+        mPageTitleTV.setText("CD Recommended Colleges");
         if (this.mInstitutes.size() == 0)
         {
-            this.mEmptyTextView.setText("No Recommended colleges found");
+            this.mEmptyTextView.setText("No CD Recommended colleges found");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.mCardContainer.setVisibility(View.GONE);
         }
@@ -240,14 +257,17 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
             this.mAdapter.setLoadingNext(false);
             this.loading = false;
         }
+
+        if (getActivity() != null)
+            ((MainActivity) getActivity()).hideProgressDialog();
     }
 
     public void showUndecidedInstitutes(List<Institute> institutes, String next) {
         this.mInstitutes.clear();
-        IS_UNDECIDED_INSTITUTES = true;
+        this.IS_UNDECIDED_INSTITUTES = true;
         this.mInstitutes.addAll(institutes);
-        mUndecidedCountTV.setClickable(false);
-        mPageTitleTV.setText(" CD Recommended Colleges - Decide Later");
+        this.mUndecidedCountTV.setClickable(false);
+        this.mPageTitleTV.setText("CD Recommended Colleges - Decide Later");
         if (this.mInstitutes.size() == 0)
         {
             this.mEmptyTextView.setText("No CD Recommended - Decide Later colleges found");
@@ -264,11 +284,14 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
             this.loading = false;
             this.mNextUrl = next;
         }
+
+        if (getActivity() != null)
+            ((MainActivity) getActivity()).hideProgressDialog();
     }
 
     @Override
     public void OnLoadNext() {
-        if (mNextUrl == null || mNextUrl.equalsIgnoreCase("null"))
+        if (this.mNextUrl == null || this.mNextUrl.equalsIgnoreCase("null"))
             return;
         this.loading = true;
         this.mAdapter.setLoadingNext(true);
@@ -283,33 +306,31 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     @Override
     public void OnInstituteLiked(Institute institute, boolean isLastCard) {
         this.mRemoveInstituteFromList();
-        if(isLastCard && IS_UNDECIDED_INSTITUTES) {
-
-            if (mNextUrl != null && !mNextUrl.equalsIgnoreCase("null"))
-            this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
-            else{
-                if(mUndecidedCount >1)
-                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
+        if(isLastCard && this.IS_UNDECIDED_INSTITUTES) {
+            if (this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null"))
+                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(this.mNextUrl);
+            else
+            {
+                if(this.mUndecidedCount > 1)
+                    this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
 
                 this.mEmptyTextView.setVisibility(View.VISIBLE);
                 this.mCardContainer.setVisibility(View.GONE);
             }
         }
 
-
-        this.mListener.OnCDRecommendedInstituteLiked(institute, isLastCard,IS_UNDECIDED_INSTITUTES);
+        this.mListener.OnCDRecommendedInstituteLiked(institute, isLastCard, this.IS_UNDECIDED_INSTITUTES);
     }
 
     @Override
     public void OnInstituteDislike(Institute institute, boolean isLastCard) {
         this.mRemoveInstituteFromList();
         if(isLastCard && IS_UNDECIDED_INSTITUTES) {
-            if (mNextUrl != null && !mNextUrl.equalsIgnoreCase("null"))
-            this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
+            if (this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null"))
+                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(this.mNextUrl);
             else{
-
-                if(mUndecidedCount >1)
-                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
+                if(this.mUndecidedCount > 1)
+                    this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
 
                 this.mEmptyTextView.setVisibility(View.VISIBLE);
                 this.mCardContainer.setVisibility(View.GONE);
@@ -323,10 +344,10 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
     public void OnDecideLater(Institute institute, boolean isLastCard) {
         this.mRemoveInstituteFromList();
         if(isLastCard && IS_UNDECIDED_INSTITUTES) {
-            if (mNextUrl != null && !mNextUrl.equalsIgnoreCase("null"))
-            this.mListener.OnCDRecommendedLoadUndecidedInstitutes(mNextUrl);
-            else{
-
+            if (this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null"))
+                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(this.mNextUrl);
+            else
+            {
                 this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
 
                 this.mEmptyTextView.setVisibility(View.VISIBLE);
@@ -334,7 +355,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
             }
         }
 
-        this.mListener.OnCDRecommendedInstituteDecideLater(institute, isLastCard,IS_UNDECIDED_INSTITUTES);
+        this.mListener.OnCDRecommendedInstituteDecideLater(institute, isLastCard, IS_UNDECIDED_INSTITUTES);
     }
 
     @Override
@@ -349,7 +370,7 @@ public class  CDRecommendedInstituteListFragment extends BaseFragment implements
 
             if(this.mInstitutes.size() <= 0) {
                 if (this.mNextUrl == null || this.mNextUrl.equalsIgnoreCase("null")) {
-                    this.mEmptyTextView.setText("No Recommended colleges found");
+                    this.mEmptyTextView.setText("No CD Recommended colleges found");
                     this.mEmptyTextView.setVisibility(View.VISIBLE);
                     this.mCardContainer.setVisibility(View.GONE);
                     return;

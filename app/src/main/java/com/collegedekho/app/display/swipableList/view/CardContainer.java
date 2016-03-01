@@ -23,11 +23,9 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.display.swipableList.model.CardModel;
@@ -66,7 +64,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
 
     //TODO: determine max dynamically based on device speed
-    private int mMaxVisible = 5 ;
+    private int mMaxVisible = 20;
     private GestureDetector mGestureDetector;
     private int mFlingSlop;
     private Orientations.OrientationType mOrientation;
@@ -83,7 +81,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
     public CardContainer(Context context) {
         super(context);
         mContext = context;
-        setOrientation(Orientations.OrientationType.Disordered);
+        //setOrientation(Orientations.OrientationType.Disordered);
         setGravity(Gravity.CENTER);
         init();
     }
@@ -114,8 +112,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 R.styleable.CardContainer);
 
         setGravity(a.getInteger(R.styleable.CardContainer_android_gravity, Gravity.CENTER));
-        int orientation = a.getInteger(R.styleable.CardContainer_orientationType, 1);
-        setOrientation(Orientations.OrientationType.fromIndex(orientation));
+        //int orientation = a.getInteger(R.styleable.CardContainer_orientationType, 1);
+        //setOrientation(Orientations.OrientationType.fromIndex(orientation));
 
         a.recycle();
     }
@@ -152,9 +150,9 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
             View view = mListAdapter.getView(mNextAdapterPosition, null, this);
             //view.setLayerType(LAYER_TYPE_SOFTWARE, null);
-            if(mOrientation == Orientations.OrientationType.Disordered) {
+            /*if(mOrientation == Orientations.OrientationType.Disordered) {
                 view.setRotation(getDisorderedRotation());
-            }
+            }*/
             addViewInLayout(view, 0, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
                     mListAdapter.getItemViewType(mNextAdapterPosition)), false);
 
@@ -165,9 +163,11 @@ public class CardContainer extends AdapterView<ListAdapter> {
         int childCount = getChildCount();
         if (childCount != 0) {
             mTopCard = getChildAt(getChildCount() - 1);
-            mAssignUICOmponentsForTopCard();
-
-            //mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
+            if (mTopCard != null)
+            {
+                mAssignUICOmponentsForTopCard();
+                mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
+            }
         }
     }
 
@@ -214,7 +214,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
         int requestedHeight = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
         int childWidth, childHeight;
 
-        if (mOrientation == Orientations.OrientationType.Disordered) {
+        /*if (mOrientation == Orientations.OrientationType.Disordered) {
             int R1, R2;
             if (requestedWidth >= requestedHeight) {
                 R1 = requestedHeight;
@@ -228,7 +228,10 @@ public class CardContainer extends AdapterView<ListAdapter> {
         } else {
             childWidth = requestedWidth;
             childHeight = requestedHeight;
-        }
+        }*/
+
+        childWidth = requestedWidth;
+        childHeight = requestedHeight;
 
         int childWidthMeasureSpec, childHeightMeasureSpec;
         childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST);
@@ -312,25 +315,25 @@ public class CardContainer extends AdapterView<ListAdapter> {
                final ImageView undecidedImageView = mUndecidedImageView;
 
 
-                if(mTopCard.getTranslationX() <= -100){
+                if(mTopCard.getTranslationX() <= -40){
                     this.mfadeInOneFadeOutAllOthers(dislikeImageView.getId());
                     /*likeImageView.setVisibility(GONE);
                     dislikeImageView.setVisibility(VISIBLE);
                     undecidedImageView.setVisibility(GONE);*/
-                } else if(mTopCard.getTranslationX() >= 100){
+                } else if(mTopCard.getTranslationX() >= 40){
                     this.mfadeInOneFadeOutAllOthers(likeImageView.getId());
                     /*likeImageView.setVisibility(VISIBLE);
                     dislikeImageView.setVisibility(GONE);
                     undecidedImageView.setVisibility(GONE);*/
                 }
-                else if (mTopCard.getTranslationY() <= -60)
+                else if (mTopCard.getTranslationY() <= -50)
                 {
                     this.mfadeInOneFadeOutAllOthers(undecidedImageView.getId());
                     /*likeImageView.setVisibility(GONE);
                     dislikeImageView.setVisibility(GONE);
                     undecidedImageView.setVisibility(VISIBLE);*/
                 }
-                else if(mTopCard.getTranslationX() >= -100 && mTopCard.getTranslationX() <= 100)
+                else if(mTopCard.getTranslationX() >= -45 && mTopCard.getTranslationX() <= 45)
                 {
                     this.mfadeInOneFadeOutAllOthers(-1);
                     //Log.v("CardContainer", "dx is :" + dx);
@@ -344,14 +347,14 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 }
 
                 if(!mDragging) {
-                    mTopCard.setLayerType(View.LAYER_TYPE_NONE, null);
+                    //mTopCard.setLayerType(View.LAYER_TYPE_NONE, null);
                     return true;
                 }
 
                 mTopCard.setTranslationX(mTopCard.getTranslationX() + dx);
                 mTopCard.setTranslationY(mTopCard.getTranslationY() + dy);
 
-                mTopCard.setRotation(40 * mTopCard.getTranslationX() / (getWidth() / 2.f));
+                //mTopCard.setRotation(40 * mTopCard.getTranslationX() / (getWidth() / 2.f));
 
                 mLastTouchX = x;
                 mLastTouchY = y;
@@ -365,7 +368,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 //mTopCard.findViewById(R.id.card_recommended_institute_detail).setEnabled(true);
 
                 if (!mDragging) {
-                    mTopCard.setLayerType(View.LAYER_TYPE_NONE, null);
+                    //mTopCard.setLayerType(View.LAYER_TYPE_NONE, null);
                     return true;
                 }
                 mDragging = false;
@@ -373,7 +376,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 ValueAnimator animator = ObjectAnimator.ofPropertyValuesHolder(mTopCard,
                         PropertyValuesHolder.ofFloat("translationX", 0),
                         PropertyValuesHolder.ofFloat("translationY", 0),
-                        PropertyValuesHolder.ofFloat("rotation", (float) Math.toDegrees(mRandom.nextGaussian() * DISORDERED_MAX_ROTATION_RADIANS)),
+                        //PropertyValuesHolder.ofFloat("rotation", (float) Math.toDegrees(mRandom.nextGaussian() * DISORDERED_MAX_ROTATION_RADIANS)),
                         PropertyValuesHolder.ofFloat("pivotX", mTopCard.getWidth() / 2.f),
                         PropertyValuesHolder.ofFloat("pivotY", mTopCard.getHeight() / 2.f)
                 ).setDuration(250);
@@ -393,7 +396,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 }
                 break;
         }
-        mTopCard.setLayerType(View.LAYER_TYPE_NONE, null);
+        //mTopCard.setLayerType(View.LAYER_TYPE_NONE, null);
         return true;
     }
 
@@ -573,13 +576,14 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
                 mTopCard = getChildAt(getChildCount() - 2);
 
-                if (mTopCard != null)
-                    mAssignUICOmponentsForTopCard();
-
-                CardModel cardModel = (CardModel)getAdapter().getItem(getChildCount() - 1);
-
                 if(mTopCard != null)
+                {
+                    mAssignUICOmponentsForTopCard();
                     mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
+                }
+
+                CardModel cardModel = (CardModel) getAdapter().getItem(getChildCount() - 1);
+
 
                 if (cardModel.getOnCardDismissedListener() != null) {
                     if ( targetX > 0 ) {
@@ -595,7 +599,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
                         .setInterpolator(new LinearInterpolator())
                         .x(targetX)
                         .y(targetY)
-                        .rotation(Math.copySign(45, velocityX))
+                        //.rotation(Math.copySign(45, velocityX))
                         .setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
@@ -638,7 +642,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
                         ValueAnimator animator = ObjectAnimator.ofPropertyValuesHolder(mTopCard,
                                 PropertyValuesHolder.ofFloat("translationX", 0),
                                 PropertyValuesHolder.ofFloat("translationY", 0),
-                                PropertyValuesHolder.ofFloat("rotation", (float) Math.toDegrees(mRandom.nextGaussian() * DISORDERED_MAX_ROTATION_RADIANS)),
+                                //PropertyValuesHolder.ofFloat("rotation", (float) Math.toDegrees(mRandom.nextGaussian() * DISORDERED_MAX_ROTATION_RADIANS)),
                                 PropertyValuesHolder.ofFloat("pivotX", mTopCard.getWidth() / 2.f),
                                 PropertyValuesHolder.ofFloat("pivotY", mTopCard.getHeight() / 2.f)
                         ).setDuration(250);
@@ -663,7 +667,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
                         .setInterpolator(new LinearInterpolator())
                         .x(targetX)
                         .y(targetY)
-                        .rotation(Math.copySign(45, velocityY))
+                        //.rotation(Math.copySign(45, velocityY))
                         .setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {

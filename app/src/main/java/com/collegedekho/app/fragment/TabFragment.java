@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamDetailAdapter;
-import com.collegedekho.app.display.ZoomPageTransformer;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.listener.OnSwipeTouchListener;
