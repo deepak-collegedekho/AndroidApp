@@ -331,7 +331,8 @@ public class Constants
     public static final String OTP_INTENT_FILTER = "com.cld.user.otp.filter";
     public static final String OTP_BODY = "Dear User,\nYour OTP for college app verification is-";
     public static final String OTP_CODE = "code";
-
+    public static final String OTP_VERIFICATION = "otp_verification";
+    public static final String ACTION_OTP_VERIFIED = "action_otp_verified";
 
 
     //String messages

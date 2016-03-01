@@ -227,9 +227,9 @@ public class ProfileFragment extends BaseFragment
         if(MainActivity.user != null)
         {
             String name = MainActivity.user.getName();
-            if(name.contains("Anonymous User"))
+            if(name!=null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()))
             {
-                if(MainActivity.user.profileData[0] != null && !MainActivity.user.profileData[0].equals(Constants.ANONYMOUS_USER))
+                if(MainActivity.user.profileData[0] != null && !MainActivity.user.profileData[0].equalsIgnoreCase(Constants.ANONYMOUS_USER))
                 {
                     mProfileName.setText(MainActivity.user.profileData[0]);
                     mProfileName.setVisibility(View.VISIBLE);

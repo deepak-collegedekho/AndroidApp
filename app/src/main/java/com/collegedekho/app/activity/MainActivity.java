@@ -2848,7 +2848,7 @@ private boolean isUpdateStreams;
             if (user.getEmail().contains("@anonymouscollegedekho.com"))
                 email = user.getPrimaryEmail();
 
-            if (name== null || name.isEmpty() || name.contains(Constants.ANONYMOUS_USER) ||
+            if (name== null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()) ||
                     phone == null || phone.length() <= 6 ||
                     email == null || email.contains("@anonymouscollegedekho.com")) {
                 final View view = getLayoutInflater().inflate(R.layout.dialog_apply, null, false);
@@ -4833,7 +4833,7 @@ private void onNotPreparingEducationResponse(String response){
             user.setPrimaryEmail(tempuser.getPrimaryEmail());
             user.setPrimaryPhone(tempuser.getPrimaryPhone());
             String userName=tempuser.getName();
-            if(userName!=null && !userName.trim().matches("")&& !userName.equals(Constants.ANONYMOUS_USER)) {
+            if(userName!=null && !userName.trim().matches("")&& !userName.equalsIgnoreCase(Constants.ANONYMOUS_USER)) {
                 user.setName(userName);
                 user.profileData[0]=userName;
             }
@@ -5586,9 +5586,28 @@ private void onNotPreparingEducationResponse(String response){
                 MainActivity.user.setIs_otp_verified(1);
                 String u = JSON.std.asString(MainActivity.user);
                 this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+
+                MainActivity.GATrackerEvent(Constants.OTP_VERIFICATION, Constants.ACTION_OTP_VERIFIED,
+                        "Success");
+
+                this.connecto.track(Constants.ACTION_OTP_VERIFIED, new Properties().putValue(Constants.ACTION_OTP_VERIFIED, "Success"));
+
+                //Appsflyer events
+                Map<String, Object> eventValue = new HashMap<>();
+                eventValue.put(Constants.ACTION_OTP_VERIFIED, "Success");
+
+                MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_OTP_VERIFIED, eventValue);
+
                 onBackPressed();
             }else {
                 if(currentFragment!=null &&  currentFragment instanceof OTPVerificationFragment){
+                    MainActivity.GATrackerEvent(Constants.OTP_VERIFICATION, Constants.ACTION_OTP_VERIFIED,
+                            "Failed");
+                    this.connecto.track(Constants.ACTION_OTP_VERIFIED, new Properties().putValue(Constants.ACTION_OTP_VERIFIED, "Failed"));
+                    //Appsflyer events
+                    Map<String, Object> eventValue = new HashMap<>();
+                    eventValue.put(Constants.ACTION_OTP_VERIFIED, "Failed");
+                    MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_OTP_VERIFIED, eventValue);
                     ((OTPVerificationFragment)currentFragment).onInvalidOtp();
                 }
             }
