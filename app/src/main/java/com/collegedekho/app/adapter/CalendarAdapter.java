@@ -136,7 +136,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             holder.monthView.setVisibility(View.VISIBLE);
 
         } else {
-            holder.monthView.setVisibility(View.INVISIBLE);
+            holder.monthView.setVisibility(View.GONE);
         }
 
         String key=mYearCalendar.get(day_key);
@@ -166,9 +166,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         }
         holder.dateView.setTag(key);
         String dateString=String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
-        if(dateString.length()<2){
-            dateString="0"+dateString;
-        }
         holder.dateView.setText(dateString);
         if (position==selectedPosition && key!=null){
             holder.view.setCardBackgroundColor(0xffcccccc);

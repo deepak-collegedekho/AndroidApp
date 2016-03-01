@@ -134,7 +134,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
             holder.monthView.setVisibility(View.VISIBLE);
 
         } else {
-            holder.monthView.setVisibility(View.INVISIBLE);
+            holder.monthView.setVisibility(View.GONE);
         }
 
         if (isActiveCell) {
@@ -177,9 +177,6 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
         }
         holder.dateView.setTag(day_key);
         String dateString=String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
-        if(dateString.length()<2){
-            dateString="0"+dateString;
-        }
         holder.dateView.setText(dateString);
     }
 
