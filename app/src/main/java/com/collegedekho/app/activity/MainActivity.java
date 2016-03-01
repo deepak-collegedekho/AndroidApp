@@ -840,7 +840,7 @@ public class MainActivity extends AppCompatActivity
 
         }else{
              disconnectFromFacebook();
-             MainActivity.this.mDisplayFragment(LoginFragment.newInstance(), false, Constants.TAG_FRAGMENT_LOGIN);
+             MainActivity.this.mDisplayLoginFragment();
         }
 
         }else {
@@ -1365,6 +1365,47 @@ public class MainActivity extends AppCompatActivity
         {
             if(currentFragment instanceof  LoginFragment || currentFragment instanceof LoginFragment1)
                 currentFragment.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void mDisplayLoginFragment() {
+        LoginFragment fragment= LoginFragment.newInstance();
+        try {
+            if (this.getCurrentFocus() != null && this.getCurrentFocus() instanceof EditText) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+
+            this.currentFragment = fragment;
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+            fragmentTransaction.replace(R.id.container, fragment, Constants.TAG_FRAGMENT_LOGIN);
+
+            fragmentTransaction.commitAllowingStateLoss();
+
+        } catch (Exception e) {
+            Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
+        }
+        finally {
+            //Send GA Session
+            MainActivity.GAScreenEvent(Constants.TAG_FRAGMENT_LOGIN);
+
+            //Appsflyer events
+            HashMap<String, Object> eventValue = new HashMap<String, Object>();
+
+            eventValue.put(Constants.SCREEN_NAME, Constants.TAG_FRAGMENT_LOGIN);
+            eventValue.put(Constants.LAST_SCREEN_NAME, this.mLastScreenName);
+            eventValue.put(Constants.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS, new Date().getTime() - this.mTimeScreenClicked.getTime());
+
+            this.mTimeScreenClicked = new Date();
+
+            this.mLastScreenName = Constants.TAG_FRAGMENT_LOGIN;
+
+            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_SCREEN_SELECTED, eventValue);
+            this.connecto.track(Constants.ACTION_SCREEN_SELECTED, new Properties().putValue(Constants.SCREEN_NAME, Constants.TAG_FRAGMENT_LOGIN).putValue(Constants.LAST_SCREEN_NAME, this.mLastScreenName).putValue(Constants.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS, new Date().getTime() - this.mTimeScreenClicked.getTime()));
         }
     }
 
@@ -5376,10 +5417,11 @@ private void onNotPreparingEducationResponse(String response){
     }
 
     private void restartApplication() {
-        Intent appIntent = getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage(getBaseContext().getPackageName());
-        appIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(appIntent);
+        loadInItData();
+//        Intent appIntent = getBaseContext().getPackageManager()
+//                .getLaunchIntentForPackage(getBaseContext().getPackageName());
+//        appIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        startActivity(appIntent);
     }
 
     private void getUserPermissions(){
