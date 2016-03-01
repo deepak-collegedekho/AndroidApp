@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -311,8 +312,13 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                 this.mListener.OnCDRecommendedLoadUndecidedInstitutes(this.mNextUrl);
             else
             {
-                if(this.mUndecidedCount > 1)
-                    this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
+                if(this.mUndecidedCount > 1){
+                    new Handler().postDelayed(new Runnable() {
+                        public void run() {
+                            sendRequestForUndecided();
+                        }
+                    }, 300);
+                }
 
                 this.mEmptyTextView.setVisibility(View.VISIBLE);
                 this.mCardContainer.setVisibility(View.GONE);
@@ -329,9 +335,14 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             if (this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null"))
                 this.mListener.OnCDRecommendedLoadUndecidedInstitutes(this.mNextUrl);
             else{
-                if(this.mUndecidedCount > 1)
-                    this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
 
+                if(this.mUndecidedCount > 1){
+                    new Handler().postDelayed(new Runnable() {
+                        public void run() {
+                            sendRequestForUndecided();
+                        }
+                    }, 300);
+                }
                 this.mEmptyTextView.setVisibility(View.VISIBLE);
                 this.mCardContainer.setVisibility(View.GONE);
             }
@@ -361,6 +372,12 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     @Override
     public void OnShowMessage(String message) {
         this.mEmptyTextView.setText(message);
+    }
+
+    private void sendRequestForUndecided(){
+        if(mListener != null)
+            this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
+
     }
 
     private void mRemoveInstituteFromList()
