@@ -10,6 +10,7 @@ import com.collegedekho.app.display.swipableList.model.CardModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Vector;
 
 public abstract class CardStackAdapter extends BaseCardStackAdapter {
 	private final Context mContext;
@@ -18,19 +19,19 @@ public abstract class CardStackAdapter extends BaseCardStackAdapter {
 	 * Lock used to modify the content of {@link #mData}. Any write operation
 	 * performed on the deque should be synchronized on this lock.
 	 */
-	private final Object mLock = new Object();
-	private ArrayList<CardModel> mData;
+//	private final Object mLock = new Object();
+	private Vector<CardModel> mData;
 
     private boolean mShouldFillCardBackground = false;
 
     public CardStackAdapter(Context context) {
 		mContext = context;
-		mData = new ArrayList<CardModel>();
+		mData = new Vector<>();
 	}
 
 	public CardStackAdapter(Context context, Collection<? extends CardModel> items) {
 		mContext = context;
-		mData = new ArrayList<CardModel>(items);
+		mData = new Vector<>(items);
 	}
 
 	@Override
@@ -42,21 +43,23 @@ public abstract class CardStackAdapter extends BaseCardStackAdapter {
 		if (wrapper == null) {
 			wrapper = new FrameLayout(mContext);
 			//wrapper.setBackgroundResource(R.drawable.card_bg);
-			if (shouldFillCardBackground()) {
+			/*if (shouldFillCardBackground()) {
 				innerWrapper = new FrameLayout(mContext);
 				innerWrapper.setBackgroundColor(mContext.getResources().getColor(R.color.card_bg));
 				wrapper.addView(innerWrapper);
 			} else {
 				innerWrapper = wrapper;
-			}
+			}*/
+			innerWrapper = wrapper;
 			cardView = getCardView(position, getCardModel(position), null, parent);
 			innerWrapper.addView(cardView);
 		} else {
-			if (shouldFillCardBackground()) {
+			/*if (shouldFillCardBackground()) {
 				innerWrapper = (FrameLayout) wrapper.getChildAt(0);
 			} else {
 				innerWrapper = wrapper;
-			}
+			}*/
+            innerWrapper = wrapper;
 			cardView = innerWrapper.getChildAt(0);
 			convertedCardView = getCardView(position, getCardModel(position), cardView, parent);
 			if (convertedCardView != cardView) {
@@ -79,26 +82,25 @@ public abstract class CardStackAdapter extends BaseCardStackAdapter {
     }
 
     public void add(CardModel item) {
-		synchronized (mLock) {
 			mData.add(item);
-		}
+		notifyDataSetChanged();
+	}
+
+	public void addAll(ArrayList<CardModel> item) {
+			mData.addAll(item);
 		notifyDataSetChanged();
 	}
 
 	public CardModel pop() {
 		CardModel model;
-		synchronized (mLock) {
 			model = mData.remove(mData.size() - 1);
-		}
 		notifyDataSetChanged();
 		return model;
 	}
 
 	public void clear()
 	{
-		synchronized (mLock) {
 			mData.clear();
-		}
 		notifyDataSetChanged();
 	}
 
@@ -108,9 +110,7 @@ public abstract class CardStackAdapter extends BaseCardStackAdapter {
 	}
 
 	public CardModel getCardModel(int position) {
-		synchronized (mLock) {
 			return mData.get(mData.size() - 1 - position);
-		}
 	}
 
 	@Override

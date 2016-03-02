@@ -37,7 +37,7 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
         if(convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.card_recommended_institute, parent, false);
-            assert convertView != null;
+//            assert convertView != null;
         }
 
         this.mParseAndPopulateCards(model, convertView);

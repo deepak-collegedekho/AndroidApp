@@ -210,9 +210,9 @@ public class CardContainer extends AdapterView<ListAdapter> {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        int requestedWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
-        int requestedHeight = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
-        int childWidth, childHeight;
+        //int requestedWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
+        //int requestedHeight = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
+        //int childWidth, childHeight;
 
         /*if (mOrientation == Orientations.OrientationType.Disordered) {
             int R1, R2;
@@ -230,16 +230,15 @@ public class CardContainer extends AdapterView<ListAdapter> {
             childHeight = requestedHeight;
         }*/
 
-        childWidth = requestedWidth - 100;
-        childHeight = requestedHeight - 40;
+        //childWidth = requestedWidth - 100;
+        //childHeight = requestedHeight - 40;
 
         int childWidthMeasureSpec, childHeightMeasureSpec;
-        childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST);
-        childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST);
+        childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - 100, MeasureSpec.AT_MOST);
+        childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(getMeasuredHeight() - getPaddingLeft() - getPaddingRight() - 40, MeasureSpec.AT_MOST);
 
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
-            assert child != null;
             child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
         }
     }
@@ -276,8 +275,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
         final float x, y;
         final float dx, dy;
         mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
-        Log.e("CardContainer", mTopCard.isHardwareAccelerated() ? "it is Hardware Accelerated" : "it is not Hardware Accelerated");
-        Log.e("CardContainer", mTopCard.toString());
+        //Log.e("CardContainer", mTopCard.isHardwareAccelerated() ? "it is Hardware Accelerated" : "it is not Hardware Accelerated");
+        //Log.e("CardContainer", mTopCard.toString());
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mTopCard.getHitRect(childRect);
@@ -556,7 +555,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
     private class GestureListener extends SimpleOnGestureListener {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            Log.d("Fling", "Fling with " + velocityX + ", " + velocityY);
+            //Log.d("Fling", "Fling with " + velocityX + ", " + velocityY);
             final View topCard = mTopCard;
             float dx = e2.getX() - e1.getX();
             float dy = e2.getY() - e1.getY();

@@ -76,12 +76,12 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_recommended_institute_listing, container, false);
 
-        this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE, false);
         this.mCardContainer = (CardContainer) rootView.findViewById(R.id.layoutview);
         this.mUndecidedCountTV = (TextView)rootView.findViewById(R.id.fragment_recommended_institute_undecided_count);
         this.mPageTitleTV = (TextView)rootView.findViewById(R.id.recommended_page_title);
 
         rootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
+        rootView.findViewById(R.id.recommended_tute_frame).setOnClickListener(this);
         Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count - ", "", Constants.ANIM_SHORT_DURATION);
 
         this.mEmptyTextView = (TextView)rootView.findViewById(android.R.id.empty);
@@ -242,10 +242,15 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         View view =  getView();
         if(view != null ){
             view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            if(!IS_TUTE_COMPLETED)
+            this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE, false);
+            if(!IS_TUTE_COMPLETED) {
                 view.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);
-            else
+                view.findViewById(R.id.recommended_tute_frame).setVisibility(View.VISIBLE);
+            }
+            else {
                 view.findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
+                view.findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
+            }
         }
     }
 
@@ -257,6 +262,10 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                 this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
                 break;
             case R.id.recommended_tute_image:
+                v.setVisibility(View.GONE);
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE, true).apply();
+                break;
+            case R.id.recommended_tute_frame:
                 v.setVisibility(View.GONE);
                 getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE, true).apply();
                 break;
