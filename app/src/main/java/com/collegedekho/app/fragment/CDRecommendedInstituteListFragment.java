@@ -62,7 +62,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-                      super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mInstitutes = this.getArguments().getParcelableArrayList(ARG_INSTITUTE);
             this.mTitle = this.getArguments().getString(ARG_TITLE);
@@ -104,11 +104,28 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         if (this.mParseCardAsyncTask == null)
         {
             this.mParseCardAsyncTask = new ParseCardAsyncTask();
-            this.mParseCardAsyncTask.execute(this.mInstitutes);
+            if (this.mInstitutes.size() > 4)
+            {
+                ArrayList<Institute> tempInstitues;
+
+                tempInstitues = new ArrayList<>();
+                tempInstitues.add(this.mInstitutes.remove(0));
+                tempInstitues.add(this.mInstitutes.remove(1));
+
+                this.mParseCardAsyncTask.execute(tempInstitues);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        CDRecommendedInstituteListFragment.this.mAddCardInAdapter(CDRecommendedInstituteListFragment.this.mInstitutes);
+                    }
+                }, 500);
+            }
+            else
+                this.mParseCardAsyncTask.execute(this.mInstitutes);
         }
         else
             this.mAddCardInAdapter(this.mInstitutes);
-
 
         this.mCardContainer.setAdapter(this.mAdapter);
         this.mUndecidedCountTV.setOnClickListener(this);
