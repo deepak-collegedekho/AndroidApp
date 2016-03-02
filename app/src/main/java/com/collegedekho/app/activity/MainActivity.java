@@ -1108,13 +1108,31 @@ public class MainActivity extends AppCompatActivity
         try {
             //Suggesting System that its a good time to do GC
             System.gc();
-            this.showProgressDialog("Rendering institutes cards..");
+            this.hideProgressDialog();
+            final ProgressDialog progress = new ProgressDialog(this);
+            progress.setCancelable(false);
+            progress.setMessage("Rendering institutes cards..");
+            progress.setIndeterminate(true);
+            progress.show();
             String val = this.extractResults(response);
 
             this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
 
             if(!isHavingNextUrl)
                 next = null;
+            int time = 1000;
+            if (mInstituteList.size() > 5) {
+                time = (150 * mInstituteList.size());
+            }
+
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (progress != null && progress.isShowing())
+                        progress.dismiss();
+                }
+            }, time);
 
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
 
@@ -1375,10 +1393,6 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayLoginFragment() {
         LoginFragment fragment= LoginFragment.newInstance();
         try {
-            if (this.getCurrentFocus() != null && this.getCurrentFocus() instanceof EditText) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            }
 
             this.currentFragment = fragment;
 
@@ -1415,13 +1429,14 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplayFragment(Fragment fragment, boolean addToBackstack, String tag) {
         try {
-            if (this.getCurrentFocus() != null && this.getCurrentFocus() instanceof EditText) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            }
 
             this.currentFragment = (BaseFragment)fragment;
-
+            if(!(currentFragment instanceof OTPVerificationFragment)){
+                if (this.getCurrentFocus() != null && this.getCurrentFocus() instanceof EditText) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -1868,6 +1883,24 @@ private boolean isUpdateStreams;
                 }
                 break;
             case Constants.TAG_LOAD_UNDECIDED_INSTITUTE:
+                if(tags.length == 3){
+
+                }
+                if (tags.length == 2)
+                {
+                    ++this.mUndecidedCount;
+                    this.mUpdateUndecidedCount(this.mUndecidedCount, false);
+                    this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.UNDECIDED);
+                    parentIndex = tags[1];
+                    if (parentIndex.equals("true"))
+                        this.OnCDRecommendedLoadNext("");
+                }
+                else if (tags.length == 1)
+                {
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNDECIDED);
+                }
+                break;
+
             case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 if(tags.length == 3){
@@ -1988,6 +2021,8 @@ private boolean isUpdateStreams;
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }catch (Exception e){
+
         }
     }
 
@@ -2462,6 +2497,7 @@ private boolean isUpdateStreams;
             case Constants.TAG_LOAD_USER_PREFERENCES_N_BACK:
             case Constants.TAG_PSYCHOMETRIC_RESPONSE:
             case Constants.TAG_EDIT_EDUCATION_DETAILS_SUBMIT:
+            case Constants.TAG_UPDATE_VIDEO_TITLE:
                 return "Loading....";
             case Constants.TAG_USER_REGISTRATION :
                 return "Creating User Please Wait";
@@ -3036,6 +3072,9 @@ private boolean isUpdateStreams;
             progressDialog.setMessage(message);
             progressDialog.setIndeterminate(true);
         } else {
+            if(progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
             progressDialog.setMessage(message);
         }
         progressDialog.show();
@@ -4735,6 +4774,7 @@ private void onNotPreparingEducationResponse(String response){
 
     private List<VideoEntry> videoList;
     private InstituteVideosFragment videosFragment;
+
     @Override
     public void onUpdate(List<VideoEntry> videoList, String url, InstituteVideosFragment fragment) {
         videosFragment=fragment;

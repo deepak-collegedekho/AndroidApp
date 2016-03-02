@@ -91,14 +91,28 @@ public class InstituteVideosFragment extends BaseFragment {
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         videosRecycler.setLayoutManager(layoutManager);
-        if (videoIdList != null && !videoIdList.isEmpty()) {
-            titleListener.onUpdate(videoList, url, this);
-        }
+//        if (videoIdList != null && !videoIdList.isEmpty()) {
+//            titleListener.onUpdate(videoList, url, this);
+//        }
         videoListAdapter = new VideoListAdapter(getActivity(), videoList);
         videosRecycler.setAdapter(videoListAdapter);
         checkYouTubeApi();
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser){
+            if (videoIdList != null && !videoIdList.isEmpty()) {
+                try {
+                    if (videoList.get(0).getViewCount().equals("0"))
+                        titleListener.onUpdate(videoList, url, this);
+                }catch (Exception e){
+
+                }
+            }
+        }
+    }
 
     private void checkYouTubeApi() {
         YouTubeInitializationResult errorReason =

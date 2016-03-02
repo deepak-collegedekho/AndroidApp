@@ -38,6 +38,7 @@ import java.util.HashMap;
 public class ProfileEditFragment extends BaseFragment {
 
     ViewPager profilePager;
+    int currentPosition=0;
     public ProfileEditFragment() {
         // required empty constructor
     }
@@ -78,13 +79,6 @@ public class ProfileEditFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ArrayList<Exam>examsList=new ArrayList<>();
-        for (int i=0;i<10;i++){
-            Exam exam=new Exam();
-            exam.setExam_name("Test "+i);
-            examsList.add(exam);
-        }
-
     }
 
     @Override
@@ -93,7 +87,7 @@ public class ProfileEditFragment extends BaseFragment {
         try {
             MainActivity activity = (MainActivity) getActivity();
             activity.showOverflowMenu(true);
-
+            currentPosition=profilePager.getCurrentItem();
         } catch (ClassCastException e) {
             e.printStackTrace();
         }
@@ -106,7 +100,7 @@ public class ProfileEditFragment extends BaseFragment {
             MainActivity activity = (MainActivity) getActivity();
             activity.init();
             activity.showOverflowMenu(false);
-
+            activity.currentFragment=this;
             ArrayList<String>titleList=new ArrayList<>();
             titleList.add("About");
             titleList.add("Education");
@@ -116,7 +110,7 @@ public class ProfileEditFragment extends BaseFragment {
             titleList.add("Streams");
             ProfilePagerAdapter adapter=new ProfilePagerAdapter(getChildFragmentManager(),titleList.size(),titleList);
             profilePager.setAdapter(adapter);
-
+            profilePager.setCurrentItem(currentPosition);
         } catch (ClassCastException e) {
             e.printStackTrace();
         }

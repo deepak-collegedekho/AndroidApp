@@ -31,7 +31,6 @@ public class OTPReceiver extends BroadcastReceiver {
                         if(body!=null && body.startsWith(Constants.OTP_BODY)){
                             otp=body.replace(Constants.OTP_BODY,"").trim();
                         }else {
-                            Log.e("DEBUG",body);
                             return;
                         }
                         if (otp!=null && !otp.matches("") && otp.length()>0) {

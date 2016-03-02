@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -32,7 +33,7 @@ public class OTPVerificationFragment extends BaseFragment {
     private EditText edtMobileNumber, edtOTP;
     private CheckBox cbTerms;
     private OTPVerificationListener mListener;
-
+    InputMethodManager imm;
     public static OTPVerificationFragment newInstance() {
 
         Bundle args = new Bundle();
@@ -67,6 +68,7 @@ public class OTPVerificationFragment extends BaseFragment {
         btnResendOtp.setOnClickListener(this);
         btnTerms = (TextView) view.findViewById(R.id.txt_terms);
         btnTerms.setOnClickListener(this);
+        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 //        btnTerms.setMovementMethod(LinkMovementMethod.getInstance());
 //        String text = "<a href='https://m.collegedekho.com/terms-and-conditions/'> terms and conditions </a>";
 //        btnTerms.setText(Html.fromHtml(text));
@@ -77,6 +79,9 @@ public class OTPVerificationFragment extends BaseFragment {
         edtOTP.addTextChangedListener(otpWatcher);
         cbTerms = (CheckBox) view.findViewById(R.id.cb_terms);
         edtMobileNumber.requestFocus();
+//        if(imm!=null)
+//        imm.showSoftInput(edtMobileNumber, InputMethodManager.SHOW_IMPLICIT);
+
     }
 
     @Override
@@ -204,9 +209,17 @@ public class OTPVerificationFragment extends BaseFragment {
     };
 
     public void displayOTPLayout() {
+        edtMobileNumber.clearFocus();
         mobileNumberLayout.setVisibility(View.GONE);
         otpLayout.setVisibility(View.VISIBLE);
         edtOTP.requestFocus();
+        if(imm!=null) {
+            try {
+                imm.showSoftInput(getView().findViewById(R.id.edt_otp_number), InputMethodManager.SHOW_IMPLICIT);
+            }catch (Exception e){
+
+            }
+        }
     }
 
     public void onInvalidOtp() {

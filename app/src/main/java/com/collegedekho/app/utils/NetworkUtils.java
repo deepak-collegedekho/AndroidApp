@@ -136,8 +136,10 @@ public class NetworkUtils {
     }
 
     public void simpleGetData(@Nullable final String tag, final String url) {
-        simpleGetData(tag, url, Request.Method.GET);
+        ((MainActivity)mContext).showProgressDialog(MainActivity.GetPersonalizedMessage(tag));
+            simpleGetData(tag, url, Request.Method.GET);
     }
+
     public void simpleGetData(@Nullable final String tag, final String url, final int method) {
         final Calendar calendar = Calendar.getInstance();
         StringRequest request = new StringRequest(method, url,
@@ -146,6 +148,7 @@ public class NetworkUtils {
                     public void onResponse(String response) {
                         Utils.logApiResponseTime(calendar, tag + " " + url);
                         mListener.onDataLoaded(tag, response);
+                        ((MainActivity)mContext).hideProgressDialog();
                     }
                 },
                 new Response.ErrorListener() {
@@ -153,17 +156,20 @@ public class NetworkUtils {
                     public void onErrorResponse(VolleyError error) {
                         Utils.logApiResponseTime(calendar, tag + " " + url);
                         Crashlytics.logException(error);
+                        try {
+                            String json = null;
+                            NetworkResponse response = error.networkResponse;
+                            if (response != null && response.data != null) {
+                                json = new String(response.data);
+                                json = trimMessage(json, "detail");
+                            }
+                            if (json != null)
+                                mListener.onError(tag, Constants.SERVER_FAULT, url, null, method);
+                            else
+                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, null, method);
+                        } catch (Exception e) {
 
-                        String json = null;
-                        NetworkResponse response = error.networkResponse;
-                        if (response != null && response.data != null) {
-                            json = new String(response.data);
-                            json = trimMessage(json, "detail");
                         }
-                        if (json != null)
-                            mListener.onError(tag, Constants.SERVER_FAULT, url, null, method);
-                        else
-                            mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, null, method);
                     }
                 }) {
         };

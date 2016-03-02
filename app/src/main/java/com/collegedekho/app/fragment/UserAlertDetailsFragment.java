@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,7 +14,6 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.adapter.CalendarAdapter;
 import com.collegedekho.app.adapter.UserAlertItemDescriptionAdapter;
 import com.collegedekho.app.adapter.UserAlertsMonthAdapter;
-import com.collegedekho.app.display.CustomGridLayoutManager;
 import com.collegedekho.app.entities.MyAlertDateDescription;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class UserAlertDetailsFragment extends BaseFragment implements UserAlerts
     // current displayed month
     private Calendar currentDate;
     private LinearLayout.LayoutParams params;
-    private CustomGridLayoutManager calendarLayoutManager;
+    private GridLayoutManager calendarLayoutManager;
     private LinearLayoutManager detailsLayoutManager;
     LinkedHashMap<String, String> yearCalendar;
     private static CalendarAdapter.OnCalendarItemSelectListener mListener;
@@ -85,7 +85,7 @@ public class UserAlertDetailsFragment extends BaseFragment implements UserAlerts
         super.onViewCreated(view, savedInstanceState);
         calendarRecyclerView = (RecyclerView) view.findViewById(R.id.calendar_recycler);
         detailsRecyclerView = (RecyclerView) view.findViewById(R.id.calendar_details_recycler);
-        calendarLayoutManager = new CustomGridLayoutManager(getActivity(), 7);
+        calendarLayoutManager = new GridLayoutManager(getActivity(), 7);
         detailsLayoutManager = new LinearLayoutManager(getActivity());
         detailsLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         detailsRecyclerView.setLayoutManager(detailsLayoutManager);
