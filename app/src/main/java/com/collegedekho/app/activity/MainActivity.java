@@ -425,7 +425,7 @@ public class MainActivity extends AppCompatActivity
         setupOtpRequest(true);
     }
 
-   @Override
+    @Override
     public void onGifCompleted() {
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -831,17 +831,17 @@ public class MainActivity extends AppCompatActivity
                 Manifest.permission.RECEIVE_SMS)
                 == PackageManager.PERMISSION_GRANTED) {
             getSupportLoaderManager().initLoader(0, null, this);
-        if (IS_USER_CREATED) {
-            // if user is anonymous  then logout from facebook
-            if(user.is_anony())
+            if (IS_USER_CREATED) {
+                // if user is anonymous  then logout from facebook
+                if(user.is_anony())
+                    disconnectFromFacebook();
+
+                this.mLoadUserStatusScreen();
+
+            }else{
                 disconnectFromFacebook();
-
-            this.mLoadUserStatusScreen();
-
-        }else{
-             disconnectFromFacebook();
-             MainActivity.this.mDisplayLoginFragment();
-        }
+                MainActivity.this.mDisplayLoginFragment();
+            }
 
         }else {
             getUserPermissions();
@@ -921,8 +921,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-    * This mthod used to show user profile fragment UI
-    */
+     * This mthod used to show user profile fragment UI
+     */
     private void mPofileEditFragment()
     {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileEditFragment.class.getSimpleName());
@@ -977,7 +977,7 @@ public class MainActivity extends AppCompatActivity
             this.mClearBackStack();
             this.mDisplayFragment(StreamFragment.newInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
 //                displayOTPAlert(this);
-                requestOtp();
+            requestOtp();
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -990,7 +990,7 @@ public class MainActivity extends AppCompatActivity
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
             this.mDisplayFragment(StreamFragment.newEditableInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
 //                displayOTPAlert(this);
-                requestOtp();
+            requestOtp();
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1155,19 +1155,19 @@ public class MainActivity extends AppCompatActivity
                 }
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
 
-            if (fragment == null) {
-                this.mDisplayFragment(CDRecommendedInstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, this.mUndecidedCount), !isFromNotification, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
-            } else {
-                if (fragment instanceof CDRecommendedInstituteListFragment) {
-                    if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED)
-                        ((CDRecommendedInstituteListFragment) fragment).showUndecidedInstitutes(this.mInstituteList, next);
-                    else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED)
-                        ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next);
-                }
+                if (fragment == null) {
+                    this.mDisplayFragment(CDRecommendedInstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, this.mUndecidedCount), !isFromNotification, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
+                } else {
+                    if (fragment instanceof CDRecommendedInstituteListFragment) {
+                        if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED)
+                            ((CDRecommendedInstituteListFragment) fragment).showUndecidedInstitutes(this.mInstituteList, next);
+                        else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED)
+                            ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next);
+                    }
 
-                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
+                    this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
+                }
             }
-        }
             if (MainActivity.user.getPartner_shortlist_count() > 0) {
                 requestOtp();
             }
@@ -1186,7 +1186,7 @@ public class MainActivity extends AppCompatActivity
                 this.mFilterCount = this.mFilterKeywords.size();
 
             if(!isHavingNextUrl)
-              next = null;
+                next = null;
 
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
 
@@ -1204,7 +1204,7 @@ public class MainActivity extends AppCompatActivity
             if(listType==Constants.SHORTLIST_TYPE){
                 if(MainActivity.user.getPartner_shortlist_count()>0) {
 //                    displayOTPAlert(this);
-                requestOtp();
+                    requestOtp();
                 }
             }
         } catch (IOException e) {
@@ -1497,7 +1497,7 @@ public class MainActivity extends AppCompatActivity
         }
         invalidateOptionsMenu();
     }
-private boolean isUpdateStreams;
+    private boolean isUpdateStreams;
     @Override
     public void onDataLoaded(String tag, String response) {
         String extraTag = null;
@@ -1814,10 +1814,10 @@ private boolean isUpdateStreams;
                 break;
 
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
-                    this.mDisplayStreamsSelection(response, false);
+                this.mDisplayStreamsSelection(response, false);
                 break;
             case Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM:
-                    this.mDisplayStreamsEditSelection(response, true);
+                this.mDisplayStreamsEditSelection(response, true);
                 break;
             case Constants.TAG_PSYCHOMETRIC_TEXT_COMPLETED:
                 if (tags.length > 2) {
@@ -1851,7 +1851,7 @@ private boolean isUpdateStreams;
                 break;
             case Constants.PNS_INSTITUTES:
                 this.onPnsInstituteNews(response);
-                    break;
+                break;
             case Constants.PNS_ARTICLES:
                 this.onPnsArticles(response);
                 break;
@@ -1883,12 +1883,12 @@ private boolean isUpdateStreams;
                 if(tags.length == 3) {
                     this.mUpdateUndecidedCount(this.mUndecidedCount, true);
                 }  if (tags.length == 2)
-                {
-                    this.mUpdateUndecidedCount(this.mUndecidedCount, true);
-                    parentIndex = tags[1];
-                    if (parentIndex.equals("true"))
-                        this.OnCDRecommendedLoadNext("");
-                }
+            {
+                this.mUpdateUndecidedCount(this.mUndecidedCount, true);
+                parentIndex = tags[1];
+                if (parentIndex.equals("true"))
+                    this.OnCDRecommendedLoadNext("");
+            }
                 break;
             case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
                 this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.NOT_INERESTED);
@@ -2037,7 +2037,7 @@ private boolean isUpdateStreams;
                 }
                 this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
             }
-                this.currentFragment.updateExamSummary(examSummary );
+            this.currentFragment.updateExamSummary(examSummary );
             if(MainActivity.type!=null && !MainActivity.type.matches("") && MainActivity.resource_uri!=null && !MainActivity.resource_uri.matches("")){
                 mhandleNotifications();
             }
@@ -2124,7 +2124,7 @@ private boolean isUpdateStreams;
             this.mFilterKeywords = filterKeywords;
             this.mFilterCount = this.mFilterKeywords.size();
 
-                //save preferences.
+            //save preferences.
             getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.PROFILE_SCREEN_TUTE, true).apply();
             this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
 
@@ -2170,7 +2170,7 @@ private boolean isUpdateStreams;
         }
         catch (IOException e) {
             e.printStackTrace();
-       }
+        }
 
         //save the preferences locally
         MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
@@ -2278,7 +2278,7 @@ private boolean isUpdateStreams;
 
             //GA Event for institute liked neutralized
             MainActivity.GATrackerEvent(Constants.CATEGORY_QNA, Constants.ACTION_QNA_LIKING_UNBIASED,
-                            "qna title: " + qnaQuestion.getTitle() +
+                    "qna title: " + qnaQuestion.getTitle() +
                             "Disliked institute: " + String.valueOf(like));
 
         } else {
@@ -2725,7 +2725,7 @@ private boolean isUpdateStreams;
                         ((InstituteDetailFragment) currentFragment).updateInstituteShortlist();
                 break;
             }
-           case Constants.TAG_INSTITUTE_LIKE_DISLIKE: {
+            case Constants.TAG_INSTITUTE_LIKE_DISLIKE: {
                 if (tags.length >= 2)
                     extraTag = tags[1];
                 if (currentFragment instanceof InstituteListFragment) {
@@ -2783,7 +2783,7 @@ private boolean isUpdateStreams;
 //                .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
 //                    @Override
 //                    public void onClick(DialogInterface dialog, int which) {
-                        MainActivity.this.mOnCourseLevelSelected(/*which*/0, stream, streamName);
+        MainActivity.this.mOnCourseLevelSelected(/*which*/0, stream, streamName);
 //                        dialog.dismiss();
 //                    }
 //                })
@@ -2798,7 +2798,7 @@ private boolean isUpdateStreams;
 //                .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
 //                    @Override
 //                    public void onClick(DialogInterface dialog, int which) {
-                        MainActivity.this.mOnCourseLevelSelected(/*which*/0, stream, streamName,true);
+        MainActivity.this.mOnCourseLevelSelected(/*which*/0, stream, streamName,true);
 //                        dialog.dismiss();
 //                    }
 //                })
@@ -2809,7 +2809,7 @@ private boolean isUpdateStreams;
     private void mOnCourseLevelSelected(int level, String streamURI, String streamName) {
         this.mOnCourseLevelSelected(level, streamURI, streamName, false);
     }
-        private void mOnCourseLevelSelected(int level, String streamURI, String streamName,boolean isEdited) {
+    private void mOnCourseLevelSelected(int level, String streamURI, String streamName,boolean isEdited) {
         //get device id
         String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -2825,13 +2825,13 @@ private boolean isUpdateStreams;
 
         if (streamName != null || streamName != "")
             MainActivity.user.setStream_name(streamName);
-            if (!isEdited) {
-                this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, MainActivity.user.getResource_uri(), hashMap, Request.Method.PUT);
-            } else {
-                this.mMakeNetworkCall(Constants.TAG_SUBMIT_EDITED_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, MainActivity.user.getResource_uri(), hashMap, Request.Method.PUT);
+        if (!isEdited) {
+            this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, MainActivity.user.getResource_uri(), hashMap, Request.Method.PUT);
+        } else {
+            this.mMakeNetworkCall(Constants.TAG_SUBMIT_EDITED_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, MainActivity.user.getResource_uri(), hashMap, Request.Method.PUT);
 
-            }
-          }
+        }
+    }
 
     @Override
     public void onInstituteSelected(int position) {
@@ -3590,7 +3590,7 @@ private boolean isUpdateStreams;
             MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_QNA_QUESTION_ASKED, eventValue);
 
             if (currentFragment instanceof InstituteDetailFragment || currentFragment instanceof  QnAQuestionsListFragment)
-                 currentFragment.instituteQnAQuestionAdded(qnaQuestion);
+                currentFragment.instituteQnAQuestionAdded(qnaQuestion);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -3608,9 +3608,9 @@ private boolean isUpdateStreams;
     public ArrayList<QnAQuestions> parseAndReturnQnAList(String qnaString,boolean isNewList) {
         try {
             QnAQuestions qnaQuestion;
-                if(isNewList){
-                    mQnAQuestions.clear();
-                }
+            if(isNewList){
+                mQnAQuestions.clear();
+            }
             JSONObject qnaResult = new JSONObject(qnaString);
             next = qnaResult.getString("next");
             JSONArray resultArray = qnaResult.getJSONArray("results");
@@ -3846,26 +3846,26 @@ private boolean isUpdateStreams;
         try {
             MainActivity.user = JSON.std.beanFrom(User.class, json);
             this.networkUtils.setToken(user.getToken());
-           if (tempUser != null){
+            if (tempUser != null){
                 MainActivity.user.setImage(tempUser.getImage());
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
                 MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
                 MainActivity.user.profileData = tempUser.profileData;
-               if(MainActivity.user.getPreference_uri()==null) {
-                   //get device id
-                   String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-                   HashMap<String, String> hashMap = new HashMap<>();
-                   hashMap.put(Constants.USER_DEVICE_ID, deviceId);
-                   //get user email id from play store
-                   if (user.profileData[1] != null)
-                   {
-                       user.setEmail(user.profileData[1]);
-                       hashMap.put(Constants.USER_EMAIL, user.profileData[1]);
-                   }
-                   this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#"+Constants.ANONYMOUS_USER, Constants.BASE_URL + "preferences/", hashMap);
-               }else{
-                   MainActivity.user.setResource_uri(MainActivity.user.getPreference_uri());
-               }
+                if(MainActivity.user.getPreference_uri()==null) {
+                    //get device id
+                    String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+                    HashMap<String, String> hashMap = new HashMap<>();
+                    hashMap.put(Constants.USER_DEVICE_ID, deviceId);
+                    //get user email id from play store
+                    if (user.profileData[1] != null)
+                    {
+                        user.setEmail(user.profileData[1]);
+                        hashMap.put(Constants.USER_EMAIL, user.profileData[1]);
+                    }
+                    this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#"+Constants.ANONYMOUS_USER, Constants.BASE_URL + "preferences/", hashMap);
+                }else{
+                    MainActivity.user.setResource_uri(MainActivity.user.getPreference_uri());
+                }
                 MainActivity.user.profileData = tempUser.profileData;
             }
             MainActivity.user.setPref(this.userPref);
@@ -4053,29 +4053,29 @@ private boolean isUpdateStreams;
     }
 
     private void onUpdateUserExams(String response) throws IOException{
-            this.mUserExamsList = JSON.std.listOfFrom(ExamDetail.class, extractResults(response));
-            MainActivity.user.setUser_exams(new ArrayList<>(mUserExamsList));
-            MainActivity.user.setExams_set(1);
-            String u = JSON.std.asString(MainActivity.user);
-            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
-            Map<String, Object> eventValue = new HashMap<String, Object>();
-            String[] examNames = new String[this.mUserExamsList.size()];
-            for (int n = 0; n < this.mUserExamsList.size(); n++)
-            {
-                ExamDetail examDetail = this.mUserExamsList.get(n);
+        this.mUserExamsList = JSON.std.listOfFrom(ExamDetail.class, extractResults(response));
+        MainActivity.user.setUser_exams(new ArrayList<>(mUserExamsList));
+        MainActivity.user.setExams_set(1);
+        String u = JSON.std.asString(MainActivity.user);
+        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+        Map<String, Object> eventValue = new HashMap<String, Object>();
+        String[] examNames = new String[this.mUserExamsList.size()];
+        for (int n = 0; n < this.mUserExamsList.size(); n++)
+        {
+            ExamDetail examDetail = this.mUserExamsList.get(n);
 
-                //GA Event
-                MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_USER_EXAM_SELECTED, examDetail.getExam_name());
-                //Connecto Event
-                this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_USER_EXAM_SELECTED, examDetail.getExam_name()));
+            //GA Event
+            MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_USER_EXAM_SELECTED, examDetail.getExam_name());
+            //Connecto Event
+            this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_USER_EXAM_SELECTED, examDetail.getExam_name()));
 
-                examNames[n] = examDetail.getExam_name() + "#" + examDetail.getExam_date();
-            }
+            examNames[n] = examDetail.getExam_name() + "#" + examDetail.getExam_date();
+        }
 
-            eventValue.put(Constants.USER_EXAMS_SET, examNames);
+        eventValue.put(Constants.USER_EXAMS_SET, examNames);
 
-            //Appsflyer events
-            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_USER_EXAM_SELECTED, eventValue);
+        //Appsflyer events
+        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_USER_EXAM_SELECTED, eventValue);
     }
 
     private void mUserEducationStepCompleted(String responseJson){
@@ -4097,7 +4097,7 @@ private boolean isUpdateStreams;
         }catch(IOException e) {
             e.printStackTrace();
         }
-     }
+    }
 
     private void showMyFbMessage(String msg)
     {
@@ -4307,10 +4307,10 @@ private boolean isUpdateStreams;
      */
     @Override
     public void onEducationSelected(HashMap<String, String> params) {
-       this.mMakeNetworkCall(Constants.TAG_EDUCATION_DETAILS_SUBMIT, Constants.BASE_URL + "user-education/", params);
+        this.mMakeNetworkCall(Constants.TAG_EDUCATION_DETAILS_SUBMIT, Constants.BASE_URL + "user-education/", params);
     }
 
-       /**
+    /**
      * This method is used to handle response having exams list
      * after user education detail is submitted to server.
      */
@@ -4363,10 +4363,10 @@ private boolean isUpdateStreams;
 
     private void onUserEducationEdited(String response){
         try {
-                UserEducation userEducation = JSON.std.beanFrom(UserEducation.class, response);
-                MainActivity.user.setUser_education(userEducation);
-                String u = JSON.std.asString(MainActivity.user);
-                this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+            UserEducation userEducation = JSON.std.beanFrom(UserEducation.class, response);
+            MainActivity.user.setUser_education(userEducation);
+            String u = JSON.std.asString(MainActivity.user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
             if(this.user.getIs_preparing().equals("0")) {
                 onBackPressed();
             }else{
@@ -4446,35 +4446,35 @@ private boolean isUpdateStreams;
 //        this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_CURRENT_STREAM_SELECTED, user.getStream_name()).putValue(Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing()));
     }
 
-private void onNotPreparingEducationResponse(String response){
-    this.mDisplayFragment(NotPreparingFragment.newInstance(),true,NotPreparingFragment.class.toString());
-    try {
-        UserEducation education = JSON.std.beanFrom(UserEducation.class, response);
-        MainActivity.user.setIs_preparing("0");
-        MainActivity.user.setEducation_set(1);
-        MainActivity.user.setSublevel(education.getSublevel());
-        MainActivity.user.setUser_education(education);
-        MainActivity.user.setStream(education.getStream());
-        String u = JSON.std.asString(user);
-        this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
-    }catch (Exception e){
+    private void onNotPreparingEducationResponse(String response){
+        this.mDisplayFragment(NotPreparingFragment.newInstance(),true,NotPreparingFragment.class.toString());
+        try {
+            UserEducation education = JSON.std.beanFrom(UserEducation.class, response);
+            MainActivity.user.setIs_preparing("0");
+            MainActivity.user.setEducation_set(1);
+            MainActivity.user.setSublevel(education.getSublevel());
+            MainActivity.user.setUser_education(education);
+            MainActivity.user.setStream(education.getStream());
+            String u = JSON.std.asString(user);
+            this.getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(Constants.KEY_USER, u).commit();
+        }catch (Exception e){
+
+        }
+        //Appsflyer events
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(Constants.USER_CURRENT_SUBLEVEL, user.getSublevel());
+        eventValue.put(Constants.USER_IS_PREPARING, user.getIs_preparing());
+
+        MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_USER_PREFERENCE, eventValue);
+
+        //GA Event
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_CURRENT_STREAM_SELECTED, user.getSublevel());
+        MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing());
+
+        //Send event to connecto
+        this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_CURRENT_STREAM_SELECTED, user.getStream_name()).putValue(Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing()));
 
     }
-    //Appsflyer events
-    Map<String, Object> eventValue = new HashMap<>();
-    eventValue.put(Constants.USER_CURRENT_SUBLEVEL, user.getSublevel());
-    eventValue.put(Constants.USER_IS_PREPARING, user.getIs_preparing());
-
-    MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_USER_PREFERENCE, eventValue);
-
-    //GA Event
-    MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_CURRENT_STREAM_SELECTED, user.getSublevel());
-    MainActivity.GATrackerEvent(Constants.CATEGORY_PREFERENCE, Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing());
-
-    //Send event to connecto
-    this.connecto.track(Constants.ACTION_USER_PREFERENCE, new Properties().putValue(Constants.ACTION_CURRENT_STREAM_SELECTED, user.getStream_name()).putValue(Constants.ACTION_USER_IS_PREPARING, user.getIs_preparing()));
-
-}
     /**
      * This method is load user profile after
      */
@@ -4502,7 +4502,7 @@ private void onNotPreparingEducationResponse(String response){
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
         if(fragment == null)
-           this.mDisplayFragment(ProfileFragment.newInstance(new ArrayList<>(mUserExamsList)),false,ProfileFragment.class.toString() );
+            this.mDisplayFragment(ProfileFragment.newInstance(new ArrayList<>(mUserExamsList)),false,ProfileFragment.class.toString() );
         else{
             this.mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
         }
@@ -4534,7 +4534,7 @@ private void onNotPreparingEducationResponse(String response){
 
         if (requestType.equals(Constants.WIDGET_INSTITUTES)
                 || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES)){
-                //|| requestType.equalsIgnoreCase(Constants.WIDGET_SHORTLIST_INSTITUTES)) {
+            //|| requestType.equalsIgnoreCase(Constants.WIDGET_SHORTLIST_INSTITUTES)) {
             //Suggesting System that its a good time to do GC
             System.gc();
 
@@ -4562,7 +4562,7 @@ private void onNotPreparingEducationResponse(String response){
         if(tag != null && !tag.isEmpty())
             params.put("tag_uris[" + (0) + "]",tag);
 
-       this.mMakeNetworkCall(requestType, url, params);
+        this.mMakeNetworkCall(requestType, url, params);
     }
 
     @Override
@@ -4692,11 +4692,11 @@ private void onNotPreparingEducationResponse(String response){
     @Override
     public void onSyllabusChanged(JSONObject jsonObject) {
 
-       String examId = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
-       if(!examId.isEmpty()) {
-           DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(examId));
-           this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS+"#"+examId, Constants.BASE_URL + "yearly-exams/" + examId + "/syllabus/", jsonObject, 1);
-       }
+        String examId = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
+        if(!examId.isEmpty()) {
+            DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(examId));
+            this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS+"#"+examId, Constants.BASE_URL + "yearly-exams/" + examId + "/syllabus/", jsonObject, 1);
+        }
     }
 
     @Override
@@ -4770,7 +4770,7 @@ private void onNotPreparingEducationResponse(String response){
         params.put("action", String.valueOf("2"));
         if(isUndecided)
             this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + isLastCard+"#"+isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-       else
+        else
             this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
 
     }
@@ -4902,21 +4902,21 @@ private void onNotPreparingEducationResponse(String response){
     }
 
     private CursorLoader getProfileLoader() {
-            return new CursorLoader(this,
-                    // Retrieve data rows for the device user's 'profile' contact.
-                    Uri.withAppendedPath(
-                            ContactsContract.Profile.CONTENT_URI,
-                            ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
-                    User.ProfileQuery.PROJECTION,
+        return new CursorLoader(this,
+                // Retrieve data rows for the device user's 'profile' contact.
+                Uri.withAppendedPath(
+                        ContactsContract.Profile.CONTENT_URI,
+                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
+                User.ProfileQuery.PROJECTION,
 
-                    // Select only email addresses.
-                    ContactsContract.Contacts.Data.MIMETYPE + " = ? OR " + ContactsContract.Contacts.Data.MIMETYPE + " = ?",
-                    new String[]{ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
-                            ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE},
+                // Select only email addresses.
+                ContactsContract.Contacts.Data.MIMETYPE + " = ? OR " + ContactsContract.Contacts.Data.MIMETYPE + " = ?",
+                new String[]{ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                        ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE},
 
-                    // Show primary email addresses first. Note that there won't be
-                    // a primary email address if the user hasn't specified one.
-                    ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
+                // Show primary email addresses first. Note that there won't be
+                // a primary email address if the user hasn't specified one.
+                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
 
@@ -4930,27 +4930,27 @@ private void onNotPreparingEducationResponse(String response){
         try {
             User tempuser = JSON.std.beanFrom(User.class, response);
 
-        //save the preferences locally
-        user.setPref(User.Prefs.STREAMKNOWN);
-        if (tempuser != null){
+            //save the preferences locally
+            user.setPref(User.Prefs.STREAMKNOWN);
+            if (tempuser != null){
 //            user.setToken(tempuser.getToken());
 //            user.setImage(tempuser.getImage());
 //            user.setLevel_name(tempuser.getLevel_name());
 //            user.setStream_name(tempuser.getStream_name());
 //            user.setStream(tempuser.getStream());
 //            user.setLevel(tempuser.getLevel());
-            user.setPrimaryEmail(tempuser.getPrimaryEmail());
-            user.setPrimaryPhone(tempuser.getPrimaryPhone());
-            String userName=tempuser.getName();
-            if(userName!=null && !userName.trim().matches("")&& !userName.equalsIgnoreCase(Constants.ANONYMOUS_USER)) {
-                user.setName(userName);
-                user.profileData[0]=userName;
-            }
+                user.setPrimaryEmail(tempuser.getPrimaryEmail());
+                user.setPrimaryPhone(tempuser.getPrimaryPhone());
+                String userName=tempuser.getName();
+                if(userName!=null && !userName.trim().matches("")&& !userName.equalsIgnoreCase(Constants.ANONYMOUS_USER)) {
+                    user.setName(userName);
+                    user.profileData[0]=userName;
+                }
 //            user.setSublevel(tempuser.getSublevel());
 //            user.setIs_preparing(tempuser.getIs_preparing());
-            user.setResource_uri(tempuser.getResource_uri());
+                user.setResource_uri(tempuser.getResource_uri());
 //            user.profileData = tempuser.profileData;
-        }
+            }
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -5007,24 +5007,24 @@ private void onNotPreparingEducationResponse(String response){
         }
     };
 
-   View.OnClickListener mClickListener = new View.OnClickListener() {
-       @Override
-       public void onClick(View view) {
-           int postion = -1 ;
-           try{
-              postion = Integer.parseInt((String)view.getTag());
-           }catch (Exception e){
-               e.printStackTrace();
-           }
+    View.OnClickListener mClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            int postion = -1 ;
+            try{
+                postion = Integer.parseInt((String)view.getTag());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
-           if(postion == 4){
+            if(postion == 4){
                 MainActivity.this.mMakeNetworkCall(Constants.TAG_MY_ALERTS,Constants.BASE_URL+"exam-alerts/",null);
-                    return;
-           }
-           mUpdateTabMenuItem(postion);
-           onTabMenuSelected(postion);
-       }
-   };
+                return;
+            }
+            mUpdateTabMenuItem(postion);
+            onTabMenuSelected(postion);
+        }
+    };
 
     public void mUpdateTabMenuItem(int tabPosition){
         prepBuddies.setSelected(false);
@@ -5111,7 +5111,7 @@ private void onNotPreparingEducationResponse(String response){
 //                this.mDisplayFragment(fragment, true, Constants.TAG_FRAGMENT_USER_EDUCATION);
 //
 //            }else {
-                this.mDisplayFragment(UserEducationFragment.newEditableInstance(userEducationList), true, Constants.TAG_FRAGMENT_USER_EDUCATION);
+            this.mDisplayFragment(UserEducationFragment.newEditableInstance(userEducationList), true, Constants.TAG_FRAGMENT_USER_EDUCATION);
 //            }
         } catch (IOException e) {
             e.printStackTrace();
@@ -5172,7 +5172,7 @@ private void onNotPreparingEducationResponse(String response){
             if (this.mInstituteList != null && !this.mInstituteList.isEmpty()) {
                 this.mInstitute = this.mInstituteList.get(0);
                 int id = this.mInstituteList.get(0).getId();
-                    this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute), false, Constants.TAG_FRAGMENT_INSTITUTE);
+                this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute), false, Constants.TAG_FRAGMENT_INSTITUTE);
 
                 this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id) , null);
@@ -5494,7 +5494,7 @@ private void onNotPreparingEducationResponse(String response){
 
     private void getUserPermissions(){
         if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.READ_CONTACTS)
+                Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED&& ContextCompat.checkSelfPermission(this,
@@ -5679,7 +5679,7 @@ private void onNotPreparingEducationResponse(String response){
                         MainActivity.this.onSubmitOTP(user_phone_number,edt_phone_number.getText().toString());
                     }
                 } else {
-                   MainActivity.this.onSubmitMobileNumber(user_phone_number);
+                    MainActivity.this.onSubmitMobileNumber(user_phone_number);
 
                 }
                 LocalBroadcastManager.getInstance(context).unregisterReceiver(otpReceiver);

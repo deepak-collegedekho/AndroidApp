@@ -22,6 +22,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -148,13 +149,12 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
         while (mNextAdapterPosition < mListAdapter.getCount() && getChildCount() < mMaxVisible) {
 
-            View view = mListAdapter.getView(mNextAdapterPosition, null, this);
+            //View view = mListAdapter.getView(mNextAdapterPosition, null, this);
             //view.setLayerType(LAYER_TYPE_SOFTWARE, null);
             /*if(mOrientation == Orientations.OrientationType.Disordered) {
                 view.setRotation(getDisorderedRotation());
             }*/
-            addViewInLayout(view, 0, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
-                    mListAdapter.getItemViewType(mNextAdapterPosition)), false);
+            addViewInLayout(mListAdapter.getView(mNextAdapterPosition, null, this), 0, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Adapter.IGNORE_ITEM_VIEW_TYPE), false);
 
             requestLayout();
 
@@ -162,7 +162,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
         }
         int childCount = getChildCount();
         if (childCount != 0) {
-            mTopCard = getChildAt(getChildCount() - 1);
+            mTopCard = getChildAt(childCount - 1);
             if (mTopCard != null)
             {
                 mAssignUICOmponentsForTopCard();
@@ -366,11 +366,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 mLikeImageView.setVisibility(GONE);
                 mDislikeImageView.setVisibility(GONE);
                 mUndecidedImageView.setVisibility(GONE);
-                //mTopCard.findViewById(R.id.card_recommended_institute_detail).setVisibility(VISIBLE);
-                //mTopCard.findViewById(R.id.card_recommended_institute_detail).setEnabled(true);
 
                 if (!mDragging) {
-                    //mTopCard.setLayerType(View.LAYER_TYPE_NONE, null);
                     return true;
                 }
                 mDragging = false;
@@ -472,7 +469,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
         }
         final int pointerIndex;
         final float x, y;
-        final float dx, dy;
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mTopCard.getHitRect(childRect);
@@ -585,7 +581,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 }
 
                 CardModel cardModel = (CardModel) getAdapter().getItem(getChildCount() - 1);
-
 
                 if (cardModel.getOnCardDismissedListener() != null) {
                     if ( targetX > 0 ) {

@@ -37,80 +37,17 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
         if(convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.card_recommended_institute, parent, false);
-//            assert convertView != null;
         }
 
         this.mParseAndPopulateCards(model, convertView);
 
-        /*Institute institute;
-        final FadeInImageView fadeInImageView;
-
-        institute = model.getInstitute();
-
-        //setting institute name
-        ((TextView) convertView.findViewById(R.id.card_recommended_institute_title)).setText(institute.getName());
-
-        //setting location
-        String text = "";
-        if (model.getInstitute().getCity_name() != null)
-            text += institute.getCity_name() + ", ";
-        if (model.getInstitute().getState_name() != null)
-            text += institute.getState_name();
-
-        if (text == "" || text.isEmpty())
-            ((TextView) convertView.findViewById(R.id.card_recommended_geolocation)).setVisibility(View.GONE);
-        else
-            ((TextView) convertView.findViewById(R.id.card_recommended_geolocation)).setText(text);
-
-        //setting institute image
-        fadeInImageView = ((FadeInImageView) convertView.findViewById(R.id.card_recommended_institute_image));
-
-        fadeInImageView.setDefaultImageResId(R.drawable.default_banner);
-        fadeInImageView.setErrorImageResId(R.drawable.default_banner);
-
-        if (institute.getStreams() != null && institute.getStreams().size() > 0)
-        {
-            TextView streamTV = ((TextView) convertView.findViewById(R.id.card_recommended_streams));
-            String streamText = "";
-
-            if (institute.getStreams().size() == 1)
-                ((TextView) convertView.findViewById(R.id.card_recommended_streams_label)).setText("Stream :");
-
-            for (String stream : institute.getStreams())
-            {
-                streamText += stream;
-                streamText += "/";
-            }
-
-            streamTV.setText(streamText.substring(0, streamText.length() - 1));
-        }
-        else {
-            convertView.findViewById(R.id.card_recommended_streams_label).setVisibility(View.GONE);
-            convertView.findViewById(R.id.card_recommended_streams).setVisibility(View.GONE);
-        }
-
-
-        if (institute.getImages().get("Banner") != null)
-            fadeInImageView.setImageUrl(institute.getImages().get("Banner"), this.imageLoader);
-        else if (institute.getImages().get("Primary") != null)
-            fadeInImageView.setImageUrl(institute.getImages().get("Primary"), this.imageLoader);
-        else if (institute.getImages().get("Student") != null)
-            fadeInImageView.setImageUrl(institute.getImages().get("Student"), this.imageLoader);
-        else if (institute.getImages().get("Infra") != null)
-            fadeInImageView.setImageUrl(institute.getImages().get("Infra"), this.imageLoader);
-        else if (institute.getImages().get("Other") != null)
-            fadeInImageView.setImageUrl(institute.getImages().get("Other"), this.imageLoader);*/
-
         //card_recommended_institute_container
-        ((TextView) convertView.findViewById(R.id.card_recommended_institute_detail)).setOnClickListener(new View.OnClickListener() {
+        (convertView.findViewById(R.id.card_recommended_institute_detail)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SimpleCardStackAdapter.this.mListener.OnInstituteSelected(((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute());
             }
         });
-
-        //To bring icons in front of everything
-        //convertView.findViewById(R.id.card_recommended_icon_container).bringToFront();
 
         model.setOnCardDismissedListener(new CardModel.OnCardDismissedListener() {
             @Override
@@ -198,7 +135,6 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
             convertView.findViewById(R.id.card_recommended_streams_label).setVisibility(View.GONE);
             convertView.findViewById(R.id.card_recommended_streams).setVisibility(View.GONE);
         }
-
 
         if (institute.getImages().get("Banner") != null)
             fadeInImageView.setImageUrl(institute.getImages().get("Banner"), this.imageLoader);

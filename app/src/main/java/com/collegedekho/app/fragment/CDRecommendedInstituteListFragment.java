@@ -106,18 +106,19 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             this.mParseCardAsyncTask = new ParseCardAsyncTask();
             if (this.mInstitutes.size() > 4)
             {
-                ArrayList<Institute> tempInstitues;
+/*                ArrayList<Institute> tempInstitues;
 
                 tempInstitues = new ArrayList<>();
-                tempInstitues.add(this.mInstitutes.remove(0));
-                tempInstitues.add(this.mInstitutes.remove(1));
+                tempInstitues.add(this.mInstitutes.remove(this.mInstitutes.size() - 1));
+                tempInstitues.add(this.mInstitutes.remove(this.mInstitutes.size() - 1));
 
-                this.mParseCardAsyncTask.execute(tempInstitues);
+                this.mParseCardAsyncTask.execute(tempInstitues);*/
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        CDRecommendedInstituteListFragment.this.mAddCardInAdapter(CDRecommendedInstituteListFragment.this.mInstitutes);
+                        //CDRecommendedInstituteListFragment.this.mAddCardInAdapter(CDRecommendedInstituteListFragment.this.mInstitutes);
+                        CDRecommendedInstituteListFragment.this.mParseCardAsyncTask.execute(CDRecommendedInstituteListFragment.this.mInstitutes);
                     }
                 }, 500);
             }
@@ -181,7 +182,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                 this.mListener = (OnCDRecommendedInstituteListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnInstituteSelectedListener");
+                    + " must implement OnCDRecommendedInstituteListener");
         }
     }
 
