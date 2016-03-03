@@ -1103,8 +1103,18 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl) {
         this.mDisplayInstituteList(response, filterAllowed, isHavingNextUrl, Constants.INSTITUTE_TYPE);
     }
-
     private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl, Constants.CDRecommendedInstituteType cdRecommendedInstituteType) {
+        switch (cdRecommendedInstituteType){
+            case UNDECIDED:
+                mDisplayCDRecommendedInstituteList(response, isHavingNextUrl, cdRecommendedInstituteType,true);
+                break;
+            case UNBAISED:
+                mDisplayCDRecommendedInstituteList(response, isHavingNextUrl, cdRecommendedInstituteType,false);
+                break;
+        }
+
+    }
+    private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl, Constants.CDRecommendedInstituteType cdRecommendedInstituteType,boolean isUpdate) {
         try {
             //Suggesting System that its a good time to do GC
             System.gc();
@@ -1113,34 +1123,42 @@ public class MainActivity extends AppCompatActivity
             progress.setCancelable(false);
             progress.setMessage("Rendering institutes cards..");
             progress.setIndeterminate(true);
-            progress.show();
-            String val = this.extractResults(response);
 
-            this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
-
-            if(!isHavingNextUrl)
+            if (!isHavingNextUrl)
                 next = null;
             int time = 1000;
-            if (mInstituteList.size() > 5) {
-                time = (150 * mInstituteList.size());
-            }
 
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (progress != null && progress.isShowing())
-                        progress.dismiss();
+            if (isUpdate) {
+                if(currentFragment!=null && currentFragment instanceof CDRecommendedInstituteListFragment){
+                    String val = this.extractResults(response);
+                    this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
+                    if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED)
+                        ((CDRecommendedInstituteListFragment) currentFragment).showUndecidedInstitutes(this.mInstituteList, next);
+                    else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED)
+                        ((CDRecommendedInstituteListFragment) currentFragment).updateList(this.mInstituteList, next);
                 }
-            }, time);
-
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
+            }else{
+                String val = this.extractResults(response);
+                this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
+                if(mInstituteList.size()>0) {
+                    if (mInstituteList.size() > 5) {
+                        time = (150 * mInstituteList.size());
+                    }
+                    progress.show();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (progress != null && progress.isShowing())
+                                progress.dismiss();
+                        }
+                    }, time);
+                }
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
 
             if (fragment == null) {
                 this.mDisplayFragment(CDRecommendedInstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, this.mUndecidedCount), !isFromNotification, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
             } else {
-                if (fragment instanceof CDRecommendedInstituteListFragment)
-                {
+                if (fragment instanceof CDRecommendedInstituteListFragment) {
                     if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED)
                         ((CDRecommendedInstituteListFragment) fragment).showUndecidedInstitutes(this.mInstituteList, next);
                     else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED)
@@ -1149,7 +1167,7 @@ public class MainActivity extends AppCompatActivity
 
                 this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
             }
-
+        }
             if (MainActivity.user.getPartner_shortlist_count() > 0) {
                 requestOtp();
             }
@@ -1570,7 +1588,11 @@ private boolean isUpdateStreams;
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
                 this.mCurrentTitle = "Recommended Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = true;
-                this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED);
+                if(tags.length==2 && tags[1]!=null && tags[1].equals("next")){
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED,true);
+                }else {
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED);
+                }
                 break;
             case Constants.SEARCHED_INSTITUTES:
                 this.mCurrentTitle = "Institutes";
