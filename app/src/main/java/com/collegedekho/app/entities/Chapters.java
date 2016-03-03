@@ -26,7 +26,7 @@ public class Chapters implements Parcelable {
         exam_date = in.readString();
         yearly_exam_id = in.readString();
         days_left = in.readString();
-        weightage = in.readInt();
+        weightage = in.readFloat();
         should_be_done = in.readInt();
         is_done = in.readInt();
         id = in.readInt();
@@ -92,7 +92,7 @@ public class Chapters implements Parcelable {
         return weightage;
     }
 
-    public void setWeightage(int weightage) {
+    public void setWeightage(float weightage) {
         this.weightage = weightage;
     }
 
