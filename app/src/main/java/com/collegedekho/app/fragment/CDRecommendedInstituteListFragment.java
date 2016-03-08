@@ -40,6 +40,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     private TextView mPageTitleTV;
     private TextView mEmptyTextView;
     private boolean IS_UNDECIDED_INSTITUTES = false;
+    private static boolean IS_FIRST_SHOW = true;
     private ParseCardAsyncTask mParseCardAsyncTask;
 
     public CDRecommendedInstituteListFragment() {
@@ -76,7 +77,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_recommended_institute_listing, container, false);
 
-        this.mCardContainer = (CardContainer) rootView.findViewById(R.id.layoutview);
+        this.mCardContainer = (CardContainer) rootView.findViewById(R.id.fragment_recommended_institute_cards_container);
         this.mUndecidedCountTV = (TextView)rootView.findViewById(R.id.fragment_recommended_institute_undecided_count);
         this.mPageTitleTV = (TextView)rootView.findViewById(R.id.recommended_page_title);
 
@@ -100,19 +101,40 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         }
 
         this.mAdapter = new SimpleCardStackAdapter(this.getContext(), this);
+        //this.mAddCardInAdapter(this.mInstitutes);
 
+        if (CDRecommendedInstituteListFragment.IS_FIRST_SHOW)
+        {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    CDRecommendedInstituteListFragment.IS_FIRST_SHOW = false;
+                    CDRecommendedInstituteListFragment.this.mAddCardInAdapter(CDRecommendedInstituteListFragment.this.mInstitutes);
+                }
+            }, 500);
+        }
+        else
+            this.mAddCardInAdapter(this.mInstitutes);
+
+        this.mCardContainer.setAdapter(this.mAdapter);
+
+
+
+/*
         if (this.mParseCardAsyncTask == null)
         {
             this.mParseCardAsyncTask = new ParseCardAsyncTask();
             if (this.mInstitutes.size() > 4)
             {
+*/
 /*                ArrayList<Institute> tempInstitues;
 
                 tempInstitues = new ArrayList<>();
                 tempInstitues.add(this.mInstitutes.remove(this.mInstitutes.size() - 1));
                 tempInstitues.add(this.mInstitutes.remove(this.mInstitutes.size() - 1));
 
-                this.mParseCardAsyncTask.execute(tempInstitues);*/
+                this.mParseCardAsyncTask.execute(tempInstitues);*//*
+
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -127,9 +149,8 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         }
         else
             this.mAddCardInAdapter(this.mInstitutes);
+*/
 
-
-        this.mCardContainer.setAdapter(this.mAdapter);
         this.mUndecidedCountTV.setOnClickListener(this);
 
         if(this.IS_UNDECIDED_INSTITUTES) {

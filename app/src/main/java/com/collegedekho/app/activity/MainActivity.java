@@ -1140,19 +1140,17 @@ public class MainActivity extends AppCompatActivity
             }else{
                 String val = this.extractResults(response);
                 this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
-                if(mInstituteList.size()>0) {
-                    if (mInstituteList.size() > 5) {
-                        time = (150 * mInstituteList.size());
-                    }
-                    progress.show();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (progress != null && progress.isShowing())
-                                progress.dismiss();
-                        }
-                    }, time);
+                if (mInstituteList.size() > 5) {
+                    time = (100 * mInstituteList.size());
                 }
+                progress.show();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (progress != null && progress.isShowing())
+                            progress.dismiss();
+                    }
+                }, time);
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST);
 
                 if (fragment == null) {

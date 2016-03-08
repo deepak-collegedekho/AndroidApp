@@ -37,38 +37,14 @@ public abstract class CardStackAdapter extends BaseCardStackAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		FrameLayout wrapper = (FrameLayout) convertView;
-		FrameLayout innerWrapper;
 		View cardView;
-		View convertedCardView;
 		if (wrapper == null) {
-			wrapper = new FrameLayout(mContext);
-			//wrapper.setBackgroundResource(R.drawable.card_bg);
-			/*if (shouldFillCardBackground()) {
-				innerWrapper = new FrameLayout(mContext);
-				innerWrapper.setBackgroundColor(mContext.getResources().getColor(R.color.card_bg));
-				wrapper.addView(innerWrapper);
-			} else {
-				innerWrapper = wrapper;
-			}*/
-			innerWrapper = wrapper;
 			cardView = getCardView(position, getCardModel(position), null, parent);
-			innerWrapper.addView(cardView);
 		} else {
-			/*if (shouldFillCardBackground()) {
-				innerWrapper = (FrameLayout) wrapper.getChildAt(0);
-			} else {
-				innerWrapper = wrapper;
-			}*/
-            innerWrapper = wrapper;
-			cardView = innerWrapper.getChildAt(0);
-			convertedCardView = getCardView(position, getCardModel(position), cardView, parent);
-			if (convertedCardView != cardView) {
-				wrapper.removeView(cardView);
-				wrapper.addView(convertedCardView);
-			}
+			cardView = wrapper.getChildAt(0);
 		}
 
-		return wrapper;
+		return cardView;
 	}
 
 	protected abstract View getCardView(int position, CardModel model, View convertView, ViewGroup parent);

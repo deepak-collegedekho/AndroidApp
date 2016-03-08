@@ -1,139 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/card_recommended_institute"
+    android:id="@+id/card_recommended_institute_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="false"
+    android:fontFamily="sans-serif-light"
     >
-    <RelativeLayout
-        android:id="@+id/card_recommended_institute_container"
+    <TextView
+        android:id="@+id/card_recommended_institute_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="@color/card_bg"
+        tools:text="International College of Engineering"
+        android:textColor="@android:color/primary_text_light"
+        android:textSize="@dimen/m18sp"
+        android:textStyle="bold"
+        android:maxLines="@integer/int2"
+        />
+    <com.collegedekho.app.widget.FadeInImageView
+        android:id="@+id/card_recommended_institute_image"
+        android:layout_width="match_parent"
+        android:layout_height="275dp"
+        android:layout_below="@id/card_recommended_institute_title"
+        android:src="@drawable/default_banner"
+        android:contentDescription="instituteImage"
+        android:scaleType="centerCrop"
+        />
+    <TextView
+        android:id="@+id/card_recommended_geolocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        >
-        <TextView
-            android:id="@+id/card_recommended_institute_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:background="@color/card_bg"
-            tools:text="International College of Engineering"
-            android:textColor="@android:color/primary_text_light"
-            android:textSize="@dimen/m18sp"
-            android:textStyle="bold"
-            android:maxLines="@integer/int2"
-            android:fontFamily="sans-serif-light"
-            />
-        <com.collegedekho.app.widget.FadeInImageView
-            android:id="@+id/card_recommended_institute_image"
-            android:layout_width="match_parent"
-            android:layout_height="275dp"
-            android:layout_below="@id/card_recommended_institute_title"
-            android:src="@drawable/default_banner"
-            android:contentDescription="instituteImage"
-            android:scaleType="centerCrop"
-            />
-
-        <RelativeLayout
-            android:id="@+id/card_recommended_institute_info_container"
-            android:layout_width="match_parent"
-            android:layout_height="275dp"
-            android:layout_alignBottom="@id/card_recommended_institute_image"
-            android:paddingRight="@dimen/activity_horizontal_margin_small"
-            android:paddingLeft="@dimen/activity_horizontal_margin_small"
-            android:paddingBottom="@dimen/activity_vertical_margin_small"
-            android:paddingTop="@dimen/activity_vertical_margin_small"
-            android:background="@drawable/bg_recommended_text_gradient"
-            >
-            <TextView
-                android:id="@+id/card_recommended_geolocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:drawableLeft="@drawable/ic_geolocation"
-                android:textColor="@color/white"
-                android:text="Pune, Maharastra"
-                android:textSize="@dimen/m16sp"
-                android:textStyle="normal"
-                android:paddingBottom="@dimen/activity_vertical_margin_small"
-                android:fontFamily="sans-serif-light"
-                android:textAlignment="center"
-                />
-            <TextView
-                android:id="@+id/card_recommended_streams_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:text="Streams :"
-                android:textSize="@dimen/m16sp"
-                android:textStyle="normal"
-                android:layout_below="@id/card_recommended_geolocation"
-                android:fontFamily="sans-serif-light"
-                android:textAlignment="center"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="@dimen/m2dp"
-                />
-            <TextView
-                android:id="@+id/card_recommended_streams"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:text="Engineering"
-                android:textSize="@dimen/m16sp"
-                android:layout_toRightOf="@id/card_recommended_streams_label"
-                android:layout_alignTop="@id/card_recommended_streams_label"
-                android:fontFamily="sans-serif-light"
-                />
-            <TextView
-                android:id="@+id/card_recommended_institute_detail"
-                style="@style/AppTheme.Bottom_Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerInParent="true"
-                android:textColor="@color/white"
-                android:text="View College Details"
-                android:textSize="@dimen/m12sp"
-                android:textStyle="normal"
-                android:fontFamily="sans-serif-light"
-                android:paddingLeft="@dimen/m15dp"
-                android:paddingRight="@dimen/m15dp"
-            />
-
-        </RelativeLayout>
-        <FrameLayout
-            android:id="@+id/card_recommended_icon_container"
-            android:layout_width="match_parent"
-            android:layout_height="320dp"
-            android:translationZ="@dimen/m5dp"
-            >
-            <ImageView
-                android:id="@+id/like_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:layout_gravity="center_vertical|start"
-                android:src="@drawable/ic_shortlist"
-                />
-            <ImageView
-                android:id="@+id/dislike_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:layout_gravity="center_vertical|end"
-                android:src="@drawable/ic_not_interested"
-                />
-            <ImageView
-                android:id="@+id/decide_later_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp"
-                android:visibility="gone"
-                android:layout_gravity="center_horizontal|bottom"
-                android:src="@drawable/ic_undecided"
-                />
-        </FrameLayout>
-    </RelativeLayout>
-</android.support.v7.widget.CardView>
+        android:layout_alignTop="@id/card_recommended_institute_image"
+        android:layout_marginTop="@dimen/m10dp"
+        android:layout_marginLeft="@dimen/m10dp"
+        android:drawableLeft="@drawable/ic_geolocation"
+        android:textColor="@color/white"
+        android:text="Pune, Maharastra"
+        android:textSize="@dimen/m16sp"
+        android:textStyle="normal"
+        android:paddingBottom="@dimen/activity_vertical_margin_small"
+        android:textAlignment="center"
+        />
+    <TextView
+        android:id="@+id/card_recommended_streams_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:text="Streams :"
+        android:textSize="@dimen/m16sp"
+        android:textStyle="normal"
+        android:layout_below="@id/card_recommended_geolocation"
+        android:fontFamily="sans-serif-light"
+        android:textAlignment="center"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="@dimen/m2dp"
+        />
+    <TextView
+        android:id="@+id/card_recommended_institute_detail"
+        style="@style/AppTheme.Bottom_Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:text="View College Details"
+        android:textSize="@dimen/m12sp"
+        android:textStyle="normal"
+        android:paddingLeft="@dimen/m15dp"
+        android:paddingRight="@dimen/m15dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignBottom="@id/card_recommended_institute_image"
+        android:layout_marginBottom="@dimen/m15dp"
+        />
+    <TextView
+        android:id="@+id/card_recommended_streams"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:text="Engineering"
+        android:textSize="@dimen/m16sp"
+        android:layout_toRightOf="@id/card_recommended_streams_label"
+        android:layout_alignTop="@id/card_recommended_streams_label"
+        android:fontFamily="sans-serif-light"
+        />
+    <ImageView
+        android:id="@+id/like_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:src="@drawable/ic_shortlist"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        />
+    <ImageView
+        android:id="@+id/dislike_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:src="@drawable/ic_not_interested"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        />
+    <ImageView
+        android:id="@+id/decide_later_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/m5dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_undecided"
+        android:layout_above="@id/card_recommended_institute_detail"
+        android:layout_centerHorizontal="true"
+        />
+</RelativeLayout>

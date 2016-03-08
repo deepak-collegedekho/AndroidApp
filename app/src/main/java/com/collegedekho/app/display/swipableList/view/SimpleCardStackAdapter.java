@@ -1,22 +1,19 @@
 package com.collegedekho.app.display.swipableList.view;
 
 import android.content.Context;
-import android.os.AsyncTask;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.display.swipableList.model.CardModel;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.widget.FadeInImageView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class SimpleCardStackAdapter extends CardStackAdapter {
 
@@ -91,6 +88,7 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
     {
         Institute institute;
         final FadeInImageView fadeInImageView;
+        ImageLoader.ImageListener imageListener;
 
         institute = model.getInstitute();
 
@@ -105,15 +103,16 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
             text += institute.getState_name();
 
         if (text == "" || text.isEmpty())
-            ((TextView) convertView.findViewById(R.id.card_recommended_geolocation)).setVisibility(View.GONE);
+            convertView.findViewById(R.id.card_recommended_geolocation).setVisibility(View.GONE);
         else
             ((TextView) convertView.findViewById(R.id.card_recommended_geolocation)).setText(text);
 
         //setting institute image
         fadeInImageView = ((FadeInImageView) convertView.findViewById(R.id.card_recommended_institute_image));
 
-        fadeInImageView.setDefaultImageResId(R.drawable.default_banner);
-        fadeInImageView.setErrorImageResId(R.drawable.default_banner);
+        //fadeInImageView.setDefaultImageResId(R.drawable.default_banner);
+        fadeInImageView.setLocalImageBitmap(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.default_banner));
+        //fadeInImageView.setErrorImageResId(R.drawable.default_banner);
 
         if (institute.getStreams() != null && institute.getStreams().size() > 0)
         {
@@ -136,7 +135,7 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
             convertView.findViewById(R.id.card_recommended_streams).setVisibility(View.GONE);
         }
 
-        if (institute.getImages().get("Banner") != null)
+        /*if (institute.getImages().get("Banner") != null)
             fadeInImageView.setImageUrl(institute.getImages().get("Banner"), this.imageLoader);
         else if (institute.getImages().get("Primary") != null)
             fadeInImageView.setImageUrl(institute.getImages().get("Primary"), this.imageLoader);
@@ -145,7 +144,32 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
         else if (institute.getImages().get("Infra") != null)
             fadeInImageView.setImageUrl(institute.getImages().get("Infra"), this.imageLoader);
         else if (institute.getImages().get("Other") != null)
-            fadeInImageView.setImageUrl(institute.getImages().get("Other"), this.imageLoader);
+            fadeInImageView.setImageUrl(institute.getImages().get("Other"), this.imageLoader);*/
+
+        imageListener = new ImageLoader.ImageListener() {
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                if (response.getBitmap() != null) {
+                    fadeInImageView.setLocalImageBitmap(response.getBitmap());
+                }
+            }
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        };
+
+        if (institute.getImages().get("Banner") != null)
+            this.imageLoader.get(institute.getImages().get("Banner"), imageListener);
+        else if (institute.getImages().get("Primary") != null)
+            this.imageLoader.get(institute.getImages().get("Primary"), imageListener);
+        else if (institute.getImages().get("Student") != null)
+            this.imageLoader.get(institute.getImages().get("Student"), imageListener);
+        else if (institute.getImages().get("Infra") != null)
+            this.imageLoader.get(institute.getImages().get("Infra"), imageListener);
+        else if (institute.getImages().get("Other") != null)
+            this.imageLoader.get(institute.getImages().get("Other"), imageListener);
     }
 
     public boolean isLoadingNext() {

@@ -111,7 +111,7 @@
         </RelativeLayout>
 
         <com.collegedekho.app.display.swipableList.view.CardContainer
-            android:id="@+id/layoutview"
+            android:id="@+id/fragment_recommended_institute_cards_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="9"
