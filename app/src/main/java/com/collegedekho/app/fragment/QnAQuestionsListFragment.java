@@ -284,6 +284,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
         @Override
         void onEndReached(String next, int type);
         void onQnAQuestionVote(int position, int voteType);
+        void onNoInternetConnection();
     }
 
 }

@@ -49,5 +49,6 @@
     <string name="yscale">1f</string>
     <string name="submit">Submit</string>
 
-
+<!--APP MESSAGES-->
+    <string name="INTERNET_CONNECTION_ERROR">You are not connected to Internet</string>
 </resources>

@@ -154,7 +154,7 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
 
     public interface OnMyFBSelectedListener extends BaseListener{
         void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position, int commentsCount);
-
+        void onNoInternetConnection();
         @Override
         void onEndReached(String next, int type);
     }

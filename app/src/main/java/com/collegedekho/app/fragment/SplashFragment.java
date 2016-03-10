@@ -101,15 +101,15 @@ public class SplashFragment extends BaseFragment {
     }
 
     public void isInternetAvailable(){
-        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
-        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+//        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+//        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
             MainActivity mainActivity = (MainActivity) getActivity();
             if (mainActivity != null) {
                 mainActivity.loadInItData();
             }
-        }else{
-            getView().findViewById(R.id.splash_no_internet_info_layout).setVisibility(View.VISIBLE);
-        }
+//        }else{
+//            getView().findViewById(R.id.splash_no_internet_info_layout).setVisibility(View.VISIBLE);
+//        }
     }
 
     public void stopMainAnimation()

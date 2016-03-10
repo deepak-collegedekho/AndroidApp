@@ -19,6 +19,7 @@ import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.widget.CircularImageView;
 
 import java.text.ParseException;
@@ -219,22 +220,27 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
+            int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
             switch(v.getId()) {
 
                 case R.id.card_item_button_like:
                 case R.id.card_item_like_layout:
-                   if (!v.isSelected()) {
-                        likeButton.setVisibility(View.GONE);
-                        likeProgressBar.setVisibility(View.VISIBLE);
-                        likeButton.setClickable(false);
-                        mListener.onQnAQuestionVote(getAdapterPosition(), Constants.LIKE_THING);
+                    if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
+                        if (!v.isSelected()) {
+                            likeButton.setVisibility(View.GONE);
+                            likeProgressBar.setVisibility(View.VISIBLE);
+                            likeButton.setClickable(false);
+                            mListener.onQnAQuestionVote(getAdapterPosition(), Constants.LIKE_THING);
 
-                    } else {
-                        likeButton.setVisibility(View.GONE);
-                        likeProgressBar.setVisibility(View.VISIBLE);
-                        likeButton.setClickable(false);
-                        mListener.onQnAQuestionVote(getAdapterPosition(), Constants.DISLIKE_THING);
+                        } else {
+                            likeButton.setVisibility(View.GONE);
+                            likeProgressBar.setVisibility(View.VISIBLE);
+                            likeButton.setClickable(false);
+                            mListener.onQnAQuestionVote(getAdapterPosition(), Constants.DISLIKE_THING);
 
+                        }
+                    }else {
+                        this.mListener.onNoInternetConnection();
                     }
                     break;
                 case R.id.layout_item_expand:

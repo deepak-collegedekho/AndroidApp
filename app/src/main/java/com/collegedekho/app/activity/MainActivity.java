@@ -24,6 +24,7 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -146,12 +147,15 @@ import com.collegedekho.app.widget.GifView;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -312,7 +316,7 @@ public class MainActivity extends AppCompatActivity
     private String mExamTag;
     private String user_phone_number;
     private int mUndecidedCount;
-
+    private Snackbar snackbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -373,6 +377,10 @@ public class MainActivity extends AppCompatActivity
         });
 
         this.setContentView(R.layout.activity_main);
+        snackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
+        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+        layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
+
         this.networkUtils = new NetworkUtils(this, this);
 
         prepBuddies       = (TextView)findViewById(R.id.prep_buddies);
@@ -573,7 +581,30 @@ public class MainActivity extends AppCompatActivity
     {
         FacebookSdk.sdkInitialize(this);
         callbackManager = CallbackManager.Factory.create();
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.e(TAG, "Logged In ");
+                showProgressDialog("Signing with facebook account");
+                AccessToken token = AccessToken.getCurrentAccessToken();
+                if (token != null) {
+                    RequestData(token);
+                }
+            }
 
+            @Override
+            public void onCancel() {
+                Log.e(TAG, "facebook login canceled");
+                Toast.makeText(MainActivity.this, "Facebook SignIn is failed", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                error.printStackTrace();
+                Log.e(TAG, "facebook login on error");
+                Toast.makeText(MainActivity.this, "Facebook SignIn has some error", Toast.LENGTH_LONG).show();
+            }
+        });
         try
         {
             PackageInfo info = getPackageManager().getPackageInfo(
@@ -592,6 +623,53 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void RequestData(final AccessToken accessToken){
+        GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+            @Override
+            public void onCompleted(JSONObject object, GraphResponse response) {
+                JSONObject json = response.getJSONObject();
+                try {
+                    if (json != null) {
+                        // get user profile info
+                       /* JSONObject pictureJsonObj = json.getJSONObject("picture");
+                        JSONObject data = pictureJsonObj.getJSONObject("data");*/
+
+                        //String image = data.getString("url");
+                        String image ="https://graph.facebook.com/" + json.optString("id") + "/picture?type=large";
+
+                        if (MainActivity.user == null)
+                            MainActivity.user = new User();
+
+                        MainActivity.user.setImage(image);
+
+                        HashMap hashMap = new HashMap<>();
+                        hashMap.put(Constants.USER_FIRST_NAME, json.getString("first_name"));
+                        hashMap.put(Constants.USER_LAST_NAME, json.getString("last_name"));
+                        hashMap.put(Constants.USER_VERIFIED, json.getString("verified"));
+                        hashMap.put(Constants.USER_NAME, json.getString("name"));
+                        hashMap.put(Constants.USER_LOCALE, json.getString("locale"));
+                        hashMap.put(Constants.USER_GENDER, json.getString("gender"));
+                        hashMap.put(Constants.USER_UPDATED_TIME, json.getString("updated_time"));
+                        hashMap.put(Constants.USER_LINK, json.getString("link"));
+                        hashMap.put(Constants.USER_ID, json.getString("id"));
+                        hashMap.put(Constants.USER_TIMEZONE, json.getString("timezone"));
+                        hashMap.put(Constants.USER_EMAIL, json.getString("email"));
+                        hashMap.put(Constants.USER_IMAGE, image);
+                        hashMap.put(Constants.USER_TOKEN, accessToken.getToken());
+                        hashMap.put(Constants.USER_EXPIRE_AT, new SimpleDateFormat("yyyy-MM-dd").format(accessToken.getExpires()) + "T" + new SimpleDateFormat("HH:mm:ss").format(accessToken.getExpires()));
+                        onFacebookLogin(hashMap);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "first_name,last_name,verified,name,locale,gender,updated_time,link,id,timezone,email,picture");
+        request.setParameters(parameters);
+        request.executeAsync();
+    }
     private void mSetupGTM()
     {
         TagManager tagManager = TagManager.getInstance(this);
@@ -637,7 +715,7 @@ public class MainActivity extends AppCompatActivity
         AppEventsLogger.activateApp(this);
         AppsFlyerLib.onActivityResume(this);
         adjustFontScale(getResources().getConfiguration());
-        System.gc();
+//        System.gc();
     }
 
 
@@ -647,7 +725,7 @@ public class MainActivity extends AppCompatActivity
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
         AppsFlyerLib.onActivityPause(this);
-        System.gc();
+//        System.gc();
     }
 
     @Override
@@ -912,8 +990,12 @@ public class MainActivity extends AppCompatActivity
         if(MainActivity.type != null && !MainActivity.type.matches("")){
             mhandleNotifications();
         }
-        else if((MainActivity.user.getEducation_set() == 1 && (MainActivity.user.getExams_set() == 1) || (MainActivity.user.getIs_preparing().equals("0")) && IS_PROFILE_LOADED))
-            this.mMakeNetworkCall(Constants.TAG_LAUNCH_USER_HOME,Constants.BASE_URL + "preferences/", null);
+        else if((MainActivity.user.getEducation_set() == 1 && (MainActivity.user.getExams_set() == 1) || (MainActivity.user.getIs_preparing().equals("0")) && IS_PROFILE_LOADED)) {
+            if(IS_PROFILE_LOADED) {
+                mLoadUserProfile(null);
+            }
+            this.mMakeNetworkCall(Constants.TAG_LAUNCH_USER_HOME, Constants.BASE_URL + "preferences/", null);
+        }
         else if(MainActivity.user.getEducation_set() == 1 &&  MainActivity.user.getExams_set() == 0 && !MainActivity.user.getIs_preparing().equals("0"))
             this.mMakeNetworkCall(Constants.TAG_LOAD_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
         else
@@ -1553,8 +1635,10 @@ public class MainActivity extends AppCompatActivity
 //                break;
             case Constants.TAG_LAUNCH_USER_HOME:
                 this.onUpdateUserPreferences(response);
-                this.mClearBackStack();
-                mLoadUserProfile(null);
+                if(!IS_PROFILE_LOADED) {
+                    this.mClearBackStack();
+                    mLoadUserProfile(null);
+                }
                 break;
             case Constants.TAG_LOAD_USER_PREFERENCES:
                 this.onUpdateUserPreferences(response);
@@ -1942,8 +2026,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
         try {
-            if (this.progressDialog != null && this.progressDialog.isShowing())
-                this.progressDialog.dismiss();
+            hideProgressDialog();
         }
         catch(Exception e)
         {
@@ -2537,7 +2620,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
                 return "Loading Profile...";
             case Constants.TAG_UPDATE_INSTITUTES:
-                return "Updating Institues...";
+                return "Updating Institutes...";
             case Constants.TAG_UPDATE_PREFRENCES:
                 return "Updating Profile...";
             case Constants.WIDGET_INSTITUTES:
@@ -2666,9 +2749,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onError(final String tag, String response, final String url, final Map<String, String> params, final int method) {
-        if (progressDialog != null)
-            if (progressDialog.isShowing())
-                progressDialog.dismiss();
+        hideProgressDialog();
 
         if (!MainActivity.this.isFinishing())
         {
@@ -2736,9 +2817,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onJsonObjectRequestError(final String tag, final String response, final String url, final JSONObject params, final int method) {
-        if (progressDialog != null)
-            if (progressDialog.isShowing())
-                progressDialog.dismiss();
+       hideProgressDialog();
 
         if (!MainActivity.this.isFinishing())
         {
@@ -3098,11 +3177,30 @@ public class MainActivity extends AppCompatActivity
             progressDialog.setMessage(message);
         }
         progressDialog.show();
+//        displaySnackBar(message);
     }
 
     public void hideProgressDialog() {
         if(progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
+//        hideSnackBar();
+    }
+
+    public void displaySnackBar(int messageId){
+        try {
+            if (snackbar != null && !snackbar.isShown()) {
+                snackbar.setText(getResources().getString(messageId));
+                snackbar.show();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void hideSnackBar(){
+        if(snackbar!=null && snackbar.isShown()){
+            snackbar.dismiss();
+        }
     }
 
     @Override
@@ -3223,6 +3321,11 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
     }
 
+    @Override
+    public void onNoInternetConnection() {
+        displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+    }
+
    /* @Override
     public void onInstituteUnShortlisted(int position) {
 
@@ -3291,22 +3394,42 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params, int method) {
+        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
         this.showProgress(tag);
         this.networkUtils.networkData(tag, url, params, method);
+        } else {
+            displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+        }
     }
 
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params) {
-        this.showProgress(tag);
-        this.networkUtils.networkData(tag, url, params);
+        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+            this.showProgress(tag);
+            this.networkUtils.networkData(tag, url, params);
+        } else {
+            displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+        }
     }
 
     private void mMakePreferenceNetworkCall(String tag, String url, Map<String, String> params) {
+        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
         this.showProgress(tag);
         this.networkUtils.putData(tag, url, params);
+        } else {
+            displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+        }
     }
     private void mMakeJsonObjectNetworkCall(String tag, String url, JSONObject params, int method) {
+        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
         this.showProgress(tag);
         this.networkUtils.networkDataWithObjectParam(tag, url, params, method);
+        } else {
+            displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+        }
     }
 
     private void showProgress(String tag) {
@@ -4800,7 +4923,13 @@ public class MainActivity extends AppCompatActivity
         videosFragment=fragment;
         if(videoList!=null && !videoList.isEmpty()){
             this.videoList=videoList;
-            networkUtils.simpleGetData(Constants.TAG_UPDATE_VIDEO_TITLE,url);
+            int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+            if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+                networkUtils.simpleGetData(Constants.TAG_UPDATE_VIDEO_TITLE,url);
+            } else {
+                displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+            }
+
         }
     }
 
@@ -5014,7 +5143,10 @@ public class MainActivity extends AppCompatActivity
             }catch (Exception e){
                 e.printStackTrace();
             }
-
+            if(postion == 3){
+                MainActivity.this.onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL+"personalize/forums", null);
+                return;
+            }
             if(postion == 4){
                 MainActivity.this.mMakeNetworkCall(Constants.TAG_MY_ALERTS,Constants.BASE_URL+"exam-alerts/",null);
                 return;
@@ -5040,10 +5172,7 @@ public class MainActivity extends AppCompatActivity
     private void onTabMenuSelected(int tabPosition) {
 
         //TODO::  remove this when future buddies tab are present
-        if(tabPosition == 3){
-            this.onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL+"personalize/forums", null);
-            return;
-        }
+
         if(mUserExamsList == null )mUserExamsList = new ArrayList<>();
 
         if(this.mUserExamsList.size() <=0)

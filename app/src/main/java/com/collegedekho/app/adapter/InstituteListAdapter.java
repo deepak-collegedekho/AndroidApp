@@ -18,11 +18,13 @@ import android.widget.Toast;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.NetworkUtils;
 
 import java.util.ArrayList;
 
@@ -254,46 +256,56 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
+            int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
             switch (v.getId()) {
                 case R.id.card_institute_button_like:
-                    if (!v.isSelected()) {
-                        likeButton.setVisibility(View.GONE);
-                        //upvoteCount.setVisibility(View.GONE);
-                        likeProgressBar.setVisibility(View.VISIBLE);
-                        likeButton.setClickable(false);
-                        //dislikeButton.setClickable(false);
-                        mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.LIKE_THING);
-                    }
-                    else
-                    {
-                        //Toast.makeText(mContext, "Already liked..", Toast.LENGTH_SHORT).show();
-                        likeButton.setVisibility(View.GONE);
-                        likeProgressBar.setVisibility(View.VISIBLE);
-                        likeButton.setClickable(false);
-                        //dislikeButton.setClickable(false);
-                        mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_THING);
+                    if (connectivityStatus != Constants.TYPE_NOT_CONNECTED){
+                        if (!v.isSelected()) {
+                            likeButton.setVisibility(View.GONE);
+                            //upvoteCount.setVisibility(View.GONE);
+                            likeProgressBar.setVisibility(View.VISIBLE);
+                            likeButton.setClickable(false);
+                            //dislikeButton.setClickable(false);
+                            mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.LIKE_THING);
+                        } else {
+                            //Toast.makeText(mContext, "Already liked..", Toast.LENGTH_SHORT).show();
+                            likeButton.setVisibility(View.GONE);
+                            likeProgressBar.setVisibility(View.VISIBLE);
+                            likeButton.setClickable(false);
+                            //dislikeButton.setClickable(false);
+                            mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_THING);
+                        }
 
+                    }else {
+                        this.mListener.onNoInternetConnection();
                     }
                     break;
                 case R.id.button_dislike_college:
-                    if (!v.isSelected()) {
-                        //dislikeButton.setVisibility(View.INVISIBLE);
-                        //dislikeProgressBar.setVisibility(View.VISIBLE);
-                        likeButton.setClickable(false);
-                        //dislikeButton.setClickable(false);
-                        mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_THING);
+                    if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
+                        if (!v.isSelected()) {
+                            //dislikeButton.setVisibility(View.INVISIBLE);
+                            //dislikeProgressBar.setVisibility(View.VISIBLE);
+                            likeButton.setClickable(false);
+                            //dislikeButton.setClickable(false);
+                            mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_THING);
+                        } else
+                            Toast.makeText(mContext, "Already disliked. You really hate this one..", Toast.LENGTH_SHORT).show();
+                    }else {
+                        this.mListener.onNoInternetConnection();
                     }
-                    else
-                        Toast.makeText(mContext, "Already disliked. You really hate this one..", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.card_institute_container:
                     this.mListener.onInstituteSelected(getAdapterPosition());
                     break;
                 case R.id.card_institute_shortlist:
-                    mShortListTV.setEnabled(false);
-                    mShortListTV.setVisibility(View.GONE);
-                    mProgressBar.setVisibility(View.VISIBLE);
-                    this.mListener.onInstituteShortlisted(getAdapterPosition());
+                    if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
+                        mShortListTV.setEnabled(false);
+                        mShortListTV.setVisibility(View.GONE);
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        this.mListener.onInstituteShortlisted(getAdapterPosition());
+                    }else {
+                        this.mListener.onNoInternetConnection();
+                    }
                     break;
                 default:
                     mListener.onInstituteSelected(getAdapterPosition());

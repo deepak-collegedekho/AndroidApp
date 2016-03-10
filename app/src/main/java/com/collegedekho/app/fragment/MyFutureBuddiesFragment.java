@@ -21,6 +21,7 @@ import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 
 import java.util.ArrayList;
@@ -83,7 +84,8 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         (rootView.findViewById(R.id.fb_push_chat)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
+                if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
                 final String value = mChatText.getText().toString();
                 if (value.trim().equals(""))
                     Toast.makeText(getActivity(), "Please enter your message", Toast.LENGTH_SHORT).show();
@@ -133,6 +135,10 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                         return;
                     }
                     mSubmittedChat(value);
+                }
+
+            }else {
+                    mListener.onNoInternetConnection();
                 }
             }
         });
@@ -315,5 +321,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         void onMyFBUpdated(int commentsSize, int myFbIndex);
         void onUserLoginRequired(String value);
         void onNameUpdated(HashMap params, String msg);
+        void onNoInternetConnection();
     }
 }

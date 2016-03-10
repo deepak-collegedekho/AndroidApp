@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
+import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.NetworkUtils;
 
 import java.util.ArrayList;
 
@@ -124,9 +126,14 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-            MyFutureBuddiesEnumeration myFbEnumration = mMyFBEnumeration.get(this.getAdapterPosition());
-            myFbEnumration.setUnread_count(0);
-            this.mListener.onMyFBSelected(myFbEnumration, this.getAdapterPosition(), mMyFBEnumeration.get(this.getAdapterPosition()).getComments_count());
+            int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
+            if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
+                MyFutureBuddiesEnumeration myFbEnumration = mMyFBEnumeration.get(this.getAdapterPosition());
+                myFbEnumration.setUnread_count(0);
+                this.mListener.onMyFBSelected(myFbEnumration, this.getAdapterPosition(), mMyFBEnumeration.get(this.getAdapterPosition()).getComments_count());
+            }else {
+                this.mListener.onNoInternetConnection();
+            }
         }
     }
 }

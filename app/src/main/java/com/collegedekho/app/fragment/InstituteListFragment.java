@@ -420,6 +420,7 @@ View instituteView;
         void onFilterApplied();
 
         void onInstituteShortlisted(int position);
+        void onNoInternetConnection();
 
         @Override
         void onEndReached(String next, int type);

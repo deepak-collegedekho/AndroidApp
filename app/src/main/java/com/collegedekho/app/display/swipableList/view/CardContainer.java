@@ -146,7 +146,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
     }
 
     private void ensureFull() {
-
+        ViewGroup.LayoutParams lp=new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Adapter.IGNORE_ITEM_VIEW_TYPE);
         while (mNextAdapterPosition < mListAdapter.getCount() && getChildCount() < mMaxVisible) {
 
             //View view = mListAdapter.getView(mNextAdapterPosition, null, this);
@@ -154,12 +154,13 @@ public class CardContainer extends AdapterView<ListAdapter> {
             /*if(mOrientation == Orientations.OrientationType.Disordered) {
                 view.setRotation(getDisorderedRotation());
             }*/
-            addViewInLayout(mListAdapter.getView(mNextAdapterPosition, null, this), 0, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Adapter.IGNORE_ITEM_VIEW_TYPE), false);
-
+            addViewInLayout(mListAdapter.getView(mNextAdapterPosition, null, this), 0,lp, false);
             requestLayout();
+
 
             mNextAdapterPosition += 1;
         }
+
         int childCount = getChildCount();
         if (childCount != 0) {
             mTopCard = getChildAt(childCount - 1);

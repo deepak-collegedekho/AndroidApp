@@ -17,6 +17,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.activity.VideoPlayerActivity;
 import com.collegedekho.app.entities.VideoEntry;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.NetworkUtils;
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
@@ -298,11 +299,16 @@ public class InstituteVideosFragment extends BaseFragment {
 
         @Override
             public void onClick(View v) {
+            int connectivityStatus = new NetworkUtils(v.getContext(), null).getConnectivityStatus();
+            if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
                 String videoId = videoList.get(getLayoutPosition()).getVideoId();
                 Intent intent = new Intent(v.getContext(), VideoPlayerActivity.class);
                 intent.putExtra("video_id", videoId);
                 startActivity(intent);
+            } else {
+                ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             }
+        }
         }
 
      /*   private final class ThumbnailListener implements

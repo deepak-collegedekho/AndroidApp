@@ -11,7 +11,12 @@ public class Filters implements Parcelable {
     private String key;
     private String value;
 
+    public Filters(){
+
+    }
     protected Filters(Parcel in) {
+        key=in.readString();
+        value=in.readString();
     }
 
     public static final Creator<Filters> CREATOR = new Creator<Filters>()

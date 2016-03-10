@@ -16,6 +16,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.fragment.QnAQuestionDetailFragment;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.NetworkUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -124,38 +125,43 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
+            int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
             switch (v.getId())
             {
                 case R.id.qna_answer_button_downvote:
-                {
-                    if (v.isSelected()) {
-                        Toast.makeText(mContext, "You can't downvote the downvoted", Toast.LENGTH_SHORT).show();
-                    }else {
-                        if(mQnAQuestionAnswers.get(getAdapterPosition()).getCurrent_user_vote_type()==Constants.LIKE_THING) {
-                            mQnAQuestionAnswers.get(getAdapterPosition()).setDownvotes(mQnAQuestionAnswers.get(getAdapterPosition()).getDownvotes()+1);
-                            mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri()+ "downvote/", Constants.NOTINTERESTED_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
-                        }else{
-                            mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri(), Constants.DISLIKE_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
+                    if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
+                        if (v.isSelected()) {
+                            Toast.makeText(mContext, "You can't downvote the downvoted", Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (mQnAQuestionAnswers.get(getAdapterPosition()).getCurrent_user_vote_type() == Constants.LIKE_THING) {
+                                mQnAQuestionAnswers.get(getAdapterPosition()).setDownvotes(mQnAQuestionAnswers.get(getAdapterPosition()).getDownvotes() + 1);
+                                mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri() + "downvote/", Constants.NOTINTERESTED_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
+                            } else {
+                                mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri(), Constants.DISLIKE_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
+                            }
                         }
+                    }else {
+                        this.mListener.onNoInternetConnection();
                     }
-
                     break;
-                }
+
                 case R.id.qna_answer_button_upvote:
-                {
-                    if (v.isSelected()) {
-                        Toast.makeText(mContext, "You can't upvote the upvoted", Toast.LENGTH_SHORT).show();
-                    }else {
-                        if(mQnAQuestionAnswers.get(getAdapterPosition()).getCurrent_user_vote_type()==Constants.DISLIKE_THING) {
-                            mQnAQuestionAnswers.get(getAdapterPosition()).setUpvotes(mQnAQuestionAnswers.get(getAdapterPosition()).getUpvotes()+1);
-                            mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri()+ "upvote/", Constants.NOTINTERESTED_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
-                        }else {
-                            mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri(), Constants.LIKE_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
+                    if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
+                        if (v.isSelected()) {
+                            Toast.makeText(mContext, "You can't upvote the upvoted", Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (mQnAQuestionAnswers.get(getAdapterPosition()).getCurrent_user_vote_type() == Constants.DISLIKE_THING) {
+                                mQnAQuestionAnswers.get(getAdapterPosition()).setUpvotes(mQnAQuestionAnswers.get(getAdapterPosition()).getUpvotes() + 1);
+                                mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri() + "upvote/", Constants.NOTINTERESTED_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
+                            } else {
+                                mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri(), Constants.LIKE_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
+                            }
                         }
+                    }else {
+                        this.mListener.onNoInternetConnection();
                     }
-
                     break;
-                }
+
                 default:
                 {
                     break;

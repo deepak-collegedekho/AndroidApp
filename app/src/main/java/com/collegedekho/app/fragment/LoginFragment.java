@@ -20,6 +20,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -58,11 +59,26 @@ public class LoginFragment extends  BaseFragment{
         rootView.findViewById(R.id.sign_up_skip).setOnClickListener(this);
 
         LoginButton fbLoginutton = (LoginButton) rootView.findViewById(R.id.facebook_sign_in);
-        fbLoginutton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "email", "user_likes", "user_education_history"));
-        mFacebookCallbackListener(fbLoginutton);
-
+        (rootView.findViewById(R.id.fb_login)).setOnClickListener(this);
+//        LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends", "email", "user_likes", "user_education_history", "user_birthday"));
+//        fbLoginutton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "email", "user_likes", "user_education_history"));
+//        mFacebookCallbackListener(fbLoginutton);
         return rootView;
     }
+
+//    @Override
+//    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+//        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+//            view.findViewById(R.id.splash_no_internet_info_layout).setVisibility(View.GONE);
+//            view.findViewById(R.id.login_layout).setVisibility(View.VISIBLE);
+//        }
+//        else {
+//            view.findViewById(R.id.splash_no_internet_info_layout).setVisibility(View.VISIBLE);
+//            view.findViewById(R.id.login_layout).setVisibility(View.GONE);
+//        }
+//    }
 
     /**
      * This method is used to register this fragment with  facebook login account
@@ -175,12 +191,18 @@ public class LoginFragment extends  BaseFragment{
     @Override
     public void onClick(View view) {
         if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
-            Toast.makeText(getActivity(), "Internet connection not found.", Toast.LENGTH_LONG).show();
+//            Toast.makeText(getActivity(), "Internet connection not found.", Toast.LENGTH_LONG).show();
+            ((MainActivity)getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
-        if(view.getId() == R.id.sign_up_skip)
-        {
-          mSkipUserLogin();
+        switch (view.getId()){
+            case R.id.sign_up_skip:
+                mSkipUserLogin();
+                break;
+
+            case R.id.fb_login:
+                LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends", "email", "user_likes", "user_education_history"));
+                break;
         }
        /* else if (view.getId() == R.id.sign_up_button) {
             String email = ((EditText) getView().findViewById(R.id.splash_login_email)).getText().toString();

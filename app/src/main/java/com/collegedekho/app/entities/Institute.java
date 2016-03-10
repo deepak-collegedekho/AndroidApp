@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.fasterxml.jackson.jr.ob.impl.DeferredMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -99,9 +100,12 @@ public class Institute implements Parcelable {
         is_shortlisted = source.readInt();
         upvotes = source.readInt();
         downvotes = source.readInt();
-        videos = source.readArrayList(ArrayList.class.getClassLoader());
-        streams = source.readArrayList(ArrayList.class.getClassLoader());
+        videos=new ArrayList<>();
+        streams=new ArrayList<>();
+        source.readStringList(videos);
+        source.readStringList(streams);
         partner_status=source.readInt();
+        images=new HashMap<>();
         source.readMap(images, Map.class.getClassLoader());
     }
 

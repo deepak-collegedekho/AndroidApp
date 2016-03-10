@@ -3,49 +3,91 @@
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/bg_splash"
-    android:paddingTop="@dimen/m100dp"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/m10dp"
     android:paddingLeft="@dimen/m50dp"
     android:paddingRight="@dimen/m50dp"
-    android:gravity="center_horizontal"
-    >
+    android:paddingTop="@dimen/m100dp">
 
 
     <ImageView
         style="@style/AppTheme.ImageView"
-        android:src="@drawable/file79"/>
+        android:src="@drawable/file79" />
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/facebook_sign_in"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/login_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        facebook:com_facebook_login_text="FACEBOOK LOGIN"
-        facebook:com_facebook_logout_text="FACEBOOK LOGIN"
-        style="@style/AppTheme.FacebookButton"
-        />
+        android:orientation="vertical">
 
-    <include layout="@layout/layout_or_line"
-        />
+        <RelativeLayout
+            android:id="@+id/fb_login"
+            style="@style/AppTheme.FacebookButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/fb_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:src="@drawable/com_facebook_button_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/m8dp"
+                android:layout_toRightOf="@id/fb_icon"
+                android:text="FACEBOOK LOGIN"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="normal" />
+        </RelativeLayout>
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/facebook_sign_in"
+            style="@style/AppTheme.FacebookButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:gravity="center"
+            android:visibility="gone"
+            facebook:com_facebook_login_text="FACEBOOK LOGIN"
+            facebook:com_facebook_logout_text="FACEBOOK LOGIN" />
+
+        <include layout="@layout/layout_or_line" />
+
+        <TextView
+            android:id="@+id/sign_up_skip"
+            style="@style/AppTheme.OrangeButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:gravity="center"
+            android:padding="@dimen/m10dp"
+            android:paddingBottom="@dimen/m5dp"
+            android:paddingTop="@dimen/m5dp"
+            android:text="SKIP"
+            android:textSize="20sp" />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/sign_up_skip"
-        style="@style/AppTheme.OrangeButton"
-        android:layout_height="wrap_content"
+        android:id="@+id/splash_no_internet_info_layout"
         android:layout_width="match_parent"
-        android:paddingBottom="@dimen/m5dp"
-        android:paddingTop="@dimen/m5dp"
-        android:padding="@dimen/m10dp"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:textSize="20sp"
+        android:layout_height="100dp"
+        android:layout_margin="@dimen/activity_vertical_margin"
         android:gravity="center"
-        android:text="SKIP"
-        />
-
-
-
+        android:text="You Are Not Connected To Internet. Please connect and come back."
+        android:textColor="@color/primary_color"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 </LinearLayout>

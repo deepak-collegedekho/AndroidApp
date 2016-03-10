@@ -23,6 +23,7 @@ import com.collegedekho.app.adapter.QnAAnswersListAdapter;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.NetworkUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -163,14 +164,19 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         this.mUpvoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (v.isSelected()) {
-                    Toast.makeText(getActivity(), "You can't upvote the upvoted", Toast.LENGTH_SHORT).show();
-                }else {
-                    if(mQnAQuestion.getCurrent_user_vote_type()==Constants.DISLIKE_THING) {
-                        mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri()+ "upvote/", Constants.NOTINTERESTED_THING, mQnAQuestion.getIndex());
-                    }else{
-                        mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri(), Constants.LIKE_THING, mQnAQuestion.getIndex());
+                int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
+                if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
+                    if (v.isSelected()) {
+                        Toast.makeText(getActivity(), "You can't upvote the upvoted", Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (mQnAQuestion.getCurrent_user_vote_type() == Constants.DISLIKE_THING) {
+                            mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri() + "upvote/", Constants.NOTINTERESTED_THING, mQnAQuestion.getIndex());
+                        } else {
+                            mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri(), Constants.LIKE_THING, mQnAQuestion.getIndex());
+                        }
                     }
+                }else {
+                    mListener.onNoInternetConnection();
                 }
             }
         });
@@ -178,14 +184,19 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         this.mDownvoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (v.isSelected()) {
-                    Toast.makeText(getActivity(), "You can't downvote the downvoted", Toast.LENGTH_SHORT).show();
-                }else {
-                    if(mQnAQuestion.getCurrent_user_vote_type()==Constants.LIKE_THING) {
-                        mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri()+ "downvote/", Constants.NOTINTERESTED_THING, mQnAQuestion.getIndex());
-                    }else {
-                        mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri(), Constants.DISLIKE_THING, mQnAQuestion.getIndex());
+                int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
+                if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
+                    if (v.isSelected()) {
+                        Toast.makeText(getActivity(), "You can't downvote the downvoted", Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (mQnAQuestion.getCurrent_user_vote_type() == Constants.LIKE_THING) {
+                            mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri() + "downvote/", Constants.NOTINTERESTED_THING, mQnAQuestion.getIndex());
+                        } else {
+                            mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri(), Constants.DISLIKE_THING, mQnAQuestion.getIndex());
+                        }
                     }
+                }else {
+                    mListener.onNoInternetConnection();
                 }
             }
         });
@@ -307,6 +318,7 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         void onQnAQuestionVote(String resourceURI, int voteType, int position);
         void onQnAAnswerVote(String resourceURI, int voteType, int answerPosition, int questionPosition);
         void onQnAAnswerSubmitted(String questionURI, String answerText, int questionIndex, int answerIndex);
+        void onNoInternetConnection();
     }
 
     @Override

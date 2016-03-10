@@ -357,7 +357,7 @@ public class ProfileEditFragment extends BaseFragment {
                     break;
                 case R.id.profile_save_button:
                     if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
-                        Toast.makeText(getActivity(), "Internet connection not found.", Toast.LENGTH_LONG).show();
+                        ((MainActivity)getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
                         return;
                     }
                     mUpdateProfile();
