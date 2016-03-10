@@ -158,7 +158,7 @@ private View mExamsTabLayout;
 
                 v.setVisibility(View.GONE);
                 IS_TUTE_COMPLETED = true;
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.PREP_BUDDY_SCREEN_TUTE, true).apply();
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
 
                 View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                 bottomMenu.animate().translationY(0);
@@ -277,7 +277,7 @@ private View mExamsTabLayout;
         ImageView fourthSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_fourth);
 
         if(this.selectedTabPosition == 1){
-            IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PREP_BUDDY_SCREEN_TUTE, false);
+            IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
             if(view != null ){
                 View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                 if(!IS_TUTE_COMPLETED) {

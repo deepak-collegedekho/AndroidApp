@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.telephony.TelephonyManager;
 
 import com.android.volley.Request;
+import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.Constants;
 
@@ -55,23 +56,23 @@ public class ApplyIntentService extends IntentService {
         HashMap<String, String> map = new HashMap<>();
 
         if (MainActivity.user != null) {
-            map.put(Constants.USER_NAME, MainActivity.user.getName());
-            map.put(Constants.USER_EMAIL, MainActivity.user.getEmail());
+            map.put(MainActivity.getResourceString(R.string.USER_NAME), MainActivity.user.getName());
+            map.put(MainActivity.getResourceString(R.string.USER_EMAIL), MainActivity.user.getEmail());
 
             TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             String mPhoneNumber = tMgr.getLine1Number();
             if (mPhoneNumber != null) {
-                map.put(Constants.USER_PHONE, mPhoneNumber);
+                map.put(MainActivity.getResourceString(R.string.USER_PHONE), mPhoneNumber);
             } else {
-                if (MainActivity.user != null) map.put(Constants.USER_PHONE, MainActivity.user.getPhone_no());
+                if (MainActivity.user != null) map.put(MainActivity.getResourceString(R.string.USER_PHONE), MainActivity.user.getPhone_no());
             }
         }
-        map.put(Constants.APPLY_COURSE,instituteCourseID);
-        map.put(Constants.APPLY_INSTITUTE, "" + instituteID);
+        map.put(MainActivity.getResourceString(R.string.APPLY_COURSE),instituteCourseID);
+        map.put(MainActivity.getResourceString(R.string.APPLY_INSTITUTE), "" + instituteID);
 
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
-        map.put(Constants.APPLY_YEAR, "" + year);
+        map.put(MainActivity.getResourceString(R.string.APPLY_YEAR), "" + year);
 
         String URL = Constants.BASE_URL + "lms/";
         MainActivity.networkUtils.networkData(Constants.TAG_APPLIED_COURSE, URL, map, Request.Method.POST);

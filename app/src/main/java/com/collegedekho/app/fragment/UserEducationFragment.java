@@ -109,7 +109,7 @@ private int selectedValue=0;
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_user_education, container, false);
-        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.EDUCATION_SCREEN_TUTE, false);
+        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.EDUCATION_SCREEN_TUTE), false);
 
         TextView cdTextView = (TextView) rootView.findViewById(R.id.user_cd_recommendation_text);
         Spanned text = Html.fromHtml("GET <b><font color='#ff8d00'>C</font><font color='#1f2560'>D</font></b> <br>RECOMMEDATIONS");
@@ -175,7 +175,7 @@ private int selectedValue=0;
         if(isEditMode){
             rootView.findViewById(R.id.education_tour_guide_image).setVisibility(View.GONE);
             IS_TUTE_COMPLETED = true;
-            getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.EDUCATION_SCREEN_TUTE, true).apply();
+            getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.EDUCATION_SCREEN_TUTE), true).apply();
             setForEditEducation();
         }else {
             rootView.findViewById(R.id.education_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
@@ -184,7 +184,7 @@ private int selectedValue=0;
 
                     v.setVisibility(View.GONE);
                     IS_TUTE_COMPLETED = true;
-                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.EDUCATION_SCREEN_TUTE, true).apply();
+                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.EDUCATION_SCREEN_TUTE), true).apply();
                     return false;
                 }
             });

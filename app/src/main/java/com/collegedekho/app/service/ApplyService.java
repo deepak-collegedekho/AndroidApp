@@ -13,6 +13,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.Constants;
@@ -77,8 +78,8 @@ public class ApplyService extends Service {
             try {
                 User user = JSON.std.beanFrom(User.class, preferences.getString(Constants.KEY_USER, null));
                 if (user != null) {
-                    params.put(Constants.USER_NAME, user.getName());
-                    params.put(Constants.USER_EMAIL, user.getEmail());
+                    params.put(MainActivity.getResourceString( R.string.USER_NAME), user.getName());
+                    params.put(MainActivity.getResourceString( R.string.USER_EMAIL), user.getEmail());
                     //params.put(Constants.USER_PHONE,user.getPhone());
                     mToken = user.getToken();
                 }
@@ -87,12 +88,12 @@ public class ApplyService extends Service {
             }
 
 
-            params.put(Constants.APPLY_COURSE, instituteCourseID);
-            params.put(Constants.APPLY_INSTITUTE, "" + instituteID);
+            params.put(MainActivity.getResourceString(R.string.APPLY_COURSE), instituteCourseID);
+            params.put(MainActivity.getResourceString(R.string.APPLY_INSTITUTE), "" + instituteID);
 
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
-            params.put(Constants.APPLY_YEAR, "" + year);
+            params.put(MainActivity.getResourceString(R.string.APPLY_YEAR), "" + year);
 
             String URL = Constants.BASE_URL + "lms/";
             if(MainActivity.networkUtils != null)

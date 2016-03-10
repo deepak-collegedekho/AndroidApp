@@ -138,21 +138,21 @@ public class LoginFragment extends  BaseFragment{
                         MainActivity.user.setImage(image);
 
                         HashMap hashMap = new HashMap<>();
-                        hashMap.put(Constants.USER_FIRST_NAME, json.getString("first_name"));
-                        hashMap.put(Constants.USER_LAST_NAME, json.getString("last_name"));
-                        hashMap.put(Constants.USER_VERIFIED, json.getString("verified"));
-                        hashMap.put(Constants.USER_NAME, json.getString("name"));
-                        hashMap.put(Constants.USER_LOCALE, json.getString("locale"));
-                        hashMap.put(Constants.USER_GENDER, json.getString("gender"));
-                        hashMap.put(Constants.USER_UPDATED_TIME, json.getString("updated_time"));
-                        hashMap.put(Constants.USER_LINK, json.getString("link"));
-                        hashMap.put(Constants.USER_ID, json.getString("id"));
-                        hashMap.put(Constants.USER_TIMEZONE, json.getString("timezone"));
-                        hashMap.put(Constants.USER_EMAIL, json.getString("email"));
-                        hashMap.put(Constants.USER_IMAGE, image);
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_FIRST_NAME), json.getString("first_name"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_LAST_NAME), json.getString("last_name"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_VERIFIED), json.getString("verified"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), json.getString("name"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_LOCALE), json.getString("locale"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_GENDER), json.getString("gender"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_UPDATED_TIME), json.getString("updated_time"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_LINK), json.getString("link"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_ID), json.getString("id"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_TIMEZONE), json.getString("timezone"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_EMAIL), json.getString("email"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_IMAGE), image);
                         AccessToken accessToken = AccessToken.getCurrentAccessToken();
-                        hashMap.put(Constants.USER_TOKEN, accessToken.getToken());
-                        hashMap.put(Constants.USER_EXPIRE_AT, new SimpleDateFormat("yyyy-MM-dd").format(accessToken.getExpires()) + "T" + new SimpleDateFormat("HH:mm:ss").format(accessToken.getExpires()));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_TOKEN), accessToken.getToken());
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_EXPIRE_AT), new SimpleDateFormat("yyyy-MM-dd").format(accessToken.getExpires()) + "T" + new SimpleDateFormat("HH:mm:ss").format(accessToken.getExpires()));
                         mFacebookLogin(hashMap);
                     }
 

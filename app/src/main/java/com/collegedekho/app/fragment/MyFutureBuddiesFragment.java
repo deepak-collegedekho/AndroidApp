@@ -98,7 +98,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                          // get name from my profile me
                         if(user.profileData[0] != null){
                             HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put(Constants.USER_NAME, user.profileData[0]);
+                            hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), user.profileData[0]);
                             mListener.onNameUpdated(hashMap, value.trim());
                             return;
                         }
@@ -117,17 +117,17 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                                 String name =   ((EditText) dialog.findViewById(R.id.user_name)).getText().toString();
                                 if(name == null || name.length() <= 0)
                                 {
-                                    Utils.DisplayToast(getActivity(), Constants.NAME_EMPTY);
+                                    Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.NAME_EMPTY));
                                     return;
                                 }
                                 else if(!Utils.isValidName(name)){
-                                    Utils.DisplayToast(getActivity(), Constants.NAME_INVALID);
+                                    Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.NAME_INVALID));
                                     return;
                                 }
 
                                 dialog.dismiss();
                                 HashMap<String, String> hashMap = new HashMap<>();
-                                hashMap.put(Constants.USER_NAME, name);
+                                hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), name);
                                 mListener.onNameUpdated(hashMap, value);
                             }
                         });

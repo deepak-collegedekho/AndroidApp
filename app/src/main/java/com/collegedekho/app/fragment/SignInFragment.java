@@ -169,21 +169,21 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
                             MainActivity.user.setImage(image);
 
                         HashMap hashMap = new HashMap<>();
-                        hashMap.put(Constants.USER_FIRST_NAME, json.getString("first_name"));
-                        hashMap.put(Constants.USER_LAST_NAME, json.getString("last_name"));
-                        hashMap.put(Constants.USER_VERIFIED, json.getString("verified"));
-                        hashMap.put(Constants.USER_NAME, json.getString("name"));
-                        hashMap.put(Constants.USER_LOCALE, json.getString("locale"));
-                        hashMap.put(Constants.USER_GENDER, json.getString("gender"));
-                        hashMap.put(Constants.USER_UPDATED_TIME, json.getString("updated_time"));
-                        hashMap.put(Constants.USER_LINK, json.getString("link"));
-                        hashMap.put(Constants.USER_ID, json.getString("id"));
-                        hashMap.put(Constants.USER_TIMEZONE, json.getString("timezone"));
-                        hashMap.put(Constants.USER_EMAIL, json.getString("email"));
-                        hashMap.put(Constants.USER_IMAGE, image);
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_FIRST_NAME), json.getString("first_name"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_LAST_NAME), json.getString("last_name"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_VERIFIED), json.getString("verified"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), json.getString("name"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_LOCALE), json.getString("locale"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_GENDER), json.getString("gender"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_UPDATED_TIME), json.getString("updated_time"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_LINK), json.getString("link"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_ID), json.getString("id"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_TIMEZONE), json.getString("timezone"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_EMAIL), json.getString("email"));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_IMAGE), image);
                         AccessToken accessToken = AccessToken.getCurrentAccessToken();
-                        hashMap.put(Constants.USER_TOKEN, accessToken.getToken());
-                        hashMap.put(Constants.USER_EXPIRE_AT, new SimpleDateFormat("yyyy-MM-dd").format(accessToken.getExpires()) + "T" + new SimpleDateFormat("HH:mm:ss").format(accessToken.getExpires()));
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_TOKEN), accessToken.getToken());
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_EXPIRE_AT), new SimpleDateFormat("yyyy-MM-dd").format(accessToken.getExpires()) + "T" + new SimpleDateFormat("HH:mm:ss").format(accessToken.getExpires()));
                         SignInFragment.this.mFacebookLogin(hashMap, mMessage);
                     }
 
@@ -270,8 +270,8 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
                 return;
             }
             HashMap hashMap = new HashMap<>();
-            hashMap.put(Constants.USER_EMAIL, email);
-            hashMap.put(Constants.USER_PASSWORD, password);
+            hashMap.put(MainActivity.getResourceString(R.string.USER_EMAIL), email);
+            hashMap.put(MainActivity.getResourceString(R.string.USER_PASSWORD), password);
             mUserSignedIn(hashMap, mMessage);
 
         }
@@ -365,36 +365,36 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
         if(currentPerson != null)
         {
             // get google user account info
-            params.put(Constants.USER_NAME, currentPerson.getDisplayName());
+            params.put(MainActivity.getResourceString(R.string.USER_NAME), currentPerson.getDisplayName());
             params.put("picture", currentPerson.getImage().getUrl());
-            params.put(Constants.USER_IMAGE,currentPerson.getImage().getUrl());// for local save
-            params.put(Constants.USER_LOCALE, currentPerson.getLanguage());
-            params.put(Constants.USER_ID, currentPerson.getId());
-            params.put(Constants.USER_LINK, currentPerson.getUrl());
-            params.put(Constants.USER_VERIFIED_EMAIL, currentPerson.isVerified());
+            params.put(MainActivity.getResourceString(R.string.USER_IMAGE),currentPerson.getImage().getUrl());// for local save
+            params.put(MainActivity.getResourceString(R.string.USER_LOCALE), currentPerson.getLanguage());
+            params.put(MainActivity.getResourceString(R.string.USER_ID), currentPerson.getId());
+            params.put(MainActivity.getResourceString(R.string.USER_LINK), currentPerson.getUrl());
+            params.put(MainActivity.getResourceString(R.string.USER_VERIFIED_EMAIL), currentPerson.isVerified());
 
             Person.Name personName =  currentPerson.getName();
             if(personName != null) {
-                params.put(Constants.USER_GIVEN_NAME, personName.getGivenName());
-                params.put(Constants.USER_FAMILY_NAME, personName.getFamilyName());
+                params.put(MainActivity.getResourceString(R.string.USER_GIVEN_NAME), personName.getGivenName());
+                params.put(MainActivity.getResourceString(R.string.USER_FAMILY_NAME), personName.getFamilyName());
             }
              // get gender info of google user
             int personGender =  currentPerson.getGender();
             if(personGender == 0){
-                params.put(Constants.USER_GENDER, "Male");
+                params.put(MainActivity.getResourceString(R.string.USER_GENDER), "Male");
             }
             else if(personGender == 1){
-                params.put(Constants.USER_GENDER, "Female");
+                params.put(MainActivity.getResourceString(R.string.USER_GENDER), "Female");
             }
             else if(personGender == 2){
-                params.put(Constants.USER_GENDER, "Other");
+                params.put(MainActivity.getResourceString(R.string.USER_GENDER), "Other");
             }
 
-            //params.put(Constants.USER_EXPIRE_AT, currentPerson.getLanguage());
+            //params.put(MainActivity.getResourceString(R.string.USER_EXPIRE_AT), currentPerson.getLanguage());
         }
         // get user email id
         final String email =  Plus.AccountApi.getAccountName(mGoogleApiClient);
-        params.put(Constants.USER_EMAIL, email);
+        params.put(MainActivity.getResourceString(R.string.USER_EMAIL), email);
 
         // request to get token of google plus user
         AsyncTask task = new AsyncTask() {
@@ -406,7 +406,7 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
                     // application.
                     String token = GoogleAuthUtil.getToken(getActivity(),
                             email, "oauth2:" + Scopes.PLUS_LOGIN);
-                   params.put(Constants.USER_TOKEN,token);
+                   params.put(MainActivity.getResourceString(R.string.USER_TOKEN),token);
                 } catch (UserRecoverableAuthException e) {
                     // This error is recoverable, so we could fix this
                     // by displaying the intent to the user.

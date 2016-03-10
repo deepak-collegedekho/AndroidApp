@@ -463,16 +463,16 @@ public class ProfileEditFragment extends BaseFragment {
             String name = ((EditText) v.findViewById(R.id.profile_edit_name)).getText().toString();
             String phone = ((EditText) v.findViewById(R.id.profile_edit_phone)).getText().toString();
             if (name == null || name.trim().isEmpty()) {
-                Utils.DisplayToast(getActivity(), Constants.NAME_EMPTY);
+                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.NAME_EMPTY));
                 return;
             } else if (!Utils.isValidName(name)) {
-                Utils.DisplayToast(getActivity(), Constants.NAME_INVALID);
+                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.NAME_INVALID));
                 return;
             } else if (phone == null || phone.trim().isEmpty()) {
-                Utils.DisplayToast(getActivity(), Constants.PHONE_EMPTY);
+                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.PHONE_EMPTY));
                 return;
             } else if (phone.length() <= 9 || !Utils.isValidPhone(phone)) {
-                Utils.DisplayToast(getActivity(), Constants.PHONE_INVALID);
+                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.PHONE_INVALID));
                 return;
             }
            /* else if (email == null || email.isEmpty()){
@@ -486,8 +486,8 @@ public class ProfileEditFragment extends BaseFragment {
 
             HashMap<String, String> hashMap = new HashMap<>();
             // hashMap.put(Constants.USER_EMAIL, email);
-            hashMap.put(Constants.USER_NAME, name.trim());
-            hashMap.put(Constants.USER_PHONE, phone.trim());
+            hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), name.trim());
+            hashMap.put(MainActivity.getResourceString(R.string.USER_PHONE), phone.trim());
             if (mListener != null) {
                 this.mListener.onProfileUpdated(hashMap);
             }

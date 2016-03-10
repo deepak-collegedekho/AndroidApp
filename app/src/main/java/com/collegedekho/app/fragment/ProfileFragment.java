@@ -72,7 +72,7 @@ public class ProfileFragment extends BaseFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PROFILE_SCREEN_TUTE, false);
+        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PROFILE_SCREEN_TUTE), false);
 
         mProfileName  = (TextView)rootView.findViewById(R.id.user_name);
         mStreamName   = (TextView)rootView.findViewById(R.id.user_profile_stream);
@@ -152,7 +152,7 @@ public class ProfileFragment extends BaseFragment
                     bottomMenu.animate().translationY(0);
                     bottomMenu.setVisibility(View.VISIBLE);
                     getActivity().invalidateOptionsMenu();
-                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.PROFILE_SCREEN_TUTE, true).apply();
+                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PROFILE_SCREEN_TUTE), true).apply();
                 }
             }
         });
@@ -206,7 +206,7 @@ public class ProfileFragment extends BaseFragment
         }
         View view =  getView();
         if(view != null ){
-            IS_TUTE_COMPLETED= getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.PROFILE_SCREEN_TUTE, false);
+            IS_TUTE_COMPLETED= getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PROFILE_SCREEN_TUTE), false);
             View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
             if(!IS_TUTE_COMPLETED) {
 

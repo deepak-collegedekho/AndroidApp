@@ -102,7 +102,7 @@ View instituteView;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_institute_listing, container, false);
-        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.INSTITUTE_LIST_SCREEN_TUTE, false);
+        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.INSTITUTE_LIST_SCREEN_TUTE), false);
 
         if (IS_TUTE_COMPLETED)
             rootView.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
@@ -178,7 +178,7 @@ View instituteView;
 
                 v.setVisibility(View.GONE);
                 IS_TUTE_COMPLETED = true;
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.INSTITUTE_LIST_SCREEN_TUTE, true).apply();
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.INSTITUTE_LIST_SCREEN_TUTE), true).apply();
                 rootView.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
                 return false;
             }

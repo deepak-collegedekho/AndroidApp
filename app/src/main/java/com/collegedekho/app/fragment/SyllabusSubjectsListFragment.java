@@ -301,8 +301,8 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
             }
 
             try {
-                parentJsonObj.put(Constants.CHAPTERS, chapterJsonArray);
-                parentJsonObj.put(Constants.SUBJECTS, subjectJsonArray);
+                parentJsonObj.put(MainActivity.getResourceString(R.string.CHAPTERS), chapterJsonArray);
+                parentJsonObj.put(MainActivity.getResourceString(R.string.SUBJECTS), subjectJsonArray);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

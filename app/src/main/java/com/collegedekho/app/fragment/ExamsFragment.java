@@ -79,7 +79,7 @@ public class ExamsFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_user_exams, container, false);
         this.mExamSubmitButton = (TextView) rootView.findViewById(R.id.exams_submit_button);
 
-        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.EXAMS_SCREEN_TUTE, false);
+        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.EXAMS_SCREEN_TUTE), false);
 
         //((TextView)rootView.findViewById(R.id.points_test_view)).setText("YOU HAVE EARNED FOR SHARING YOUR DETAIL");
         final RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.exams_recycle_view);
@@ -128,7 +128,7 @@ public class ExamsFragment extends BaseFragment {
 
                 v.setVisibility(View.GONE);
                 IS_TUTE_COMPLETED = true;
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.EXAMS_SCREEN_TUTE, true).apply();
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.EXAMS_SCREEN_TUTE), true).apply();
 
                 recyclerView.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();
@@ -254,8 +254,8 @@ public class ExamsFragment extends BaseFragment {
                             if(!examDetailObj.isSelected())continue;
                             JSONObject examHash = new JSONObject();
                             try {
-                                examHash.putOpt(Constants.EXAM_ID,examDetailObj.getId());
-                                examHash.putOpt(Constants.MARKS,examDetailObj.getExam_marks());
+                                examHash.putOpt(MainActivity.getResourceString(R.string.EXAM_ID),examDetailObj.getId());
+                                examHash.putOpt(MainActivity.getResourceString(R.string.MARKS),examDetailObj.getExam_marks());
                                 parentArray.put(examHash);
                                 isExamSelected = true;
                                 if(mainActivity!=null){
@@ -270,7 +270,7 @@ public class ExamsFragment extends BaseFragment {
                 }
             }
             try {
-                parentJsonObject.put(Constants.RESULTS,parentArray);
+                parentJsonObject.put(MainActivity.getResourceString(R.string.RESULTS),parentArray);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

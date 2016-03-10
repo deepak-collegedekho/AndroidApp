@@ -16,7 +16,7 @@
             android:layout_height="@dimen/m50dp"
             android:layout_margin="@dimen/m10dp"
             android:gravity="center"
-            android:text="Help us understand you better"
+            android:text="@string/otp_title"
             android:textColor="@color/white"
             android:textSize="@dimen/m24sp"
             android:textStyle="bold" />
@@ -39,7 +39,7 @@
                 android:id="@+id/title_msg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Enter Your Mobile Number"
+                android:text="@string/enter_mobile_number"
                android:layout_gravity="left"
                 android:layout_marginLeft="@dimen/m40dp"
                 android:textColor="@color/white"
@@ -90,7 +90,7 @@
                 android:layout_margin="@dimen/m40dp"
                 android:background="@drawable/bg_button_orange"
                 android:gravity="center"
-                android:text="SUBMIT"
+                android:text="@string/submit"
                 android:textColor="@color/white"
                 android:textSize="@dimen/m18sp"
                 android:textStyle="bold" />
@@ -108,7 +108,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="OTP has been sent to your mobile number"
+                android:text="@string/otp_sent_message"
                 android:textColor="@color/white"
                 android:textSize="@dimen/m26sp" />
 
@@ -144,7 +144,7 @@
                 android:layout_marginLeft="@dimen/m40dp"
                 android:layout_marginTop="@dimen/m20dp"
                 android:gravity="center_vertical"
-                android:text=" Resend OTP"
+                android:text="@string/resend_otp"
                 android:textColor="@color/primary_orange"
                 android:textSize="@dimen/m20sp" />
 
@@ -157,7 +157,7 @@
                 android:layout_marginTop="@dimen/m20dp"
                 android:background="@drawable/bg_button_orange"
                 android:gravity="center"
-                android:text="VERIFY YOUR MOBILE NUMBER"
+                android:text="@string/verify_number"
                 android:textColor="@color/white"
                 android:textSize="@dimen/m18sp"
                 android:textStyle="bold" />

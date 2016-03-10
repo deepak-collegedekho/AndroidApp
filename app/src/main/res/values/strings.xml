@@ -47,8 +47,329 @@
     <string name="cancel">CANCEL</string>
     <string name="xscale">1.2f</string>
     <string name="yscale">1f</string>
-    <string name="submit">Submit</string>
 
-<!--APP MESSAGES-->
+    <!--APP MESSAGES-->
     <string name="INTERNET_CONNECTION_ERROR">You are not connected to Internet</string>
+
+
+    <!--TAGS-->
+    <string name="PREFS">sharedprefs</string>
+    <string name="KEY_USER">user_id</string>
+    <string name="TAG_CREATE_USER">create_user</string>
+    <string name="ANONYMOUS_USER">Anonymous user</string>
+    <string name="TAG_CREATE_ANONY_USER">create_anony_user</string>
+    <string name="TAG_CREATE_FACEBOOK_ANONY_USER">create_facebook_anony_user</string>
+    <string name="TAG_SKIP_LOGIN">skip_login</string>
+    <string name="TAG_USER_SIGNUP">user_sign_up</string>
+    <string name="TAG_USER_FACEBOOK_LOGIN">user_facebook_login</string>
+    <string name="TAG_USER_LOGIN">user_login</string>
+    <string name="TAG_USER_REGISTRATION">user_registration</string>
+    <string name="TAG_EDUCATION_DETAILS_SUBMIT">user_education_submit</string>
+    <string name="TAG_EDIT_EDUCATION_DETAILS_SUBMIT">edited_user_education_submit</string>
+    <string name="TAG_NOT_PREPARING_EDUCATION_DETAILS_SUBMIT">user_not_preparing_education_submit</string>
+    <string name="TAG_EXAMS_LIST">exams_list</string>
+    <string name="TAG_EDIT_EXAMS_LIST">edit_exams_list</string>
+    <string name="TAG_LOAD_EXAMS_LIST">load_exams_list</string>
+
+    <string name="TAG_SUBMIT_EXAMS_LIST">submit_exams_list</string>
+    <string name="TAG_LOAD_USER_PREFERENCES">load_user_preferences</string>
+    <string name="TAG_LOAD_USER_PREFERENCES_N_BACK">load_user_preferences_n_back</string>
+    <string name="TAG_LAUNCH_USER_HOME">launch_user_home</string>
+    <string name="TAG_SUBMIT_EDITED_EXAMS_LIST">submit_edited_exams_list</string>
+    <string name="TAG_SUBMIT_PSYCHOMETRIC_EXAM">submit_psychometric_exam</string>
+    <string name="TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM">submit_edit_psychometric_exam</string>
+    <string name="TAG_SUBMIT_SBS_EXAM">submit_sbs_exam</string>
+
+    <string name="TAG_LOAD_STREAM">load_stream</string>
+    <string name="TAG_PSYCHOMETRIC_QUESTIONS">load_psychometric_questions</string>
+    <string name="TAG_PSYCHOMETRIC_RESPONSE">load_psychometric_response</string>
+    <string name="TAG_EDIT_PSYCHOMETRIC_QUESTIONS">load_edit_psychometric_questions</string>
+    <string name="TAG_LOAD_STEP_BY_STEP">load_step_by_step</string>
+    <string name="TAG_USER_EDUCATION">load_user_education</string>
+    <string name="TAG_EDIT_USER_EDUCATION">load_edit_user_education</string>
+    <string name="TAG_UPDATE_STREAM">update_stream</string>
+    <string name="KEY_STREAMS">streams</string>
+    <string name="USER_CREATED">user_created</string>
+    <string name="USER_PROFILE_LOADED">user_profile_loaded</string>
+    <string name="CAN_ASK_OTP_TODAY">can_ask_otp_today</string>
+    <string name="WIDGET_INSTITUTES">institutes</string>
+    <string name="PNS_INSTITUTES">pns_institutes</string>
+    <string name="PNS_NEWS">pns_news</string>
+    <string name="PNS_FORUM">pns_forum</string>
+    <string name="PNS_QNA">pns_qna</string>
+    <string name="PNS_ARTICLES">pns_articles</string>
+    <string name="WIDGET_RECOMMENDED_INSTITUTES">recommended_institutes</string>
+    <string name="WIDGET_SHORTLIST_INSTITUTES">shortlist_institutes</string>
+    <string name="WIDGET_SYLLABUS">syllabus</string>
+    <string name="WIDGET_TEST_CALENDAR">test_calendar</string>
+    <string name="PLAY_VIDEO_NOTIFICATION">play_video_notification</string>
+
+    <string name="SEARCHED_INSTITUTES">searched_institutes</string>
+    <string name="WIDGET_COURSES">courses</string>
+    <string name="WIDGET_NEWS">news</string>
+    <string name="WIDGET_ARTICES">articles</string>
+    <string name="WIDGET_FORUMS">forums</string>
+    <string name="TAG_LOAD_QNA_QUESTIONS">qna</string>
+
+    <!--<string name="IP">http://10.0.3.2</string>-->
+    <!--<string name="IP">http://www.launch.collegedekho.com</string>-->
+    <string name="IP">http://www.collegedekho.com</string>
+    <!--<string name="IP">http://192.168.8.101</string>-->
+    <!--<string name="IP">http://192.168.56.1</string>-->
+    <!--<string name="BASE_URL = IP + ":8000/api/1/</string>-->
+
+    <string name="TAG_LOAD_COURSES">load_courses</string>
+    <string name="TAG_APPLIED_COURSE">applied_course</string>
+    <string name="TAG_POST_QUESTION">post_question</string>
+    <string name="TAG_LOAD_FILTERS">load_filters</string>
+    <string name="TAG_RESOURCE_URI">resource_uri</string>
+    <string name="TAG_LABEL">label</string>
+    <string name="TAG_URI">uri</string>
+    <string name="TAG_ATTR">attr</string>
+    <string name="TAG_TAGS">tags</string>
+    <string name="TAG_ID">id</string>
+    <string name="TAG_SELECTED">is_selected</string>
+    <string name="TAG_NEXT_SHORTLIST_INSTITUTE">next_shortlist_institutes</string>
+    <string name="TAG_NEXT_INSTITUTE">next_institutes</string>
+    <string name="TAG_NEXT_NEWS">next_news</string>
+    <string name="TAG_NEXT_ARTICLES">next_articles</string>
+    <string name="TAG_NEXT_QNA_LIST">next_aqna_list</string>
+    <string name="TAG_NEXT_FORUMS_LIST">next_forums_list</string>
+    <string name="TAG_INSTITUTE_LIKE_DISLIKE">institute_like_dislike</string>
+    <string name="TAG_SHORTLIST_INSTITUTE">shortlist</string>
+    <string name="TAG_RECOMMENDED_SHORTLIST_INSTITUTE">recommended_shortlist</string>
+    <string name="TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE">recommended_not_interested</string>
+    <string name="TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE">recommended_decide_later</string>
+    <string name="TAG_LOAD_UNDECIDED_INSTITUTE">load_undecided_later</string>
+    <string name="TAG_DELETESHORTLIST_INSTITUTE">delete</string>
+    <string name="TAG_UNSHORTLIST_INSTITUTE">unshortlist_institute</string>
+
+    <string name="TAG_LOAD_PSYCHOMETRIC_TEST">load_psychometric_test</string>
+    <string name="TAG_MY_ALERTS">my_alerts</string>
+    <string name="TAG_LOAD_INSTITUTE_QNA_QUESTIONS">institute_qna</string>
+    <string name="TAG_FRAGMENT_INSTITUTE_LIST">fragment_institute_list</string>
+    <string name="TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST">fragment_cd_recommended_institute_list</string>
+    <string name="TAG_FRAGMENT_SHORTLISTED_INSTITUTE_LIST">fragment_shortlisted_institute_list</string>
+    <string name="TAG_FRAGMENT_PYSCHOMETRIC_TEST_QUESTION_LIST">fragment_pyschometric_test_question_list</string>
+    <string name="QTYPE_SINGLE">single</string>
+    <string name="QTYPE_MULTIPLE">multiple</string>
+    <string name="QTYPE_DROPDOWN">dropdown</string>
+    <string name="QTYPE_INPUT">input</string>
+    <string name="QTYPE_RANGE">range</string>
+    <string name="TAG_LOAD_MY_FUTURE_BUDDIES">my_fb</string>
+    <string name="TAG_LOAD_MY_FB">load_my_fb</string>
+    <string name="TAG_REFRESH_MY_FB">refresh_my_fb</string>
+    <string name="TAG_SUBMIT_PSYCHOMETRIC_TEST">submit_psychometric_test</string>
+    <string name="TAG_SUBMIT_PREFRENCES">submit_prefrences</string>
+    <string name="TAG_SUBMIT_EDITED_PREFRENCES">submit_edited_prefrences</string>
+    <string name="TAG_UPDATE_PREFRENCES">update_prefrences</string>
+    <string name="TAG_UPDATE_INSTITUTES">update_institutes</string>
+    <string name="TAG_FRAGMENT_FILTER_LIST">fragment_filter_list</string>
+    <string name="TAG_FRAGMENT_QNA_QUESTION_LIST">fragment_qna_questions_list</string>
+    <string name="TAG_FRAGMENT_WIDGET_LIST">fragment_widget_list</string>
+    <string name="TAG_FRAGMENT_NEWS_LIST">fragment_news_list</string>
+    <string name="TAG_FRAGMENT_NEWS_DETAIL">fragment_news_detail</string>
+    <string name="TAG_FRAGMENT_ARTICLES_LIST">fragment_articles_list</string>
+    <string name="TAG_FRAGMENT_ARTICLE_DETAIL">fragment_article_detail</string>
+    <string name="TAG_FRAGMENT_INSTITUTE">fragment_institute</string>
+    <string name="TAG_FRAGMENT_MY_FB">fragment_my_fb</string>
+    <string name="TAG_FRAGMENT_MY_FB_ENUMERATION">fragment_my_fb_enumeration</string>
+    <string name="TAG_FRAGMENT_STREAMS">fragment_streams</string>
+    <string name="TAG_FRAGMENT_PROFILE">fragment_profile1</string>
+    <string name="TAG_FRAGMENT_QNA_QUESTION_DETAIL">fragment_qna_question_detail</string>
+    <string name="TAG_FRAGMENT_USER_EDUCATION">fragment_user_education</string>
+    <string name="TAG_FRAGMENT_SIGNIN">fragment_signin</string>
+    <string name="TAG_FRAGMENT_LOGIN">fragment_login</string>
+
+    <string name="METHOD_GET">GET</string>
+    <string name="METHOD_POST">POST</string>
+
+    <string name="SELECTED_FILTERS">selected_filters</string>
+    <string name="TAG_QUESTION_LIKE_DISLIKE">tag_question_like_dislike</string>
+    <string name="TAG_EXAM_SUMMARY">exam_summary</string>
+    <string name="TAG_NAME_UPDATED">name_updated</string>
+    <string name="SUBMITTED_CHAPTER_STATUS">chapter_submitted</string>
+    <string name="TAG_PSYCHOMETRIC_TEXT_COMPLETED">psychometric_text_completed</string>
+    <string name="TAG_LOAD_INSTITUTE_NEWS">institute_news</string>
+    <string name="TAG_LOAD_INSTITUTE_ARTICLE">institute_article</string>
+    <string name="TAG_USER_EDUCATION_SET">user_education_set</string>
+    <string name="TAG_USER_EXAMS_SET">user_exams_set</string>
+    <string name="TAG_EDIT_USER_EXAMS_SET">edit_user_exams_set</string>
+    <string name="SELECTED_EXAM_ID">selected_exam_id</string>
+    <string name="SEARCH_INSTITUTES">search_institutes</string>
+    <string name="SEARCH_ARTICLES">search_articles</string>
+    <string name="SEARCH_NEWS">search_news</string>
+    <string name="SEARCH_QNA">search_qna</string>
+    <string name="SERVER_FAULT">The servers made a boo boo. Try again later</string>
+    <string name="NO_CONNECTION_FAULT">You are not connected to internet. Please connect and try again.</string>
+    <string name="TAG_FRAGMENT_SHORTLISTED_INSTITUTE">fragment_shortlisted_institute</string>
+
+
+    <string name="USER_NAME">name</string>
+    <string name="USER_FIRST_NAME">first_name</string>
+    <string name="USER_LAST_NAME">last_name</string>
+    <string name="USER_FAMILY_NAME">family_name</string>
+    <string name="USER_GIVEN_NAME">given_name</string>
+    <string name="USER_PASSWORD">password</string>
+    <string name="USER_ID">id</string>
+    <string name="USER_TOKEN">token</string>
+    <string name="USER_EMAIL">email</string>
+    <string name="USER_VERIFIED_EMAIL">verified_email</string>
+    <string name="USER_STREAM">stream</string>
+    <string name="USER_LEVEL">level</string>
+    <string name="USER_STREAM_NAME">stream_name</string>
+    <string name="USER_CURRENT_STREAM_NAME">current_stream_name</string>
+    <string name="USER_CURRENT_SUBLEVEL">current_sublevel</string>
+    <string name="USER_IS_PREPARING">is_preparing</string>
+    <string name="CHOOSEN_ACTION_WHEN_NOT_PREPARING">choosen_action_when_not_preparing</string>
+    <string name="USER_STREAM_ID">stream_id</string>
+    <string name="USER_CURRENT_STREAM_ID">current_stream_id</string>
+    <string name="USER_LEVEL_NAME">level_name</string>
+    <string name="USER_CURRENT_LEVEL_NAME">current_level_name</string>
+    <string name="USER_EDUCATION_SET">education_set</string>
+    <string name="USER_EXAMS_SET">exams_set</string>
+    <string name="USER_PHONE">phone_no</string>
+    <string name="USER_IMAGE">user_image</string>
+    <string name="USER_VERIFIED">verified</string>
+    <string name="USER_LOCALE">locale</string>
+    <string name="USER_GENDER">gender</string>
+    <string name="USER_TIMEZONE">timezone</string>
+    <string name="USER_UPDATED_TIME">updated_time</string>
+    <string name="USER_LINK">link</string>
+    <string name="USER_EXPIRE_AT">expires_at</string>
+    <string name="USER_DEVICE_ID">device_id</string>
+
+    <string name="EXAM_ID">exam_id</string>
+    <string name="MARKS">marks</string>
+    <string name="RESULTS">results</string>
+    <string name="CHAPTERS">chapters</string>
+    <string name="SUBJECTS">subjects</string>
+
+
+    <string name="APPLY_YEAR">year_of_admission</string>
+    <string name="APPLY_COURSE">institute_course</string>
+    <string name="APPLY_COURSE_ID">institute_course_id</string>
+    <string name="APPLY_INSTITUTE">institute</string>
+
+
+    <string name="KEY_APPLY_STATUS">apply_status</string>
+    <string name="TAG_UPDATE_VIDEO_TITLE">update_video_title</string>
+
+    <string name="CATEGORY_PREFERENCE">category_preference</string>
+    <string name="CATEGORY_QNA">category_qna</string>
+    <string name="CATEGORY_MY_FB">category_my_fb</string>
+    <string name="CATEGORY_INSTITUTES">category_institutes</string>
+    <string name="CATEGORY_ARTICLE">category_article</string>
+    <string name="CATEGORY_NEWS">category_news</string>
+
+    <!--Actions-->
+    <string name="ACTION_STREAM_UPDATED">action_stream_updated</string>
+    <string name="ACTION_LEVEL_UPDATED">action_level_updated</string>
+    <string name="ACTION_CURRENT_STREAM_UPDATED">action_current_stream_updated</string>
+    <string name="ACTION_CURRENT_LEVEL_UPDATED">action_current_level_updated</string>
+    <string name="ACTION_STREAM_SELECTED">action_stream_selected</string>
+    <string name="ACTION_LEVEL_SELECTED">action_level_selected</string>
+    <string name="ACTION_CURRENT_STREAM_SELECTED">action_current_stream_selected</string>
+    <string name="ACTION_CURRENT_LEVEL_SELECTED">action_current_level_selected</string>
+    <string name="ACTION_MY_FB_SELECTED">action_my_fb_selected</string>
+    <string name="ACTION_QNA_QUESTION_ASKED">action_qna_question_asked</string>
+    <string name="QNA_QUESTION_RESOURCE_URI">qna_question_resource_uri</string>
+    <string name="ACTION_COURSE_APPLIED">action_course_applied</string>
+    <string name="ACTION_VOTE_QNA_QUESTION_ENTITY">action_qna_question_entity_vote</string>
+    <string name="ACTION_VOTE_QNA_ANSWER_ENTITY">action_qna_answer_entity_vote</string>
+    <string name="ACTION_QNA_ANSWER_SUBMITTED">action_qna_answer_submitted</string>
+    <string name="QNA_ANSWER_RESOURCE_URI">qna_answer_resource_uri</string>
+    <string name="ACTION_MY_FB_COMMENT_SUBMITTED">action_my_fb_comment_submitted</string>
+    <string name="MY_FB_URI">action_my_fb_comment_uri</string>
+    <string name="ACTION_INSTITUTE_SHORTLISTED">action_institute_shortlisted</string>
+    <string name="ACTION_RECOMMENDED_INSTITUTE_SHORTLISTED">action_recommended_institute_shortlisted</string>
+    <string name="ACTION_RECOMMENDED_INSTITUTE_NOT_INTERESTED">action_recommended_institute_not_interested</string>
+    <string name="ACTION_RECOMMENDED_INSTITUTE_UNDECIDED">action_recommended_institute_undecided</string>
+    <string name="ACTION_INSTITUTE_SHORTLISTED_REMOVED">action_institute_shortlisting_removed</string>
+    <string name="ACTION_INSTITUTE_LIKED">action_institute_like</string>
+    <string name="ACTION_INSTITUTE_DISLIKED">action_institute_disliked</string>
+    <string name="ACTION_INSTITUTE_LIKING_UNBIASED">action_institute_liking_unbiased</string>
+    <string name="ACTION_QNA_LIKING_UNBIASED">action_qna_liking_unbiased</string>
+    <string name="ACTION_VOTE_QNA_QUESTION_UPVOTED">action_qna_question_entity_upvoted</string>
+    <string name="ACTION_VOTE_QNA_QUESTION_DOWNVOTED">action_qna_question_entity_downvoted</string>
+    <string name="ACTION_VOTE_QNA_ANSWER_UPVOTED">action_qna_answer_entity_upvoted</string>
+    <string name="ACTION_VOTE_QNA_ANSWER_DOWNVOTED">action_qna_answer_entity_downvoted</string>
+    <string name="ACTION_FILTER_APPLIED">action_filter_applied</string>
+    <string name="ACTION_ARTICLE_SELECTED">action_article_selected</string>
+    <string name="ACTION_NEWS_SELECTED">action_news_selected</string>
+    <string name="INSTITUTE_RESOURCE_URI">institute_resource_uri</string>
+    <string name="ACTION_SCREEN_SELECTED">action_screen_selected</string>
+    <string name="ACTION_USER_IS_PREPARING">action_is_preparing</string>
+    <string name="ACTION_USER_PREFERENCE">action_user_preference</string>
+    <string name="ACTION_USER_EXAM_SELECTED">action_user_exam_selected</string>
+    <string name="ACTION_INSTITUTE_SELECTED">action_institute_selected</string>
+    <string name="ACTION_CD_RECOMMENDED_INSTITUTE_ACTION">action_cd_recommended_institute_action</string>
+    <string name="ACTION_WHEN_NOT_PREPARING">action_when_not_preparing</string>
+    <string name="ACTION_USER_LOGIN">action_user_login</string>
+    <string name="TAG_USER_PHONE_ADDED">user_phone_added</string>
+    <string name="TAG_RESEND_OTP">resend_otp</string>
+    <string name="TAG_VERIFY_USER_PHONE">action_user_login</string>
+    <string name="USER_OTP">user_otp</string>
+    <string name="OTP_INTENT_FILTER">com.cld.user.otp.filter</string>
+    <string name="OTP_BODY">Dear User,\nYour OTP for college app verification is-</string>
+    <string name="OTP_CODE">code</string>
+    <string name="OTP_VERIFICATION">otp_verification</string>
+    <string name="ACTION_OTP_VERIFIED">action_otp_verified</string>
+
+
+    <!--String messages-->
+    <string name="EMAIL_PASSOWRD_NOT_EXISTS">The e-mail address and/or password you specified are not correct.</string>
+    <string name="EMAIL_PASSOWRD_ALREADY_EXISTS">A user is already registered with this e-mail address.</string>
+    <string name="NAME_EMPTY">Please enter your name</string>
+    <string name="NAME_INVALID">Please enter a valid name</string>
+    <string name="PHONE_EMPTY">Please enter your phone number</string>
+    <string name="PHONE_INVALID">Please enter a valid phone number</string>
+    <string name="EMAIL_EMPTY">Please enter your email</string>
+    <string name="EMAIL_INVALID">Please enter a valid email</string>
+    <string name="PASSWORD_EMPTY">Please enter a password</string>
+    <string name="PASSWORD_INVALID">Minimum password length is 6</string>
+
+    <!--Connecto Events-->
+    <string name="CONNECTO_SESSION_STARTED">session_started</string>
+    <string name="CONNECTO_SESSION_ENDED">session_ended</string>
+    <string name="CONNECTO_STREAM_SELECTED">stream_selected</string>
+    <string name="CONNECTO_LEVEL_SELECTED">level_selected</string>
+    <string name="CONNECTO_STREAM_UPDATED">stream_updated</string>
+    <string name="CONNECTO_LEVEL_UPDATED">level_updated</string>
+
+    <string name="EXPANDED_INDICATOR">\u2013</string>
+    <string name="COLAPSED_INDICATOR">+</string>
+
+    <string name="VOTE_TYPE">vote_type</string>
+    <string name="SCREEN_NAME">screen_name</string>
+    <string name="LAST_SCREEN_NAME">last_screen_name</string>
+    <string name="TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS">time_lapsed_since_last_screen_name_in_ms</string>
+
+    <!--for app tutorials-->
+
+    <string name="KEY_USER_LEARNED_TOUCH">user_touch</string>
+    <string name="PROFILE_SCREEN_TUTE">profile_tute</string>
+    <string name="EDUCATION_SCREEN_TUTE">education_tute</string>
+    <string name="EXAMS_SCREEN_TUTE">exams_tute</string>
+    <string name="PREP_BUDDY_SCREEN_TUTE">prep_tute</string>
+    <string name="INSTITUTE_LIST_SCREEN_TUTE">institute_tute</string>
+    <string name="RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE">recommended_institute_tute</string>
+    <string name="MY_FB_SCREEN_TUTE">myfb_tute</string>
+    <string name="CD_RECOMMENDED_INSTITUTE_ACTION_TYPE">cd_recommended_institute_action_type</string>
+
+    <string name="INSTITUTE_ID">institute_id_set</string>
+    <string name="YOUTUBE_DEVELOPER_KEY">AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk</string>
+
+
+    <string name="otp_verification">OTP Verification</string>
+    <string name="enter_6_digit_OTP">Enter 6 digit OTP</string>
+    <string name="verify">VERIFY</string>
+    <string name="otp_title">Help us understand you better</string>
+    <string name="enter_mobile_number">Enter Your Mobile Number</string>
+    <string name="otp_sent_message">OTP has been sent to your mobile number</string>
+    <string name="resend_otp"> Resend OTP</string>
+    <string name="submit">SUBMIT</string>
+    <string name="verify_number">VERIFY YOUR MOBILE NUMBER</string>
+    <string name="otp_verified">OTP successfully Verified</string>
+    <string name="invalid_otp">Invalid OTP</string>
 </resources>

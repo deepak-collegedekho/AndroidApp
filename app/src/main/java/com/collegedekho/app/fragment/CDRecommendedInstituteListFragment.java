@@ -264,7 +264,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         View view =  getView();
         if(view != null ){
             view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(Constants.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE, false);
+            this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), false);
             if(!IS_TUTE_COMPLETED) {
                 view.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);
                 view.findViewById(R.id.recommended_tute_frame).setVisibility(View.VISIBLE);
@@ -285,11 +285,11 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                 break;
             case R.id.recommended_tute_image:
                 v.setVisibility(View.GONE);
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE, true).apply();
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), true).apply();
                 break;
             case R.id.recommended_tute_frame:
                 v.setVisibility(View.GONE);
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(Constants.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE, true).apply();
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), true).apply();
                 break;
             default:
                 break;

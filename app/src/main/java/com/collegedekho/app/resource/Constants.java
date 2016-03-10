@@ -22,12 +22,10 @@ public class Constants
     public static final String[] headSubLabels = {"College search step-by-step", "", "Find college with majors you want"};
     public static final String PREFS = "sharedprefs";
     public static final String KEY_USER = "user_id";
-    public static final String TAG_CREATE_USER = "create_user";
     public static final String ANONYMOUS_USER = "Anonymous user";
     public static final String TAG_CREATE_ANONY_USER = "create_anony_user";
     public static final String TAG_CREATE_FACEBOOK_ANONY_USER = "create_facebook_anony_user";
     public static final String TAG_SKIP_LOGIN = "skip_login";
-    public static final String TAG_USER_SIGNUP = "user_sign_up";
     public static final String TAG_USER_FACEBOOK_LOGIN = "user_facebook_login";
     public static final String TAG_USER_LOGIN = "user_login";
     public static final String TAG_USER_REGISTRATION = "user_registration";
@@ -55,10 +53,6 @@ public class Constants
     public static final String TAG_USER_EDUCATION = "load_user_education";
     public static final String TAG_EDIT_USER_EDUCATION = "load_edit_user_education";
     public static final String TAG_UPDATE_STREAM = "update_stream";
-    public static final String KEY_STREAMS = "streams";
-    public static final String USER_CREATED = "user_created";
-    public static final String USER_PROFILE_LOADED = "user_profile_loaded";
-    public static final String CAN_ASK_OTP_TODAY = "can_ask_otp_today";
     public static final String WIDGET_INSTITUTES = "institutes";
     public static final String PNS_INSTITUTES = "pns_institutes";
     public static final String PNS_NEWS = "pns_news";
@@ -108,22 +102,16 @@ public class Constants
     public static final String TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE = "recommended_decide_later";
     public static final String TAG_LOAD_UNDECIDED_INSTITUTE = "load_undecided_later";
     public static final String TAG_DELETESHORTLIST_INSTITUTE = "delete";
-    public static final String TAG_UNSHORTLIST_INSTITUTE = "unshortlist_institute";
     public static final int NEITHER_LIKE_NOR_DISLIKE = -1;
-    //public static final String WIDGET_SHORTLIST = "shortlistedinstitutes";
     public static final String TAG_LOAD_PSYCHOMETRIC_TEST = "load_psychometric_test";
     public static final String TAG_MY_ALERTS = "my_alerts";
     public static final String TAG_LOAD_INSTITUTE_QNA_QUESTIONS = "institute_qna";
     public static final String TAG_FRAGMENT_INSTITUTE_LIST = "fragment_institute_list";
-    public static final String TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST = "fragment_cd_recommended_institute_list";
-    public static final String TAG_FRAGMENT_SHORTLISTED_INSTITUTE_LIST = "fragment_shortlisted_institute_list";
-    public static final String TAG_FRAGMENT_PYSCHOMETRIC_TEST_QUESTION_LIST = "fragment_pyschometric_test_question_list";
     public static final String QTYPE_SINGLE = "single";
     public static final String QTYPE_MULTIPLE = "multiple";
     public static final String QTYPE_DROPDOWN = "dropdown";
     public static final String QTYPE_INPUT = "input";
     public static final String QTYPE_RANGE = "range";
-    public static final String TAG_LOAD_MY_FUTURE_BUDDIES = "my_fb";
     public static final String TAG_LOAD_MY_FB = "load_my_fb";
     public static final String TAG_REFRESH_MY_FB = "refresh_my_fb";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_TEST = "submit_psychometric_test";
@@ -133,7 +121,6 @@ public class Constants
     public static final String TAG_UPDATE_INSTITUTES = "update_institutes";
     public static final String TAG_FRAGMENT_FILTER_LIST = "fragment_filter_list";
     public static final String TAG_FRAGMENT_QNA_QUESTION_LIST = "fragment_qna_questions_list";
-    public static final String TAG_FRAGMENT_WIDGET_LIST = "fragment_widget_list";
     public static final String TAG_FRAGMENT_NEWS_LIST = "fragment_news_list";
     public static final String TAG_FRAGMENT_NEWS_DETAIL = "fragment_news_detail";
     public static final String TAG_FRAGMENT_ARTICLES_LIST = "fragment_articles_list";
@@ -142,13 +129,6 @@ public class Constants
     public static final String TAG_FRAGMENT_MY_FB = "fragment_my_fb";
     public static final String TAG_FRAGMENT_MY_FB_ENUMERATION = "fragment_my_fb_enumeration";
     public static final String TAG_FRAGMENT_STREAMS = "fragment_streams";
-    public static final String TAG_FRAGMENT_PROFILE = "fragment_profile1";
-    public static final String TAG_FRAGMENT_QNA_QUESTION_DETAIL = "fragment_qna_question_detail";
-    public static final String TAG_FRAGMENT_USER_EDUCATION = "fragment_user_education";
-    public static final String TAG_FRAGMENT_SIGNIN = "fragment_signin";
-    public static final String TAG_FRAGMENT_LOGIN= "fragment_login";
-    public static final String METHOD_GET = "GET";
-    public static final String METHOD_POST = "POST";
     public static final int LIKE_THING = 0;
     public static final int DISLIKE_THING = 1;
     public static final int NOTINTERESTED_THING = -1;
@@ -165,8 +145,6 @@ public class Constants
     public static final String TAG_LOAD_INSTITUTE_NEWS = "institute_news";
     public static final String TAG_LOAD_INSTITUTE_ARTICLE = "institute_article";
     public static final String TAG_USER_EDUCATION_SET = "user_education_set";
-    public static final String TAG_USER_EXAMS_SET = "user_exams_set";
-    public static final String TAG_EDIT_USER_EXAMS_SET = "edit_user_exams_set";
     public static final String SELECTED_EXAM_ID = "selected_exam_id";
     public static final String SEARCH_INSTITUTES = "search_institutes";
     public static final String SEARCH_ARTICLES = "search_articles";
@@ -215,54 +193,6 @@ public class Constants
     public static final int FORUM_LIST_TYPE  = 6 ;
     public static final int INSTITUTE_SEARCH_TYPE   = 7 ;
 
-    //User Attributes
-    public static final String USER_NAME        = "name";
-    public static final String USER_FIRST_NAME  = "first_name";
-    public static final String USER_LAST_NAME   = "last_name";
-    public static final String USER_FAMILY_NAME = "family_name";
-    public static final String USER_GIVEN_NAME  = "given_name";
-    public static final String USER_PASSWORD    = "password";
-    public static final String USER_ID          = "id";
-    public static final String USER_TOKEN       = "token";
-    public static final String USER_EMAIL       = "email";
-    public static final String USER_VERIFIED_EMAIL = "verified_email";
-    public static final String USER_STREAM      = "stream";
-    public static final String USER_LEVEL       = "level";
-    public static final String USER_STREAM_NAME = "stream_name";
-    public static final String USER_CURRENT_STREAM_NAME = "current_stream_name";
-    public static final String USER_CURRENT_SUBLEVEL = "current_sublevel";
-    public static final String USER_IS_PREPARING = "is_preparing";
-    public static final String CHOOSEN_ACTION_WHEN_NOT_PREPARING = "choosen_action_when_not_preparing";
-    public static final String USER_STREAM_ID   = "stream_id";
-    public static final String USER_CURRENT_STREAM_ID   = "current_stream_id";
-    public static final String USER_LEVEL_NAME  = "level_name";
-    public static final String USER_CURRENT_LEVEL_NAME  = "current_level_name";
-    public static final String USER_EDUCATION_SET = "education_set";
-    public static final String USER_EXAMS_SET = "exams_set";
-    public static final String USER_PHONE       = "phone_no";
-    public static final String USER_IMAGE       = "user_image";
-    public static final String USER_VERIFIED= "verified";
-    public static final String USER_LOCALE = "locale";
-    public static final String USER_GENDER = "gender";
-    public static final String USER_TIMEZONE = "timezone";
-    public static final String USER_UPDATED_TIME = "updated_time";
-    public static final String USER_LINK = "link";
-    public static final String USER_EXPIRE_AT = "expires_at";
-    public static final String USER_DEVICE_ID = "device_id";
-
-    public static final String EXAM_ID = "exam_id";
-    public static final String MARKS = "marks";
-    public static final String RESULTS = "results";
-    public static final String CHAPTERS = "chapters";
-    public static final String SUBJECTS = "subjects";
-
-
-    public static final String APPLY_YEAR = "year_of_admission";
-    public static final String APPLY_COURSE = "institute_course";
-    public static final String APPLY_COURSE_ID = "institute_course_id";
-    public static final String APPLY_INSTITUTE = "institute";
-
-
     public static final int APPLY_COMPLETE  = 0;
     public static final int APPLY_PENDING   = 1;
     public static final int APPLY_UPDATING  = 2;
@@ -272,58 +202,12 @@ public class Constants
 //    public static String YOUTUBE_DEVELOPER_KEY = "AIzaSyBIu-yzOCq2pg237na2kAGUqzlrb9su-6c";
     public static final String TAG_UPDATE_VIDEO_TITLE = "update_video_title";
 
-    //GA Categories
-    public static final String CATEGORY_PREFERENCE = "category_preference";
-    public static final String CATEGORY_QNA = "category_qna";
-    public static final String CATEGORY_MY_FB = "category_my_fb";
-    public static final String CATEGORY_INSTITUTES = "category_institutes";
-    public static final String CATEGORY_ARTICLE = "category_article";
-    public static final String CATEGORY_NEWS = "category_news";
-
-    //Actions
-    public static final String ACTION_STREAM_UPDATED = "action_stream_updated";
-    public static final String ACTION_LEVEL_UPDATED = "action_level_updated";
-    public static final String ACTION_CURRENT_STREAM_UPDATED = "action_current_stream_updated";
-    public static final String ACTION_CURRENT_LEVEL_UPDATED = "action_current_level_updated";
-    public static final String ACTION_STREAM_SELECTED = "action_stream_selected";
-    public static final String ACTION_LEVEL_SELECTED = "action_level_selected";
-    public static final String ACTION_CURRENT_STREAM_SELECTED = "action_current_stream_selected";
-    public static final String ACTION_CURRENT_LEVEL_SELECTED = "action_current_level_selected";
-    public static final String ACTION_MY_FB_SELECTED = "action_my_fb_selected";
-    public static final String ACTION_QNA_QUESTION_ASKED = "action_qna_question_asked";
-    public static final String QNA_QUESTION_RESOURCE_URI = "qna_question_resource_uri";
-    public static final String ACTION_COURSE_APPLIED = "action_course_applied";
     public static final String ACTION_VOTE_QNA_QUESTION_ENTITY = "action_qna_question_entity_vote";
     public static final String ACTION_VOTE_QNA_ANSWER_ENTITY = "action_qna_answer_entity_vote";
     public static final String ACTION_QNA_ANSWER_SUBMITTED = "action_qna_answer_submitted";
-    public static final String QNA_ANSWER_RESOURCE_URI = "qna_answer_resource_uri";
     public static final String ACTION_MY_FB_COMMENT_SUBMITTED = "action_my_fb_comment_submitted";
-    public static final String MY_FB_URI = "action_my_fb_comment_uri";
-    public static final String ACTION_INSTITUTE_SHORTLISTED = "action_institute_shortlisted";
-    public static final String ACTION_RECOMMENDED_INSTITUTE_SHORTLISTED = "action_recommended_institute_shortlisted";
-    public static final String ACTION_RECOMMENDED_INSTITUTE_NOT_INTERESTED = "action_recommended_institute_not_interested";
-    public static final String ACTION_RECOMMENDED_INSTITUTE_UNDECIDED = "action_recommended_institute_undecided";
-    public static final String ACTION_INSTITUTE_SHORTLISTED_REMOVED = "action_institute_shortlisting_removed";
-    public static final String ACTION_INSTITUTE_LIKED = "action_institute_like";
     public static final String ACTION_INSTITUTE_DISLIKED = "action_institute_disliked";
-    public static final String ACTION_INSTITUTE_LIKING_UNBIASED = "action_institute_liking_unbiased";
-    public static final String ACTION_QNA_LIKING_UNBIASED = "action_qna_liking_unbiased";
-    public static final String ACTION_VOTE_QNA_QUESTION_UPVOTED = "action_qna_question_entity_upvoted";
-    public static final String ACTION_VOTE_QNA_QUESTION_DOWNVOTED = "action_qna_question_entity_downvoted";
-    public static final String ACTION_VOTE_QNA_ANSWER_UPVOTED = "action_qna_answer_entity_upvoted";
-    public static final String ACTION_VOTE_QNA_ANSWER_DOWNVOTED = "action_qna_answer_entity_downvoted";
-    public static final String ACTION_FILTER_APPLIED = "action_filter_applied";
-    public static final String ACTION_ARTICLE_SELECTED = "action_article_selected";
-    public static final String ACTION_NEWS_SELECTED = "action_news_selected";
-    public static final String INSTITUTE_RESOURCE_URI = "institute_resource_uri";
-    public static final String ACTION_SCREEN_SELECTED = "action_screen_selected";
-    public static final String ACTION_USER_IS_PREPARING = "action_is_preparing";
-    public static final String ACTION_USER_PREFERENCE = "action_user_preference";
-    public static final String ACTION_USER_EXAM_SELECTED = "action_user_exam_selected";
-    public static final String ACTION_INSTITUTE_SELECTED = "action_institute_selected";
-    public static final String ACTION_CD_RECOMMENDED_INSTITUTE_ACTION = "action_cd_recommended_institute_action";
-    public static final String ACTION_WHEN_NOT_PREPARING = "action_when_not_preparing";
-    public static final String ACTION_USER_LOGIN = "action_user_login";
+//    public static final String ACTION_WHEN_NOT_PREPARING = "action_when_not_preparing";
     public static final String TAG_USER_PHONE_ADDED = "user_phone_added";
     public static final String TAG_RESEND_OTP = "resend_otp";
     public static final String TAG_VERIFY_USER_PHONE = "action_user_login";
@@ -332,28 +216,6 @@ public class Constants
     public static final String OTP_BODY = "Dear User,\nYour OTP for college app verification is-";
     public static final String OTP_CODE = "code";
     public static final String OTP_VERIFICATION = "otp_verification";
-    public static final String ACTION_OTP_VERIFIED = "action_otp_verified";
-
-
-    //String messages
-    public static final String EMAIL_PASSOWRD_NOT_EXISTS ="The e-mail address and/or password you specified are not correct.";
-    public static final String EMAIL_PASSOWRD_ALREADY_EXISTS = "A user is already registered with this e-mail address.";
-    public static final String NAME_EMPTY       = "Please enter your name";
-    public static final String NAME_INVALID     = "Please enter a valid name";
-    public static final String PHONE_EMPTY      = "Please enter your phone number";
-    public static final String PHONE_INVALID    = "Please enter a valid phone number";
-    public static final String EMAIL_EMPTY      = "Please enter your email";
-    public static final String EMAIL_INVALID    = "Please enter a valid email";
-    public static final String PASSWORD_EMPTY   = "Please enter a password";
-    public static final String PASSWORD_INVALID   = "Minimum password length is 6";
-
-    //Connecto Events
-    public static final String CONNECTO_SESSION_STARTED = "session_started";
-    public static final String CONNECTO_SESSION_ENDED = "session_ended";
-    public static final String CONNECTO_STREAM_SELECTED = "stream_selected";
-    public static final String CONNECTO_LEVEL_SELECTED = "level_selected";
-    public static final String CONNECTO_STREAM_UPDATED = "stream_updated";
-    public static final String CONNECTO_LEVEL_UPDATED = "level_updated";
 
     // for close app
     public static boolean READY_TO_CLOSE = false;
@@ -361,21 +223,7 @@ public class Constants
     public static final String EXPANDED_INDICATOR = "\u2013";
     public static final String COLAPSED_INDICATOR = "+";
 
-    public static final String VOTE_TYPE = "vote_type";
-    public static final String SCREEN_NAME = "screen_name";
-    public static final String LAST_SCREEN_NAME = "last_screen_name";
-    public static final String TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS = "time_lapsed_since_last_screen_name_in_ms";
-
     // for app tutorials
-
-    public static final String KEY_USER_LEARNED_TOUCH   = "user_touch";
-    public static final String PROFILE_SCREEN_TUTE      = "profile_tute";
-    public static final String EDUCATION_SCREEN_TUTE    = "education_tute";
-    public static final String EXAMS_SCREEN_TUTE        = "exams_tute";
-    public static final String PREP_BUDDY_SCREEN_TUTE   = "prep_tute";
-    public static final String INSTITUTE_LIST_SCREEN_TUTE = "institute_tute";
-    public static final String RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE = "recommended_institute_tute";
-    public static final String MY_FB_SCREEN_TUTE        = "myfb_tute";
 
     public static boolean IS_RECOMENDED_COLLEGE = false;
     public static final int REMOMMENDED_INSTITUTE_ACTION = 1;

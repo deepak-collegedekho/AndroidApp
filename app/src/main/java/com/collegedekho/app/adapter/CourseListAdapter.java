@@ -13,6 +13,8 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.fragment.InstituteCoursesFragment;
 import com.collegedekho.app.listener.OnApplyClickedListener;
+import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.NetworkUtils;
 
 import java.util.ArrayList;
 
@@ -102,17 +104,22 @@ public class CourseListAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
+            int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
             if (v.getId() == R.id.button_apply) {
-                InstituteCourse c = (InstituteCourse) itemView.getTag();
-               // if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
-                  if(c.getIs_applied() == 1){
-                    Toast.makeText(mContext, "Already Applied", Toast.LENGTH_SHORT).show();
-                } else {
-                    mIsAppliedResponse = true;
-                    cApplyBtn.setVisibility(View.INVISIBLE);
-                    cProgressBar.setVisibility(View.VISIBLE);
-                    cListener.onCourseApplied(getAdapterPosition(), InstituteCoursesFragment.getTabposition(), c);
+                if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
+                    InstituteCourse c = (InstituteCourse) itemView.getTag();
+                    // if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
+                    if (c.getIs_applied() == 1) {
+                        Toast.makeText(mContext, "Already Applied", Toast.LENGTH_SHORT).show();
+                    } else {
+                        mIsAppliedResponse = true;
+                        cApplyBtn.setVisibility(View.INVISIBLE);
+                        cProgressBar.setVisibility(View.VISIBLE);
+                        cListener.onCourseApplied(getAdapterPosition(), InstituteCoursesFragment.getTabposition(), c);
 
+                    }
+                }else {
+                    this.cListener.onNoInternetConnection();
                 }
             }
         }

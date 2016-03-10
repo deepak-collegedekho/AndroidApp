@@ -16,6 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.resource.Constants;
@@ -247,7 +248,7 @@ public class NetworkUtils {
                                 else if(Integer.parseInt(code) == ErrorCode.LOGIN_PASSWORD_INCORRECT)
                                 {
                                     ((MainActivity)mContext).hideProgressDialog();
-                                    Toast.makeText(mContext, Constants.EMAIL_PASSOWRD_NOT_EXISTS,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(mContext, MainActivity.getResourceString(R.string.EMAIL_PASSOWRD_NOT_EXISTS),Toast.LENGTH_LONG).show();
                                     return;
                                 }
                             } catch (JSONException e) {
@@ -263,7 +264,7 @@ public class NetworkUtils {
                                 String code = jsonObj.getString("Code");
                                 if(Integer.parseInt(code) == ErrorCode.LOGIN_EMAIL_ALREADY_EXISTS) {
                                     ((MainActivity) mContext).hideProgressDialog();
-                                    Toast.makeText(mContext, Constants.EMAIL_PASSOWRD_ALREADY_EXISTS, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(mContext, MainActivity.getResourceString(R.string.EMAIL_PASSOWRD_ALREADY_EXISTS), Toast.LENGTH_LONG).show();
                                     return;
                                 }
 
@@ -421,10 +422,10 @@ public class NetworkUtils {
     {
 
                 SharedPreferences preferences = mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
-                String instituteId  = params.get(Constants.APPLY_INSTITUTE);
+                String instituteId  = params.get(MainActivity.getResourceString(R.string.APPLY_INSTITUTE));
 
                 Set<String> idList = preferences.getStringSet(instituteId, new HashSet<String>());
-                idList.add(params.get(Constants.APPLY_COURSE));
+                idList.add(params.get(MainActivity.getResourceString(R.string.APPLY_COURSE)));
 
                 preferences.edit().putString(Constants.INSTITUTE_ID, instituteId)
                 .putStringSet(instituteId, idList)
