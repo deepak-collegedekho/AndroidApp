@@ -110,7 +110,7 @@ public class CourseListAdapter extends RecyclerView.Adapter {
                     InstituteCourse c = (InstituteCourse) itemView.getTag();
                     // if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
                     if (c.getIs_applied() == 1) {
-                        Toast.makeText(mContext, "Already Applied", Toast.LENGTH_SHORT).show();
+                        cListener.displayMessage(R.string.ALREADY_APPLIED);
                     } else {
                         mIsAppliedResponse = true;
                         cApplyBtn.setVisibility(View.INVISIBLE);
@@ -119,7 +119,7 @@ public class CourseListAdapter extends RecyclerView.Adapter {
 
                     }
                 }else {
-                    this.cListener.onNoInternetConnection();
+                    this.cListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                 }
             }
         }

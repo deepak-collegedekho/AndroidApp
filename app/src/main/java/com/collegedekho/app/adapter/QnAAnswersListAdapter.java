@@ -131,7 +131,7 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
                 case R.id.qna_answer_button_downvote:
                     if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
                         if (v.isSelected()) {
-                            Toast.makeText(mContext, "You can't downvote the downvoted", Toast.LENGTH_SHORT).show();
+                            mListener.displayMessage(R.string.ALREADY_DOWN_VOTED);
                         } else {
                             if (mQnAQuestionAnswers.get(getAdapterPosition()).getCurrent_user_vote_type() == Constants.LIKE_THING) {
                                 mQnAQuestionAnswers.get(getAdapterPosition()).setDownvotes(mQnAQuestionAnswers.get(getAdapterPosition()).getDownvotes() + 1);
@@ -141,14 +141,14 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
                             }
                         }
                     }else {
-                        this.mListener.onNoInternetConnection();
+                        this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                     }
                     break;
 
                 case R.id.qna_answer_button_upvote:
                     if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
                         if (v.isSelected()) {
-                            Toast.makeText(mContext, "You can't upvote the upvoted", Toast.LENGTH_SHORT).show();
+                            mListener.displayMessage(R.string.ALREADY_UP_VOTED);
                         } else {
                             if (mQnAQuestionAnswers.get(getAdapterPosition()).getCurrent_user_vote_type() == Constants.DISLIKE_THING) {
                                 mQnAQuestionAnswers.get(getAdapterPosition()).setUpvotes(mQnAQuestionAnswers.get(getAdapterPosition()).getUpvotes() + 1);
@@ -158,7 +158,7 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
                             }
                         }
                     }else {
-                        this.mListener.onNoInternetConnection();
+                        this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                     }
                     break;
 

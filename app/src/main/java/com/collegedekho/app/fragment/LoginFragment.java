@@ -102,14 +102,14 @@ public class LoginFragment extends  BaseFragment{
             public void onCancel() {
                 // App code
                 Log.e(TAG, "facebook login canceled");
-                Toast.makeText(getActivity(), "Facebook SignIn is failed", Toast.LENGTH_LONG).show();
+                mListener.displayMessage(R.string.FACEBOOK_SIGNIN_FAILED);
             }
 
             @Override
             public void onError(FacebookException e) {
 //                e.printStackTrace();
                 Log.e(TAG, "facebook login on error");
-                Toast.makeText(getActivity(), "Facebook SignIn has some error", Toast.LENGTH_LONG).show();
+                mListener.displayMessage(R.string.SIGNIN_ERROR);
             }
         });
     }
@@ -269,6 +269,7 @@ public class LoginFragment extends  BaseFragment{
         void onSkipUserLogin();
 
         void onFacebookLogin(HashMap<String,String> params);
+        void displayMessage(int messageId);
 
     }
 

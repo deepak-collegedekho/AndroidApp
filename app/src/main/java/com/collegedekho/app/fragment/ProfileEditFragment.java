@@ -122,6 +122,7 @@ public class ProfileEditFragment extends BaseFragment {
         void onEditUserStreams();
         void onEditUserExams();
         void onTakePsychometric();
+        void displayMessage(int messageId);
     }
 
 
@@ -463,16 +464,16 @@ public class ProfileEditFragment extends BaseFragment {
             String name = ((EditText) v.findViewById(R.id.profile_edit_name)).getText().toString();
             String phone = ((EditText) v.findViewById(R.id.profile_edit_phone)).getText().toString();
             if (name == null || name.trim().isEmpty()) {
-                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.NAME_EMPTY));
+                mListener.displayMessage(R.string.NAME_EMPTY);
                 return;
             } else if (!Utils.isValidName(name)) {
-                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.NAME_INVALID));
+                mListener.displayMessage(R.string.NAME_INVALID);
                 return;
             } else if (phone == null || phone.trim().isEmpty()) {
-                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.PHONE_EMPTY));
+                mListener.displayMessage(R.string.PHONE_EMPTY);
                 return;
             } else if (phone.length() <= 9 || !Utils.isValidPhone(phone)) {
-                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.PHONE_INVALID));
+                mListener.displayMessage(R.string.PHONE_INVALID);
                 return;
             }
            /* else if (email == null || email.isEmpty()){

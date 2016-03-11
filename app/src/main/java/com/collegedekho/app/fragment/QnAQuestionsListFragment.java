@@ -173,6 +173,13 @@ public class QnAQuestionsListFragment extends BaseFragment {
                 if(rootView != null) {
                     if ((rootView.findViewById(R.id.qna_ask_layout)).getVisibility() == View.GONE) {
                         (rootView.findViewById(R.id.qna_ask_layout)).setVisibility(View.VISIBLE);
+                        rootView.findViewById(R.id.dummy_view).setVisibility(View.VISIBLE);
+                        rootView.findViewById(R.id.dummy_view).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        });
                         this.mToggleAskButtonVisiblity(View.GONE);
                     }
                 }
@@ -181,6 +188,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
                 if(rootView != null)  {
                     this.mToggleAskButtonVisiblity(View.VISIBLE);
                     (rootView.findViewById(R.id.qna_ask_layout)).setVisibility(View.GONE);
+                    rootView.findViewById(R.id.dummy_view).setVisibility(View.GONE);
                 }
                 break;
             case R.id.institute_qna_button_ask_submit:
@@ -221,15 +229,16 @@ public class QnAQuestionsListFragment extends BaseFragment {
         EditText check = (EditText)rootView.findViewById(R.id.institute_qna_question_title);
               String title =  check.getText().toString();
         if (title == null || title.trim().length() <= 0) {
-            Utils.DisplayToast(getActivity(), "Question title cannot be empty.");
+            mListener.displayMessage(R.string.QUESTION_TITLE_EMPTY);
              return null;
         }
         EditText check1 = (EditText)rootView.findViewById(R.id.institute_qna_question_desc);
 
         String desc =  check1.getText().toString();
         if (desc == null || desc.trim().length() <= 0) {
-            Utils.DisplayToast(getActivity(), "Question text cannot be empty.");
-             return null;
+            mListener.displayMessage(R.string.QUESTION_TEXT_EMPTY);
+
+            return null;
         }
 
         QnAQuestions q = new QnAQuestions();
@@ -247,9 +256,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
             QnAQuestions q = validateData(rootView);
             if (q != null && mListener != null)
             {
-
                 this.mListener.onQuestionAsked(q);
-
             }
 
         }
@@ -263,15 +270,15 @@ public class QnAQuestionsListFragment extends BaseFragment {
         if(this.mQnAQuestionsList == null)
             this.mQnAQuestionsList = new ArrayList<>();
 
-            this.mQnAQuestionsList.add(mQnAQuestionsList.size(), ques);
-            this.mAdapter.notifyItemInserted(mQnAQuestionsList.size() - 1);
+            this.mQnAQuestionsList.add(0, ques);
+            this.mAdapter.notifyItemInserted(0);
             this.mAdapter.notifyDataSetChanged();
 
             View view = getView();
             if(view != null) {
-               ((RecyclerView) view.findViewById(R.id.institute_questions_list)).scrollToPosition(mQnAQuestionsList.size() - 1);
-
+               ((RecyclerView) view.findViewById(R.id.institute_questions_list)).scrollToPosition(0);
                 view.findViewById(R.id.qna_ask_layout).setVisibility(View.GONE);
+                view.findViewById(R.id.dummy_view).setVisibility(View.GONE);
                 this.mToggleAskButtonVisiblity(View.VISIBLE);
             }
 
@@ -284,7 +291,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
         @Override
         void onEndReached(String next, int type);
         void onQnAQuestionVote(int position, int voteType);
-        void onNoInternetConnection();
+        void displayMessage(int messageId);
     }
 
 }

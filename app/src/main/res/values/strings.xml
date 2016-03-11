@@ -50,8 +50,19 @@
 
     <!--APP MESSAGES-->
     <string name="INTERNET_CONNECTION_ERROR">You are not connected to Internet</string>
-
-
+    <string name="THANKS_FOR_VOTE">Thanks for your vote</string>
+    <string name="SELECT_ONE_EXAM">Select at least one Exam</string>
+    <string name="QUESTION_TITLE_EMPTY">Question title cannot be empty</string>
+    <string name="QUESTION_TEXT_EMPTY">Question text cannot be empty</string>
+    <string name="ACCEPT_TERMS_AND_CONDITIONS">Please read and accept terms conditions</string>
+    <string name="FACEBOOK_SIGNIN_FAILED">Facebook SignIn is failed</string>
+    <string name="SIGNIN_ERROR">Failed to sign in Facebook</string>
+    <string name="ALREADY_APPLIED">Already Applied</string>
+    <string name="ALREADY_DISLIKED">Already Disliked</string>
+    <string name="ALREADY_DOWN_VOTED">You have already down-voted it</string>
+    <string name="ALREADY_UP_VOTED">You have already up-voted it</string>
+    <string name="ENTER_YOUR_MESSAGE">Please enter your message</string>
+    <string name="ENTER_YOUR_ANSWER">Please enter your answer</string>
     <!--TAGS-->
     <string name="PREFS">sharedprefs</string>
     <string name="KEY_USER">user_id</string>

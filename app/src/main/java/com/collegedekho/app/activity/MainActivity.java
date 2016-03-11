@@ -378,7 +378,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         this.setContentView(R.layout.activity_main);
-        snackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
+        snackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_LONG);
         Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
         layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
 
@@ -596,14 +596,14 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onCancel() {
                 Log.e(TAG, "facebook login canceled");
-                Toast.makeText(MainActivity.this, "Facebook SignIn is failed", Toast.LENGTH_LONG).show();
+                displayMessage(R.string.FACEBOOK_SIGNIN_FAILED);
             }
 
             @Override
             public void onError(FacebookException error) {
                 error.printStackTrace();
                 Log.e(TAG, "facebook login on error");
-                Toast.makeText(MainActivity.this, "Facebook SignIn has some error", Toast.LENGTH_LONG).show();
+                displayMessage(R.string.SIGNIN_ERROR);
             }
         });
         try
@@ -705,20 +705,32 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        super.onResume();
-        Bundle extras = getIntent().getExtras();
-        if (extras != null)
-        {
-            MainActivity.type = extras.getString("screen");
-            MainActivity.resource_uri = extras.getString("resource_uri");
-        }
-        // Logs 'install' and 'app activate' App Events.
-        AppEventsLogger.activateApp(this);
-        AppsFlyerLib.onActivityResume(this);
-        adjustFontScale(getResources().getConfiguration());
+            super.onResume();
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                MainActivity.type = extras.getString("screen");
+                MainActivity.resource_uri = extras.getString("resource_uri");
+            }
+            // Logs 'install' and 'app activate' App Events.
+            AppEventsLogger.activateApp(this);
+            AppsFlyerLib.onActivityResume(this);
+            adjustFontScale(getResources().getConfiguration());
 //        System.gc();
     }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        try {
+            super.onRestoreInstanceState(savedInstanceState);
+        }catch (Exception e){
+            e.printStackTrace();
+            Intent intent=new Intent(this,MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+    }
 
     @Override
     protected void onPause() {
@@ -3049,22 +3061,22 @@ public class MainActivity extends AppCompatActivity
                         String email = ((TextView) view.findViewById(R.id.apply_email)).getText().toString();
                         String phone = ((TextView) view.findViewById(R.id.apply_phone)).getText().toString();
                         if (name == null || name.isEmpty()) {
-                            Utils.DisplayToast(getApplicationContext(), getResourceString(R.string.NAME_EMPTY));
+                            displayMessage(R.string.NAME_EMPTY);
                             return;
                         } else if (!Utils.isValidName(name)) {
-                            Utils.DisplayToast(getApplicationContext(), getResourceString(R.string.NAME_INVALID));
+                            displayMessage(R.string.NAME_INVALID);
                             return;
                         } else if (phone == null || phone.isEmpty()) {
-                            Utils.DisplayToast(getApplicationContext(), getResourceString(R.string.PHONE_EMPTY));
+                            displayMessage(R.string.PHONE_EMPTY);
                             return;
                         } else if (phone.length() <= 9 || phone.length() > 12 || !Utils.isValidPhone(phone) ) {
-                            Utils.DisplayToast(getApplicationContext(), getResourceString(R.string.PHONE_INVALID));
+                            displayMessage(R.string.PHONE_INVALID);
                             return;
                         } else if (email == null || email.isEmpty()) {
-                            Utils.DisplayToast(getApplicationContext(), getResourceString(R.string.EMAIL_EMPTY));
+                            displayMessage(R.string.EMAIL_EMPTY);
                             return;
                         } else if (!Utils.isValidEmail(email)) {
-                            Utils.DisplayToast(getApplicationContext(), getResourceString(R.string.EMAIL_INVALID));
+                            displayMessage(R.string.EMAIL_INVALID);
                             return;
                         }
                         apply.dismiss();
@@ -3323,8 +3335,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onNoInternetConnection() {
-        displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+    public void displayMessage(int messageId) {
+        displaySnackBar(messageId);
     }
 
    /* @Override
@@ -3448,7 +3460,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onQnAQuestionVote(String resourceURI, int voteType, int position) {
-        Utils.DisplayToast(this, "Thanks for your vote");
+        displayMessage(R.string.THANKS_FOR_VOTE);
         if (voteType == Constants.LIKE_THING) {
             this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
         } else if (voteType == Constants.DISLIKE_THING) {
@@ -3711,8 +3723,11 @@ public class MainActivity extends AppCompatActivity
 
             MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_QNA_QUESTION_ASKED), eventValue);
 
-            if (currentFragment instanceof InstituteDetailFragment || currentFragment instanceof  QnAQuestionsListFragment)
-                currentFragment.instituteQnAQuestionAdded(qnaQuestion);
+            if (currentFragment instanceof InstituteDetailFragment) {
+                ((InstituteDetailFragment)currentFragment).instituteQnAQuestionAdded(qnaQuestion);
+            }else if (currentFragment instanceof  QnAQuestionsListFragment){
+                ((QnAQuestionsListFragment)currentFragment).instituteQnAQuestionAdded(qnaQuestion);
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -5820,7 +5835,7 @@ public class MainActivity extends AppCompatActivity
         try {
             JSONObject responseObject=new JSONObject(response);
             if(responseObject.optBoolean("verified")) {
-                Utils.DisplayToast(this,getResourceString(R.string.otp_verified));
+                displayMessage(R.string.otp_verified);
                 MainActivity.user.setIs_otp_verified(1);
                 String u = JSON.std.asString(MainActivity.user);
                 this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();

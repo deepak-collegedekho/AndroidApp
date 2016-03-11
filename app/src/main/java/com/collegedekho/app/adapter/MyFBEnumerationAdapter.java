@@ -132,7 +132,7 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
                 myFbEnumration.setUnread_count(0);
                 this.mListener.onMyFBSelected(myFbEnumration, this.getAdapterPosition(), mMyFBEnumeration.get(this.getAdapterPosition()).getComments_count());
             }else {
-                this.mListener.onNoInternetConnection();
+                this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
             }
         }
     }

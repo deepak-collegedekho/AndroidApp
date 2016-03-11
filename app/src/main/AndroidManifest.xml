@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:installLocation="auto"
     package="com.collegedekho.app">
 
     <!--connecto permissions-->
@@ -42,6 +43,7 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:hardwareAccelerated="true"
+
         android:theme="@style/AppTheme">
 
         <receiver android:name=".listener.ApplyReceiver">

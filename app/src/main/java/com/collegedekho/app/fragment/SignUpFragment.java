@@ -105,35 +105,35 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             String phone    = ((EditText) getView().findViewById(R.id.signup_phone)).getText().toString();
             if (name == null || name.isEmpty())
             {
-                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.NAME_EMPTY));
+                mListener.displayMessage(R.string.NAME_EMPTY);
                 return;
             }
             else if(!isValidName(name)){
-                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.NAME_INVALID));
+                mListener.displayMessage(R.string.NAME_INVALID);
                 return;
             }
             else if(phone == null || phone.isEmpty()) {
-                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.PHONE_EMPTY));
+                mListener.displayMessage(R.string.PHONE_EMPTY);
                 return;
             }
             else if(phone.length() <= 9 ||!isValidPhone(phone)){
-                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.PHONE_INVALID));
+                mListener.displayMessage(R.string.PHONE_INVALID);
                 return;
             }
             else if (email == null || email.isEmpty()){
-                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.EMAIL_EMPTY));
+                mListener.displayMessage(R.string.EMAIL_EMPTY);
                 return;
             }
             else if(!isValidEmail(email)){
-                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.EMAIL_INVALID));
+                mListener.displayMessage(R.string.EMAIL_INVALID);
                 return;
             }
             else if (password == null || password.isEmpty()){
-                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.PASSWORD_EMPTY));
+                mListener.displayMessage(R.string.PASSWORD_EMPTY);
                 return;
             }
             else if (password.length() < 6 ){
-                Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.PASSWORD_INVALID));
+                mListener.displayMessage(R.string.PASSWORD_INVALID);
                 return;
             }
 

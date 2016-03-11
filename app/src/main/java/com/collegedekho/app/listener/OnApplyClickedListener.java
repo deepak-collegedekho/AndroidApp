@@ -8,5 +8,5 @@ import com.collegedekho.app.entities.InstituteCourse;
  */
 public interface OnApplyClickedListener {
     void onCourseApplied(int position ,int tabPosition ,InstituteCourse id);
-    void onNoInternetConnection();
+    void displayMessage(int messageId);
 }

@@ -276,13 +276,13 @@ public class ExamsFragment extends BaseFragment {
             }
             if(!isExamSelected){
                 if(!isEditMode) {
-                    Utils.DisplayToast(getActivity(), "Select at least one Exam");
+                    mListener.displayMessage(R.string.SELECT_ONE_EXAM);
                     return;
                 }else {
                     if(isPreSelected) {
                         mListener.onCancelExamSubmission();
                     }else {
-                        Utils.DisplayToast(getActivity(), "Select at least one Exam");
+                        mListener.displayMessage(R.string.SELECT_ONE_EXAM);
                         return;
                     }
                     return;
@@ -310,5 +310,6 @@ public class ExamsFragment extends BaseFragment {
         void onExamsSelected(JSONObject params);
         void onExamsEdited(JSONObject params);
         void onCancelExamSubmission();
+        void displayMessage(int messageId);
     }
 }

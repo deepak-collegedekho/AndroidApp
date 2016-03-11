@@ -133,5 +133,6 @@ public class LoginFragment1 extends BaseFragment {
 
         void onUserSignIn(String URL, HashMap hashMap, String msg);
         void onUserSignUp(String URL, HashMap hashMap, String msg);
+        void displayMessage(int messageId);
     }
 }

@@ -38,7 +38,11 @@
             android:padding="5dp"
             android:layout_marginBottom="35dp"/>
 
-
+<ImageView android:id="@+id/dummy_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone"
+    />
             <include layout="@layout/layout_qna_ask_question"
                 android:id="@+id/qna_ask_layout"
                 android:layout_width="match_parent"

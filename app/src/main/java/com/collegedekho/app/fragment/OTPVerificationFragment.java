@@ -125,7 +125,7 @@ public class OTPVerificationFragment extends BaseFragment {
                         if (cbTerms.isChecked()) {
                             mListener.onSubmitMobileNumber(number);
                         } else {
-                            Utils.DisplayToast(v.getContext(), "Please read and accept terms conditions.");
+                            mListener.displayMessage(R.string.ACCEPT_TERMS_AND_CONDITIONS);
                         }
                     } else {
                         edtMobileNumber.setError("Enter Valid Mobile Number");
@@ -227,10 +227,9 @@ public class OTPVerificationFragment extends BaseFragment {
     }
 
     public interface OTPVerificationListener {
-        public void onSubmitMobileNumber(String mobileNumber);
-
-        public void onSubmitOTP(String mobileNumber, String otp);
-
-        public void onResendOTP(String mobileNumber);
+        void onSubmitMobileNumber(String mobileNumber);
+        void onSubmitOTP(String mobileNumber, String otp);
+        void onResendOTP(String mobileNumber);
+        void displayMessage(int messageId);
     }
 }

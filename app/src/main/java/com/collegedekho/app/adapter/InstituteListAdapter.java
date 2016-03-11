@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.fragment.InstituteListFragment;
@@ -277,7 +276,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                         }
 
                     }else {
-                        this.mListener.onNoInternetConnection();
+                        this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                     }
                     break;
                 case R.id.button_dislike_college:
@@ -289,9 +288,9 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                             //dislikeButton.setClickable(false);
                             mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_THING);
                         } else
-                            Toast.makeText(mContext, "Already disliked. You really hate this one..", Toast.LENGTH_SHORT).show();
+                            mListener.displayMessage(R.string.ALREADY_DISLIKED);
                     }else {
-                        this.mListener.onNoInternetConnection();
+                        this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                     }
                     break;
                 case R.id.card_institute_container:
@@ -304,7 +303,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                         mProgressBar.setVisibility(View.VISIBLE);
                         this.mListener.onInstituteShortlisted(getAdapterPosition());
                     }else {
-                        this.mListener.onNoInternetConnection();
+                        this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                     }
                     break;
                 default:

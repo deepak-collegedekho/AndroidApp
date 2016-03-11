@@ -127,47 +127,49 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         (rootView.findViewById(R.id.answer_reply)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                int connectivityStatus = new NetworkUtils(v.getContext(), null).getConnectivityStatus();
+                if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 
-                alert.setTitle("Enter your answer");
+                    alert.setTitle("Enter your answer");
 
-                // Set an EditText view to get user input
-                final EditText input = (EditText) LayoutInflater.from(getActivity()).inflate(R.layout.item_text_edit, null);
+                    // Set an EditText view to get user input
+                    final EditText input = (EditText) LayoutInflater.from(getActivity()).inflate(R.layout.item_text_edit, null);
 
-                alert.setView(input);
+                    alert.setView(input);
 
-                alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String value = input.getText().toString();
-                        if (value.trim().equals(""))
-                        {
-                            Toast.makeText(getActivity(),"Please enter your answer", Toast.LENGTH_SHORT).show();
+                    alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            String value = input.getText().toString();
+                            if (value.trim().equals("")) {
+                                mListener.displayMessage(R.string.ENTER_YOUR_ANSWER);
+                            } else {
+                                mListener.onQnAAnswerSubmitted(mQnAQuestion.getResource_uri(), input.getText().toString().trim(), mQnAQuestion.getIndex(), mQnAAnswersSet.size());
+                                input.setText("");
+                            }
                         }
-                        else
-                        {
-                            mListener.onQnAAnswerSubmitted(mQnAQuestion.getResource_uri(), input.getText().toString().trim(), mQnAQuestion.getIndex(), mQnAAnswersSet.size());
-                            input.setText("");
+                    });
+
+                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // Canceled.
                         }
-                    }
-                });
+                    });
 
-                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Canceled.
-                    }
-                });
+                    alert.show();
 
-                alert.show();
+                } else {
+                    mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
+                }
             }
         });
 
         this.mUpvoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
-                if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
+
                     if (v.isSelected()) {
-                        Toast.makeText(getActivity(), "You can't upvote the upvoted", Toast.LENGTH_SHORT).show();
+                        mListener.displayMessage(R.string.ALREADY_UP_VOTED);
                     } else {
                         if (mQnAQuestion.getCurrent_user_vote_type() == Constants.DISLIKE_THING) {
                             mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri() + "upvote/", Constants.NOTINTERESTED_THING, mQnAQuestion.getIndex());
@@ -175,9 +177,7 @@ public class QnAQuestionDetailFragment extends BaseFragment{
                             mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri(), Constants.LIKE_THING, mQnAQuestion.getIndex());
                         }
                     }
-                }else {
-                    mListener.onNoInternetConnection();
-                }
+
             }
         });
 
@@ -187,7 +187,7 @@ public class QnAQuestionDetailFragment extends BaseFragment{
                 int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
                 if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
                     if (v.isSelected()) {
-                        Toast.makeText(getActivity(), "You can't downvote the downvoted", Toast.LENGTH_SHORT).show();
+                        mListener.displayMessage(R.string.ALREADY_DOWN_VOTED);
                     } else {
                         if (mQnAQuestion.getCurrent_user_vote_type() == Constants.LIKE_THING) {
                             mListener.onQnAQuestionVote(mQnAQuestion.getResource_uri() + "downvote/", Constants.NOTINTERESTED_THING, mQnAQuestion.getIndex());
@@ -196,7 +196,7 @@ public class QnAQuestionDetailFragment extends BaseFragment{
                         }
                     }
                 }else {
-                    mListener.onNoInternetConnection();
+                    mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                 }
             }
         });
@@ -318,7 +318,7 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         void onQnAQuestionVote(String resourceURI, int voteType, int position);
         void onQnAAnswerVote(String resourceURI, int voteType, int answerPosition, int questionPosition);
         void onQnAAnswerSubmitted(String questionURI, String answerText, int questionIndex, int answerIndex);
-        void onNoInternetConnection();
+        void displayMessage(int messageId);
     }
 
     @Override

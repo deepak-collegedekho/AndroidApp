@@ -240,7 +240,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
 
                         }
                     }else {
-                        this.mListener.onNoInternetConnection();
+                        this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                     }
                     break;
                 case R.id.layout_item_expand:

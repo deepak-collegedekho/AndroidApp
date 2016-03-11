@@ -261,11 +261,11 @@ public class ProfileFragment extends BaseFragment
             mainActivity.mUpdateTabMenuItem(-1);
         }
 
-        if (Utils.isScreenGotOff() == true)
-        {
-            Utils.setScreenGotOff(false);
-            return;
-        }
+//        if (Utils.isScreenGotOff() == true)
+//        {
+//            Utils.setScreenGotOff(false);
+//            return;
+//        }
 
         updateExamSummaryHandler.postDelayed(updateExamSummaryRunnable,300);
         if(((MainActivity)getActivity()).isReloadProfile && this.mListener!=null){

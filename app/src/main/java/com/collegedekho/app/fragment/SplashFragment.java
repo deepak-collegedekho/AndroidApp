@@ -1,5 +1,7 @@
 package com.collegedekho.app.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -44,54 +46,6 @@ public class SplashFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-      /* final View view = getView();
-        if(view != null)
-        {
-            FrameLayout layout =(FrameLayout) getActivity().findViewById(R.id.container);
-            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) layout.getLayoutParams();
-            params.setBehavior(null);
-
-           int splashTime = 5000;
-
-            if(IS_FIRST_TIME) {
-                IS_FIRST_TIME = false;
-                this.mLogoView = (ImageView) view.findViewById(R.id.splash_logo_view);
-                // Load the ImageView that will host the animation and
-                // set its background to our AnimationDrawable XML resource.
-                this.mLogoView.setBackgroundResource(R.drawable.loading_animation);
-
-                // Get the background, which has been compiled to an AnimationDrawable object.
-                this.mFrameAnimation = (AnimationDrawable) this.mLogoView.getBackground();
-
-                // Start the main animation (looped playback by default).
-                this.mFrameAnimation.start();
-            }
-            else
-            {
-                splashTime=0;
-            }
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //Stop the Main Animation and Start Secondary
-                    stopMainAnimation();
-                    //check if this device is connected to internet
-                    int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
-                    if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
-                        view.findViewById(R.id.splash_no_internet_info_layout).setVisibility(View.GONE);
-
-                        Constants.IS_CONNECTED_TO_INTERNET = true;
-                        //Initialize the app
-                        MainActivity mainActivity = (MainActivity)getActivity();
-                        if(mainActivity != null ) {
-                            mainActivity.loadInItData();
-                        }
-
-                    } else
-                        view.findViewById(R.id.splash_no_internet_info_layout).setVisibility(View.VISIBLE);
-                }
-            }, splashTime);
-        }*/
     }
 
     @Override
@@ -101,15 +55,19 @@ public class SplashFragment extends BaseFragment {
     }
 
     public void isInternetAvailable(){
-//        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
-//        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        SharedPreferences sp = getActivity().getSharedPreferences(MainActivity.getResourceString(R.string.PREFS), Context.MODE_PRIVATE);
+        boolean IS_USER_CREATED = sp.getBoolean(MainActivity.getResourceString(R.string.USER_CREATED), false);
+        boolean IS_PROFILE_LOADED = sp.getBoolean(MainActivity.getResourceString(R.string.USER_PROFILE_LOADED), false);
+
+        if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED && IS_USER_CREATED && !IS_PROFILE_LOADED ) {
+            getView().findViewById(R.id.splash_no_internet_info_layout).setVisibility(View.VISIBLE);
+        }else{
             MainActivity mainActivity = (MainActivity) getActivity();
             if (mainActivity != null) {
                 mainActivity.loadInItData();
             }
-//        }else{
-//            getView().findViewById(R.id.splash_no_internet_info_layout).setVisibility(View.VISIBLE);
-//        }
+        }
     }
 
     public void stopMainAnimation()

@@ -88,7 +88,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                 if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
                 final String value = mChatText.getText().toString();
                 if (value.trim().equals(""))
-                    Toast.makeText(getActivity(), "Please enter your message", Toast.LENGTH_SHORT).show();
+                    mListener.displayMessage(R.string.ENTER_YOUR_MESSAGE);
                 else
                 {
                     User user =MainActivity.user;
@@ -117,11 +117,11 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                                 String name =   ((EditText) dialog.findViewById(R.id.user_name)).getText().toString();
                                 if(name == null || name.length() <= 0)
                                 {
-                                    Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.NAME_EMPTY));
+                                   mListener.displayMessage(R.string.NAME_EMPTY);
                                     return;
                                 }
                                 else if(!Utils.isValidName(name)){
-                                    Utils.DisplayToast(getActivity(), MainActivity.getResourceString(R.string.NAME_INVALID));
+                                    mListener.displayMessage(R.string.NAME_INVALID);
                                     return;
                                 }
 
@@ -138,7 +138,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                 }
 
             }else {
-                    mListener.onNoInternetConnection();
+                    mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                 }
             }
         });
@@ -321,6 +321,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         void onMyFBUpdated(int commentsSize, int myFbIndex);
         void onUserLoginRequired(String value);
         void onNameUpdated(HashMap params, String msg);
-        void onNoInternetConnection();
+        void displayMessage(int messageId);
     }
 }

@@ -420,7 +420,7 @@ View instituteView;
         void onFilterApplied();
 
         void onInstituteShortlisted(int position);
-        void onNoInternetConnection();
+        void displayMessage(int messageId);
 
         @Override
         void onEndReached(String next, int type);

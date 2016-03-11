@@ -147,7 +147,7 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
         til1 = (TextInputLayout) check.getParent();
         String title =  check.getText().toString();
         if (title == null || title.length() <= 0) {
-            Utils.DisplayToast(getActivity(),"Question title cannot be empty.");
+            mListener.displayMessage(R.string.QUESTION_TITLE_EMPTY);
             til1.setError("Question title cannot be empty.");
             return null;
         }
@@ -158,7 +158,7 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
         til2 = (TextInputLayout) check1.getParent();
         String desc =  check1.getText().toString();
         if (desc == null || desc.length() <= 0) {
-            Utils.DisplayToast(getActivity(), "Question text cannot be empty.");
+            mListener.displayMessage(R.string.QUESTION_TEXT_EMPTY);
                      til2.setError("Question text cannot be empty.");
             return null;
         }
@@ -283,6 +283,7 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
      */
     public interface OnQuestionAskedListener {
         void onQuestionAsked(QnAQuestions question);
+        void displayMessage(int messageId);
     }
 
     //adds added answer to the current list
