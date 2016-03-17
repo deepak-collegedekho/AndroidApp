@@ -31,6 +31,7 @@ public class Chapters implements Parcelable {
         is_done = in.readInt();
         id = in.readInt();
         name = in.readString();
+        chapters=new ArrayList<>();
         chapters = in.createTypedArrayList(ChapterDetails.CREATOR);
     }
 

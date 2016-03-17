@@ -19,6 +19,7 @@ public class YoutubeVideoDetails implements Parcelable {
     protected YoutubeVideoDetails(Parcel in) {
         kind = in.readString();
         etag = in.readString();
+        items=new ArrayList<>();
         items = in.createTypedArrayList(Item.CREATOR);
     }
 

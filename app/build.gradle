@@ -37,7 +37,7 @@ android {
         incremental true
         javaMaxHeapSize '4g'
         preDexLibraries = false
-        dexInProcess false
+//        dexInProcess false
     }
     repositories {
         maven { url 'http://www.connecto.io/maven-repo' }

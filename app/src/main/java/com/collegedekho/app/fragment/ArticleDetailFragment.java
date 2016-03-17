@@ -92,6 +92,12 @@ public class ArticleDetailFragment extends BaseFragment {
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.setUserVisibleHint(true);
+    }
+
     public void updateArticle(Articles article) {
         this.mArticle = article;
         showArticleUpdate();
@@ -181,8 +187,6 @@ public class ArticleDetailFragment extends BaseFragment {
             if (mMainActivity != null)
                 mMainActivity.currentFragment = this;
         }
-
-
     }
 }
 

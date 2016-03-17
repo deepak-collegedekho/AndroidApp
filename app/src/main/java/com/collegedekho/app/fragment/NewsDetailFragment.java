@@ -80,6 +80,12 @@ public class NewsDetailFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        this.setUserVisibleHint(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_news_detail, container, false);
@@ -166,8 +172,6 @@ public class NewsDetailFragment extends BaseFragment {
             if (mMainActivity != null)
                 mMainActivity.currentFragment = this;
         }
-
-
     }
 }
 

@@ -56,7 +56,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private int filterCount;
     private TextView mEmptyTextView;
     private boolean IS_TUTE_COMPLETED = true;
-private View filterBtn,filters;
+    private View filterBtn,filters;
     private  int mViewType = Constants.VIEW_INTO_LIST;
     private ContactsCompletionView mCompletionView;
     private ArrayAdapter<String> tolenAdapter;
@@ -179,12 +179,12 @@ View instituteView;
                 v.setVisibility(View.GONE);
                 IS_TUTE_COMPLETED = true;
                 getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.INSTITUTE_LIST_SCREEN_TUTE), true).apply();
-                rootView.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
+                if(filterAllowed && mInstitutes!=null && mInstitutes.size()>0 && listType!=Constants.INSTITUTE_SEARCH_TYPE) {
+                    rootView.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
+                }
                 return false;
             }
         });
-
-
         return rootView;
     }
 

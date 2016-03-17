@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
@@ -236,8 +238,8 @@ public class Utils {
                             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                             layoutParams.setMargins(0, 0, 0, -30);
                             textView.setLayoutParams(layoutParams);
-//                            textView.setMovementMethod(LinkMovementMethod.getInstance());
                             textView.setText(spanner.fromTagNode(childNode, null));
+                            textView.setMovementMethod(AppLinkMovementMethod.getInstance());
                             parentLayout.addView(textView);
                         }
                     } else {
@@ -245,8 +247,8 @@ public class Utils {
                         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         layoutParams.setMargins(0, 0, 0, -30);
                         textView.setLayoutParams(layoutParams);
-//                        textView.setMovementMethod(LinkMovementMethod.getInstance());
                         textView.setText(spanner.fromTagNode(childNode, null));
+                        textView.setMovementMethod(AppLinkMovementMethod.getInstance());
                         parentLayout.addView(textView);
                     }
                 }
@@ -255,8 +257,8 @@ public class Utils {
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.setMargins(0, 0, 0, -30);
                 textView.setLayoutParams(layoutParams);
-//                textView.setMovementMethod(LinkMovementMethod.getInstance());
                 textView.setText(spanner.fromTagNode(node, null));
+                textView.setMovementMethod(AppLinkMovementMethod.getInstance());
                 parentLayout.addView(textView);
             }
         }
@@ -509,5 +511,15 @@ public class Utils {
         result.setPixels(pixels, 0, result.getWidth(), 0, 0, result.getWidth(), result.getHeight());
 
         return result;
+    }
+
+    public static void rateApplication(Context context){
+
+        String appPackageName = context.getPackageName();
+        try {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (ActivityNotFoundException e) {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
     }
 }

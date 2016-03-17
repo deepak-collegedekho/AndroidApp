@@ -21,6 +21,7 @@ public class MyAlertDate implements Parcelable {
         count = in.readInt();
         year = in.readInt();
         month = in.readInt();
+        dates=new ArrayList<>();
         dates = in.createTypedArrayList(MyAlertDateDescription.CREATOR);
     }
 

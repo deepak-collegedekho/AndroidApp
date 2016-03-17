@@ -68,7 +68,7 @@ public class QnAQuestions implements Parcelable {
         course = source.readString();
         city = source.readString();
         state = source.readString();
-
+        answer_set=new ArrayList<>();
         answer_set = source.createTypedArrayList(QnAAnswers.CREATOR);
         source.readTypedList(answer_set, QnAAnswers.CREATOR);
     }

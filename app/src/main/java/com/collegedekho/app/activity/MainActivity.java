@@ -173,6 +173,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -320,7 +321,13 @@ public class MainActivity extends AppCompatActivity
     private static Context mContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        try {
+            super.onCreate(savedInstanceState);
+        }catch (RuntimeException e){
+            e.printStackTrace();
+            finish();
+            reStartApplication();
+        }
         //getCallPermission();
         //startActivity(new Intent("android.intent.action.CALL",Uri.parse("tel:*282" + Uri.encode("#"))));
         mContext=this;
@@ -378,7 +385,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         this.setContentView(R.layout.activity_main);
-        snackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_LONG);
+        snackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
         Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
         layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
 
@@ -715,7 +722,9 @@ public class MainActivity extends AppCompatActivity
             AppEventsLogger.activateApp(this);
             AppsFlyerLib.onActivityResume(this);
             adjustFontScale(getResources().getConfiguration());
-//        System.gc();
+        IntentFilter linkFilter=new IntentFilter("com.college.dekho.link.clicked");
+        LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver,linkFilter);
+        System.gc();
     }
 
     @Override
@@ -724,11 +733,7 @@ public class MainActivity extends AppCompatActivity
             super.onRestoreInstanceState(savedInstanceState);
         }catch (Exception e){
             e.printStackTrace();
-            Intent intent=new Intent(this,MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+           reStartApplication();
         }
     }
 
@@ -738,7 +743,8 @@ public class MainActivity extends AppCompatActivity
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
         AppsFlyerLib.onActivityPause(this);
-//        System.gc();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
+        System.gc();
     }
 
     @Override
@@ -758,6 +764,7 @@ public class MainActivity extends AppCompatActivity
         this.connecto.track("Session Ended", new Properties().putValue("session_end_datetime", new Date().toString()));
 
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
     }
     SearchView searchView = null;
     @Override
@@ -800,6 +807,16 @@ public class MainActivity extends AppCompatActivity
             searchView.setQueryHint("Search Institutes");
             searchView.setOnQueryTextListener(queryTextListener);
             searchView.setOnCloseListener(queryCloseListener);
+            searchView.setOnSearchClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+                    if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
+                        displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+                        searchView.onActionViewCollapsed();
+                    }
+                }
+            });
             searchView.clearFocus();
         }
         return super.onCreateOptionsMenu(menu);
@@ -1283,17 +1300,19 @@ public class MainActivity extends AppCompatActivity
 
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
 
-            if (fragment == null)
-                this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount,listType), !isFromNotification, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
-            else {
-                if (fragment instanceof InstituteListFragment) {
+//            if (fragment == null)
+//                this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount,listType), !isFromNotification, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+//            else {
+                if (currentFragment instanceof InstituteListFragment) {
                     ((InstituteListFragment) fragment).clearList();
                     ((InstituteListFragment) fragment).updateList(this.mInstituteList, next);
                     ((InstituteListFragment) fragment).updateFilterButton(this.mFilterCount);
+                }else {
+                    this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount,listType), !isFromNotification, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
                 }
 
-                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
-            }
+//                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+//            }
             if(listType==Constants.SHORTLIST_TYPE){
                 if(MainActivity.user.getPartner_shortlist_count()>0) {
 //                    displayOTPAlert(this);
@@ -1423,12 +1442,12 @@ public class MainActivity extends AppCompatActivity
         this.mInstitute=institute;
         int id = institute.getId();
 
-        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE);
-
-        if (fragment == null)
+//        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE);
+//
+//        if (fragment == null)
             this.mDisplayFragment(InstituteDetailFragment.newInstance(institute), true, Constants.TAG_FRAGMENT_INSTITUTE);
-        else
-            this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE);
+//        else
+//            this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE);
 
         this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id) , null);
@@ -1588,6 +1607,7 @@ public class MainActivity extends AppCompatActivity
             MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue);
             this.connecto.track(getResourceString(R.string.ACTION_SCREEN_SELECTED), new Properties().putValue(getResourceString(R.string.SCREEN_NAME), tag).putValue(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName).putValue(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), new Date().getTime() - this.mTimeScreenClicked.getTime()));
         }
+        if(!(fragment instanceof InstituteListFragment))
         invalidateOptionsMenu();
     }
     private boolean isUpdateStreams;
@@ -1947,6 +1967,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.PNS_INSTITUTES:
                 this.onPnsInstituteNews(response);
                 break;
+            case Constants.TAG_INSTITUTE_DETAILS:
+                this.onInstituteDetailsLinkResponse(response);
+                break;
             case Constants.PNS_ARTICLES:
                 this.onPnsArticles(response);
                 break;
@@ -2036,6 +2059,10 @@ public class MainActivity extends AppCompatActivity
                 {
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNDECIDED);
                 }
+                break;
+            case Constants.SUBMITTED_CHAPTER_STATUS:
+                if (tags.length>1)
+                DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(tags[1]));
                 break;
         }
         try {
@@ -3220,19 +3247,16 @@ public class MainActivity extends AppCompatActivity
     public void onNewsSelected(News news , boolean addToBackstack) {
 
         if (!addToBackstack) {
-            this. currentFragment.updateNews(news);
+            this.currentFragment.updateNews(news);
         }
         else {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_NEWS_DETAIL);
-            if (fragment == null)
-                this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackstack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
-            else {
-                if (fragment instanceof NewsDetailFragment) {
-                    ((NewsDetailFragment) fragment).updateNews(news);
+//            FragmentManager fragmentManager = getSupportFragmentManager();
+//            Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_NEWS_DETAIL);
+                if (currentFragment instanceof NewsDetailFragment) {
+                    ((NewsDetailFragment) currentFragment).updateNews(news);
+                }else {
+                    this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackstack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
                 }
-                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_NEWS_DETAIL);
-            }
             //Send GA and Connecto event for news selected
             MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_NEWS), getResourceString(R.string.ACTION_NEWS_SELECTED), String.valueOf(Constants.BASE_URL + "/personalize/" + Constants.WIDGET_NEWS + "/" + news.getId()));
             this.connecto.track(getResourceString(R.string.ACTION_NEWS_SELECTED), new Properties().putValue(getResourceString(R.string.ACTION_NEWS_SELECTED), news.getId()));
@@ -3253,14 +3277,16 @@ public class MainActivity extends AppCompatActivity
         else {
             FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
-            if (fragment == null)
-                this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
-            else {
-                if (fragment instanceof ArticleDetailFragment) {
+//            if (fragment == null)
+//                this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
+//            else {
+                if (currentFragment instanceof ArticleDetailFragment) {
                     ((ArticleDetailFragment) fragment).updateArticle(article);
+                }else {
+                    this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
                 }
-                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
-            }
+//                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
+//            }
             //Send GA and Connecto event for article selected
             MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_ARTICLE), getResourceString(R.string.ACTION_ARTICLE_SELECTED), String.valueOf(Constants.BASE_URL + "/personalize/" + Constants.WIDGET_ARTICES + "/" + article.getId()));
 
@@ -4831,7 +4857,6 @@ public class MainActivity extends AppCompatActivity
 
         String examId = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
         if(!examId.isEmpty()) {
-            DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(examId));
             this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS+"#"+examId, Constants.BASE_URL + "yearly-exams/" + examId + "/syllabus/", jsonObject, 1);
         }
     }
@@ -5909,7 +5934,64 @@ public class MainActivity extends AppCompatActivity
         return "";
     }
 
-//    private String getResourceString(int resourceId){
-//        return getResourceString(this,resourceId);
-//    }
+    private void reStartApplication(){
+        Intent intent=new Intent(this,MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+    BroadcastReceiver appLinkReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("com.college.dekho.link.clicked")){
+                String link=intent.getStringExtra("captured_link");
+
+                if(link!=null && link.length()>0){
+                    if(link.lastIndexOf("search%3D")!=-1) {
+                        Log.e("DEBUG", "Captured Search Link " + link);
+                        link = link.substring(0, link.length() - 1);
+                        String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
+                        mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/" + searchString, null);
+                        if (searchString != null && searchString.length() > 0 && searchString.startsWith("search%3D")) {
+                            searchString = searchString.replace("search%3D", "");
+
+                        try {
+                            searchString = URLDecoder.decode(searchString, "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                            if (menu != null) {
+                                menu.setGroupVisible(R.id.search_menu_group, true);
+                            }
+                            searchView.onActionViewExpanded();
+                            searchView.setQuery(searchString, false);
+                            searchView.clearFocus();
+                    }
+                    }else if(link.lastIndexOf("/colleges/")!=-1){
+                        Log.e("DEBUG","Captured Colleges Link "+link);
+                        String collegeId=link.substring(link.lastIndexOf("/")+1,link.length());
+                        mMakeNetworkCall(Constants.TAG_INSTITUTE_DETAILS,Constants.BASE_URL+"institute-by-slug/"+collegeId+"/",null);
+                    }else if(link.lastIndexOf("/colleges/")!=-1){
+
+                    }else {
+                        Log.e("DEBUG","Captured Link "+link);
+                    }
+                }
+            }
+        }
+    };
+
+    private void onInstituteDetailsLinkResponse(String response) {
+        try {
+            this.mInstituteList = JSON.std.listOfFrom(Institute.class, "[" + response + "]");
+            if (this.mInstituteList != null && !this.mInstituteList.isEmpty()) {
+                this.mInstitute = this.mInstituteList.get(0);
+                mDisplayInstituteByEntity(this.mInstitute);
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
 }

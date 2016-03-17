@@ -237,8 +237,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
         int childWidthMeasureSpec, childHeightMeasureSpec;
         childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - 100, MeasureSpec.AT_MOST);
         childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(getMeasuredHeight() - getPaddingLeft() - getPaddingRight() - 40, MeasureSpec.AT_MOST);
-
-        for (int i = 0; i < getChildCount(); i++) {
+        int childCount=getChildCount();
+        for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
             child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
         }

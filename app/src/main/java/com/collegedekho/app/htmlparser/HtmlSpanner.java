@@ -23,6 +23,7 @@ import android.text.SpannableStringBuilder;
 import com.collegedekho.app.htmlparser.exception.ParsingCancelledException;
 import com.collegedekho.app.htmlparser.handlers.FontHandler;
 import com.collegedekho.app.htmlparser.handlers.HeaderHandler;
+import com.collegedekho.app.htmlparser.handlers.LinkHandler;
 import com.collegedekho.app.htmlparser.handlers.ListItemHandler;
 import com.collegedekho.app.htmlparser.handlers.MonoSpaceHandler;
 import com.collegedekho.app.htmlparser.handlers.NewLineHandler;
@@ -455,7 +456,7 @@ public class HtmlSpanner {
 
         registerHandler("li", new ListItemHandler());
 
-//        registerHandler("a", new LinkHandler());
+        registerHandler("a", new LinkHandler());
 //        registerHandler("img", new ImageHandler());
 
         registerHandler("font", new FontHandler() );

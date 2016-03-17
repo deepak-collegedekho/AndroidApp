@@ -22,6 +22,7 @@ public class Exam implements Parcelable{
 
     protected Exam(Parcel in) {
         exam_name = in.readString();
+        exam_details=new ArrayList<>();
         exam_details = in.createTypedArrayList(ExamDetail.CREATOR);
         isSelected = in.readByte() != 0;
     }

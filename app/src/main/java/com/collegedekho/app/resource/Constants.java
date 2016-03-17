@@ -55,6 +55,7 @@ public class Constants
     public static final String TAG_UPDATE_STREAM = "update_stream";
     public static final String WIDGET_INSTITUTES = "institutes";
     public static final String PNS_INSTITUTES = "pns_institutes";
+    public static final String TAG_INSTITUTE_DETAILS = "institute_details";
     public static final String PNS_NEWS = "pns_news";
     public static final String PNS_FORUM = "pns_forum";
     public static final String PNS_QNA = "pns_qna";
