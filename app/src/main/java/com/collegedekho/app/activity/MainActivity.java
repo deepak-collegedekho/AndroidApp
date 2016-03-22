@@ -135,6 +135,8 @@ import com.collegedekho.app.fragment.UserEducationFragment;
 import com.collegedekho.app.fragment.VideosFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
+import com.collegedekho.app.gcm.NotificationUtilities;
+import com.collegedekho.app.gcm.RegistrationIntentService;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.listener.OnArticleSelectListener;
@@ -477,6 +479,8 @@ public class MainActivity extends AppCompatActivity
                 invalidateOptionsMenu();
             }
         });
+
+        toolbar.setNavigationContentDescription("Select to go to home screen");
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
@@ -724,6 +728,20 @@ public class MainActivity extends AppCompatActivity
             adjustFontScale(getResources().getConfiguration());
         IntentFilter linkFilter=new IntentFilter("com.college.dekho.link.clicked");
         LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver,linkFilter);
+
+        /*GCM COMPONENTS*/
+     /*   if(!NotificationUtilities.isRegistered(this)){
+            Intent intent = new Intent(MainActivity.this, RegistrationIntentService.class);
+            MainActivity.this.startService(intent);
+        }else {
+            Log.e(TAG,"Registration ID :"+ NotificationUtilities.getRegistrationId(this));
+        }*/
+
+//        try {
+//            NotificationUtilities.postBopMessage("https://www.airbop.com/api/v1/messages","Hello Test Notification");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         System.gc();
     }
 
@@ -3055,6 +3073,12 @@ public class MainActivity extends AppCompatActivity
             String name = user.getName();
             String email = user.getEmail();
             String phone = user.getPhone_no();
+            if(email==null){
+                email=user.getPrimaryEmail();
+            }
+            if(phone==null){
+                phone=user.getPrimaryPhone();
+            }
 
             if(name.equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER)))
                 name="";
@@ -4203,14 +4227,30 @@ public class MainActivity extends AppCompatActivity
             MainActivity.user.setIs_otp_verified(userObj.getIs_otp_verified());
             MainActivity.user.setPartner_shortlist_count(userObj.getPartner_shortlist_count());
             MainActivity.user.setBlocking_otp(user.getBlocking_otp());
+            MainActivity.user.setApp_version(userObj.getApp_version());
             this.mUserExamsList=MainActivity.user.getUser_exams();
             String u = JSON.std.asString(MainActivity.user);
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
 
-        }catch(IOException e) {
+            String currentVersionName = getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
+            if (currentVersionName!=null) {
+                currentVersionName = currentVersionName.replace(".", "");
+                int currentVersion = Integer.valueOf(currentVersionName);
+                String releasedVersionName = userObj.getApp_version();
+                releasedVersionName = releasedVersionName.replace(".", "");
+                int releasedVersion = Integer.parseInt(releasedVersionName);
+                if (releasedVersion > currentVersion) {
+                    Utils.updateAppAlertDialog(this);
+                }
+            }
 
+        }catch(IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
+            e.printStackTrace();
+        }catch (PackageManager.NameNotFoundException e){
+            e.printStackTrace();
+        }catch (NumberFormatException e){
             e.printStackTrace();
         }
     }
@@ -5946,36 +5986,55 @@ public class MainActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals("com.college.dekho.link.clicked")){
                 String link=intent.getStringExtra("captured_link");
-
                 if(link!=null && link.length()>0){
                     if(link.lastIndexOf("search%3D")!=-1) {
-                        Log.e("DEBUG", "Captured Search Link " + link);
+//                        Log.e("DEBUG", "Captured Search Link " + link);
                         link = link.substring(0, link.length() - 1);
                         String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
                         mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/" + searchString, null);
                         if (searchString != null && searchString.length() > 0 && searchString.startsWith("search%3D")) {
                             searchString = searchString.replace("search%3D", "");
-
-                        try {
-                            searchString = URLDecoder.decode(searchString, "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                        }
+                            try {
+                                searchString = URLDecoder.decode(searchString, "UTF-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
                             if (menu != null) {
                                 menu.setGroupVisible(R.id.search_menu_group, true);
                             }
                             searchView.onActionViewExpanded();
                             searchView.setQuery(searchString, false);
                             searchView.clearFocus();
+                        }
                     }
-                    }else if(link.lastIndexOf("/colleges/")!=-1){
-                        Log.e("DEBUG","Captured Colleges Link "+link);
+                    else if(link.lastIndexOf("search=")!=-1){
+//                        Log.e("DEBUG", "Captured Search Link " + link);
+                        link = link.substring(0, link.length() - 1);
+                        String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
+                        mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/" + searchString, null);
+                        if (searchString != null && searchString.length() > 0 && searchString.startsWith("search=")) {
+                            searchString = searchString.replace("search=", "");
+                            try {
+                                searchString = URLDecoder.decode(searchString, "UTF-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            if (menu != null) {
+                                menu.setGroupVisible(R.id.search_menu_group, true);
+                            }
+                            searchView.onActionViewExpanded();
+                            searchView.setQuery(searchString, false);
+                            searchView.clearFocus();
+                        }
+                    }
+                    else if(link.lastIndexOf("/colleges/")!=-1){
+//                        Log.e("DEBUG","Captured Colleges Link "+link);
                         String collegeId=link.substring(link.lastIndexOf("/")+1,link.length());
                         mMakeNetworkCall(Constants.TAG_INSTITUTE_DETAILS,Constants.BASE_URL+"institute-by-slug/"+collegeId+"/",null);
                     }else if(link.lastIndexOf("/colleges/")!=-1){
 
                     }else {
-                        Log.e("DEBUG","Captured Link "+link);
+//                        Log.e("DEBUG","Captured Link "+link);
                     }
                 }
             }

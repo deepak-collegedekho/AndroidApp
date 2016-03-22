@@ -142,6 +142,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible"
+        android:importantForAccessibility="no"
         >
         <ImageView
             android:id="@+id/recommended_tute_image"
@@ -149,6 +150,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:clickable="true"
+            android:contentDescription="@string/profile_tute_description"
             android:src="@drawable/ic_recommended_tute"
             />
     </FrameLayout>

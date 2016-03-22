@@ -116,10 +116,16 @@ public class NetworkUtils {
                     json = new String(response.data);
                     json = trimMessage(json, "detail");
                 }
-                if (json != null)
+                if (json != null) {
                     mListener.onError(tag, Constants.SERVER_FAULT, url, null, method);
-                else
-                    mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, null, method);
+                } else {
+                    int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+                    if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+                        mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, null, method);
+                    } else {
+                        mListener.onError(tag, Constants.UNKNOWN_ERROR, url, null, method);
+                    }
+                }
             }
         })
         {
@@ -175,10 +181,16 @@ public class NetworkUtils {
                                 json = new String(response.data);
                                 json = trimMessage(json, "detail");
                             }
-                            if (json != null)
+                            if (json != null) {
                                 mListener.onError(tag, Constants.SERVER_FAULT, url, null, method);
-                            else
-                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, null, method);
+                            } else {
+                                int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+                                if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+                                    mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, null, method);
+                                } else {
+                                    mListener.onError(tag, Constants.UNKNOWN_ERROR, url, null, method);
+                                }
+                            }
                         } catch (Exception e) {
 
                         }
@@ -279,10 +291,16 @@ public class NetworkUtils {
                     }
 
                     json = trimMessage(json, "detail");
-                    if (json != null)
-                        mListener.onError(tag, Constants.SERVER_FAULT, url, params, method);
-                    else
-                        mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, params, method);
+                    if (json != null) {
+                        mListener.onError(tag, Constants.SERVER_FAULT, url, null, method);
+                    } else {
+                        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+                        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+                            mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, null, method);
+                        } else {
+                            mListener.onError(tag, Constants.UNKNOWN_ERROR, url, null, method);
+                        }
+                    }
                 }
             })
         {

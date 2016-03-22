@@ -45,6 +45,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:clickable="true"
+            android:contentDescription="@string/profile_tute_description"
             android:src="@drawable/ic_myfb_tute" />
 
     </FrameLayout>

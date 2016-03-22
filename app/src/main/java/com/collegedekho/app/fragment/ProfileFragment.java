@@ -177,7 +177,10 @@ public class ProfileFragment extends BaseFragment
             }
 
         }
-*/
+*/      int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+            Utils.app_launched(getActivity());
+        }
         return rootView;
     }
 
@@ -400,10 +403,13 @@ public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
         CircularProgressBar profileCompleted =  (CircularProgressBar) view.findViewById(R.id.profile_image_circular_progressbar);
 
         Utils.SetCounterAnimation(covered_syllabus, this.mExamSummary.getSyllabus_covered(), "" , "%", Constants.ANIM_SHORT_DURATION);
+        covered_syllabus.setContentDescription(String.valueOf(this.mExamSummary.getSyllabus_covered())+ "percent syllabus completed");
         Utils.SetCounterAnimation(recommended_countTV, this.mExamSummary.getRecommended_count(), "" , "", Constants.ANIM_SHORT_DURATION);
+        recommended_countTV.setContentDescription(String.valueOf(this.mExamSummary.getRecommended_count())+" colleges recommended by college dekho");
         Utils.SetCounterAnimation(wishList_countTV, this.mExamSummary.getShortlist_count(), "" , "", Constants.ANIM_SHORT_DURATION);
+        wishList_countTV.setContentDescription(String.valueOf(this.mExamSummary.getShortlist_count())+ "colleges in your wishlist");
         Utils.SetCounterAnimation(backup_countTV, this.mExamSummary.getBackup_count(), "" , "", Constants.ANIM_SHORT_DURATION);
-
+        backup_countTV.setContentDescription(String.valueOf("You are eligible for "+this.mExamSummary.getBackup_count())+ " colleges");
         important_dateTV.setText(""+this.mExamSummary.getNext_important_date());
 
         //TODO:: showing progress as a profile circle

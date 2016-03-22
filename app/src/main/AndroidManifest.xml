@@ -136,5 +136,39 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
+<!--GCM COMPONENTS-->
+<!--        <receiver
+            android:name=".gcm.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+
+                &lt;!&ndash; Receives the actual messages. &ndash;&gt;
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                &lt;!&ndash; &lt;!&ndash; Receives the registration id. &ndash;&gt;
+                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />&ndash;&gt;
+
+                <category android:name="com.collegedekho.app" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".gcm.RegistrationIntentService"
+            android:exported="false">
+        </service>
+
+        <service
+            android:name=".gcm.MyInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
+
+        <service android:name=".gcm.GCMIntentService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>-->
     </application>
 </manifest>

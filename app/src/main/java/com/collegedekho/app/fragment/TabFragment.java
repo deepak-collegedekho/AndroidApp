@@ -91,6 +91,7 @@ private View mExamsTabLayout;
                 {
                     mProfileName.setText(MainActivity.user.profileData[0]);
                     mProfileName.setVisibility(View.VISIBLE);
+                    mProfileName.setContentDescription(MainActivity.user.profileData[0]);
                 }else {
                     mProfileName.setText("");
                     mProfileName.setVisibility(View.GONE);
@@ -304,7 +305,10 @@ private View mExamsTabLayout;
             fourthSubMenuIV.setImageResource(R.drawable.ic_prep_path);
 
             firstSubMenuTV.setText("Test Calendar");
+            firstSubMenuTV.setContentDescription("Test preparation calendar");
             secondSubMenuTV.setText("Syllabus");
+            secondSubMenuTV.setContentDescription("Syllabus for exam");
+
             thirdSubMenuTV.setText("Challenges");
             fourthSubMenuTV.setText("Prep Path");
 
@@ -332,9 +336,13 @@ private View mExamsTabLayout;
             fourthSubMenuIV.setImageResource(R.drawable.ic_qna);
 
             firstSubMenuTV.setText("Institutes");
+            firstSubMenuTV.setContentDescription("Select to Explore all Institutes");
             secondSubMenuTV.setText("News");
+            secondSubMenuTV.setContentDescription("Select to Explore News");
             thirdSubMenuTV.setText("Article");
+            thirdSubMenuTV.setContentDescription("Select to Explore Articles");
             fourthSubMenuTV.setText("Qna");
+            fourthSubMenuTV.setContentDescription("Select to Explore Qna");
 
             this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
         }else   if(this.selectedTabPosition == 3){

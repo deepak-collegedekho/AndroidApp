@@ -8,8 +8,10 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
@@ -22,6 +24,7 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
@@ -32,9 +35,12 @@ import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.BuildConfig;
+import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.htmlparser.HtmlSpanner;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.resource.TypeFaceTypes;
+import com.google.android.gms.auth.GoogleAuthUtil;
 
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
@@ -127,10 +133,10 @@ public class Utils {
      */
     public static String getDeviceEmail(Context context){
         Pattern emailPattern = Patterns.EMAIL_ADDRESS;
-        Account[] accounts = AccountManager.get(context).getAccounts();
+        Account[] accounts = AccountManager.get(context).getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
         for (Account account : accounts) {
             if (emailPattern.matcher(account.name).matches()) {
-                return account.name;
+                return account.name.replaceAll("\"","");
             }
         }
         return null;
@@ -521,5 +527,92 @@ public class Utils {
         } catch (ActivityNotFoundException e) {
             context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
         }
+    }
+
+    public static void app_launched(Context mContext) {
+         int DAYS_UNTIL_PROMPT = 2;//Min number of days
+         int LAUNCHES_UNTIL_PROMPT = 5;//Min number of launches
+        SharedPreferences prefs = mContext.getSharedPreferences("apprater", Context.MODE_PRIVATE);
+        if (prefs.getBoolean("dont_show_again", false)) { return ; }
+
+        SharedPreferences.Editor editor = prefs.edit();
+
+        // Increment launch counter
+        long launch_count = prefs.getLong("launch_count", 0)+1;
+        editor.putLong("launch_count", launch_count);
+
+        // Get date of first launch
+        Long date_firstLaunch = prefs.getLong("date_first_launch", 0);
+
+        if (date_firstLaunch == 0 && LAUNCHES_UNTIL_PROMPT==launch_count) {
+            date_firstLaunch = System.currentTimeMillis();
+            editor.putLong("date_first_launch", date_firstLaunch);
+            rateUsAlertDialog(mContext, editor);
+        }
+
+        // Wait at least n days before opening
+        if (launch_count >= LAUNCHES_UNTIL_PROMPT) {
+            if (System.currentTimeMillis() >= date_firstLaunch +(DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000)) {
+                date_firstLaunch = System.currentTimeMillis();
+                editor.putLong("date_first_launch", date_firstLaunch);
+                rateUsAlertDialog(mContext, editor);
+            }
+        }
+
+        editor.commit();
+    }
+
+    private static void rateUsAlertDialog(final Context context,final SharedPreferences.Editor editor){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+        final AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.setTitle(MainActivity.getResourceString(R.string.APP_NAME));
+        alertDialog.setMessage(MainActivity.getResourceString(R.string.RATE_US_ON_STORE));
+        alertDialog.setCancelable(false);
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, MainActivity.getResourceString(R.string.LATER), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.dismiss();
+            }
+        });
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, MainActivity.getResourceString(R.string.YES), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Utils.rateApplication(context);
+                alertDialog.dismiss();
+            }
+        });
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, MainActivity.getResourceString(R.string.NEVER), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (editor != null) {
+                    editor.putBoolean("dont_show_again", true);
+                    editor.commit();
+                }
+                alertDialog.dismiss();
+            }
+        });
+        alertDialog.show();
+    }
+
+    public static void updateAppAlertDialog(final Context context){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+        final AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.setTitle(MainActivity.getResourceString(R.string.APP_NAME));
+        alertDialog.setMessage(MainActivity.getResourceString(R.string.UPDATE_APP_VERSION));
+        alertDialog.setCancelable(false);
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, MainActivity.getResourceString(R.string.LATER), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.dismiss();
+            }
+        });
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, MainActivity.getResourceString(R.string.YES), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Utils.rateApplication(context);
+                alertDialog.dismiss();
+            }
+        });
+        alertDialog.show();
     }
 }

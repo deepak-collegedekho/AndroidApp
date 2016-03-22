@@ -70,6 +70,7 @@
             android:scaleType="fitXY"
             android:clickable="true"
             android:visibility="gone"
+            android:contentDescription="@string/profile_tute_description"
             android:src="@drawable/ic_exam_tute" />
     </FrameLayout>
 

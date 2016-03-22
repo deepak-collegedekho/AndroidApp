@@ -42,6 +42,7 @@ public class User
     private int is_otp_verified;
     private int partner_shortlist_count;
     private int blocking_otp;
+    private String app_version;
 
     public String getPreference_uri() {
         return preference_uri;
@@ -300,33 +301,42 @@ public class User
         if(this.profileData == null)
             this.profileData = new String[3];
 
-        this.profileData[1] = "";
-        this.profileData[2] = "[";
+//        this.profileData[1] = "";
+//        this.profileData[2] = "[";
 
         while (!cursor.isAfterLast()) {
             this.profileData[0] = cursor.getString(ProfileQuery.NAME);
             String data = cursor.getString(ProfileQuery.PHONE_NUMBER);
+            if(data==null || data.matches("")){
+                continue;
+            }
             if(emailPattern.matcher(data).matches())
             {
                 if(cursor.getInt(ProfileQuery.IS_PRIMARY)!=0)
-                    this.primaryEmail = data;
-                this.profileData[1]+="\""+data+"\",";
+                    this.primaryEmail = data.replaceAll("\"","");
+                this.profileData[1]= data.replaceAll("\"","");
             }
             else
             {
-                if(this.primaryPhone==null)
-                    this.primaryPhone = data;
-                this.profileData[2]+="\""+data+"\",";
+                if(this.primaryPhone==null) {
+                    String number=data.replaceAll(" ","");
+                    if(number.length()>10){
+                        number=number.substring(number.length()-10,number.length());
+                    }
+                    this.primaryPhone = number;
+                    this.profileData[2]=number;
+                }
+
             }
             cursor.moveToNext();
         }
         if(this.primaryEmail==null){
             this.primaryEmail = Utils.getDeviceEmail(context);
-            if(this.primaryEmail!=null && !this.profileData[1].contains(this.primaryEmail))
-                this.profileData[1]+=this.primaryEmail;
+            if(this.primaryEmail!=null && (this.profileData[1]==null || !this.profileData[1].contains(this.primaryEmail)))
+                this.profileData[1]=this.primaryEmail;
         }
 /*        profileData[1]+="]";*/
-        profileData[2]+="]";
+//        profileData[2]+="]";
     }
 
     public int getIs_otp_verified() {
@@ -351,5 +361,13 @@ public class User
 
     public void setBlocking_otp(int blocking_otp) {
         this.blocking_otp = blocking_otp;
+    }
+
+    public String getApp_version() {
+        return app_version;
+    }
+
+    public void setApp_version(String app_version) {
+        this.app_version = app_version;
     }
 }

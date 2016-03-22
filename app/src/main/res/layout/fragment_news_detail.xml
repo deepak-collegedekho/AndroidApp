@@ -17,6 +17,7 @@
             <com.collegedekho.app.widget.FadeInImageView
                 android:id="@+id/image_news_expanded"
                 android:layout_width="match_parent"
+                android:contentDescription="@string/news_image_description"
                 android:layout_height="160dp" />
 
             <TextView

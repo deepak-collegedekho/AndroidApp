@@ -160,6 +160,7 @@ public class Constants
     public static final int TYPE_NOT_CONNECTED = 0;
     public static final String SERVER_FAULT = "The servers made a boo boo. Try again later";
     public static final String NO_CONNECTION_FAULT = "You are not connected to internet. Please connect and try again.";
+    public static final String UNKNOWN_ERROR = "Something went wrong. Please try again later";
     public static final int FILTER_CATEGORY_COURSE_AND_SPECIALIZATION = 0;
     public static final int FILTER_CATEGORY_LOCATION = 1;
     public static final int FILTER_CATEGORY_TYPE_AND_SUPPORT_SERVICES = 2;
@@ -240,4 +241,9 @@ public class Constants
     public enum CDRecommendedInstituteType {
         UNDECIDED, SHORTLISTED, NOT_INERESTED, UNBAISED
     }
+
+    public static String MESSAGE="message";
+    public static String COLLAPSE_KEY="collapse_key";
+    public static String URL="url";
+
 }

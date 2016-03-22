@@ -84,12 +84,14 @@
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:textColor="@color/primary_orange"
+                            android:importantForAccessibility="no"
                             android:text="SYLLABUS"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="10sp"
-                            android:text="COMPLETED"/>
+                            android:text="COMPLETED"
+                            android:importantForAccessibility="no"/>
                     </LinearLayout>
                     <TextView
                         android:id="@+id/covered_syllabus"
@@ -100,6 +102,7 @@
                         android:textSize="38sp"
                         android:textColor="@color/light_blue"
                         android:text="..."
+                        android:importantForAccessibility="no"
                         />
 
                 </LinearLayout>
@@ -169,6 +172,7 @@
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:clickable="true"
+            android:contentDescription="@string/profile_tute_description"
             android:background="@drawable/ic_profile_tute1" />
 
     </FrameLayout>

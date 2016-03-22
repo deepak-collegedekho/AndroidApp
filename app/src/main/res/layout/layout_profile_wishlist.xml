@@ -30,6 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_centerVertical="true"
+                android:importantForAccessibility="no"
                 android:src="@drawable/ic_recommended_colleges"/>
 
             <TextView
@@ -38,6 +39,7 @@
                 android:layout_below="@id/recommended_colleges_image"
                 android:layout_alignParentBottom="true"
                 android:text="RECOMMENDED"
+                android:importantForAccessibility="no"
                 android:textSize="16sp"
                 android:textColor="@color/white"/>
             <LinearLayout
@@ -65,6 +67,7 @@
                     android:text="colleges"
                     android:gravity="right"
                     android:textSize="12sp"
+                    android:importantForAccessibility="no"
                     android:textColor="@color/white"/>
 
             </LinearLayout>
@@ -86,12 +89,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_alignParentBottom="true"
+                android:importantForAccessibility="no"
                 android:src="@drawable/ic_wishlist_colleges"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/wishList_colleges_image"
+                android:importantForAccessibility="no"
                 android:layout_alignParentBottom="true"
                 android:text="WISHLIST"
                 android:gravity="center"
@@ -122,6 +127,7 @@
                     android:layout_height="wrap_content"
                     android:text="colleges"
                     android:gravity="right"
+                    android:importantForAccessibility="no"
                     android:textSize="12sp"
                     android:textColor="@color/white"/>
 
@@ -155,6 +161,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_alignParentBottom="true"
+                android:importantForAccessibility="no"
                 android:src="@drawable/ic_backup_colleges"/>
 
             <TextView
@@ -164,6 +171,7 @@
                 android:layout_alignParentBottom="true"
                 android:text="Eligible"
                 android:gravity="center"
+                android:importantForAccessibility="no"
                 android:textSize="16sp"
                 android:textColor="@color/white"
                 android:paddingBottom="@dimen/m5dp"/>
@@ -192,6 +200,7 @@
                     android:text="colleges"
                     android:gravity="right"
                     android:textSize="12sp"
+                    android:importantForAccessibility="no"
                     android:textColor="@color/white"/>
 
             </LinearLayout>
@@ -215,6 +224,7 @@
                 android:layout_centerVertical="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="@dimen/m8dp"
+                android:importantForAccessibility="no"
                 android:src="@drawable/ic_important_dates"/>
 
             <TextView

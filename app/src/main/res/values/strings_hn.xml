@@ -372,15 +372,30 @@
     <string name="YOUTUBE_DEVELOPER_KEY">AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk</string>
 
 
-    <string name="otp_verification">OTP Verification</string>
-    <string name="enter_6_digit_OTP">Enter 6 digit OTP</string>
-    <string name="verify">VERIFY</string>
-    <string name="otp_title">Help us understand you better</string>
+    <string name="otp_verification">ओटीपी सत्यापन</string>
+    <string name="enter_6_digit_OTP">6 अंकों ओटीपी दर्ज</string>
+    <string name="verify">सत्यापित</string>
+    <string name="otp_title">हमें आप बेहतर समझने में मदद</string>
     <string name="enter_mobile_number">Enter Your Mobile Number</string>
-    <string name="otp_sent_message">OTP has been sent to your mobile number</string>
-    <string name="resend_otp"> Resend OTP</string>
-    <string name="submit">SUBMIT</string>
-    <string name="verify_number">VERIFY YOUR MOBILE NUMBER</string>
-    <string name="otp_verified">OTP successfully Verified</string>
-    <string name="invalid_otp">Invalid OTP</string>
+    <string name="otp_sent_message">ओटीपी आपके मोबाइल नंबर के लिए भेज दिया गया है</string>
+    <string name="resend_otp"> ओटीपी को फिर से भेजें</string>
+    <string name="submit">जमा करें</string>
+    <string name="verify_number">अपना मोबाइल नंबर सत्यापित</string>
+    <string name="otp_verified">ओटीपी सफलतापूर्वक सत्यापित</string>
+    <string name="invalid_otp">अमान्य ओटीपी</string>
+
+    <!--GCM-->
+    <string name="server_registering">Trying (attempt %1$d/%2$d) to register device on Demo Server.</string>
+    <string name="server_registered">successfully added device!</string>
+    <string name="server_unregistered">successfully removed device!</string>
+    <string name="server_register_error">Could not register device on Server after %1$d attempts.</string>
+    <string name="server_unregister_error">Could not unregister device on Server (%1$s).</string>
+
+
+    <!--ACCESSIBILITY DESCRIPTION-->
+    <string name="fb_login_description">Login with facebook</string>
+    <string name="sign_up_skip_description">Continue without Logging in to facebook</string>
+    <string name="profile_image_description">your image</string>
+    <string name="recommended_colleges_description">Colleges recommended to you by College Dekho</string>
+
 </resources>
