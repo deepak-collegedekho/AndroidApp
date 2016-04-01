@@ -28,7 +28,7 @@ public class SpiderWebChart extends RoundChart {
 
     public static final int DEFAULT_LATITUDE_COLOR = Color.BLACK;
 
-    public static final int[] COLORS = {Color.RED, Color.BLUE, Color.YELLOW};
+    public static final int[] COLORS = {0xffff6f00, Color.BLUE, Color.YELLOW};
 
     protected List<List<TitleValueEntity>> data;
 
@@ -207,7 +207,7 @@ public class SpiderWebChart extends RoundChart {
                 mPaintFill.setColor(COLORS[j]);
                 mPaintFill.setStyle(Style.FILL);
                 mPaintFill.setAntiAlias(true);
-                mPaintFill.setAlpha(70);
+                mPaintFill.setAlpha(99);
 
                 Paint mPaintBorder = new Paint();
                 mPaintBorder.setColor(COLORS[j]);

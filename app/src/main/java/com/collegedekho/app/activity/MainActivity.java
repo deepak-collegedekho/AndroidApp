@@ -2984,8 +2984,10 @@ public class MainActivity extends AppCompatActivity
     }*/
     @Override
     public void onInstituteLikedDisliked(int position, int liked) {
-        Institute institute = this.mInstituteList.get(position);
-        this.onInstituteLikedDislikedByEntity(institute, liked, Constants.TAG_INSTITUTE_LIKE_DISLIKE + "#" + position, Constants.INSTITUTE_LIKE_DISLIKE);
+        if (position >= 0 && mInstituteList != null && mInstituteList.size() > position) {
+            Institute institute = this.mInstituteList.get(position);
+            this.onInstituteLikedDislikedByEntity(institute, liked, Constants.TAG_INSTITUTE_LIKE_DISLIKE + "#" + position, Constants.INSTITUTE_LIKE_DISLIKE);
+        }
     }
 
     public void onInstituteLikedDislikedByEntity(Institute institute, int liked, String tag, int source) {

@@ -45,7 +45,7 @@
 #-repackageclasses ''
 
 #Uncomment if using annotations to keep them.
--keepattributes Signature
+-keepattributes Signature,SourceFile,LineNumberTable,*Annotation*
 
 #Keep classes that are referenced on the AndroidManifest
 -keep public class * extends android.app.Activity
