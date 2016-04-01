@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -165,6 +166,10 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.tagmanager.Container;
 import com.google.android.gms.tagmanager.ContainerHolder;
 import com.google.android.gms.tagmanager.TagManager;
+import com.truecaller.android.sdk.ITrueCallback;
+import com.truecaller.android.sdk.TrueClient;
+import com.truecaller.android.sdk.TrueError;
+import com.truecaller.android.sdk.TrueProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -230,7 +235,7 @@ public class MainActivity extends AppCompatActivity
         SyllabusSubjectsListFragment.OnSubjectSelectedListener,CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
         UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteListFragment.OnCDRecommendedInstituteListener,
-        InstituteVideosFragment.OnTitleUpdateListener,OTPVerificationFragment.OTPVerificationListener
+        InstituteVideosFragment.OnTitleUpdateListener,OTPVerificationFragment.OTPVerificationListener, ITrueCallback
 
 {
 
@@ -250,7 +255,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private static final String TAG = "MainActivity";
-    private static final String TRACKER_ID = "UA-67752258-1";
 
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
@@ -279,14 +283,12 @@ public class MainActivity extends AppCompatActivity
     private String mLastScreenName = "";
     private String instituteCourseId = "";
     private List<Widget> mWidgets;
-    public static CallbackManager callbackManager;
+    public  CallbackManager callbackManager;
     private Date mTimeScreenClicked = new Date();
     public boolean isReloadProfile=false;
     public boolean isBackPressEnabled=true;
     private String mGTMContainerId = "www.collegedekho.com";
     private Connecto connecto = null;
-    // Get SENDER_ID fom GCM.
-    String SENDER_ID = "864760274938";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -319,6 +321,8 @@ public class MainActivity extends AppCompatActivity
     private int mUndecidedCount;
     private Snackbar snackbar;
     private static Context mContext;
+    public static TrueClient mTrueClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
@@ -331,9 +335,6 @@ public class MainActivity extends AppCompatActivity
         //getCallPermission();
         //startActivity(new Intent("android.intent.action.CALL",Uri.parse("tel:*282" + Uri.encode("#"))));
         mContext=this;
-        //Send GA Session
-        MainActivity.GASessionEvent(MainActivity.TAG);
-
         Bundle extras = getIntent().getExtras();
         if (extras != null)
         {
@@ -350,14 +351,156 @@ public class MainActivity extends AppCompatActivity
             Log.i(TAG, "App Link Target URL: " + targetUrl.toString());
         }
 
-        // Set the Currency
-        AppsFlyerLib.setCurrencyCode("INR");
+        this.setContentView(R.layout.activity_main);
 
+        snackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
+        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+        layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
+
+        this.networkUtils = new NetworkUtils(this, this);
+
+        prepBuddies       = (TextView)findViewById(R.id.prep_buddies);
+        resourceBuddies   = (TextView)findViewById(R.id.resources_buddies);
+        futureBuddies     = (TextView)findViewById(R.id.future_buddies);
+        myAlerts          = (TextView)findViewById(R.id.my_alerts);
+
+        prepBuddies.setOnClickListener(mClickListener);
+        resourceBuddies.setOnClickListener(mClickListener);
+        futureBuddies.setOnClickListener(mClickListener);
+        myAlerts.setOnClickListener(mClickListener);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CONTACTS)
+                == PackageManager.PERMISSION_GRANTED ) {
+            getSupportLoaderManager().initLoader(0, null, this);
+        }
+        // register with true SDk
+        MainActivity.mTrueClient = new TrueClient(getApplicationContext(), this);
+
+        // register with connecto
+        this.mRegistrationConnecto();
+
+        // register fabric Crashlytics
+        Fabric.with(this, new Crashlytics());
+
+        // register with Apps Flayer
+        this.mRegistrationAppsFlyer();
+
+        // register with facebook Sdk
+        this.mRegistrationFacebookSdk();
+
+        // register with GA tarcker
+        this.mRegistrationGATracker();
+
+        this.mSetupGTM();
+
+        this.mSetUpAPPToolBar();
+        this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
+
+        //init();
+        //this.mDisplayFragment(MyAlertFragment.newInstance(null), false, MyAlertFragment.class.getName());
+        // show appBarLayout and toolBar
+
+        // TODO: Move this to where you establish a user session
+        logUser();
+        setupOtpRequest(true);
+        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        this.IS_PROFILE_LOADED = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getBoolean(getResourceString(R.string.USER_PROFILE_LOADED), false);
+        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED && IS_PROFILE_LOADED) {
+            Utils.appLaunched(this);
+        }
+    }
+    /**
+     * This method is used  with connecto sdk
+     */
+    private void mRegistrationConnecto() {
+
+        this.connecto = Connecto.with(MainActivity.this);
+        //this.connecto.identify("Harsh1234Vardhan", new Traits().putValue("name", "HarshVardhan"));
+        //You can also track any event if you want
+        //this.connecto.track("Session Started", new Properties().putValue("value", 800));
+        this.connecto.registerWithGCM(MainActivity.this, Constants.SENDER_ID);
+    }
+
+    /**
+     * This method is used with GA tracker
+     */
+
+    private void mRegistrationGATracker(){
+
+        this.analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
+        this.analytics.setLocalDispatchPeriod(1800);
+
+        MainActivity.tracker = this.analytics.newTracker(Constants.TRACKER_ID);
+
+        // Provide unhandled exceptions reports. Do that first after creating the tracker
+        MainActivity.tracker.enableExceptionReporting(true);
+        // Enable Remarketing, Demographics & Interests reports
+        // https://developers.google.com/analytics/devguides/collection/android/display-features
+        MainActivity.tracker.enableAdvertisingIdCollection(true);
+        // Enable automatic activity tracking for your app
+        MainActivity.tracker.enableAutoActivityTracking(true);
+        //Send GA Session
+        MainActivity.GASessionEvent(MainActivity.TAG);
+    }
+    /**
+     * This method is used to register and initialize facebook sdk
+     */
+    private void mRegistrationFacebookSdk()
+    {
+        FacebookSdk.sdkInitialize(this);
+        callbackManager = CallbackManager.Factory.create();
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.e(TAG, "Logged In ");
+                showProgressDialog("Signing with facebook account");
+                AccessToken token = AccessToken.getCurrentAccessToken();
+                if (token != null) {
+                    RequestData(token);
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                Log.e(TAG, "facebook login canceled");
+                displayMessage(R.string.FACEBOOK_SIGNIN_FAILED);
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                error.printStackTrace();
+                Log.e(TAG, "facebook login on error");
+                displayMessage(R.string.SIGNIN_ERROR);
+            }
+        });
+        try
+        {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.collegedekho.app",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                String keyHAsh = Base64.encodeToString(md.digest(), Base64.DEFAULT);
+                Log.d("KeyHash:", keyHAsh);
+            }
+        }
+        catch (PackageManager.NameNotFoundException e) {
+        }
+        catch (NoSuchAlgorithmException e) {
+        }
+    }
+
+    /**
+     * This method is used to register Apps flyer tracker
+     */
+    private void mRegistrationAppsFlyer(){
         // The Dev key cab be set here or in the manifest.xml
-        AppsFlyerLib.setAppsFlyerKey("v3bLHGLaEavK2ePfvpj6aA");
-        AppsFlyerLib.sendTracking(this);
+        AppsFlyerLib.getInstance().init(this, Constants.APPSFLYER_ID);
+        // Set the Currency
+        AppsFlyerLib.getInstance().setCurrencyCode("INR");
 
-        AppsFlyerLib.registerConversionListener(this,new AppsFlyerConversionListener() {
+        AppsFlyerLib.getInstance().registerConversionListener(this,new AppsFlyerConversionListener() {
             public void onInstallConversionDataLoaded(Map<String, String> conversionData) {
                 DebugLogQueue.getInstance().push("\nGot conversion data from server");
                 for (String attrName : conversionData.keySet()){
@@ -383,67 +526,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-
-        this.setContentView(R.layout.activity_main);
-        snackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
-        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
-        layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
-
-        this.networkUtils = new NetworkUtils(this, this);
-
-        prepBuddies       = (TextView)findViewById(R.id.prep_buddies);
-        resourceBuddies   = (TextView)findViewById(R.id.resources_buddies);
-        futureBuddies     = (TextView)findViewById(R.id.future_buddies);
-        myAlerts          = (TextView)findViewById(R.id.my_alerts);
-
-        prepBuddies.setOnClickListener(mClickListener);
-        resourceBuddies.setOnClickListener(mClickListener);
-        futureBuddies.setOnClickListener(mClickListener);
-        myAlerts.setOnClickListener(mClickListener);
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_CONTACTS)
-                == PackageManager.PERMISSION_GRANTED ) {
-            getSupportLoaderManager().initLoader(0, null, this);
-        }
-        this.connecto = Connecto.with(MainActivity.this);
-        //this.connecto.identify("Harsh1234Vardhan", new Traits().putValue("name", "HarshVardhan"));
-        //You can also track any event if you want
-        //this.connecto.track("Session Started", new Properties().putValue("value", 800));
-        this.connecto.registerWithGCM(MainActivity.this, this.SENDER_ID);
-
-        Fabric.with(this, new Crashlytics());
-
-        this.analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
-        this.analytics.setLocalDispatchPeriod(1800);
-
-        MainActivity.tracker = this.analytics.newTracker(TRACKER_ID);
-
-        // Provide unhandled exceptions reports. Do that first after creating the tracker
-        MainActivity.tracker.enableExceptionReporting(true);
-        // Enable Remarketing, Demographics & Interests reports
-        // https://developers.google.com/analytics/devguides/collection/android/display-features
-        MainActivity.tracker.enableAdvertisingIdCollection(true);
-        // Enable automatic activity tracking for your app
-        MainActivity.tracker.enableAutoActivityTracking(true);
-
-        this.mRegisterFacebookSdk();
-        this.mSetupGTM();
-
-        this.mSetUpAPPToolBar();
-        this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
-
-        //init();
-        //this.mDisplayFragment(MyAlertFragment.newInstance(null), false, MyAlertFragment.class.getName());
-        // show appBarLayout and toolBar
-
-        // TODO: Move this to where you establish a user session
-        logUser();
-        setupOtpRequest(true);
-        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
-        this.IS_PROFILE_LOADED = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getBoolean(getResourceString(R.string.USER_PROFILE_LOADED), false);
-        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED && IS_PROFILE_LOADED) {
-            Utils.appLaunched(this);
-        }
     }
 
     @Override
@@ -589,54 +671,7 @@ public class MainActivity extends AppCompatActivity
         MainActivity.resource_uri="";
     }
 
-    /**
-     * This method is used to register and initialize facebook sdk
-     */
-    private void mRegisterFacebookSdk()
-    {
-        FacebookSdk.sdkInitialize(this);
-        callbackManager = CallbackManager.Factory.create();
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.e(TAG, "Logged In ");
-                showProgressDialog("Signing with facebook account");
-                AccessToken token = AccessToken.getCurrentAccessToken();
-                if (token != null) {
-                    RequestData(token);
-                }
-            }
 
-            @Override
-            public void onCancel() {
-                Log.e(TAG, "facebook login canceled");
-                displayMessage(R.string.FACEBOOK_SIGNIN_FAILED);
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                error.printStackTrace();
-                Log.e(TAG, "facebook login on error");
-                displayMessage(R.string.SIGNIN_ERROR);
-            }
-        });
-        try
-        {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    "com.collegedekho.app",
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                String keyHAsh = Base64.encodeToString(md.digest(), Base64.DEFAULT);
-                Log.d("KeyHash:", keyHAsh);
-            }
-        }
-        catch (PackageManager.NameNotFoundException e) {
-        }
-        catch (NoSuchAlgorithmException e) {
-        }
-    }
 
     public void RequestData(final AccessToken accessToken){
         GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
@@ -649,7 +684,7 @@ public class MainActivity extends AppCompatActivity
                        /* JSONObject pictureJsonObj = json.getJSONObject("picture");
                         JSONObject data = pictureJsonObj.getJSONObject("data");*/
 
-                        //String image = data.getString("url");
+                        //String image_new = data.getString("url");
                         String image ="https://graph.facebook.com/" + json.optString("id") + "/picture?type=large";
 
                         if (MainActivity.user == null)
@@ -672,7 +707,11 @@ public class MainActivity extends AppCompatActivity
                         hashMap.put(getResourceString(R.string.USER_IMAGE), image);
                         hashMap.put(getResourceString(R.string.USER_TOKEN), accessToken.getToken());
                         hashMap.put(getResourceString(R.string.USER_EXPIRE_AT), new SimpleDateFormat("yyyy-MM-dd").format(accessToken.getExpires()) + "T" + new SimpleDateFormat("HH:mm:ss").format(accessToken.getExpires()));
-                        onFacebookLogin(hashMap);
+
+                        String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+                        hashMap.put(getResourceString(R.string.USER_DEVICE_ID), deviceId);
+                        hashMap.put(MainActivity.getResourceString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_FACEBOOK);
+                        onUserCommonLogin(hashMap, Constants.TAG_FACEBOOK_LOGIN);
                     }
 
                 } catch (JSONException e) {
@@ -719,16 +758,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-            super.onResume();
-            Bundle extras = getIntent().getExtras();
-            if (extras != null) {
-                MainActivity.type = extras.getString("screen");
-                MainActivity.resource_uri = extras.getString("resource_uri");
-            }
-            // Logs 'install' and 'app activate' App Events.
-            AppEventsLogger.activateApp(this);
-            AppsFlyerLib.onActivityResume(this);
-            adjustFontScale(getResources().getConfiguration());
+        super.onResume();
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            MainActivity.type = extras.getString("screen");
+            MainActivity.resource_uri = extras.getString("resource_uri");
+        }
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+        adjustFontScale(getResources().getConfiguration());
         IntentFilter linkFilter=new IntentFilter("com.college.dekho.link.clicked");
         LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver,linkFilter);
 
@@ -754,7 +792,7 @@ public class MainActivity extends AppCompatActivity
             super.onRestoreInstanceState(savedInstanceState);
         }catch (Exception e){
             e.printStackTrace();
-           reStartApplication();
+            reStartApplication();
         }
     }
 
@@ -763,22 +801,11 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
-        AppsFlyerLib.onActivityPause(this);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         System.gc();
     }
 
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
-        AppsFlyerLib.onActivityResume(this);
-    }
-    @Override
-    protected void onStop() {
-        super.onStop();
-        AppsFlyerLib.onActivityPause(this);
-    }
+
 
     @Override
     protected void onDestroy() {
@@ -921,11 +948,8 @@ public class MainActivity extends AppCompatActivity
             if (sp.contains(getResourceString(R.string.KEY_USER))) {
                 MainActivity.user = JSON.std.beanFrom(User.class, sp.getString(getResourceString(R.string.KEY_USER), null));
                 this.networkUtils.setToken(MainActivity.user.getToken());
-
-                this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(getResourceString(R.string.USER_NAME), MainActivity.user.getName()).putValue(getResourceString(R.string.USER_STREAM_NAME), MainActivity.user.getStream_name()).putValue(getResourceString(R.string.USER_LEVEL_NAME), MainActivity.user.getLevel_name()));
-                this.connecto.track("Session Started", new Properties().putValue("session_start_datetime", new Date().toString()));
-
-                AppsFlyerLib.setCustomerUserId(MainActivity.user.getId());
+                // user id register
+                setUserIdWithAllEvents();
 
                 // this code for backward compatibility because in first release user stream and level
                 // were saved in uri form instead of IDs. it can be remove after some releases
@@ -948,6 +972,22 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
+    }
+
+    /**
+     * This methos is used to register userId with Apps Flyer
+     * and GA Tracker
+     */
+    private void setUserIdWithAllEvents(){
+        // register user id with apps flyer
+        AppsFlyerLib.getInstance().setCustomerUserId(MainActivity.user.getId());
+        // register user id with GA tracker
+        this.tracker.setClientId(MainActivity.user.getId());
+        // register user id with connecto
+        // TODO:: add user phone number in connecto
+        this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(getResourceString(R.string.USER_NAME), MainActivity.user.getName()));
+        this.connecto.track("Session Started", new Properties().putValue("session_start_datetime", new Date().toString()));
+
     }
 
     public void loadInItData()
@@ -977,9 +1017,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
     /**
-     * This method is called when first time anonymous user is created
+     /* * This method is called when first time anonymous user is created
      * @param json
-     */
+     *//*
     private void mUserCreated(String json) {
         try {
             User tempUser = MainActivity.user;
@@ -1027,7 +1067,7 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
-    }
+    }*/
 
     /**
      * This method is used to load screens according to user status
@@ -1324,13 +1364,13 @@ public class MainActivity extends AppCompatActivity
 //            if (fragment == null)
 //                this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount,listType), !isFromNotification, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
 //            else {
-                if (currentFragment instanceof InstituteListFragment) {
-                    ((InstituteListFragment) fragment).clearList();
-                    ((InstituteListFragment) fragment).updateList(this.mInstituteList, next);
-                    ((InstituteListFragment) fragment).updateFilterButton(this.mFilterCount);
-                }else {
-                    this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount,listType), !isFromNotification, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
-                }
+            if (currentFragment instanceof InstituteListFragment) {
+                ((InstituteListFragment) fragment).clearList();
+                ((InstituteListFragment) fragment).updateList(this.mInstituteList, next);
+                ((InstituteListFragment) fragment).updateFilterButton(this.mFilterCount);
+            }else {
+                this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount,listType), !isFromNotification, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+            }
 
 //                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
 //            }
@@ -1466,7 +1506,7 @@ public class MainActivity extends AppCompatActivity
 //        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE);
 //
 //        if (fragment == null)
-            this.mDisplayFragment(InstituteDetailFragment.newInstance(institute), true, Constants.TAG_FRAGMENT_INSTITUTE);
+        this.mDisplayFragment(InstituteDetailFragment.newInstance(institute), true, Constants.TAG_FRAGMENT_INSTITUTE);
 //        else
 //            this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE);
 
@@ -1534,10 +1574,14 @@ public class MainActivity extends AppCompatActivity
                 this.mLoadUserStatusScreen();
             }
         }
-        else
+        else if(mTrueClient.onActivityResult(requestCode,resultCode,data)) {
+            return;
+        }
+        else  if(callbackManager.onActivityResult(requestCode, resultCode, data))
         {
-            if(currentFragment instanceof  LoginFragment || currentFragment instanceof LoginFragment1)
-                currentFragment.onActivityResult(requestCode, resultCode, data);
+            return;
+            /*if(currentFragment instanceof  LoginFragment || currentFragment instanceof ProfileEditFragment)
+                currentFragment.onActivityResult(requestCode, resultCode, data);*/
         }
     }
 
@@ -1588,9 +1632,7 @@ public class MainActivity extends AppCompatActivity
                     imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
             }
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
             fragmentTransaction.replace(R.id.container, fragment, tag);
 
@@ -1629,7 +1671,7 @@ public class MainActivity extends AppCompatActivity
             this.connecto.track(getResourceString(R.string.ACTION_SCREEN_SELECTED), new Properties().putValue(getResourceString(R.string.SCREEN_NAME), tag).putValue(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName).putValue(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), new Date().getTime() - this.mTimeScreenClicked.getTime()));
         }
         if(!(fragment instanceof InstituteListFragment))
-        invalidateOptionsMenu();
+            invalidateOptionsMenu();
     }
     private boolean isUpdateStreams;
     @Override
@@ -1643,13 +1685,9 @@ public class MainActivity extends AppCompatActivity
 
         switch (tags[0]) {
             case Constants.TAG_SKIP_LOGIN:
-                this.mUserCreated(response);
-                break;
-            case Constants.TAG_CREATE_FACEBOOK_ANONY_USER:
-                this.mCreatedFacebookAnonymousUser(response);
-                break;
-            case Constants.TAG_USER_FACEBOOK_LOGIN:
-                this.mUserFacebookLoginResponse(response);
+            case Constants.TAG_TRUE_SDK_LOGIN:
+            case Constants.TAG_FACEBOOK_LOGIN:
+                this.mUpdateUserPreferences(response);
                 break;
             case Constants.TAG_USER_EDUCATION:
                 this.mDisplayUserEducationFragment(response);
@@ -2083,7 +2121,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.SUBMITTED_CHAPTER_STATUS:
                 if (tags.length>1)
-                DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(tags[1]));
+                    DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(tags[1]));
                 break;
         }
         try {
@@ -2654,7 +2692,6 @@ public class MainActivity extends AppCompatActivity
         switch (tag) {
 
             case Constants.TAG_SKIP_LOGIN:
-            case Constants.TAG_CREATE_ANONY_USER:
             case Constants.TAG_EDIT_EXAMS_LIST:
             case Constants.TAG_EDIT_PSYCHOMETRIC_QUESTIONS:
             case Constants.TAG_EDIT_USER_EDUCATION:
@@ -2879,7 +2916,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onJsonObjectRequestError(final String tag, final String response, final String url, final JSONObject params, final int method) {
-       hideProgressDialog();
+        hideProgressDialog();
 
         if (!MainActivity.this.isFinishing())
         {
@@ -2984,10 +3021,8 @@ public class MainActivity extends AppCompatActivity
     }*/
     @Override
     public void onInstituteLikedDisliked(int position, int liked) {
-        if (position >= 0 && mInstituteList != null && mInstituteList.size() > position) {
-            Institute institute = this.mInstituteList.get(position);
-            this.onInstituteLikedDislikedByEntity(institute, liked, Constants.TAG_INSTITUTE_LIKE_DISLIKE + "#" + position, Constants.INSTITUTE_LIKE_DISLIKE);
-        }
+        Institute institute = this.mInstituteList.get(position);
+        this.onInstituteLikedDislikedByEntity(institute, liked, Constants.TAG_INSTITUTE_LIKE_DISLIKE + "#" + position, Constants.INSTITUTE_LIKE_DISLIKE);
     }
 
     public void onInstituteLikedDislikedByEntity(Institute institute, int liked, String tag, int source) {
@@ -3274,24 +3309,39 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onNewsSelected(News news , boolean addToBackstack) {
-
-        if (!addToBackstack) {
+    public void onNewsSelected(News news , boolean addToBackStack, View view) {
+        if (!addToBackStack) {
             this.currentFragment.updateNews(news);
         }
         else {
-//            FragmentManager fragmentManager = getSupportFragmentManager();
-//            Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_NEWS_DETAIL);
-                if (currentFragment instanceof NewsDetailFragment) {
-                    (currentFragment).updateNews(news);
-                }else {
-                    this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackstack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
-                }
+            if (currentFragment instanceof NewsDetailFragment) {
+                (currentFragment).updateNews(news);
+            }else {
+
+                     /*Fragment fragment = NewsDetailFragment.newInstance(news, this.mNewsList);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        fragment.setSharedElementEnterTransition(new DetailsTransition());
+                        fragment.setEnterTransition(new Fade());
+                        fragment.setExitTransition(new Fade());
+                        fragment.setSharedElementReturnTransition(new DetailsTransition());
+                    }
+
+                    FragmentTransaction fragmentTransaction  = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.addSharedElement(view, getResources().getString(R.string.news_image_transaction));
+                    fragmentTransaction.replace(R.id.container, fragment);//, Constants.TAG_FRAGMENT_NEWS_DETAIL);
+
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+                    fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+
+                    fragmentTransaction.addToBackStack(fragment.toString());
+                    fragmentTransaction.commit();*/
+                this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
+            }
             //Send GA and Connecto event for news selected
             MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_NEWS), getResourceString(R.string.ACTION_NEWS_SELECTED), String.valueOf(Constants.BASE_URL + "/personalize/" + Constants.WIDGET_NEWS + "/" + news.getId()));
             this.connecto.track(getResourceString(R.string.ACTION_NEWS_SELECTED), new Properties().putValue(getResourceString(R.string.ACTION_NEWS_SELECTED), news.getId()));
             //Appsflyer events
-            Map<String, Object> eventValue = new HashMap<String, Object>();
+            Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(news.getId()));
 
             MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_NEWS_SELECTED), eventValue);
@@ -3310,11 +3360,11 @@ public class MainActivity extends AppCompatActivity
 //            if (fragment == null)
 //                this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
 //            else {
-                if (currentFragment instanceof ArticleDetailFragment) {
-                    ((ArticleDetailFragment) fragment).updateArticle(article);
-                }else {
-                    this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
-                }
+            if (currentFragment instanceof ArticleDetailFragment) {
+                ((ArticleDetailFragment) fragment).updateArticle(article);
+            }else {
+                this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
+            }
 //                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
 //            }
             //Send GA and Connecto event for article selected
@@ -3470,8 +3520,8 @@ public class MainActivity extends AppCompatActivity
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params, int method) {
         int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
-        this.showProgress(tag);
-        this.networkUtils.networkData(tag, url, params, method);
+            this.showProgress(tag);
+            this.networkUtils.networkData(tag, url, params, method);
         } else {
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
         }
@@ -3490,8 +3540,8 @@ public class MainActivity extends AppCompatActivity
     private void mMakePreferenceNetworkCall(String tag, String url, Map<String, String> params) {
         int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
-        this.showProgress(tag);
-        this.networkUtils.putData(tag, url, params);
+            this.showProgress(tag);
+            this.networkUtils.putData(tag, url, params);
         } else {
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
         }
@@ -3499,8 +3549,8 @@ public class MainActivity extends AppCompatActivity
     private void mMakeJsonObjectNetworkCall(String tag, String url, JSONObject params, int method) {
         int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
-        this.showProgress(tag);
-        this.networkUtils.networkDataWithObjectParam(tag, url, params, method);
+            this.showProgress(tag);
+            this.networkUtils.networkDataWithObjectParam(tag, url, params, method);
         } else {
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
         }
@@ -3962,7 +4012,8 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onUserSignUp(String url, HashMap hashMap, String msg) {
-        this.mMakeNetworkCall(Constants.TAG_USER_REGISTRATION + "#" + msg, url, hashMap);}
+        this.mMakeNetworkCall(Constants.TAG_USER_REGISTRATION + "#" + msg, url, hashMap);
+    }
 
 
     /**
@@ -3970,52 +4021,113 @@ public class MainActivity extends AppCompatActivity
      *  registration or facebook login
      */
     @Override
-    public void onSkipUserLogin() {
-        this.mMakeNetworkCall(Constants.TAG_SKIP_LOGIN, Constants.BASE_URL + "users/anonymous/", new HashMap<String, String>());
-
-        //send skip event
-        //Send GA Session
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), Constants.TAG_SKIP_LOGIN);
-
-        //Appsflyer events
-        HashMap<String, Object> eventValue = new HashMap<String, Object>();
-
-        eventValue.put(Constants.TAG_USER_LOGIN, Constants.TAG_SKIP_LOGIN);
-
-        MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_USER_LOGIN), eventValue);
-        this.connecto.track(getResourceString(R.string.ACTION_USER_LOGIN), new Properties().putValue(Constants.TAG_USER_LOGIN, Constants.TAG_SKIP_LOGIN));
+    public void onSkipUserLogin(HashMap<String, String> params) {
+        onUserCommonLogin(params,Constants.TAG_SKIP_LOGIN);
     }
-
 
     /**
      * This method is used to login with facebook account
      * @param params request data
      */
-    @Override
-    public void onFacebookLogin(HashMap<String, String> params) {
-        this.userPref = User.Prefs.STREAMKNOWN;
-        this.mMakeNetworkCall(Constants.TAG_CREATE_FACEBOOK_ANONY_USER, Constants.BASE_URL + "users/anonymous/", params);
-        this.mUserSignUPParams = params;
+    public void onUserCommonLogin(HashMap<String, String> params , String TAG) {
+        this.mMakeNetworkCall(TAG, Constants.BASE_URL + "auth/common-login/", params);
 
-        //send FB event
         //Send GA Session
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), Constants.TAG_USER_FACEBOOK_LOGIN);
+        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), TAG);
 
         //Appsflyer events
-        HashMap<String, Object> eventValue = new HashMap<String, Object>();
-
-        eventValue.put(Constants.TAG_USER_LOGIN, Constants.TAG_USER_FACEBOOK_LOGIN);
-
+        HashMap<String, Object> eventValue = new HashMap<>();
+        eventValue.put(Constants.TAG_USER_LOGIN, TAG);
         MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_USER_LOGIN), eventValue);
-        this.connecto.track(getResourceString(R.string.ACTION_USER_LOGIN), new Properties().putValue(Constants.TAG_USER_LOGIN, Constants.TAG_USER_FACEBOOK_LOGIN));
+        this.connecto.track(getResourceString(R.string.ACTION_USER_LOGIN), new Properties().putValue(Constants.TAG_USER_LOGIN, TAG));
     }
 
-    /**
+    private void mUpdateUserPreferences(String jsonResponse)
+    {
+        User tempUser = MainActivity.user;
+        try {
+            MainActivity.user = JSON.std.beanFrom(User.class, jsonResponse);
+            this.networkUtils.setToken(user.getToken());
+            if (tempUser != null){
+                MainActivity.user.setImage(tempUser.getImage());
+                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+                MainActivity.user.profileData = tempUser.profileData;
+            }
+            setUserIdWithAllEvents();
+            String u = JSON.std.asString(this.user);
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).commit();
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.IS_PROFILE_LOADED = false;
+        this.mLoadUserStatusScreen();
+    }
+
+
+    @Override
+    public void onSuccesProfileShared(@NonNull TrueProfile trueProfile) {
+
+        HashMap params = new HashMap<>();
+
+        if( trueProfile.zipcode == null)
+            trueProfile.zipcode ="";
+
+        if( trueProfile.city == null)
+            trueProfile.city ="";
+
+        if( trueProfile.avatarUrl == null)
+            trueProfile.avatarUrl ="";
+
+        if( trueProfile.facebookId == null)
+            trueProfile.facebookId ="";
+
+        String phone =  trueProfile.phoneNumber;
+        if(phone != null){
+            phone = phone.replace("+91", "");
+            params.put(MainActivity.getResourceString(R.string.USER_PHONE), phone);
+        }
+        params.put(MainActivity.getResourceString(R.string.USER_NAME),trueProfile.firstName+" "+trueProfile.lastName);
+        params.put(MainActivity.getResourceString(R.string.USER_EMAIL), trueProfile.email);
+        params.put(MainActivity.getResourceString(R.string.USER_GENDER),trueProfile.gender);
+        params.put(MainActivity.getResourceString(R.string.USER_CITY), trueProfile.city);
+        params.put(MainActivity.getResourceString(R.string.USER_ZIP_CODE),trueProfile.zipcode);
+        params.put(MainActivity.getResourceString(R.string.USER_IMAGE), trueProfile.avatarUrl);
+        params.put(MainActivity.getResourceString(R.string.USER_COUNTRY_CODE), trueProfile.countryCode);
+        params.put(MainActivity.getResourceString(R.string.USER_FACEBOOK_ID), trueProfile.facebookId);
+
+        String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        params.put(MainActivity.getResourceString(R.string.USER_DEVICE_ID), deviceId);
+        params.put(MainActivity.getResourceString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_TRUECALLER);
+
+        //TODO :: delete this after image_new handle at server side
+        if(MainActivity.user != null && trueProfile.avatarUrl != null){
+            MainActivity.user.setImage(trueProfile.avatarUrl);
+        }
+
+        onUserCommonLogin(params,Constants.TAG_TRUE_SDK_LOGIN);
+    }
+
+
+
+    @Override
+    public void onFailureProfileShared(@NonNull TrueError trueError) {
+
+        if(trueError.getErrorType() == TrueError.ERROR_TYPE_NETWORK){
+            displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+        }
+        else
+            Utils.DisplayToast(getApplicationContext(),"Failed sharing - Reason: unauthorized user");
+    }
+
+
+    /***
      * This method is used to create anonymous user
      * while facebook login
      * @param json
      */
-    private void mCreatedFacebookAnonymousUser(String json)
+    /*private void mCreatedFacebookAnonymousUser(String json)
     {
         User tempUser = this.user;
         try {
@@ -4033,12 +4145,33 @@ public class MainActivity extends AppCompatActivity
         }
         this.mMakeNetworkCall(Constants.TAG_USER_FACEBOOK_LOGIN, Constants.BASE_URL + "auth/facebook/", this.mUserSignUPParams);
     }
-
+    /**
+     * This method is used to create anonymous user
+     * while facebook login
+     * @param json
+     */
+    /*private void mCreatedTrueSdkAnonymousUser(String json)
+    {
+        User tempUser = this.user;
+        try {
+            MainActivity.user = JSON.std.beanFrom(User.class, json);
+            this.networkUtils.setToken(this.user.getToken());
+            if (tempUser != null){
+                MainActivity.user.setImage(tempUser.getImage());
+                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+                MainActivity.user.profileData = tempUser.profileData;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.mMakeNetworkCall(Constants.TAG_USER_TRUE_SDK_LOGIN, Constants.BASE_URL + "auth/facebook/", this.mUserSignUPParams);
+    }
     /**
      * Method is called when user login with facebook successfully
      * @param json
      */
-    private void mUserFacebookLoginResponse(String json)
+   /* private void mUserFacebookLoginResponse(String json)
     {
         User tempUser = MainActivity.user;
         try {
@@ -4075,6 +4208,11 @@ public class MainActivity extends AppCompatActivity
         }
         this.mLoadUserStatusScreen();
     }
+    */
+
+
+
+
 
     /**
      * This method is used to log out facebook account
@@ -4383,10 +4521,10 @@ public class MainActivity extends AppCompatActivity
             String levelName = jsonObj.getString(getResourceString(R.string.USER_LEVEL_NAME));
             if(user.getStream().equalsIgnoreCase(stream_id))
                 streamRadioGroup.setVisibility(View.GONE);
-            else if(user.getLevel().equalsIgnoreCase(level_id)) {
+           /* else if(user.getLevel().equalsIgnoreCase(level_id)) {
                 levelRadioGroup.setVisibility(View.GONE);
                 dialog.findViewById(R.id.select_level_text).setVisibility(View.GONE);
-            }
+            }*/
 
             ((RadioButton)dialog.findViewById(R.id.firstStream)).setText(streamName);
             ((RadioButton)dialog.findViewById(R.id.secondStream)).setText(user.getStream_name());
@@ -4452,7 +4590,7 @@ public class MainActivity extends AppCompatActivity
 
     public static void AppsflyerTrackerEvent(Context context, String eventName, Map<String, Object> eventValue)
     {
-        AppsFlyerLib.trackEvent(context, eventName, eventValue);
+        AppsFlyerLib.getInstance().trackEvent(context, eventName, eventValue);
     }
 
     @Override

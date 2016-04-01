@@ -202,8 +202,8 @@ public class NewsFragment extends BaseFragment  {
                 }
                 break;
             case R.id.news_detail_layout:
-
-                (( MainActivity)getActivity()).onNewsSelected(this.mNews, true);
+                rootView = getView();
+                (( MainActivity)getActivity()).onNewsSelected(this.mNews, true,  rootView.findViewById(R.id.news_college_banner));
                 break;
             default:
                 break;
@@ -211,9 +211,6 @@ public class NewsFragment extends BaseFragment  {
 
         updateViewTypeIcon(getView(), this.mViewType);
     }
-
-
-
 
     public void updateNews(News news)
     {

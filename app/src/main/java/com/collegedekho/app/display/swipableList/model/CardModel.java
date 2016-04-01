@@ -6,7 +6,7 @@
  *
  * TAndTinder is a native library for Android that provide a
  * Tinder card like effect. A card can be constructed using an
- * image and displayed with animation effects, dismiss-to-like
+ * image_new and displayed with animation effects, dismiss-to-like
  * and dismiss-to-unlike, and use different sorting mechanisms.
  *
  * AndTinder is compatible with API Level 13 and upwards

@@ -1,6 +1,7 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
@@ -75,6 +76,9 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
         if (news.image != null && !news.image.isEmpty())
             newsHolder.newsImage.setImageUrl(news.image, imageLoader);
+
+
+        ViewCompat.setTransitionName(newsHolder.newsImage, String.valueOf(position) + "_image");
 
         if(this.mViewType == Constants.VIEW_INTO_LIST) {
             newsHolder.newsContent.setText(Html.fromHtml(news.content));
@@ -164,7 +168,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
                 flag = true;
             if (getAdapterPosition() < mNewsList.size())
                 try {
-                    mListener.onNewsSelected(mNewsList.get(getAdapterPosition()), flag);
+                    mListener.onNewsSelected(mNewsList.get(getAdapterPosition()), flag, newsImage);
                 }catch (Exception e){
                     e.printStackTrace();
                 }

@@ -93,41 +93,41 @@ public class NetworkUtils {
         final Calendar calendar=Calendar.getInstance();
         StringRequest request = new StringRequest(method, url,
                 new Response.Listener<String>()
-        {
-            @Override
-            public void onResponse(String response)
-            {
-                Utils.logApiResponseTime(calendar,tag+" "+url);
-                mListener.onDataLoaded(tag, response);
-            }
-        },
+                {
+                    @Override
+                    public void onResponse(String response)
+                    {
+                        Utils.logApiResponseTime(calendar,tag+" "+url);
+                        mListener.onDataLoaded(tag, response);
+                    }
+                },
                 new Response.ErrorListener()
                 {
-            @Override
-            public void onErrorResponse(VolleyError error)
-            {
-                Utils.logApiResponseTime(calendar,tag+" "+url);
-                Crashlytics.logException(error);
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        Utils.logApiResponseTime(calendar,tag+" "+url);
+                        Crashlytics.logException(error);
 
-                String json = null;
-                NetworkResponse response = error.networkResponse;
-                if (response != null && response.data != null)
-                {
-                    json = new String(response.data);
-                    json = trimMessage(json, "detail");
-                }
-                if (json != null) {
-                    mListener.onError(tag, Constants.SERVER_FAULT, url, null, method);
-                } else {
-                    int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
-                    if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
-                        mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, null, method);
-                    } else {
-                        mListener.onError(tag, Constants.UNKNOWN_ERROR, url, null, method);
+                        String json = null;
+                        NetworkResponse response = error.networkResponse;
+                        if (response != null && response.data != null)
+                        {
+                            json = new String(response.data);
+                            json = trimMessage(json, "detail");
+                        }
+                        if (json != null) {
+                            mListener.onError(tag, Constants.SERVER_FAULT, url, null, method);
+                        } else {
+                            int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+                            if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
+                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, null, method);
+                            } else {
+                                mListener.onError(tag, Constants.UNKNOWN_ERROR, url, null, method);
+                            }
+                        }
                     }
-                }
-            }
-        })
+                })
         {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -155,7 +155,7 @@ public class NetworkUtils {
 
     public void simpleGetData(@Nullable final String tag, final String url) {
         ((MainActivity)mContext).showProgressDialog(MainActivity.GetPersonalizedMessage(tag));
-            simpleGetData(tag, url, Request.Method.GET);
+        simpleGetData(tag, url, Request.Method.GET);
     }
 
     public void simpleGetData(@Nullable final String tag, final String url, final int method) {
@@ -224,85 +224,86 @@ public class NetworkUtils {
     {
         final Calendar calendar=Calendar.getInstance();
         StringRequest request = new StringRequest(method, url, new Response.Listener<String>()
+        {
+            @Override
+            public void onResponse(String response)
             {
-                @Override
-                public void onResponse(String response)
+                Utils.logApiResponseTime(calendar, tag + " " + url);
+                mListener.onDataLoaded(tag, response);
+            }
+        },
+                new Response.ErrorListener()
                 {
-                    Utils.logApiResponseTime(calendar, tag + " " + url);
-                    mListener.onDataLoaded(tag, response);
-                }
-            },
-            new Response.ErrorListener()
-            {
-                @Override
-                public void onErrorResponse(VolleyError error)
-                {
-                    Utils.logApiResponseTime(calendar, tag + " " + url);
-                    Crashlytics.logException(error);
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        Utils.logApiResponseTime(calendar, tag + " " + url);
+                        Crashlytics.logException(error);
 
-                    String json = null;
-                    NetworkResponse response = error.networkResponse;
-                    if (response != null && response.data != null)
-                    {
-                        json = new String(response.data);
-                    }
-                    String[] tags = tag.split("#");
-                    if(tags[0].equalsIgnoreCase(Constants.TAG_USER_LOGIN))
-                    {
-                        if(json != null) {
-                            try {
-                                JSONObject jsonObj = new JSONObject(json);
-                                String code = jsonObj.getString("Code");
-                                if(Integer.parseInt(code) == ErrorCode.LOGIN_PREFERENCE_CONFLICT) {
-                                    mListener.showDialogForStreamLevel(tag, url, jsonObj, params);
-                                    return;
+                        String json = null;
+                        NetworkResponse response = error.networkResponse;
+                        if (response != null && response.data != null)
+                        {
+                            json = new String(response.data);
+                        }
+                        String[] tags = tag.split("#");
+                        if(tags[0].equalsIgnoreCase(Constants.TAG_TRUE_SDK_LOGIN) || tags[0].equalsIgnoreCase(Constants.TAG_FACEBOOK_LOGIN) )
+                        {
+                            if(json != null) {
+                                try {
+                                    JSONObject jsonObj = new JSONObject(json);
+                                    String code = jsonObj.getString("Code");
+                                    if(Integer.parseInt(code) == ErrorCode.LOGIN_PREFERENCE_CONFLICT) {
+                                        mListener.showDialogForStreamLevel(tag, url, jsonObj, params);
+                                        return;
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
-                                else if(Integer.parseInt(code) == ErrorCode.LOGIN_PASSWORD_INCORRECT)
-                                {
-                                    ((MainActivity)mContext).hideProgressDialog();
-                                    Toast.makeText(mContext, MainActivity.getResourceString(R.string.EMAIL_PASSOWRD_NOT_EXISTS),Toast.LENGTH_LONG).show();
-                                    return;
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
                             }
                         }
-                    }
-                    else  if(tags[0].equalsIgnoreCase(Constants.TAG_USER_REGISTRATION))
-                    {
-                        if(json != null) {
-                            try {
-                                JSONObject jsonObj = new JSONObject(json);
-                                String code = jsonObj.getString("Code");
-                                if(Integer.parseInt(code) == ErrorCode.LOGIN_EMAIL_ALREADY_EXISTS) {
-                                    ((MainActivity) mContext).hideProgressDialog();
-                                    Toast.makeText(mContext, MainActivity.getResourceString(R.string.EMAIL_PASSOWRD_ALREADY_EXISTS), Toast.LENGTH_LONG).show();
-                                    return;
-                                }
+                        else  if(tags[0].equalsIgnoreCase(Constants.TAG_USER_REGISTRATION))
+                        {
+                            if(json != null) {
+                                try {
+                                    JSONObject jsonObj = new JSONObject(json);
+                                    String code = jsonObj.getString("Code");
+                                    if(Integer.parseInt(code) == ErrorCode.LOGIN_EMAIL_ALREADY_EXISTS) {
+                                        ((MainActivity) mContext).hideProgressDialog();
+                                        Toast.makeText(mContext, MainActivity.getResourceString(R.string.EMAIL_PASSOWRD_ALREADY_EXISTS), Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                    else if(Integer.parseInt(code) == ErrorCode.LOGIN_PASSWORD_INCORRECT)
+                                    {
+                                        ((MainActivity)mContext).hideProgressDialog();
+                                        Toast.makeText(mContext, MainActivity.getResourceString(R.string.EMAIL_PASSOWRD_NOT_EXISTS),Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
-                    }
-                    else if(tags[0].equalsIgnoreCase(Constants.TAG_APPLIED_COURSE))
-                    {
-                        saveToSharedPref(params);
-                    }
+                        else if(tags[0].equalsIgnoreCase(Constants.TAG_APPLIED_COURSE))
+                        {
+                            saveToSharedPref(params);
+                        }
 
-                    json = trimMessage(json, "detail");
-                    if (json != null) {
-                        mListener.onError(tag, Constants.SERVER_FAULT, url, null, method);
-                    } else {
-                        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
-                        if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
-                            mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, null, method);
+                        json = trimMessage(json, "detail");
+                        if (json != null) {
+                            mListener.onError(tag, Constants.SERVER_FAULT, url, null, method);
                         } else {
-                            mListener.onError(tag, Constants.UNKNOWN_ERROR, url, null, method);
+                            int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+                            if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
+                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, null, method);
+                            } else {
+                                mListener.onError(tag, Constants.UNKNOWN_ERROR, url, null, method);
+                            }
                         }
                     }
-                }
-            })
+                })
         {
             @Override
             protected Map<String, String> getParams()
@@ -315,7 +316,9 @@ public class NetworkUtils {
             {
                 Map<String, String> params = new HashMap<>();
 
-                params.put("Authorization", "Token " + mtoken);
+                if (mtoken != null)
+                    params.put("Authorization", "Token " + mtoken);
+
                 params.put("Content-Type", "application/form-data");
                 params.put("Accept", "application/json");
 
@@ -340,14 +343,14 @@ public class NetworkUtils {
         JsonObjectRequest request = new JsonObjectRequest(method,
                 url, params,
                 new Response.Listener<JSONObject>()
-        {
-            @Override
-            public void onResponse(JSONObject response)
-            {
-                Utils.logApiResponseTime(calendar,tag+" "+url);
-                mListener.onDataLoaded(tag, response.toString());
-            }
-        },
+                {
+                    @Override
+                    public void onResponse(JSONObject response)
+                    {
+                        Utils.logApiResponseTime(calendar,tag+" "+url);
+                        mListener.onDataLoaded(tag, response.toString());
+                    }
+                },
                 new Response.ErrorListener()
                 {
                     @Override
@@ -364,11 +367,13 @@ public class NetworkUtils {
 
                         }
                         json = trimMessage(json, "detail");
-                        if (json != null) {
-                            mListener.onError(tag, Constants.SERVER_FAULT, url, null, method);
-                        } else {
+                        if (json != null)
+                            mListener.onJsonObjectRequestError(tag, Constants.SERVER_FAULT, url, params, method);
+                        else
+                        {
                             int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
-                            if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
+                            if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+
                                 mListener.onError(tag, Constants.NO_CONNECTION_FAULT, url, null, method);
                             } else {
                                 mListener.onError(tag, Constants.UNKNOWN_ERROR, url, null, method);
@@ -381,7 +386,9 @@ public class NetworkUtils {
             public Map<String, String> getHeaders() throws AuthFailureError
             {
                 Map<String, String> params = new HashMap<>();
-                params.put("Authorization", "Token " + mtoken);
+                if (mtoken != null)
+                    params.put("Authorization", "Token " + mtoken);
+
                 params.put("Content-Type", "application/form-data");
                 params.put("Accept", "application/json");
                 return params;
@@ -445,17 +452,17 @@ public class NetworkUtils {
     private void saveToSharedPref(Map<String , String> params)
     {
 
-                SharedPreferences preferences = mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
-                String instituteId  = params.get(MainActivity.getResourceString(R.string.APPLY_INSTITUTE));
+        SharedPreferences preferences = mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
+        String instituteId  = params.get(MainActivity.getResourceString(R.string.APPLY_INSTITUTE));
 
-                Set<String> idList = preferences.getStringSet(instituteId, new HashSet<String>());
-                idList.add(params.get(MainActivity.getResourceString(R.string.APPLY_COURSE)));
+        Set<String> idList = preferences.getStringSet(instituteId, new HashSet<String>());
+        idList.add(params.get(MainActivity.getResourceString(R.string.APPLY_COURSE)));
 
-                preferences.edit().putString(Constants.INSTITUTE_ID, instituteId)
+        preferences.edit().putString(Constants.INSTITUTE_ID, instituteId)
                 .putStringSet(instituteId, idList)
                 .putInt(Constants.KEY_APPLY_STATUS, Constants.APPLY_PENDING)
-                        .apply();
-                Toast.makeText(mContext, "Failed to apply the course, will retry after sometime.", Toast.LENGTH_LONG).show();
+                .apply();
+        Toast.makeText(mContext, "Failed to apply the course, will retry after sometime.", Toast.LENGTH_LONG).show();
 
     }
 

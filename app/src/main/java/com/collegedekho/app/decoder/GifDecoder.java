@@ -24,8 +24,8 @@ public class GifDecoder {
         protected static final int MAX_STACK_SIZE = 4096;
         protected InputStream in;
         protected int status;
-        protected int width; // full image width
-        protected int height; // full image height
+        protected int width; // full image_new width
+        protected int height; // full image_new height
         protected boolean gctFlag; // global color table used
         protected int gctSize; // size of global color table
         protected int loopCount = 1; // iterations; 0 = repeat forever
@@ -39,7 +39,7 @@ public class GifDecoder {
         protected boolean lctFlag; // local color table flag
         protected boolean interlace; // interlace flag
         protected int lctSize; // local color table size
-        protected int ix, iy, iw, ih; // current image rectangle
+        protected int ix, iy, iw, ih; // current image_new rectangle
         protected int lrx, lry, lrw, lrh;
         protected Bitmap image; // current frame
         protected Bitmap lastBitmap; // previous frame
@@ -93,7 +93,7 @@ public class GifDecoder {
         }
 
         /**
-         * Gets the first (or only) image read.
+         * Gets the first (or only) image_new read.
          * 
          * @return BufferedBitmap containing first frame, or null if none.
          */
@@ -111,15 +111,15 @@ public class GifDecoder {
         }
 
         /**
-         * Creates new frame image from current data (and previous frames as specified by their disposition codes).
+         * Creates new frame image_new from current data (and previous frames as specified by their disposition codes).
          */
         protected void setPixels() {
-                // expose destination image's pixels as int array
+                // expose destination image_new's pixels as int array
                 int[] dest = new int[width * height];
-                // fill in starting image contents based on last image's dispose code
+                // fill in starting image_new contents based on last image_new's dispose code
                 if (lastDispose > 0) {
                         if (lastDispose == 3) {
-                                // use image before last
+                                // use image_new before last
                                 int n = frameCount - 2;
                                 if (n > 0) {
                                         lastBitmap = getFrame(n - 1);
@@ -131,7 +131,7 @@ public class GifDecoder {
                                 lastBitmap.getPixels(dest, 0, width, 0, 0, width, height);
                                 // copy pixels
                                 if (lastDispose == 2) {
-                                        // fill last image rect area with background color
+                                        // fill last image_new rect area with background color
                                         int c = 0;
                                         if (!transparency) {
                                                 c = lastBgColor;
@@ -198,7 +198,7 @@ public class GifDecoder {
         }
 
         /**
-         * Gets the image contents of frame n.
+         * Gets the image_new contents of frame n.
          * 
          * @return BufferedBitmap representation of frame, or null if n is invalid.
          */
@@ -210,7 +210,7 @@ public class GifDecoder {
         }
 
         /**
-         * Reads GIF image from stream
+         * Reads GIF image_new from stream
          * 
          * @param is
          *          containing GIF file.
@@ -238,7 +238,7 @@ public class GifDecoder {
         }
 
         /**
-         * Decodes LZW image data into pixel array. Adapted from John Cristy's BitmapMagick.
+         * Decodes LZW image_new data into pixel array. Adapted from John Cristy's BitmapMagick.
          */
         protected void decodeBitmapData() {
                 int nullCode = -1;
@@ -445,7 +445,7 @@ public class GifDecoder {
                 while (!(done || err())) {
                         int code = read();
                         switch (code) {
-                        case 0x2C: // image separator
+                        case 0x2C: // image_new separator
                                 readBitmap();
                                 break;
                         case 0x21: // extension
@@ -494,7 +494,7 @@ public class GifDecoder {
                 int packed = read(); // packed fields
                 dispose = (packed & 0x1c) >> 2; // disposal method
                 if (dispose == 0) {
-                        dispose = 1; // elect to keep old image if discretionary
+                        dispose = 1; // elect to keep old image_new if discretionary
                 }
                 transparency = (packed & 1) != 0;
                 delay = readShort() * 10; // delay in milliseconds
@@ -522,10 +522,10 @@ public class GifDecoder {
         }
 
         /**
-         * Reads next frame image
+         * Reads next frame image_new
          */
         protected void readBitmap() {
-                ix = readShort(); // (sub)image position & size
+                ix = readShort(); // (sub)image_new position & size
                 iy = readShort();
                 iw = readShort();
                 ih = readShort();
@@ -562,10 +562,10 @@ public class GifDecoder {
                         return;
                 }
                 frameCount++;
-                // create new image to receive frame data
+                // create new image_new to receive frame data
                 image = Bitmap.createBitmap(width, height, Config.ARGB_4444);
-                setPixels(); // transfer pixel data to image
-                frames.addElement(new GifFrame(image, delay)); // add image to frame
+                setPixels(); // transfer pixel data to image_new
+                frames.addElement(new GifFrame(image, delay)); // add image_new to frame
                 // list
                 if (transparency) {
                         act[transIndex] = save;
@@ -614,7 +614,7 @@ public class GifDecoder {
         }
 
         /**
-         * Resets frame state for reading next image.
+         * Resets frame state for reading next image_new.
          */
         protected void resetFrame() {
                 lastDispose = dispose;

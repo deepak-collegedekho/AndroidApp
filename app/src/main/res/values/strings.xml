@@ -216,6 +216,7 @@
     <string name="TAG_FRAGMENT_SHORTLISTED_INSTITUTE">fragment_shortlisted_institute</string>
 
 
+    <string name="USER_LOGIN_TYPE">login_type</string>
     <string name="USER_NAME">name</string>
     <string name="USER_FIRST_NAME">first_name</string>
     <string name="USER_LAST_NAME">last_name</string>
@@ -240,13 +241,17 @@
     <string name="USER_EDUCATION_SET">education_set</string>
     <string name="USER_EXAMS_SET">exams_set</string>
     <string name="USER_PHONE">phone_no</string>
-    <string name="USER_IMAGE">user_image</string>
+    <string name="USER_ZIP_CODE">zipcode</string>
+    <string name="USER_IMAGE">image</string>
     <string name="USER_VERIFIED">verified</string>
     <string name="USER_LOCALE">locale</string>
     <string name="USER_GENDER">gender</string>
     <string name="USER_TIMEZONE">timezone</string>
     <string name="USER_UPDATED_TIME">updated_time</string>
     <string name="USER_LINK">link</string>
+    <string name="USER_COUNTRY_CODE">country_code</string>
+    <string name="USER_CITY">city</string>
+    <string name="USER_FACEBOOK_ID">facebook_id</string>
     <string name="USER_EXPIRE_AT">expires_at</string>
     <string name="USER_DEVICE_ID">device_id</string>
 
@@ -407,4 +412,13 @@
     <string name="profile_tute_description">Tutorial: select to vanish</string>
     <string name="news_image_description">Image for current news</string>
     <string name="article_image_description">Image for current Article</string>
+
+    <!-- TRUE CALLER -->
+    <string name="partnerKey">baLWqkLO85xFIlFrAi5phqW1zSfCceMb</string>
+
+    <!--   new and Article image transaction-->
+    <string name="news_image_transaction">NewsImageTransaction</string>
+    <string name="news_title_transaction">NewsTitleTransaction</string>
+    <string name="news_date_transaction">NewsDateTransaction</string>
+    <string name="article_image_transaction">ArticleImageTransaction</string>
 </resources>

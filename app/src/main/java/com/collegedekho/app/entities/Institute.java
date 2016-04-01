@@ -390,9 +390,9 @@ public class Institute implements Parcelable {
                 Facility f = new Facility();
                 if (fdm.containsKey("name") && fdm.get("name")!=null)
                     f.tag = fdm.get("name").toString();
-                if (fdm.containsKey("image") && fdm.get("image")!=null)
-                    f.image = fdm.get("image").toString();
-                if (f.image != null)
+                if (fdm.containsKey("image_new") && fdm.get("image_new")!=null)
+                    f.image_new = fdm.get("image_new").toString();
+                if (f.image_new != null)
                     this.facilities.add(f);
             }
         }
@@ -403,7 +403,7 @@ public class Institute implements Parcelable {
             facilities = new ArrayList<>();
         Facility f = new Facility();
         f.tag = facility.get("name");
-        f.image = facility.get("image");
+        f.image_new = facility.get("image_new");
         facilities.add(f);
     }*/
 
@@ -442,11 +442,11 @@ public class Institute implements Parcelable {
     /*public void setImages(ArrayList images) {
         if (this.images == null)
             this.images = new ArrayList<>();
-        for (Object image : images)
+        for (Object image_new : images)
         {
-            if (image instanceof DeferredMap)
+            if (image_new instanceof DeferredMap)
             {
-                DeferredMap fdm = (DeferredMap) image;
+                DeferredMap fdm = (DeferredMap) image_new;
                 Images f = new Images();
                 if (fdm.containsKey("Banner"))
                     f.setBanner(fdm.get("Banner").toString());

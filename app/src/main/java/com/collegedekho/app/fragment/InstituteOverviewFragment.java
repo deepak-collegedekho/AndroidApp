@@ -1,7 +1,7 @@
 package com.collegedekho.app.fragment;
 
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -128,8 +128,8 @@ public class InstituteOverviewFragment extends BaseFragment {
     private void setupFacilities(LayoutInflater inflater, LinearLayout facilityLayout, ArrayList<Facility> facilities) {
         ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
         for (Facility f : facilities) {
-            NetworkImageView imageView = (NetworkImageView) inflater.inflate(R.layout.item_facility, facilityLayout, false);
-            imageView.setImageUrl(f.image, imageLoader);
+            NetworkImageView imageView = (NetworkImageView) inflater.inflate(R.layout.item_facility_35dp, facilityLayout, false);
+            imageView.setImageUrl(f.image_new, imageLoader);
             facilityLayout.addView(imageView);
         }
     }
@@ -169,7 +169,7 @@ public class InstituteOverviewFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         try {
             mListener = (OnInstituteShortlistedListener) activity;

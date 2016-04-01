@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,13 +14,16 @@ import android.view.ViewGroup;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.truecaller.android.sdk.ITrueCallback;
+import com.truecaller.android.sdk.TrueError;
+import com.truecaller.android.sdk.TrueProfile;
 
 import java.util.HashMap;
 
 /**
  * Created by sureshsaini on 11/10/15.
  */
-public class LoginFragment1 extends BaseFragment {
+public class LoginFragment1 extends BaseFragment  {
 
     private static final int SIGNUP = 1;
     private static final int SIGNIN = 0;
@@ -62,6 +66,7 @@ public class LoginFragment1 extends BaseFragment {
 
         return rootView;
     }
+
 
     class LoginPagerAdapter extends FragmentPagerAdapter
     {
@@ -118,6 +123,7 @@ public class LoginFragment1 extends BaseFragment {
             mMainActivity.currentFragment = this;
 
     }
+
 
         /**
          * This interface must be implemented by activities that contain this

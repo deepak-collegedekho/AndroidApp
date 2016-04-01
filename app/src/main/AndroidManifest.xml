@@ -95,6 +95,10 @@
             android:label="@string/application_service"/>
 
         <service android:name=".service.ApplyService"/>
+
+        <meta-data
+            android:name="com.truecaller.android.sdk.PartnerKey"
+            android:value="@string/partnerKey"/>
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id"/>
@@ -119,17 +123,19 @@
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.appsflyer.MultipleInstallBroadcastReceiver" android:exported="true">
+        <receiver
+            android:name="com.appsflyer.MultipleInstallBroadcastReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.appsflyer.AppsFlyerLib">
+       <!-- <receiver android:name="com.appsflyer.AppsFlyerLib">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REMOVED"/>
                 <data android:scheme="package"/>
             </intent-filter>
-        </receiver>
+        </receiver>-->
 
         <receiver android:name=".receiver.OTPReceiver">
             <intent-filter android:priority="1000">

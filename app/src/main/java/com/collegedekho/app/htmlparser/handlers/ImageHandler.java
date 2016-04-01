@@ -33,7 +33,7 @@ import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Handles image tags.
+ * Handles image_new tags.
  * 
  * The default implementation tries to load images through a URL.openStream(),
  * override loadBitmap() to implement your own loading.

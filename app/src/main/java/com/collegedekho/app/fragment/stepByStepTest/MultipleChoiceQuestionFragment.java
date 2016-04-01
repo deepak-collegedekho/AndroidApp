@@ -257,7 +257,7 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
                 }
             });
 
-            //set image
+            //set image_new
             ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
             NetworkImageView optionImage = (NetworkImageView) convertView.findViewById(R.id.multiple_option_image);
 

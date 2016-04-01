@@ -221,7 +221,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             if (facilities.size() > 4 && mViewType ==  Constants.VIEW_INTO_LIST) {
                 for (int i = 0; i < 4; i++) {
                     NetworkImageView imgView = (NetworkImageView) instiFaciltyList.getChildAt(i);
-                    imgView.setImageUrl(facilities.get(i).image, mImageLoader);
+                    imgView.setImageUrl(facilities.get(i).image_new, mImageLoader);
                     imgView.setVisibility(View.VISIBLE);
                 }
                 ((TextView) instiFaciltyList.getChildAt(4)).setText("+" + (facilities.size() - 4));
@@ -231,7 +231,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                 int i;
                 for (i = 0; i < 2; i++) {
                     NetworkImageView imgView = (NetworkImageView) instiFaciltyList.getChildAt(i);
-                    imgView.setImageUrl(facilities.get(i).image, mImageLoader);
+                    imgView.setImageUrl(facilities.get(i).image_new, mImageLoader);
                     imgView.setVisibility(View.VISIBLE);
                 }
                 for (int j = i; j < 4; j++) {
@@ -243,7 +243,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                 int i;
                 for (i = 0; i < facilities.size(); i++) {
                     NetworkImageView imgView = (NetworkImageView) instiFaciltyList.getChildAt(i);
-                    imgView.setImageUrl(facilities.get(i).image, mImageLoader);
+                    imgView.setImageUrl(facilities.get(i).image_new, mImageLoader);
                     imgView.setVisibility(View.VISIBLE);
                 }
                 for (int j = i; j < 5; j++) {

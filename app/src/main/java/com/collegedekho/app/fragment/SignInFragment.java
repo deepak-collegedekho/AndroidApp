@@ -120,8 +120,8 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
      *  and callback methods call when  try to login with facebook
       */
     private  void mFacebookCallbackListener(LoginButton loginButton)
-    {
-        loginButton.registerCallback(MainActivity.callbackManager, new FacebookCallback<LoginResult>() {
+    {/*
+        loginButton.registerCallback(.callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
@@ -147,7 +147,7 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
                 Toast.makeText(getActivity(), "Facebook SignIn has some error", Toast.LENGTH_LONG).show();
 
             }
-        });
+        });*/
     }
 
     /**
@@ -294,7 +294,7 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
                 mGoogleApiClient.connect();
         }
         else {
-            MainActivity.callbackManager.onActivityResult(requestCode, resultCode, data);
+           // MainActivity.callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 

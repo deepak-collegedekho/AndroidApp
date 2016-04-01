@@ -39,7 +39,7 @@ public class UrlImageParser implements Html.ImageGetter {
 
         asyncTask.execute(source);
 
-        // return reference to URLDrawable where I will change with actual image from
+        // return reference to URLDrawable where I will change with actual image_new from
         // the src tag
         return urlDrawable;
     }
@@ -67,7 +67,7 @@ public class UrlImageParser implements Html.ImageGetter {
             // from the HTTP call
             urlDrawable.drawable = result;
 
-            // redraw the image by invalidating the container
+            // redraw the image_new by invalidating the container
             UrlImageParser.this.container.invalidate();
         }
 
@@ -96,7 +96,7 @@ public class UrlImageParser implements Html.ImageGetter {
     @SuppressWarnings("deprecation")
     public class UrlDrawable extends BitmapDrawable {
         // the drawable that you need to set, you could set the initial drawing
-        // with the loading image if you need to
+        // with the loading image_new if you need to
         protected Drawable drawable;
 
         @Override

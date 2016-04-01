@@ -23,10 +23,9 @@ public class Constants
     public static final String PREFS = "sharedprefs";
     public static final String KEY_USER = "user_id";
     public static final String ANONYMOUS_USER = "Anonymous user";
-    public static final String TAG_CREATE_ANONY_USER = "create_anony_user";
-    public static final String TAG_CREATE_FACEBOOK_ANONY_USER = "create_facebook_anony_user";
+    public static final String TAG_FACEBOOK_LOGIN = "user_facebook_login";
+    public static final String TAG_TRUE_SDK_LOGIN = "true_sdk_login";
     public static final String TAG_SKIP_LOGIN = "skip_login";
-    public static final String TAG_USER_FACEBOOK_LOGIN = "user_facebook_login";
     public static final String TAG_USER_LOGIN = "user_login";
     public static final String TAG_USER_REGISTRATION = "user_registration";
     public static final String TAG_EDUCATION_DETAILS_SUBMIT = "user_education_submit";
@@ -218,6 +217,9 @@ public class Constants
     public static final String OTP_BODY = "Dear User,\nYour OTP for college app verification is-";
     public static final String OTP_CODE = "code";
     public static final String OTP_VERIFICATION = "otp_verification";
+    public static final String LOGIN_TYPE_ANONYMOUS = "anonymous";
+    public static final String LOGIN_TYPE_FACEBOOK  = "facebook";
+    public static final String LOGIN_TYPE_TRUECALLER = "truecaller";
 
     // for close app
     public static boolean READY_TO_CLOSE = false;
@@ -245,5 +247,12 @@ public class Constants
     public static String MESSAGE="message";
     public static String COLLAPSE_KEY="collapse_key";
     public static String URL="url";
+
+    // GA tacker ID
+    public static final String TRACKER_ID = "UA-67752258-1";
+    // Apps Flyer ID
+    public static final String APPSFLYER_ID = "v3bLHGLaEavK2ePfvpj6aA" ;
+    // Connecto ID for GCM
+    public static final String SENDER_ID = "864760274938";
 
 }

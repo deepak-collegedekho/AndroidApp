@@ -1,6 +1,8 @@
 package com.collegedekho.app.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,13 +23,14 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.UserEducation;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
+import com.facebook.login.LoginManager;
+import com.truecaller.android.sdk.TrueButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -35,8 +38,10 @@ import java.util.HashMap;
  */
 public class ProfileEditFragment extends BaseFragment {
 
-    ViewPager profilePager;
-    int currentPosition=0;
+    private ViewPager profilePager;
+    private int currentPosition=0;
+    private ProfilePagerAdapter profileAdapter;
+
     public ProfileEditFragment() {
         // required empty constructor
     }
@@ -53,6 +58,7 @@ public class ProfileEditFragment extends BaseFragment {
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Nullable
     @Override
@@ -91,12 +97,13 @@ public class ProfileEditFragment extends BaseFragment {
         }
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
         try {
             MainActivity activity = (MainActivity) getActivity();
-            activity.init();
+            //activity.init();
             activity.showOverflowMenu(false);
             activity.currentFragment=this;
             ArrayList<String>titleList=new ArrayList<>();
@@ -106,12 +113,14 @@ public class ProfileEditFragment extends BaseFragment {
                 titleList.add("Exams");
             }
             titleList.add("Streams");
-            ProfilePagerAdapter adapter=new ProfilePagerAdapter(getChildFragmentManager(),titleList.size(),titleList);
-            profilePager.setAdapter(adapter);
+            profileAdapter=new ProfilePagerAdapter(getChildFragmentManager(),titleList.size(),titleList);
+            profilePager.setAdapter(profileAdapter);
             profilePager.setCurrentItem(currentPosition);
         } catch (ClassCastException e) {
             e.printStackTrace();
         }
+
+
     }
 
     public interface onProfileUpdateListener {
@@ -127,7 +136,9 @@ public class ProfileEditFragment extends BaseFragment {
     class ProfilePagerAdapter extends FragmentStatePagerAdapter{
         private int NUM_PAGES=1;
         ArrayList<String>titleList;
-        public ProfilePagerAdapter(FragmentManager fm,int pageCount,ArrayList<String> titleList) {
+        public ProfileChildFragment profileChildFragment;
+
+        public ProfilePagerAdapter(FragmentManager fm, int pageCount, ArrayList<String> titleList) {
             super(fm);
             this.titleList=titleList;
             NUM_PAGES=pageCount;
@@ -135,12 +146,12 @@ public class ProfileEditFragment extends BaseFragment {
 
         @Override
         public Fragment getItem(int position) {
-           Fragment fragment= ProfileChildFragment.newInstance();
+            profileChildFragment= ProfileChildFragment.newInstance();
             Bundle b=new Bundle();
             b.putInt("position", position);
             b.putString("title",titleList.get(position));
-            fragment.setArguments(b);
-            return  fragment;
+            profileChildFragment.setArguments(b);
+            return  profileChildFragment;
         }
 
         @Override
@@ -157,7 +168,8 @@ public class ProfileEditFragment extends BaseFragment {
         }
     }
 
-    public static class ProfileChildFragment extends BaseFragment{
+    @SuppressLint("ValidFragment")
+    public static class ProfileChildFragment extends BaseFragment {
         private int position;
         private LinearLayout examsLayout, streamsLayout,recommendedLayout, educationLayout,psychometricTestLayout;
         CardView userExamsLayout, userStreamsLayout, userEducationLayout,userRecommendedLayout,userProfileInputLayout;
@@ -165,8 +177,9 @@ public class ProfileEditFragment extends BaseFragment {
         private Button btnTakePsycho;
         private TextView saveButton;
         private onProfileUpdateListener mListener;
-        public ProfileChildFragment() {
 
+        public ProfileChildFragment(){
+            // required empty constructor
         }
 
         public static ProfileChildFragment newInstance() {
@@ -214,15 +227,13 @@ public class ProfileEditFragment extends BaseFragment {
             btnEditExams.setOnClickListener(this);
             btnEditEducation.setOnClickListener(this);
             btnTakePsycho.setOnClickListener(this);
-
+            view.findViewById(R.id.edit_profile_fb_login).setOnClickListener(this);
             saveButton=(TextView)view.findViewById(R.id.profile_save_button);
             saveButton.setOnClickListener(this);
             EditText mProfileName = (EditText) view.findViewById(R.id.profile_edit_name);
             EditText mProfilePhone = (EditText) view.findViewById(R.id.profile_edit_phone);
-            //EditText mProfileEmail  = (EditText) rootView.findViewById(R.id.profile_edit_email);
             if (MainActivity.user != null) {
                 String name = MainActivity.user.getName();
-                String email = MainActivity.user.getEmail();
                 String phone = MainActivity.user.getPhone_no();
 
                 if (phone != null)
@@ -235,11 +246,6 @@ public class ProfileEditFragment extends BaseFragment {
                     mProfileName.setText(name);
 
 
-          /*  if(email.contains("anonymouscollegedekho"))
-                mProfileEmail.setText(MainActivity.user.getPrimaryEmail());
-            else
-                mProfileEmail.setText(email);*/
-
                 if (phone == null || phone.isEmpty()) {
                     String mPhone = MainActivity.user.getPrimaryPhone();
                     if (mPhone != null)
@@ -247,8 +253,9 @@ public class ProfileEditFragment extends BaseFragment {
                     mProfilePhone.setText(mPhone);
                 } else
                     mProfilePhone.setText(phone);
-
             }
+
+
 
         }
 
@@ -284,6 +291,20 @@ public class ProfileEditFragment extends BaseFragment {
                         userExamsLayout.setVisibility(View.GONE);
                         userStreamsLayout.setVisibility(View.GONE);
                         userRecommendedLayout.setVisibility(View.GONE);
+                        View view  = getView();
+                        if(view != null){
+                            if (MainActivity.user != null && MainActivity.user.is_anony()){
+                                view.findViewById(R.id.com_truecaller_android_sdk_truebutton).setVisibility(View.VISIBLE);
+                                view.findViewById(R.id.edit_profile_fb_login).setVisibility(View.VISIBLE);
+                            }
+                            TrueButton trueButton =(TrueButton)view.findViewById(R.id.com_truecaller_android_sdk_truebutton);
+                            boolean usable = trueButton.isUsable();
+
+                            if (usable)
+                                trueButton.setTrueClient(MainActivity.mTrueClient);
+                            else
+                                trueButton.setVisibility(View.GONE);
+                        }
                         break;
                     case "Education":
                         userProfileInputLayout.setVisibility(View.GONE);
@@ -340,6 +361,7 @@ public class ProfileEditFragment extends BaseFragment {
 
         }
 
+
         @Override
         public void onClick(View view) {
 
@@ -357,11 +379,11 @@ public class ProfileEditFragment extends BaseFragment {
                     onTakePsychometricTest();
                     break;
                 case R.id.profile_save_button:
-                    if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
-                        ((MainActivity)getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
-                        return;
-                    }
                     mUpdateProfile();
+                    break;
+                case R.id.edit_profile_fb_login:
+                    LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends", "email", "user_likes", "user_education_history"));
+
                     break;
             }
 
@@ -460,7 +482,6 @@ public class ProfileEditFragment extends BaseFragment {
             View v = getView();
             if (v == null) return;
 
-            // String email    = ((EditText) v.findViewById(R.id.profile_edit_email)).getText().toString();
             String name = ((EditText) v.findViewById(R.id.profile_edit_name)).getText().toString();
             String phone = ((EditText) v.findViewById(R.id.profile_edit_phone)).getText().toString();
             if (name == null || name.trim().isEmpty()) {
@@ -476,17 +497,8 @@ public class ProfileEditFragment extends BaseFragment {
                 mListener.displayMessage(R.string.PHONE_INVALID);
                 return;
             }
-           /* else if (email == null || email.isEmpty()){
-                Utils.DisplayToast(getActivity(), Constants.EMAIL_EMPTY);
-                return;
-            }
-            else if(!Utils.isValidEmail(email)){
-                Utils.DisplayToast(getActivity(), Constants.EMAIL_INVALID);
-                return;
-            }*/
 
             HashMap<String, String> hashMap = new HashMap<>();
-            // hashMap.put(Constants.USER_EMAIL, email);
             hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), name.trim());
             hashMap.put(MainActivity.getResourceString(R.string.USER_PHONE), phone.trim());
             if (mListener != null) {
@@ -508,5 +520,7 @@ public class ProfileEditFragment extends BaseFragment {
         private void onTakePsychometricTest() {
             mListener.onTakePsychometric();
         }
+
+
     }
 }

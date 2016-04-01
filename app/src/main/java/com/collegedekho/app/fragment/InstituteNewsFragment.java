@@ -185,7 +185,7 @@ public class InstituteNewsFragment extends BaseFragment  {
                 break;
             case R.id.news_detail_layout:
 
-                (( MainActivity)getActivity()).onNewsSelected(this.mNews, true);
+                (( MainActivity)getActivity()).onNewsSelected(this.mNews, true, null);
                 break;
             default:
                 break;

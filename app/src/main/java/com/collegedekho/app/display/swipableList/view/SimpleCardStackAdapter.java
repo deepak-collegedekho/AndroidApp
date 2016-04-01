@@ -107,7 +107,7 @@ public final class SimpleCardStackAdapter extends CardStackAdapter {
         else
             ((TextView) convertView.findViewById(R.id.card_recommended_geolocation)).setText(text);
 
-        //setting institute image
+        //setting institute image_new
         fadeInImageView = ((FadeInImageView) convertView.findViewById(R.id.card_recommended_institute_image));
 
         //fadeInImageView.setDefaultImageResId(R.drawable.default_banner);

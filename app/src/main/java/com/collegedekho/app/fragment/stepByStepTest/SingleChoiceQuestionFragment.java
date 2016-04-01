@@ -190,7 +190,7 @@ public class SingleChoiceQuestionFragment extends StepByStepFragment implements 
             TextView choiceText = (TextView) convertView.findViewById(R.id.single_choice_text);
             choiceText.setText(sbsChoice.getName());
 
-            //set image
+            //set image_new
             ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
             NetworkImageView optionImage = (NetworkImageView) convertView.findViewById(R.id.single_option_image);
 

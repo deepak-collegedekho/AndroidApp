@@ -21,7 +21,7 @@ public class Facility implements Parcelable {
         }
     };
     public String tag;
-    public String image;
+    public String image_new;
 
     public Facility() {
 
@@ -29,7 +29,7 @@ public class Facility implements Parcelable {
 
     public Facility(Parcel source) {
         tag = source.readString();
-        image = source.readString();
+        image_new = source.readString();
     }
 
     @Override
@@ -40,6 +40,6 @@ public class Facility implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(tag);
-        dest.writeString(image);
+        dest.writeString(image_new);
     }
 }

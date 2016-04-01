@@ -3,37 +3,33 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.entities.User;
+import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
-import com.facebook.AccessToken;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
+import com.collegedekho.app.utils.Utils;
 import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
+import com.truecaller.android.sdk.ITrueCallback;
+import com.truecaller.android.sdk.TrueButton;
+import com.truecaller.android.sdk.TrueClient;
+import com.truecaller.android.sdk.TrueError;
+import com.truecaller.android.sdk.TrueProfile;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 
 /**
  * Created by sureshsaini on 20/11/15.
  */
-public class LoginFragment extends  BaseFragment{
+public class LoginFragment extends  BaseFragment {
 
     private OnUserSignUpListener mListener;
 
@@ -54,121 +50,18 @@ public class LoginFragment extends  BaseFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_splash_login,container, false);
-        //rootView.findViewById(R.id.sign_up_button).setOnClickListener(this);
+        TrueButton trueButton =(TrueButton)rootView.findViewById(R.id.com_truecaller_android_sdk_truebutton);
+        boolean usable = trueButton.isUsable();
+
+        if (usable)
+            trueButton.setTrueClient(MainActivity.mTrueClient);
+        else
+           trueButton.setVisibility(View.GONE);
+
         rootView.findViewById(R.id.sign_up_skip).setOnClickListener(this);
-
-        LoginButton fbLoginutton = (LoginButton) rootView.findViewById(R.id.facebook_sign_in);
         (rootView.findViewById(R.id.fb_login)).setOnClickListener(this);
-//        LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends", "email", "user_likes", "user_education_history", "user_birthday"));
-//        fbLoginutton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "email", "user_likes", "user_education_history"));
-//        mFacebookCallbackListener(fbLoginutton);
+
         return rootView;
-    }
-
-//    @Override
-//    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
-//        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
-//            view.findViewById(R.id.splash_no_internet_info_layout).setVisibility(View.GONE);
-//            view.findViewById(R.id.login_layout).setVisibility(View.VISIBLE);
-//        }
-//        else {
-//            view.findViewById(R.id.splash_no_internet_info_layout).setVisibility(View.VISIBLE);
-//            view.findViewById(R.id.login_layout).setVisibility(View.GONE);
-//        }
-//    }
-
-    /**
-     * This method is used to register this fragment with  facebook login account
-     *  and callback methods call when  try to login with facebook
-     */
-    private void mFacebookCallbackListener(LoginButton loginButton)
-    {
-        loginButton.registerCallback(MainActivity.callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                // App code
-                Log.d(TAG, "facebook login successfully connected");
-                ((MainActivity) getActivity()).showProgressDialog("Signing with facebook account");
-                loginResult.getAccessToken();
-                if (AccessToken.getCurrentAccessToken() != null) {
-                    RequestData();
-                }
-            }
-
-            @Override
-            public void onCancel() {
-                // App code
-                Log.e(TAG, "facebook login canceled");
-                mListener.displayMessage(R.string.FACEBOOK_SIGNIN_FAILED);
-            }
-
-            @Override
-            public void onError(FacebookException e) {
-//                e.printStackTrace();
-                Log.e(TAG, "facebook login on error");
-                mListener.displayMessage(R.string.SIGNIN_ERROR);
-            }
-        });
-    }
-
-    /**
-     *  This method request user profile info after successfully
-     *  login with facebook account
-     */
-    public void RequestData(){
-        GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-            @Override
-            public void onCompleted(JSONObject object, GraphResponse response) {
-                JSONObject json = response.getJSONObject();
-                try {
-                    if (json != null) {
-                        // get user profile info
-                       /* JSONObject pictureJsonObj = json.getJSONObject("picture");
-                        JSONObject data = pictureJsonObj.getJSONObject("data");*/
-
-                        //String image = data.getString("url");
-                        String image ="https://graph.facebook.com/" + json.optString("id") + "/picture?type=large";
-
-                        if (MainActivity.user == null)
-                            MainActivity.user = new User();
-
-                        MainActivity.user.setImage(image);
-
-                        HashMap hashMap = new HashMap<>();
-                        hashMap.put(MainActivity.getResourceString(R.string.USER_FIRST_NAME), json.getString("first_name"));
-                        hashMap.put(MainActivity.getResourceString(R.string.USER_LAST_NAME), json.getString("last_name"));
-                        hashMap.put(MainActivity.getResourceString(R.string.USER_VERIFIED), json.getString("verified"));
-                        hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), json.getString("name"));
-                        hashMap.put(MainActivity.getResourceString(R.string.USER_LOCALE), json.getString("locale"));
-                        hashMap.put(MainActivity.getResourceString(R.string.USER_GENDER), json.getString("gender"));
-                        hashMap.put(MainActivity.getResourceString(R.string.USER_UPDATED_TIME), json.getString("updated_time"));
-                        hashMap.put(MainActivity.getResourceString(R.string.USER_LINK), json.getString("link"));
-                        hashMap.put(MainActivity.getResourceString(R.string.USER_ID), json.getString("id"));
-                        hashMap.put(MainActivity.getResourceString(R.string.USER_TIMEZONE), json.getString("timezone"));
-                        hashMap.put(MainActivity.getResourceString(R.string.USER_EMAIL), json.getString("email"));
-                        hashMap.put(MainActivity.getResourceString(R.string.USER_IMAGE), image);
-                        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-                        hashMap.put(MainActivity.getResourceString(R.string.USER_TOKEN), accessToken.getToken());
-                        hashMap.put(MainActivity.getResourceString(R.string.USER_EXPIRE_AT), new SimpleDateFormat("yyyy-MM-dd").format(accessToken.getExpires()) + "T" + new SimpleDateFormat("HH:mm:ss").format(accessToken.getExpires()));
-                        mFacebookLogin(hashMap);
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "first_name,last_name,verified,name,locale,gender,updated_time,link,id,timezone,email,picture");
-        request.setParameters(parameters);
-        request.executeAsync();
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-            MainActivity.callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -187,14 +80,14 @@ public class LoginFragment extends  BaseFragment{
         super.onDetach();
         mListener = null;
     }
+
     @Override
     public void onClick(View view) {
         if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
-//            Toast.makeText(getActivity(), "Internet connection not found.", Toast.LENGTH_LONG).show();
-            ((MainActivity)getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+            ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.sign_up_skip:
                 mSkipUserLogin();
                 break;
@@ -203,71 +96,23 @@ public class LoginFragment extends  BaseFragment{
                 LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends", "email", "user_likes", "user_education_history"));
                 break;
         }
-       /* else if (view.getId() == R.id.sign_up_button) {
-            String email = ((EditText) getView().findViewById(R.id.splash_login_email)).getText().toString();
-            String password = ((EditText) getView().findViewById(R.id.splash_login_password)).getText().toString();
-            String name = ((EditText) getView().findViewById(R.id.splash_login_name)).getText().toString();
-            String phone = ((EditText) getView().findViewById(R.id.splash_login_phone)).getText().toString();
-            if (name == null || name.isEmpty()) {
-                Utils.DisplayToast(getActivity(), Constants.NAME_EMPTY);
-                return;
-            } else if (!isValidName(name)) {
-                Utils.DisplayToast(getActivity(), Constants.NAME_INVALID);
-                return;
-            } else if (phone == null || phone.isEmpty()) {
-                Utils.DisplayToast(getActivity(), Constants.PHONE_EMPTY);
-                return;
-            } else if (phone.length() <= 9 || !isValidPhone(phone)) {
-                Utils.DisplayToast(getActivity(), Constants.PHONE_INVALID);
-                return;
-            } else if (email == null || email.isEmpty()) {
-                Utils.DisplayToast(getActivity(), Constants.EMAIL_EMPTY);
-                return;
-            } else if (!isValidEmail(email)) {
-                Utils.DisplayToast(getActivity(), Constants.EMAIL_INVALID);
-                return;
-            } else if (password == null || password.isEmpty()) {
-                Utils.DisplayToast(getActivity(), Constants.PASSWORD_EMPTY);
-                return;
-            } else if (password.length() < 6) {
-                Utils.DisplayToast(getActivity(), Constants.PASSWORD_INVALID);
-                return;
-            }
-
-            HashMap hashMap = new HashMap<>();
-            hashMap.put(Constants.USER_EMAIL, email);
-            hashMap.put(Constants.USER_PASSWORD, password);
-            hashMap.put(Constants.USER_NAME, name);
-            hashMap.put(Constants.USER_PHONE, phone);
-            mUserSignUp(hashMap);
-        }*/
     }
-   /* private void mUserSignUp(HashMap params)
-    {
-        if(mListener != null)
-            mListener.onSplashUserSignUp(params);
-    }*/
 
     private void mSkipUserLogin()
     {
-        if(mListener != null)
-            mListener.onSkipUserLogin();
-    }
+        if(mListener != null) {
+            HashMap<String, String> params = new HashMap<>();
+            String deviceId = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
+            params.put(MainActivity.getResourceString(R.string.USER_DEVICE_ID), deviceId);
+            params.put(MainActivity.getResourceString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
 
-    private void mFacebookLogin(HashMap params)
-    {
-        if(mListener != null)
-            mListener.onFacebookLogin(params);
+            mListener.onSkipUserLogin(params);
+        }
     }
-
 
     public interface OnUserSignUpListener {
 
-      //void onSplashUserSignUp(HashMap<String,String> params);
-
-        void onSkipUserLogin();
-
-        void onFacebookLogin(HashMap<String,String> params);
+        void onSkipUserLogin(HashMap<String, String> params);
         void displayMessage(int messageId);
 
     }
