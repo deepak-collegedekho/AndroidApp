@@ -50,7 +50,9 @@ public class DropDownQuestionFragment extends PsychometricQuestionFragment imple
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             pQuestion = getArguments().getParcelable(ARG_QUESTION);
-            mIsRequired = pQuestion.isRequired();
+            if(pQuestion!=null) {
+                mIsRequired = pQuestion.isRequired();
+            }
         }
     }
 
@@ -134,7 +136,7 @@ public class DropDownQuestionFragment extends PsychometricQuestionFragment imple
         String key = (String) this.mChoiceListAdapter.getItem(this.mSelectedPosition);
         String value = this.mChoiceHashMap.get(key);
 
-        super.setAnswer((String) pQuestion.getField().get(0), value);
+        super.setAnswer(pQuestion.getField().get(0), value);
     }
 
     private class ChoiceListAdapter extends ArrayAdapter
@@ -151,7 +153,7 @@ public class DropDownQuestionFragment extends PsychometricQuestionFragment imple
             this.mContext = context;
             this.mRowLayout = resource;
             this.mSpinnerRowTextView = textViewResourceId;
-            this.mChoiceList = (ArrayList<String>) objects;
+            this.mChoiceList = objects;
         }
 
         public ChoiceListAdapter(Context context, int resource, List objects, ArrayList<String> mChoiceList, Context mContext, int mRowLayout) {

@@ -88,8 +88,11 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                                 if (obj == null) continue;
                                 obj.setSelected(false);
                             }
+                            if(count>=position) {
+                                examDetail.get(position).setSelected(true);
+                            }
                         }
-                        examDetail.get(position).setSelected(true);
+
                     }
 
                     @Override

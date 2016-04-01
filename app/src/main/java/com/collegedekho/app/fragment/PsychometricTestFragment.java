@@ -56,7 +56,7 @@ private static PsychometricTestFragment.OnNextPageListener mNextListener;
             if(end>mQuestionList.size()){
                 end=mQuestionList.size()-start;
             }
-            subList = new ArrayList<PsychometricTestQuestion>(mQuestionList.subList(start, end));
+            subList = new ArrayList<>(mQuestionList.subList(start, end));
         }
     }
 

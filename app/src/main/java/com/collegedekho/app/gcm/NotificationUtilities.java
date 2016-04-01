@@ -1,21 +1,17 @@
 package com.collegedekho.app.gcm;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
-import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -23,7 +19,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -189,7 +184,7 @@ public final class NotificationUtilities {
         digest.reset();
 
         byte[] byteData = digest.digest(input.getBytes("UTF-8"));
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < byteData.length; i++){
             sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
@@ -254,7 +249,7 @@ public final class NotificationUtilities {
     }
 
     public static String getBodyAsJSON(final boolean isRegister){
-        List<Pair<String, String>> list_params = new ArrayList<Pair<String, String>>();
+        List<Pair<String, String>> list_params = new ArrayList<>();
         fillAlphaPairList(list_params, isRegister);
 
         StringBuilder bodyBuilder = new StringBuilder();
@@ -478,7 +473,7 @@ public final class NotificationUtilities {
     }
 
     public static String getBodyAsUrlEncoded(final boolean isRegister){
-        List<Pair<String, String>> list_params = new ArrayList<Pair<String, String>>();
+        List<Pair<String, String>> list_params = new ArrayList<>();
         fillAlphaPairList(list_params, isRegister);
 
         StringBuilder bodyBuilder = new StringBuilder();

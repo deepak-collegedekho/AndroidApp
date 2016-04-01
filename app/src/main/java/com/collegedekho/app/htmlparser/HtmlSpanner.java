@@ -109,7 +109,7 @@ public class HtmlSpanner {
     public HtmlSpanner(HtmlCleaner cleaner, FontResolver fontResolver) {
         this.htmlCleaner = cleaner;
         this.fontResolver = fontResolver;
-        this.handlers = new HashMap<String, TagNodeHandler>();
+        this.handlers = new HashMap<>();
 
         registerBuiltInHandlers();
     }
@@ -117,7 +117,7 @@ public class HtmlSpanner {
     public HtmlSpanner(Activity activity,HtmlCleaner cleaner, FontResolver fontResolver) {
         this.htmlCleaner = cleaner;
         this.fontResolver = fontResolver;
-        this.handlers = new HashMap<String, TagNodeHandler>();
+        this.handlers = new HashMap<>();
 
         registerBuiltInHandlers(activity);
     }
@@ -315,8 +315,7 @@ public class HtmlSpanner {
         }
     }
 
-    private void handleContent(SpannableStringBuilder builder, Object node,
-                               SpanStack stack, CancellationCallback cancellationCallback ) {
+    private void handleContent(SpannableStringBuilder builder, Object node, CancellationCallback cancellationCallback ) {
 
         checkForCancellation(cancellationCallback);
 
@@ -356,7 +355,7 @@ public class HtmlSpanner {
             for (Object childNode : node.getChildren()) {
 
                 if ( childNode instanceof ContentNode ) {
-                    handleContent( builder, childNode, stack, cancellationCallback );
+                    handleContent( builder, childNode, cancellationCallback );
                 } else if ( childNode instanceof TagNode ) {
                     applySpan( builder, (TagNode) childNode, stack, cancellationCallback );
                 }

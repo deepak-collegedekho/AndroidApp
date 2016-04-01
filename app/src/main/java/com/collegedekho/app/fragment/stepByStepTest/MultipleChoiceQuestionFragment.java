@@ -69,9 +69,11 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.pQuestion = getArguments().getParcelable(ARG_QUESTION);
-            this.mIsRequired = this.pQuestion.isRequired();
+            if(pQuestion!=null){
+                this.mIsRequired = this.pQuestion.isRequired();
+                this.mIsChecked = new boolean[this.pQuestion.getChoices().size()];
+            }
             this.mAnswers = new HashMap<Integer, Integer>();
-            this.mIsChecked = new boolean[this.pQuestion.getChoices().size()];
         }
     }
 

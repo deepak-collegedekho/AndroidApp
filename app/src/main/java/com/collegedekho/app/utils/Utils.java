@@ -93,9 +93,10 @@ public class Utils {
      * @return
      */
     public static boolean isValidEmail(CharSequence target) {
-        if(target == null || target.length() <= 0)
-            return false;
-        return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+//        if(target == null || target.length() <= 0)
+//            return false;
+//        return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        return !(target == null || target.length() <= 0) && target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
     /**
@@ -164,9 +165,10 @@ public class Utils {
         return subjectColors[colorIndex];
     }
     public static boolean isUriEndsWithNumber(String resourceUri){
-        if (resourceUri!=null && resourceUri.length()>1)
-        return resourceUri.substring(0,resourceUri.length()-1).matches("^.*\\d");
-        return false;
+//        if (resourceUri!=null && resourceUri.length()>1)
+//        return resourceUri.substring(0,resourceUri.length()-1).matches("^.*\\d");
+//        return false;
+        return resourceUri!=null && resourceUri.length()>1 && resourceUri.substring(0,resourceUri.length()-1).matches("^.*\\d");
     }
 
     public static void SetCounterAnimation(final TextView textView, int count, final String prefix, final String suffix, long duration)
@@ -529,7 +531,7 @@ public class Utils {
         }
     }
 
-    public static void app_launched(Context mContext) {
+    public static void appLaunched(Context mContext) {
          int DAYS_UNTIL_PROMPT = 2;//Min number of days
          int LAUNCHES_UNTIL_PROMPT = 5;//Min number of launches
         SharedPreferences prefs = mContext.getSharedPreferences("apprater", Context.MODE_PRIVATE);

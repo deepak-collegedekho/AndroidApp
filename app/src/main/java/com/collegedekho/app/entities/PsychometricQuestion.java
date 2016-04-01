@@ -129,6 +129,6 @@ public class PsychometricQuestion implements Parcelable {
 
     public boolean getHasSecondary()
     {
-        return secondary.size() > 0 ? true : false;
+        return secondary.size() > 0 ;
     }
 }

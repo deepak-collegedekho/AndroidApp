@@ -16,11 +16,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.resource.Constants;
@@ -274,9 +272,10 @@ public class ProfileEditFragment extends BaseFragment {
         @Override
         public void onResume() {
             super.onResume();
-            if(getArguments()!=null){
-                position=getArguments().getInt("position");
-                String title=getArguments().getString("title");
+            if(getArguments()!=null) {
+                position = getArguments().getInt("position");
+                String title = getArguments().getString("title");
+                if(title!=null){
                 switch (title) {
                     case "About":
                         userProfileInputLayout.setVisibility(View.VISIBLE);
@@ -311,6 +310,7 @@ public class ProfileEditFragment extends BaseFragment {
                         userRecommendedLayout.setVisibility(View.VISIBLE);
                         break;
                 }
+            }
             }
             if(MainActivity.user.getIs_preparing().equals("1")) {
 //                btnEditStreams.setVisibility(View.VISIBLE);
@@ -433,7 +433,7 @@ public class ProfileEditFragment extends BaseFragment {
             CardView cardView = (CardView) LayoutInflater.from(context).inflate(R.layout.exams_card_layout, null);
             cardView.setLayoutParams(layoutParams);
             ((TextView) cardView.findViewById(R.id.exam_name)).setText(streamName);
-            ((TextView) cardView.findViewById(R.id.exam_year)).setVisibility(View.GONE);
+            (cardView.findViewById(R.id.exam_year)).setVisibility(View.GONE);
             parentLayout.addView(cardView);
         }
 
@@ -451,7 +451,7 @@ public class ProfileEditFragment extends BaseFragment {
                 CardView cardView = (CardView) LayoutInflater.from(context).inflate(R.layout.exams_card_layout, null);
                 cardView.setLayoutParams(layoutParams);
                 ((TextView) cardView.findViewById(R.id.exam_name)).setText(streamName);
-                ((TextView) cardView.findViewById(R.id.exam_year)).setVisibility(View.GONE);
+                (cardView.findViewById(R.id.exam_year)).setVisibility(View.GONE);
                 parentLayout.addView(cardView);
             }
         }

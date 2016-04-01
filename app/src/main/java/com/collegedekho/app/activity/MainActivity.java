@@ -121,6 +121,7 @@ import com.collegedekho.app.fragment.NotPreparingFragment;
 import com.collegedekho.app.fragment.OTPVerificationFragment;
 import com.collegedekho.app.fragment.ProfileEditFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
+import com.collegedekho.app.fragment.PsychometricStreamFragment;
 import com.collegedekho.app.fragment.PsychometricTestParentFragment;
 import com.collegedekho.app.fragment.QnAQuestionDetailFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
@@ -132,11 +133,8 @@ import com.collegedekho.app.fragment.TabFragment;
 import com.collegedekho.app.fragment.UserAlertsFragment;
 import com.collegedekho.app.fragment.UserAlertsParentFragment;
 import com.collegedekho.app.fragment.UserEducationFragment;
-import com.collegedekho.app.fragment.VideosFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
-import com.collegedekho.app.gcm.NotificationUtilities;
-import com.collegedekho.app.gcm.RegistrationIntentService;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.listener.OnArticleSelectListener;
@@ -220,7 +218,7 @@ SOFTWARE.*/
 public class MainActivity extends AppCompatActivity
         implements  LoaderManager.LoaderCallbacks<Cursor>,ExamsFragment.OnExamsSelectListener,
         ProfileFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
-        DataLoadListener, StreamFragment.OnStreamInteractionListener,AdapterView.OnItemSelectedListener,
+        DataLoadListener, StreamFragment.OnStreamInteractionListener,PsychometricStreamFragment.OnStreamInteractionListener,AdapterView.OnItemSelectedListener,
         InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener,
         OnNewsSelectListener,ProfileEditFragment.onProfileUpdateListener,
         InstituteQnAFragment.OnQuestionAskedListener, FilterFragment.OnFilterInteractionListener,
@@ -441,6 +439,11 @@ public class MainActivity extends AppCompatActivity
         // TODO: Move this to where you establish a user session
         logUser();
         setupOtpRequest(true);
+        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        this.IS_PROFILE_LOADED = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getBoolean(getResourceString(R.string.USER_PROFILE_LOADED), false);
+        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED && IS_PROFILE_LOADED) {
+            Utils.appLaunched(this);
+        }
     }
 
     @Override
@@ -842,7 +845,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (currentFragment instanceof ProfileEditFragment || currentFragment instanceof ExamsFragment || currentFragment instanceof UserEducationFragment ||currentFragment instanceof StreamFragment || currentFragment instanceof PsychometricTestParentFragment || currentFragment instanceof OTPVerificationFragment)
+        if (currentFragment instanceof ProfileEditFragment || currentFragment instanceof ExamsFragment || currentFragment instanceof UserEducationFragment ||currentFragment instanceof StreamFragment || currentFragment instanceof PsychometricStreamFragment || currentFragment instanceof PsychometricTestParentFragment || currentFragment instanceof OTPVerificationFragment)
             menu.setGroupVisible(R.id.main_menu_group, false);
         else
             menu.getItem(0).setVisible(true);
@@ -856,8 +859,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void showOverflowMenu(boolean showMenu){
-        if(menu == null)
-            return;
+//        if(menu == null)
+//            return;
 //        menu.setGroupVisible(R.id.main_menu_group, showMenu);
     }
 
@@ -1105,7 +1108,7 @@ public class MainActivity extends AppCompatActivity
             String results=JSON.std.asString(map.get("results"));
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
             this.mClearBackStack();
-            this.mDisplayFragment(StreamFragment.newInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
+            this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams),addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
 //                displayOTPAlert(this);
             requestOtp();
         } catch (IOException e) {
@@ -1118,7 +1121,7 @@ public class MainActivity extends AppCompatActivity
             Map<String, Object> map = JSON.std.mapFrom(response);
             String results=JSON.std.asString(map.get("results"));
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
-            this.mDisplayFragment(StreamFragment.newEditableInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
+            this.mDisplayFragment(PsychometricStreamFragment.newEditableInstance(new ArrayList(streams),addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
 //                displayOTPAlert(this);
             requestOtp();
         } catch (IOException e) {
@@ -2023,7 +2026,7 @@ public class MainActivity extends AppCompatActivity
                 this.mUpdateUndecidedCount(this.mUndecidedCount, true);
                 parentIndex = tags[1];
                 if (parentIndex.equals("true"))
-                    this.OnCDRecommendedLoadNext("");
+                    this.OnCDRecommendedLoadNext();
             }
                 break;
             case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
@@ -2037,7 +2040,7 @@ public class MainActivity extends AppCompatActivity
                     this.mUpdateUndecidedCount(this.mUndecidedCount, true);
                     parentIndex = tags[1];
                     if (parentIndex.equals("true"))
-                        this.OnCDRecommendedLoadNext("");
+                        this.OnCDRecommendedLoadNext();
                 }
                 break;
             case Constants.TAG_LOAD_UNDECIDED_INSTITUTE:
@@ -2051,7 +2054,7 @@ public class MainActivity extends AppCompatActivity
                     this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.UNDECIDED);
                     parentIndex = tags[1];
                     if (parentIndex.equals("true"))
-                        this.OnCDRecommendedLoadNext("");
+                        this.OnCDRecommendedLoadNext();
                 }
                 else if (tags.length == 1)
                 {
@@ -2071,7 +2074,7 @@ public class MainActivity extends AppCompatActivity
                     this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.UNDECIDED);
                     parentIndex = tags[1];
                     if (parentIndex.equals("true"))
-                        this.OnCDRecommendedLoadNext("");
+                        this.OnCDRecommendedLoadNext();
                 }
                 else if (tags.length == 1)
                 {
@@ -2395,6 +2398,7 @@ public class MainActivity extends AppCompatActivity
                 String u = "";
                 u = JSON.std.asString(MainActivity.user);
                 this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 onBackPressed();
                 onBackPressed();
             } catch (IOException e) {
@@ -3277,7 +3281,7 @@ public class MainActivity extends AppCompatActivity
 //            FragmentManager fragmentManager = getSupportFragmentManager();
 //            Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_NEWS_DETAIL);
                 if (currentFragment instanceof NewsDetailFragment) {
-                    ((NewsDetailFragment) currentFragment).updateNews(news);
+                    (currentFragment).updateNews(news);
                 }else {
                     this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackstack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
                 }
@@ -3373,15 +3377,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onInstituteShortlisted(int position) {
-        Institute institute = this.mInstituteList.get(position);
-        if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
-            if (institute.getPartner_status() > 0) {
+        if (mInstituteList != null && mInstituteList.size() > position && position>=0) {
+            Institute institute = this.mInstituteList.get(position);
+            if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
+                if (institute.getPartner_status() > 0) {
 //                displayOTPAlert(this);
-                requestOtp();
-            }
-            this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
-        }else
-            this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
+                    requestOtp();
+                }
+                this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
+            } else
+                this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
+        }
     }
 
     @Override
@@ -3447,13 +3453,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onInstituteShortlisted()
-    {
-        Institute institute = this.mInstituteList.get(this.currentInstitute);
-        if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
-            this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + this.currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
-        else
-            this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
+    public void onInstituteShortlisted() {
+        try {
+            Institute institute = this.mInstituteList.get(this.currentInstitute);
+            if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
+                this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + this.currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
+        }catch(Exception e){
+
+        }
     }
 
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params, int method) {
@@ -3774,9 +3783,9 @@ public class MainActivity extends AppCompatActivity
             MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_QNA_QUESTION_ASKED), eventValue);
 
             if (currentFragment instanceof InstituteDetailFragment) {
-                ((InstituteDetailFragment)currentFragment).instituteQnAQuestionAdded(qnaQuestion);
+                (currentFragment).instituteQnAQuestionAdded(qnaQuestion);
             }else if (currentFragment instanceof  QnAQuestionsListFragment){
-                ((QnAQuestionsListFragment)currentFragment).instituteQnAQuestionAdded(qnaQuestion);
+                (currentFragment).instituteQnAQuestionAdded(qnaQuestion);
             }
 
         } catch (JSONException e) {
@@ -4453,12 +4462,12 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        Bundle bundle = new Bundle();
-        bundle.putStringArrayList(VideosFragment.VIDEO_LIST_ACTIVITY, videos);
-
-        Intent activityIntent = new Intent(MainActivity.this, VideoListActivity.class);
-        activityIntent.putExtras(bundle);
-        this.startActivity(activityIntent);
+//        Bundle bundle = new Bundle();
+//        bundle.putStringArrayList(VideosFragment.VIDEO_LIST_ACTIVITY, videos);
+//
+//        Intent activityIntent = new Intent(MainActivity.this, VideoListActivity.class);
+//        activityIntent.putExtras(bundle);
+//        this.startActivity(activityIntent);
     }
 
     @Override
@@ -4877,9 +4886,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSubmitPsychometricTest(JSONObject params,boolean fromEditProfile) {
         if(fromEditProfile){
-            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM, Constants.BASE_URL + "psychometric/", params, 1);
+            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM, Constants.BASE_URL + "star-psychometric/", params, 1);
         }else {
-            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM, Constants.BASE_URL + "psychometric/", params, 1);
+            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM, Constants.BASE_URL + "star-psychometric/", params, 1);
         }
     }
 
@@ -4929,7 +4938,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void OnCDRecommendedLoadNext(String nextURL)
+    public void OnCDRecommendedLoadNext()
     {
         Map<String , String> params = this.mGetTheFilters();
 
@@ -5754,7 +5763,7 @@ public class MainActivity extends AppCompatActivity
 
         TextView dialog_ok=(TextView)dialogView.findViewById(R.id.btn_dialog_positive);
         TextView dialog_cancel=(TextView)dialogView.findViewById(R.id.btn_dialog_negative);
-        ((TextView)dialogView.findViewById(R.id.plus_nine_one)).setVisibility(View.VISIBLE);
+        (dialogView.findViewById(R.id.plus_nine_one)).setVisibility(View.VISIBLE);
         final EditText edt_phone_number=(EditText)dialogView.findViewById(R.id.user_phone_number);
         edt_phone_number.addTextChangedListener(new TextWatcher() {
             @Override
@@ -5831,7 +5840,7 @@ public class MainActivity extends AppCompatActivity
         final TextView dialog_ok = (TextView) dialogView.findViewById(R.id.btn_dialog_positive);
         TextView dialog_cancel = (TextView) dialogView.findViewById(R.id.btn_dialog_negative);
         TextView dialog_neural = (TextView) dialogView.findViewById(R.id.btn_dialog_nutral);
-        ((View)dialogView.findViewById(R.id.resend_otp_layout)).setVisibility(View.VISIBLE);
+        (dialogView.findViewById(R.id.resend_otp_layout)).setVisibility(View.VISIBLE);
         dialog_ok.setText(getResourceString(R.string.verify));
         edt_phone_number.addTextChangedListener(new TextWatcher() {
             @Override

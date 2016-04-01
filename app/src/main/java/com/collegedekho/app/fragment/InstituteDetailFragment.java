@@ -22,7 +22,6 @@ import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.QnAQuestions;
-import com.collegedekho.app.resource.Constants;
 import com.fasterxml.jackson.jr.ob.JSON;
 
 import org.json.JSONException;

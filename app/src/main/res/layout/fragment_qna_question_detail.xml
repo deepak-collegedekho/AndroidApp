@@ -230,7 +230,7 @@
             android:id="@+id/answer_reply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_mode_edit_white_24dp"
+            android:src="@drawable/edit_icon"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             fab:fab_type="normal"

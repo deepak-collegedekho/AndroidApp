@@ -42,7 +42,7 @@ public final class CSSParser {
 
 		CSSParser parser = new CSSParser();
 
-		List<Rule> rules = new ArrayList<Rule>();
+		List<Rule> rules = new ArrayList<>();
 
 		if (css == null || css.trim().length() == 0) {
 			return rules;
@@ -87,11 +87,11 @@ public final class CSSParser {
 		this.propertyName = "";
 		this.valueName = "";
 		//		this.map = new LinkedHashMap<String, String>();
-		this.values = new ArrayList<PropertyValue>();
+		this.values = new ArrayList<>();
 		this.state = State.INSIDE_SELECTOR;
 		this.previousChar = null;
 		this.beforeCommentMode = null;
-		this.selectorNames = new ArrayList<String>();
+		this.selectorNames = new ArrayList<>();
 	}
 
 	/**
@@ -168,14 +168,12 @@ public final class CSSParser {
 			valueName = "";
 
 			state = State.INSIDE_PROPERTY_NAME;
-			return;
 
 		} else if (Chars.ROUND_BRACKET_BEG.equals(c)) {
 
 			valueName += Chars.ROUND_BRACKET_BEG;
 
 			state = State.INSIDE_VALUE_ROUND_BRACKET;
-			return;
 
 		} else if (Chars.COLON.equals(c)) {
 
@@ -188,7 +186,6 @@ public final class CSSParser {
 		} else {
 
 			valueName += c;
-			return;
 
 		}
 
@@ -207,12 +204,10 @@ public final class CSSParser {
 
 			valueName += Chars.ROUND_BRACKET_END;
 			state = State.INSIDE_VALUE;
-			return;
 
 		} else {
 
 			valueName += c;
-			return;
 
 		}
 
@@ -231,7 +226,6 @@ public final class CSSParser {
 		if (Chars.COLON.equals(c)) {
 
 			state = State.INSIDE_VALUE;
-			return;
 
 		} else if (Chars.SEMI_COLON.equals(c)) {
 
@@ -282,7 +276,6 @@ public final class CSSParser {
 		} else {
 
 			propertyName += c;
-			return;
 
 		}
 
@@ -299,7 +292,6 @@ public final class CSSParser {
 		if (Chars.STAR.equals(previousChar) && Chars.SLASH.equals(c)) {
 
 			state = beforeCommentMode;
-			return;
 
 		}
 
@@ -317,7 +309,6 @@ public final class CSSParser {
 		if (Chars.BRACKET_BEG.equals(c)) {
 
 			state = State.INSIDE_PROPERTY_NAME;
-			return;
 
 		} else if (Chars.COMMA.equals(c)) {
 
@@ -331,7 +322,6 @@ public final class CSSParser {
 		} else {
 
 			selectorName += c;
-			return;
 
 		}
 

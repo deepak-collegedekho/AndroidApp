@@ -21,7 +21,6 @@ import com.collegedekho.app.adapter.QnAQuestionsListAdapter;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -75,7 +74,7 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
         }
         else
         {
-            this.mQnAQuestions = new ArrayList<QnAQuestions>();
+            this.mQnAQuestions = new ArrayList<>();
             this.mInstitute = "";
         }
     }

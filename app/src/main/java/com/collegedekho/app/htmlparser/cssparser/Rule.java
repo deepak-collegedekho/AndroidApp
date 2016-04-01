@@ -59,7 +59,7 @@ public final class Rule {
 
 	public Rule(final List<Selector> selectors) {
 		this.selectors = selectors;
-		this.propertyValues = new ArrayList<PropertyValue>();
+		this.propertyValues = new ArrayList<>();
 	}
 
 	@Override

@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -62,7 +61,9 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mQnAQuestion = getArguments().getParcelable(ARG_PARAM1);
-            mQnAAnswersSet = mQnAQuestion.getAnswer_set();
+            if(mQnAQuestion!=null) {
+                mQnAAnswersSet = mQnAQuestion.getAnswer_set();
+            }
             mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
             mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
         }

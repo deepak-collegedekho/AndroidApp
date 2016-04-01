@@ -37,8 +37,10 @@ public class RegistrationIntentService extends IntentService {
                 subscribeTopics(token);
             }else {
                 String oldRegId= NotificationUtilities.getRegistrationId(this);
-                if (oldRegId!=null || !oldRegId.matches(token)){
-                    sendRegistrationToServer(token);
+                if (oldRegId==null || !oldRegId.matches(token)){
+                    if(token!=null) {
+                        sendRegistrationToServer(token);
+                    }
                 }
             }
         } catch (Exception e) {

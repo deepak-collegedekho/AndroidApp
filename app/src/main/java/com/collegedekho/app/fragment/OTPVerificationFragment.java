@@ -22,7 +22,6 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.Utils;
 
 /**
  * Created by Bashir on 24/2/16.
@@ -213,13 +212,13 @@ public class OTPVerificationFragment extends BaseFragment {
         mobileNumberLayout.setVisibility(View.GONE);
         otpLayout.setVisibility(View.VISIBLE);
         edtOTP.requestFocus();
-        if(imm!=null) {
-            try {
-                imm.showSoftInput(getView().findViewById(R.id.edt_otp_number), InputMethodManager.SHOW_IMPLICIT);
-            }catch (Exception e){
-
-            }
-        }
+//        if(imm!=null) {
+//            try {
+//                imm.showSoftInput(getView().findViewById(R.id.edt_otp_number), InputMethodManager.SHOW_IMPLICIT);
+//            }catch (Exception e){
+//
+//            }
+//        }
     }
 
     public void onInvalidOtp() {

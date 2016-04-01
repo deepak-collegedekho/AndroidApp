@@ -46,7 +46,9 @@ public class TextQuestionFragment extends PsychometricQuestionFragment implement
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             pQuestion = getArguments().getParcelable(ARG_QUESTION);
-            mIsRequired = pQuestion.isRequired();
+            if(pQuestion!=null) {
+                mIsRequired = pQuestion.isRequired();
+            }
         }
     }
 
@@ -125,7 +127,7 @@ public class TextQuestionFragment extends PsychometricQuestionFragment implement
 
     @Override
     public boolean isAnswered() {
-        return this.mAnswertext.getText().length() > 0 ? true : false;
+        return this.mAnswertext.getText().length() > 0;
     }
 
     @Override
@@ -135,7 +137,7 @@ public class TextQuestionFragment extends PsychometricQuestionFragment implement
 
     @Override
     public void updateAndSetAnswer() {
-        super.setAnswer((String) pQuestion.getField().get(0), this.mAnswertext.getText().toString());
+        super.setAnswer(pQuestion.getField().get(0), this.mAnswertext.getText().toString());
     }
 
     /**

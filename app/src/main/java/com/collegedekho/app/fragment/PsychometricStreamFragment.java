@@ -2,36 +2,53 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.StreamAdapter;
+import com.collegedekho.app.display.androidcharts.diagram.SpiderWebChart;
+import com.collegedekho.app.display.androidcharts.series.TitleValueEntity;
 import com.collegedekho.app.entities.Stream;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class StreamFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class PsychometricStreamFragment extends BaseFragment implements AdapterView.OnItemClickListener {
     private static final String ARG_STREAMS = "streams";
     private static final String ARG_STREAM_UPDATE = "stream_update";
-
+    private TextView txtMessage;
     private ArrayList<Stream> streams;
 
     private OnStreamInteractionListener mListener;
     private static boolean isStreamUpdate;
-    public StreamFragment() {
+    private boolean isEditMode;
+    private SpiderWebChart spiderwebchart;
+    public PsychometricStreamFragment() {
         // Required empty public constructor
     }
 
-    public static StreamFragment newInstance(ArrayList<Stream> streams , boolean isForUpdate) {
-        StreamFragment streamFragment = new StreamFragment();
+    public static PsychometricStreamFragment newInstance(ArrayList<Stream> streams , boolean isForUpdate) {
+        PsychometricStreamFragment streamFragment = new PsychometricStreamFragment();
         Bundle b = new Bundle();
         b.putParcelableArrayList(ARG_STREAMS, streams);
         b.putBoolean(ARG_STREAM_UPDATE, isForUpdate);
+        streamFragment.setArguments(b);
+        return streamFragment;
+    }
+
+    public static PsychometricStreamFragment newEditableInstance(ArrayList<Stream> streams , boolean isForUpdate) {
+        PsychometricStreamFragment streamFragment = new PsychometricStreamFragment();
+        Bundle b = new Bundle();
+        b.putParcelableArrayList(ARG_STREAMS, streams);
+        b.putBoolean(ARG_STREAM_UPDATE, isForUpdate);
+        b.putBoolean("is_edit_mode",true);
         streamFragment.setArguments(b);
         return streamFragment;
     }
@@ -42,6 +59,7 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
         if (getArguments() != null) {
             streams = getArguments().getParcelableArrayList(ARG_STREAMS);
             isStreamUpdate = getArguments().getBoolean(ARG_STREAM_UPDATE);
+            isEditMode=getArguments().getBoolean("is_edit_mode");
         }
     }
 
@@ -50,15 +68,28 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_streams, container, false);
         GridView grid = (GridView) rootView.findViewById(R.id.stream_grid);
-        grid.setAdapter(new StreamAdapter(getActivity(), streams));
+        grid.setAdapter(new StreamAdapter(getActivity(), new ArrayList(streams.subList(0,2))));
         grid.setOnItemClickListener(this);
         return rootView;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        this.spiderwebchart = (SpiderWebChart)view.findViewById(R.id.spiderwebchart);
+        this.spiderwebchart.setVisibility(View.VISIBLE);
+        this.txtMessage=(TextView) view.findViewById(R.id.txt_message);
+        txtMessage.setText(MainActivity.getResourceString(R.string.PSYCHOMETRIC_STREAMS));
+        initSpiderWebChart();
+    }
 
     public void onStreamSelected(String uri, String name) {
         if (mListener != null) {
+            if (!isEditMode) {
                 mListener.onStreamSelected(uri, name);
+            }else {
+                mListener.onEditedStreamSelected(uri,name);
+            }
         }
     }
 
@@ -84,10 +115,6 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Stream streamObj =  streams.get(position);
-//        if(isStreamUpdate) {
-//            onStreamUpdated(streamObj.resourceUri, streamObj.getName() );
-//        }
-//        else
         onStreamSelected(streamObj.resourceUri,streamObj.getName());
     }
 
@@ -114,5 +141,17 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(ARG_STREAMS, streams);
         outState.putBoolean(ARG_STREAM_UPDATE, this.isStreamUpdate);
+    }
+    private void initSpiderWebChart() {
+//        spiderwebchart.setDisplayBorder(false);
+        List<TitleValueEntity> data1 = new ArrayList<>();
+        for (Stream stream:streams ) {
+            data1.add(new TitleValueEntity(stream.getShortName().split("/")[0], stream.getScore()));
+        }
+        List<List<TitleValueEntity>> data = new ArrayList<>();
+        data.add(data1);
+        spiderwebchart.setLatitudeNum(data1.size());
+        spiderwebchart.setLongitudeNum(data1.size());
+        spiderwebchart.setData(data);
     }
 }

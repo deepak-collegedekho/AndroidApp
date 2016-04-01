@@ -134,7 +134,7 @@ public class SingleChoiceQuestionFragment extends PsychometricQuestionFragment i
         if (value != 1)
             this.mIsAnswerDeemedForSecondary = true;
 
-        super.setAnswer((String) pQuestion.getField().get(0), value);
+        super.setAnswer(pQuestion.getField().get(0), value);
     }
 
     @Override

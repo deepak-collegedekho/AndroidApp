@@ -18,7 +18,6 @@ import com.collegedekho.app.adapter.SyllabusSubjectListAdapter;
 import com.collegedekho.app.entities.Chapters;
 import com.collegedekho.app.entities.Subjects;
 import com.collegedekho.app.entities.Units;
-import com.collegedekho.app.resource.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -165,7 +164,7 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
             ArrayList<Units> originalUnitsList = subjectObj.getUnits();
             ArrayList<Units> unitList = new ArrayList<>();
 
-            if(originalUnitsList != null || !originalUnitsList.isEmpty()){
+            if(originalUnitsList != null && !originalUnitsList.isEmpty()){
                 for (Units unitObj:originalUnitsList ) {
 
                     Units unit = new Units();
@@ -176,7 +175,7 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
                     ArrayList<Chapters> originalChapterList = unitObj.getChapters();
                     ArrayList<Chapters>  chapterList = new ArrayList<>();
 
-                    if(originalChapterList != null || !originalChapterList.isEmpty()) {
+                    if(originalChapterList != null && !originalChapterList.isEmpty()) {
                         for (Chapters chapterObj : originalChapterList) {
 
                             Chapters chapter = new Chapters();
@@ -226,8 +225,8 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
                 ArrayList<Chapters> originalChapterList = unitObj.getChapters();
                 ArrayList<Chapters> chapterList = unit.getChapters();
 
-                if (originalChapterList != null || !originalChapterList.isEmpty()
-                        || chapterList != null || !chapterList.isEmpty()) {
+                if (originalChapterList != null && !originalChapterList.isEmpty()
+                        || chapterList != null && !chapterList.isEmpty()) {
 
                     int chapterSize = originalChapterList.size();
                     for (int k = 0; k < chapterSize; k++) {

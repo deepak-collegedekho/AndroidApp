@@ -59,7 +59,7 @@ public class InstituteVideosFragment extends BaseFragment {
         if (bundle != null) {
             this.videoIdList = bundle.getStringArrayList("institute_videos_list");
 
-            this.videoList = new ArrayList<VideoEntry>();
+            this.videoList = new ArrayList<>();
             calendar=Calendar.getInstance();
             StringBuilder builder = new StringBuilder();
             builder.append("https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=");
@@ -153,8 +153,8 @@ public class InstituteVideosFragment extends BaseFragment {
         public VideoListAdapter(Context context, ArrayList<VideoEntry> videoList) {
             this.videoList = videoList;
 
-            entryViews = new ArrayList<View>();
-            thumbnailViewToLoaderMap = new HashMap<YouTubeThumbnailView, YouTubeThumbnailLoader>();
+            entryViews = new ArrayList<>();
+            thumbnailViewToLoaderMap = new HashMap<>();
             inflater = LayoutInflater.from(context);
 //            thumbnailListener = new ThumbnailListener();
 

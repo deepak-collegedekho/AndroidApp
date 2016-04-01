@@ -18,8 +18,8 @@ import java.util.List;
  */
 public class CompiledRule {
 
-    private List<List<CSSCompiler.TagNodeMatcher>> matchers = new ArrayList<List<CSSCompiler.TagNodeMatcher>>();
-    private List<CSSCompiler.StyleUpdater> styleUpdaters = new ArrayList<CSSCompiler.StyleUpdater>();
+    private List<List<CSSCompiler.TagNodeMatcher>> matchers = new ArrayList<>();
+    private List<CSSCompiler.StyleUpdater> styleUpdaters = new ArrayList<>();
 
     private HtmlSpanner spanner;
 

@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -279,20 +278,20 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                         this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                     }
                     break;
-                case R.id.button_dislike_college:
-                    if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
-                        if (!v.isSelected()) {
-                            //dislikeButton.setVisibility(View.INVISIBLE);
-                            //dislikeProgressBar.setVisibility(View.VISIBLE);
-                            likeButton.setClickable(false);
-                            //dislikeButton.setClickable(false);
-                            mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_THING);
-                        } else
-                            mListener.displayMessage(R.string.ALREADY_DISLIKED);
-                    }else {
-                        this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
-                    }
-                    break;
+//                case R.id.button_dislike_college:
+//                    if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
+//                        if (!v.isSelected()) {
+//                            //dislikeButton.setVisibility(View.INVISIBLE);
+//                            //dislikeProgressBar.setVisibility(View.VISIBLE);
+//                            likeButton.setClickable(false);
+//                            //dislikeButton.setClickable(false);
+//                            mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_THING);
+//                        } else
+//                            mListener.displayMessage(R.string.ALREADY_DISLIKED);
+//                    }else {
+//                        this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
+//                    }
+//                    break;
                 case R.id.card_institute_container:
                     this.mListener.onInstituteSelected(getAdapterPosition());
                     break;

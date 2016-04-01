@@ -7,7 +7,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -58,7 +57,7 @@ public class UserAlertsParentFragment extends BaseFragment implements ViewPager.
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((Button)view.findViewById(R.id.btn_submit_calendar)).setVisibility(View.GONE);
+        (view.findViewById(R.id.btn_submit_calendar)).setVisibility(View.GONE);
         viewPager = (ViewPager) view.findViewById(R.id.pager);
         mPagerAdapter = new UserAlertsPagerAdapter(getChildFragmentManager(), numPages,alertDatesList);
         viewPager.setAdapter(mPagerAdapter);

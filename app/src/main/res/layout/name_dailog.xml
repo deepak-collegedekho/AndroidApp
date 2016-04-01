@@ -21,7 +21,6 @@
         android:layout_marginTop="@dimen/m8dp"
         android:layout_marginLeft="@dimen/m25dp"
         android:layout_marginRight="@dimen/m35dp"
-        android:layout_centerHorizontal="true"
         android:layout_height="wrap_content">
 
         <EditText

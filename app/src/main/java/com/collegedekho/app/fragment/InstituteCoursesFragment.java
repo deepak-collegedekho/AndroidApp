@@ -66,8 +66,10 @@ public class InstituteCoursesFragment extends BaseFragment {
             this.mCourses = new ArrayList<>();
             for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++) {
                 ArrayList<InstituteCourse> a = getArguments().getParcelableArrayList(InstituteCourse.CourseLevel.values()[i].name());
-                this.mCourseCount += a.size();
-                this.mCourses.add(a);
+                if(a!=null) {
+                    this.mCourseCount += a.size();
+                    this.mCourses.add(a);
+                }
             }
         }
     }
@@ -103,7 +105,7 @@ public class InstituteCoursesFragment extends BaseFragment {
         mTabLayout.setupWithViewPager(mPager);
         mTabLayout.setVisibility(View.VISIBLE);
         ((TextView) rootView.findViewById(R.id.course_tab_title)).setText("Courses Offered");
-        ((TextView) rootView.findViewById(R.id.course_tab_title)).setVisibility(View.GONE);
+        (rootView.findViewById(R.id.course_tab_title)).setVisibility(View.GONE);
 
         mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -140,7 +142,7 @@ public class InstituteCoursesFragment extends BaseFragment {
             if (courseCount > 0) {
                 init(rootView);
             } else if (courseCount < 1) {
-                ((TextView) rootView.findViewById(R.id.course_tab_title)).setVisibility(View.VISIBLE);
+                (rootView.findViewById(R.id.course_tab_title)).setVisibility(View.VISIBLE);
                 ((TextView) rootView.findViewById(R.id.course_tab_title)).setText("Courses info not available");
             }
         }

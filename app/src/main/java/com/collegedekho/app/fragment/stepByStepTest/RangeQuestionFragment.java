@@ -53,7 +53,9 @@ public class RangeQuestionFragment extends StepByStepFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             pQuestion = getArguments().getParcelable(ARG_QUESTION);
-            mIsRequired = pQuestion.isRequired();
+            if(pQuestion!=null) {
+                mIsRequired = pQuestion.isRequired();
+            }
         }
     }
 
@@ -176,7 +178,7 @@ public class RangeQuestionFragment extends StepByStepFragment {
     public void updateAndSetAnswer() {
         String[] tagList = pQuestion.getName().split("#");
 
-        super.setAnswer((String) tagList[0], this.mMin);
-        super.setAnswer((String) tagList[1], this.mProgress);
+        super.setAnswer(tagList[0], this.mMin);
+        super.setAnswer(tagList[1], this.mProgress);
     }
 }

@@ -20,8 +20,7 @@
         android:id="@+id/psychometric_test_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:layout_above="@+id/btn_submit">
+        android:layout_weight="1">
 
     </com.collegedekho.app.display.NonSwipeableViewPager>
 
@@ -30,7 +29,6 @@
         android:background="@color/primary_orange"
         android:id="@+id/btn_submit"
         android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
         android:layout_marginTop="3dp"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/m9dp"

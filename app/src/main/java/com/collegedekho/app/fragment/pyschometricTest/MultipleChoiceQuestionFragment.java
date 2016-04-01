@@ -156,7 +156,7 @@ public class MultipleChoiceQuestionFragment extends PsychometricQuestionFragment
             answers.add(String.valueOf(s[i]));
         }
         //ArrayList<String> answerStrings = ArrayList;
-        super.setAnswer((String) pQuestion.getField().get(0), answers.toString());
+        super.setAnswer(pQuestion.getField().get(0), answers.toString());
     }
 
     @Override

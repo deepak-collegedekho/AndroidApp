@@ -85,7 +85,6 @@
 
         <TextView android:id="@+id/preparing_msg"
             android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/m2dp"
             android:paddingTop="@dimen/m2dp"
@@ -153,7 +152,6 @@
             android:background="@color/primary_orange"
             android:id="@+id/education_submit_button"
             android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
             android:layout_marginTop="3dp"
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/m9dp"

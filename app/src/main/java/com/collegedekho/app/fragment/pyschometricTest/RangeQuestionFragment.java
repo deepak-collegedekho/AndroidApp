@@ -53,7 +53,9 @@ public class RangeQuestionFragment extends PsychometricQuestionFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             pQuestion = getArguments().getParcelable(ARG_QUESTION);
-            mIsRequired = pQuestion.isRequired();
+            if(pQuestion!=null) {
+                mIsRequired = pQuestion.isRequired();
+            }
         }
     }
 
@@ -167,7 +169,7 @@ public class RangeQuestionFragment extends PsychometricQuestionFragment {
 
     @Override
     public void updateAndSetAnswer() {
-        super.setAnswer((String) pQuestion.getField().get(0), this.mMin);
-        super.setAnswer((String) pQuestion.getField().get(1), this.mProgress);
+        super.setAnswer(pQuestion.getField().get(0), this.mMin);
+        super.setAnswer(pQuestion.getField().get(1), this.mProgress);
     }
 }

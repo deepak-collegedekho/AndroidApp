@@ -362,7 +362,7 @@
     <string name="SCREEN_NAME">screen_name</string>
     <string name="LAST_SCREEN_NAME">last_screen_name</string>
     <string name="TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS">time_lapsed_since_last_screen_name_in_ms</string>
-
+    <string name="PSYCHOMETRIC_STREAMS">CollegeDekho Recommended streams</string>
     <!--for app tutorials-->
 
     <string name="KEY_USER_LEARNED_TOUCH">user_touch</string>

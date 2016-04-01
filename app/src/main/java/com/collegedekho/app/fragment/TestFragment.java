@@ -45,7 +45,7 @@ public class TestFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = (View) inflater.inflate(R.layout.fragment_test_detail, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_test_detail, container, false);
         TextView similarUser = (TextView)rootView.findViewById(R.id.similar_users);
         similarUser.setText(mTestDetail);
 

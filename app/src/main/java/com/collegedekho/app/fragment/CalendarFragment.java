@@ -52,15 +52,15 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
 //    private static LinkedHashMap<String, String> mYearCalendar;
     private ArrayList<Chapters> mChapterList;
 
-    public static CalendarFragment newInstance(LinkedHashMap<String, String> yearCalendar, LinkedHashMap<String, ArrayList<ChapterDetails>> chaptersDetailsList,CalendarItemDetailsAdapter.OnItemStateChangeListener listener) {
-//        mYearCalendar = yearCalendar;
-//        mChaptersDetailsList = chaptersDetailsList;
-        mListener=listener;
-        Bundle args = new Bundle();
-        CalendarFragment fragment = new CalendarFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    public static CalendarFragment newInstance(LinkedHashMap<String, String> yearCalendar, LinkedHashMap<String, ArrayList<ChapterDetails>> chaptersDetailsList,CalendarItemDetailsAdapter.OnItemStateChangeListener listener) {
+////        mYearCalendar = yearCalendar;
+////        mChaptersDetailsList = chaptersDetailsList;
+//        mListener=listener;
+//        Bundle args = new Bundle();
+//        CalendarFragment fragment = new CalendarFragment();
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
     public static CalendarFragment newInstance(CalendarItemDetailsAdapter.OnItemStateChangeListener listener) {
         mListener=listener;
@@ -76,8 +76,10 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
         Bundle args=getParentFragment().getArguments();
         if(args!=null){
             mChapterList=args.getParcelableArrayList("chapters_list");
-            mChapterList.size();
-            initCalendar();
+            if(mChapterList!=null &&mChapterList.size()>0) {
+                mChapterList.size();
+                initCalendar();
+            }
         }
     }
 
@@ -124,7 +126,7 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
     }
 
     public void updateCalendar(Calendar calendar) {
-        ArrayList<Date> cells = new ArrayList<Date>();
+        ArrayList<Date> cells = new ArrayList<>();
 //        Calendar calendar = (Calendar) currentDate.clone();
 
         // determine the cell for current month's beginning
@@ -147,14 +149,14 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
 
 
     @Override
-    public void onItemSelect(int position, int startPosition, int endPosition, String itemKey) {
+    public void onItemSelect(String itemKey) {
         ArrayList<ChapterDetails> chaptersList = new ArrayList<>();
         if (itemKey != null) {
             String keys = mYearCalendar.get(itemKey);
             if (keys != null) {
                 String[] subject_keys = keys.split(",");
-                for (int i = 0; i < subject_keys.length; i++) {
-                    ArrayList<ChapterDetails> chapters = chaptersDetailsList.get(subject_keys[i]);
+                for (String subKey:subject_keys) {
+                    ArrayList<ChapterDetails> chapters = chaptersDetailsList.get(subKey);
                     if (chapters != null && !chapters.isEmpty()) {
                         chaptersList.add(chapters.get(0));
                     }

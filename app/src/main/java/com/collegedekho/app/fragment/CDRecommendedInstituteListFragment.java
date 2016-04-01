@@ -183,7 +183,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         }
     }
 
-    private void mAddNextCardInAdapter(List<Institute> list, SimpleCardStackAdapter adapter)
+    private void mAddNextCardInAdapter(List<Institute> list)
     {
         for (int i = list.size() - 1; i >= 0; i--)
         {
@@ -312,7 +312,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             this.mCardContainer.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
             this.mAdapter.clear();
-            this.mAddNextCardInAdapter(this.mInstitutes, null);
+            this.mAddNextCardInAdapter(this.mInstitutes);
             this.mNextUrl = next;
             this.mAdapter.setLoadingNext(false);
             this.loading = false;
@@ -339,7 +339,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             this.mCardContainer.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
             this.mAdapter.clear();
-            this.mAddNextCardInAdapter(this.mInstitutes, null);
+            this.mAddNextCardInAdapter(this.mInstitutes);
             this.mAdapter.setLoadingNext(false);
             this.loading = false;
             this.mNextUrl = next;
@@ -355,7 +355,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             return;
         this.loading = true;
         this.mAdapter.setLoadingNext(true);
-        this.mListener.OnCDRecommendedLoadNext(this.mNextUrl);
+        this.mListener.OnCDRecommendedLoadNext();
     }
 
     @Override
@@ -449,7 +449,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                     this.mEmptyTextView.setText("No CD Recommended colleges found");
                     this.mEmptyTextView.setVisibility(View.VISIBLE);
                     this.mCardContainer.setVisibility(View.GONE);
-                    return;
                 } else {
                     this.mEmptyTextView.setText("Loading...");
                     this.mEmptyTextView.setVisibility(View.VISIBLE);
@@ -471,7 +470,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     }
 
     public interface OnCDRecommendedInstituteListener extends BaseListener{
-        void OnCDRecommendedLoadNext(String nextURL);
+        void OnCDRecommendedLoadNext();
         void OnCDRecommendedInstituteSelected(Institute institute);
         void OnCDRecommendedInstituteLiked(Institute institute, boolean isLastCard, boolean isUndecided);
         void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard, boolean isUndecided);

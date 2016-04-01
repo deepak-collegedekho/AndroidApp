@@ -29,9 +29,9 @@ public class NotPreparingFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        btn_iknow=(View)view.findViewById(R.id.btn_i_know);
-        btn_psychometric =(View)view.findViewById(R.id.btn_psychometric_test);
-        btn_step_by_step =(View)view.findViewById(R.id.btn_step_by_step);
+        btn_iknow=view.findViewById(R.id.btn_i_know);
+        btn_psychometric =view.findViewById(R.id.btn_psychometric_test);
+        btn_step_by_step =view.findViewById(R.id.btn_step_by_step);
 
         btn_iknow.setOnClickListener(this);
         btn_psychometric.setOnClickListener(this);

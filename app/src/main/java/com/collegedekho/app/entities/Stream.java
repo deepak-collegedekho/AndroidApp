@@ -25,6 +25,15 @@ public class Stream implements Parcelable {
     public String uri;
     public String image;
     public String description;
+    public int score;
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
 
     public Stream() {
     }
@@ -36,7 +45,7 @@ public class Stream implements Parcelable {
         uri = source.readString();
         image = source.readString();
         description = source.readString();
-
+        score=source.readInt();
     }
 
     public String getResource_uri() {
@@ -100,6 +109,7 @@ public class Stream implements Parcelable {
         dest.writeString(uri);
         dest.writeString(image);
         dest.writeString(description);
+        dest.writeInt(score);
     }
 
     public String getShort_name() {

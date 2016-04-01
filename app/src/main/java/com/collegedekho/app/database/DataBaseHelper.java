@@ -74,12 +74,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         try {
             String getQuery = "SELECT * FROM exams_summary WHERE yearly_exam_id = " + yearlyExamId;
             Cursor cursor = db.rawQuery(getQuery, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    examSummary = cursor.getString(cursor.getColumnIndex("summary"));
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        examSummary = cursor.getString(cursor.getColumnIndex("summary"));
 //                    examSummary = JSON.std.beanFrom(ExamSummary.class, summary);
 //                    Log.e("DEBUG", "Exam Summary from DB " + examSummary);
-                } while (cursor.moveToNext());
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,8 +100,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             String getQuery = "SELECT * FROM exams_summary WHERE yearly_exam_id = " + yearlyExamId;
             Cursor cursor = db.rawQuery(getQuery, null);
 
-            if (cursor != null && cursor.moveToFirst()) {
-                isExists = true;
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    isExists = true;
+                }
+                cursor.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -161,10 +167,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         try {
             String getQuery = "SELECT * FROM user WHERE user_id = " + userId;
             Cursor cursor = db.rawQuery(getQuery, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    user = cursor.getString(cursor.getColumnIndex("user_data"));
-                } while (cursor.moveToNext());
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        user = cursor.getString(cursor.getColumnIndex("user_data"));
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
             }
         } catch (Exception e) {
             e.printStackTrace();

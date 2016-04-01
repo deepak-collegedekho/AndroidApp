@@ -102,7 +102,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                     if(selectedPosition==-1){
                         selectedPosition=position;
                     }
-                    mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
+                    mListener.onItemSelect(day_key);
                 } else if (day == 1 && isActiveCell) {
                     isActiveCell = false;
                     endCellPosition = position - 1;
@@ -114,7 +114,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                     if(selectedPosition==-1){
                         selectedPosition=position;
                     }
-                    mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
+                    mListener.onItemSelect(day_key);
                 } else if (day == 1 && isActiveCell) {
                     isActiveCell = false;
                     endCellPosition = position - 1;
@@ -152,12 +152,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         if(key!=null){
             String[] keyArray=key.split(",");
             holder.dotView.removeAllViews();
-            for (int j=0;j<keyArray.length;j++){
+            for (String keyval:keyArray){
                 View dot=inflater.inflate(R.layout.dot_view,holder.dotView,false);
 
                 Drawable  mDrawable = mContext.getResources().getDrawable(R.drawable.bg_button_blue);
                 mDrawable.setColorFilter(new
-                        PorterDuffColorFilter(Utils.getSubjectColor(Integer.valueOf(keyArray[j])), PorterDuff.Mode.SRC_IN));
+                        PorterDuffColorFilter(Utils.getSubjectColor(Integer.valueOf(keyval)), PorterDuff.Mode.SRC_IN));
                 dot.setBackgroundDrawable(mDrawable);
                 holder.dotView.addView(dot);
             }
@@ -169,7 +169,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         holder.dateView.setText(dateString);
         if (position==selectedPosition && key!=null){
             holder.view.setCardBackgroundColor(0xffcccccc);
-            mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
+            mListener.onItemSelect(day_key);
         }else {
             holder.view.setCardBackgroundColor(0xffffffff);
         }
@@ -218,12 +218,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 selectedPosition = getLayoutPosition();
                 notifyDataSetChanged();
             }
-            mListener.onItemSelect(getLayoutPosition(), startCellPosition, endCellPosition, key);
+            mListener.onItemSelect( key);
 
         }
     }
 
     public interface OnCalendarItemSelectListener {
-        public void onItemSelect(int position,int startPosition,int endPosition,String itemKey);
+        public void onItemSelect(String itemKey);
     }
 }

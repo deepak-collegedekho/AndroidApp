@@ -177,10 +177,7 @@ public class ProfileFragment extends BaseFragment
             }
 
         }
-*/      int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
-        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
-            Utils.app_launched(getActivity());
-        }
+*/
         return rootView;
     }
 

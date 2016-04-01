@@ -12,7 +12,6 @@
 
     <View
         style="@style/AppTheme.Divider1"
-        android:layout_below="@id/institute_qna_question_title"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp" />
 

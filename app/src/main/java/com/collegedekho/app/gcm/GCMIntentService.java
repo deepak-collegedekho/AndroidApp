@@ -11,14 +11,11 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
+import com.collegedekho.app.R;
 import com.collegedekho.app.activity.VideoPlayerActivity;
 import com.collegedekho.app.resource.Constants;
 import com.google.android.gms.gcm.GcmListenerService;
-import com.collegedekho.app.R;
-
-import java.util.Random;
 
 public class GCMIntentService extends GcmListenerService {
 

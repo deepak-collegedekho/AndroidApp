@@ -39,8 +39,8 @@ public class CSSCompiler {
 
         Log.d("CSSCompiler", "Compiling rule " + rule );
 
-        List<List<TagNodeMatcher>> matchers = new ArrayList<List<TagNodeMatcher>>();
-        List<StyleUpdater> styleUpdaters = new ArrayList<StyleUpdater>();
+        List<List<TagNodeMatcher>> matchers = new ArrayList<>();
+        List<StyleUpdater> styleUpdaters = new ArrayList<>();
 
         for ( Selector selector: rule.getSelectors() ) {
             List<TagNodeMatcher> selMatchers = CSSCompiler.createMatchersFromSelector(selector);
@@ -84,7 +84,7 @@ public class CSSCompiler {
     }
 
     public static List<TagNodeMatcher> createMatchersFromSelector( Selector selector ) {
-        List<TagNodeMatcher> matchers = new ArrayList<TagNodeMatcher>();
+        List<TagNodeMatcher> matchers = new ArrayList<>();
 
         String selectorString = selector.toString();
 

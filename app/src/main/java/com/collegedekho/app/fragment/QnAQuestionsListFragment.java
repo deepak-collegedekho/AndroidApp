@@ -17,7 +17,6 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.QnAQuestionsListAdapter;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
 
 import java.util.ArrayList;

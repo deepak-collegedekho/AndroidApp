@@ -167,7 +167,7 @@ public class Constants
     public static final int FILTER_CATEGORY_CAMPUS_AND_HOUSING = 3;
     public static final String TAG_FRAGMENT_SHORTLISTED_INSTITUTE = "fragment_shortlisted_institute";
 
-    public static final HashMap<Integer, Integer> FilterCategoryMap = new HashMap<Integer, Integer>();
+    public static final HashMap<Integer, Integer> FilterCategoryMap = new HashMap<>();
 
 
     public static final int VIEW_INTO_GRID  = 1;

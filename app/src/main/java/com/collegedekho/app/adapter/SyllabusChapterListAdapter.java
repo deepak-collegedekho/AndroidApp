@@ -45,7 +45,7 @@ public class SyllabusChapterListAdapter extends RecyclerView.Adapter {
         ChapterHolder chapterHolder = (ChapterHolder) holder;
 
         chapterHolder.mChapterName.setText(chapters.getName());
-        chapterHolder.mcheckBox.setSelected(chapters.getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
+        chapterHolder.mcheckBox.setSelected(chapters.getIs_done() == Constants.BOOLEAN_TRUE);
     }
 
     @Override

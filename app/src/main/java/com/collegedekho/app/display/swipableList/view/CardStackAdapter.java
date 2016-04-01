@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.collegedekho.app.R;
 import com.collegedekho.app.display.swipableList.model.CardModel;
 
 import java.util.ArrayList;

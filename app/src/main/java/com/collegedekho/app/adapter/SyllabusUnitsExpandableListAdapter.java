@@ -104,7 +104,7 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
         parentViewHolder.parentUnitLabel.setText(g.getUnit_name());
         parentViewHolder.subPercentage.setText(String.valueOf(g.getUnit_done_percent()));
         parentViewHolder.parentUnitProgressBar.setProgress(g.getUnit_done_percent());
-        parentViewHolder.parentUnitCheckBox.setChecked(g.getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
+        parentViewHolder.parentUnitCheckBox.setChecked(g.getIs_done() == Constants.BOOLEAN_TRUE);
         ((TextView) convertView.findViewById(R.id.indicator))
                 .setText(isExpanded ? Constants.EXPANDED_INDICATOR : Constants.COLAPSED_INDICATOR);
 
@@ -129,7 +129,7 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
         final Chapters chapters=allChapters.get(childPosition);
 
         childViewHolder.childChapterLabel.setText(chapters.getName());
-        childViewHolder.childChapterCheckBox.setChecked(chapters.getIs_done() == Constants.BOOLEAN_TRUE ? true : false);
+        childViewHolder.childChapterCheckBox.setChecked(chapters.getIs_done() == Constants.BOOLEAN_TRUE);
 
 
         /*

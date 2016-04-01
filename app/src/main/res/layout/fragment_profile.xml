@@ -153,7 +153,6 @@
             android:layout_width="match_parent"/>
 
         <include layout="@layout/layout_bottom_button"
-            android:layout_below="@id/include_layout_profile_widget"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".2"

@@ -130,7 +130,7 @@ public class SyllabusUnitListFragment extends BaseFragment {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_submit_units:
-                ((MainActivity)getActivity()).onBackPressed();
+                (getActivity()).onBackPressed();
                 break;
         }
     }

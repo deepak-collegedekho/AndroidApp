@@ -14,7 +14,6 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
-import com.collegedekho.app.utils.Utils;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;
