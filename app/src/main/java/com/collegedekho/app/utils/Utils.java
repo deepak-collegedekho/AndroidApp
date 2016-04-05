@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -13,11 +14,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.renderscript.Allocation;
@@ -616,5 +619,16 @@ public class Utils {
             }
         });
         alertDialog.show();
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public static Bitmap getBitmap(VectorDrawable vectorDrawable) {
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return bitmap;
     }
 }

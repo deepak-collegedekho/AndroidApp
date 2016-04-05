@@ -35,7 +35,6 @@ public class CardModel {
 	private Institute institute;
 
     private OnCardDismissedListener mOnCardDismissedListener = null;
-
     private OnClickListener mOnClickListener = null;
     private View.OnTouchListener mOnTouchListener = null;
 

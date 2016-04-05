@@ -34,11 +34,11 @@ android {
                 multiDexEnabled true
             }
     buildTypes {
-       debug {
+      /* debug {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+        }*/
         release {
             minifyEnabled true
             shrinkResources true

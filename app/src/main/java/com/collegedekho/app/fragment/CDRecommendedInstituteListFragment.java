@@ -41,7 +41,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     private TextView mEmptyTextView;
     private boolean IS_UNDECIDED_INSTITUTES = false;
     private static boolean IS_FIRST_SHOW = true;
-    private ParseCardAsyncTask mParseCardAsyncTask;
+    //private ParseCardAsyncTask mParseCardAsyncTask;
 
     public CDRecommendedInstituteListFragment() {
         // Required empty public constructor
@@ -55,7 +55,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         args.putString(ARG_TITLE, title);
         args.putString(ARG_NEXT, next);
         args.putInt(ARG_UNDECIDED_INSTITUTE_COUNT, undecidedCount);
-
         fragment.setArguments(args);
 
         return fragment;
@@ -81,8 +80,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         this.mUndecidedCountTV = (TextView)rootView.findViewById(R.id.fragment_recommended_institute_undecided_count);
         this.mPageTitleTV = (TextView)rootView.findViewById(R.id.recommended_page_title);
 
-        rootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
-        rootView.findViewById(R.id.recommended_tute_frame).setOnClickListener(this);
         Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count - ", "", Constants.ANIM_SHORT_DURATION);
 
         this.mEmptyTextView = (TextView)rootView.findViewById(android.R.id.empty);
@@ -96,11 +93,10 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         else
         {
             this.mCardContainer.setVisibility(View.VISIBLE);
-
             this.mEmptyTextView.setVisibility(View.GONE);
         }
 
-        this.mAdapter = new SimpleCardStackAdapter(this.getContext(), this);
+        this.mAdapter = new SimpleCardStackAdapter(getActivity(), this.getContext(), this);
         //this.mAddCardInAdapter(this.mInstitutes);
 
         if (CDRecommendedInstituteListFragment.IS_FIRST_SHOW)
@@ -118,39 +114,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
 
         this.mCardContainer.setAdapter(this.mAdapter);
 
-
-
-/*
-        if (this.mParseCardAsyncTask == null)
-        {
-            this.mParseCardAsyncTask = new ParseCardAsyncTask();
-            if (this.mInstitutes.size() > 4)
-            {
-*/
-/*                ArrayList<Institute> tempInstitues;
-
-                tempInstitues = new ArrayList<>();
-                tempInstitues.add(this.mInstitutes.remove(this.mInstitutes.size() - 1));
-                tempInstitues.add(this.mInstitutes.remove(this.mInstitutes.size() - 1));
-
-                this.mParseCardAsyncTask.execute(tempInstitues);*//*
-
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //CDRecommendedInstituteListFragment.this.mAddCardInAdapter(CDRecommendedInstituteListFragment.this.mInstitutes);
-                        CDRecommendedInstituteListFragment.this.mParseCardAsyncTask.execute(CDRecommendedInstituteListFragment.this.mInstitutes);
-                    }
-                }, 500);
-            }
-            else
-                this.mParseCardAsyncTask.execute(this.mInstitutes);
-        }
-        else
-            this.mAddCardInAdapter(this.mInstitutes);
-*/
-
         this.mUndecidedCountTV.setOnClickListener(this);
 
         if(this.IS_UNDECIDED_INSTITUTES) {
@@ -158,8 +121,8 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             mPageTitleTV.setText("CD Recommended Colleges - Decide Later");
         }
 
-        if (getActivity() != null)
-            ((MainActivity) getActivity()).hideProgressDialog();
+        rootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
+        rootView.findViewById(R.id.recommended_tute_frame).setOnClickListener(this);
 
         return rootView;
     }
@@ -168,31 +131,14 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
 
     private void mAddCardInAdapter(List<Institute> list)
     {
+       final  ArrayList<CardModel> modelArrayList = new ArrayList<>();
         for (int i = list.size() - 1; i >= 0; i--)
         {
-            final CardModel model;
-
-            model = new CardModel(list.get(i), this.getActivity());
-
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    CDRecommendedInstituteListFragment.this.mAdapter.add(model);
-                }
-            });
+             CardModel  model = new CardModel(list.get(i), this.getActivity());
+             modelArrayList.add(model);
         }
-    }
+        mAdapter.addAll(modelArrayList);
 
-    private void mAddNextCardInAdapter(List<Institute> list)
-    {
-        for (int i = list.size() - 1; i >= 0; i--)
-        {
-            CardModel model;
-
-            model = new CardModel(list.get(i), this.getActivity());
-
-            this.mAdapter.add(model);
-        }
     }
 
     @Override
@@ -246,7 +192,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     @Override
     public void onPause() {
         super.onPause();
-
         if (getView() != null)
             getView().setLayerType(View.LAYER_TYPE_NONE, null);
 
@@ -312,7 +257,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             this.mCardContainer.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
             this.mAdapter.clear();
-            this.mAddNextCardInAdapter(this.mInstitutes);
+            this.mAddCardInAdapter(this.mInstitutes);
             this.mNextUrl = next;
             this.mAdapter.setLoadingNext(false);
             this.loading = false;
@@ -339,7 +284,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             this.mCardContainer.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
             this.mAdapter.clear();
-            this.mAddNextCardInAdapter(this.mInstitutes);
+            this.mAddCardInAdapter(this.mInstitutes);
             this.mAdapter.setLoadingNext(false);
             this.loading = false;
             this.mNextUrl = next;
@@ -419,7 +364,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             else
             {
                 this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
-
                 this.mEmptyTextView.setVisibility(View.VISIBLE);
                 this.mCardContainer.setVisibility(View.GONE);
             }
@@ -476,15 +420,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard, boolean isUndecided);
         void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard, boolean isUndecided);
         void OnCDRecommendedLoadUndecidedInstitutes(String url);
-    }
-
-    public class ParseCardAsyncTask extends AsyncTask<List<Institute>, Void, Void> {
-
-        @Override
-        protected Void doInBackground(List<Institute>... params) {
-            CDRecommendedInstituteListFragment.this.mAddCardInAdapter(params[0]);
-            return null;
-        }
     }
 
 }

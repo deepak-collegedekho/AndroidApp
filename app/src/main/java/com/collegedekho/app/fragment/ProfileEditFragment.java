@@ -23,7 +23,9 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.UserEducation;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.facebook.login.LoginManager;
@@ -382,6 +384,10 @@ public class ProfileEditFragment extends BaseFragment {
                     mUpdateProfile();
                     break;
                 case R.id.edit_profile_fb_login:
+                    if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+                        ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+                        return;
+                    }
                     LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends", "email", "user_likes", "user_education_history"));
 
                     break;

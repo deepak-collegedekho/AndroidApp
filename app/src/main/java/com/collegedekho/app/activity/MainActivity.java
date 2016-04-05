@@ -3021,8 +3021,11 @@ public class MainActivity extends AppCompatActivity
     }*/
     @Override
     public void onInstituteLikedDisliked(int position, int liked) {
-        Institute institute = this.mInstituteList.get(position);
-        this.onInstituteLikedDislikedByEntity(institute, liked, Constants.TAG_INSTITUTE_LIKE_DISLIKE + "#" + position, Constants.INSTITUTE_LIKE_DISLIKE);
+
+        if (position >= 0 && mInstituteList != null && mInstituteList.size() > position) {
+            Institute institute = this.mInstituteList.get(position);
+            this.onInstituteLikedDislikedByEntity(institute, liked, Constants.TAG_INSTITUTE_LIKE_DISLIKE + "#" + position, Constants.INSTITUTE_LIKE_DISLIKE);
+        }
     }
 
     public void onInstituteLikedDislikedByEntity(Institute institute, int liked, String tag, int source) {
@@ -4884,14 +4887,12 @@ public class MainActivity extends AppCompatActivity
 
     public void onHomeItemSelected(String requestType, String url, String tag) {
 
-        if (requestType.equals(Constants.WIDGET_INSTITUTES)
+        if (requestType.equalsIgnoreCase(Constants.WIDGET_INSTITUTES)
                 || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES)){
-            //|| requestType.equalsIgnoreCase(Constants.WIDGET_SHORTLIST_INSTITUTES)) {
             //Suggesting System that its a good time to do GC
             System.gc();
 
             Map<String , String> params = this.mGetTheFilters();
-
             if(tag != null && !tag.isEmpty())
             {
                 params.put("tag_uris[" + (params.size()) + "]",tag);

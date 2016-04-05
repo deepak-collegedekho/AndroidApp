@@ -1,8 +1,10 @@
 package com.collegedekho.app.display.swipableList.view;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 
 import com.collegedekho.app.display.swipableList.model.CardModel;
@@ -11,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Vector;
 
-public abstract class CardStackAdapter extends BaseCardStackAdapter {
+public abstract class CardStackAdapter extends BaseAdapter {
 	private final Context mContext;
 
 	/**
@@ -42,7 +44,6 @@ public abstract class CardStackAdapter extends BaseCardStackAdapter {
 		} else {
 			cardView = wrapper.getChildAt(0);
 		}
-
 		return cardView;
 	}
 
@@ -57,13 +58,14 @@ public abstract class CardStackAdapter extends BaseCardStackAdapter {
     }
 
     public void add(CardModel item) {
+
 			mData.add(item);
-		notifyDataSetChanged();
+		//notifyDataSetChanged();
 	}
 
 	public void addAll(ArrayList<CardModel> item) {
 			mData.addAll(item);
-		notifyDataSetChanged();
+		//notifyDataSetChanged();
 	}
 
 	public CardModel pop() {
