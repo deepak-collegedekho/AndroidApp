@@ -2,10 +2,6 @@ package com.collegedekho.app.display.swipableList.view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +15,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.display.swipableList.model.CardModel;
 import com.collegedekho.app.entities.Institute;
+import com.collegedekho.app.resource.BitMapHolder;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.widget.FadeInImageView;
 
@@ -35,14 +32,6 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
     private Vector<CardModel> mData;
 
 
-    private Drawable drawableShortList ;
-    private Drawable drawableNotIntrested ;
-    private Drawable drawablUndecided ;
-    private Bitmap shortListBitmap ;
-    private Bitmap notIntrestedBitmap ;
-    private Bitmap undecidedBitmap ;
-
-
     public SimpleCardStackAdapter(Activity activity, Context context, OnCDRecommendedAdapterInterface listener) {
         //super(context);
         this.imageLoader = MySingleton.getInstance(context).getImageLoader();
@@ -50,13 +39,6 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         this.mContext = context;
         this.mActivity = activity;
         this. mData = new Vector<>();
-
-        this.drawableShortList = ContextCompat.getDrawable(mContext, R.drawable.ic_shortlist);
-        this.drawableNotIntrested = ContextCompat.getDrawable(mContext, R.drawable.ic_not_interested);
-        this.drawablUndecided = ContextCompat.getDrawable(mContext, R.drawable.ic_undecided);
-        this.shortListBitmap = com.collegedekho.app.utils.Utils.getBitmap((VectorDrawable)drawableShortList);
-        this.notIntrestedBitmap = com.collegedekho.app.utils.Utils.getBitmap((VectorDrawable)drawableNotIntrested);
-        this.undecidedBitmap = com.collegedekho.app.utils.Utils.getBitmap((VectorDrawable)drawablUndecided);
 
     }
 
@@ -124,8 +106,6 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
     private void mParseAndPopulateCards(final CardModel model,final  View convertView)
     {
-
-        Log.e("get view card", "step 3  time in card view "+ System.currentTimeMillis());
                 final FadeInImageView fadeInImageView;
                 ImageLoader.ImageListener imageListener;
                 Institute institute =  model.getInstitute();
@@ -148,40 +128,20 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
                 //setting institute image_new
                 fadeInImageView = ((FadeInImageView) convertView.findViewById(R.id.card_recommended_institute_image));
 
-                Log.e("get view card", "step 0  time in card view "+ System.currentTimeMillis());
                 //fadeInImageView.setDefaultImageResId(R.drawable.default_banner);
                 //fadeInImageView.setLocalImageBitmap(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.default_banner));
                 //fadeInImageView.setErrorImageResId(R.drawable.default_banner);
                 fadeInImageView.setBackgroundResource(R.drawable.default_banner);
+        try{
+            ((ImageView) convertView.findViewById(R.id.like_textview)).setImageBitmap(BitMapHolder.SHORTLISTED_BITMAP);
+            ((ImageView) convertView.findViewById(R.id.dislike_textview)).setImageBitmap(BitMapHolder.UNSHORTLISTED_BITMAP);
+            ((ImageView) convertView.findViewById(R.id.decide_later_textview)).setImageBitmap(BitMapHolder.UNDECIDED_BITMAP);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
-        new Thread(new Runnable() {
-             @Override
-            public void run() {
-                 if(drawableShortList == null)
-                 drawableShortList = ContextCompat.getDrawable(mContext, R.drawable.ic_shortlist);
-                 if(drawableNotIntrested == null)
-                 drawableNotIntrested = ContextCompat.getDrawable(mContext, R.drawable.ic_not_interested);
-                 if(drawablUndecided == null)
-                 drawablUndecided = ContextCompat.getDrawable(mContext, R.drawable.ic_undecided);
-                 if(shortListBitmap == null)
-                 shortListBitmap = com.collegedekho.app.utils.Utils.getBitmap((VectorDrawable)drawableShortList);
-                 if(notIntrestedBitmap == null)
-                 notIntrestedBitmap = com.collegedekho.app.utils.Utils.getBitmap((VectorDrawable)drawableNotIntrested);
-                 if(undecidedBitmap == null)
-                 undecidedBitmap = com.collegedekho.app.utils.Utils.getBitmap((VectorDrawable)drawablUndecided);
 
-                 mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((ImageView)convertView.findViewById(R.id.like_textview)).setImageBitmap(shortListBitmap);
-                        ((ImageView)convertView.findViewById(R.id.dislike_textview)).setImageBitmap(notIntrestedBitmap);
-                        ((ImageView)convertView.findViewById(R.id.decide_later_textview)).setImageBitmap(undecidedBitmap);
-                    }
-                });
-            }
-        }).start();
-
-                if (institute.getStreams() != null && institute.getStreams().size() > 0)
+        if (institute.getStreams() != null && institute.getStreams().size() > 0)
                 {
                     TextView streamTV = ((TextView) convertView.findViewById(R.id.card_recommended_streams));
                     String streamText = "";

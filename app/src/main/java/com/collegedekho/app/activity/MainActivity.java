@@ -140,6 +140,7 @@ import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.listener.OnArticleSelectListener;
 import com.collegedekho.app.listener.OnNewsSelectListener;
+import com.collegedekho.app.resource.BitMapHolder;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.utils.NetworkUtils;
@@ -325,6 +326,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Log.e(TAG, " onCreate  enter time"+ System.currentTimeMillis());
         try {
             super.onCreate(savedInstanceState);
         }catch (RuntimeException e){
@@ -351,23 +354,15 @@ public class MainActivity extends AppCompatActivity
             Log.i(TAG, "App Link Target URL: " + targetUrl.toString());
         }
 
+        Log.e(TAG, " onCreate  step 1 time taken "+ System.currentTimeMillis());
         this.setContentView(R.layout.activity_main);
-
+        this.getBitMapResources();
         snackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
         Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
         layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
 
         this.networkUtils = new NetworkUtils(this, this);
 
-        prepBuddies       = (TextView)findViewById(R.id.prep_buddies);
-        resourceBuddies   = (TextView)findViewById(R.id.resources_buddies);
-        futureBuddies     = (TextView)findViewById(R.id.future_buddies);
-        myAlerts          = (TextView)findViewById(R.id.my_alerts);
-
-        prepBuddies.setOnClickListener(mClickListener);
-        resourceBuddies.setOnClickListener(mClickListener);
-        futureBuddies.setOnClickListener(mClickListener);
-        myAlerts.setOnClickListener(mClickListener);
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS)
                 == PackageManager.PERMISSION_GRANTED ) {
@@ -380,21 +375,37 @@ public class MainActivity extends AppCompatActivity
         this.mRegistrationConnecto();
 
         // register fabric Crashlytics
-        Fabric.with(this, new Crashlytics());
+        this.mRegistrationFabricCrashlytics();
 
         // register with Apps Flayer
         this.mRegistrationAppsFlyer();
 
+        Log.e(TAG, " onCreate  step 2 time taken "+ System.currentTimeMillis());
         // register with facebook Sdk
         this.mRegistrationFacebookSdk();
 
+        Log.e(TAG, " onCreate  step 3 time taken "+ System.currentTimeMillis());
         // register with GA tarcker
         this.mRegistrationGATracker();
 
+        Log.e(TAG, " onCreate  step 4 time taken "+ System.currentTimeMillis());
         this.mSetupGTM();
 
+        Log.e(TAG, " onCreate  step 5 time taken "+ System.currentTimeMillis());
         this.mSetUpAPPToolBar();
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
+
+
+        Log.e(TAG, " onCreate  step 6 time taken "+ System.currentTimeMillis());
+
+        prepBuddies       = (TextView)findViewById(R.id.prep_buddies);
+        resourceBuddies   = (TextView)findViewById(R.id.resources_buddies);
+        futureBuddies     = (TextView)findViewById(R.id.future_buddies);
+        myAlerts          = (TextView)findViewById(R.id.my_alerts);
+        prepBuddies.setOnClickListener(mClickListener);
+        resourceBuddies.setOnClickListener(mClickListener);
+        futureBuddies.setOnClickListener(mClickListener);
+        myAlerts.setOnClickListener(mClickListener);
 
         //init();
         //this.mDisplayFragment(MyAlertFragment.newInstance(null), false, MyAlertFragment.class.getName());
@@ -408,7 +419,10 @@ public class MainActivity extends AppCompatActivity
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED && IS_PROFILE_LOADED) {
             Utils.appLaunched(this);
         }
+
+        Log.e(TAG, " onCreate  exit time"+ System.currentTimeMillis());
     }
+
     /**
      * This method is used  with connecto sdk
      */
@@ -427,20 +441,26 @@ public class MainActivity extends AppCompatActivity
 
     private void mRegistrationGATracker(){
 
-        this.analytics = GoogleAnalytics.getInstance(this.getApplicationContext());
-        this.analytics.setLocalDispatchPeriod(1800);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                analytics = GoogleAnalytics.getInstance(getApplicationContext());
+                analytics.setLocalDispatchPeriod(1800);
 
-        MainActivity.tracker = this.analytics.newTracker(Constants.TRACKER_ID);
+                MainActivity.tracker = analytics.newTracker(Constants.TRACKER_ID);
 
-        // Provide unhandled exceptions reports. Do that first after creating the tracker
-        MainActivity.tracker.enableExceptionReporting(true);
-        // Enable Remarketing, Demographics & Interests reports
-        // https://developers.google.com/analytics/devguides/collection/android/display-features
-        MainActivity.tracker.enableAdvertisingIdCollection(true);
-        // Enable automatic activity tracking for your app
-        MainActivity.tracker.enableAutoActivityTracking(true);
-        //Send GA Session
-        MainActivity.GASessionEvent(MainActivity.TAG);
+                // Provide unhandled exceptions reports. Do that first after creating the tracker
+                MainActivity.tracker.enableExceptionReporting(true);
+                // Enable Remarketing, Demographics & Interests reports
+                // https://developers.google.com/analytics/devguides/collection/android/display-features
+                MainActivity.tracker.enableAdvertisingIdCollection(true);
+                // Enable automatic activity tracking for your app
+                MainActivity.tracker.enableAutoActivityTracking(true);
+                //Send GA Session
+                MainActivity.GASessionEvent(MainActivity.TAG);
+            }
+        }).start();
+
     }
     /**
      * This method is used to register and initialize facebook sdk
@@ -492,6 +512,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
+     * This method is used to register Fabric Crashlyticsr
+     */
+    private void mRegistrationFabricCrashlytics() {
+       new Thread(new Runnable() {
+           @Override
+           public void run() {
+               Fabric.with(MainActivity.this, new Crashlytics());
+           }
+       }).start();
+    }
+    /**
      * This method is used to register Apps flyer tracker
      */
     private void mRegistrationAppsFlyer(){
@@ -527,7 +558,17 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+    private void getBitMapResources(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BitMapHolder bitMapHolder = new BitMapHolder();
+                bitMapHolder.setContext(getApplicationContext());
+                bitMapHolder.getBitMapFromResource();
+            }
+        }).start();
 
+    }
     @Override
     public void onGifCompleted() {
         new Handler().postDelayed(new Runnable() {
@@ -566,8 +607,8 @@ public class MainActivity extends AppCompatActivity
         });
 
         toolbar.setNavigationContentDescription("Select to go to home screen");
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        //DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
     private void logUser() {
@@ -981,12 +1022,20 @@ public class MainActivity extends AppCompatActivity
     private void setUserIdWithAllEvents(){
         // register user id with apps flyer
         AppsFlyerLib.getInstance().setCustomerUserId(MainActivity.user.getId());
+        //Appsflyer events
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(getResourceString(R.string.SESSION_STARTED_DATE_TIME), new Date().toString());
+        eventValue.put(getResourceString(R.string.USER_ID), MainActivity.user.getId());
+        eventValue.put(getResourceString(R.string.USER_EMAIL), user.getEmail());
+        eventValue.put(getResourceString(R.string.USER_PHONE), user.getPhone_no());
+
+        AppsflyerTrackerEvent(this,getResourceString(R.string.SESSION_STARTED),eventValue);
         // register user id with GA tracker
         this.tracker.setClientId(MainActivity.user.getId());
         // register user id with connecto
         // TODO:: add user phone number in connecto
         this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(getResourceString(R.string.USER_NAME), MainActivity.user.getName()));
-        this.connecto.track("Session Started", new Properties().putValue("session_start_datetime", new Date().toString()));
+        this.connecto.track(getResourceString(R.string.SESSION_STARTED),  new Properties().putValue(getResourceString(R.string.SESSION_STARTED_DATE_TIME), new Date().toString()));
 
     }
 
@@ -1292,14 +1341,14 @@ public class MainActivity extends AppCompatActivity
             //Suggesting System that its a good time to do GC
             System.gc();
             this.hideProgressDialog();
-            final ProgressDialog progress = new ProgressDialog(this);
+            /*final ProgressDialog progress = new ProgressDialog(this);
             progress.setCancelable(false);
             progress.setMessage("Rendering institutes cards..");
-            progress.setIndeterminate(true);
+            progress.setIndeterminate(true);*/
 
             if (!isHavingNextUrl)
                 next = null;
-            int time = 1000;
+            int time = 500;
 
             if (isUpdate) {
                 if(currentFragment!=null && currentFragment instanceof CDRecommendedInstituteListFragment){
@@ -1313,8 +1362,8 @@ public class MainActivity extends AppCompatActivity
             }else{
                 String val = this.extractResults(response);
                 this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
-                if (mInstituteList.size() > 5) {
-                    time = (100 * mInstituteList.size());
+                /*if (mInstituteList.size() > 5) {
+                    time = (20 * mInstituteList.size());
                 }
                 progress.show();
                 new Handler().postDelayed(new Runnable() {
@@ -1323,7 +1372,7 @@ public class MainActivity extends AppCompatActivity
                         if (progress != null && progress.isShowing())
                             progress.dismiss();
                     }
-                }, time);
+                }, time);*/
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
 
                 if (fragment == null) {

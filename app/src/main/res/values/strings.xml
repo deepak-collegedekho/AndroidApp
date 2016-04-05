@@ -353,6 +353,8 @@
     <string name="APP_NAME">CollegeDekho</string>
 
     <!--Connecto Events-->
+    <string name="SESSION_STARTED">Session Started</string>
+    <string name="SESSION_STARTED_DATE_TIME">session_start_datetime</string>
     <string name="CONNECTO_SESSION_STARTED">session_started</string>
     <string name="CONNECTO_SESSION_ENDED">session_ended</string>
     <string name="CONNECTO_STREAM_SELECTED">stream_selected</string>

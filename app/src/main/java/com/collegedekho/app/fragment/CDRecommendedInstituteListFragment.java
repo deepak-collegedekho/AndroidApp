@@ -1,7 +1,6 @@
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -50,13 +49,11 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     public static CDRecommendedInstituteListFragment newInstance(ArrayList<Institute> institutes, String title, String next, int undecidedCount) {
         CDRecommendedInstituteListFragment fragment = new CDRecommendedInstituteListFragment();
         Bundle args = new Bundle();
-
         args.putParcelableArrayList(ARG_INSTITUTE, institutes);
         args.putString(ARG_TITLE, title);
         args.putString(ARG_NEXT, next);
         args.putInt(ARG_UNDECIDED_INSTITUTE_COUNT, undecidedCount);
         fragment.setArguments(args);
-
         return fragment;
     }
 
@@ -97,23 +94,10 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         }
 
         this.mAdapter = new SimpleCardStackAdapter(getActivity(), this.getContext(), this);
-        //this.mAddCardInAdapter(this.mInstitutes);
+        this.mAddCardInAdapter(this.mInstitutes);
 
-        if (CDRecommendedInstituteListFragment.IS_FIRST_SHOW)
-        {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    CDRecommendedInstituteListFragment.IS_FIRST_SHOW = false;
-                    CDRecommendedInstituteListFragment.this.mAddCardInAdapter(CDRecommendedInstituteListFragment.this.mInstitutes);
-                }
-            }, 500);
-        }
-        else
-            this.mAddCardInAdapter(this.mInstitutes);
 
         this.mCardContainer.setAdapter(this.mAdapter);
-
         this.mUndecidedCountTV.setOnClickListener(this);
 
         if(this.IS_UNDECIDED_INSTITUTES) {
@@ -138,7 +122,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
              modelArrayList.add(model);
         }
         mAdapter.addAll(modelArrayList);
-
     }
 
     @Override
