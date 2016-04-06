@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/activity_vertical_margin_small"
+    android:scrollbars="none">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/gcm_dialog_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/gcm_btn_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@color/primary_orange"
+            android:text="@string/cancel"
+            android:textColor="@color/white"
+            android:paddingBottom="@dimen/m4dp"
+            android:paddingTop="@dimen/m4dp"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/gcm_btn_ok"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@color/primary_orange"
+            android:text="@string/submit"
+            android:textColor="@color/white"
+
+            android:paddingBottom="@dimen/m4dp"
+            android:paddingTop="@dimen/m4dp"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+</LinearLayout>
+    </ScrollView>

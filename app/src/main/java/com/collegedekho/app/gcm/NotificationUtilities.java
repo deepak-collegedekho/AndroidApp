@@ -79,6 +79,7 @@ public final class NotificationUtilities {
     public static void register(final Context context, final String regId) {
         Log.i(TAG, "registering device (regId = " + regId + ")");
         long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
+        mRegId=regId;
         // Once GCM returns a registration id, we need to register on our server
         // As the server might be down, we will retry it a couple
         // times.
@@ -89,7 +90,7 @@ public final class NotificationUtilities {
                         R.string.server_registering, i, MAX_ATTEMPTS));
 //                post(serverUrl, params);//TO REGISTER ON SERVER
                 String airBopServerUrl = AirBopCommonUtilities.SERVER_URL + "register";
-                postToBopServer(airBopServerUrl,true,true);
+//                postToBopServer(airBopServerUrl,true,true);
                 setRegistered(context, true);
                 storeRegistrationId(context, regId);
                 String message = context.getString(R.string.server_registered);

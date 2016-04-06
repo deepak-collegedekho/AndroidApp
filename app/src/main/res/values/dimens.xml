@@ -81,5 +81,5 @@
 
     <dimen name="cover_width">40dp</dimen>
     <dimen name="cover_height">40dp</dimen>
-
+    <dimen name="chart_font_size">14sp</dimen>
 </resources>

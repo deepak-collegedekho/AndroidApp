@@ -8,6 +8,7 @@ import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 
 import com.collegedekho.app.display.androidcharts.series.TitleValueEntity;
@@ -41,6 +42,7 @@ public class SpiderWebChart extends RoundChart {
     protected int latitudeColor = DEFAULT_LATITUDE_COLOR;
 
     protected int backgroundColor = DEFAULT_BACKGROUND_COLOR;
+    float fontSize=26f;
 
     public SpiderWebChart(Context context) {
         super(context);
@@ -52,6 +54,10 @@ public class SpiderWebChart extends RoundChart {
 
     public SpiderWebChart(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    public void setFontSize(float fontSize) {
+        this.fontSize = fontSize;
     }
 
     @Override
@@ -128,7 +134,7 @@ public class SpiderWebChart extends RoundChart {
 
         Paint mPaintFont = new Paint();
         mPaintFont.setColor(Color.BLACK);
-        mPaintFont.setTextSize(24f);
+        mPaintFont.setTextSize(fontSize);
         mPaintFont.setFakeBoldText(true);
         mPaintFont.setAntiAlias(true);
         Path mPath = new Path();
@@ -143,13 +149,14 @@ public class SpiderWebChart extends RoundChart {
                 } else {
                     mPath.lineTo(pt.x, pt.y);
                 }
-
+                Rect bounds = new Rect();
+                mPaintFont.getTextBounds(title, 0, 1, bounds);
                 // draw title
                 String title = data.get(0).get(i).getTitle();
                 float realx = 0;
                 float realy = 0;
 
-                // TODO title position
+                // TODO title position  
                 if (pt.x < position.x) {
                     realx = pt.x - mPaintFont.measureText(title) - 5;
                 } else if (pt.x > position.x) {
@@ -159,7 +166,7 @@ public class SpiderWebChart extends RoundChart {
                 }
 
                 if (pt.y > position.y) {
-                    realy = pt.y + 12;
+                    realy = pt.y + bounds.height();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ;
                 } else if (pt.y < position.y) {
                     realy = pt.y - 4;
                 } else {

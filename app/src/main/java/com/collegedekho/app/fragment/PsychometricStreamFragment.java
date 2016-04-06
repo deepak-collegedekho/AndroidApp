@@ -150,6 +150,7 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
         }
         List<List<TitleValueEntity>> data = new ArrayList<>();
         data.add(data1);
+        spiderwebchart.setFontSize(getActivity().getResources().getDimension(R.dimen.chart_font_size));
         spiderwebchart.setLatitudeNum(data1.size());
         spiderwebchart.setLongitudeNum(data1.size());
         spiderwebchart.setData(data);

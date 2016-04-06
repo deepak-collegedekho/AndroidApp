@@ -35,7 +35,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -136,6 +135,8 @@ import com.collegedekho.app.fragment.UserAlertsParentFragment;
 import com.collegedekho.app.fragment.UserEducationFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
+import com.collegedekho.app.gcm.NotificationUtilities;
+import com.collegedekho.app.gcm.RegistrationIntentService;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.listener.OnArticleSelectListener;
@@ -812,12 +813,12 @@ public class MainActivity extends AppCompatActivity
         LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver,linkFilter);
 
         /*GCM COMPONENTS*/
-     /*   if(!NotificationUtilities.isRegistered(this)){
+        if(!NotificationUtilities.isRegistered(this)){
             Intent intent = new Intent(MainActivity.this, RegistrationIntentService.class);
             MainActivity.this.startService(intent);
         }else {
             Log.e(TAG,"Registration ID :"+ NotificationUtilities.getRegistrationId(this));
-        }*/
+        }
 
 //        try {
 //            NotificationUtilities.postBopMessage("https://www.airbop.com/api/v1/messages","Hello Test Notification");
@@ -1682,7 +1683,11 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+            if(currentFragment instanceof SplashFragment || currentFragment instanceof ProfileFragment){
+                fragmentTransaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+            }else {
+                fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+            }
             fragmentTransaction.replace(R.id.container, fragment, tag);
 
             if (addToBackstack)
@@ -1731,7 +1736,7 @@ public class MainActivity extends AppCompatActivity
         String like = null;
         String[] tags = tag.split("#");
         int voteType = 0;
-
+        boolean hideProgressDialog=true;
         switch (tags[0]) {
             case Constants.TAG_SKIP_LOGIN:
             case Constants.TAG_TRUE_SDK_LOGIN:
@@ -2016,8 +2021,13 @@ public class MainActivity extends AppCompatActivity
                 this.onTestCalendarResponse(response);
                 break;
             case Constants.TAG_PSYCHOMETRIC_RESPONSE:
-                if(tags[1]!=null) {
+                if(tags[1] != null) {
                     DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(tags[1]));
+                }
+                String examId = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID, "");
+                if (!examId.isEmpty()) {
+                    hideProgressDialog=false;
+                    this.mMakeNetworkCall(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + examId + "/calendar/", null);
                 }
                 break;
             case Constants.TAG_NAME_UPDATED:
@@ -2174,6 +2184,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
         try {
+            if(hideProgressDialog)
             hideProgressDialog();
         }
         catch(Exception e)
@@ -3051,9 +3062,9 @@ public class MainActivity extends AppCompatActivity
         if (streamName != null || streamName != "")
             MainActivity.user.setStream_name(streamName);
         if (!isEdited) {
-            this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, MainActivity.user.getResource_uri(), hashMap, Request.Method.PUT);
+            this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
         } else {
-            this.mMakeNetworkCall(Constants.TAG_SUBMIT_EDITED_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, MainActivity.user.getResource_uri(), hashMap, Request.Method.PUT);
+            this.mMakeNetworkCall(Constants.TAG_SUBMIT_EDITED_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
 
         }
     }
@@ -5330,7 +5341,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onNameUpdated(HashMap params, String msg) {
-        this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED + "#" + msg, MainActivity.user.getResource_uri(), params, Request.Method.PUT);
+        this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED + "#" + msg, MainActivity.user.getPreference_uri(), params, Request.Method.PUT);
     }
 
     private void onNameUpdatedResponse(String response , String msg) {
@@ -5383,14 +5394,13 @@ public class MainActivity extends AppCompatActivity
 
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(CalendarParentFragment.class.getSimpleName() );
             if(fragment == null)
-                this.mDisplayFragment(CalendarParentFragment.newInstance(new ArrayList(this.chaptersList)), !isFromNotification, CalendarParentFragment.class.getSimpleName() );
+                this.mDisplayFragment(CalendarParentFragment.newInstance(new ArrayList(this.chaptersList)), !isFromNotification, CalendarParentFragment.class.getSimpleName());
             else {
                 if (currentFragment instanceof CalendarParentFragment)
                     ((CalendarParentFragment) currentFragment).updateCalander(new ArrayList(this.chaptersList));
 
                 this.mDisplayFragment(fragment, false, CalendarParentFragment.class.getSimpleName());
 
-                //this.mDisplayFragment(CalendarParentFragment.newInstance(new ArrayList(this.chaptersList)), true, Constants.WIDGET_TEST_CALENDAR);
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -5402,10 +5412,8 @@ public class MainActivity extends AppCompatActivity
     public void onSubmitCalendarData(JSONObject object,String url) {
         String examId = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
         this.mMakeJsonObjectNetworkCall(Constants.TAG_PSYCHOMETRIC_RESPONSE+"#"+examId,Constants.BASE_URL+url,object,1);
-        if(!examId.isEmpty()) {
-            this.onHomeItemSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + examId + "/calendar/", null);
-        }
     }
+
     Handler baskpressHandler=new Handler();
     Runnable backpressRunnable = new Runnable() {
         @Override
@@ -5500,7 +5508,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onProfileUpdated(HashMap<String, String> hashMap) {
-        this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, MainActivity.user.getResource_uri(), hashMap, Request.Method.PUT);
+        this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
 
     }
 

@@ -58,6 +58,7 @@ public class RegistrationIntentService extends IntentService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
+        if(token!=null && !token.trim().matches(""))
         NotificationUtilities.register(getApplicationContext(), token);
     }
 

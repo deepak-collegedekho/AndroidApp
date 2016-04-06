@@ -13,7 +13,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.VideoPlayerActivity;
+import com.collegedekho.app.activity.GCMDialogActivity;
 import com.collegedekho.app.resource.Constants;
 import com.google.android.gms.gcm.GcmListenerService;
 
@@ -43,10 +43,15 @@ public class GCMIntentService extends GcmListenerService {
     }
 
     private void sendNotification(int id,Bundle data) {
+        if(data.getString("resource_uri")!=null){
+            return;
+        }
         String message=data.getString(Constants.MESSAGE);
         String collapseKey=data.getString(Constants.COLLAPSE_KEY);
-        Intent intent = new Intent(this, VideoPlayerActivity.class);
+        Intent intent = new Intent(this, GCMDialogActivity.class);
+        intent.putExtra("question_type",data.getString("question_type"));
         intent.putExtra("video_id","ZfIpYXpUpYc");
+        intent.putExtra("data",data);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         int color = 0x6d6f71;
