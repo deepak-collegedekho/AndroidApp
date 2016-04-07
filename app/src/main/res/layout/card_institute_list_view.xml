@@ -122,7 +122,7 @@
                         android:layout_width="@dimen/m20dp"
                         android:layout_height="@dimen/m20dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_like"
+                        app:srcCompat="@drawable/ic_like"
                         android:tint="@color/subheading_color"
                         />
                     <ProgressBar
@@ -205,7 +205,7 @@
                         android:id="@+id/card_institute_expand"
                         android:layout_width="@dimen/m25dp"
                         android:layout_height="@dimen/m25dp"
-                        android:src="@drawable/ic_keyboard_arrow_right_white_18dp"
+                        app:srcCompat="@drawable/ic_right_arrow"
                         android:tint="@color/subheading_color"
                         android:fadingEdge="horizontal"
                         android:scaleType="fitEnd"

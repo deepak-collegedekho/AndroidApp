@@ -10,7 +10,7 @@
         android:id="@+id/profile_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/ic_profile_default"
+        app:srcCompat="@drawable/ic_profile_default"
         android:visibility="visible"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"

@@ -60,5 +60,6 @@
     //gradient colors
     <color name="start_gradient">#f7737272</color>
     <color name="end_gradient">#96a7aca7</color>
+    <color name="wallet_dim_foreground_holo_dark">#bebebe</color>
 
 </resources>

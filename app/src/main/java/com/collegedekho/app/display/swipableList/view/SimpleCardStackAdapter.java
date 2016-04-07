@@ -2,6 +2,7 @@ package com.collegedekho.app.display.swipableList.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -129,9 +130,9 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
                 fadeInImageView = ((FadeInImageView) convertView.findViewById(R.id.card_recommended_institute_image));
 
                 //fadeInImageView.setDefaultImageResId(R.drawable.default_banner);
-                //fadeInImageView.setLocalImageBitmap(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.default_banner));
+                fadeInImageView.setLocalImageBitmap(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.default_banner));
                 //fadeInImageView.setErrorImageResId(R.drawable.default_banner);
-                fadeInImageView.setBackgroundResource(R.drawable.default_banner);
+                //fadeInImageView.setBackgroundResource(R.drawable.default_banner);
         try{
             ((ImageView) convertView.findViewById(R.id.like_textview)).setImageBitmap(BitMapHolder.SHORTLISTED_BITMAP);
             ((ImageView) convertView.findViewById(R.id.dislike_textview)).setImageBitmap(BitMapHolder.UNSHORTLISTED_BITMAP);

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="@color/app_background"
@@ -13,7 +14,7 @@
     <ImageView
         android:id="@+id/view_into_grid_image"
         style="@style/AppTheme.ImageView"
-        android:src="@drawable/ic_view_grid" />
+        app:srcCompat="@drawable/ic_view_grid" />
 
     <TextView
         style="@style/AppTheme.TextView.Head2"
@@ -29,7 +30,7 @@
         android:id="@+id/view_into_list_image"
         style="@style/AppTheme.ImageView"
         android:paddingLeft="@dimen/m10dp"
-        android:src="@drawable/ic_view_list" />
+        app:srcCompat="@drawable/ic_view_list" />
 
     <TextView
         style="@style/AppTheme.TextView.Head2"

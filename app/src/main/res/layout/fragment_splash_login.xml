@@ -14,7 +14,7 @@
 
     <ImageView
         style="@style/AppTheme.ImageView"
-        android:src="@drawable/file79" />
+        android:src="@drawable/college_logo" />
 
     <LinearLayout
         android:id="@+id/login_layout"

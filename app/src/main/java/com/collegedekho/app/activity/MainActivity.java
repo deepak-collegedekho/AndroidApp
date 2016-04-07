@@ -423,7 +423,6 @@ public class MainActivity extends AppCompatActivity
 
         Log.e(TAG, " onCreate  exit time"+ System.currentTimeMillis());
     }
-
     /**
      * This method is used  with connecto sdk
      */
@@ -531,6 +530,7 @@ public class MainActivity extends AppCompatActivity
         AppsFlyerLib.getInstance().init(this, Constants.APPSFLYER_ID);
         // Set the Currency
         AppsFlyerLib.getInstance().setCurrencyCode("INR");
+        AppsFlyerLib.getInstance().setDebugLog(true);
 
         AppsFlyerLib.getInstance().registerConversionListener(this,new AppsFlyerConversionListener() {
             public void onInstallConversionDataLoaded(Map<String, String> conversionData) {
@@ -3177,12 +3177,6 @@ public class MainActivity extends AppCompatActivity
             String name = user.getName();
             String email = user.getEmail();
             String phone = user.getPhone_no();
-            if(email==null){
-                email=user.getPrimaryEmail();
-            }
-            if(phone==null){
-                phone=user.getPrimaryPhone();
-            }
 
             if(name.equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER)))
                 name="";
@@ -3196,7 +3190,7 @@ public class MainActivity extends AppCompatActivity
 
             if (name== null || name.isEmpty() || name.toLowerCase().contains(getResourceString(R.string.ANONYMOUS_USER).toLowerCase()) ||
                     phone == null || phone.length() <= 6 ||
-                    email == null || email.contains("@anonymouscollegedekho.com")) {
+                    email == null || email.isEmpty() || email.contains("@anonymouscollegedekho.com")) {
                 final View view = getLayoutInflater().inflate(R.layout.dialog_apply, null, false);
                 ((TextView) view.findViewById(R.id.apply_name)).setText(name);
                 ((TextView) view.findViewById(R.id.apply_email)).setText(email);

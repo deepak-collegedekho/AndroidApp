@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:background="@color/white"
@@ -34,7 +35,7 @@
                 android:layout_gravity="center"
                 android:layout_centerVertical="true"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_recommended_colleges"/>
+                app:srcCompat="@drawable/ic_recommended_colleges"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -93,7 +94,7 @@
                 android:layout_gravity="center"
                 android:layout_alignParentBottom="true"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_wishlist_colleges"/>
+                app:srcCompat="@drawable/ic_wishlist_colleges"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -165,7 +166,7 @@
                 android:layout_gravity="center"
                 android:layout_alignParentBottom="true"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_backup_colleges"/>
+                app:srcCompat="@drawable/ic_backup_colleges"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -228,7 +229,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="@dimen/m8dp"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_important_dates"/>
+                app:srcCompat="@drawable/ic_important_dates"/>
 
             <TextView
                 android:layout_width="match_parent"

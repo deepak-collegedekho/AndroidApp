@@ -44,6 +44,22 @@ public class User
     private int blocking_otp;
     private String app_version;
 
+    private String primaryEmail;
+    private String primaryPhone;
+    public String[] profileData = new String[3];
+
+    public interface ProfileQuery {
+        String[] PROJECTION = {
+                ContactsContract.CommonDataKinds.Identity.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
+        };
+
+        int NAME = 0;
+        int PHONE_NUMBER = 1;
+        int IS_PRIMARY = 2;
+    }
+
     public String getPreference_uri() {
         return preference_uri;
     }
@@ -63,9 +79,6 @@ public class User
     private ArrayList<String>collegedekho_recommended_streams;
     private int psychometric_given;
 
-    private String primaryEmail;
-    private String primaryPhone;
-    public String[] profileData = new String[3];
 
     public ArrayList<ExamDetail> getUser_exams() {
         return user_exams;
@@ -83,17 +96,6 @@ public class User
         this.user_education = user_education;
     }
 
-    public interface ProfileQuery {
-        String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Identity.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Phone.NUMBER,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-        };
-
-        int NAME = 0;
-        int PHONE_NUMBER = 1;
-        int IS_PRIMARY = 2;
-    }
 
 
     public int getPsychometric_given() {

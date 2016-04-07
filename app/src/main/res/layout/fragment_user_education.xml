@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:background="@color/white"
     android:fitsSystemWindows="true"
@@ -11,9 +12,9 @@
         android:layout_height="match_parent">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:paddingTop="20dp"
+            android:layout_height="match_parent"
             android:background="@color/app_background"
-            android:layout_height="match_parent">
+            android:paddingTop="20dp">
             <RelativeLayout
                 android:id="@+id/education_point_layout"
                 android:layout_marginBottom="@dimen/m10dp"
@@ -29,12 +30,6 @@
                     android:textSize="16sp"
                     android:text="CONGRATULATIONS ON YOUR FIRST LOGIN"/>
 
-                <include layout="@layout/layout_points_header"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/first_login"
-                    android:paddingTop="@dimen/m12dp"
-                    />
 
             </RelativeLayout>
 
@@ -175,7 +170,7 @@
             android:scaleType="fitXY"
             android:clickable="true"
             android:contentDescription="@string/profile_tute_description"
-            android:src="@drawable/ic_education_tute" />
+            app:srcCompat="@drawable/ic_education_tute" />
 
     </FrameLayout>
 </RelativeLayout>

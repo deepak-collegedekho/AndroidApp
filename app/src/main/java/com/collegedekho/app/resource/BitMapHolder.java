@@ -44,7 +44,18 @@ public class BitMapHolder {
     }
 
     public void  getBitMapFromResource(){
-        if(this.drawableShortList == null)
+       /*
+
+       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+          remoteViews.setImageViewResource(R.id.imageView, R.drawable.vector);
+
+        } else {
+          Context wrappedContext = TintContextWrapper.wrap(context);
+          Drawable d = ContextCompat.getDrawable(wrappedContext, R.drawable.vector);
+          }
+
+
+       if(this.drawableShortList == null)
             this.drawableShortList = ContextCompat.getDrawable(mContext, R.drawable.ic_shortlist);
         if(this.drawableNotIntrested == null)
             this.drawableNotIntrested = ContextCompat.getDrawable(mContext, R.drawable.ic_not_interested);
@@ -55,7 +66,7 @@ public class BitMapHolder {
         if(UNSHORTLISTED_BITMAP == null)
            UNSHORTLISTED_BITMAP = getBitmap((VectorDrawable)this.drawableNotIntrested);
         if(UNDECIDED_BITMAP == null)
-           UNDECIDED_BITMAP = getBitmap((VectorDrawable)this.drawableUndecided);
+           UNDECIDED_BITMAP = getBitmap((VectorDrawable)this.drawableUndecided);*/
 
     }
 }

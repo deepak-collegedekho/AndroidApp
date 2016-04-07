@@ -145,7 +145,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="0.2"
                             android:padding="@dimen/m10dp"
-                            android:src="@drawable/edit_icon" />
+                            app:srcCompat="@drawable/ic_edit" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -195,7 +195,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="0.2"
                             android:padding="@dimen/m10dp"
-                            android:src="@drawable/edit_icon" />
+                            app:srcCompat="@drawable/ic_edit" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -246,7 +246,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="0.2"
                             android:padding="@dimen/m10dp"
-                            android:src="@drawable/edit_icon"
+                            app:srcCompat="@drawable/ic_edit"
                             android:visibility="gone" />
                     </LinearLayout>
 
@@ -298,7 +298,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="0.2"
                             android:padding="@dimen/m10dp"
-                            android:src="@drawable/edit_icon"
+                            app:srcCompat="@drawable/ic_edit"
                             android:visibility="gone" />
                     </LinearLayout>
 

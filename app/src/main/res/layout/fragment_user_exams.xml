@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
      android:layout_width="match_parent"
     android:background="@color/app_background"
     android:layout_height="match_parent">
@@ -10,7 +11,6 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textStyle="bold"
-        android:layout_below="@id/points_layout"
         android:textSize="17sp"
         android:paddingTop="50dp"
         android:paddingRight="@dimen/m40dp"
@@ -23,13 +23,8 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_below="@id/exam_textview"
-              android:src="@drawable/ic_exams_user"/>
-    <!--<com.andexert.library.RippleView
-        android:id="@+id/more"
-        android:layout_width="match_parent"
-        android:layout_height="?android:actionBarSize"
-        android:layout_alignParentBottom="true"
-        rv_centered="true">-->
+              app:srcCompat="@drawable/ic_exams_user"/>
+
 
         <TextView
             style="@style/AppTheme.OrangeButton"
@@ -45,7 +40,6 @@
             android:visibility="gone"
             android:text="SUBMIT"/>
 
-    <!--</com.andexert.library.RippleView>-->
 
        <android.support.v7.widget.RecyclerView
             android:id="@+id/exams_recycle_view"

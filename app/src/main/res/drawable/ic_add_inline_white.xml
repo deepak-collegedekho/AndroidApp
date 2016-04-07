@@ -1,24 +1,4 @@
-<!-- res/drawable/heart.xml -->
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:height="20dp"
-    android:width="20dp"
-    android:viewportHeight="500"
-    android:viewportWidth="500">
-    <group
-        android:pivotX="300.0"
-        android:pivotY="300.0">
-        <path
-            android:strokeColor="#fff"
-            android:strokeWidth="35"
-            android:strokeMiterLimit="10"
-            android:pathData="M475,250c0,124.812-101.188,226-226,226
-		C124.187,476,23,374.812,23,250C23,125.187,124.187,24,249,24C373.812,24,475,125.187,475,250z"/>
-
-        <path
-            android:fillColor="#fff"
-            android:pathData="M276.452,216.625h109.587v48.871H276.452v126.067h-54.073V265.496H111.959v-48.871h110.419V100.436h54.073
-			V216.625z"/>
-
-    </group>
-
-</vector>
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_add_inline_white_vector"/>
+</selector>

@@ -46,7 +46,6 @@
             android:orientation="vertical"
             app:cardCornerRadius="@dimen/corner_radius"
             app:cardElevation="@dimen/cardview_default_elevation"
-            android:background="@drawable/ic_chat_inline"
             app:cardUseCompatPadding="true">
             <LinearLayout
                 android:id="@+id/my_fb_comment_container"
@@ -80,7 +79,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_check_black_12dp"
+                        app:srcCompat="@drawable/ic_check_black"
                         android:layout_alignParentRight="true"
                         android:visibility="gone"
                         />

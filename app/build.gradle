@@ -26,6 +26,7 @@ android {
     buildToolsVersion '23.0.2'
     defaultConfig
             {
+                vectorDrawables.useSupportLibrary = true
                 applicationId "com.collegedekho.app"
                 minSdkVersion 15
                 targetSdkVersion 23
@@ -51,9 +52,7 @@ android {
         preDexLibraries = false
 //        dexInProcess false
     }
-    repositories {
-        maven { url 'http://www.connecto.io/maven-repo' }
-    }
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES.txt'
         exclude 'META-INF/DEPENDENCIES'
@@ -72,10 +71,10 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/AF-Android-SDK-v4.3.1.jar')
     compile(name: "truesdk-0.3", ext: "aar")
+    compile(name: "connecto-android-sdk-0.0.6", ext: "aar")
     compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
         transitive = true;
     }
-    compile 'io.connecto:connecto-android-sdk:0.0.5'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.android.support:cardview-v7:23.2.0'
@@ -88,11 +87,13 @@ dependencies {
     compile 'com.google.android.gms:play-services-identity:8.4.0'
     compile 'com.melnykov:floatingactionbutton:1.3.0'
     compile 'com.android.support:support-v4:23.2.0'
+    compile 'com.android.support:support-vector-drawable:23.2.0'
+    compile 'com.android.support:animated-vector-drawable:23.2.0'
     compile 'com.bowyer.app:fabtransitionlayout:0.2.0@aar'
     compile 'com.google.android.gms:play-services-ads:8.4.0'
     compile 'com.google.android.gms:play-services-auth:8.4.0'
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
+    compile 'com.google.android.gms:play-services-analytics:8.4.0'
     compile 'com.github.traex.rippleeffect:library:1.3'
     compile 'net.sourceforge.htmlcleaner:htmlcleaner:2.2'
 }
-apply plugin: 'com.google.gms.google-services'

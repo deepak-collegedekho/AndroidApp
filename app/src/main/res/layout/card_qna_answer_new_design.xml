@@ -41,7 +41,7 @@
                     android:id="@+id/qna_answer_button_upvote"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_arrow_up"
+                    app:srcCompat="@drawable/ic_arrow_up"
                     android:background="@drawable/bg_upvote"
                     />
                 <TextView
@@ -62,7 +62,7 @@
                     android:id="@+id/qna_answer_button_downvote"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_arrow_down"
+                    app:srcCompat="@drawable/ic_arrow_down"
                     android:background="@drawable/bg_downvote"
                     />
             </LinearLayout>
