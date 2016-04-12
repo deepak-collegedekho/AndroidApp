@@ -1,4 +1,5 @@
 package com.collegedekho.app.widget;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
@@ -10,17 +11,17 @@ import com.android.volley.toolbox.NetworkImageView;
 public class FadeInImageView extends NetworkImageView {
 
     private static final float BITMAP_SCALE = 0.4f;
-    private static final float BLUR_RADIUS = 7.5f;
+    private static final float BLUR_RADIUS = 3.5f;
 
     private Bitmap mLocalBitmap;
 
     private boolean mShowLocal;
 
     public void setLocalImageBitmap(Bitmap bitmap) {
-        if (bitmap != null) {
-            mShowLocal = true;
-        }
-        this.mLocalBitmap = this.fastblur(bitmap, FadeInImageView.BITMAP_SCALE, 2);
+        this.mShowLocal = true;
+
+        this.mLocalBitmap = this.fastblur(bitmap, FadeInImageView.BITMAP_SCALE, 7);
+
         requestLayout();
     }
 
@@ -79,7 +80,6 @@ public class FadeInImageView extends NetworkImageView {
      * the following line:
      * Stack Blur Algorithm by Mario Klingemann <mario@quasimondo.com>
      */
-
     public Bitmap fastblur(Bitmap sentBitmap, float scale, int radius) {
 
         int width = Math.round(sentBitmap.getWidth() * scale);

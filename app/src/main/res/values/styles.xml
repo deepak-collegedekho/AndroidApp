@@ -502,6 +502,12 @@
         <item name="android:background">@drawable/rounded_bottom_menu_item</item>
 
     </style>
+    <style name="AppTheme.TextWithShadow">
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
+    </style>
     Declaration
     <style name="Widget.GifView" parent="@android:style/Widget"></style>
 

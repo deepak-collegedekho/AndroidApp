@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -22,6 +23,7 @@ import com.collegedekho.app.adapter.QnAAnswersListAdapter;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
 
 import java.text.ParseException;
@@ -212,6 +214,30 @@ public class QnAQuestionDetailFragment extends BaseFragment{
 
         return rootView;
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        String resourceURI = this.mQnAQuestion.getResource_uri();
+        String[] resourceURIArray = resourceURI.split("/");
+
+        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_QNA_QUESTION_LIST + "/personalize/qna/" + resourceURIArray[resourceURIArray.length - 1]);
+
+        AnalyticsUtils.AppIndexingView("CollegeDekho - QnA - " + this.mQnAQuestion.getDesc(), val, val, (MainActivity) this.getActivity(), true);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        String resourceURI = this.mQnAQuestion.getResource_uri();
+        String[] resourceURIArray = resourceURI.split("/");
+
+        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_QNA_QUESTION_LIST + "/personalize/qna/" + resourceURIArray[resourceURIArray.length - 1]);
+
+        AnalyticsUtils.AppIndexingView("CollegeDekho - QnA - " + this.mQnAQuestion.getDesc(), val, val, (MainActivity) this.getActivity(), false);
+    }
+
 
     @Override
     public void onAttach(Context activity) {

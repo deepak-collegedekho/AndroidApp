@@ -62,27 +62,35 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- ATTENTION: This intent was auto-generated. Follow instructions at
+  https://g.co/AppIndexing/AndroidStudio to publish your URLs. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http://www.collegedekho.com" />
-                <data android:scheme="appsflyer" />
+                <!-- ATTENTION: This data URL was auto-generated. We recommend that you use the HTTP scheme.
+                  TODO: Change the host or pathPrefix as necessary. -->
+                <data
+                    android:host="www.collegedekho.com"
+                    android:scheme="http" />
             </intent-filter>
+
+        </activity>
+        <activity
+            android:name=".activity.VideoPlayerActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation|keyboardHidden|screenSize|layoutDirection"
+            android:parentActivityName=".activity.MainActivity"
+            >
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.DEFAULT" />
         </activity>
         <activity
             android:name=".activity.PsychometricAnalysisActivity"
             android:label="@string/title_activity_psychometric_analysis"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
-        </activity>
-
-        <activity
-            android:name=".activity.VideoPlayerActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|keyboardHidden|screenSize|layoutDirection">
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.DEFAULT" />
         </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -180,5 +188,10 @@
         <activity android:name=".activity.GCMDialogActivity"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog">
         </activity>
+    <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 </manifest>

@@ -20,7 +20,6 @@ public abstract class CardStackAdapter extends BaseAdapter {
 	 * Lock used to modify the content of {@link #mData}. Any write operation
 	 * performed on the deque should be synchronized on this lock.
 	 */
-//	private final Object mLock = new Object();
 	private Vector<CardModel> mData;
 
     private boolean mShouldFillCardBackground = false;

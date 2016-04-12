@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.appsflyer.AppsFlyerLib;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.InstitutePagerAdapter;
@@ -22,7 +24,11 @@ import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.QnAQuestions;
+import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.AnalyticsUtils;
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -96,34 +102,6 @@ public class InstituteDetailFragment extends BaseFragment {
         //this.mDetailsPager.setPageTransformer(true, new DepthPageTransformer());
         this.mDetailsPager.setOffscreenPageLimit(5);
 
-        //this.mFooterAdapter = new FooterPagerAdapter(this.mInstitute, this.getContext());
-
-        //this.mFooterPager = (ViewPager) rootView.findViewById(R.id.college_extras_pager);
-        //this.mFooterPager.setAdapter(this.mFooterAdapter);
-        //this.mFooterPager.setPageMargin(this.getResources().getDisplayMetrics().widthPixels /-7);
-
-/*
-        this.mData.add(new GameEntity(R.drawable.ic_carousel_video, R.string.videos_title));
-        this.mData.add(new GameEntity(R.drawable.ic_carousel_qna, R.string.qna_title));
-        this.mData.add(new GameEntity(R.drawable.ic_carousel_news, R.string.news_title));
-        this.mData.add(new GameEntity(R.drawable.ic_carousel_articles, R.string.article_title));
-*/
-
-        /*this.mData.add(new GameEntity(R.drawable.image_1, R.string.videos_title));
-        this.mData.add(new GameEntity(R.drawable.image_2, R.string.qna_title));
-        this.mData.add(new GameEntity(R.drawable.image_3, R.string.news_title));
-        this.mData.add(new GameEntity(R.drawable.image_4, R.string.article_title));*/
-
-/*
-        this.mAdapter = new CoverFlowAdapter(this.getContext());
-        this.mAdapter.setData(this.mData);
-*/
-
-        //this.tabLayout = (TabLayout) rootView.findViewById(R.id.college_tabs_layout);
-        //this.tabLayout.setTabTextColors(getResources().getColor(R.color.white), getResources().getColor(R.color.light_grey_background));
-        //this.tabLayout.setupWithViewPager(this.mDetailsPager);
-
-        //this.mDetailsPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(this.tabLayout));
         this.mDetailsPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -147,6 +125,24 @@ public class InstituteDetailFragment extends BaseFragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_INSTITUTE_LIST  + "/institutes/" + this.mInstitute.getId());
+
+        AnalyticsUtils.AppIndexingView("CollegeDekho - Colleges - " + this.mInstitute.getUri_slug(), val, val, (MainActivity) this.getActivity(), true);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_INSTITUTE_LIST  + "/institutes/" + this.mInstitute.getId());
+
+        AnalyticsUtils.AppIndexingView("CollegeDekho - Colleges - " + this.mInstitute.getUri_slug(), val, val, (MainActivity) this.getActivity(), false);
     }
 
     public void updateCourses(String response ) { new LoadCoursesAsyncTask().execute(response);  }

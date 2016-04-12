@@ -28,6 +28,7 @@ public class Articles implements Parcelable{
     public String similar_articles;
     public int id;
     public String stream;
+    public String slug;
 
     public int getNews_source() {
         return news_source;
@@ -51,6 +52,7 @@ public class Articles implements Parcelable{
         published_on = source.readString();
         similar_articles = source.readString();
         stream = source.readString();
+        slug = source.readString();
         id  =   source.readInt();
         news_source=source.readInt();
     }
@@ -66,6 +68,7 @@ public class Articles implements Parcelable{
         dest.writeString(published_on);
         dest.writeString(similar_articles);
         dest.writeString(stream);
+        dest.writeString(slug);
         dest.writeInt(id);
         dest.writeInt(news_source);
     }
@@ -104,6 +107,14 @@ public class Articles implements Parcelable{
 
     public String getStream() {
         return stream;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public void setStream(String stream) {

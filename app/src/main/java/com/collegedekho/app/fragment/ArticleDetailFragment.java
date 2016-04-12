@@ -1,6 +1,7 @@
 
 package com.collegedekho.app.fragment;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -22,7 +23,10 @@ import com.collegedekho.app.adapter.ArticleListAdapter;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.Utils;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -188,5 +192,22 @@ public class ArticleDetailFragment extends BaseFragment {
                 mMainActivity.currentFragment = this;
         }
     }
-}
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_ARTICLES_LIST + "/personalize/articles/" + this.mArticle.getId());
+
+        AnalyticsUtils.AppIndexingView("CollegeDekho - Article - " + this.mArticle.title, val, val, (MainActivity) this.getActivity(), true);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_ARTICLES_LIST + "/personalize/articles/" + this.mArticle.getId());
+
+        AnalyticsUtils.AppIndexingView("CollegeDekho - Article - " + this.mArticle.title, val, val, (MainActivity) this.getActivity(), false);
+    }
+}

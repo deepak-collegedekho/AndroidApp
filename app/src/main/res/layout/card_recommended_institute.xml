@@ -30,6 +30,7 @@
         />
     <TextView
         android:id="@+id/card_recommended_geolocation"
+        style="@style/AppTheme.TextWithShadow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/card_recommended_institute_image"
@@ -46,6 +47,7 @@
 
     <TextView
         android:id="@+id/card_recommended_streams_label"
+        style="@style/AppTheme.TextWithShadow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
@@ -76,6 +78,7 @@
         />
     <TextView
         android:id="@+id/card_recommended_streams"
+        style="@style/AppTheme.TextWithShadow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"

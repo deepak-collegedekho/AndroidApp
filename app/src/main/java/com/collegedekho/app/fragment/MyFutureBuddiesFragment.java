@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,8 +21,11 @@ import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -258,10 +262,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     public void onPause()
     {
         super.onPause();
-        /*// hide keyboard
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(this.mChatText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-*/
+
         if (this.mMyFbRefreshTimer != null)
         {
             this.mMyFbRefreshTimer.cancel();
@@ -269,6 +270,30 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
             this.mMyFbRefreshTimer = null;
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        String resourceURI = this.mMyFutureBuddies.getResource_uri();
+        String[] resourceURIArray = resourceURI.split("/");
+
+        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_MY_FB_ENUMERATION + "/personalize/forums/" + resourceURIArray[resourceURIArray.length - 1]);
+
+        AnalyticsUtils.AppIndexingView("CollegeDekho - MyFutureBuddy - " + this.mMyFutureBuddies.getInstitute_name(), val, val, (MainActivity) this.getActivity(), true);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        String resourceURI = this.mMyFutureBuddies.getResource_uri();
+        String[] resourceURIArray = resourceURI.split("/");
+
+        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_MY_FB_ENUMERATION + "/personalize/forums/" + resourceURIArray[resourceURIArray.length - 1]);
+
+        AnalyticsUtils.AppIndexingView("CollegeDekho - MyFutureBuddy - " + this.mMyFutureBuddies.getInstitute_name(), val, val, (MainActivity) this.getActivity(), false);
     }
 
     public void commentAdded(MyFutureBuddyComment comment)

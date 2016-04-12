@@ -39,7 +39,6 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
     private TextView mAskExpertSubmitButton;
     private LinearLayout mInstituteQnAAskContainer;
     private LinearLayout mInstituteQnAQuestionListContainer;
-    private LinearLayout mInstituteQnAAskContainerButtonsControllers;
     private QnAQuestionsListAdapter mQnAQuestionsListAdapter;
     private RecyclerView mQuestionsListView;
     private String mInstitute;
@@ -85,7 +84,6 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
         View rootView = inflater.inflate(R.layout.fragment_institute_qna, container, false);
 
         this.mInstituteQnAAskContainer = (LinearLayout) rootView.findViewById(R.id.institute_qna_ask_question_container);
-        this.mInstituteQnAAskContainerButtonsControllers = (LinearLayout) rootView.findViewById(R.id.institute_qna_question_controls_buttons);
         this.mInstituteQnAQuestionListContainer = (LinearLayout) rootView.findViewById(R.id.institute_qna_question_recycle_view_container);
         this.mAskExpertButton = (TextView) rootView.findViewById(R.id.institute_qna_button_ask_expert);
         this.mAskExpertCancelButton= (TextView) rootView.findViewById(R.id.institute_qna_button_ask_cancel);

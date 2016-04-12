@@ -1,5 +1,7 @@
 package com.collegedekho.app.resource;
 
+import android.net.Uri;
+
 import com.collegedekho.app.R;
 
 import java.util.HashMap;
@@ -228,7 +230,6 @@ public class Constants
     public static final String COLAPSED_INDICATOR = "+";
 
     // for app tutorials
-
     public static boolean IS_RECOMENDED_COLLEGE = false;
     public static final int REMOMMENDED_INSTITUTE_ACTION = 1;
     public static final int INSTITUTE_LIKE_DISLIKE = 0;
@@ -237,6 +238,8 @@ public class Constants
     public static long ANIM_SHORT_DURATION = 200;
     public static long ANIM_AVERAGE_DURATION = 500;
     public static long ANIM_LONG_DURATION =  1000;
+
+    public static final Uri BASE_APP_URI = Uri.parse("android-app://com.collegedekho.app/http/www.collegedekho.com/");
 
     public static final String CD_RECOMMENDED_INSTITUTE_ACTION_TYPE = "cd_recommended_institute_action_type";
 
