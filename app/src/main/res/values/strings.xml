@@ -50,6 +50,9 @@
 
     <!--APP MESSAGES-->
     <string name="INTERNET_CONNECTION_ERROR">You are not connected to Internet</string>
+    <string name="TRUE_SDK_USER_DENIED">User denied to sharing his/her profile details.</string>
+    <string name="TRUE_SDK_INTERNAL_ERROR">Failed sharing -Reason: internal error.</string>
+    <string name="TRUE_SDK_INVALID_USER">Failed sharing - Reason: unauthorized user.</string>
     <string name="THANKS_FOR_VOTE">Thanks for your vote</string>
     <string name="SELECT_ONE_EXAM">Select at least one Exam</string>
     <string name="QUESTION_TITLE_EMPTY">Question title cannot be empty</string>

@@ -19,8 +19,8 @@
 
     <ImageView
         android:id="@+id/layout_item_expand"
-        android:layout_width="@dimen/m30dp"
-        android:layout_height="@dimen/m30dp"
+        android:layout_width="@dimen/m20dp"
+        android:layout_height="@dimen/m20dp"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/m10dp"
         app:srcCompat="@drawable/ic_right_arrow"

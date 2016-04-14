@@ -15,8 +15,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +28,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -392,7 +395,6 @@ public class MainActivity extends AppCompatActivity
             Log.i(TAG, "App Link Target URL: " + targetUrl.toString());
         }
 
-        Log.e(TAG, " onCreate  step 1 time taken "+ System.currentTimeMillis());
         this.setContentView(R.layout.activity_main);
         this.getBitMapResources();
         snackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
@@ -409,7 +411,7 @@ public class MainActivity extends AppCompatActivity
         // register with true SDk
         MainActivity.mTrueClient = new TrueClient(getApplicationContext(), this);
 
-        // register with connecto
+        // register with Connecto
         this.mRegistrationConnecto();
 
         // register fabric Crashlytics
@@ -418,27 +420,26 @@ public class MainActivity extends AppCompatActivity
         // register with Apps Flayer
         this.mRegistrationAppsFlyer();
 
-        Log.e(TAG, " onCreate  step 2 time taken "+ System.currentTimeMillis());
         // register with facebook Sdk
         this.mRegistrationFacebookSdk();
 
-        Log.e(TAG, " onCreate  step 3 time taken "+ System.currentTimeMillis());
-        // register with GA tarcker
+        // register with GA tracker
         this.mRegistrationGATracker();
 
-        Log.e(TAG, " onCreate  step 4 time taken "+ System.currentTimeMillis());
         this.mSetupGTM();
-
-        Log.e(TAG, " onCreate  step 5 time taken "+ System.currentTimeMillis());
-        this.mSetUpAPPToolBar();
-        this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
-
-        Log.e(TAG, " onCreate  step 6 time taken "+ System.currentTimeMillis());
 
         prepBuddies       = (TextView)findViewById(R.id.prep_buddies);
         resourceBuddies   = (TextView)findViewById(R.id.resources_buddies);
         futureBuddies     = (TextView)findViewById(R.id.future_buddies);
         myAlerts          = (TextView)findViewById(R.id.my_alerts);
+        prepBuddies.setOnClickListener(mClickListener);
+        resourceBuddies.setOnClickListener(mClickListener);
+        futureBuddies.setOnClickListener(mClickListener);
+        myAlerts.setOnClickListener(mClickListener);
+
+        this.mSetUpAPPToolBar();
+        this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
+
 
         // TODO: Move this to where you establish a user session
         logUser();
@@ -596,7 +597,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run() {
                 BitMapHolder bitMapHolder = new BitMapHolder();
-                bitMapHolder.setContext(getApplicationContext());
+                bitMapHolder.setContext(MainActivity.this);
                 bitMapHolder.getBitMapFromResource();
             }
         }).start();
@@ -4214,7 +4215,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * This method is used to login with facebook account
      *
-     * @param params request data
+     * @param trueProfile request data
      */
     @Override
     public void onSuccesProfileShared(@NonNull TrueProfile trueProfile) {
@@ -4237,6 +4238,11 @@ public class MainActivity extends AppCompatActivity
         if(phone != null){
             phone = phone.replace("+91", "");
             params.put(MainActivity.getResourceString(R.string.USER_PHONE), phone);
+        }
+
+        if( trueProfile.email == null) {
+             trueProfile.email = MainActivity.user.getEmail();
+
         }
         params.put(MainActivity.getResourceString(R.string.USER_NAME),trueProfile.firstName+" "+trueProfile.lastName);
         params.put(MainActivity.getResourceString(R.string.USER_EMAIL), trueProfile.email);
@@ -4267,8 +4273,14 @@ public class MainActivity extends AppCompatActivity
         if(trueError.getErrorType() == TrueError.ERROR_TYPE_NETWORK){
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
         }
+        else if(trueError.getErrorType() == TrueError.ERROR_TYPE_USER_DENIED){
+            displaySnackBar(R.string.TRUE_SDK_USER_DENIED);
+        }
+        else if(trueError.getErrorType() == TrueError.ERROR_TYPE_INTERNAL){
+            displaySnackBar(R.string.TRUE_SDK_INTERNAL_ERROR);
+        }
         else
-            Utils.DisplayToast(getApplicationContext(),"Failed sharing - Reason: unauthorized user");
+            displaySnackBar(R.string.TRUE_SDK_INVALID_USER);
     }
 
 
