@@ -63,6 +63,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -136,6 +137,7 @@ import com.collegedekho.app.fragment.TabFragment;
 import com.collegedekho.app.fragment.UserAlertsFragment;
 import com.collegedekho.app.fragment.UserAlertsParentFragment;
 import com.collegedekho.app.fragment.UserEducationFragment;
+import com.collegedekho.app.fragment.WebViewFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.gcm.NotificationUtilities;
@@ -244,7 +246,9 @@ public class MainActivity extends AppCompatActivity
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
         UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteListFragment.OnCDRecommendedInstituteListener,
         InstituteVideosFragment.OnTitleUpdateListener,OTPVerificationFragment.OTPVerificationListener, ITrueCallback
+
 {
+
     static {
         Constants.FilterCategoryMap.put(Constants.ID_FACILITIES, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
         Constants.FilterCategoryMap.put(Constants.ID_HOSTEL, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
@@ -261,7 +265,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private static final String TAG = "MainActivity";
-
+    public static boolean IN_FOREGROUND=false;
+    private boolean IS_NETWORK_TASK_RUNNING=false;
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
 
@@ -330,13 +335,16 @@ public class MainActivity extends AppCompatActivity
     private Snackbar snackbar;
     private static Context mContext;
     public static TrueClient mTrueClient;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
+    /*** ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     public GoogleApiClient client;
 
 
+
+    ProgressBar searchProgress;
+    Handler gcmDialogHandler=new Handler();
+    Runnable gcmDialogRunnable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -362,7 +370,7 @@ public class MainActivity extends AppCompatActivity
             {
                 this.mDeepLinkingURI = data;
 
-                Toast.makeText(getApplicationContext(), data, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), data, Toast.LENGTH_SHORT).show();
             }
         }
 /*
@@ -386,7 +394,7 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.resource_uri = extras.getString("resource_uri");
             }
 
-            Toast.makeText(MainActivity.this, MainActivity.type + MainActivity.resource_uri, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MainActivity.this, MainActivity.type + MainActivity.resource_uri, Toast.LENGTH_SHORT).show();
         }
 
         Uri targetUrl =
@@ -440,7 +448,6 @@ public class MainActivity extends AppCompatActivity
         this.mSetUpAPPToolBar();
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
-
         // TODO: Move this to where you establish a user session
         logUser();
         setupOtpRequest(true);
@@ -452,7 +459,24 @@ public class MainActivity extends AppCompatActivity
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
+        searchProgress = (ProgressBar) findViewById(R.id.resource_progress_bar);
         Log.e(TAG, " onCreate  exit time"+ System.currentTimeMillis());
+        gcmDialogRunnable =new Runnable() {
+            @Override
+            public void run() {
+                if(IN_FOREGROUND && IS_PROFILE_LOADED){
+                    if(!IS_NETWORK_TASK_RUNNING) {
+                        Intent gcmIntent = new Intent(MainActivity.this, GCMDialogActivity.class);
+//                        gcmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        MainActivity.this.startActivityForResult(gcmIntent,Constants.GCM_RESULT_DATA_KEY);
+                    }else {
+                        gcmDialogHandler.removeCallbacks(gcmDialogRunnable);
+                        gcmDialogHandler.postDelayed(gcmDialogRunnable,5000);
+                    }
+                }
+            }
+        };
+        gcmDialogHandler.postDelayed(gcmDialogRunnable,15000);
     }
 
     /**
@@ -634,6 +658,7 @@ public class MainActivity extends AppCompatActivity
                 else if (currentFragment instanceof OTPVerificationFragment)
                     return;
 
+
                 mClearBackStack();
                 invalidateOptionsMenu();
             }
@@ -739,22 +764,25 @@ public class MainActivity extends AppCompatActivity
                     startActivityForResult(intent, Constants.RC_QUIT_VIDEO_PLAYER);
                 }
                 break;
+            case Constants.ACTION_OPEN_WEB_URL:
+                onDisplayWebFragment(MainActivity.resource_uri);
+                break;
+
             default:
                 this.isFromNotification = false;
                 this.isFromDeepLinking = false;
-
                 MainActivity.type = "";
                 MainActivity.resource_uri = "";
                 this.mDeepLinkingURI = "";
-
                 this.mLoadUserStatusScreen();
-
                 break;
         }
 
         MainActivity.type = "";
         MainActivity.resource_uri = "";
         this.mDeepLinkingURI = "";
+        getIntent().putExtra("screen","");
+        getIntent().putExtra("resource_uri","");
     }
 
     private void mHandleDeepLinking(String uri) {
@@ -771,7 +799,7 @@ public class MainActivity extends AppCompatActivity
 
             MainActivity.resource_uri = Constants.BASE_URL + resourceURI;
 
-            Toast.makeText(MainActivity.this, MainActivity.resource_uri, Toast.LENGTH_LONG).show();
+//            Toast.makeText(MainActivity.this, MainActivity.resource_uri, Toast.LENGTH_LONG).show();
         }
         else
             MainActivity.type = "";
@@ -910,14 +938,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        IN_FOREGROUND=true;
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             MainActivity.type = extras.getString("screen");
             MainActivity.resource_uri = extras.getString("resource_uri");
         }
+        adjustFontScale(getResources().getConfiguration());
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
-        IntentFilter linkFilter=new IntentFilter("com.college.dekho.link.clicked");
+        IntentFilter linkFilter=new IntentFilter(Constants.CONTENT_LINK_FILTER);
+        linkFilter.addAction(Constants.NOTIFICATION_FILTER);
         LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver,linkFilter);
 
         /*GCM COMPONENTS*/
@@ -949,6 +980,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
+        IN_FOREGROUND=false;
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
@@ -1063,7 +1095,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (currentFragment instanceof ProfileEditFragment || currentFragment instanceof ExamsFragment || currentFragment instanceof UserEducationFragment ||currentFragment instanceof StreamFragment || currentFragment instanceof PsychometricStreamFragment || currentFragment instanceof PsychometricTestParentFragment || currentFragment instanceof OTPVerificationFragment)
+        if (currentFragment instanceof ProfileEditFragment || currentFragment instanceof ExamsFragment || currentFragment instanceof UserEducationFragment ||currentFragment instanceof StreamFragment || currentFragment instanceof PsychometricStreamFragment || currentFragment instanceof PsychometricTestParentFragment || currentFragment instanceof OTPVerificationFragment ||currentFragment instanceof WebViewFragment)
             menu.setGroupVisible(R.id.main_menu_group, false);
         else
             menu.getItem(0).setVisible(true);
@@ -1281,7 +1313,7 @@ public class MainActivity extends AppCompatActivity
             this.mHandleNotifications(true);
         } else if (this.mDeepLinkingURI != null && !this.mDeepLinkingURI.isEmpty()) {
             Log.e("MA: DL URL ", MainActivity.this.mDeepLinkingURI);
-            Toast.makeText(MainActivity.this, this.mDeepLinkingURI, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MainActivity.this, this.mDeepLinkingURI, Toast.LENGTH_SHORT).show();
             this.isFromDeepLinking = true;
             this.mHandleDeepLinking(this.mDeepLinkingURI);
         } else if ((MainActivity.user.getEducation_set() == 1 && (MainActivity.user.getExams_set() == 1) || (MainActivity.user.getIs_preparing().equals("0")) && IS_PROFILE_LOADED)) {
@@ -1373,7 +1405,6 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to update institutes list of next page
-     *
      * @param response
      */
     private void updateNextInstituteList(String response) {
@@ -1404,10 +1435,8 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }*/
-
     /**
      * This method is used to update news list of next page
-     *
      * @param response
      */
     private void updateNextNewsList(String response) {
@@ -1429,7 +1458,6 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to update articles list of next page
-     *
      * @param response
      */
     private void updateNextArticlesList(String response) {
@@ -1452,7 +1480,6 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to update qna list of next page
-     *
      * @param response
      */
     private void updateNextQnaList(String response) {
@@ -1465,7 +1492,6 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to update qna list of next page
-     *
      * @param response
      */
     private void updateNextForumsList(String response) {
@@ -1484,7 +1510,6 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl) {
         this.mDisplayInstituteList(response, filterAllowed, isHavingNextUrl, Constants.INSTITUTE_TYPE);
     }
-
     private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl, Constants.CDRecommendedInstituteType cdRecommendedInstituteType) {
         switch (cdRecommendedInstituteType) {
             case UNDECIDED:
@@ -1527,9 +1552,7 @@ public class MainActivity extends AppCompatActivity
                 /*if (mInstituteList.size() > 5) {
                     time = (20 * mInstituteList.size());
                 }
-
                 progress.show();
-
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -1538,7 +1561,6 @@ public class MainActivity extends AppCompatActivity
                     }
                 }, time);*/
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
-
 
                 if (fragment == null) {
                     this.mDisplayFragment(CDRecommendedInstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, this.mUndecidedCount), !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
@@ -1763,6 +1785,15 @@ public class MainActivity extends AppCompatActivity
         else  if(callbackManager.onActivityResult(requestCode, resultCode, data))
         {
             return;
+        }else if(requestCode==Constants.GCM_RESULT_DATA_KEY && resultCode==RESULT_OK){
+            try {
+                HashMap<String, String> hashMap = (HashMap<String, String>) data.getSerializableExtra(Constants.DIALOG_DATA);
+                if(hashMap!=null && !hashMap.isEmpty()) {
+                    onProfileUpdated(hashMap);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -1856,9 +1887,7 @@ public class MainActivity extends AppCompatActivity
         if(!(fragment instanceof InstituteListFragment))
             invalidateOptionsMenu();
     }
-
     private boolean isUpdateStreams;
-
     @Override
     public void onDataLoaded(String tag, String response) {
         String extraTag = null;
@@ -2416,7 +2445,6 @@ public class MainActivity extends AppCompatActivity
      * This method is used to provide education level
      * and user will select current education  and request for exams
      * relative to his/her education
-     *
      * @param response
      */
     private void mDisplayUserEducationFragment(String response) {
@@ -2813,7 +2841,6 @@ public class MainActivity extends AppCompatActivity
             News news = (News) newsList.get(i);
             String tempId = news.getSimilar_news();
             if (tempId == null) continue;
-            ;
             tempId = tempId.replaceAll("L", "");
             ArrayList<String> similarNewsIds = new ArrayList<String>();
             try {
@@ -2980,7 +3007,6 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to update institute articles
-     *
      * @param response
      */
     private void mUpdateInstituteArticle(String response) {
@@ -2996,10 +3022,8 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
-
     /**
      * This method is used to update institute news
-     *
      * @param response
      */
     private void mUpdateInstituteNews(String response) {
@@ -3179,7 +3203,6 @@ public class MainActivity extends AppCompatActivity
         this.currentInstitute = position;
         this.mDisplayInstituteByPosition(position);
     }
-
     /*@Override
     public void onShortListInstituteSelected(int position) {
         this.currentInstitute = position;
@@ -3404,7 +3427,6 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method returns
-     *
      * @return
      */
     private Map mGetTheFilters() {
@@ -3443,11 +3465,13 @@ public class MainActivity extends AppCompatActivity
             progressDialog.setMessage(message);
         }
         progressDialog.show();
+        IS_NETWORK_TASK_RUNNING=true;
     }
 
     public void hideProgressDialog() {
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
+        IS_NETWORK_TASK_RUNNING=false;
     }
 
     public void displaySnackBar(int messageId) {
@@ -3589,10 +3613,10 @@ public class MainActivity extends AppCompatActivity
         if (mInstituteList != null && mInstituteList.size() > position && position>=0) {
             Institute institute = this.mInstituteList.get(position);
             if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
-                if (institute.getPartner_status() > 0) {
+//                if (institute.getPartner_status() > 0) {
 //                displayOTPAlert(this);
                     requestOtp();
-                }
+//                }
                 this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
             } else
                 this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
@@ -3984,6 +4008,7 @@ public class MainActivity extends AppCompatActivity
             }else if (currentFragment instanceof  QnAQuestionsListFragment){
                 (currentFragment).instituteQnAQuestionAdded(qnaQuestion);
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -4069,7 +4094,6 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is called when user change anything in Institute List
-     *
      * @param response server response
      */
     private void mUpdateInstituteList(String response) {
@@ -4101,8 +4125,9 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 setupOtpRequest(false);
+            }else if (currentFragment instanceof WebViewFragment && ((WebViewFragment) currentFragment).canGoBack()){
+                return;
             }
-
         }
 
         if (backStackCount == 0 && !Constants.READY_TO_CLOSE) {
@@ -4153,19 +4178,19 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to sign Up
-     *
-     * @param url     social site url
+     * @param url social site url
      * @param hashMap request data
-     * @param msg     myFb comment
+     * @param msg myFb comment
      */
     @Override
     public void onUserSignUp(String url, HashMap hashMap, String msg) {
         this.mMakeNetworkCall(Constants.TAG_USER_REGISTRATION + "#" + msg, url, hashMap);
     }
 
+
     /**
      * This method is called when user skip
-     * registration or facebook login
+     *  registration or facebook login
      */
     @Override
     public void onSkipUserLogin(HashMap<String, String> params) {
@@ -4212,11 +4237,6 @@ public class MainActivity extends AppCompatActivity
         this.mLoadUserStatusScreen();
     }
 
-    /**
-     * This method is used to login with facebook account
-     *
-     * @param trueProfile request data
-     */
     @Override
     public void onSuccesProfileShared(@NonNull TrueProfile trueProfile) {
 
@@ -4287,7 +4307,6 @@ public class MainActivity extends AppCompatActivity
     /***
      * This method is used to create anonymous user
      * while facebook login
-     *
      * @param json
      */
     /*private void mCreatedFacebookAnonymousUser(String json)
@@ -4297,7 +4316,7 @@ public class MainActivity extends AppCompatActivity
             MainActivity.user = JSON.std.beanFrom(User.class, json);
             //this.user.setPref(this.userPref);
             this.networkUtils.setToken(this.user.getToken());
-            if (tempUser != null) {
+            if (tempUser != null){
                 MainActivity.user.setImage(tempUser.getImage());
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
                 MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
@@ -4332,7 +4351,6 @@ public class MainActivity extends AppCompatActivity
     }
     /**
      * Method is called when user login with facebook successfully
-     *
      * @param json
      */
    /* private void mUserFacebookLoginResponse(String json)
@@ -4341,23 +4359,24 @@ public class MainActivity extends AppCompatActivity
         try {
             MainActivity.user = JSON.std.beanFrom(User.class, json);
             this.networkUtils.setToken(user.getToken());
-            if (tempUser != null) {
+            if (tempUser != null){
                 MainActivity.user.setImage(tempUser.getImage());
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
                 MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
                 MainActivity.user.profileData = tempUser.profileData;
-                if (MainActivity.user.getPreference_uri() == null) {
+                if(MainActivity.user.getPreference_uri()==null) {
                     //get device id
                     String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put(getResourceString(R.string.USER_DEVICE_ID), deviceId);
                     //get user email id from play store
-                    if (user.profileData[1] != null) {
+                    if (user.profileData[1] != null)
+                    {
                         user.setEmail(user.profileData[1]);
                         hashMap.put(getResourceString(R.string.USER_EMAIL), user.profileData[1]);
                     }
-                    this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED + "#" + getResourceString(R.string.ANONYMOUS_USER), Constants.BASE_URL + "preferences/", hashMap);
-                } else {
+                    this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#"+getResourceString(R.string.ANONYMOUS_USER), Constants.BASE_URL + "preferences/", hashMap);
+                }else{
                     MainActivity.user.setResource_uri(MainActivity.user.getPreference_uri());
                 }
                 MainActivity.user.profileData = tempUser.profileData;
@@ -4393,10 +4412,9 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to sign in with any social site
-     *
-     * @param url     social site url
+     * @param url social site url
      * @param hashMap request data
-     * @param msg     myFb comment
+     * @param msg myFb comment
      */
     @Override
     public void onUserSignIn(String url, HashMap hashMap, String msg) {
@@ -4405,9 +4423,8 @@ public class MainActivity extends AppCompatActivity
 
     /***
      * This method is called when user sign Up successfully
-     *
      * @param response response json send  by server
-     * @param msg      MyFb comment message
+     * @param msg MyFb comment message
      */
     public void onUserRegisteredResponse(String response, String msg) {
         User tempUser = this.user;
@@ -4442,9 +4459,8 @@ public class MainActivity extends AppCompatActivity
 
     /***
      * This method is called when user sign in successfully
-     *
      * @param response response json send  by server
-     * @param msg      MyFb comment message
+     * @param msg MyFb comment message
      */
     public void onUserSignInResponse(String response, String msg) {
 
@@ -4539,6 +4555,11 @@ public class MainActivity extends AppCompatActivity
             MainActivity.user.setPartner_shortlist_count(userObj.getPartner_shortlist_count());
             MainActivity.user.setBlocking_otp(user.getBlocking_otp());
             MainActivity.user.setApp_version(userObj.getApp_version());
+            MainActivity.user.setGender(userObj.getGender());
+            MainActivity.user.setSocial_category(userObj.getSocial_category());
+            MainActivity.user.setYear_of_admission(userObj.getYear_of_admission());
+            MainActivity.user.setPreferred_mode(userObj.getPreferred_mode());
+
             this.mUserExamsList=MainActivity.user.getUser_exams();
             String u = JSON.std.asString(MainActivity.user);
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
@@ -4554,6 +4575,7 @@ public class MainActivity extends AppCompatActivity
                     Utils.updateAppAlertDialog(this);
                 }
             }
+
         }catch(IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -4652,13 +4674,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * If user login with any social site like facebook and stream and level has conflict
-     * it shows a dialog to choose stream and level.
-     *
-     * @param tag     Tag
-     * @param URL     Api Url according to login
+     *  If user login with any social site like facebook and stream and level has conflict
+     *  it shows a dialog to choose stream and level.
+     * @param tag Tag
+     * @param URL Api Url according to login
      * @param jsonObj response json
-     * @param params  request data send to api
+     * @param params request data send to api
      */
     public void showDialogForStreamLevel(final String tag, final String URL, JSONObject jsonObj, final Map<String, String> params) {
         final Dialog dialog = new Dialog(this);
@@ -4745,7 +4766,7 @@ public class MainActivity extends AppCompatActivity
     public void onFooterVideosSelected(ArrayList<String> videos) {
 
         if (videos == null || videos.size() < 1) {
-            Toast.makeText(MainActivity.this, "No videoes for this college yet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "No videos for this college yet", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -4798,7 +4819,6 @@ public class MainActivity extends AppCompatActivity
     /**
      * This method is used to send user's current education
      * details to server like current level, stream and marks
-     *
      * @param params
      */
     @Override
@@ -4973,7 +4993,6 @@ public class MainActivity extends AppCompatActivity
         this.connecto.track(getResourceString(R.string.ACTION_USER_PREFERENCE), new Properties().putValue(getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED), user.getStream_name()).putValue(getResourceString(R.string.ACTION_USER_IS_PREPARING), user.getIs_preparing()));
 
     }
-
     /**
      * This method is load user profile after
      */
@@ -4988,9 +5007,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         //  show appBarLayout and toolBar
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.container).getLayoutParams();
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.main_container).getLayoutParams();
         params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
-        findViewById(R.id.container).setLayoutParams(params);
+        findViewById(R.id.main_container).setLayoutParams(params);
         mUserExamsList = MainActivity.user.getUser_exams();
         if (mUserExamsList == null)
             mUserExamsList = new ArrayList<>();
@@ -5004,6 +5023,11 @@ public class MainActivity extends AppCompatActivity
             this.mDisplayFragment(ProfileFragment.newInstance(new ArrayList<>(mUserExamsList)), false, ProfileFragment.class.toString());
         else {
             this.mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
+        }
+        if(!IS_USER_CREATED){
+            Map<String, Object> eventValue = new HashMap<>();
+            eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), ProfileFragment.class.getSimpleName());
+            MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue);
         }
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_PROFILE_LOADED), true).commit();
 
@@ -5030,6 +5054,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onHomeItemSelected(String requestType, String url, String tag) {
+
         if (requestType.equalsIgnoreCase(Constants.WIDGET_INSTITUTES)
                 || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES)){
             //Suggesting System that its a good time to do GC
@@ -5186,6 +5211,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSyllabusChanged(JSONObject jsonObject) {
+
         String examId = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getString(Constants.SELECTED_EXAM_ID,  "");
         if(!examId.isEmpty()) {
             this.mMakeJsonObjectNetworkCall(Constants.SUBMITTED_CHAPTER_STATUS+"#"+examId, Constants.BASE_URL + "yearly-exams/" + examId + "/syllabus/", jsonObject, 1);
@@ -5243,9 +5269,9 @@ public class MainActivity extends AppCompatActivity
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("1"));
-        if (institute.getPartner_status() > 0) {
+//        if (institute.getPartner_status() > 0) {
             requestOtp();
-        }
+//        }
         if (isUndecided)
             this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard + "#" + isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
         else
@@ -5417,6 +5443,7 @@ public class MainActivity extends AppCompatActivity
                 // a primary email address if the user hasn't specified one.
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
+
 
 
     @Override
@@ -5769,6 +5796,8 @@ public class MainActivity extends AppCompatActivity
                     e.printStackTrace();
                 }
                 doSearches(mSearchString);
+                stopSearchProgress();
+                startSearchProgress();
             }
             return true;
         }
@@ -5836,6 +5865,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     Runnable searchRunnable;
+    Runnable searchProgressRunnable;
 
     private void doSearches(final String query) {
         if (searchRunnable != null) {
@@ -5847,11 +5877,36 @@ public class MainActivity extends AppCompatActivity
                 doSearch(query);
             }
         };
-        searchHandler.postDelayed(searchRunnable, 750);
+        searchHandler.postDelayed(searchRunnable, 1000);
+    }
+
+
+    private void startSearchProgress() {
+        searchProgress.setVisibility(View.VISIBLE);
+        searchProgressRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if(searchProgress.getProgress()<100) {
+                    searchProgress.setProgress(searchProgress.getProgress() + 10);
+                    searchProgressHandler.postDelayed(searchProgressRunnable, 100);
+                }else {
+                    stopSearchProgress();
+                }
+            }
+        };
+        searchProgressHandler.post(searchProgressRunnable);
+    }
+
+    private void stopSearchProgress(){
+        if (searchProgressRunnable != null) {
+            searchProgress.setProgress(0);
+            searchProgressHandler.removeCallbacks(searchProgressRunnable);
+            searchProgress.setVisibility(View.GONE);
+        }
     }
 
     Handler searchHandler = new Handler();
-
+    Handler searchProgressHandler=new Handler();
     private void onNewsSearchResult(String response) {
         try {
             this.mNewsList = JSON.std.listOfFrom(News.class, extractResults(response));
@@ -6182,6 +6237,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 } else {
                     MainActivity.this.onSubmitMobileNumber(user_phone_number);
+
                 }
                 LocalBroadcastManager.getInstance(context).unregisterReceiver(otpReceiver);
             }
@@ -6271,66 +6327,76 @@ public class MainActivity extends AppCompatActivity
     private void reStartApplication(){
         Intent intent=new Intent(this,MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
     BroadcastReceiver appLinkReceiver=new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("com.college.dekho.link.clicked")){
-                String link=intent.getStringExtra("captured_link");
-                if(link!=null && link.length()>0){
-                    if(link.lastIndexOf("search%3D")!=-1) {
+            switch (intent.getAction()){
+                case Constants.CONTENT_LINK_FILTER:
+                    String link=intent.getStringExtra("captured_link");
+                    if(link!=null && link.length()>0){
+                        if(link.lastIndexOf("search%3D")!=-1) {
 //                        Log.e("DEBUG", "Captured Search Link " + link);
-                        link = link.substring(0, link.length() - 1);
-                        String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
-                        mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/" + searchString, null);
-                        if (searchString != null && searchString.length() > 0 && searchString.startsWith("search%3D")) {
-                            searchString = searchString.replace("search%3D", "");
-                            try {
-                                searchString = URLDecoder.decode(searchString, "UTF-8");
-                            } catch (UnsupportedEncodingException e) {
-                                e.printStackTrace();
+                            link = link.substring(0, link.length() - 1);
+                            String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
+                            mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/" + searchString, null);
+                            if (searchString != null && searchString.length() > 0 && searchString.startsWith("search%3D")) {
+                                searchString = searchString.replace("search%3D", "");
+                                try {
+                                    searchString = URLDecoder.decode(searchString, "UTF-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                                if (menu != null) {
+                                    menu.setGroupVisible(R.id.search_menu_group, true);
+                                }
+                                searchView.onActionViewExpanded();
+                                searchView.setQuery(searchString, false);
+                                searchView.clearFocus();
                             }
-                            if (menu != null) {
-                                menu.setGroupVisible(R.id.search_menu_group, true);
-                            }
-                            searchView.onActionViewExpanded();
-                            searchView.setQuery(searchString, false);
-                            searchView.clearFocus();
                         }
-                    }
-                    else if(link.lastIndexOf("search=")!=-1){
+                        else if(link.lastIndexOf("search=")!=-1){
 //                        Log.e("DEBUG", "Captured Search Link " + link);
-                        link = link.substring(0, link.length() - 1);
-                        String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
-                        mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/" + searchString, null);
-                        if (searchString != null && searchString.length() > 0 && searchString.startsWith("search=")) {
-                            searchString = searchString.replace("search=", "");
-                            try {
-                                searchString = URLDecoder.decode(searchString, "UTF-8");
-                            } catch (UnsupportedEncodingException e) {
-                                e.printStackTrace();
+                            link = link.substring(0, link.length() - 1);
+                            String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
+                            mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/" + searchString, null);
+                            if (searchString != null && searchString.length() > 0 && searchString.startsWith("search=")) {
+                                searchString = searchString.replace("search=", "");
+                                try {
+                                    searchString = URLDecoder.decode(searchString, "UTF-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                                if (menu != null) {
+                                    menu.setGroupVisible(R.id.search_menu_group, true);
+                                }
+                                searchView.onActionViewExpanded();
+                                searchView.setQuery(searchString, false);
+                                searchView.clearFocus();
                             }
-                            if (menu != null) {
-                                menu.setGroupVisible(R.id.search_menu_group, true);
-                            }
-                            searchView.onActionViewExpanded();
-                            searchView.setQuery(searchString, false);
-                            searchView.clearFocus();
                         }
-                    }
-                    else if(link.lastIndexOf("/colleges/")!=-1){
+                        else if(link.lastIndexOf("/colleges/")!=-1){
 //                        Log.e("DEBUG","Captured Colleges Link "+link);
-                        String collegeId=link.substring(link.lastIndexOf("/")+1,link.length());
-                        mMakeNetworkCall(Constants.TAG_INSTITUTE_DETAILS,Constants.BASE_URL+"institute-by-slug/"+collegeId+"/",null);
-                    }else if(link.lastIndexOf("/colleges/")!=-1){
+                            String collegeId=link.substring(link.lastIndexOf("/")+1,link.length());
+                            mMakeNetworkCall(Constants.TAG_INSTITUTE_DETAILS,Constants.BASE_URL+"institute-by-slug/"+collegeId+"/",null);
+                        }else if(link.lastIndexOf("/colleges/")!=-1){
 
-                    }else {
+                        }else {
 //                        Log.e("DEBUG","Captured Link "+link);
+                        }
                     }
-                }
+                    break;
+
+                case Constants.NOTIFICATION_FILTER:
+                    MainActivity.type=intent.getStringExtra("screen");
+                    MainActivity.resource_uri=intent.getStringExtra("resource_uri");
+                    if(MainActivity.resource_uri!=null && !MainActivity.resource_uri.trim().matches("") && MainActivity.type!=null && !MainActivity.type.trim().matches("")) {
+                        mHandleNotifications(false);
+                    }
+                    break;
             }
         }
     };
@@ -6347,4 +6413,13 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
+
+    private void onDisplayWebFragment(String url){
+        if(currentFragment instanceof WebViewFragment){
+            ((WebViewFragment) currentFragment).loadUrl(url);
+        }else {
+            mDisplayFragment(WebViewFragment.newInstance(url),!isFromNotification,Constants.ACTION_OPEN_WEB_URL);
+        }
+    }
+
 }

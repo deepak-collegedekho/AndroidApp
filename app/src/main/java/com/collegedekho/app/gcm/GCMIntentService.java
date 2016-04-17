@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.GCMDialogActivity;
 import com.collegedekho.app.resource.Constants;
 import com.google.android.gms.gcm.GcmListenerService;
 
@@ -43,31 +42,32 @@ public class GCMIntentService extends GcmListenerService {
     }
 
     private void sendNotification(int id,Bundle data) {
-        if(data.getString("resource_uri")!=null){
-            return;
-        }
+//        if(data.getString("resource_uri")!=null){
+//            return;
+//        }
         String message=data.getString(Constants.MESSAGE);
         String collapseKey=data.getString(Constants.COLLAPSE_KEY);
-        Intent intent = new Intent(this, GCMDialogActivity.class);
+        Intent intent = new Intent(this, NotificationIntentService.class);
         intent.putExtra("question_type",data.getString("question_type"));
-        intent.putExtra("video_id","ZfIpYXpUpYc");
-        intent.putExtra("data",data);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtras(data);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        int color = 0x6d6f71;
-//        int color = 0x8cc63f;
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
-        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_cap);
+//        int color = 0x6d6f71;
+        int color = 0xff1f2560;
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
+//                PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getService(this, id /* Request code */, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_notification_icon);
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_cap)
+                .setSmallIcon(R.drawable.ic_notification_lollipop)
                 .setLargeIcon(largeIcon)
                 .setColor(color)
                 .setLights(0xFFFF0000, 1000, 1000)
                 .setVibrate(new long[]{100, 100, 100,  100, 100, 300})
-                .setContentTitle("CLD Notification Received")
-                .setContentText(message)
+                .setContentTitle(data.getString("text"))
+                .setContentText(data.getString("bigText"))
                 .setAutoCancel(true)
                 .setPriority(Notification.PRIORITY_HIGH)
                 .setSound(defaultSoundUri)

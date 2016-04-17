@@ -44,6 +44,11 @@ public class User
     private int blocking_otp;
     private String app_version;
 
+    private String gender;
+    private String social_category;
+    private String year_of_admission;
+    private String preferred_mode;
+
     private String primaryEmail;
     private String primaryPhone;
     public String[] profileData = new String[3];
@@ -372,4 +377,37 @@ public class User
     public void setApp_version(String app_version) {
         this.app_version = app_version;
     }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getSocial_category() {
+        return social_category;
+    }
+
+    public void setSocial_category(String social_category) {
+        this.social_category = social_category;
+    }
+
+    public String getYear_of_admission() {
+        return year_of_admission;
+    }
+
+    public void setYear_of_admission(String year_of_admission) {
+        this.year_of_admission = year_of_admission;
+    }
+
+    public String getPreferred_mode() {
+        return preferred_mode;
+    }
+
+    public void setPreferred_mode(String preferred_mode) {
+        this.preferred_mode = preferred_mode;
+    }
+
 }

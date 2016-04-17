@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
+import com.collegedekho.app.resource.Constants;
+
 /**
  * Created by Bashir on 15/3/16.
  */
@@ -38,7 +40,7 @@ public class AppLinkMovementMethod extends LinkMovementMethod {
             URLSpan[] link = buffer.getSpans(off, off, URLSpan.class);
             if (link.length != 0) {
                 String url = link[0].getURL();
-                Intent linkIntent = new Intent("com.college.dekho.link.clicked");
+                Intent linkIntent = new Intent(Constants.CONTENT_LINK_FILTER);
                 linkIntent.putExtra("captured_link", url);
                 if (url.startsWith("https")) {
                     LocalBroadcastManager.getInstance(movementContext).sendBroadcast(linkIntent);

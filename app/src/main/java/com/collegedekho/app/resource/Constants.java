@@ -258,4 +258,18 @@ public class Constants
     // Connecto ID for GCM
     public static final String SENDER_ID = "864760274938";
 
+
+
+    public static final String NOTIFICATION_FILTER="com.notification.filter";
+
+    public static final String CONTENT_LINK_FILTER="com.college.dekho.link.clicked";
+    public static final String ACTION_OPEN_WEB_URL="open_web_url";
+    public static final String GCM_QUESTIONS_LIST_PREFERENCES_KEY = "gcm_questions_list_preferences";
+    public static final String GCM_QUESTIONS_LIST_COMPLETED_KEY = "gcm_questions_list_completed";
+    public static final String QUESTIONS_LIST_KEY = "questions_list";
+    public static final int GCM_RESULT_DATA_KEY=201;
+    public static final String SELECTED_PREFERENCE_FILTERS = "selected_preference_filters";
+    public static final String GCM_DIALOG_RESULT="gcm_dialog_result";
+    public static final String DIALOG_DATA="gcm_dialog_data";
+
 }

@@ -71,6 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:text="Video"
+                android:maxLines="@integer/int3"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#000000" />
 

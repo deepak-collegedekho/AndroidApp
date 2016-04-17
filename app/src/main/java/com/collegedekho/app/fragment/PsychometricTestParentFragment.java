@@ -91,9 +91,9 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
         mAdapter = new PsychometricTestViewPagerAdapter(getChildFragmentManager(), numPages, mQuestionsList, this);
         mPager.setAdapter(mAdapter);
         if(preState==View.GONE){
-            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getActivity().findViewById(R.id.container).getLayoutParams();
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getActivity().findViewById(R.id.main_container).getLayoutParams();
             params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
-            getActivity().findViewById(R.id.container).setLayoutParams(params);
+            getActivity().findViewById(R.id.main_container).setLayoutParams(params);
         }
     }
 
@@ -131,7 +131,7 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
             if (preState == View.GONE) {
                 appBar.setVisibility(View.GONE);
                 CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                getActivity().findViewById(R.id.container).setLayoutParams(params);
+                getActivity().findViewById(R.id.main_container).setLayoutParams(params);
             }
         }
     }

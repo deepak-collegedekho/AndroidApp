@@ -23,6 +23,8 @@ public class StepByStepChoice implements Parcelable {
     private int id;
     private String name;
     private String image;
+    private String uri;
+    private String label;
 
     public StepByStepChoice() {
     }
@@ -31,6 +33,7 @@ public class StepByStepChoice implements Parcelable {
         id = source.readInt();
         name = source.readString();
         image = source.readString();
+        uri=source.readString();
     }
 
     @Override
@@ -43,6 +46,7 @@ public class StepByStepChoice implements Parcelable {
         dest.writeInt(id);
         dest.writeString(name);
         dest.writeString(image);
+        dest.writeString(uri);
     }
 
     public int getId() {
@@ -67,5 +71,21 @@ public class StepByStepChoice implements Parcelable {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.name = label;
     }
 }

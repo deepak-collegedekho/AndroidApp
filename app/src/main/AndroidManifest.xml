@@ -121,7 +121,6 @@
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
             </intent-filter>
         </receiver>
-
         <!-- Used for Google Play Store Campaign Measurement-->
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
         <receiver android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
@@ -152,19 +151,19 @@
         </receiver>
 
 <!--GCM COMPONENTS-->
-        <receiver
+<!--        <receiver
             android:name=".gcm.GCMBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
 
-                <!-- Receives the actual messages. -->
+                &lt;!&ndash; Receives the actual messages. &ndash;&gt;
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <!-- &lt;!&ndash; Receives the registration id. &ndash;&gt;
-                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />-->
+                &lt;!&ndash; &lt;!&ndash; Receives the registration id. &ndash;&gt;
+                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />&ndash;&gt;
 
                 <category android:name="com.collegedekho.app" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
         <service
             android:name=".gcm.RegistrationIntentService"
             android:exported="false">
@@ -180,18 +179,22 @@
 
         <service android:name=".gcm.GCMIntentService"
             android:exported="false">
-            <intent-filter>
+            <intent-filter android:priority="1000">
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
 
         <activity android:name=".activity.GCMDialogActivity"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog">
+            android:excludeFromRecents="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         </activity>
     <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <service android:name=".gcm.NotificationIntentService"
+            android:exported="false"/>
     </application>
 </manifest>

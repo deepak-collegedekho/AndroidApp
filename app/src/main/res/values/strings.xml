@@ -45,6 +45,7 @@
 
     <string name="ok">OK</string>
     <string name="cancel">CANCEL</string>
+    <string name="skip">SKIP</string>
     <string name="xscale">1.2f</string>
     <string name="yscale">1f</string>
 
@@ -334,6 +335,7 @@
     <string name="OTP_CODE">code</string>
     <string name="OTP_VERIFICATION">otp_verification</string>
     <string name="ACTION_OTP_VERIFIED">action_otp_verified</string>
+    <string name="ACTION_USER_PROFILE_CREATED">action_user_profile_created</string>
 
 
     <!--String messages-->
@@ -426,4 +428,6 @@
     <string name="news_title_transaction">NewsTitleTransaction</string>
     <string name="news_date_transaction">NewsDateTransaction</string>
     <string name="article_image_transaction">ArticleImageTransaction</string>
+    <string name="dialog_title">Share more, Gain more.\nAnd open the door of possibilities for you!</string>
+    <string name="GCM_DIALOG_SELECTION_ERROR">Nothing selected</string>
 </resources>
