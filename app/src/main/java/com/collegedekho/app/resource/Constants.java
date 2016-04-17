@@ -41,6 +41,7 @@ public class Constants
     public static final String TAG_LOAD_USER_PREFERENCES = "load_user_preferences";
     public static final String TAG_LOAD_USER_PREFERENCES_N_BACK = "load_user_preferences_n_back";
     public static final String TAG_LAUNCH_USER_HOME = "launch_user_home";
+    public static final String TAG_UPDATE_USER_PROFILE = "update_user_profile_from_notification";
     public static final String TAG_SUBMIT_EDITED_EXAMS_LIST = "submit_edited_exams_list";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_EXAM = "submit_psychometric_exam";
     public static final String TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM = "submit_edit_psychometric_exam";

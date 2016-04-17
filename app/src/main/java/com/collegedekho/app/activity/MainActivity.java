@@ -15,10 +15,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,7 +26,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -1746,7 +1743,7 @@ public class MainActivity extends AppCompatActivity
             try {
                 HashMap<String, String> hashMap = (HashMap<String, String>) data.getSerializableExtra(Constants.DIALOG_DATA);
                 if(hashMap!=null && !hashMap.isEmpty()) {
-                    onProfileUpdated(hashMap);
+                    this.mMakeNetworkCall(Constants.TAG_UPDATE_USER_PROFILE, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -1902,6 +1899,9 @@ public class MainActivity extends AppCompatActivity
                     this.mClearBackStack();
                     mLoadUserProfile(null);
                 }
+                break;
+            case Constants.TAG_UPDATE_USER_PROFILE:
+                this.onUpdatePreferences(response);
                 break;
             case Constants.TAG_LOAD_USER_PREFERENCES:
                 this.onUpdateUserPreferences(response);
@@ -4540,6 +4540,38 @@ public class MainActivity extends AppCompatActivity
         }catch (PackageManager.NameNotFoundException e){
             e.printStackTrace();
         }catch (NumberFormatException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void onUpdatePreferences(String responseJson) {
+        try {
+            User userObj = JSON.std.beanFrom(User.class, responseJson);
+            MainActivity.user.setExams_set(userObj.getExams_set());
+            MainActivity.user.setUser_exams(userObj.getUser_exams());
+            MainActivity.user.setUser_education(userObj.getUser_education());
+            MainActivity.user.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
+            MainActivity.user.setLevel(userObj.getLevel());
+            MainActivity.user.setLevel_name(userObj.getLevel_name());
+            MainActivity.user.setEducation_set(userObj.getEducation_set());
+            MainActivity.user.setPsychometric_given(userObj.getPsychometric_given());
+            MainActivity.user.setStream_name(userObj.getStream_name());
+            MainActivity.user.setPhone_no(userObj.getPhone_no());
+            MainActivity.user.setIs_preparing(userObj.getIs_preparing());
+            MainActivity.user.setResource_uri(userObj.getResource_uri());
+            MainActivity.user.setIs_otp_verified(userObj.getIs_otp_verified());
+            MainActivity.user.setPartner_shortlist_count(userObj.getPartner_shortlist_count());
+            MainActivity.user.setBlocking_otp(user.getBlocking_otp());
+            MainActivity.user.setApp_version(userObj.getApp_version());
+            MainActivity.user.setGender(userObj.getGender());
+            MainActivity.user.setSocial_category(userObj.getSocial_category());
+            MainActivity.user.setYear_of_admission(userObj.getYear_of_admission());
+            MainActivity.user.setPreferred_mode(userObj.getPreferred_mode());
+            this.mUserExamsList=MainActivity.user.getUser_exams();
+            String u = JSON.std.asString(MainActivity.user);
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+
+        }catch(IOException e) {
             e.printStackTrace();
         }
     }
