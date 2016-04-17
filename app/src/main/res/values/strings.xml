@@ -349,7 +349,7 @@
     <string name="EMAIL_INVALID">Please enter a valid email</string>
     <string name="PASSWORD_EMPTY">Please enter a password</string>
     <string name="PASSWORD_INVALID">Minimum password length is 6</string>
-    <string name="RATE_US_ON_STORE">Rate the App</string>
+    <string name="RATE_US_ON_STORE">Rate us on play store</string>
     <string name="UPDATE_APP_VERSION">You are using an older version of App"\n"Update your App now.</string>
 
     <string name="YES">YES</string>
@@ -420,8 +420,10 @@
     <string name="news_image_description">Image for current news</string>
     <string name="article_image_description">Image for current Article</string>
 
-    <!-- TRUE CALLER -->
-    <string name="partnerKey">baLWqkLO85xFIlFrAi5phqW1zSfCceMb</string>
+    <!-- TRUE CALLER Debug key-->
+    <!--string name="partnerKey">baLWqkLO85xFIlFrAi5phqW1zSfCceMb</string-->
+    <!-- TRUE CALLER Release key-->
+    <string name="partnerKey">ZjojDtbi99nS9J3pW8dwMfFYkrHxYeRM</string>
 
     <!--   new and Article image transaction-->
     <string name="news_image_transaction">NewsImageTransaction</string>

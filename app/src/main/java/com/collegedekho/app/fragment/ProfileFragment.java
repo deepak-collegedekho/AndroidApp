@@ -16,7 +16,6 @@ import com.collegedekho.app.adapter.ExamDetailAdapter;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.listener.OnSwipeTouchListener;
-import com.collegedekho.app.resource.BitMapHolder;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;

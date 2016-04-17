@@ -60,7 +60,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private  int mViewType = Constants.VIEW_INTO_LIST;
     private ContactsCompletionView mCompletionView;
     private ArrayAdapter<String> tolenAdapter;
-View instituteView;
+    View instituteView;
 
     public InstituteListFragment() {
         // Required empty public constructor
@@ -268,6 +268,13 @@ View instituteView;
                 mCompletionView.clear();
             }
             this.mSetFilterList();
+        }
+        if (mInstitutes.size() == 0) {
+            this.mEmptyTextView.setText("Opps! Unable to find colleges for your preferences, please change your filters in ‘*Resource Buddy*’!");
+            this.mEmptyTextView.setVisibility(View.VISIBLE);
+        }
+        else {
+            this.mEmptyTextView.setVisibility(View.GONE);
         }
     }
 

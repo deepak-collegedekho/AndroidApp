@@ -4,13 +4,10 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.resource.Constants;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.tagmanager.DataLayer;
 import com.google.android.gms.tagmanager.TagManager;
-
-import java.net.URI;
 
 /**
  * Utility class.

@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.appsflyer.AppsFlyerLib;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.InstitutePagerAdapter;
@@ -27,8 +26,6 @@ import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.fasterxml.jackson.jr.ob.JSON;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
 
 import org.json.JSONException;
 import org.json.JSONObject;

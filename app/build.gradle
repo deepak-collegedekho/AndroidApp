@@ -17,11 +17,6 @@ repositories {
 }
 
 android {
-    signingConfigs {
-        debug {
-            storeFile file('/home/Bashir/Android/harsh_debug_keystore/debug.keystore')
-        }
-    }
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
     defaultConfig

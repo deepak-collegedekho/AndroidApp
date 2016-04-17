@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+
 import android.support.v4.content.ContextCompat;
 
 import com.collegedekho.app.R;

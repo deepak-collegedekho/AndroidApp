@@ -20,7 +20,7 @@ public class FadeInImageView extends NetworkImageView {
     public void setLocalImageBitmap(Bitmap bitmap) {
         this.mShowLocal = true;
 
-        this.mLocalBitmap = this.fastblur(bitmap, FadeInImageView.BITMAP_SCALE, 7);
+        this.mLocalBitmap = this.fastblur(bitmap, FadeInImageView.BITMAP_SCALE, 1);
 
         requestLayout();
     }
