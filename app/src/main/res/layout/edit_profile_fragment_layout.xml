@@ -64,32 +64,31 @@
                     <RelativeLayout
                         android:id="@+id/edit_profile_fb_login"
                         style="@style/AppTheme.FacebookButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
+                        android:layout_width="285dp"
+                        android:layout_height="45dp"
                         android:layout_marginBottom="@dimen/activity_vertical_margin"
                         android:layout_marginTop="@dimen/activity_vertical_margin"
-                        android:visibility="gone"
-                        android:contentDescription="@string/fb_login_description"
-                        android:padding="8dp">
+                        android:gravity="left"
+                        android:layout_marginLeft="4dp"
+                        android:contentDescription="@string/fb_login_description">
 
                         <ImageView
                             android:id="@+id/edit_profile_fb_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_centerVertical="true"
                             android:contentDescription="@string/fb_login_description"
-                            android:src="@drawable/com_facebook_button_icon" />
+                            android:src="@drawable/ic_facebook_icon" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:layout_marginLeft="@dimen/m8dp"
+                            android:paddingLeft="@dimen/m10dp"
                             android:layout_toRightOf="@id/edit_profile_fb_icon"
-                            android:text="FACEBOOK LOGIN"
+                            android:text="Facebook Login"
                             android:textColor="@color/white"
-                            android:textSize="14sp"
+                            android:textSize="18sp"
                             android:contentDescription="@string/fb_login_description"
                             android:textStyle="normal" />
                     </RelativeLayout>

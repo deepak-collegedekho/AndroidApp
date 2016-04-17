@@ -21,41 +21,44 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:paddingLeft="@dimen/m2dp"
+        android:paddingRight="@dimen/m2dp"
         android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/fb_login"
             style="@style/AppTheme.FacebookButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="250dp"
+            android:layout_height="45dp"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:gravity="left"
             android:contentDescription="@string/fb_login_description"
-            android:padding="8dp">
+            >
 
             <ImageView
                 android:id="@+id/fb_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:contentDescription="@string/fb_login_description"
-                android:src="@drawable/com_facebook_button_icon" />
+                android:src="@drawable/ic_facebook_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/m8dp"
+                android:paddingLeft="@dimen/m10dp"
                 android:layout_toRightOf="@id/fb_icon"
-                android:text="FACEBOOK LOGIN"
+                android:text="Facebook Login"
                 android:textColor="@color/white"
-                android:textSize="14sp"
+                android:textSize="18sp"
                 android:contentDescription="@string/fb_login_description"
                 android:textStyle="normal" />
         </RelativeLayout>
 
         <com.truecaller.android.sdk.TrueButton
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:trueButtonText="signIn"
             android:layout_gravity="center_horizontal"/>
@@ -65,11 +68,11 @@
         <TextView
             android:id="@+id/sign_up_skip"
             style="@style/AppTheme.OrangeButton"
-            android:layout_width="match_parent"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:gravity="center"
-            android:padding="@dimen/m10dp"
+            android:padding="@dimen/m8dp"
             android:paddingBottom="@dimen/m5dp"
             android:paddingTop="@dimen/m5dp"
             android:text="SKIP"

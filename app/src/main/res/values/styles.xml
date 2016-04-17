@@ -352,10 +352,12 @@
 
 
     <style name="AppTheme.FacebookButton">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:paddingTop">@dimen/m5dp</item>
-        <item name="android:paddingBottom">@dimen/m5dp</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:layout_width">328dp</item>
+        <item name="android:paddingLeft">@dimen/m10dp</item>
+        <item name="android:paddingRight">@dimen/m8dp</item>
+        <item name="android:paddingTop">@dimen/m8dp</item>
+        <item name="android:paddingBottom">@dimen/m8dp</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">normal</item>
