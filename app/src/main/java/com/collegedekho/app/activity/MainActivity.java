@@ -807,50 +807,7 @@ public class MainActivity extends AppCompatActivity
         this.mHandleNotifications(true);
     }
 
-    /**
-     * This method is used to register and initialize facebook sdk
-     */
-    private void mRegisterFacebookSdk() {
-        FacebookSdk.sdkInitialize(this);
-        callbackManager = CallbackManager.Factory.create();
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.e(TAG, "Logged In ");
-                showProgressDialog("Signing with facebook account");
-                AccessToken token = AccessToken.getCurrentAccessToken();
-                if (token != null) {
-                    RequestData(token);
-                }
-            }
 
-            @Override
-            public void onCancel() {
-                Log.e(TAG, "facebook login canceled");
-                displayMessage(R.string.FACEBOOK_SIGNIN_FAILED);
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                error.printStackTrace();
-                Log.e(TAG, "facebook login on error");
-                displayMessage(R.string.SIGNIN_ERROR);
-            }
-        });
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    "com.collegedekho.app",
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                String keyHAsh = Base64.encodeToString(md.digest(), Base64.DEFAULT);
-                Log.d("KeyHash:", keyHAsh);
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-        } catch (NoSuchAlgorithmException e) {
-        }
-    }
 
     public void RequestData(final AccessToken accessToken) {
         GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {

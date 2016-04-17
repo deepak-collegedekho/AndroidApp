@@ -212,13 +212,15 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                 this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
                 break;
             case R.id.recommended_tute_image:
-                v.setVisibility(View.GONE);
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), true).apply();
-                break;
             case R.id.recommended_tute_frame:
                 v.setVisibility(View.GONE);
+                View view = getView();
+                if(view != null){
+                    view.findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
+                    view.findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
+                }
                 getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), true).apply();
-                break;
+
             default:
                 break;
         }
