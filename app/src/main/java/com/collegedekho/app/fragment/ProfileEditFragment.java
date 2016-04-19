@@ -294,13 +294,18 @@ public class ProfileEditFragment extends BaseFragment {
                         userRecommendedLayout.setVisibility(View.GONE);
                         View view  = getView();
                         if(view != null){
+                            TrueButton trueButton =(TrueButton)view.findViewById(R.id.com_truecaller_android_sdk_truebutton);
+
                             if (MainActivity.user != null && MainActivity.user.is_anony()){
-                                view.findViewById(R.id.com_truecaller_android_sdk_truebutton).setVisibility(View.VISIBLE);
+                                trueButton.setVisibility(View.VISIBLE);
                                 view.findViewById(R.id.edit_profile_fb_login).setVisibility(View.VISIBLE);
                             }
-                            TrueButton trueButton =(TrueButton)view.findViewById(R.id.com_truecaller_android_sdk_truebutton);
-                            boolean usable = trueButton.isUsable();
+                            else{
+                               trueButton.setVisibility(View.GONE);
+                                view.findViewById(R.id.edit_profile_fb_login).setVisibility(View.GONE);
+                            }
 
+                            boolean usable = trueButton.isUsable();
                             if (usable)
                                 trueButton.setTrueClient(MainActivity.mTrueClient);
                             else
