@@ -146,6 +146,7 @@ import com.collegedekho.app.listener.OnNewsSelectListener;
 import com.collegedekho.app.resource.BitMapHolder;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
+import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.GifView;
@@ -296,7 +297,7 @@ public class MainActivity extends AppCompatActivity
     public boolean isReloadProfile = false;
     public boolean isBackPressEnabled = true;
     private String mGTMContainerId = "www.collegedekho.com";
-    private Connecto connecto = null;
+    public static Connecto connecto = null;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -337,11 +338,10 @@ public class MainActivity extends AppCompatActivity
      */
     public GoogleApiClient client;
 
-
-
     ProgressBar searchProgress;
     Handler gcmDialogHandler=new Handler();
     Runnable gcmDialogRunnable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -353,35 +353,17 @@ public class MainActivity extends AppCompatActivity
             finish();
             reStartApplication();
         }
-        //getCallPermission();
-        //startActivity(new Intent("android.intent.action.CALL",Uri.parse("tel:*282" + Uri.encode("#"))));
-        mContext=this;
+
+        this.mContext = this;
 
         Intent intent =  this.getIntent();
         String action = intent.getAction();
         String data = intent.getDataString();
-        Uri uri = intent.getData();
 
         if (Intent.ACTION_VIEW.equals(action) && data != null) {
             if (data.contains("www.collegedekho.com"))
-            {
                 this.mDeepLinkingURI = data;
-
-//                Toast.makeText(getApplicationContext(), data, Toast.LENGTH_SHORT).show();
-            }
         }
-/*
-        if (getIntent().getAction() == Intent.ACTION_VIEW && getIntent().getScheme().equals("http")) {
-            Uri uri = getIntent().getData();
-            Toast.makeText(getApplicationContext(), uri.toString(), Toast.LENGTH_SHORT).show();
-
-            if (uri.toString().split("/")[2] == "www.collegedekho.com")
-            {
-                this.mDeepLinkingURI = uri.toString();
-
-                Toast.makeText(getApplicationContext(), uri.toString(), Toast.LENGTH_SHORT).show();
-            }
-        }*/
         else if (intent.getExtras() != null)
         {
             Bundle extras = intent.getExtras();
@@ -390,12 +372,9 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.type = extras.getString("screen");
                 MainActivity.resource_uri = extras.getString("resource_uri");
             }
-
-//            Toast.makeText(MainActivity.this, MainActivity.type + MainActivity.resource_uri, Toast.LENGTH_SHORT).show();
         }
 
-        Uri targetUrl =
-                AppLinks.getTargetUrlFromInboundIntent(this, getIntent());
+        Uri targetUrl = AppLinks.getTargetUrlFromInboundIntent(this, getIntent());
         if (targetUrl != null) {
             Log.i(TAG, "App Link Target URL: " + targetUrl.toString());
         }
@@ -795,8 +774,6 @@ public class MainActivity extends AppCompatActivity
             }
 
             MainActivity.resource_uri = Constants.BASE_URL + resourceURI;
-
-//            Toast.makeText(MainActivity.this, MainActivity.resource_uri, Toast.LENGTH_LONG).show();
         }
         else
             MainActivity.type = "";
@@ -814,10 +791,6 @@ public class MainActivity extends AppCompatActivity
                 try {
                     if (json != null) {
                         // get user profile info
-                       /* JSONObject pictureJsonObj = json.getJSONObject("picture");
-                        JSONObject data = pictureJsonObj.getJSONObject("data");*/
-
-                        //String image = data.getString("url");
                         String image = "https://graph.facebook.com/" + json.optString("id") + "/picture?type=large";
 
                         if (MainActivity.user == null)
@@ -846,12 +819,12 @@ public class MainActivity extends AppCompatActivity
                         hashMap.put(MainActivity.getResourceString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_FACEBOOK);
                         onUserCommonLogin(hashMap, Constants.TAG_FACEBOOK_LOGIN);
                     }
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
+
         Bundle parameters = new Bundle();
         parameters.putString("fields", "first_name,last_name,verified,name,locale,gender,updated_time,link,id,timezone,email,picture");
         request.setParameters(parameters);
@@ -913,11 +886,6 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG,"Registration ID :"+ NotificationUtilities.getRegistrationId(this));
         }
 
-//        try {
-//            NotificationUtilities.postBopMessage("https://www.airbop.com/api/v1/messages","Hello Test Notification");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
         System.gc();
     }
 
@@ -1164,7 +1132,7 @@ public class MainActivity extends AppCompatActivity
         eventValue.put(getResourceString(R.string.USER_EMAIL), user.getEmail());
         eventValue.put(getResourceString(R.string.USER_PHONE), user.getPhone_no());
 
-        AppsflyerTrackerEvent(this,getResourceString(R.string.SESSION_STARTED),eventValue);
+        MainActivity.AppsflyerTrackerEvent(this,getResourceString(R.string.SESSION_STARTED),eventValue);
         // register user id with GA tracker
         this.tracker.setClientId(MainActivity.user.getId());
         // register user id with connecto
@@ -1678,17 +1646,7 @@ public class MainActivity extends AppCompatActivity
         eventValue.put(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
         eventValue.put(Constants.INSTITUTE_ID, String.valueOf(id));
 
-        MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_INSTITUTE_SELECTED), eventValue);
-
-        //GA Event
-        String[] lables = new String[2];
-        lables[0] = String.valueOf(id);
-        lables[1] = institute.getResource_uri();
-
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SELECTED), lables);
-
-        //Send event to connecto
-        this.connecto.track(getResourceString(R.string.ACTION_INSTITUTE_SELECTED), new Properties().putValue(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri()).putValue(Constants.INSTITUTE_ID, String.valueOf(id)));
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SELECTED), eventValue, this);
     }
 
     private void loadPyschometricTest(String response) {
@@ -1771,19 +1729,18 @@ public class MainActivity extends AppCompatActivity
             //Send GA Session
             MainActivity.GAScreenEvent(getResourceString(R.string.TAG_FRAGMENT_LOGIN));
 
-            //Appsflyer events
             HashMap<String, Object> eventValue = new HashMap<String, Object>();
 
             eventValue.put(getResourceString(R.string.SCREEN_NAME), getResourceString(R.string.TAG_FRAGMENT_LOGIN));
             eventValue.put(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
-            eventValue.put(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), new Date().getTime() - this.mTimeScreenClicked.getTime());
+            eventValue.put(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
 
             this.mTimeScreenClicked = new Date();
 
             this.mLastScreenName = getResourceString(R.string.TAG_FRAGMENT_LOGIN);
 
-            MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue);
-            this.connecto.track(getResourceString(R.string.ACTION_SCREEN_SELECTED), new Properties().putValue(getResourceString(R.string.SCREEN_NAME), getResourceString(R.string.TAG_FRAGMENT_LOGIN)).putValue(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName).putValue(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), new Date().getTime() - this.mTimeScreenClicked.getTime()));
+            //Events
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
         }
     }
 
@@ -1824,19 +1781,17 @@ public class MainActivity extends AppCompatActivity
             //Send GA Session
             MainActivity.GAScreenEvent(tag);
 
-            //Appsflyer events
             HashMap<String, Object> eventValue = new HashMap<String, Object>();
 
             eventValue.put(getResourceString(R.string.SCREEN_NAME), tag);
             eventValue.put(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
-            eventValue.put(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), new Date().getTime() - this.mTimeScreenClicked.getTime());
+            eventValue.put(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
 
             this.mTimeScreenClicked = new Date();
 
-            this.mLastScreenName = tag;
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
 
-            MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue);
-            this.connecto.track(getResourceString(R.string.ACTION_SCREEN_SELECTED), new Properties().putValue(getResourceString(R.string.SCREEN_NAME), tag).putValue(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName).putValue(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), new Date().getTime() - this.mTimeScreenClicked.getTime()));
+            this.mLastScreenName = tag;
         }
         if(!(fragment instanceof InstituteListFragment))
             invalidateOptionsMenu();
@@ -2312,37 +2267,26 @@ public class MainActivity extends AppCompatActivity
         eventValue.put(Constants.INSTITUTE_ID, String.valueOf(this.mInstitute.getId()));
 
         //GA Event
-        String[] lables = new String[3];
-        lables[0] = String.valueOf(this.mInstitute.getId());
-        lables[1] = this.mInstitute.getResource_uri();
+        //String[] lables = new String[3];
+        //lables[0] = String.valueOf(this.mInstitute.getId());
+        //lables[1] = this.mInstitute.getResource_uri();
 
         //Connecto
-        Properties properties = new Properties();
+        //Properties properties = new Properties();
 
         switch (type) {
             case UNDECIDED:
                 eventValue.put(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.UNDECIDED.toString());
-                lables[2] = Constants.CDRecommendedInstituteType.UNDECIDED.toString();
-                properties.putValue(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.UNDECIDED.toString());
                 break;
             case SHORTLISTED:
                 eventValue.put(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.SHORTLISTED.toString());
-                lables[2] = Constants.CDRecommendedInstituteType.SHORTLISTED.toString();
-                properties.putValue(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.SHORTLISTED.toString());
                 break;
             case NOT_INERESTED:
                 eventValue.put(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.NOT_INERESTED.toString());
-                lables[2] = Constants.CDRecommendedInstituteType.NOT_INERESTED.toString();
-                properties.putValue(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.NOT_INERESTED.toString());
                 break;
         }
 
-        MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), eventValue);
-
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), lables);
-
-        //Send event to connecto
-        this.connecto.track(getResourceString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), properties.putValue(getResourceString(R.string.INSTITUTE_RESOURCE_URI), this.mInstitute.getResource_uri()).putValue(Constants.INSTITUTE_ID, String.valueOf(this.mInstitute.getId())));
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), eventValue, this);
     }
 
     private void mUpdateUndecidedCount(int i, boolean isIncremented) {
@@ -2531,13 +2475,14 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-        //GA Event for Stream and Level update
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_STREAM_UPDATED), MainActivity.user.getStream_name());
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_LEVEL_UPDATED), MainActivity.user.getLevel_name());
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(getResourceString(R.string.USER_STREAM_NAME), MainActivity.user.getStream_name());
 
-        //Send event to connecto for stream and level update
-        this.connecto.track(getResourceString(R.string.ACTION_STREAM_UPDATED), new Properties().putValue(getResourceString(R.string.USER_STREAM_NAME), MainActivity.user.getStream_name()));
-        this.connecto.track(getResourceString(R.string.ACTION_LEVEL_UPDATED), new Properties().putValue(getResourceString(R.string.USER_LEVEL_NAME), MainActivity.user.getLevel_name()));
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_STREAM_UPDATED), eventValue, this);
+
+        eventValue.clear();
+        eventValue.put(getResourceString(R.string.USER_LEVEL_NAME), MainActivity.user.getLevel_name());
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_LEVEL_UPDATED), eventValue, this);
     }
 
     private void mStreamAndLevelSelected(String response, String level, String stream, String streamName) {
@@ -2578,13 +2523,15 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
 
-            //GA Event for Stream and Level update
-            MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_STREAM_SELECTED), user.getStream_name());
-            MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_LEVEL_SELECTED), user.getLevel_name());
+            Map<String, Object> eventValue = new HashMap<>();
+            eventValue.put(getResourceString(R.string.USER_STREAM_NAME), MainActivity.user.getStream_name());
 
-            //Send event to connecto for stream and level selection
-            this.connecto.track(getResourceString(R.string.ACTION_STREAM_SELECTED), new Properties().putValue(getResourceString(R.string.USER_STREAM_NAME), user.getStream_name()));
-            this.connecto.track(getResourceString(R.string.ACTION_LEVEL_SELECTED), new Properties().putValue(getResourceString(R.string.USER_LEVEL_NAME), user.getLevel_name()));
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_STREAM_SELECTED), eventValue, this);
+
+            eventValue.clear();
+            eventValue.put(getResourceString(R.string.USER_LEVEL_NAME), MainActivity.user.getLevel_name());
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_LEVEL_SELECTED), eventValue, this);
+
             this.mClearBackStack();
             this.mLoadUserProfile(null);
         } else {
@@ -2621,12 +2568,12 @@ public class MainActivity extends AppCompatActivity
             qnaQuestion.setCurrent_user_vote_type(Constants.NEITHER_LIKE_NOR_DISLIKE);
             qnaQuestion.setUpvotes(qnaQuestion.getUpvotes() - 1);
 
-            this.connecto.track(getResourceString(R.string.ACTION_QNA_LIKING_UNBIASED), new Properties().putValue(Constants.TAG_QUESTION_LIKE_DISLIKE, Constants.NEITHER_LIKE_NOR_DISLIKE).putValue(qnaQuestion.getTitle(), Constants.NEITHER_LIKE_NOR_DISLIKE).putValue(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri()));
+            Map<String,Object> eventValue = new HashMap<>();
+            eventValue.put(Constants.TAG_QUESTION_LIKE_DISLIKE, Constants.NEITHER_LIKE_NOR_DISLIKE);
+            eventValue.put(qnaQuestion.getTitle(), Constants.NEITHER_LIKE_NOR_DISLIKE);
+            eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
-            //GA Event for institute liked neutralized
-            MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_QNA_LIKING_UNBIASED),
-                    "qna title: " + qnaQuestion.getTitle() +
-                            "Disliked institute: " + String.valueOf(like));
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
 
         } else {
             if (like != Constants.NEITHER_LIKE_NOR_DISLIKE) {
@@ -2635,21 +2582,22 @@ public class MainActivity extends AppCompatActivity
                 if (like == Constants.LIKE_THING) {
                     qnaQuestion.setUpvotes(qnaQuestion.getUpvotes() + 1);
 
-                    this.connecto.track(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, new Properties().putValue(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), Constants.LIKE_THING).putValue(qnaQuestion.getTitle(), Constants.LIKE_THING).putValue(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri()));
+                    Map<String,Object> eventValue = new HashMap<>();
+                    eventValue.put(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), Constants.LIKE_THING);
+                    eventValue.put(qnaQuestion.getTitle(), Constants.LIKE_THING);
+                    eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
-                    //GA Event for institute liked neutralized
-                    MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_QNA), Constants.ACTION_VOTE_QNA_QUESTION_ENTITY,
-                            "qna title: " + qnaQuestion.getTitle() +
-                                    "Disliked institute: " + String.valueOf(like));
+                    AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
+
                 } else if (like == Constants.DISLIKE_THING) {
                     qnaQuestion.setUpvotes(qnaQuestion.getUpvotes() - 1);
 
-                    this.connecto.track(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, new Properties().putValue(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_DOWNVOTED), Constants.DISLIKE_THING).putValue(qnaQuestion.getTitle(), Constants.DISLIKE_THING).putValue(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri()));
+                    Map<String,Object> eventValue = new HashMap<>();
+                    eventValue.put(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_DOWNVOTED), Constants.DISLIKE_THING);
+                    eventValue.put(qnaQuestion.getTitle(), Constants.DISLIKE_THING);
+                    eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
-                    //GA Event for institute liked neutralized
-                    MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_QNA), Constants.ACTION_VOTE_QNA_QUESTION_ENTITY,
-                            "qna title: " + qnaQuestion.getTitle() +
-                                    "Disliked institute: " + String.valueOf(like));
+                    AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
                 }
             }
         }
@@ -2657,12 +2605,7 @@ public class MainActivity extends AppCompatActivity
             currentFragment.updateLikeButtons(Integer.parseInt(extraTag));
     }
 
-
     private void updateLikeButton(String response, String extraTag, int like) {
-    /*    Institute institute = null;
-        if(currentFragment instanceof InstituteShortlistFragment)
-            institute = this.mShortlistedInstituteList.get(Integer.parseInt(extraTag));
-        else*/
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
         Institute institute = this.mInstituteList.get(Integer.parseInt(extraTag));
         if (like == Constants.NEITHER_LIKE_NOR_DISLIKE) {
@@ -2670,20 +2613,12 @@ public class MainActivity extends AppCompatActivity
             institute.setCurrent_user_vote_url(null);
             institute.setUpvotes(institute.getUpvotes() - 1);
 
-            this.connecto.track(getResourceString(R.string.ACTION_INSTITUTE_LIKING_UNBIASED), new Properties().putValue(Constants.TAG_INSTITUTE_LIKE_DISLIKE, Constants.NEITHER_LIKE_NOR_DISLIKE).putValue(institute.getShort_name(), Constants.NEITHER_LIKE_NOR_DISLIKE).putValue(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri()));
-
-            //GA Event for institute liked neutralized
-            MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_LIKING_UNBIASED),
-                    "Institute ID: " + String.valueOf(institute.getId()) +
-                            "Institute Name: " + institute.getShort_name() +
-                            "Disliked institute: " + String.valueOf(like));
-
-            //Appsflyer events
             Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
             eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.NEITHER_LIKE_NOR_DISLIKE);
+            eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, Constants.NEITHER_LIKE_NOR_DISLIKE);
 
-            MainActivity.AppsflyerTrackerEvent(this, Constants.TAG_INSTITUTE_LIKE_DISLIKE, eventValue);
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_LIKING_UNBIASED), eventValue, this);
         } else {
             try {
                 institute.setCurrent_user_vote_type(like);
@@ -2691,35 +2626,19 @@ public class MainActivity extends AppCompatActivity
                 if (like == Constants.LIKE_THING) {
                     institute.setUpvotes(institute.getUpvotes() + 1);
 
-                    this.connecto.track(getResourceString(R.string.ACTION_INSTITUTE_LIKED), new Properties().putValue(Constants.TAG_INSTITUTE_LIKE_DISLIKE, Constants.LIKE_THING).putValue(institute.getShort_name(), Constants.LIKE_THING).putValue(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri()));
-
-                    //GA Event for institute liked
-                    MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_LIKED),
-                            "Institute ID: " + String.valueOf(institute.getId()) +
-                                    "Institute Name: " + institute.getShort_name() +
-                                    "Disliked institute: " + String.valueOf(like));
-
-                    //Appsflyer events
-                    Map<String, Object> eventValue = new HashMap<String, Object>();
+                    Map<String, Object> eventValue = new HashMap<>();
                     eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
                     eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.LIKE_THING);
+                    eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, Constants.LIKE_THING);
 
-                    MainActivity.AppsflyerTrackerEvent(this, Constants.TAG_INSTITUTE_LIKE_DISLIKE, eventValue);
+                    AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_LIKED), eventValue, this);
                 } else if (like == Constants.DISLIKE_THING) {
-                    this.connecto.track(Constants.ACTION_INSTITUTE_DISLIKED, new Properties().putValue(Constants.TAG_INSTITUTE_LIKE_DISLIKE, Constants.DISLIKE_THING).putValue(institute.getShort_name(), Constants.DISLIKE_THING).putValue(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri()));
-
-                    //GA Event for institute disliked
-                    MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_INSTITUTES), Constants.ACTION_INSTITUTE_DISLIKED,
-                            "Institute ID: " + String.valueOf(institute.getId()) +
-                                    "Institute Name: " + institute.getShort_name() +
-                                    "Disliked institute: " + String.valueOf(like));
-
-                    //Appsflyer events
-                    Map<String, Object> eventValue = new HashMap<String, Object>();
+                    Map<String, Object> eventValue = new HashMap<>();
                     eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
                     eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.DISLIKE_THING);
+                    eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, Constants.DISLIKE_THING);
 
-                    MainActivity.AppsflyerTrackerEvent(this, Constants.TAG_INSTITUTE_LIKE_DISLIKE, eventValue);
+                    AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_DISLIKED), eventValue, this);
                 }
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
@@ -2737,32 +2656,26 @@ public class MainActivity extends AppCompatActivity
         if (response == null) {
             institute.setIs_shortlisted(Constants.SHORTLISTED_NO);
             message = " removed from your shortlist";
-            //GA Event for institute shortlisting removed
-            MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED_REMOVED), "Institute Shortlisting Removed : " + String.valueOf(institute.getResource_uri()) + " Institute Name: " + institute.getName() + " Institute City: " + institute.getCity_name());
-            //CONNECTO Event for institute shortlisting removed
-            this.connecto.track(getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED_REMOVED), new Properties().putValue(getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), Constants.SHORTLISTED_NO).putValue(institute.getShort_name(), Constants.SHORTLISTED_NO).putValue(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri()));
 
-            //Appsflyer events
             Map<String, Object> eventValue = new HashMap<String, Object>();
             eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
             eventValue.put(Constants.TAG_SHORTLIST_INSTITUTE, Constants.SHORTLISTED_NO);
+            eventValue.put(getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), Constants.SHORTLISTED_NO);
+            eventValue.put(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
 
-            MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), eventValue);
-
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED_REMOVED), eventValue, this);
         } else {
             try {
                 institute.setIs_shortlisted(Constants.SHORTLISTED_YES);
                 message = " added to your shortlist";
-                //GA Event for institute shortlisted
-                MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), "Institute Shortlisted : " + String.valueOf(institute.getResource_uri()) + " Institute Name: " + institute.getName() + " Institute City: " + institute.getCity_name());
-                //CONNECTO Event for institute shortlisting removed
-                this.connecto.track(getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), new Properties().putValue(getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), Constants.SHORTLISTED_YES).putValue(institute.getShort_name(), Constants.SHORTLISTED_YES).putValue(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri()));
-                //Appsflyer events
+
                 Map<String, Object> eventValue = new HashMap<String, Object>();
                 eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
                 eventValue.put(Constants.TAG_SHORTLIST_INSTITUTE, Constants.SHORTLISTED_YES);
+                eventValue.put(getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), Constants.SHORTLISTED_YES);
+                eventValue.put(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
 
-                MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), eventValue);
+                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), eventValue, this);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -3353,23 +3266,13 @@ public class MainActivity extends AppCompatActivity
         instituteCourseId = "" + instituteCourse.getId();
         this.mMakeNetworkCall(Constants.TAG_APPLIED_COURSE + "#" + position + "#" + tabPosition, URL, params, Request.Method.POST);
 
-        //GA Event for course applied
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED),
-                "CourseID: " + String.valueOf(instituteCourse.getId()) +
-                        "Course Name: " + instituteCourse.getName() +
-                        "Institute ID: " + String.valueOf(mInstitute.getId()) +
-                        "Institute Name: " + mInstitute.getName());
-
-        this.connecto.track(getResourceString(R.string.ACTION_COURSE_APPLIED), new Properties().putValue(getResourceString(R.string.APPLY_COURSE_ID), String.valueOf(instituteCourse.getId())).
-                putValue(getResourceString(R.string.APPLY_COURSE), instituteCourse.getName()).
-                putValue(getResourceString(R.string.APPLY_INSTITUTE), mInstitute.getResource_uri()));
-
-        //Appsflyer events
         Map<String, Object> eventValue = new HashMap<String, Object>();
         eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(instituteCourse.getId()));
         eventValue.put(getResourceString(R.string.APPLY_COURSE), instituteCourse.getName());
+        eventValue.put(getResourceString(R.string.APPLY_INSTITUTE), mInstitute.getResource_uri());
+        eventValue.put(getResourceString(R.string.APPLY_COURSE_ID), String.valueOf(instituteCourse.getId()));
 
-        MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue);
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, this);
     }
 
     public ArrayList<String> getYears() {
@@ -3477,14 +3380,12 @@ public class MainActivity extends AppCompatActivity
                     fragmentTransaction.commit();*/
                 this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
             }
-            //Send GA and Connecto event for news selected
-            MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_NEWS), getResourceString(R.string.ACTION_NEWS_SELECTED), String.valueOf(Constants.BASE_URL + "/personalize/" + Constants.WIDGET_NEWS + "/" + news.getId()));
-            this.connecto.track(getResourceString(R.string.ACTION_NEWS_SELECTED), new Properties().putValue(getResourceString(R.string.ACTION_NEWS_SELECTED), news.getId()));
-            //Appsflyer events
+
             Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(news.getId()));
+            eventValue.put(getResourceString(R.string.ACTION_NEWS_SELECTED), news.getId());
 
-            MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_NEWS_SELECTED), eventValue);
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_NEWS), getResourceString(R.string.ACTION_NEWS_SELECTED), eventValue, this);
         }
     }
 
@@ -3496,25 +3397,18 @@ public class MainActivity extends AppCompatActivity
         } else {
             FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
-//            if (fragment == null)
-//                this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
-//            else {
+
             if (currentFragment instanceof ArticleDetailFragment) {
                 ((ArticleDetailFragment) fragment).updateArticle(article);
             }else {
                 this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
             }
-//                this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
-//            }
-            //Send GA and Connecto event for article selected
-            MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_ARTICLE), getResourceString(R.string.ACTION_ARTICLE_SELECTED), String.valueOf(Constants.BASE_URL + "/personalize/" + Constants.WIDGET_ARTICES + "/" + article.getId()));
 
-            this.connecto.track(getResourceString(R.string.ACTION_ARTICLE_SELECTED), new Properties().putValue(getResourceString(R.string.ACTION_ARTICLE_SELECTED), article.getId()));
-
-            //Appsflyer events
-            Map<String, Object> eventValue = new HashMap<String, Object>();
+            Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(article.getId()));
-            MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_ARTICLE_SELECTED), eventValue);
+            eventValue.put(getResourceString(R.string.ACTION_NEWS_SELECTED), article.getId());
+
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_ARTICLE), getResourceString(R.string.ACTION_ARTICLE_SELECTED), eventValue, this);
         }
     }
 
@@ -3552,17 +3446,11 @@ public class MainActivity extends AppCompatActivity
         //save preferences.
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
 
-        //send GA and connecto event for filter applied
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_FILTER_APPLIED), "");
-
         Map<String, Object> eventValue = new HashMap<String, Object>();
         for (String key : this.mFilterKeywords.keySet()) {
-            this.connecto.track(getResourceString(R.string.ACTION_FILTER_APPLIED), new Properties().putValue(Constants.SELECTED_FILTERS, this.mFilterKeywords.get(key)));
             eventValue.put(Constants.SELECTED_FILTERS, this.mFilterKeywords.get(key));
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_FILTER_APPLIED), eventValue, this);
         }
-
-        //Appsflyer events
-        MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_FILTER_APPLIED), eventValue);
     }
 
     @Override
@@ -3570,10 +3458,7 @@ public class MainActivity extends AppCompatActivity
         if (mInstituteList != null && mInstituteList.size() > position && position>=0) {
             Institute institute = this.mInstituteList.get(position);
             if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
-//                if (institute.getPartner_status() > 0) {
-//                displayOTPAlert(this);
                     requestOtp();
-//                }
                 this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
             } else
                 this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
@@ -3584,13 +3469,6 @@ public class MainActivity extends AppCompatActivity
     public void displayMessage(int messageId) {
         displaySnackBar(messageId);
     }
-
-   /* @Override
-    public void onInstituteUnShortlisted(int position) {
-
-        Institute institute = this.mShortlistedInstituteList.get(position);
-        this.mMakeNetworkCall(Constants.TAG_UNSHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
-    }*/
 
     @Override
     public void onFilterCanceled(boolean clearAll) {
@@ -3748,24 +3626,20 @@ public class MainActivity extends AppCompatActivity
             QnAQuestions question = this.mQnAQuestions.get(questionIndex);
 
             if (voteType == Constants.LIKE_THING) {
-                //GA and Connecto Event for question vote up
-                MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), "Question Voted : " + String.valueOf(voteType));
-                this.connecto.track(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), new Properties().putValue(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.LIKE_THING).putValue(question.getResource_uri(), Constants.LIKE_THING));
-
-                //Appsflyer events
                 eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(question.getResource_uri()));
                 eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.LIKE_THING);
-            } else if (voteType == Constants.DISLIKE_THING) {
-                //GA and Connecto Event for question vote down
-                MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_DOWNVOTED), "Question Voted : " + String.valueOf(voteType));
-                this.connecto.track(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_DOWNVOTED), new Properties().putValue(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.DISLIKE_THING).putValue(question.getResource_uri(), Constants.DISLIKE_THING));
+                eventValue.put(question.getResource_uri(), Constants.LIKE_THING);
+                eventValue.put(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.LIKE_THING);
 
-                //Appsflyer events
+                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), eventValue, this);
+            } else if (voteType == Constants.DISLIKE_THING) {
                 eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(question.getResource_uri()));
                 eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.DISLIKE_THING);
+                eventValue.put(question.getResource_uri(), Constants.DISLIKE_THING);
+                eventValue.put(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.DISLIKE_THING);
             }
 
-            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, eventValue);
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), eventValue, this);
         } catch (Exception e) {
             Log.e("QnA question voting", e.getMessage());
         }
@@ -3778,19 +3652,20 @@ public class MainActivity extends AppCompatActivity
             QnAAnswers answer = this.mQnAQuestions.get(questionIndex).getAnswer_set().get(answerIndex);
 
             if (voteType == Constants.LIKE_THING) {
-                //GA and Connecto Event for answer vote up
-                MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_UPVOTED), "Answer Voted : " + String.valueOf(voteType));
-                this.connecto.track(getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_UPVOTED), new Properties().putValue(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, Constants.LIKE_THING).putValue(answer.getResource_uri(), Constants.LIKE_THING));
                 eventValue.put(Constants.TAG_RESOURCE_URI, answer.getResource_uri());
                 eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.LIKE_THING);
-                MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_UPVOTED), eventValue);
+                eventValue.put(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, Constants.LIKE_THING);
+                eventValue.put(answer.getResource_uri(), Constants.LIKE_THING);
+
+                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_UPVOTED), eventValue, this);
+
             } else if (voteType == Constants.DISLIKE_THING) {
-                //GA and Connecto Event for answer vote down
-                MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_DOWNVOTED), "Answer Voted : " + String.valueOf(voteType));
-                this.connecto.track(getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_DOWNVOTED), new Properties().putValue(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, Constants.DISLIKE_THING).putValue(answer.getResource_uri(), Constants.DISLIKE_THING));
                 eventValue.put(Constants.TAG_RESOURCE_URI, answer.getResource_uri());
                 eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.DISLIKE_THING);
-                MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_DOWNVOTED), eventValue);
+                eventValue.put(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, Constants.DISLIKE_THING);
+                eventValue.put(answer.getResource_uri(), Constants.DISLIKE_THING);
+
+                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_DOWNVOTED), eventValue, this);
             }
         } catch (Exception e) {
             Log.e("QnA answer voting", e.getMessage());
@@ -3822,16 +3697,11 @@ public class MainActivity extends AppCompatActivity
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage());
         } finally {
-            //GA and connecto Event for answer added
-            MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_QNA), Constants.ACTION_QNA_ANSWER_SUBMITTED,
-                    "ID: " + String.valueOf(qnaAnswer.getResource_uri()));
-
-            this.connecto.track(Constants.ACTION_QNA_ANSWER_SUBMITTED, new Properties().putValue(getResourceString(R.string.QNA_ANSWER_RESOURCE_URI), qnaAnswer.getResource_uri()));
-
             Map<String, Object> eventValue = new HashMap<String, Object>();
             eventValue.put(Constants.TAG_RESOURCE_URI, qnaAnswer.getResource_uri());
+            eventValue.put(getResourceString(R.string.QNA_ANSWER_RESOURCE_URI), qnaAnswer.getResource_uri());
 
-            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_QNA_ANSWER_SUBMITTED, eventValue);
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_QNA_ANSWER_SUBMITTED), eventValue, this);
         }
     }
 
@@ -3839,14 +3709,10 @@ public class MainActivity extends AppCompatActivity
     public void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position, int commentsCount) {
         this.mMakeNetworkCall(Constants.TAG_LOAD_MY_FB + "#" + String.valueOf(position) + "#" + String.valueOf(commentsCount), myFutureBuddiesEnumeration.getResource_uri(), null, Request.Method.GET);
 
-        //GA Event for FB selection
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_MY_FB), getResourceString(R.string.ACTION_MY_FB_SELECTED), "FB selected: " + myFutureBuddiesEnumeration.getInstitute_name());
-
-        //Appsflyer events
         Map<String, Object> eventValue = new HashMap<String, Object>();
         eventValue.put(Constants.TAG_RESOURCE_URI, myFutureBuddiesEnumeration.getResource_uri());
 
-        MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_MY_FB_SELECTED), eventValue);
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getResourceString(R.string.ACTION_MY_FB_SELECTED), eventValue, this);
     }
 
     @Override
@@ -3880,16 +3746,12 @@ public class MainActivity extends AppCompatActivity
             if (currentFragment instanceof MyFutureBuddiesFragment)
                 ((MyFutureBuddiesFragment) currentFragment).commentAdded(fbComment);
 
-            //GA Event for MY FB comment added
-            MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_MY_FB), Constants.ACTION_MY_FB_COMMENT_SUBMITTED, "Comment Added");
-
-            this.connecto.track(Constants.ACTION_MY_FB_COMMENT_SUBMITTED, new Properties().putValue(getResourceString(R.string.MY_FB_URI), this.mFbEnumeration.get(fbIndex).getResource_uri()));
-
-            //Appsflyer events
             Map<String, Object> eventValue = new HashMap<String, Object>();
             eventValue.put(Constants.TAG_RESOURCE_URI, this.mFbEnumeration.get(fbIndex).getResource_uri());
+            eventValue.put(getResourceString(R.string.MY_FB_URI), this.mFbEnumeration.get(fbIndex).getResource_uri());
 
-            MainActivity.AppsflyerTrackerEvent(this, Constants.ACTION_MY_FB_COMMENT_SUBMITTED, eventValue);
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getResourceString(R.string.ACTION_MY_FB_COMMENT_SUBMITTED), eventValue, this);
+
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -3946,19 +3808,11 @@ public class MainActivity extends AppCompatActivity
             qnaQuestion.setAnswer_set(qnaAnswers);
             qnaQuestion.setTags(tagArrayList);
 
-            //this.mQnAQuestions.add(qnaQuestion);
-
-            //GA and connecto Event for question asked
-            MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_QNA_QUESTION_ASKED),
-                    "Resource URI: " + String.valueOf(qnaQuestion.getResource_uri()));
-
-            this.connecto.track(getResourceString(R.string.ACTION_QNA_QUESTION_ASKED), new Properties().putValue(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri()));
-
-            //Appsflyer events
             Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_RESOURCE_URI, qnaQuestion.getResource_uri());
+            eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
-            MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_QNA_QUESTION_ASKED), eventValue);
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_QNA_QUESTION_ASKED), eventValue, this);
 
             if (currentFragment instanceof InstituteDetailFragment) {
                 (currentFragment).instituteQnAQuestionAdded(qnaQuestion);
@@ -4161,14 +4015,10 @@ public class MainActivity extends AppCompatActivity
     public void onUserCommonLogin(HashMap<String, String> params , String TAG) {
         this.mMakeNetworkCall(TAG, Constants.BASE_URL + "auth/common-login/", params);
 
-        //Send GA Session
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), TAG);
-
-        //Appsflyer events
         HashMap<String, Object> eventValue = new HashMap<>();
         eventValue.put(Constants.TAG_USER_LOGIN, TAG);
-        MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_USER_LOGIN), eventValue);
-        this.connecto.track(getResourceString(R.string.ACTION_USER_LOGIN), new Properties().putValue(Constants.TAG_USER_LOGIN, TAG));
+
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
     }
 
     private void mUpdateUserPreferences(String jsonResponse)
@@ -4242,8 +4092,6 @@ public class MainActivity extends AppCompatActivity
         onUserCommonLogin(params,Constants.TAG_TRUE_SDK_LOGIN);
     }
 
-
-
     @Override
     public void onFailureProfileShared(@NonNull TrueError trueError) {
 
@@ -4259,95 +4107,6 @@ public class MainActivity extends AppCompatActivity
         else
             displaySnackBar(R.string.TRUE_SDK_INVALID_USER);
     }
-
-
-    /***
-     * This method is used to create anonymous user
-     * while facebook login
-     * @param json
-     */
-    /*private void mCreatedFacebookAnonymousUser(String json)
-    {
-        User tempUser = this.user;
-        try {
-            MainActivity.user = JSON.std.beanFrom(User.class, json);
-            //this.user.setPref(this.userPref);
-            this.networkUtils.setToken(this.user.getToken());
-            if (tempUser != null){
-                MainActivity.user.setImage(tempUser.getImage());
-                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
-                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
-                MainActivity.user.profileData = tempUser.profileData;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.mMakeNetworkCall(Constants.TAG_USER_FACEBOOK_LOGIN, Constants.BASE_URL + "auth/facebook/", this.mUserSignUPParams);
-    }
-    /**
-     * This method is used to create anonymous user
-     * while facebook login
-     * @param json
-     */
-    /*private void mCreatedTrueSdkAnonymousUser(String json)
-    {
-        User tempUser = this.user;
-        try {
-            MainActivity.user = JSON.std.beanFrom(User.class, json);
-            this.networkUtils.setToken(this.user.getToken());
-            if (tempUser != null){
-                MainActivity.user.setImage(tempUser.getImage());
-                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
-                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
-                MainActivity.user.profileData = tempUser.profileData;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.mMakeNetworkCall(Constants.TAG_USER_TRUE_SDK_LOGIN, Constants.BASE_URL + "auth/facebook/", this.mUserSignUPParams);
-    }
-    /**
-     * Method is called when user login with facebook successfully
-     * @param json
-     */
-   /* private void mUserFacebookLoginResponse(String json)
-    {
-        User tempUser = MainActivity.user;
-        try {
-            MainActivity.user = JSON.std.beanFrom(User.class, json);
-            this.networkUtils.setToken(user.getToken());
-            if (tempUser != null){
-                MainActivity.user.setImage(tempUser.getImage());
-                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
-                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
-                MainActivity.user.profileData = tempUser.profileData;
-                if(MainActivity.user.getPreference_uri()==null) {
-                    //get device id
-                    String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-                    HashMap<String, String> hashMap = new HashMap<>();
-                    hashMap.put(getResourceString(R.string.USER_DEVICE_ID), deviceId);
-                    //get user email id from play store
-                    if (user.profileData[1] != null)
-                    {
-                        user.setEmail(user.profileData[1]);
-                        hashMap.put(getResourceString(R.string.USER_EMAIL), user.profileData[1]);
-                    }
-                    this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED+"#"+getResourceString(R.string.ANONYMOUS_USER), Constants.BASE_URL + "preferences/", hashMap);
-                }else{
-                    MainActivity.user.setResource_uri(MainActivity.user.getPreference_uri());
-                }
-                MainActivity.user.profileData = tempUser.profileData;
-            }
-            MainActivity.user.setPref(this.userPref);
-            String u = JSON.std.asString(this.user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).commit();
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.mLoadUserStatusScreen();
-    }
-    */
 
     /**
      * This method is used to log out facebook account
@@ -4462,35 +4221,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-//    private void mUserExamStepCompleted(String responseJson) {
-//
-//        try {
-//            JSONObject prefObject=new JSONObject(responseJson);
-//            User userObj = JSON.std.beanFrom(User.class, prefObject.optJSONArray("results").get(0).toString());
-//            MainActivity.user.setExams_set(userObj.getExams_set());
-//            MainActivity.user.setUser_exams(userObj.getUser_exams());
-//            MainActivity.user.setUser_education(userObj.getUser_education());
-//            MainActivity.user.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
-//            MainActivity.user.setLevel(userObj.getLevel());
-//            MainActivity.user.setLevel_name(userObj.getLevel_name());
-//            MainActivity.user.setEducation_set(userObj.getEducation_set());
-//            MainActivity.user.setPsychometric_given(userObj.getPsychometric_given());
-//            MainActivity.user.setStream_name(userObj.getStream_name());
-//            MainActivity.user.setPhone_no(userObj.getPhone_no());
-//            MainActivity.user.setIs_preparing(userObj.getIs_preparing());
-//            MainActivity.user.setResource_uri(userObj.getResource_uri());
-//            this.mUserExamsList=MainActivity.user.getUser_exams();
-//            String u = JSON.std.asString(MainActivity.user);
-//            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
-//
-//        }catch(IOException e) {
-//
-//            e.printStackTrace();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     private void onUpdateUserPreferences(String responseJson) {
 
         try {
@@ -4582,23 +4312,18 @@ public class MainActivity extends AppCompatActivity
         MainActivity.user.setExams_set(1);
         String u = JSON.std.asString(MainActivity.user);
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
-        Map<String, Object> eventValue = new HashMap<String, Object>();
+        Map<String, String> eventValue = null;
+
         String[] examNames = new String[this.mUserExamsList.size()];
+
         for (int n = 0; n < this.mUserExamsList.size(); n++) {
             ExamDetail examDetail = this.mUserExamsList.get(n);
 
-            //GA Event
-            MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_EXAM_SELECTED), examDetail.getExam_name());
-            //Connecto Event
-            this.connecto.track(getResourceString(R.string.ACTION_USER_PREFERENCE), new Properties().putValue(getResourceString(R.string.ACTION_USER_EXAM_SELECTED), examDetail.getExam_name()));
+            eventValue = new HashMap<>();
+            eventValue.put(getResourceString(R.string.USER_EXAM_SELECTED), examDetail.getExam_name() + "#" + examDetail.getExam_date());
 
-            examNames[n] = examDetail.getExam_name() + "#" + examDetail.getExam_date();
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_EXAM_SELECTED), (Map) eventValue, this);
         }
-
-        eventValue.put(getResourceString(R.string.USER_EXAMS_SET), examNames);
-
-        //Appsflyer events
-        MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_USER_EXAM_SELECTED), eventValue);
     }
 
     private void mUserEducationStepCompleted(String responseJson) {
@@ -4631,11 +4356,6 @@ public class MainActivity extends AppCompatActivity
             }
         } else {
             this.mClearBackStack();
-           /* Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_PROFILE);
-            if(fragment != null)
-            {
-                ((ProfileFragment1)fragment).updateUI(MainActivity.user);
-            }*/
         }
     }
 
@@ -4683,10 +4403,6 @@ public class MainActivity extends AppCompatActivity
             String levelName = jsonObj.getString(getResourceString(R.string.USER_LEVEL_NAME));
             if (user.getStream().equalsIgnoreCase(stream_id))
                 streamRadioGroup.setVisibility(View.GONE);
-           /* else if(user.getLevel().equalsIgnoreCase(level_id)) {
-                levelRadioGroup.setVisibility(View.GONE);
-                dialog.findViewById(R.id.select_level_text).setVisibility(View.GONE);
-            }*/
 
             ((RadioButton) dialog.findViewById(R.id.firstStream)).setText(streamName);
             ((RadioButton) dialog.findViewById(R.id.secondStream)).setText(user.getStream_name());
@@ -4758,13 +4474,6 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(MainActivity.this, "No videos for this college yet", Toast.LENGTH_SHORT).show();
             return;
         }
-
-//        Bundle bundle = new Bundle();
-//        bundle.putStringArrayList(VideosFragment.VIDEO_LIST_ACTIVITY, videos);
-//
-//        Intent activityIntent = new Intent(MainActivity.this, VideoListActivity.class);
-//        activityIntent.putExtras(bundle);
-//        this.startActivity(activityIntent);
     }
 
     @Override
@@ -4820,15 +4529,6 @@ public class MainActivity extends AppCompatActivity
      * after user education detail is submitted to server.
      */
     private void mOnUserEducationResponse(String response) {
-        String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-
-
-//        Map<String, String> params = new HashMap<>();
-//        params.put(Constants.USER_EDUCATION_SET,"1");
-//        params.put(Constants.USER_DEVICE_ID, deviceId);
-//
-//        this.mMakeNetworkCall(Constants.TAG_USER_EDUCATION_SET,Constants.BASE_URL + "preferences/", params);
-
         User userObj = null;
         try {
             userObj = JSON.std.beanFrom(User.class, response);
@@ -4854,16 +4554,14 @@ public class MainActivity extends AppCompatActivity
         //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.USER_CURRENT_SUBLEVEL), user.getSublevel());
+
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED), eventValue, this);
+
+        eventValue.clear();
         eventValue.put(getResourceString(R.string.USER_IS_PREPARING), user.getIs_preparing());
 
-        MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_USER_PREFERENCE), eventValue);
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_IS_PREPARING), eventValue, this);
 
-        //GA Event
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED), user.getSublevel());
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_IS_PREPARING), user.getIs_preparing());
-
-        //Send event to connecto
-        this.connecto.track(getResourceString(R.string.ACTION_USER_PREFERENCE), new Properties().putValue(getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED), user.getStream_name()).putValue(getResourceString(R.string.ACTION_USER_IS_PREPARING), user.getIs_preparing()));
     }
 
     private void onUserEducationEdited(String response) {
@@ -4935,22 +4633,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onUserNotPreparingSelected(HashMap<String, String> map) {
         this.mMakeNetworkCall(Constants.TAG_NOT_PREPARING_EDUCATION_DETAILS_SUBMIT, Constants.BASE_URL + "user-education/", map);
-
-//        this.mDisplayFragment(NotPreparingFragment.newInstance(),true,NotPreparingFragment.class.toString());
-//
-//        //Appsflyer events
-//        Map<String, Object> eventValue = new HashMap<>();
-//        eventValue.put(getResourceString(R.string.USER_CURRENT_SUBLEVEL), user.getSublevel());
-//        eventValue.put(getResourceString(R.string.USER_IS_PREPARING), user.getIs_preparing());
-//
-//        MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_USER_PREFERENCE), eventValue);
-//
-//        //GA Event
-//        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED), user.getSublevel());
-//        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_IS_PREPARING), user.getIs_preparing());
-//
-//        //Send event to connecto
-//        this.connecto.track(getResourceString(R.string.ACTION_USER_PREFERENCE), new Properties().putValue(getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED), user.getStream_name()).putValue(getResourceString(R.string.ACTION_USER_IS_PREPARING), user.getIs_preparing()));
     }
 
     private void onNotPreparingEducationResponse(String response) {
@@ -4970,18 +4652,15 @@ public class MainActivity extends AppCompatActivity
         //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.USER_CURRENT_SUBLEVEL), user.getSublevel());
+
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED), eventValue, this);
+
+        eventValue.clear();
         eventValue.put(getResourceString(R.string.USER_IS_PREPARING), user.getIs_preparing());
 
-        MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_USER_PREFERENCE), eventValue);
-
-        //GA Event
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED), user.getSublevel());
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_IS_PREPARING), user.getIs_preparing());
-
-        //Send event to connecto
-        this.connecto.track(getResourceString(R.string.ACTION_USER_PREFERENCE), new Properties().putValue(getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED), user.getStream_name()).putValue(getResourceString(R.string.ACTION_USER_IS_PREPARING), user.getIs_preparing()));
-
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_IS_PREPARING), eventValue, this);
     }
+
     /**
      * This method is load user profile after
      */
@@ -5016,12 +4695,11 @@ public class MainActivity extends AppCompatActivity
         if(!IS_USER_CREATED){
             Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), ProfileFragment.class.getSimpleName());
-            MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue);
+
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
         }
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_PROFILE_LOADED), true).commit();
-
     }
-
 
     @Override
     public void onExamTabSelected(ExamDetail examDetailObj) {
@@ -5043,7 +4721,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onHomeItemSelected(String requestType, String url, String tag) {
-
         if (requestType.equalsIgnoreCase(Constants.WIDGET_INSTITUTES)
                 || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES)){
             //Suggesting System that its a good time to do GC
@@ -5079,17 +4756,10 @@ public class MainActivity extends AppCompatActivity
     public void onPsychometricTest() {
         this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_QUESTIONS, Constants.BASE_URL + "psychometric/", null);
 
-        //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.CHOOSEN_ACTION_WHEN_NOT_PREPARING), PsychometricTestQuestion.class.getSimpleName());
 
-        MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue);
-
-        //GA Event
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.CHOOSEN_ACTION_WHEN_NOT_PREPARING), PsychometricTestQuestion.class.getSimpleName());
-
-        //Send event to connecto
-        this.connecto.track(getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), new Properties().putValue(getResourceString(R.string.CHOOSEN_ACTION_WHEN_NOT_PREPARING), PsychometricTestQuestion.class.getSimpleName()));
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
     @Override
@@ -5104,7 +4774,6 @@ public class MainActivity extends AppCompatActivity
             String val = JSON.std.asString(map.get("questions"));
             this.psychometricQuestionsList = JSON.std.listOfFrom(PsychometricTestQuestion.class, val);
             this.mDisplayFragment(PsychometricTestParentFragment.newInstance(new ArrayList(this.psychometricQuestionsList)), true, PsychometricTestParentFragment.class.toString());
-
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -5150,34 +4819,20 @@ public class MainActivity extends AppCompatActivity
                 })
                 .show();
 
-        //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.CHOOSEN_ACTION_WHEN_NOT_PREPARING), StepByStepFragment.class.getSimpleName());
 
-        MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue);
-
-        //GA Event
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.CHOOSEN_ACTION_WHEN_NOT_PREPARING), StepByStepFragment.class.getSimpleName());
-
-        //Send event to connecto
-        this.connecto.track(getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), new Properties().putValue(getResourceString(R.string.CHOOSEN_ACTION_WHEN_NOT_PREPARING), StepByStepFragment.class.getSimpleName()));
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
     @Override
     public void onIknowWhatIWant() {
         this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
 
-        //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.CHOOSEN_ACTION_WHEN_NOT_PREPARING), "I_KNOW_WHAT_I_WANT");
 
-        MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue);
-
-        //GA Event
-        MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.CHOOSEN_ACTION_WHEN_NOT_PREPARING), "I_KNOW_WHAT_I_WANT");
-
-        //Send event to connecto
-        this.connecto.track(getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), new Properties().putValue(getResourceString(R.string.CHOOSEN_ACTION_WHEN_NOT_PREPARING), "I_KNOW_WHAT_I_WANT"));
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
     @Override
@@ -6030,10 +5685,6 @@ public class MainActivity extends AppCompatActivity
 
     private void restartApplication() {
         loadInItData();
-//        Intent appIntent = getBaseContext().getPackageManager()
-//                .getLaunchIntentForPackage(getBaseContext().getPackageName());
-//        appIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        startActivity(appIntent);
     }
 
     private void getUserPermissions() {
@@ -6044,16 +5695,6 @@ public class MainActivity extends AppCompatActivity
                 != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this,
                 Manifest.permission.RECEIVE_SMS)
                 != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-//                    Manifest.permission.RECEIVE_SMS)) {
-//
-//                // Show an expanation to the user *asynchronously* -- don't block
-//                // this thread waiting for the user's response! After the user
-//                // sees the explanation, try again to request the permission.
-//
-//            } else {
 
             // No explanation needed, we can request the permission.
 
@@ -6243,26 +5884,19 @@ public class MainActivity extends AppCompatActivity
                 String u = JSON.std.asString(MainActivity.user);
                 this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
 
-                MainActivity.GATrackerEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), "Success");
-
-                this.connecto.track(getResourceString(R.string.ACTION_OTP_VERIFIED), new Properties().putValue(getResourceString(R.string.ACTION_OTP_VERIFIED), "Success"));
-
-                //Appsflyer events
                 Map<String, Object> eventValue = new HashMap<>();
                 eventValue.put(getResourceString(R.string.ACTION_OTP_VERIFIED), "Success");
 
-                MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue);
+                AnalyticsUtils.SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
 
                 onBackPressed();
             } else {
                 if (currentFragment != null && currentFragment instanceof OTPVerificationFragment) {
-                    MainActivity.GATrackerEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED),
-                            "Failed");
-                    this.connecto.track(getResourceString(R.string.ACTION_OTP_VERIFIED), new Properties().putValue(getResourceString(R.string.ACTION_OTP_VERIFIED), "Failed"));
-                    //Appsflyer events
                     Map<String, Object> eventValue = new HashMap<>();
                     eventValue.put(getResourceString(R.string.ACTION_OTP_VERIFIED), "Failed");
-                    MainActivity.AppsflyerTrackerEvent(this, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue);
+
+                    AnalyticsUtils.SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
+
                     ((OTPVerificationFragment) currentFragment).onInvalidOtp();
                 }
             }
@@ -6316,7 +5950,6 @@ public class MainActivity extends AppCompatActivity
     private void reStartApplication(){
         Intent intent=new Intent(this,MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
@@ -6348,7 +5981,6 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
                         else if(link.lastIndexOf("search=")!=-1){
-//                        Log.e("DEBUG", "Captured Search Link " + link);
                             link = link.substring(0, link.length() - 1);
                             String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
                             mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/" + searchString, null);
@@ -6368,13 +6000,12 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
                         else if(link.lastIndexOf("/colleges/")!=-1){
-//                        Log.e("DEBUG","Captured Colleges Link "+link);
-                            String collegeId=link.substring(link.lastIndexOf("/")+1,link.length());
-                            mMakeNetworkCall(Constants.TAG_INSTITUTE_DETAILS,Constants.BASE_URL+"institute-by-slug/"+collegeId+"/",null);
+                            String collegeId = link.substring(link.lastIndexOf("/")+1,link.length());
+                            mMakeNetworkCall(Constants.TAG_INSTITUTE_DETAILS, Constants.BASE_URL + "institute-by-slug/"+collegeId+"/",null);
                         }else if(link.lastIndexOf("/colleges/")!=-1){
 
                         }else {
-//                        Log.e("DEBUG","Captured Link "+link);
+
                         }
                     }
                     break;
@@ -6410,5 +6041,4 @@ public class MainActivity extends AppCompatActivity
             mDisplayFragment(WebViewFragment.newInstance(url),!isFromNotification,Constants.ACTION_OPEN_WEB_URL);
         }
     }
-
 }

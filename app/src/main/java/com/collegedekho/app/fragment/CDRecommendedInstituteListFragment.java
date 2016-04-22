@@ -40,7 +40,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     private TextView mEmptyTextView;
     private boolean IS_UNDECIDED_INSTITUTES = false;
     private static boolean IS_FIRST_SHOW = true;
-    //private ParseCardAsyncTask mParseCardAsyncTask;
 
     public CDRecommendedInstituteListFragment() {
         // Required empty public constructor

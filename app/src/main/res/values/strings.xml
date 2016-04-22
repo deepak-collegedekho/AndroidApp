@@ -244,6 +244,7 @@
     <string name="USER_CURRENT_LEVEL_NAME">current_level_name</string>
     <string name="USER_EDUCATION_SET">education_set</string>
     <string name="USER_EXAMS_SET">exams_set</string>
+    <string name="USER_EXAM_SELECTED">exam_selected</string>
     <string name="USER_PHONE">phone_no</string>
     <string name="USER_ZIP_CODE">zipcode</string>
     <string name="USER_IMAGE">image</string>
