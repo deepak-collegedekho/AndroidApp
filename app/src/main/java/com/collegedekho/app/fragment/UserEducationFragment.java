@@ -39,7 +39,7 @@ public class UserEducationFragment extends BaseFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String USER_EDUCATION_LIST = "user_education_list";
-private int selectedValue=0;
+    private int selectedValue=0;
     // TODO: Rename and change types of parameters
     private String mLevelID;
     private String mSubLevelID = "";
@@ -83,6 +83,7 @@ private int selectedValue=0;
 
         return fragment;
     }
+
     public static UserEducationFragment newEditableInstance(ArrayList<UserEducation> userEducationList) {
         UserEducationFragment fragment = new UserEducationFragment();
         Bundle args = new Bundle();
@@ -108,7 +109,7 @@ private int selectedValue=0;
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_user_education, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_user_education, container, false);
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.EDUCATION_SCREEN_TUTE), false);
 
         TextView cdTextView = (TextView) rootView.findViewById(R.id.user_cd_recommendation_text);

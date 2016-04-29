@@ -15,7 +15,7 @@
         android:layout_weight=".5"
         android:orientation="horizontal"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="12dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:weightSum="1">
@@ -26,26 +26,30 @@
             android:layout_width="0dp"
             android:layout_weight=".5"
             android:background="@drawable/rounded_box_light_blue_20px"
-            android:layout_height="90dp" >
+            android:layout_height="match_parent" >
+
+            <TextView
+                android:id="@+id/recommended_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="RECOMMENDED"
+                android:importantForAccessibility="no"
+                android:textSize="16sp"
+                android:layout_marginBottom="@dimen/m4dp"
+                android:textColor="@color/white"/>
 
             <ImageView
                 android:id="@+id/recommended_colleges_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_above="@id/recommended_text"
                 android:layout_centerVertical="true"
                 android:importantForAccessibility="no"
                 app:srcCompat="@drawable/ic_recommended_colleges"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/recommended_colleges_image"
-                android:layout_alignParentBottom="true"
-                android:text="RECOMMENDED"
-                android:importantForAccessibility="no"
-                android:textSize="16sp"
-                android:textColor="@color/white"/>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -85,7 +89,7 @@
             android:layout_weight=".5"
             android:layout_marginLeft="@dimen/m5dp"
             android:background="@drawable/rounded_box_light_blue_20px"
-            android:layout_height="90dp" >
+            android:layout_height="match_parent" >
 
             <ImageView
                 android:id="@+id/wishList_colleges_image"
@@ -103,10 +107,11 @@
                 android:importantForAccessibility="no"
                 android:layout_alignParentBottom="true"
                 android:text="WISHLIST"
-                android:gravity="center"
+                android:gravity="left"
+                android:paddingLeft="2dp"
                 android:textSize="16sp"
                 android:textColor="@color/white"
-                android:paddingBottom="@dimen/m5dp"/>
+                android:paddingBottom="@dimen/m4dp"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -155,9 +160,8 @@
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_weight=".5"
-
             android:background="@drawable/rounded_box_light_blue_20px"
-            android:layout_height="90dp" >
+            android:layout_height="match_parent" >
 
             <ImageView
                 android:id="@+id/backup_colleges_image"
@@ -173,12 +177,13 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/backup_colleges_image"
                 android:layout_alignParentBottom="true"
-                android:text="Eligible"
-                android:gravity="center"
+                android:text="ELIGIBLE"
+                android:gravity="left"
+                android:paddingLeft="4dp"
                 android:importantForAccessibility="no"
                 android:textSize="16sp"
                 android:textColor="@color/white"
-                android:paddingBottom="@dimen/m5dp"/>
+                android:paddingBottom="@dimen/m4dp"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -218,7 +223,7 @@
             android:layout_weight=".5"
             android:layout_marginLeft="@dimen/m5dp"
             android:background="@drawable/rounded_box_light_blue_20px"
-            android:layout_height="90dp" >
+            android:layout_height="match_parent" >
 
             <ImageView
                 android:id="@+id/important_dates_image"
@@ -240,6 +245,7 @@
                 android:text="IMPORTANT DATES"
                 android:layout_marginBottom="@dimen/m4dp"
                 android:gravity="left"
+                android:paddingLeft="2dp"
                 android:textSize="16sp"
                 android:textColor="@color/white"/>
             <LinearLayout android:id="@+id/counts"

@@ -252,12 +252,14 @@ public class Constants
     public static String COLLAPSE_KEY="collapse_key";
     public static String URL="url";
 
-    // GA tacker ID
+    // Google Analytics tacker ID
     public static final String TRACKER_ID = "UA-67752258-1";
     // Apps Flyer ID
     public static final String APPSFLYER_ID = "v3bLHGLaEavK2ePfvpj6aA" ;
     // Connecto ID for GCM
     public static final String SENDER_ID = "864760274938";
+    // GCM key for Apps Flyer
+    public static final String GCM_KEY_APPS_FLYER = "AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk";
 
 
 

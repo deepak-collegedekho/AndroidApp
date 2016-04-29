@@ -18,6 +18,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
@@ -43,6 +44,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.transition.Fade;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -146,6 +148,7 @@ import com.collegedekho.app.listener.OnNewsSelectListener;
 import com.collegedekho.app.resource.BitMapHolder;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
+import com.collegedekho.app.resource.DetailsTransition;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
@@ -560,7 +563,11 @@ public class MainActivity extends AppCompatActivity
      */
     private void mRegistrationAppsFlyer(){
         // The Dev key cab be set here or in the manifest.xml
-        AppsFlyerLib.getInstance().init(this, Constants.APPSFLYER_ID);
+        AppsFlyerLib.getInstance().startTracking(this.getApplication(), Constants.APPSFLYER_ID);
+
+        //AppsFlyer: collecting your GCM project ID by setGCMProjectID allows you to track uninstall data in your dashboard
+
+        AppsFlyerLib.getInstance().setGCMProjectID(this,Constants.GCM_KEY_APPS_FLYER);
         // Set the Currency
         AppsFlyerLib.getInstance().setCurrencyCode("INR");
         AppsFlyerLib.getInstance().setDebugLog(true);
@@ -3361,7 +3368,7 @@ public class MainActivity extends AppCompatActivity
                 (currentFragment).updateNews(news);
             }else {
 
-                     /*Fragment fragment = NewsDetailFragment.newInstance(news, this.mNewsList);
+                     Fragment fragment = NewsDetailFragment.newInstance(news, this.mNewsList);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         fragment.setSharedElementEnterTransition(new DetailsTransition());
                         fragment.setEnterTransition(new Fade());
@@ -3377,8 +3384,8 @@ public class MainActivity extends AppCompatActivity
                     fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
 
                     fragmentTransaction.addToBackStack(fragment.toString());
-                    fragmentTransaction.commit();*/
-                this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
+                    fragmentTransaction.commit();
+                //this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
             }
 
             Map<String, Object> eventValue = new HashMap<>();

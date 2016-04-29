@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/parentScrollView">
@@ -17,11 +18,12 @@
             <com.collegedekho.app.widget.FadeInImageView
                 android:id="@+id/image_news_expanded"
                 android:layout_width="match_parent"
-                android:contentDescription="@string/news_image_description"
+                android:transitionName="@string/news_image_transaction"
                 android:layout_height="160dp"
-                android:transitionName="@string/news_image_transaction"/>
-
-            <TextView
+                android:scaleType="fitXY"
+                android:layout_gravity="right"
+                tools:ignore="ContentDescription,UnusedAttribute"/>
+        <TextView
                 android:id="@+id/textview_news_title"
                 style="@style/AppTheme.TextHomeSubHead.Medium"
                 android:layout_width="match_parent"
