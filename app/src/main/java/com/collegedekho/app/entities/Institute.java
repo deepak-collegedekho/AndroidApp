@@ -63,6 +63,13 @@ public class Institute implements Parcelable {
     private ArrayList<String> videos;
     private ArrayList<String> streams;
     private Map<String, String> images;
+    private int shortlist_count;
+    private double min_fees;
+    private double max_fees;
+    private String min_salary;
+    private String fees;
+
+    private ArrayList<String>exams=new ArrayList<>();
 
     public Institute() {
     }
@@ -109,6 +116,13 @@ public class Institute implements Parcelable {
         partner_status=source.readInt();
         images=new HashMap<>();
         source.readMap(images, Map.class.getClassLoader());
+        min_fees=source.readDouble();
+        max_fees=source.readDouble();
+        min_salary=source.readString();
+        shortlist_count=source.readInt();
+        exams=new ArrayList<>();
+        source.readStringList(exams);
+        fees=source.readString();
     }
 
     public String getCurrent_user_vote_url() {
@@ -250,6 +264,12 @@ public class Institute implements Parcelable {
         dest.writeStringList(streams);
         dest.writeMap(images);
         dest.writeInt(partner_status);
+        dest.writeDouble(min_fees);
+        dest.writeDouble(max_fees);
+        dest.writeString(min_salary);
+        dest.writeStringList(exams);
+        dest.writeInt(shortlist_count);
+        dest.writeString(fees);
     }
 
     public String getLogo() {
@@ -506,5 +526,53 @@ public class Institute implements Parcelable {
 
     public void setPartner_status(int partner_status) {
         this.partner_status = partner_status;
+    }
+
+    public int getShortlist_count() {
+        return shortlist_count;
+    }
+
+    public void setShortlist_count(int shortlist_count) {
+        this.shortlist_count = shortlist_count;
+    }
+
+    public double getMin_fees() {
+        return min_fees;
+    }
+
+    public void setMin_fees(double min_fees) {
+        this.min_fees = min_fees;
+    }
+
+    public double getMax_fees() {
+        return max_fees;
+    }
+
+    public void setMax_fees(double max_fees) {
+        this.max_fees = max_fees;
+    }
+
+    public String getMin_salary() {
+        return min_salary;
+    }
+
+    public void setMin_salary(String min_salary) {
+        this.min_salary = min_salary;
+    }
+
+    public ArrayList<String> getExams() {
+        return exams;
+    }
+
+    public void setExams(ArrayList<String> exams) {
+        this.exams = exams;
+    }
+
+    public String getFees() {
+        return fees;
+    }
+
+    public void setFees(String fees) {
+        this.fees = fees;
     }
 }

@@ -387,7 +387,7 @@ private View mExamsTabLayout;
             } else if(selectedSubMenuPosition == 1) {
                 if (this.mExamDetail != null) {
                     this.mHomeWidgetSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/calendar/", null);
-                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, mExamDetail.getId()).commit();
+                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, mExamDetail.getId()).apply();
                 }
             }else
                 Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -120,7 +121,7 @@ public class OTPVerificationFragment extends BaseFragment {
                 if (mListener != null) {
 
                     String number = edtMobileNumber.getText().toString();
-                    if (number != null && !number.trim().equals("") && number.trim().length() == 10) {
+                    if (number != null && !number.trim().equals("") && number.trim().length() == 10 && TextUtils.isDigitsOnly(number)) {
                         if (cbTerms.isChecked()) {
                             mListener.onSubmitMobileNumber(number);
                         } else {
@@ -201,8 +202,10 @@ public class OTPVerificationFragment extends BaseFragment {
         public void onReceive(Context context, Intent intent) {
             String otp = intent.getStringExtra(Constants.USER_OTP);
             edtOTP.setText(otp);
-            if (otp != null && !otp.trim().equals("") && otp.trim().length() == 6) {
-                mListener.onSubmitOTP(edtMobileNumber.getText().toString(), otp);
+            if (otp != null && !otp.trim().equals("") && otp.trim().length() == 6){
+                if (mListener != null) {
+                    mListener.onSubmitOTP(edtMobileNumber.getText().toString(), otp);
+                }
             }
         }
     };
@@ -222,7 +225,9 @@ public class OTPVerificationFragment extends BaseFragment {
     }
 
     public void onInvalidOtp() {
-        edtOTP.setError("OTP is invalid");
+        if(edtOTP!=null) {
+            edtOTP.setError("OTP is invalid");
+        }
     }
 
     public interface OTPVerificationListener {

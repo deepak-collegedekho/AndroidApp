@@ -139,8 +139,6 @@ import com.collegedekho.app.fragment.UserEducationFragment;
 import com.collegedekho.app.fragment.WebViewFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
-import com.collegedekho.app.gcm.NotificationUtilities;
-import com.collegedekho.app.gcm.RegistrationIntentService;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.listener.OnArticleSelectListener;
@@ -446,7 +444,6 @@ public class MainActivity extends AppCompatActivity
                 if(IN_FOREGROUND && IS_PROFILE_LOADED){
                     if(!IS_NETWORK_TASK_RUNNING) {
                         Intent gcmIntent = new Intent(MainActivity.this, GCMDialogActivity.class);
-//                        gcmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         MainActivity.this.startActivityForResult(gcmIntent,Constants.GCM_RESULT_DATA_KEY);
                     }else {
                         gcmDialogHandler.removeCallbacks(gcmDialogRunnable);
@@ -824,6 +821,7 @@ public class MainActivity extends AppCompatActivity
                         String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
                         hashMap.put(getResourceString(R.string.USER_DEVICE_ID), deviceId);
                         hashMap.put(MainActivity.getResourceString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_FACEBOOK);
+                        DataBaseHelper.getInstance(MainActivity.this).deleteAllExamSummary();
                         onUserCommonLogin(hashMap, Constants.TAG_FACEBOOK_LOGIN);
                     }
                 } catch (JSONException e) {
@@ -884,15 +882,6 @@ public class MainActivity extends AppCompatActivity
         IntentFilter linkFilter=new IntentFilter(Constants.CONTENT_LINK_FILTER);
         linkFilter.addAction(Constants.NOTIFICATION_FILTER);
         LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver,linkFilter);
-
-        /*GCM COMPONENTS*/
-        if(!NotificationUtilities.isRegistered(this)){
-            Intent intent = new Intent(MainActivity.this, RegistrationIntentService.class);
-            MainActivity.this.startService(intent);
-        }else {
-            Log.e(TAG,"Registration ID :"+ NotificationUtilities.getRegistrationId(this));
-        }
-
         System.gc();
     }
 
@@ -1024,10 +1013,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (currentFragment instanceof ProfileEditFragment || currentFragment instanceof ExamsFragment || currentFragment instanceof UserEducationFragment ||currentFragment instanceof StreamFragment || currentFragment instanceof PsychometricStreamFragment || currentFragment instanceof PsychometricTestParentFragment || currentFragment instanceof OTPVerificationFragment ||currentFragment instanceof WebViewFragment)
+        if (currentFragment instanceof ProfileEditFragment || currentFragment instanceof ExamsFragment || currentFragment instanceof UserEducationFragment ||currentFragment instanceof StreamFragment || currentFragment instanceof PsychometricStreamFragment || currentFragment instanceof PsychometricTestParentFragment || currentFragment instanceof OTPVerificationFragment ||currentFragment instanceof WebViewFragment) {
             menu.setGroupVisible(R.id.main_menu_group, false);
-        else
+        }else {
+            if(menu.size()>0)
             menu.getItem(0).setVisible(true);
+        }
         setSearchAvailable(menu);
         if (!getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), false)) {
             menu.setGroupVisible(R.id.main_menu_group, false);
@@ -1629,6 +1620,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mDisplayInstituteByPosition(int position) {
+        if(position<0 || position>=mInstituteList.size()){
+            return;
+        }
         this.mInstitute = this.mInstituteList.get(position);
         this.mDisplayInstituteByEntity(this.mInstitute);
     }
@@ -2357,12 +2351,16 @@ public class MainActivity extends AppCompatActivity
      */
     private void mDisplayUserEducationFragment(String response) {
         try {
-            response = response.substring(10, response.length() - 1);
-            ArrayList<UserEducation> userEducationList = (ArrayList<UserEducation>) JSON.std.listOfFrom(UserEducation.class, response);
+            JSONObject responseObject=new JSONObject(response);
+            JSONArray levelsArray=responseObject.getJSONArray("levels");
+            if(levelsArray!=null && levelsArray.length()>0) {
+                ArrayList<UserEducation> userEducationList = (ArrayList<UserEducation>) JSON.std.listOfFrom(UserEducation.class, levelsArray.toString());
 
-            this.mDisplayFragment(UserEducationFragment.newInstance(userEducationList), false, getResourceString(R.string.TAG_FRAGMENT_USER_EDUCATION));
-
+                this.mDisplayFragment(UserEducationFragment.newInstance(userEducationList), false, getResourceString(R.string.TAG_FRAGMENT_USER_EDUCATION));
+            }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -2425,7 +2423,7 @@ public class MainActivity extends AppCompatActivity
 
             //save preferences.
             getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), true).apply();
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).apply();
 
             //move to profile
             this.mClearBackStack();
@@ -2477,7 +2475,7 @@ public class MainActivity extends AppCompatActivity
         try {
             String u = null;
             u = JSON.std.asString(user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -2500,7 +2498,7 @@ public class MainActivity extends AppCompatActivity
     private void mStreamAndLevelSelected(String response, String level, String stream, String streamName, boolean isUpdateStreams) {
         //Retrieve token from pref to save it across the pref updates
 
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).commit();
+        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).apply();
         User tempUser = MainActivity.user;
         if (!isUpdateStreams) {
 
@@ -2525,7 +2523,7 @@ public class MainActivity extends AppCompatActivity
             try {
                 String user = "";
                 user = JSON.std.asString(MainActivity.user);
-                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), user).commit();
+                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), user).apply();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -2556,7 +2554,7 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.user.profileData = tempUser.profileData;
                 String u = "";
                 u = JSON.std.asString(MainActivity.user);
-                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 onBackPressed();
                 onBackPressed();
@@ -2614,7 +2612,11 @@ public class MainActivity extends AppCompatActivity
 
     private void updateLikeButton(String response, String extraTag, int like) {
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
-        Institute institute = this.mInstituteList.get(Integer.parseInt(extraTag));
+        int index=Integer.parseInt(extraTag);
+        if (index < 0 || index >= mInstituteList.size()) {
+            return;
+        }
+        Institute institute = this.mInstituteList.get(index);
         if (like == Constants.NEITHER_LIKE_NOR_DISLIKE) {
             institute.setCurrent_user_vote_type(Constants.NEITHER_LIKE_NOR_DISLIKE);
             institute.setCurrent_user_vote_url(null);
@@ -2657,7 +2659,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void updateShortlistInstitute(String response, String extraTag) {
-        Institute institute = this.mInstituteList.get(Integer.parseInt(extraTag));
+        int index=Integer.parseInt(extraTag);
+        if (index < 0 || index >= mInstituteList.size()) {
+            return;
+        }
+        Institute institute = this.mInstituteList.get(index);
         String message = null;
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
         if (response == null) {
@@ -3331,6 +3337,7 @@ public class MainActivity extends AppCompatActivity
             }
             progressDialog.setMessage(message);
         }
+        if(!isFinishing())
         progressDialog.show();
         IS_NETWORK_TASK_RUNNING=true;
     }
@@ -3451,7 +3458,7 @@ public class MainActivity extends AppCompatActivity
 
         this.mUpdateFilterButton();
         //save preferences.
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
+        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).apply();
 
         Map<String, Object> eventValue = new HashMap<String, Object>();
         for (String key : this.mFilterKeywords.keySet()) {
@@ -3494,7 +3501,7 @@ public class MainActivity extends AppCompatActivity
             this.mFilterKeywords = new HashMap<>();
 
             //reset the filters in preferences
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).commit();
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).apply();
 
             this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", null);
         } else {
@@ -4042,8 +4049,8 @@ public class MainActivity extends AppCompatActivity
             }
             setUserIdWithAllEvents();
             String u = JSON.std.asString(this.user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).commit();
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).apply();
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -4095,7 +4102,7 @@ public class MainActivity extends AppCompatActivity
         if(MainActivity.user != null && trueProfile.avatarUrl != null){
             MainActivity.user.setImage(trueProfile.avatarUrl);
         }
-
+        DataBaseHelper.getInstance(this).deleteAllExamSummary();
         onUserCommonLogin(params,Constants.TAG_TRUE_SDK_LOGIN);
     }
 
@@ -4176,7 +4183,7 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
         showMyFbMessage(msg);
     }
 
@@ -4203,7 +4210,7 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
         showMyFbMessage(msg);
 
     }
@@ -4256,7 +4263,7 @@ public class MainActivity extends AppCompatActivity
 
             this.mUserExamsList=MainActivity.user.getUser_exams();
             String u = JSON.std.asString(MainActivity.user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
 
             String currentVersionName = getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
             if (currentVersionName!=null) {
@@ -4306,7 +4313,7 @@ public class MainActivity extends AppCompatActivity
             MainActivity.user.setPreferred_mode(userObj.getPreferred_mode());
             this.mUserExamsList=MainActivity.user.getUser_exams();
             String u = JSON.std.asString(MainActivity.user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
 
         }catch(IOException e) {
             e.printStackTrace();
@@ -4318,9 +4325,9 @@ public class MainActivity extends AppCompatActivity
         MainActivity.user.setUser_exams(new ArrayList<>(mUserExamsList));
         MainActivity.user.setExams_set(1);
         String u = JSON.std.asString(MainActivity.user);
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
-        Map<String, String> eventValue = null;
 
+        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
+        Map<String, Object> eventValue = new HashMap<String, Object>();
         String[] examNames = new String[this.mUserExamsList.size()];
 
         for (int n = 0; n < this.mUserExamsList.size(); n++) {
@@ -4348,7 +4355,7 @@ public class MainActivity extends AppCompatActivity
             this.user.setIs_preparing(userObj.getIs_preparing());
             this.user.setExams_set(userObj.getExams_set());
             String u = JSON.std.asString(this.user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -4551,7 +4558,7 @@ public class MainActivity extends AppCompatActivity
                 this.user.setIs_preparing(userObj.getIs_preparing());
                 this.user.setUser_education(education);
                 String u = JSON.std.asString(this.user);
-                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
             } catch (Exception e) {
 
             }
@@ -4576,7 +4583,7 @@ public class MainActivity extends AppCompatActivity
             UserEducation userEducation = JSON.std.beanFrom(UserEducation.class, response);
             MainActivity.user.setUser_education(userEducation);
             String u = JSON.std.asString(MainActivity.user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
             if (this.user.getIs_preparing().equals("0")) {
                 onBackPressed();
             } else {
@@ -4652,7 +4659,7 @@ public class MainActivity extends AppCompatActivity
             MainActivity.user.setUser_education(education);
             MainActivity.user.setStream(education.getStream());
             String u = JSON.std.asString(user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
         } catch (Exception e) {
 
         }
@@ -4705,7 +4712,9 @@ public class MainActivity extends AppCompatActivity
 
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
         }
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_PROFILE_LOADED), true).commit();
+
+        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_PROFILE_LOADED), true).apply();
+
     }
 
     @Override
@@ -4764,8 +4773,7 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_QUESTIONS, Constants.BASE_URL + "psychometric/", null);
 
         Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.CHOOSEN_ACTION_WHEN_NOT_PREPARING), PsychometricTestQuestion.class.getSimpleName());
-
+        eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), PsychometricTestQuestion.class.getSimpleName());
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
@@ -4827,7 +4835,7 @@ public class MainActivity extends AppCompatActivity
                 .show();
 
         Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.CHOOSEN_ACTION_WHEN_NOT_PREPARING), StepByStepFragment.class.getSimpleName());
+        eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), StepByStepFragment.class.getSimpleName());
 
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
@@ -4837,7 +4845,7 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
 
         Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.CHOOSEN_ACTION_WHEN_NOT_PREPARING), "I_KNOW_WHAT_I_WANT");
+        eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), "I_KNOW_WHAT_I_WANT");
 
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
@@ -5137,7 +5145,7 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
 
         if (currentFragment instanceof MyFutureBuddiesFragment) {
             ((MyFutureBuddiesFragment) currentFragment).sendChatRequest(msg);
@@ -5277,17 +5285,22 @@ public class MainActivity extends AppCompatActivity
 
     private void mDisplayEditUserEducationFragment(String response) {
         try {
-            response = response.substring(10, response.length() - 1);
-            ArrayList<UserEducation> userEducationList = (ArrayList<UserEducation>) JSON.std.listOfFrom(UserEducation.class, response);
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(getResourceString(R.string.TAG_FRAGMENT_USER_EDUCATION));
+            JSONObject responseObject=new JSONObject(response);
+            JSONArray levelsArray=responseObject.getJSONArray("levels");
+            if(levelsArray!=null && levelsArray.length()>0) {
+                ArrayList<UserEducation> userEducationList = (ArrayList<UserEducation>) JSON.std.listOfFrom(UserEducation.class, levelsArray.toString());
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag(getResourceString(R.string.TAG_FRAGMENT_USER_EDUCATION));
 //            if(fragment!=null && fragment instanceof UserEducationFragment){
 //                ((UserEducationFragment)fragment).setForEditEducation();
 //                this.mDisplayFragment(fragment, true, getResourceString(R.string.TAG_FRAGMENT_USER_EDUCATION));
 //
 //            }else {
-            this.mDisplayFragment(UserEducationFragment.newEditableInstance(userEducationList), true, getResourceString(R.string.TAG_FRAGMENT_USER_EDUCATION));
+                this.mDisplayFragment(UserEducationFragment.newEditableInstance(userEducationList), true, getResourceString(R.string.TAG_FRAGMENT_USER_EDUCATION));
 //            }
+            }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -5889,7 +5902,7 @@ public class MainActivity extends AppCompatActivity
                 displayMessage(R.string.otp_verified);
                 MainActivity.user.setIs_otp_verified(1);
                 String u = JSON.std.asString(MainActivity.user);
-                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
 
                 Map<String, Object> eventValue = new HashMap<>();
                 eventValue.put(getResourceString(R.string.ACTION_OTP_VERIFIED), "Success");
@@ -5939,7 +5952,7 @@ public class MainActivity extends AppCompatActivity
         //TODO: Merge if with else
         else {
             if (!canRequest) {
-                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.CAN_ASK_OTP_TODAY), today).commit();
+                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.CAN_ASK_OTP_TODAY), today).apply();
             }
         }
         return true;
@@ -5968,7 +5981,6 @@ public class MainActivity extends AppCompatActivity
                     String link=intent.getStringExtra("captured_link");
                     if(link!=null && link.length()>0){
                         if(link.lastIndexOf("search%3D")!=-1) {
-//                        Log.e("DEBUG", "Captured Search Link " + link);
                             link = link.substring(0, link.length() - 1);
                             String searchString = link.substring(link.lastIndexOf("/") + 1, link.length());
                             mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/" + searchString, null);
@@ -6046,6 +6058,19 @@ public class MainActivity extends AppCompatActivity
             ((WebViewFragment) currentFragment).loadUrl(url);
         }else {
             mDisplayFragment(WebViewFragment.newInstance(url),!isFromNotification,Constants.ACTION_OPEN_WEB_URL);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Bundle bundle=intent.getExtras();
+        if(bundle!=null) {
+            if (bundle.containsKey("screen") && bundle.containsKey("resource_uri")) {
+                MainActivity.type = bundle.getString("screen");
+                MainActivity.resource_uri = bundle.getString("resource_uri");
+                mHandleNotifications(false);
+            }
         }
     }
 }

@@ -42,7 +42,7 @@ public class UserAlertsAdapter extends RecyclerView.Adapter<UserAlertsAdapter.Us
     @Override
     public void onBindViewHolder(UserAlertsViewHolder holder, int position) {
         MyAlertDate myAlertDate = itemList.get(position);
-        holder.nameTextView.setText(monthNames[Integer.valueOf(myAlertDate.getMonth())] + " " + myAlertDate.getYear());
+        holder.nameTextView.setText(monthNames[myAlertDate.getMonth()] + " " + myAlertDate.getYear());
         holder.countTextView.setText(String.valueOf(myAlertDate.getCount())+" "+getEvent(myAlertDate.getCount()));
     }
 

@@ -30,6 +30,7 @@
             android:layout_height="wrap_content"
             android:gravity="top"
             android:padding="@dimen/m5dp"
+            android:visibility="gone"
             android:background="@color/bg_divider"
             >
 
@@ -111,7 +112,7 @@
             </RelativeLayout>
         </RelativeLayout>
 
-        <com.collegedekho.app.display.swipableList.view.CardContainer
+        <com.collegedekho.app.display.swipableList.view.CardContainerNew
             android:id="@+id/fragment_recommended_institute_cards_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -134,6 +135,7 @@
         android:layout_marginBottom="@dimen/activity_horizontal_margin_small"
         android:textSize="@dimen/m14sp"
         android:fontFamily="sans-serif-light"
+        android:visibility="gone"
         />
 
     </LinearLayout>

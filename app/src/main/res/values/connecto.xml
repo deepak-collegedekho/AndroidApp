@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
 <string name="connecto_write_key">YH29KED7XE5DU1HP</string>
-<string name="push_icon">ic_notification_icon</string>
-<string name="push_icon_pre_lollipop">ic_notification_lollipop</string>
-<string name="push_icon_bg_color">#ffffff</string>
+<string name="push_icon">ic_notification_lollipop</string>
+<string name="push_icon_pre_lollipop">ic_notification_icon</string>
+<string name="push_icon_bg_color">#ff1f2560</string>
 </resources>

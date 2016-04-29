@@ -442,29 +442,6 @@ public class Utils {
         }
         return time;
     }
-//    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
-//    static {
-//        suffixes.put(1_000L, "k");
-//        suffixes.put(1_000_000L, "M");
-//        suffixes.put(1_000_000_000L, "G");
-//        suffixes.put(1_000_000_000_000L, "T");
-//        suffixes.put(1_000_000_000_000_000L, "P");
-//        suffixes.put(1_000_000_000_000_000_000L, "E");
-//    }
-//    public static String formatCount(long value) {
-//        //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
-//        if (value == Long.MIN_VALUE) return formatCount(Long.MIN_VALUE + 1);
-//        if (value < 0) return "-" + formatCount(-value);
-//        if (value < 1000) return Long.toString(value); //deal with easy case
-//
-//        Map.Entry<Long, String> e = suffixes.floorEntry(value);
-//        Long divideBy = e.getKey();
-//        String suffix = e.getValue();
-//
-//        long truncated = value / (divideBy / 10); //the number part of the output times 10
-//        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
-//        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
-//    }
 
     public static String formatCount(double n, int iteration) {
         char[] c = new char[]{'k', 'm', 'b', 't'};
@@ -475,6 +452,24 @@ public class Utils {
                         (int) d * 10 / 10 : d + "" // (int) d * 10 / 10 drops the decimal
                 ) + "" + c[iteration])
                 : formatCount(d, iteration+1));
+    }
+
+    public static String rupeeFormatter(double rupees) {
+        double rupee = rupees / 10000000;
+        if (rupee >= 1) {
+            return (int) Math.ceil(rupee) + "Cr";
+        } else {
+            rupee = rupees / 100000;
+            if (rupee >= 1) {
+                return (int) Math.ceil(rupee) + "L";
+            } else {
+                rupee = rupees / 1000;
+                if (rupee >= 1) {
+                    return (int) Math.ceil(rupee) + "k";
+                }
+            }
+        }
+        return "" + rupees;
     }
 
     public static Bitmap blurRenderScript(Context context, Bitmap smallBitmap, int radius) {
@@ -561,7 +556,7 @@ public class Utils {
             }
         }
 
-        editor.commit();
+        editor.apply();
     }
 
     private static void rateUsAlertDialog(final Context context,final SharedPreferences.Editor editor){

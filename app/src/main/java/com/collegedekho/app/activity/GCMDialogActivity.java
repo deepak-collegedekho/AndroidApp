@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,7 +95,7 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
             } else {
                 stepByStepQuestions = getQuestionsList();
                 String listData = JSON.std.asString(stepByStepQuestions);
-                sharedPreferences.edit().putString(Constants.QUESTIONS_LIST_KEY, listData).commit();
+                sharedPreferences.edit().putString(Constants.QUESTIONS_LIST_KEY, listData).apply();
             }
             question = getQuestion(stepByStepQuestions);
         } catch (IOException e) {
@@ -316,7 +317,7 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
             stepByStepQuestions.add(question);
             try {
                 String listData = JSON.std.asString(stepByStepQuestions);
-                sharedPreferences.edit().putString(Constants.QUESTIONS_LIST_KEY, listData).commit();
+                sharedPreferences.edit().putString(Constants.QUESTIONS_LIST_KEY, listData).apply();
             } catch (IOException e) {
 
             }
@@ -325,9 +326,9 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
 
     private void processInputDialog(boolean isNumber) {
         String userInput = edtUserInput.getText().toString();
-        if (userInput != null && !userInput.trim().matches("")) {
+        if (!userInput.trim().matches("")) {
             if (isNumber) {
-                if (userInput.length() < 10) {
+                if (userInput.length() < 10 || !TextUtils.isDigitsOnly(userInput)) {
                     edtUserInput.setError("Number not valid");
                 } else {
                     questionAnswered(question);
@@ -387,7 +388,7 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
         stepByStepQuestions.remove(question);
         try {
             String listData = JSON.std.asString(stepByStepQuestions);
-            sharedPreferences.edit().putString(Constants.QUESTIONS_LIST_KEY, listData).commit();
+            sharedPreferences.edit().putString(Constants.QUESTIONS_LIST_KEY, listData).apply();
         } catch (IOException e) {
 
         }
@@ -474,6 +475,13 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
                 }
             } else if (question.getName().equals("number")) {
                 if (MainActivity.user.getPhone_no() == null) {
+                    return question;
+                } else {
+                    questionAnswered(question);
+                    return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
+                }
+            }else if (question.getName().equals("preferred_streams")) {
+                if (MainActivity.user.getStream_name() == null) {
                     return question;
                 } else {
                     questionAnswered(question);

@@ -24,25 +24,23 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.display.swipableList.model.CardModel;
 import com.collegedekho.app.display.swipableList.model.Orientations;
-import com.collegedekho.app.resource.Constants;
 
 import java.util.Random;
 
-public class CardContainer extends AdapterView<ListAdapter> {
+public class CardContainerNew extends AdapterView<ListAdapter> {
     public static final int INVALID_POINTER_ID = -1;
     private int mActivePointerId = INVALID_POINTER_ID;
     private static final double DISORDERED_MAX_ROTATION_RADIANS = Math.PI / 64;
     private int mNumberOfCards = -1;
-    private ImageView mLikeImageView;
-    private ImageView mDislikeImageView;
-    private ImageView mUndecidedImageView;
+//    private ImageView mLikeImageView;
+//    private ImageView mDislikeImageView;
+//    private ImageView mUndecidedImageView;
     private TextView mTextView;
     private final DataSetObserver mDataSetObserver = new DataSetObserver() {
         @Override
@@ -79,7 +77,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
     private boolean mDragging;
     private Context mContext;
 
-    public CardContainer(Context context) {
+    public CardContainerNew(Context context) {
         super(context);
         mContext = context;
         //setOrientation(Orientations.OrientationType.Disordered);
@@ -87,14 +85,14 @@ public class CardContainer extends AdapterView<ListAdapter> {
         init();
     }
 
-    public CardContainer(Context context, AttributeSet attrs) {
+    public CardContainerNew(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         initFromXml(attrs);
         init();
     }
 
-    public CardContainer(Context context, AttributeSet attrs, int defStyle) {
+    public CardContainerNew(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mContext = context;
         initFromXml(attrs);
@@ -318,31 +316,31 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 if(mTopCard.getTranslationX() <= -60){
                     //Log.e("CardContainer", "IN translationX <= -60");
                     //this.mfadeInOneFadeOutAllOthers(dislikeImageView.getId());
-                    mLikeImageView.setVisibility(GONE);
-                    mDislikeImageView.setVisibility(VISIBLE);
-                    mUndecidedImageView.setVisibility(GONE);
+//                    mLikeImageView.setVisibility(GONE);
+//                    mDislikeImageView.setVisibility(VISIBLE);
+//                    mUndecidedImageView.setVisibility(GONE);
                 } else if(mTopCard.getTranslationX() >= 60){
                     //Log.e("CardContainer", "IN translationX >= 60");
                     //this.mfadeInOneFadeOutAllOthers(likeImageView.getId());
-                    mLikeImageView.setVisibility(VISIBLE);
-                    mDislikeImageView.setVisibility(GONE);
-                    mUndecidedImageView.setVisibility(GONE);
+//                    mLikeImageView.setVisibility(VISIBLE);
+//                    mDislikeImageView.setVisibility(GONE);
+//                    mUndecidedImageView.setVisibility(GONE);
                 }
                 else if (mTopCard.getTranslationY() <= -50)
                 {
                     //Log.e("CardContainer", "IN translationY <= -50");
                     //this.mfadeInOneFadeOutAllOthers(undecidedImageView.getId());
-                    mLikeImageView.setVisibility(GONE);
-                    mDislikeImageView.setVisibility(GONE);
-                    mUndecidedImageView.setVisibility(VISIBLE);
+//                    mLikeImageView.setVisibility(GONE);
+//                    mDislikeImageView.setVisibility(GONE);
+//                    mUndecidedImageView.setVisibility(VISIBLE);
                 }
                 else if(mTopCard.getTranslationX() >= -40 && mTopCard.getTranslationX() <= 40)
                 {
                     //Log.e("CardContainer", "IN translationX() >= -40 && translationX() <= 40");
                     //this.mfadeInOneFadeOutAllOthers(-1);
-                    mLikeImageView.setVisibility(GONE);
-                    mDislikeImageView.setVisibility(GONE);
-                    mUndecidedImageView.setVisibility(GONE);
+//                    mLikeImageView.setVisibility(GONE);
+//                    mDislikeImageView.setVisibility(GONE);
+//                    mUndecidedImageView.setVisibility(GONE);
                 }
 
                 if (Math.abs(dx) > mTouchSlop || Math.abs(dy) > mTouchSlop) {
@@ -364,9 +362,9 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                mLikeImageView.setVisibility(GONE);
-                mDislikeImageView.setVisibility(GONE);
-                mUndecidedImageView.setVisibility(GONE);
+//                mLikeImageView.setVisibility(GONE);
+//                mDislikeImageView.setVisibility(GONE);
+//                mUndecidedImageView.setVisibility(GONE);
 
                 if (!mDragging) {
                     return true;
@@ -402,9 +400,9 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
     private void mAssignUICOmponentsForTopCard()
     {
-        this.mLikeImageView = (ImageView)mTopCard.findViewById(R.id.like_textview);
-        this.mDislikeImageView = (ImageView)mTopCard.findViewById(R.id.dislike_textview);
-        this.mUndecidedImageView = (ImageView)mTopCard.findViewById(R.id.decide_later_textview);
+//        this.mLikeImageView = (ImageView)mTopCard.findViewById(R.id.like_textview);
+//        this.mDislikeImageView = (ImageView)mTopCard.findViewById(R.id.dislike_textview);
+//        this.mUndecidedImageView = (ImageView)mTopCard.findViewById(R.id.decide_later_textview);
         this.mTextView = (TextView) mTopCard.findViewById(R.id.card_recommended_institute_detail);
 
        // this.mLikeImageView .setBackgroundResource(R.drawable.ic_shortlist);
@@ -420,45 +418,45 @@ public class CardContainer extends AdapterView<ListAdapter> {
         {
             case R.id.dislike_textview:
             {
-                this.mDislikeImageView.animate().alpha(1.0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
-                this.mDislikeImageView.setVisibility(VISIBLE);
-                this.mLikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
-                this.mLikeImageView.setVisibility(GONE);
-                this.mUndecidedImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
-                this.mUndecidedImageView.setVisibility(GONE);
+//                this.mDislikeImageView.animate().alpha(1.0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
+//                this.mDislikeImageView.setVisibility(VISIBLE);
+//                this.mLikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
+//                this.mLikeImageView.setVisibility(GONE);
+//                this.mUndecidedImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
+//                this.mUndecidedImageView.setVisibility(GONE);
 
                 break;
             }
             case R.id.like_textview:
             {
-                this.mLikeImageView.animate().alpha(1.0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
-                this.mLikeImageView.setVisibility(VISIBLE);
-                this.mDislikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
-                this.mDislikeImageView.setVisibility(GONE);
-                this.mUndecidedImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
-                this.mUndecidedImageView.setVisibility(GONE);
+//                this.mLikeImageView.animate().alpha(1.0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
+//                this.mLikeImageView.setVisibility(VISIBLE);
+//                this.mDislikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
+//                this.mDislikeImageView.setVisibility(GONE);
+//                this.mUndecidedImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
+//                this.mUndecidedImageView.setVisibility(GONE);
 
                 break;
             }
             case R.id.decide_later_textview:
             {
-                this.mUndecidedImageView.animate().alpha(1.0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
-                this.mUndecidedImageView.setVisibility(VISIBLE);
-                this.mLikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
-                this.mLikeImageView.setVisibility(GONE);
-                this.mDislikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
-                this.mDislikeImageView.setVisibility(GONE);
+//                this.mUndecidedImageView.animate().alpha(1.0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
+//                this.mUndecidedImageView.setVisibility(VISIBLE);
+//                this.mLikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
+//                this.mLikeImageView.setVisibility(GONE);
+//                this.mDislikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
+//                this.mDislikeImageView.setVisibility(GONE);
 
                 break;
             }
             default:
             {
-                this.mLikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
-                this.mLikeImageView.setVisibility(GONE);
-                this.mDislikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
-                this.mDislikeImageView.setVisibility(GONE);
-                this.mUndecidedImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
-                this.mUndecidedImageView.setVisibility(GONE);
+//                this.mLikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
+//                this.mLikeImageView.setVisibility(GONE);
+//                this.mDislikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
+//                this.mDislikeImageView.setVisibility(GONE);
+//                this.mUndecidedImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
+//                this.mUndecidedImageView.setVisibility(GONE);
 
                 break;
             }

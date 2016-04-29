@@ -33,7 +33,7 @@ public class OTPReceiver extends BroadcastReceiver {
                             } else {
                                 return;
                             }
-                            if (otp != null && !otp.matches("") && otp.length() > 0) {
+                            if (!otp.matches("") && otp.length() > 0) {
 
 //                            Toast.makeText(context, sender+": "+otp, Toast.LENGTH_SHORT).show();
                                 Intent otpIntent = new Intent(Constants.OTP_INTENT_FILTER);

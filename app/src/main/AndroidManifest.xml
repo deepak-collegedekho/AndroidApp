@@ -82,8 +82,10 @@
             android:configChanges="orientation|keyboardHidden|screenSize|layoutDirection"
             android:parentActivityName=".activity.MainActivity"
             >
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.DEFAULT" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
         </activity>
         <activity
             android:name=".activity.PsychometricAnalysisActivity"
@@ -196,7 +198,5 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <service android:name=".gcm.NotificationIntentService"
-            android:exported="false"/>
     </application>
 </manifest>

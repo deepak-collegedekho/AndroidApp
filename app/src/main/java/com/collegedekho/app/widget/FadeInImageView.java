@@ -3,7 +3,6 @@ package com.collegedekho.app.widget;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -82,24 +81,24 @@ public class FadeInImageView extends NetworkImageView {
      */
     public Bitmap fastblur(Bitmap sentBitmap, float scale, int radius) {
 
-        int width = Math.round(sentBitmap.getWidth() * scale);
-        int height = Math.round(sentBitmap.getHeight() * scale);
-        sentBitmap = Bitmap.createScaledBitmap(sentBitmap, width, height, false);
+//        int width = Math.round(sentBitmap.getWidth() * scale);
+//        int height = Math.round(sentBitmap.getHeight() * scale);
+//        sentBitmap = Bitmap.createScaledBitmap(sentBitmap, width, height, false);
+//
+//        Bitmap bitmap = sentBitmap.copy(sentBitmap.getConfig(), true);
 
-        Bitmap bitmap = sentBitmap.copy(sentBitmap.getConfig(), true);
+//        if (radius < 1) {
+//            return (null);
+//        }
+//
+//        int w = bitmap.getWidth();
+//        int h = bitmap.getHeight();
+//
+//        int[] pix = new int[w * h];
+//        Log.e("pix", w + " " + h + " " + pix.length);
+//        bitmap.getPixels(pix, 0, w, 0, 0, w, h);
 
-        if (radius < 1) {
-            return (null);
-        }
-
-        int w = bitmap.getWidth();
-        int h = bitmap.getHeight();
-
-        int[] pix = new int[w * h];
-        Log.e("pix", w + " " + h + " " + pix.length);
-        bitmap.getPixels(pix, 0, w, 0, 0, w, h);
-
-        int wm = w - 1;
+/*        int wm = w - 1;
         int hm = h - 1;
         int wh = w * h;
         int div = radius + radius + 1;
@@ -283,8 +282,8 @@ public class FadeInImageView extends NetworkImageView {
         }
 
         Log.e("pix", w + " " + h + " " + pix.length);
-        bitmap.setPixels(pix, 0, w, 0, 0, w, h);
+        bitmap.setPixels(pix, 0, w, 0, 0, w, h);*/
 
-        return (bitmap);
+        return (sentBitmap);
     }
 }

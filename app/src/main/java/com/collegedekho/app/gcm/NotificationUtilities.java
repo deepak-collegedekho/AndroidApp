@@ -130,7 +130,7 @@ public final class NotificationUtilities {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(REG_ID, regId);
         editor.putInt(APP_VERSION, appVersion);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -159,7 +159,7 @@ public final class NotificationUtilities {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(IS_REGISTERED, status);
         editor.putInt(APP_VERSION, appVersion);
-        editor.commit();
+        editor.apply();
     }
 
 

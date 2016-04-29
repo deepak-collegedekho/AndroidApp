@@ -12,8 +12,8 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.display.swipableList.model.CardModel;
-import com.collegedekho.app.display.swipableList.view.CardContainer;
-import com.collegedekho.app.display.swipableList.view.SimpleCardStackAdapter;
+import com.collegedekho.app.display.swipableList.view.CardContainerNew;
+import com.collegedekho.app.display.swipableList.view.SimpleCardStackAdapterNew;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CDRecommendedInstituteListFragment extends BaseFragment implements SimpleCardStackAdapter.OnCDRecommendedAdapterInterface{
+public class CDRecommendedInstituteListFragment extends BaseFragment implements SimpleCardStackAdapterNew.OnCDRecommendedAdapterInterface{
     public static final String TITLE = "CDRecommendedInstitutes";
     private static final String ARG_INSTITUTE = "cdrecommendedinstitute";
     private static final String ARG_FILTER_ALLOWED = "filter_allowed";
@@ -30,10 +30,10 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     private static final String ARG_UNDECIDED_INSTITUTE_COUNT = "undecided_institute_count";
     private ArrayList<Institute> mInstitutes;
     private String mTitle;
-    private SimpleCardStackAdapter mAdapter;
+    private SimpleCardStackAdapterNew mAdapter;
     private OnCDRecommendedInstituteListener mListener;
     private boolean IS_TUTE_COMPLETED = true;
-    private CardContainer mCardContainer;
+    private CardContainerNew mCardContainer;
     private int mUndecidedCount;
     private TextView mUndecidedCountTV;
     private TextView mPageTitleTV;
@@ -72,7 +72,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_recommended_institute_listing, container, false);
 
-        this.mCardContainer = (CardContainer) rootView.findViewById(R.id.fragment_recommended_institute_cards_container);
+        this.mCardContainer = (CardContainerNew) rootView.findViewById(R.id.fragment_recommended_institute_cards_container);
         this.mUndecidedCountTV = (TextView)rootView.findViewById(R.id.fragment_recommended_institute_undecided_count);
         this.mPageTitleTV = (TextView)rootView.findViewById(R.id.recommended_page_title);
 
@@ -92,7 +92,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             this.mEmptyTextView.setVisibility(View.GONE);
         }
 
-        this.mAdapter = new SimpleCardStackAdapter(getActivity(), this.getContext(), this);
+        this.mAdapter = new SimpleCardStackAdapterNew(getActivity(), this.getContext(), this);
         this.mAddCardInAdapter(this.mInstitutes);
 
 

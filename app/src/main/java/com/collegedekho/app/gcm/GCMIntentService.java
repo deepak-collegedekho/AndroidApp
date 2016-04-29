@@ -1,19 +1,7 @@
 package com.collegedekho.app.gcm;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 
-import com.collegedekho.app.R;
-import com.collegedekho.app.resource.Constants;
 import com.google.android.gms.gcm.GcmListenerService;
 
 public class GCMIntentService extends GcmListenerService {
@@ -26,7 +14,7 @@ public class GCMIntentService extends GcmListenerService {
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        sendNotification(NotificationID.getID(), data);
+
     }
 
     @Override
@@ -41,42 +29,4 @@ public class GCMIntentService extends GcmListenerService {
     public void onSendError(String msgId, String error) {
     }
 
-    private void sendNotification(int id,Bundle data) {
-//        if(data.getString("resource_uri")!=null){
-//            return;
-//        }
-        String message=data.getString(Constants.MESSAGE);
-        String collapseKey=data.getString(Constants.COLLAPSE_KEY);
-        Intent intent = new Intent(this, NotificationIntentService.class);
-        intent.putExtra("question_type",data.getString("question_type"));
-        intent.putExtras(data);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-//        int color = 0x6d6f71;
-        int color = 0xff1f2560;
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
-//                PendingIntent.FLAG_ONE_SHOT);
-        PendingIntent pendingIntent = PendingIntent.getService(this, id /* Request code */, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_notification_icon);
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_notification_lollipop)
-                .setLargeIcon(largeIcon)
-                .setColor(color)
-                .setLights(0xFFFF0000, 1000, 1000)
-                .setVibrate(new long[]{100, 100, 100,  100, 100, 300})
-                .setContentTitle(data.getString("text"))
-                .setContentText(data.getString("bigText"))
-                .setAutoCancel(true)
-                .setPriority(Notification.PRIORITY_HIGH)
-                .setSound(defaultSoundUri)
-                .setGroup(collapseKey)
-                .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(id, notificationBuilder.build());
-    }
 }

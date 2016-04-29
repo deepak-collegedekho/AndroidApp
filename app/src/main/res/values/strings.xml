@@ -237,7 +237,7 @@
     <string name="USER_CURRENT_STREAM_NAME">current_stream_name</string>
     <string name="USER_CURRENT_SUBLEVEL">current_sublevel</string>
     <string name="USER_IS_PREPARING">is_preparing</string>
-    <string name="CHOOSEN_ACTION_WHEN_NOT_PREPARING">choosen_action_when_not_preparing</string>
+    <string name="CHOSEN_ACTION_WHEN_NOT_PREPARING">chosen_action_when_not_preparing</string>
     <string name="USER_STREAM_ID">stream_id</string>
     <string name="USER_CURRENT_STREAM_ID">current_stream_id</string>
     <string name="USER_LEVEL_NAME">level_name</string>

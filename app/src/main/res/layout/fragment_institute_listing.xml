@@ -60,7 +60,7 @@
         android:id="@+id/institute_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/filter_tokenLL" />
+        android:layout_below="@id/filter_tokenLL" />
 
     <include layout="@layout/layout_progressbar"/>
 
