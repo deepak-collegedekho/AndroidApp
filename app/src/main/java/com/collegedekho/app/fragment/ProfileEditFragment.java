@@ -124,6 +124,16 @@ public class ProfileEditFragment extends BaseFragment {
 
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
     public interface onProfileUpdateListener {
         void onProfileUpdated(HashMap<String, String> hashMap);
         void onEditUserEducation();
@@ -367,6 +377,16 @@ public class ProfileEditFragment extends BaseFragment {
 
         }
 
+
+        @Override
+        public void show() {
+
+        }
+
+        @Override
+        public void hide() {
+
+        }
 
         @Override
         public void onClick(View view) {

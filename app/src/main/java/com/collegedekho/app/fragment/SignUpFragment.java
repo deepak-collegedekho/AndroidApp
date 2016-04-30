@@ -90,6 +90,16 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
 
     @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
     public void onClick(View view) {
         if( new NetworkUtils(getActivity(),null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED)
         {

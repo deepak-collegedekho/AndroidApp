@@ -156,4 +156,13 @@ public class InstituteCoursesFragment extends BaseFragment {
         return mTabLayout.getSelectedTabPosition();
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
 }

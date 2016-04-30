@@ -397,6 +397,16 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         return result;
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
     public interface OnCDRecommendedInstituteListener extends BaseListener{
         void OnCDRecommendedLoadNext();
         void OnCDRecommendedInstituteSelected(Institute institute);
@@ -405,5 +415,4 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard, boolean isUndecided);
         void OnCDRecommendedLoadUndecidedInstitutes(String url);
     }
-
 }

@@ -46,4 +46,14 @@ public class ExamDetailFragment extends BaseFragment{
         View rootView = inflater.inflate(R.layout.fragment_exam_detail, container, false);
         return rootView;
     }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
 }

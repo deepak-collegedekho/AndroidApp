@@ -95,6 +95,16 @@ public class NewsDetailFragment extends BaseFragment {
         return rootView;
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
     public void updateNews(News news) {
         this.mNews = news;
         showNewsUpdate();

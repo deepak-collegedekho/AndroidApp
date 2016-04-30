@@ -108,4 +108,13 @@ public class InstitutePlacementFragment extends BaseFragment {
     }
 
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
 }

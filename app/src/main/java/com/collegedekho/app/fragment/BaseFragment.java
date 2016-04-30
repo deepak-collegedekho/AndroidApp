@@ -17,10 +17,14 @@ import com.collegedekho.app.resource.Constants;
 /**
  * Created by root on 16/9/15.
  */
-public class BaseFragment extends Fragment implements View.OnClickListener{
+public abstract class BaseFragment extends Fragment implements View.OnClickListener{
 
     protected static final String ARG_TITLE = "title";
     protected static final String ARG_NEXT = "next";
+
+    private static final float HIDE_THRESHOLD = 100;
+    private static final float SHOW_THRESHOLD = 50;
+
     protected String TAG ="BaseFragment";
     protected int pastVisiblesItems, visibleItemCount, totalItemCount;
     protected boolean loading = false;
@@ -30,7 +34,8 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
     protected BaseListener listener;
     public int listType;
     protected  static int EXAM_TAB_POSITION =0;
-
+    private int scrollDist = 0;
+    private boolean isVisible = true;
 
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -53,13 +58,33 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
                 if(listener != null)
                     listener.onEndReached(mNextUrl,listType);
             }
-            /*if(dy < 0)
-            {
-                mProgressBarLL.setVisibility(View.GONE);
-            }*/
-        }
 
+            //  Check scrolled distance against the minimum
+            if (isVisible && scrollDist > HIDE_THRESHOLD) {
+                //  Hide fab & reset scrollDist
+                hide();
+                scrollDist = 0;
+                isVisible = false;
+            }
+            //  -MINIMUM because scrolling up gives - dy values
+            else if (!isVisible && scrollDist < -SHOW_THRESHOLD) {
+                //  Show fab & reset scrollDist
+                show();
+
+                scrollDist = 0;
+                isVisible = true;
+            }
+
+            //  Whether we scroll up or down, calculate scroll distance
+            if ((isVisible && dy > 0) || (!isVisible && dy < 0)) {
+                scrollDist += dy;
+            }
+        }
     };
+
+    public abstract void show();
+
+    public abstract void hide();
 
     protected void updateViewTypeIcon(View view, int type)
     {
@@ -74,7 +99,6 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
             ((ImageView) view.findViewById(R.id.view_into_list_image)).setColorFilter(getResources().getColor(R.color.primary_color));
         }
     }
-
 
     @Override
     public void onClick(View v) {
@@ -97,7 +121,6 @@ public class BaseFragment extends Fragment implements View.OnClickListener{
         void onFilterApplied();
 
         void onInstituteLikedDisliked(int position, int liked);
-
     }
 
 }

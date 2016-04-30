@@ -26,8 +26,6 @@ public class ParallaxPageTransformer implements ViewPager.PageTransformer {
             // This page is way off-screen to the right.
             view.setAlpha(1);
         }
-
-
     }
 
 }

@@ -64,5 +64,13 @@ public class InstituteAboutFragment extends BaseFragment {
     }
 
 
+    @Override
+    public void show() {
 
+    }
+
+    @Override
+    public void hide() {
+
+    }
 }

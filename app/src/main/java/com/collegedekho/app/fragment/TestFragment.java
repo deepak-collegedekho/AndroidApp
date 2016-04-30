@@ -51,4 +51,14 @@ public class TestFragment extends BaseFragment {
 
         return rootView;
     }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
 }

@@ -17,6 +17,8 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.InstitutePagerAdapter;
+import com.collegedekho.app.display.CustomViewPager;
+import com.collegedekho.app.display.DepthPageTransformer;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.GameEntity;
 import com.collegedekho.app.entities.Institute;
@@ -50,8 +52,7 @@ public class InstituteDetailFragment extends BaseFragment {
     ArrayList<Articles> mInstituteArticleList;
     private Institute mInstitute;
     private InstitutePagerAdapter mDetailsAdapter;
-    private ViewPager mDetailsPager;
-    private ArrayList<GameEntity> mData = new ArrayList<>(4);
+    private CustomViewPager mDetailsPager;
     private String nextArticleUrl;
     private String nextNewsUrl;
 
@@ -94,10 +95,9 @@ public class InstituteDetailFragment extends BaseFragment {
         else{
             this.mDetailsAdapter.updateInstitutiesList(this.mInstitute);
         }
-        this.mDetailsPager = (ViewPager) rootView.findViewById(R.id.college_detail_pager);
+        this.mDetailsPager = (CustomViewPager) rootView.findViewById(R.id.college_detail_pager);
         this.mDetailsPager.setAdapter(this.mDetailsAdapter);
-        //this.mDetailsPager.setPageTransformer(true, new DepthPageTransformer());
-        this.mDetailsPager.setOffscreenPageLimit(5);
+        this.mDetailsPager.setPageTransformer(true, new DepthPageTransformer());
 
         this.mDetailsPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -249,109 +249,9 @@ public class InstituteDetailFragment extends BaseFragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             mDetailsAdapter.setCourses(courses);
-            if (getView() != null) {
-                //tabLayout.setupWithViewPager(mDetailsPager);
-            }
         }
     }
 
-    /**
-     * Get the current view position from the ViewPager by
-     * extending SimpleOnPageChangeListener class and adding your method
-     */
-    public class FooterPagerAdapter extends PagerAdapter implements View.OnClickListener{
-
-        private Institute mInstitute;
-        private Context mContext;
-        private InstituteDetailFragment.OnInstituteFooterItemSelected mListener;
-
-        public FooterPagerAdapter(Institute institute, Context context) {
-            this.mInstitute = institute;
-            this.mContext = context;
-            this.mListener = (InstituteDetailFragment.OnInstituteFooterItemSelected) context;
-        }
-
-        @Override
-        public int getCount() {
-            return 4;
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-
-            CardView cardView = (CardView) LayoutInflater.from(this.mContext).inflate(R.layout.card_blue_item, null, false);
-            cardView.setOnClickListener(this);
-
-            TextView component = (TextView) cardView.findViewById(R.id.blue_item_text);
-
-            switch (position)
-            {
-                case InstituteDetailFragment.Videos:
-                {
-                    component.setText("Videos");
-                    component.setTag(this.mInstitute.getVideos());
-                    cardView.setTag(InstituteDetailFragment.Videos);
-                    break;
-                }
-                case InstituteDetailFragment.QnA:
-                {
-                    component.setText("QnA");
-                    component.setTag(this.mInstitute.getId());
-                    cardView.setTag(InstituteDetailFragment.QnA);
-                    break;
-                }
-                case InstituteDetailFragment.News:
-                {
-                    component.setText("News");
-                    component.setTag(this.mInstitute.getId());
-                    cardView.setTag(InstituteDetailFragment.News);
-                    break;
-                }
-                case InstituteDetailFragment.Articles:
-                {
-                    component.setText("Articles");
-                    component.setTag(this.mInstitute.getId());
-                    cardView.setTag(InstituteDetailFragment.Articles);
-                    break;
-                }
-                default:
-                    break;
-            }
-
-            container.addView(cardView);
-
-            return cardView;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((CardView) object);
-        }
-
-        @Override
-        public void onClick(View v) {
-            TextView component = (TextView) v.findViewById(R.id.blue_item_text);
-
-            switch ((int) v.getTag())
-            {
-                case InstituteDetailFragment.Videos:
-                {
-                    this.mListener.onFooterVideosSelected((ArrayList<String>) component.getTag());
-                    break;
-                }
-                default:
-                {
-                    this.mListener.OnFooterOtherItemsSelected((int) v.getTag(), (int) component.getTag());
-                    break;
-                }
-            }
-        }
-    }
 
     public class LoadQnAQuestionAsyncTask extends AsyncTask<String, Void, Void> {
 
@@ -387,9 +287,13 @@ public class InstituteDetailFragment extends BaseFragment {
             mMainActivity.currentFragment = this;
     }
 
-    public interface OnInstituteFooterItemSelected{
-        void onFooterVideosSelected(ArrayList<String> videos);
+    @Override
+    public void show() {
 
-        void OnFooterOtherItemsSelected(int type, int instituteID);
+    }
+
+    @Override
+    public void hide() {
+
     }
 }

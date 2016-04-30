@@ -135,6 +135,16 @@ public class InstituteVideosFragment extends BaseFragment {
         }
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
     class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoListViewHolder> {
 
         ArrayList<VideoEntry> videoList;

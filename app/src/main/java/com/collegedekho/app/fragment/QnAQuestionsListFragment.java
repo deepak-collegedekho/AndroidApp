@@ -139,6 +139,17 @@ public class QnAQuestionsListFragment extends BaseFragment {
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
     }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
     @Override
     public void onClick(View view) {
         super.onClick(view);

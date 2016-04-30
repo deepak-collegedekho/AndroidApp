@@ -178,6 +178,16 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
     }
 
     @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
     public void onClick(View v) {
 
         this.mCurrentFolders.clear();

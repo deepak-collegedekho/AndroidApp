@@ -114,6 +114,16 @@ public class OTPVerificationFragment extends BaseFragment {
     }
 
     @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {

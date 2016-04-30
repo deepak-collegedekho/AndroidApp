@@ -118,6 +118,16 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
         onStreamSelected(streamObj.resourceUri,streamObj.getName());
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
 
     public interface OnStreamInteractionListener {
         void onStreamSelected(String stream, String streamName);

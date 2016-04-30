@@ -127,6 +127,16 @@ public class SyllabusUnitListFragment extends BaseFragment {
     }
 
     @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_submit_units:

@@ -171,4 +171,14 @@ public class MyAlertFragment extends  BaseFragment {
             }
         }
     }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
 }

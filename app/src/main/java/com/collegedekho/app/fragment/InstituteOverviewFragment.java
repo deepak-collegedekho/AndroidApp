@@ -255,6 +255,16 @@ public class InstituteOverviewFragment extends BaseFragment {
             }
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
 
     public interface OnInstituteShortlistedListener {
         void onInstituteShortlisted();

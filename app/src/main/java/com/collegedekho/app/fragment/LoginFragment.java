@@ -74,6 +74,16 @@ public class LoginFragment extends  BaseFragment {
     }
 
     @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
     public void onClick(View view) {
         if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);

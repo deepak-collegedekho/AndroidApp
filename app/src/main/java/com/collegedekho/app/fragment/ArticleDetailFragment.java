@@ -208,4 +208,14 @@ public class ArticleDetailFragment extends BaseFragment {
 
         AnalyticsUtils.AppIndexingView("CollegeDekho - Article - " + this.mArticle.title, val, val, (MainActivity) this.getActivity(), false);
     }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
 }

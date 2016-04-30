@@ -268,6 +268,16 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
         //    currentCourseIndex = position;
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

@@ -152,6 +152,16 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
         this.mNextUrl = next;
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
     public interface OnMyFBSelectedListener extends BaseListener{
         void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position, int commentsCount);
         void displayMessage(int messageId);

@@ -269,12 +269,15 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
     {
         if (this.mListener != null) {
             int index = StepByStepQuestion.CurrentLevels.valueOf(StepByStepQuestion.getCurrentLevel().toString()).ordinal();
+
             index = index  + 1;
+
             try {
                 StepByStepFragment.mAnswersMap.put("user_type", index);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
             this.mListener.onSBSTestFinish(Constants.TAG_SUBMIT_SBS_EXAM, Constants.BASE_URL + "step-by-step/answers/", StepByStepFragment.mAnswersMap);
         }
 
@@ -341,6 +344,16 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
     @Override
     public boolean isAnswerDeemedForSecondary() {
         return false;
+    }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
     }
 
     /**

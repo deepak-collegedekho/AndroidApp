@@ -78,4 +78,14 @@ public class SplashFragment extends BaseFragment {
         //Start the secondary animation
         //this.mLogoView.startAnimation(AnimationUtils.loadAnimation(getActivity().getBaseContext(), R.anim.bounce_slow));
     }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
 }

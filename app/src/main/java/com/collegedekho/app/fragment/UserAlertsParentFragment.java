@@ -117,4 +117,14 @@ public class UserAlertsParentFragment extends BaseFragment implements ViewPager.
 //        this.mListener = null;
 
     }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
 }

@@ -91,6 +91,16 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
         onStreamSelected(streamObj.resourceUri,streamObj.getName());
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
 
     public interface OnStreamInteractionListener {
         void onStreamSelected(String stream, String streamName);

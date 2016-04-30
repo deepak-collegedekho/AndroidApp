@@ -340,6 +340,16 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         this.mAnswersListView.scrollToPosition(this.mQnAAnswersSet.size() - 1);
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
 
     public interface OnQnAAnswerInteractionListener {
         void onQnAQuestionVote(String resourceURI, int voteType, int position);

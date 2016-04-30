@@ -223,4 +223,14 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
             updateCalendar(currentDate);
         }
     }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
 }

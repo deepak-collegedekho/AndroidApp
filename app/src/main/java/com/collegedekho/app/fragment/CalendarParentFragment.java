@@ -277,4 +277,13 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
         void onSubmitCalendarData(JSONObject object,String url);
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
 }

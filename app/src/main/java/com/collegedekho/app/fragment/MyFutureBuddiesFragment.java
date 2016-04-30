@@ -338,6 +338,17 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             mListener.onUserLoginRequired(value);
 
     }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
     public interface OnMyFBInteractionListener {
         void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex);
         void onMyFBUpdated(int commentsSize, int myFbIndex);

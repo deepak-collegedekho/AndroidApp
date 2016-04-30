@@ -63,6 +63,16 @@ public class LoginFragment1 extends BaseFragment  {
         return rootView;
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
 
     class LoginPagerAdapter extends FragmentPagerAdapter
     {

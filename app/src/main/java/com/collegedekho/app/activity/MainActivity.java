@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity
         InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         QnAQuestionDetailFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener, OnArticleSelectListener,
-        LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener, InstituteDetailFragment.OnInstituteFooterItemSelected,
+        LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener,
         UserEducationFragment.OnUserEducationInteractionListener, PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
@@ -363,7 +363,10 @@ public class MainActivity extends AppCompatActivity
 
         if (Intent.ACTION_VIEW.equals(action) && data != null) {
             if (data.contains("www.collegedekho.com"))
+            {
                 this.mDeepLinkingURI = data;
+                Log.e(TAG, " DeepLinking URL is  : "+ mDeepLinkingURI);
+            }
         }
         else if (intent.getExtras() != null)
         {
@@ -438,7 +441,7 @@ public class MainActivity extends AppCompatActivity
 
         searchProgress = (ProgressBar) findViewById(R.id.resource_progress_bar);
         Log.e(TAG, " onCreate  exit time"+ System.currentTimeMillis());
-        gcmDialogRunnable =new Runnable() {
+        gcmDialogRunnable = new Runnable() {
             @Override
             public void run() {
                 if(IN_FOREGROUND && IS_PROFILE_LOADED){
@@ -1430,6 +1433,7 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl) {
         this.mDisplayInstituteList(response, filterAllowed, isHavingNextUrl, Constants.INSTITUTE_TYPE);
     }
+
     private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl, Constants.CDRecommendedInstituteType cdRecommendedInstituteType) {
         switch (cdRecommendedInstituteType) {
             case UNDECIDED:
@@ -1439,7 +1443,6 @@ public class MainActivity extends AppCompatActivity
                 mDisplayCDRecommendedInstituteList(response, isHavingNextUrl, cdRecommendedInstituteType, false);
                 break;
         }
-
     }
 
     private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl, Constants.CDRecommendedInstituteType cdRecommendedInstituteType, boolean isUpdate) {
@@ -1647,6 +1650,7 @@ public class MainActivity extends AppCompatActivity
         eventValue.put(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
         eventValue.put(Constants.INSTITUTE_ID, String.valueOf(id));
 
+        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SELECTED), eventValue, this);
     }
 
@@ -1790,6 +1794,7 @@ public class MainActivity extends AppCompatActivity
 
             this.mTimeScreenClicked = new Date();
 
+            //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
 
             this.mLastScreenName = tag;
@@ -2287,6 +2292,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
+        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), eventValue, this);
     }
 
@@ -2404,6 +2410,7 @@ public class MainActivity extends AppCompatActivity
     private void mStepByStepDone(String response) {
         try {
             StepByStepResult sbsResult = JSON.std.beanFrom(StepByStepResult.class, response);
+
             //sbsResult
             MainActivity.user.setStream_name(sbsResult.getStream_name());
             MainActivity.user.setStream(String.valueOf(sbsResult.getStream_id()));
@@ -2483,10 +2490,13 @@ public class MainActivity extends AppCompatActivity
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.USER_STREAM_NAME), MainActivity.user.getStream_name());
 
+        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_STREAM_UPDATED), eventValue, this);
 
         eventValue.clear();
         eventValue.put(getResourceString(R.string.USER_LEVEL_NAME), MainActivity.user.getLevel_name());
+
+        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_LEVEL_UPDATED), eventValue, this);
     }
 
@@ -2531,10 +2541,13 @@ public class MainActivity extends AppCompatActivity
             Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(getResourceString(R.string.USER_STREAM_NAME), MainActivity.user.getStream_name());
 
+            //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_STREAM_SELECTED), eventValue, this);
 
             eventValue.clear();
             eventValue.put(getResourceString(R.string.USER_LEVEL_NAME), MainActivity.user.getLevel_name());
+
+            //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_LEVEL_SELECTED), eventValue, this);
 
             this.mClearBackStack();
@@ -2578,6 +2591,7 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(qnaQuestion.getTitle(), Constants.NEITHER_LIKE_NOR_DISLIKE);
             eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
+            //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
 
         } else {
@@ -2592,6 +2606,7 @@ public class MainActivity extends AppCompatActivity
                     eventValue.put(qnaQuestion.getTitle(), Constants.LIKE_THING);
                     eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
+                    //Events
                     AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
 
                 } else if (like == Constants.DISLIKE_THING) {
@@ -2602,6 +2617,7 @@ public class MainActivity extends AppCompatActivity
                     eventValue.put(qnaQuestion.getTitle(), Constants.DISLIKE_THING);
                     eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
+                    //Events
                     AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
                 }
             }
@@ -2624,9 +2640,10 @@ public class MainActivity extends AppCompatActivity
 
             Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
-            eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.NEITHER_LIKE_NOR_DISLIKE);
-            eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, Constants.NEITHER_LIKE_NOR_DISLIKE);
+            eventValue.put(getResourceString(R.string.VOTE_TYPE), String.valueOf(Constants.NEITHER_LIKE_NOR_DISLIKE));
+            eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, String.valueOf(Constants.NEITHER_LIKE_NOR_DISLIKE));
 
+            //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_LIKING_UNBIASED), eventValue, this);
         } else {
             try {
@@ -2637,16 +2654,18 @@ public class MainActivity extends AppCompatActivity
 
                     Map<String, Object> eventValue = new HashMap<>();
                     eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
-                    eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.LIKE_THING);
-                    eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, Constants.LIKE_THING);
+                    eventValue.put(getResourceString(R.string.VOTE_TYPE), String.valueOf(Constants.LIKE_THING));
+                    eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, String.valueOf(Constants.LIKE_THING));
 
+                    //Events
                     AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_LIKED), eventValue, this);
                 } else if (like == Constants.DISLIKE_THING) {
                     Map<String, Object> eventValue = new HashMap<>();
                     eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
-                    eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.DISLIKE_THING);
-                    eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, Constants.DISLIKE_THING);
+                    eventValue.put(getResourceString(R.string.VOTE_TYPE), String.valueOf(Constants.DISLIKE_THING));
+                    eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, String.valueOf(Constants.DISLIKE_THING));
 
+                    //Events
                     AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_DISLIKED), eventValue, this);
                 }
             } catch (Exception e) {
@@ -2676,6 +2695,7 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), Constants.SHORTLISTED_NO);
             eventValue.put(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
 
+            //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED_REMOVED), eventValue, this);
         } else {
             try {
@@ -2688,6 +2708,7 @@ public class MainActivity extends AppCompatActivity
                 eventValue.put(getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), Constants.SHORTLISTED_YES);
                 eventValue.put(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
 
+                //Events
                 AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), eventValue, this);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
@@ -3285,6 +3306,7 @@ public class MainActivity extends AppCompatActivity
         eventValue.put(getResourceString(R.string.APPLY_INSTITUTE), mInstitute.getResource_uri());
         eventValue.put(getResourceString(R.string.APPLY_COURSE_ID), String.valueOf(instituteCourse.getId()));
 
+        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, this);
     }
 
@@ -3399,6 +3421,7 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(news.getId()));
             eventValue.put(getResourceString(R.string.ACTION_NEWS_SELECTED), news.getId());
 
+            //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_NEWS), getResourceString(R.string.ACTION_NEWS_SELECTED), eventValue, this);
         }
     }
@@ -3422,6 +3445,7 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(article.getId()));
             eventValue.put(getResourceString(R.string.ACTION_NEWS_SELECTED), article.getId());
 
+            //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_ARTICLE), getResourceString(R.string.ACTION_ARTICLE_SELECTED), eventValue, this);
         }
     }
@@ -3463,6 +3487,8 @@ public class MainActivity extends AppCompatActivity
         Map<String, Object> eventValue = new HashMap<String, Object>();
         for (String key : this.mFilterKeywords.keySet()) {
             eventValue.put(Constants.SELECTED_FILTERS, this.mFilterKeywords.get(key));
+
+            //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_FILTER_APPLIED), eventValue, this);
         }
     }
@@ -3645,15 +3671,19 @@ public class MainActivity extends AppCompatActivity
                 eventValue.put(question.getResource_uri(), Constants.LIKE_THING);
                 eventValue.put(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.LIKE_THING);
 
+                //Events
                 AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), eventValue, this);
+
             } else if (voteType == Constants.DISLIKE_THING) {
                 eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(question.getResource_uri()));
                 eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.DISLIKE_THING);
                 eventValue.put(question.getResource_uri(), Constants.DISLIKE_THING);
                 eventValue.put(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.DISLIKE_THING);
+
+                //Events
+                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), eventValue, this);
             }
 
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), eventValue, this);
         } catch (Exception e) {
             Log.e("QnA question voting", e.getMessage());
         }
@@ -3671,6 +3701,7 @@ public class MainActivity extends AppCompatActivity
                 eventValue.put(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, Constants.LIKE_THING);
                 eventValue.put(answer.getResource_uri(), Constants.LIKE_THING);
 
+                //Events
                 AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_UPVOTED), eventValue, this);
 
             } else if (voteType == Constants.DISLIKE_THING) {
@@ -3679,6 +3710,7 @@ public class MainActivity extends AppCompatActivity
                 eventValue.put(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, Constants.DISLIKE_THING);
                 eventValue.put(answer.getResource_uri(), Constants.DISLIKE_THING);
 
+                //Events
                 AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_DOWNVOTED), eventValue, this);
             }
         } catch (Exception e) {
@@ -3715,6 +3747,7 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(Constants.TAG_RESOURCE_URI, qnaAnswer.getResource_uri());
             eventValue.put(getResourceString(R.string.QNA_ANSWER_RESOURCE_URI), qnaAnswer.getResource_uri());
 
+            //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_QNA_ANSWER_SUBMITTED), eventValue, this);
         }
     }
@@ -3726,6 +3759,7 @@ public class MainActivity extends AppCompatActivity
         Map<String, Object> eventValue = new HashMap<String, Object>();
         eventValue.put(Constants.TAG_RESOURCE_URI, myFutureBuddiesEnumeration.getResource_uri());
 
+        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getResourceString(R.string.ACTION_MY_FB_SELECTED), eventValue, this);
     }
 
@@ -3764,6 +3798,7 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(Constants.TAG_RESOURCE_URI, this.mFbEnumeration.get(fbIndex).getResource_uri());
             eventValue.put(getResourceString(R.string.MY_FB_URI), this.mFbEnumeration.get(fbIndex).getResource_uri());
 
+            //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getResourceString(R.string.ACTION_MY_FB_COMMENT_SUBMITTED), eventValue, this);
 
         } catch (Exception e) {
@@ -3826,6 +3861,7 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(Constants.TAG_RESOURCE_URI, qnaQuestion.getResource_uri());
             eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
+            //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_QNA_QUESTION_ASKED), eventValue, this);
 
             if (currentFragment instanceof InstituteDetailFragment) {
@@ -4032,6 +4068,7 @@ public class MainActivity extends AppCompatActivity
         HashMap<String, Object> eventValue = new HashMap<>();
         eventValue.put(Constants.TAG_USER_LOGIN, TAG);
 
+        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
     }
 
@@ -4336,6 +4373,7 @@ public class MainActivity extends AppCompatActivity
             eventValue = new HashMap<>();
             eventValue.put(getResourceString(R.string.USER_EXAM_SELECTED), examDetail.getExam_name() + "#" + examDetail.getExam_date());
 
+            //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_EXAM_SELECTED), (Map) eventValue, this);
         }
     }
@@ -4447,7 +4485,6 @@ public class MainActivity extends AppCompatActivity
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     public ArrayList<Folder> getFilterList() {
@@ -4480,36 +4517,6 @@ public class MainActivity extends AppCompatActivity
     {
         AppsFlyerLib.getInstance().trackEvent(context, eventName, eventValue);
     }
-
-    @Override
-    public void onFooterVideosSelected(ArrayList<String> videos) {
-
-        if (videos == null || videos.size() < 1) {
-            Toast.makeText(MainActivity.this, "No videos for this college yet", Toast.LENGTH_SHORT).show();
-            return;
-        }
-    }
-
-    @Override
-    public void OnFooterOtherItemsSelected(int type, int instituteID) {
-        switch (type) {
-            case InstituteDetailFragment.QnA: {
-                this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL + "personalize/qna/", null);
-                break;
-            }
-            case InstituteDetailFragment.News: {
-                this.mMakeNetworkCall(Constants.WIDGET_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(instituteID), null);
-                break;
-            }
-            case InstituteDetailFragment.Articles: {
-                this.mMakeNetworkCall(Constants.WIDGET_ARTICES, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(instituteID), null);
-                break;
-            }
-            default:
-                break;
-        }
-    }
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -4569,11 +4576,13 @@ public class MainActivity extends AppCompatActivity
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.USER_CURRENT_SUBLEVEL), user.getSublevel());
 
+        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED), eventValue, this);
 
         eventValue.clear();
         eventValue.put(getResourceString(R.string.USER_IS_PREPARING), user.getIs_preparing());
 
+        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_IS_PREPARING), eventValue, this);
 
     }
@@ -4587,7 +4596,6 @@ public class MainActivity extends AppCompatActivity
             if (this.user.getIs_preparing().equals("0")) {
                 onBackPressed();
             } else {
-//                this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/",null);
                 onEditUserExams();
             }
         } catch (IOException e) {
@@ -4667,11 +4675,13 @@ public class MainActivity extends AppCompatActivity
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.USER_CURRENT_SUBLEVEL), user.getSublevel());
 
+        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED), eventValue, this);
 
         eventValue.clear();
         eventValue.put(getResourceString(R.string.USER_IS_PREPARING), user.getIs_preparing());
 
+        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_IS_PREPARING), eventValue, this);
     }
 
@@ -4710,6 +4720,7 @@ public class MainActivity extends AppCompatActivity
             Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), ProfileFragment.class.getSimpleName());
 
+            //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
         }
 
@@ -4774,6 +4785,8 @@ public class MainActivity extends AppCompatActivity
 
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), PsychometricTestQuestion.class.getSimpleName());
+
+        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
@@ -4837,6 +4850,7 @@ public class MainActivity extends AppCompatActivity
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), StepByStepFragment.class.getSimpleName());
 
+        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
@@ -4847,6 +4861,7 @@ public class MainActivity extends AppCompatActivity
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), "I_KNOW_WHAT_I_WANT");
 
+        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
@@ -5907,6 +5922,7 @@ public class MainActivity extends AppCompatActivity
                 Map<String, Object> eventValue = new HashMap<>();
                 eventValue.put(getResourceString(R.string.ACTION_OTP_VERIFIED), "Success");
 
+                //Events
                 AnalyticsUtils.SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
 
                 onBackPressed();
@@ -5915,6 +5931,7 @@ public class MainActivity extends AppCompatActivity
                     Map<String, Object> eventValue = new HashMap<>();
                     eventValue.put(getResourceString(R.string.ACTION_OTP_VERIFIED), "Failed");
 
+                    //Events
                     AnalyticsUtils.SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
 
                     ((OTPVerificationFragment) currentFragment).onInvalidOtp();

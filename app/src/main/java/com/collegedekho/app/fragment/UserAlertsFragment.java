@@ -93,6 +93,16 @@ public class UserAlertsFragment extends BaseFragment implements UserAlertsAdapte
         mListener.onItemSelected(position);
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
     public interface OnAlertItemSelectListener {
         public void onItemSelected(int position);
     }

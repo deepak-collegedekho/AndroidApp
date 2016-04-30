@@ -137,4 +137,14 @@ public class UserAlertDetailsFragment extends BaseFragment implements UserAlerts
         UserAlertItemDescriptionAdapter alertItemDescriptionAdapter=new UserAlertItemDescriptionAdapter(getActivity(),details);
         detailsRecyclerView.setAdapter(alertItemDescriptionAdapter);
     }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
 }

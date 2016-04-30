@@ -82,4 +82,18 @@
     <dimen name="cover_width">40dp</dimen>
     <dimen name="cover_height">40dp</dimen>
     <dimen name="chart_font_size">14sp</dimen>
+
+    <dimen name="fab_elevation">8dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_elevation_press">12dp</dimen>
+    <dimen name="fab_size">56dp</dimen>
+
+    <dimen name="statusbar_size">24dp</dimen>
+
+    <dimen name="cardview_toolbar_spacer">16dp</dimen>
+
+    <dimen name="toolbar_double_height">112dp</dimen>
+    <dimen name="appbar_padding_top">8dp</dimen>
+    <dimen name="activity_margin_half">8dp</dimen>
+
 </resources>

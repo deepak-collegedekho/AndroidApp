@@ -224,7 +224,15 @@ public final class VideosFragment extends BaseFragment {
         }
     }
 
+    @Override
+    public void show() {
 
+    }
+
+    @Override
+    public void hide() {
+
+    }
 
 
     /**

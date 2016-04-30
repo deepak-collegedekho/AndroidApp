@@ -330,7 +330,17 @@ public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
         this.mListener = null;
     }
 
-    @Override
+            @Override
+            public void show() {
+
+            }
+
+            @Override
+            public void hide() {
+
+            }
+
+            @Override
     public void onClick(View view) {
         super.onClick(view);
 

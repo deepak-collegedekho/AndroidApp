@@ -2,24 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
     <TextView
         android:id="@+id/textview_page_title"
         style="@style/AppTheme.TextView.page_title"
         android:paddingRight="55dp"
-        android:text="Engineering colleges in India" />
-
-<!--
-       <ImageView
-        android:id="@+id/button_filter"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:src="@drawable/ic_filter" />
--->
+        android:text="Engineering colleges in India"
+        />
 
     <include layout="@layout/layout_empty"/>
 
@@ -27,7 +18,8 @@
         android:id="@+id/viewType"
         android:layout_below="@id/textview_page_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        />
 
     <LinearLayout
         android:id="@+id/filter_tokenLL"
@@ -67,7 +59,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
+        android:visibility="gone"
         >
         <ImageView
             android:id="@+id/institute_list_tour_guide_image"
@@ -79,19 +71,7 @@
             android:src="@drawable/ic_institute_tute"
             />
     </FrameLayout>
-    <com.melnykov.fab.FloatingActionButton
-        android:id="@+id/button_filter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_filter"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        fab:fab_type="normal"
-        android:layout_marginStart="@dimen/activity_horizontal_margin_small"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        fab:fab_colorNormal="@color/primary_color"
-        android:visibility="visible"
-        />
+
+    <include layout="@layout/fab" />
+
 </RelativeLayout>

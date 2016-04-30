@@ -143,6 +143,16 @@ public class InstituteNewsFragment extends BaseFragment  {
     }
 
     @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
     public void onClick(View view) {
         super.onClick(view);
         switch (view.getId())

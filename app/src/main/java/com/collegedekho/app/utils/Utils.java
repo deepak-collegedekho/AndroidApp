@@ -613,4 +613,9 @@ public class Utils {
         alertDialog.show();
     }
 
+    public static int getToolbarHeight(Context context) {
+        int height = (int) context.getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
+        return height;
+    }
+
 }

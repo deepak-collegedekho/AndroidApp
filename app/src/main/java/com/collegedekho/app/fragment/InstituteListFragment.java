@@ -2,19 +2,28 @@ package com.collegedekho.app.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -56,11 +65,20 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private int filterCount;
     private TextView mEmptyTextView;
     private boolean IS_TUTE_COMPLETED = true;
-    private View filterBtn,filters;
+    private View filterBtn, filters;
     private  int mViewType = Constants.VIEW_INTO_LIST;
     private ContactsCompletionView mCompletionView;
-    private ArrayAdapter<String> tolenAdapter;
+    private ArrayAdapter<String> tokenAdapter;
+    private RecyclerView recyclerView;
     View instituteView;
+    Toolbar toolbar;
+    int toolbarHeight;
+    FrameLayout fab;
+    ImageButton fabBtn;
+    //View fabShadow;
+    int fabMargin;
+    AppBarLayout toolbarContainer;
+    boolean fadeToolbar = false;
 
     public InstituteListFragment() {
         // Required empty public constructor
@@ -76,7 +94,9 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         args.putBoolean(ARG_FILTER_ALLOWED, filterAllowed);
         args.putInt(ARG_FILTER_COUNT, filterCount);
         args.putInt("list_type",listType);
+
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -89,7 +109,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             mNextUrl = getArguments().getString(ARG_NEXT);
             filterAllowed = getArguments().getBoolean(ARG_FILTER_ALLOWED);
             filterCount = getArguments().getInt(ARG_FILTER_COUNT);
-            listType = getArguments().getInt("list_type");//Constants.INSTITUTE_TYPE;
+            listType = getArguments().getInt("list_type");
             if(listType==0){
                 listType=Constants.INSTITUTE_TYPE;
             }else if (listType==Constants.INSTITUTE_SEARCH_TYPE){
@@ -102,13 +122,35 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_institute_listing, container, false);
+
+        Animation animation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.simple_grow);
+
+        toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+
+        //  FAB margin needed for animation
+        fabMargin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
+        toolbarHeight = Utils.getToolbarHeight(this.getActivity());
+
+        toolbarContainer = (AppBarLayout) getActivity().findViewById(R.id.app_bar_layout);
+
+        fab = (FrameLayout) rootView.findViewById(R.id.myfab_main);
+        fabBtn = (ImageButton) rootView.findViewById(R.id.button_filter);
+        //fabShadow = rootView.findViewById(R.id.myfab_shadow);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //fabShadow.setVisibility(View.GONE);
+            fabBtn.setBackground(this.getActivity().getDrawable(R.drawable.ripple_accent));
+        }
+
+        fab.startAnimation(animation);
+
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.INSTITUTE_LIST_SCREEN_TUTE), false);
 
         if (IS_TUTE_COMPLETED)
             rootView.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
 
         mCompletionView = (ContactsCompletionView)rootView.findViewById(R.id.searchView);
-        mCompletionView.setAdapter(tolenAdapter);
+        mCompletionView.setAdapter(tokenAdapter);
         mCompletionView.setTokenListener(this);
         mCompletionView.setInputType(InputType.TYPE_NULL);
         mCompletionView.allowDuplicates(false);
@@ -118,8 +160,14 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         (rootView).findViewById(R.id.view_into_list).setOnClickListener(this);
 
         ((TextView) rootView.findViewById(R.id.textview_page_title)).setText(mTitle);
-        progressBarLL     =   (LinearLayout)rootView.findViewById(R.id.progressBarLL);
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_list);
+        progressBarLL = (LinearLayout)rootView.findViewById(R.id.progressBarLL);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_list);
+
+        /* Set top padding= toolbar height.
+         So there is no overlap when the toolbar hides.
+         Avoid using 0 for the other parameters as it resets padding set via XML!*/
+
+        //recyclerView.setHasFixedSize(true);
 
         if(this.mViewType == Constants.VIEW_INTO_GRID)
             layoutManager = new GridLayoutManager(getActivity(), 2);
@@ -157,7 +205,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         filterBtn=rootView.findViewById(R.id.button_filter);
         filters=rootView.findViewById(R.id.filter_tokenLL);
 
-        tolenAdapter = new FilteredArrayAdapter<String>(getActivity(), R.layout.contact_token, new String[]{}) {
+        tokenAdapter = new FilteredArrayAdapter<String>(getActivity(), R.layout.contact_token, new String[]{}) {
             @Override
             protected boolean keepObject(String obj, String mask) {
                 Log.e("", "");
@@ -185,6 +233,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                 return false;
             }
         });
+
         return rootView;
     }
 
@@ -350,7 +399,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
         if(listener != null)
             listener.onFilterApplied();
-
     }
 
     private void mSetFilterList()
@@ -415,6 +463,21 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         updateViewTypeIcon(getView(), this.mViewType);
     }
 
+    @Override
+    public void show() {
+        //toolbarContainer.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+        //toolbarContainer.animate().alpha(1).setInterpolator(new DecelerateInterpolator(1)).start();
+        //toolbarContainer.setVisibility(View.VISIBLE);
+        fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+    }
+
+    @Override
+    public void hide() {
+        //toolbarContainer.animate().translationY(-toolbarHeight).setInterpolator(new AccelerateInterpolator(2)).start();
+        //toolbarContainer.animate().alpha(0).setInterpolator(new AccelerateInterpolator(1)).start();
+        //toolbarContainer.setVisibility(View.GONE);
+        fab.animate().translationY(fab.getHeight() + fabMargin).setInterpolator(new AccelerateInterpolator(2)).start();
+    }
 
     public interface OnInstituteSelectedListener extends BaseListener {
         void onInstituteSelected(int position);
