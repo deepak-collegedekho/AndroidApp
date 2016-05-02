@@ -82,7 +82,7 @@ public class CourseListAdapter extends RecyclerView.Adapter {
             }else {
                 cDuration.setText(":  " + c.getDuration() + " " + c.duration_type_display);
             }
-            cLevel.setText(":  " + InstituteCourse.CourseLevel.values()[c.getLevel()].name());
+            cLevel.setText(":  " + InstituteCourse.CourseLevel.values()[c.getLevel()].name().replace("_", " "));
             itemView.setTag(c);
            // if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
             if(c.getIs_applied() == 1){
@@ -97,7 +97,6 @@ public class CourseListAdapter extends RecyclerView.Adapter {
                 cApplyBtn.setVisibility(View.VISIBLE);
                 cProgressBar.setVisibility(View.GONE);
             }
-
         }
 
 
@@ -107,7 +106,6 @@ public class CourseListAdapter extends RecyclerView.Adapter {
             if (v.getId() == R.id.button_apply) {
                 if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
                     InstituteCourse c = (InstituteCourse) itemView.getTag();
-                    // if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
                     if (c.getIs_applied() == 1) {
                         cListener.displayMessage(R.string.ALREADY_APPLIED);
                     } else {
@@ -115,7 +113,6 @@ public class CourseListAdapter extends RecyclerView.Adapter {
                         cApplyBtn.setVisibility(View.INVISIBLE);
                         cProgressBar.setVisibility(View.VISIBLE);
                         cListener.onCourseApplied(getAdapterPosition(), InstituteCoursesFragment.getTabposition(), c);
-
                     }
                 }else {
                     this.cListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
@@ -125,8 +122,7 @@ public class CourseListAdapter extends RecyclerView.Adapter {
     }
 
     public void updateAdapter() {
-
         this.mIsAppliedResponse = false;
-       this.notifyDataSetChanged();
+        this.notifyDataSetChanged();
     }
 }
