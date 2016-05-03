@@ -2,6 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/wish_list_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -60,7 +61,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_marginRight="@dimen/m4dp"
-                        android:src="@drawable/ic_share"/>
+                        app:srcCompat="@drawable/ic_share"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -127,7 +128,7 @@
                             android:layout_height="match_parent"
                             android:layout_marginBottom="@dimen/m5dp"
                             android:padding="@dimen/m2dp"
-                            android:src="@drawable/ic_like"/>
+                            app:srcCompat="@drawable/ic_like"/>
 
                         <TextView
                             android:id="@+id/vote_count"
@@ -221,7 +222,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/wishlist_information"/>
+                        app:srcCompat="@drawable/wishlist_information"/>
 
                     <LinearLayout
                         android:id="@+id/heart_layout"
@@ -371,7 +372,7 @@
                                 android:layout_below="@id/see_all_text"
                                 android:layout_centerHorizontal="true"
                                 android:layout_marginTop="@dimen/m1dp"
-                                android:src="@drawable/wishlist_arrow_down"/>
+                                app:srcCompat="@drawable/wishlist_arrow_down"/>
                         </RelativeLayout>
 
                         <View
@@ -410,7 +411,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_centerHorizontal="true"
-                                    android:src="@drawable/wishlist_placement"
+                                    app:srcCompat="@drawable/wishlist_placement"
                                     />
 
                                 <TextView
@@ -448,7 +449,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_centerHorizontal="true"
-                                        android:src="@drawable/wishlist_fees"/>
+                                        app:srcCompat="@drawable/wishlist_fees"/>
 
                                     <TextView
                                         android:id="@+id/fees_range_text"
@@ -651,7 +652,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_button_blue"
-                        android:drawableLeft="@drawable/call"
                         android:drawablePadding="@dimen/m5dp"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
@@ -659,6 +659,7 @@
                         android:paddingBottom="5dp"
                         android:text="CALL L3"
                         android:gravity="center"
+                        android:drawableLeft="@drawable/call"
                         android:layout_marginRight="@dimen/m8dp"
                         android:textColor="@color/white"/>
 

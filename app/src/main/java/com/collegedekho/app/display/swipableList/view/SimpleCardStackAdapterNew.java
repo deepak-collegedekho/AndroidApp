@@ -378,7 +378,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
                 }
             });
         }else {
-            //convertView.findViewById(R.id.btn_call_now).setVisibility(View.GONE);
+            convertView.findViewById(R.id.btn_call_now).setVisibility(View.GONE);
         }
 
         convertView.findViewById(R.id.btn_details).setOnClickListener(new View.OnClickListener() {
