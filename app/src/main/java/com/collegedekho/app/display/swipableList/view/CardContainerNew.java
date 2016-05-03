@@ -42,6 +42,7 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
 //    private ImageView mDislikeImageView;
 //    private ImageView mUndecidedImageView;
     private TextView mTextView;
+    OnSwipeDirectionListener mListener;
     private final DataSetObserver mDataSetObserver = new DataSetObserver() {
         @Override
         public void onChanged() {
@@ -106,6 +107,9 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
         mGestureDetector = new GestureDetector(getContext(), new GestureListener());
     }
 
+    public void setListener(OnSwipeDirectionListener listener){
+        mListener=listener;
+    }
     private void initFromXml(AttributeSet attr) {
         TypedArray a = getContext().obtainStyledAttributes(attr,
                 R.styleable.CardContainer);
@@ -315,13 +319,15 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
 
                 if(mTopCard.getTranslationX() <= -60){
                     //Log.e("CardContainer", "IN translationX <= -60");
-                    //this.mfadeInOneFadeOutAllOthers(dislikeImageView.getId());
+//                    this.mfadeInOneFadeOutAllOthers(dislikeImageView.getId());
+                    mListener.onActionDislike();
 //                    mLikeImageView.setVisibility(GONE);
 //                    mDislikeImageView.setVisibility(VISIBLE);
 //                    mUndecidedImageView.setVisibility(GONE);
                 } else if(mTopCard.getTranslationX() >= 60){
                     //Log.e("CardContainer", "IN translationX >= 60");
-                    //this.mfadeInOneFadeOutAllOthers(likeImageView.getId());
+//                    this.mfadeInOneFadeOutAllOthers(likeImageView.getId());
+                    mListener.onActionLike();
 //                    mLikeImageView.setVisibility(VISIBLE);
 //                    mDislikeImageView.setVisibility(GONE);
 //                    mUndecidedImageView.setVisibility(GONE);
@@ -329,7 +335,8 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
                 else if (mTopCard.getTranslationY() <= -50)
                 {
                     //Log.e("CardContainer", "IN translationY <= -50");
-                    //this.mfadeInOneFadeOutAllOthers(undecidedImageView.getId());
+//                    this.mfadeInOneFadeOutAllOthers(undecidedImageView.getId());
+                    mListener.onActionDecideLater();
 //                    mLikeImageView.setVisibility(GONE);
 //                    mDislikeImageView.setVisibility(GONE);
 //                    mUndecidedImageView.setVisibility(VISIBLE);
@@ -337,7 +344,8 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
                 else if(mTopCard.getTranslationX() >= -40 && mTopCard.getTranslationX() <= 40)
                 {
                     //Log.e("CardContainer", "IN translationX() >= -40 && translationX() <= 40");
-                    //this.mfadeInOneFadeOutAllOthers(-1);
+//                    this.mfadeInOneFadeOutAllOthers(-1);
+                    mListener.onActionCancel();
 //                    mLikeImageView.setVisibility(GONE);
 //                    mDislikeImageView.setVisibility(GONE);
 //                    mUndecidedImageView.setVisibility(GONE);
@@ -362,6 +370,7 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                mListener.onActionCancel();
 //                mLikeImageView.setVisibility(GONE);
 //                mDislikeImageView.setVisibility(GONE);
 //                mUndecidedImageView.setVisibility(GONE);
@@ -405,64 +414,63 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
 //        this.mUndecidedImageView = (ImageView)mTopCard.findViewById(R.id.decide_later_textview);
         this.mTextView = (TextView) mTopCard.findViewById(R.id.card_recommended_institute_detail);
 
-       // this.mLikeImageView .setBackgroundResource(R.drawable.ic_shortlist);
-       // this.mDislikeImageView.setBackgroundResource(R.drawable.ic_not_interested);
-       // this.mUndecidedImageView.setBackgroundResource(R.drawable.ic_undecided);
+//        this.mLikeImageView .setBackgroundResource(R.drawable.ic_shortlist_vector);
+//        this.mDislikeImageView.setBackgroundResource(R.drawable.ic_not_interested_vector);
+//        this.mUndecidedImageView.setBackgroundResource(R.drawable.ic_undecided_vector);
 
 
     }
 
-    private void mfadeInOneFadeOutAllOthers(int viewID)
-    {
-        switch(viewID)
-        {
-            case R.id.dislike_textview:
-            {
+//    private void mfadeInOneFadeOutAllOthers(int viewID)   {
+//        switch(viewID)
+//        {
+//            case R.id.dislike_textview:
+//            {
 //                this.mDislikeImageView.animate().alpha(1.0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
 //                this.mDislikeImageView.setVisibility(VISIBLE);
 //                this.mLikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
 //                this.mLikeImageView.setVisibility(GONE);
 //                this.mUndecidedImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
 //                this.mUndecidedImageView.setVisibility(GONE);
-
-                break;
-            }
-            case R.id.like_textview:
-            {
+//
+//                break;
+//            }
+//            case R.id.like_textview:
+//            {
 //                this.mLikeImageView.animate().alpha(1.0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
 //                this.mLikeImageView.setVisibility(VISIBLE);
 //                this.mDislikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
 //                this.mDislikeImageView.setVisibility(GONE);
 //                this.mUndecidedImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
 //                this.mUndecidedImageView.setVisibility(GONE);
-
-                break;
-            }
-            case R.id.decide_later_textview:
-            {
+//
+//                break;
+//            }
+//            case R.id.decide_later_textview:
+//            {
 //                this.mUndecidedImageView.animate().alpha(1.0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
 //                this.mUndecidedImageView.setVisibility(VISIBLE);
 //                this.mLikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
 //                this.mLikeImageView.setVisibility(GONE);
 //                this.mDislikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
 //                this.mDislikeImageView.setVisibility(GONE);
-
-                break;
-            }
-            default:
-            {
+//
+//                break;
+//            }
+//            default:
+//            {
 //                this.mLikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
 //                this.mLikeImageView.setVisibility(GONE);
 //                this.mDislikeImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
 //                this.mDislikeImageView.setVisibility(GONE);
 //                this.mUndecidedImageView.animate().alpha(0f).setDuration(Constants.ANIM_SHORTEST_DURATION);
 //                this.mUndecidedImageView.setVisibility(GONE);
-
-                break;
-            }
-
-        }
-    }
+//
+//                break;
+//            }
+//
+//        }
+//    }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
@@ -593,6 +601,7 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
                     } else {
                         cardModel.getOnCardDismissedListener().onDislike();
                     }
+                    mListener.onActionCancel();
                 }
 
                 topCard.animate()
@@ -653,6 +662,7 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
 
                         return false;
                     }
+                    mListener.onActionCancel();
                 }
 
                 mTopCard = getChildAt(getChildCount() - 2);
@@ -687,5 +697,11 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
             } else
                 return false;
         }
+    }
+    public interface OnSwipeDirectionListener{
+        void onActionDislike();
+        void onActionLike();
+        void onActionDecideLater();
+        void onActionCancel();
     }
 }

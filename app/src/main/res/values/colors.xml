@@ -6,6 +6,7 @@
     <!--    <color name="primary_color">#fefaf3</color> -->
     <color name="primary_color_dark">#ff1f2560</color>
     <color name="primary_orange">#ff8d00</color>
+    <color name="primary_orange_light">#c1ff8d00</color>
     <color name="primary_orange_dark">#ff6f00</color>
     <!--<color name="primary_color_dark">#fefaf3</color>-->
     <color name="divider1">#ff002f45</color>

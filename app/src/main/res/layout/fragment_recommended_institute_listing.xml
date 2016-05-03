@@ -157,4 +157,35 @@
             android:src="@drawable/ic_recommended_tute"
             />
     </FrameLayout>
+    <RelativeLayout android:id="@+id/direction_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/like_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            />
+
+        <ImageView
+            android:id="@+id/dislike_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            />
+        <ImageView
+            android:id="@+id/decide_later_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/m5dp"
+            android:layout_marginTop="@dimen/m40dp"
+            android:visibility="gone"
+            android:layout_above="@id/card_recommended_institute_detail"
+            android:layout_centerHorizontal="true"
+            />
+    </RelativeLayout>
 </RelativeLayout>

@@ -68,8 +68,11 @@ public class Institute implements Parcelable {
     private double max_fees;
     private String min_salary;
     private String fees;
+    private String l3_number;
+    private String application_end_date;
+    private String application_status;
 
-    private ArrayList<String>exams=new ArrayList<>();
+    private ArrayList<String> exams = new ArrayList<>();
 
     public Institute() {
     }
@@ -109,20 +112,23 @@ public class Institute implements Parcelable {
         is_shortlisted = source.readInt();
         upvotes = source.readInt();
         downvotes = source.readInt();
-        videos=new ArrayList<>();
-        streams=new ArrayList<>();
+        videos = new ArrayList<>();
+        streams = new ArrayList<>();
         source.readStringList(videos);
         source.readStringList(streams);
-        partner_status=source.readInt();
-        images=new HashMap<>();
+        partner_status = source.readInt();
+        images = new HashMap<>();
         source.readMap(images, Map.class.getClassLoader());
-        min_fees=source.readDouble();
-        max_fees=source.readDouble();
-        min_salary=source.readString();
-        shortlist_count=source.readInt();
-        exams=new ArrayList<>();
+        min_fees = source.readDouble();
+        max_fees = source.readDouble();
+        min_salary = source.readString();
+        shortlist_count = source.readInt();
+        exams = new ArrayList<>();
         source.readStringList(exams);
-        fees=source.readString();
+        fees = source.readString();
+        l3_number=source.readString();
+        application_end_date=source.readString();
+        application_status=source.readString();
     }
 
     public String getCurrent_user_vote_url() {
@@ -270,6 +276,9 @@ public class Institute implements Parcelable {
         dest.writeStringList(exams);
         dest.writeInt(shortlist_count);
         dest.writeString(fees);
+        dest.writeString(l3_number);
+        dest.writeString(application_end_date);
+        dest.writeString(application_status);
     }
 
     public String getLogo() {
@@ -419,9 +428,9 @@ public class Institute implements Parcelable {
             if (facility instanceof DeferredMap) {
                 DeferredMap fdm = (DeferredMap) facility;
                 Facility f = new Facility();
-                if (fdm.containsKey("name") && fdm.get("name")!=null)
+                if (fdm.containsKey("name") && fdm.get("name") != null)
                     f.tag = fdm.get("name").toString();
-                if (fdm.containsKey("image_new") && fdm.get("image_new")!=null)
+                if (fdm.containsKey("image_new") && fdm.get("image_new") != null)
                     f.image_new = fdm.get("image_new").toString();
                 if (f.image_new != null)
                     this.facilities.add(f);
@@ -574,5 +583,29 @@ public class Institute implements Parcelable {
 
     public void setFees(String fees) {
         this.fees = fees;
+    }
+
+    public String getL3_number() {
+        return l3_number;
+    }
+
+    public void setL3_number(String l3_number) {
+        this.l3_number = l3_number;
+    }
+
+    public String getApplication_end_date() {
+        return application_end_date;
+    }
+
+    public void setApplication_end_date(String application_end_date) {
+        this.application_end_date = application_end_date;
+    }
+
+    public String getApplication_status() {
+        return application_status;
+    }
+
+    public void setApplication_status(String application_status) {
+        this.application_status = application_status;
     }
 }

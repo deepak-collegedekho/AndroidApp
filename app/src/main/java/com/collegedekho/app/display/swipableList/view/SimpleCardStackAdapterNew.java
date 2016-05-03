@@ -2,6 +2,8 @@ package com.collegedekho.app.display.swipableList.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -39,15 +42,17 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
     private Context mContext;
     private Activity mActivity;
     private Vector<CardModel> mData;
+    private String examTag="";
 
 
-    public SimpleCardStackAdapterNew(Activity activity, Context context, OnCDRecommendedAdapterInterface listener) {
+    public SimpleCardStackAdapterNew(Activity activity, Context context, OnCDRecommendedAdapterInterface listener,String examTag) {
         //super(context);
         this.imageLoader = MySingleton.getInstance(context).getImageLoader();
         this.mListener = listener;
         this.mContext = context;
         this.mActivity = activity;
         this.mData = new Vector<>();
+        this.examTag=examTag;
 
     }
 
@@ -68,7 +73,19 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         this.mParseAndPopulateCards(model, convertView);
 
         //card_recommended_institute_container
+        (convertView.findViewById(R.id.share)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         (convertView.findViewById(R.id.btn_apply_now)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.OnAppliedInstitute(((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute().getId());
+            }
+        });
+        (convertView.findViewById(R.id.header_view)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SimpleCardStackAdapterNew.this.mListener.OnInstituteSelected(((CardModel) SimpleCardStackAdapterNew.this.getItem(position)).getInstitute());
@@ -113,9 +130,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
     private void mParseAndPopulateCards(final CardModel model, final View convertView) {
         final FadeInImageView fadeInImageView;
         ImageLoader.ImageListener imageListener;
-        ImageLoader.ImageListener bottomImageListener;
-        Institute institute = model.getInstitute();
-        final FadeInImageView bottomImage;
+        final Institute institute = model.getInstitute();
         // set institute name
         ((TextView) convertView.findViewById(R.id.title)).setText(institute.getName());
 
@@ -133,7 +148,6 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
 
         //setting institute image_new
         fadeInImageView = ((FadeInImageView) convertView.findViewById(R.id.institute_image));
-        bottomImage = ((FadeInImageView) convertView.findViewById(R.id.bottom_image));
         //fadeInImageView.setDefaultImageResId(R.drawable.default_banner);
         //fadeInImageView.setErrorImageResId(R.drawable.default_banner);
         if (BitMapHolder.DEFAULT_BANNER != null)
@@ -141,7 +155,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         fadeInImageView.setBackgroundResource(R.drawable.default_banner);
 
 
-   /*     try{
+       /* try{
             ((ImageView) convertView.findViewById(R.id.like_textview)).setImageBitmap(BitMapHolder.SHORTLISTED_BITMAP);
             ((ImageView) convertView.findViewById(R.id.dislike_textview)).setImageBitmap(BitMapHolder.UNSHORTLISTED_BITMAP);
             ((ImageView) convertView.findViewById(R.id.decide_later_textview)).setImageBitmap(BitMapHolder.UNDECIDED_BITMAP);
@@ -159,6 +173,9 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             TextView avgSalary = ((TextView) convertView.findViewById(R.id.avg_sal_val));
             TextView placementPercent = ((TextView) convertView.findViewById(R.id.placement_percentage));
             TextView feesText=(TextView)convertView.findViewById(R.id.fees_range_text);
+            TextView applicationStatus=(TextView)convertView.findViewById(R.id.txt_interested);
+            TextView examsAccepted=(TextView)convertView.findViewById(R.id.txt_exam_accepted);
+            TextView applicationEndDate=(TextView)convertView.findViewById(R.id.txt_month_value);
 
             try {
                 int markerMargin=0;
@@ -202,6 +219,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             ((TextView)convertView.findViewById(R.id.applied_count)).setText(""+(institute.getUpvotes()+institute.getShortlist_count()));
             final RecyclerView facilitiesRecycler = (RecyclerView) convertView.findViewById(R.id.facilities_recycler);
             GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 7, LinearLayoutManager.VERTICAL, false);
+            applicationStatus.setText(institute.getApplication_status());
 //            layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
             facilitiesRecycler.setLayoutManager(layoutManager);
             final ArrayList<Facility> facilityArrayList = institute.getFacilities();
@@ -306,7 +324,16 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
                 examsText=examsText+exam+",";
             }
             streamTV.setText("Stream: " + streamText.substring(0, streamText.length() - 1));
-            examsTv.setText("Exams: "+examsText.substring(0, examsText.length() - 1));
+            if(examTag!=null && !examTag.trim().isEmpty())
+            examsTv.setText("Exam:"+examTag.toUpperCase());
+            if(!examsText.trim().isEmpty())
+            examsAccepted.setText(examsText.substring(0, examsText.length() - 1));
+            if(institute.getApplication_end_date()!=null && !institute.getApplication_end_date().trim().isEmpty()){
+                applicationEndDate.setText(institute.getApplication_end_date());
+            }else {
+                convertView.findViewById(R.id.clock_layout).setVisibility(View.INVISIBLE);
+                convertView.findViewById(R.id.txt_last_application_text).setVisibility(View.INVISIBLE);
+            }
         } else {
 
 //            convertView.findViewById(R.id.card_recommended_streams_label).setVisibility(View.GONE);
@@ -328,67 +355,43 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             }
         };
 
-        bottomImageListener = new ImageLoader.ImageListener() {
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                if (response.getBitmap() != null) {
-                    bottomImage.setLocalImageBitmap(response.getBitmap());
-                }
-            }
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        };
-
-
-                /*if (institute.getImages().get("Banner") != null)
-                    fadeInImageView.setImageUrl(institute.getImages().get("Banner"), this.imageLoader);
-                else if (institute.getImages().get("Primary") != null)
-                    fadeInImageView.setImageUrl(institute.getImages().get("Primary"), this.imageLoader);
-                else if (institute.getImages().get("Student") != null)
-                    fadeInImageView.setImageUrl(institute.getImages().get("Student"), this.imageLoader);
-                else if (institute.getImages().get("Infra") != null)
-                    fadeInImageView.setImageUrl(institute.getImages().get("Infra"), this.imageLoader);
-                else if (institute.getImages().get("Other") != null)
-                    fadeInImageView.setImageUrl(institute.getImages().get("Other"), this.imageLoader);*//*
-                */
-
-        String used = null;
-
         if (institute.getImages().get("Banner") != null) {
             imageLoader.get(institute.getImages().get("Banner"), imageListener);
-            used = institute.getImages().get("Banner");
         } else if (institute.getImages().get("Primary") != null) {
             imageLoader.get(institute.getImages().get("Primary"), imageListener);
-            used = institute.getImages().get("Primary");
         } else if (institute.getImages().get("Student") != null) {
             imageLoader.get(institute.getImages().get("Student"), imageListener);
-            used = institute.getImages().get("Student");
         } else if (institute.getImages().get("Infra") != null) {
             imageLoader.get(institute.getImages().get("Infra"), imageListener);
-            used = institute.getImages().get("Infra");
         } else if (institute.getImages().get("Other") != null) {
             imageLoader.get(institute.getImages().get("Other"), imageListener);
-            used = institute.getImages().get("Other");
         }
 
-        if (institute.getImages().get("Banner") != null && !institute.getImages().get("Banner").equals(used))
-            imageLoader.get(institute.getImages().get("Banner"), bottomImageListener);
-        else if (institute.getImages().get("Primary") != null && !institute.getImages().get("Primary").equals(used))
-            imageLoader.get(institute.getImages().get("Primary"), bottomImageListener);
-        else if (institute.getImages().get("Student") != null && !institute.getImages().get("Student").equals(used))
-            imageLoader.get(institute.getImages().get("Student"), bottomImageListener);
-        else if (institute.getImages().get("Infra") != null && !institute.getImages().get("Infra").equals(used))
-            imageLoader.get(institute.getImages().get("Infra"), bottomImageListener);
-        else if (institute.getImages().get("Other") != null && !institute.getImages().get("Other").equals(used))
-            imageLoader.get(institute.getImages().get("Other"), bottomImageListener);
-        else if (BitMapHolder.DEFAULT_BANNER != null)
-            bottomImage.setLocalImageBitmap(BitMapHolder.DEFAULT_BANNER);
-        else
-            bottomImage.setBackgroundResource(R.drawable.default_banner);
+        if (institute.getL3_number() != null && !institute.getL3_number().trim().matches("")) {
+            convertView.findViewById(R.id.btn_call_now).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri number = Uri.parse("tel:" + institute.getL3_number());
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+                    mContext.startActivity(callIntent);
+                }
+            });
+        }else {
+            convertView.findViewById(R.id.btn_call_now).setVisibility(View.GONE);
+        }
 
+        convertView.findViewById(R.id.btn_details).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(convertView.findViewById(R.id.overlay_layout).getVisibility()==View.VISIBLE){
+                    convertView.findViewById(R.id.overlay_layout).setVisibility(View.GONE);
+                    ((ImageView)convertView.findViewById(R.id.btn_details)).setImageResource(R.drawable.wishlist_information);
+                }else{
+                    convertView.findViewById(R.id.overlay_layout).setVisibility(View.VISIBLE);
+                    ((ImageView)convertView.findViewById(R.id.btn_details)).setImageResource(R.drawable.wish_list_close_info);
+                }
+            }
+        });
     }
 
     public boolean isLoadingNext() {
@@ -411,6 +414,8 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         void OnDecideLater(Institute institute, boolean isLastCard);
 
         void OnShowMessage(String message);
+
+        void OnAppliedInstitute(int instituteId);
     }
 
     public void clear() {

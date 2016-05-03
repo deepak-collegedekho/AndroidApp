@@ -1486,7 +1486,7 @@ public class MainActivity extends AppCompatActivity
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
 
                 if (fragment == null) {
-                    this.mDisplayFragment(CDRecommendedInstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, this.mUndecidedCount), !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
+                    this.mDisplayFragment(CDRecommendedInstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, this.mUndecidedCount,mExamTag), !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
                 } else {
                     if (fragment instanceof CDRecommendedInstituteListFragment) {
                         if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED)
@@ -4985,6 +4985,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void OnCDRecommendedLoadUndecidedInstitutes(String url) {
         this.mMakeNetworkCall(Constants.TAG_LOAD_UNDECIDED_INSTITUTE, url, null, Request.Method.GET);
+    }
+
+    @Override
+    public void OnAppliedInstitute(int instituteId) {
+        String cafUrl="https://m.collegedekho.com/caf-login-signup/?institute_id="+instituteId;
+        onDisplayWebFragment(cafUrl);
     }
 
     private List<VideoEntry> videoList;

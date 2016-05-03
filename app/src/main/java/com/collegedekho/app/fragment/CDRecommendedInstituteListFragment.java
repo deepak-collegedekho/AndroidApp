@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -15,6 +16,7 @@ import com.collegedekho.app.display.swipableList.model.CardModel;
 import com.collegedekho.app.display.swipableList.view.CardContainerNew;
 import com.collegedekho.app.display.swipableList.view.SimpleCardStackAdapterNew;
 import com.collegedekho.app.entities.Institute;
+import com.collegedekho.app.resource.BitMapHolder;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
 
@@ -22,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CDRecommendedInstituteListFragment extends BaseFragment implements SimpleCardStackAdapterNew.OnCDRecommendedAdapterInterface{
+public class CDRecommendedInstituteListFragment extends BaseFragment implements SimpleCardStackAdapterNew.OnCDRecommendedAdapterInterface,CardContainerNew.OnSwipeDirectionListener {
     public static final String TITLE = "CDRecommendedInstitutes";
     private static final String ARG_INSTITUTE = "cdrecommendedinstitute";
     private static final String ARG_FILTER_ALLOWED = "filter_allowed";
@@ -40,18 +42,22 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     private TextView mEmptyTextView;
     private boolean IS_UNDECIDED_INSTITUTES = false;
     private static boolean IS_FIRST_SHOW = true;
-
+    private ImageView mLikeImageView;
+    private ImageView mDislikeImageView;
+    private ImageView mUndecidedImageView;
+String examTag;
     public CDRecommendedInstituteListFragment() {
         // Required empty public constructor
     }
 
-    public static CDRecommendedInstituteListFragment newInstance(ArrayList<Institute> institutes, String title, String next, int undecidedCount) {
+    public static CDRecommendedInstituteListFragment newInstance(ArrayList<Institute> institutes, String title, String next, int undecidedCount,String examTag) {
         CDRecommendedInstituteListFragment fragment = new CDRecommendedInstituteListFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(ARG_INSTITUTE, institutes);
         args.putString(ARG_TITLE, title);
         args.putString(ARG_NEXT, next);
         args.putInt(ARG_UNDECIDED_INSTITUTE_COUNT, undecidedCount);
+        args.putString("EXAM_TAG",examTag);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,6 +70,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             this.mTitle = this.getArguments().getString(ARG_TITLE);
             this.mNextUrl = this.getArguments().getString(ARG_NEXT);
             this.mUndecidedCount = this.getArguments().getInt(ARG_UNDECIDED_INSTITUTE_COUNT);
+            this.examTag=this.getArguments().getString("EXAM_TAG");
         }
     }
 
@@ -73,9 +80,23 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         final View rootView = inflater.inflate(R.layout.fragment_recommended_institute_listing, container, false);
 
         this.mCardContainer = (CardContainerNew) rootView.findViewById(R.id.fragment_recommended_institute_cards_container);
+        this.mCardContainer.setListener(this);
+
         this.mUndecidedCountTV = (TextView)rootView.findViewById(R.id.fragment_recommended_institute_undecided_count);
         this.mPageTitleTV = (TextView)rootView.findViewById(R.id.recommended_page_title);
 
+        try{
+            mLikeImageView=(ImageView) rootView.findViewById(R.id.like_textview);
+            mDislikeImageView=(ImageView) rootView.findViewById(R.id.dislike_textview);
+            mUndecidedImageView=(ImageView) rootView.findViewById(R.id.decide_later_textview);
+
+            mLikeImageView.setImageBitmap(BitMapHolder.SHORTLISTED_BITMAP);
+            mDislikeImageView.setImageBitmap(BitMapHolder.UNSHORTLISTED_BITMAP);
+            mUndecidedImageView.setImageBitmap(BitMapHolder.UNDECIDED_BITMAP);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count - ", "", Constants.ANIM_SHORT_DURATION);
 
         this.mEmptyTextView = (TextView)rootView.findViewById(android.R.id.empty);
@@ -92,7 +113,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             this.mEmptyTextView.setVisibility(View.GONE);
         }
 
-        this.mAdapter = new SimpleCardStackAdapterNew(getActivity(), this.getContext(), this);
+        this.mAdapter = new SimpleCardStackAdapterNew(getActivity(), this.getContext(), this,examTag);
         this.mAddCardInAdapter(this.mInstitutes);
 
 
@@ -361,6 +382,12 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         this.mEmptyTextView.setText(message);
     }
 
+    @Override
+    public void OnAppliedInstitute(int instituteId) {
+        if(mListener != null)
+            this.mListener.OnAppliedInstitute(instituteId);
+    }
+
     private void sendRequestForUndecided(){
         if(mListener != null)
             this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
@@ -407,6 +434,34 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
 
     }
 
+    @Override
+    public void onActionDislike() {
+        mLikeImageView.setVisibility(View.GONE);
+        mDislikeImageView.setVisibility(View.VISIBLE);
+        mUndecidedImageView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onActionLike() {
+        mLikeImageView.setVisibility(View.VISIBLE);
+        mDislikeImageView.setVisibility(View.GONE);
+        mUndecidedImageView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onActionDecideLater() {
+        mLikeImageView.setVisibility(View.GONE);
+        mDislikeImageView.setVisibility(View.GONE);
+        mUndecidedImageView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onActionCancel() {
+        mLikeImageView.setVisibility(View.GONE);
+        mDislikeImageView.setVisibility(View.GONE);
+        mUndecidedImageView.setVisibility(View.GONE);
+    }
+
     public interface OnCDRecommendedInstituteListener extends BaseListener{
         void OnCDRecommendedLoadNext();
         void OnCDRecommendedInstituteSelected(Institute institute);
@@ -414,5 +469,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard, boolean isUndecided);
         void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard, boolean isUndecided);
         void OnCDRecommendedLoadUndecidedInstitutes(String url);
+        void OnAppliedInstitute(int instituteId);
     }
 }
