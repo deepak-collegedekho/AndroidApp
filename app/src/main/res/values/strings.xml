@@ -271,6 +271,7 @@
     <string name="APPLY_COURSE">institute_course</string>
     <string name="APPLY_COURSE_ID">institute_course_id</string>
     <string name="APPLY_INSTITUTE">institute</string>
+    <string name="APPLY_INSTITUTE_FROM_RECO">institute_from_reco</string>
 
 
     <string name="KEY_APPLY_STATUS">apply_status</string>

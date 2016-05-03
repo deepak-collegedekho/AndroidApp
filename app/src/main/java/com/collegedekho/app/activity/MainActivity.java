@@ -18,7 +18,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
@@ -44,7 +43,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.transition.Fade;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -146,7 +144,6 @@ import com.collegedekho.app.listener.OnNewsSelectListener;
 import com.collegedekho.app.resource.BitMapHolder;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
-import com.collegedekho.app.resource.DetailsTransition;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
@@ -1936,6 +1933,16 @@ public class MainActivity extends AppCompatActivity
                 }
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 this.mUpdateAppliedCourses(response, extraTag, tabPosition);
+                break;
+
+            case Constants.TAG_WISH_LIST_APPLIED_COURSE:
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
+                if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteListFragment) {
+                    if(mInstituteList!=null && mInstituteList.size()>0 && institute!=null && mInstituteList.contains(institute)) {
+                        mInstituteList.remove(institute);
+                        ((CDRecommendedInstituteListFragment) currentFragment).updateList(this.mInstituteList, next);
+                    }
+                }
                 break;
             case Constants.TAG_POST_QUESTION:
                 this.mInstituteQnAQuestionAdded(response);
@@ -5010,9 +5017,120 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void OnAppliedInstitute(int instituteId) {
-        String cafUrl="https://m.collegedekho.com/caf-login-signup/?institute_id="+instituteId;
-        onDisplayWebFragment(cafUrl);
+    public void OnAppliedInstitute(Institute institute) {
+        if(institute.getGroups_exists()==1) {
+            String cafUrl = "https://m.collegedekho.com/caf-login-signup/?institute_id=" + institute.getId();
+            onDisplayWebFragment(cafUrl);
+        }else {
+            onWishListCourseApplied(institute);
+        }
+    }
+
+    Institute institute;
+    public void onWishListCourseApplied(final Institute institute) {
+        this.institute=institute;
+        final HashMap<String, String> params = new HashMap<>();
+        if (user != null) {
+            String name = user.getName();
+            String email = user.getEmail();
+            String phone = user.getPhone_no();
+
+            if (name.equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER)))
+                name = "";
+
+            if ((user.getName() == null || user.getName().isEmpty() || name.equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER))) && user.profileData[0] != null)
+                name = user.profileData[0];
+            if (phone == null || phone.isEmpty())
+                phone = user.getPrimaryPhone();
+            if (user.getEmail().contains("@anonymouscollegedekho.com"))
+                email = user.getPrimaryEmail();
+
+            if (name == null || name.isEmpty() || name.toLowerCase().contains(getResourceString(R.string.ANONYMOUS_USER).toLowerCase()) ||
+                    phone == null || phone.length() <= 6 ||
+                    email == null || email.isEmpty() || email.contains("@anonymouscollegedekho.com")) {
+                final View view = getLayoutInflater().inflate(R.layout.dialog_apply, null, false);
+                ((TextView) view.findViewById(R.id.apply_name)).setText(name);
+                ((TextView) view.findViewById(R.id.apply_email)).setText(email);
+                ((TextView) view.findViewById(R.id.apply_phone)).setText(phone);
+                Spinner datePicker = (Spinner) view.findViewById(R.id.apply_year);
+                datePicker.setAdapter(new ArrayAdapter<>(this, R.layout.item_spinner, getYears()));
+                datePicker.setOnItemSelectedListener(this);
+                final Dialog apply = new android.app.AlertDialog.Builder(this)
+                        .setView(view)
+                        .create();
+                apply.setCanceledOnTouchOutside(false);
+                apply.show();
+                (view.findViewById(R.id.submit_button)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String name = ((TextView) view.findViewById(R.id.apply_name)).getText().toString();
+                        String email = ((TextView) view.findViewById(R.id.apply_email)).getText().toString();
+                        String phone = ((TextView) view.findViewById(R.id.apply_phone)).getText().toString();
+                        if (name == null || name.isEmpty()) {
+                            displayMessage(R.string.NAME_EMPTY);
+                            return;
+                        } else if (!Utils.isValidName(name)) {
+                            displayMessage(R.string.NAME_INVALID);
+                            return;
+                        } else if (phone == null || phone.isEmpty()) {
+                            displayMessage(R.string.PHONE_EMPTY);
+                            return;
+                        } else if (phone.length() <= 9 || phone.length() > 12 || !Utils.isValidPhone(phone)) {
+                            displayMessage(R.string.PHONE_INVALID);
+                            return;
+                        } else if (email == null || email.isEmpty()) {
+                            displayMessage(R.string.EMAIL_EMPTY);
+                            return;
+                        } else if (!Utils.isValidEmail(email)) {
+                            displayMessage(R.string.EMAIL_INVALID);
+                            return;
+                        }
+                        apply.dismiss();
+                        params.put(getResourceString(R.string.USER_NAME), name);
+                        params.put(getResourceString(R.string.USER_EMAIL), email);
+                        params.put(getResourceString(R.string.USER_PHONE), phone);
+                        params.put(getResourceString(R.string.APPLY_YEAR), mYear);
+                        params.put("institute", "" + institute.getId());
+
+                        String URL = Constants.BASE_URL + "lms/";
+                        mMakeNetworkCall(Constants.TAG_WISH_LIST_APPLIED_COURSE , URL, params, Request.Method.POST);
+
+                        Map<String, Object> eventValue = new HashMap<String, Object>();
+                        eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_RECO), institute.getResource_uri());
+                        //Events
+                        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
+
+                    }
+                });
+
+                (view.findViewById(R.id.cancel_button)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        apply.dismiss();
+                        if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
+                            ((InstituteDetailFragment) currentFragment).cancleAppliedRequest();
+                    }
+                });
+            } else {
+                params.put(getResourceString(R.string.USER_NAME), name);
+                params.put(getResourceString(R.string.USER_EMAIL), email);
+                params.put(getResourceString(R.string.USER_PHONE), phone);
+
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                params.put(getResourceString(R.string.APPLY_YEAR), "" + year);
+                params.put("institute", "" + institute.getId());
+
+                String URL = Constants.BASE_URL + "lms/";
+                mMakeNetworkCall(Constants.TAG_WISH_LIST_APPLIED_COURSE , URL, params, Request.Method.POST);
+
+                Map<String, Object> eventValue = new HashMap<>();
+                eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_RECO), institute.getResource_uri());
+                //Events
+                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
+
+            }
+        }
     }
 
     private List<VideoEntry> videoList;

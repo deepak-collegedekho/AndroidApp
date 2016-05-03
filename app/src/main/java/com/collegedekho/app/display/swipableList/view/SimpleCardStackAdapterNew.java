@@ -82,7 +82,8 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         (convertView.findViewById(R.id.btn_apply_now)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.OnAppliedInstitute(((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute().getId());
+                Institute institute=((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute();
+                    mListener.OnAppliedInstitute(institute);
             }
         });
         (convertView.findViewById(R.id.header_view)).setOnClickListener(new View.OnClickListener() {
@@ -415,7 +416,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
 
         void OnShowMessage(String message);
 
-        void OnAppliedInstitute(int instituteId);
+        void OnAppliedInstitute(Institute institute);
     }
 
     public void clear() {

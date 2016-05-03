@@ -383,9 +383,9 @@ String examTag;
     }
 
     @Override
-    public void OnAppliedInstitute(int instituteId) {
+    public void OnAppliedInstitute(Institute institute) {
         if(mListener != null)
-            this.mListener.OnAppliedInstitute(instituteId);
+            this.mListener.OnAppliedInstitute(institute);
     }
 
     private void sendRequestForUndecided(){
@@ -469,6 +469,6 @@ String examTag;
         void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard, boolean isUndecided);
         void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard, boolean isUndecided);
         void OnCDRecommendedLoadUndecidedInstitutes(String url);
-        void OnAppliedInstitute(int instituteId);
+        void OnAppliedInstitute(Institute institute);
     }
 }

@@ -71,6 +71,7 @@ public class Institute implements Parcelable {
     private String l3_number;
     private String application_end_date;
     private String application_status;
+    private int groups_exists;
 
     private ArrayList<String> exams = new ArrayList<>();
 
@@ -129,6 +130,7 @@ public class Institute implements Parcelable {
         l3_number=source.readString();
         application_end_date=source.readString();
         application_status=source.readString();
+        groups_exists=source.readInt();
     }
 
     public String getCurrent_user_vote_url() {
@@ -279,6 +281,7 @@ public class Institute implements Parcelable {
         dest.writeString(l3_number);
         dest.writeString(application_end_date);
         dest.writeString(application_status);
+        dest.writeInt(groups_exists);
     }
 
     public String getLogo() {
@@ -607,5 +610,13 @@ public class Institute implements Parcelable {
 
     public void setApplication_status(String application_status) {
         this.application_status = application_status;
+    }
+
+    public int getGroups_exists() {
+        return groups_exists;
+    }
+
+    public void setGroups_exists(int groups_exists) {
+        this.groups_exists = groups_exists;
     }
 }

@@ -83,6 +83,7 @@ public class Constants
     public static final String BASE_URL = IP + "/api/1/";
     public static final String TAG_LOAD_COURSES = "load_courses";
     public static final String TAG_APPLIED_COURSE = "applied_course";
+    public static final String TAG_WISH_LIST_APPLIED_COURSE = "wish_listLapplied_course";
     public static final String TAG_POST_QUESTION = "post_question";
     public static final String TAG_LOAD_FILTERS = "load_filters";
     public static final String TAG_RESOURCE_URI = "resource_uri";

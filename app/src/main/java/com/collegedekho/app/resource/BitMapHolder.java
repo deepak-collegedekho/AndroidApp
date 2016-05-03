@@ -5,12 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-
 import android.support.v4.content.ContextCompat;
 
 import com.collegedekho.app.R;
-import android.graphics.drawable.VectorDrawable;
-import android.os.Build;
 
 
 /**
@@ -49,11 +46,11 @@ public class BitMapHolder {
     public void  getBitMapFromResource(){
 
         if(this.drawableShortList == null)
-            this.drawableShortList = ContextCompat.getDrawable(mContext, R.drawable.ic_shortlist_vector);
+            this.drawableShortList = ContextCompat.getDrawable(mContext, R.drawable.move_to_wishlist);
         if(this.drawableNotIntrested == null)
-            this.drawableNotIntrested = ContextCompat.getDrawable(mContext, R.drawable.ic_not_interested_vector);
+            this.drawableNotIntrested = ContextCompat.getDrawable(mContext, R.drawable.not_interested);
         if(this.drawableUndecided == null)
-            this. drawableUndecided = ContextCompat.getDrawable(mContext, R.drawable.ic_undecided_vector);
+            this. drawableUndecided = ContextCompat.getDrawable(mContext, R.drawable.decide_later);
 
         if(SHORTLISTED_BITMAP == null)
             SHORTLISTED_BITMAP   =  getBitmapDrawable(drawableShortList);
