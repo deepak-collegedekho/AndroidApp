@@ -278,6 +278,7 @@ public class MainActivity extends AppCompatActivity
     private List<Institute> mShortlistedInstituteList;
     private int currentInstitute;
     private ProgressDialog progressDialog;
+    private AlertDialog mErrorDialog;
     private String mCurrentTitle;
     private String next;
     private List<MyFutureBuddiesEnumeration> mFbEnumeration;
@@ -2956,9 +2957,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onError(final String tag, String response, final String url, final Map<String, String> params, final int method) {
         hideProgressDialog();
+        hideErrorDialog();
 
         if (!MainActivity.this.isFinishing()) {
-            new AlertDialog.Builder(this)
+          mErrorDialog =  new AlertDialog.Builder(this)
                     .setMessage(response)
                     .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                         @Override
@@ -3022,10 +3024,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onJsonObjectRequestError(final String tag, final String response, final String url, final JSONObject params, final int method) {
         hideProgressDialog();
-
+        hideErrorDialog();
         if (!MainActivity.this.isFinishing()) {
             //show dialog
-            new AlertDialog.Builder(this)
+          mErrorDialog =  new AlertDialog.Builder(this)
                     .setMessage(response)
                     .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                         @Override
@@ -3368,6 +3370,11 @@ public class MainActivity extends AppCompatActivity
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
         IS_NETWORK_TASK_RUNNING=false;
+    }
+
+    public void hideErrorDialog() {
+        if (mErrorDialog != null && mErrorDialog.isShowing())
+            mErrorDialog.dismiss();
     }
 
     public void displaySnackBar(int messageId) {

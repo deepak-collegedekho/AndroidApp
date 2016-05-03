@@ -23,7 +23,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/wish_list_title_blue_bg"
-                    android:padding="@dimen/m8dp">
+                    android:paddingTop="@dimen/m6dp"
+                    android:paddingBottom="@dimen/m5dp"
+                    android:paddingRight="@dimen/m10dp"
+                    android:paddingLeft="@dimen/m10dp">
 
                     <TextView
                         android:id="@+id/title"
@@ -62,15 +65,14 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="@dimen/m140dp">
 
                     <com.collegedekho.app.widget.FadeInImageView
                         android:id="@+id/institute_image"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/m160dp"
+                        android:layout_height="match_parent"
                         android:layout_marginLeft="@dimen/m2dp"
                         android:layout_marginRight="@dimen/m2dp"
-                        android:adjustViewBounds="true"
                         android:scaleType="fitXY"
                         android:src="@drawable/default_banner"/>
 
@@ -86,6 +88,7 @@
                         android:text="CRR"
                         android:textColor="@color/white"
                         android:textSize="13sp"
+                        android:visibility="gone"
                         android:textStyle="bold"
                         />
 
@@ -102,6 +105,7 @@
                         android:paddingRight="@dimen/m2dp"
                         android:paddingTop="@dimen/m5dp"
                         android:text="10"
+                        android:visibility="gone"
                         android:textColor="@color/white"
                         android:textSize="13sp"
                         android:textStyle="bold"
@@ -278,7 +282,7 @@
                         android:layout_marginLeft="-8dp"
                         android:layout_marginRight="@dimen/m20dp"
                         android:layout_marginTop="@dimen/m10dp"
-                        android:background="@drawable/heart_drawable"
+                        android:background="@drawable/alarm"
                         android:gravity="center_horizontal"
                         android:orientation="vertical"
                         android:layout_marginBottom="@dimen/m8dp"
@@ -592,6 +596,7 @@
                         android:layout_height="1dp"
                         android:layout_marginLeft="@dimen/m10dp"
                         android:layout_marginRight="@dimen/m10dp"
+                        android:layout_marginTop="@dimen/m8dp"
                         android:background="@color/end_gradient"/>
 
                     <LinearLayout
@@ -607,14 +612,14 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="left"
                             android:layout_weight="1"
-                            android:background="@color/primary_orange_light"
+                            android:background="@color/primary_orange_opacity"
                             android:maxLines="@integer/int1"
-                            android:paddingTop="@dimen/m10dp"
-                            android:paddingBottom="@dimen/m10dp"
+                            android:paddingTop="@dimen/m8dp"
+                            android:paddingBottom="@dimen/m8dp"
                             android:paddingLeft="@dimen/m5dp"
                             android:text="streams"
                             android:textColor="@color/primary_color"
-                            android:textSize="12sp"/>
+                            android:textSize="13sp"/>
 
                         <TextView
                             android:id="@+id/recommended_exams"
@@ -623,14 +628,14 @@
                             android:layout_gravity="left"
                             android:layout_marginLeft="@dimen/m10dp"
                             android:layout_weight="1"
-                            android:background="@color/primary_orange_light"
+                            android:background="@color/primary_orange_opacity"
                             android:maxLines="@integer/int1"
-                            android:paddingTop="@dimen/m10dp"
-                            android:paddingBottom="@dimen/m10dp"
+                            android:paddingTop="@dimen/m8dp"
+                            android:paddingBottom="@dimen/m8dp"
                             android:paddingLeft="@dimen/m5dp"
                             android:text="Exams"
                             android:textColor="@color/primary_color"
-                            android:textSize="12sp"/>
+                            android:textSize="13sp"/>
                     </LinearLayout>
 
                 <LinearLayout
@@ -638,7 +643,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/m10dp"
                     android:layout_marginBottom="@dimen/m10dp"
-                    android:gravity="top|center_horizontal"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <TextView
@@ -646,9 +651,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_button_blue"
-                        android:drawableLeft="@drawable/ic_like"
+                        android:drawableLeft="@drawable/call"
                         android:drawablePadding="@dimen/m5dp"
-                        android:padding="10dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
                         android:text="CALL L3"
                         android:gravity="center"
                         android:layout_marginRight="@dimen/m8dp"
@@ -659,7 +667,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_button_orange"
-                        android:padding="11dp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
                         android:text="APPLY NOW"
                         android:layout_marginLeft="@dimen/m8dp"
                         android:textColor="@color/white"/>
