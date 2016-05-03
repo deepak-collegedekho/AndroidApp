@@ -61,6 +61,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_marginRight="@dimen/m4dp"
+                        android:visibility="gone"
                         app:srcCompat="@drawable/ic_share"/>
                 </RelativeLayout>
 
@@ -508,7 +509,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_below="@id/max_sal_txt"
                                     android:layout_marginLeft="@dimen/m10dp"
-                                    android:text="50 Lac"
+                                    android:text="-- Lac"
                                     android:textColor="@color/primary_color"
                                     android:textSize="11sp"
                                     android:textStyle="bold"
@@ -560,7 +561,7 @@
                                     android:layout_below="@id/avg_sal_txt"
                                     android:layout_marginLeft="@dimen/m10dp"
                                     android:layout_toRightOf="@id/min_sal_bar"
-                                    android:text="40 Lac"
+                                    android:text="-- Lac"
                                     android:textColor="@color/primary_color"
                                     android:textSize="11sp"
                                     android:textStyle="bold"
@@ -584,7 +585,7 @@
                                     android:layout_alignParentBottom="true"
                                     android:layout_marginLeft="@dimen/m10dp"
                                     android:layout_toRightOf="@id/min_sal_bar"
-                                    android:text="30 Lac"
+                                    android:text="-- Lac"
                                     android:textColor="@color/primary_color"
                                     android:textSize="11sp"
                                     android:textStyle="bold"

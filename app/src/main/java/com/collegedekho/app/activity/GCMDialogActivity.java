@@ -529,8 +529,8 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
         questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, preferredStream));
         questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, yearOfAdmission));
 //        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, preferredSpecialization));
-        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, preferredStates));
-        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, preferredCities));
+//        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, preferredStates));
+//        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, preferredCities));
         questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, feesRange));
         questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, preferredMode));
 ////        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, loanRequired));

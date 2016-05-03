@@ -213,7 +213,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             if (institute.getPlacement_percentage() != null && !institute.getPlacement_percentage().isEmpty()) {
                 placementPercent.setText("" + institute.getPlacement_percentage() + "%");
             }else {
-                placementPercent.setText("");
+                placementPercent.setText("---");
             }
             TextView likes = ((TextView) convertView.findViewById(R.id.vote_count));
             likes.setText(String.valueOf(institute.getUpvotes()));
@@ -308,7 +308,12 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
                     seeAllButton.setVisibility(View.INVISIBLE);
                 }
             }
-            feesText.setText(institute.getFees());
+
+            if (institute.getFees() != null && !institute.getFees().isEmpty()) {
+                feesText.setText("" + institute.getFees());
+            }else {
+                feesText.setText("---");
+            }
 //            if (institute.getStreams().size() == 1)
 //                ((TextView) convertView.findViewById(R.id.card_recommended_streams_label)).setText("Stream :");
 
