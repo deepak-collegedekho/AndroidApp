@@ -2,6 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/m1dp"
@@ -29,8 +30,14 @@
             style="@style/AppTheme.ImageView.FadeInImage"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:contentDescription="@string/article_image"
+            android:contentDescription="@string/news_image"
             android:layout_below="@+id/card_article_heading"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:scaleType="fitXY"
+            android:layout_gravity="center"
+            tools:ignore="ContentDescription,UnusedAttribute"
             />
         <TextView
             android:id="@+id/textview_article_title"

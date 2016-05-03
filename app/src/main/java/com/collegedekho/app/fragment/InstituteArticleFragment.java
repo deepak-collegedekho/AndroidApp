@@ -200,7 +200,7 @@ public class InstituteArticleFragment extends BaseFragment {
                 break;
             case R.id.article_detail_layout:
 
-                (( MainActivity)getActivity()).onArticleSelected(this.mArticle, true);
+                (( MainActivity)getActivity()).onArticleSelected(this.mArticle, true, null);
                 break;
             default:
                 break;

@@ -422,9 +422,9 @@
     <string name="article_image_description">Image for current Article</string>
 
     <!-- TRUE CALLER Debug key-->
-    <!--string name="partnerKey">baLWqkLO85xFIlFrAi5phqW1zSfCceMb</string-->
+    <string name="partnerKey">baLWqkLO85xFIlFrAi5phqW1zSfCceMb</string>
     <!-- TRUE CALLER Release key-->
-    <string name="partnerKey">ZjojDtbi99nS9J3pW8dwMfFYkrHxYeRM</string>
+  <!--  <string name="partnerKey">ZjojDtbi99nS9J3pW8dwMfFYkrHxYeRM</string>-->
 
     <!--   new and Article image transaction-->
     <string name="news_image_transaction">NewsImageTransaction</string>

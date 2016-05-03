@@ -458,7 +458,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         @Override
         public FacilitiesAdapter.FacilitiesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             NetworkImageView imageView = (NetworkImageView) LayoutInflater.
-                    from(parent.getContext()).inflate(R.layout.item_facility_35dp, parent, false);
+                    from(parent.getContext()).inflate(R.layout.item_facility_38dp, parent, false);
             return new FacilitiesViewHolder(imageView);
         }
 

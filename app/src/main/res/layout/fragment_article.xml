@@ -28,7 +28,9 @@
             <com.collegedekho.app.widget.FadeInImageView
                 android:id="@+id/article_college_banner"
                 style="@style/AppTheme.ImageView.FadeInImage"
-                android:layout_height="170dp"/>
+                android:transitionName="grid_article_image"
+                android:layout_height="170dp"
+                android:scaleType="fitXY"/>
 
             <TextView
                 android:id="@+id/article_title"

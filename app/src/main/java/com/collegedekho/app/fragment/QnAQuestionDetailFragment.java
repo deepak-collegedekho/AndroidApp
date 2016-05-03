@@ -38,8 +38,8 @@ public class QnAQuestionDetailFragment extends BaseFragment{
     private QnAQuestions mQnAQuestion;
     private ArrayList<QnAAnswers> mQnAAnswersSet;
     private OnQnAAnswerInteractionListener mListener;
-    private ImageView mUpvoteButton;
-    private ImageView mDownvoteButton;
+    private ImageView mUpVoteButton;
+    private ImageView mDownVoteButton;
     private QnAAnswersListAdapter mQnAAnswersListAdapter;
     private TextView mVoteCounts;
     private RecyclerView mAnswersListView;
@@ -121,11 +121,11 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         this.mVoteCounts = ((TextView) rootView.findViewById(R.id.qna_votes_Count));
         this.mVoteCounts.setText(String.valueOf(this.mQnAQuestion.getUpvotes() - this.mQnAQuestion.getDownvotes()));
 
-        this.mUpvoteButton = (ImageView) rootView.findViewById(R.id.qna_button_upvote);
-        this.mDownvoteButton = (ImageView) rootView.findViewById(R.id.qna_button_downvote);
+        this.mUpVoteButton = (ImageView) rootView.findViewById(R.id.qna_button_upvote);
+        this.mDownVoteButton = (ImageView) rootView.findViewById(R.id.qna_button_downvote);
 
-        this.mUpvoteButton.setSelected(this.mQnAQuestion.getCurrent_user_vote_type() == Constants.LIKE_THING);
-        this.mDownvoteButton.setSelected(this.mQnAQuestion.getCurrent_user_vote_type() == Constants.DISLIKE_THING);
+        this.mUpVoteButton.setSelected(this.mQnAQuestion.getCurrent_user_vote_type() == Constants.LIKE_THING);
+        this.mDownVoteButton.setSelected(this.mQnAQuestion.getCurrent_user_vote_type() == Constants.DISLIKE_THING);
 
         (rootView.findViewById(R.id.answer_reply)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,7 +167,7 @@ public class QnAQuestionDetailFragment extends BaseFragment{
             }
         });
 
-        this.mUpvoteButton.setOnClickListener(new View.OnClickListener() {
+        this.mUpVoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -184,7 +184,7 @@ public class QnAQuestionDetailFragment extends BaseFragment{
             }
         });
 
-        this.mDownvoteButton.setOnClickListener(new View.OnClickListener() {
+        this.mDownVoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
@@ -269,16 +269,16 @@ public class QnAQuestionDetailFragment extends BaseFragment{
             if (voteType == Constants.LIKE_THING)
             {
                 totalVotes++;
-                this.mUpvoteButton.setSelected(true);
-                this.mDownvoteButton.setSelected(false);
+                this.mUpVoteButton.setSelected(true);
+                this.mDownVoteButton.setSelected(false);
 //                this.mQnAQuestion.setCurrent_user_vote_type(Constants.LIKE_THING);
                 this.mQnAQuestion.setUpvotes(mQnAQuestion.getUpvotes()+1);
             }
             else if(voteType == Constants.DISLIKE_THING)
             {
                 totalVotes--;
-                this.mUpvoteButton.setSelected(false);
-                this.mDownvoteButton.setSelected(true);
+                this.mUpVoteButton.setSelected(false);
+                this.mDownVoteButton.setSelected(true);
 //                this.mQnAQuestion.setCurrent_user_vote_type(Constants.DISLIKE_THING);
                 this.mQnAQuestion.setDownvotes(mQnAQuestion.getDownvotes()+1);
             }else {
@@ -291,8 +291,8 @@ public class QnAQuestionDetailFragment extends BaseFragment{
 
             this.mQnAQuestion.setCurrent_user_vote_type(voteType);
             this.mVoteCounts.setText(String.valueOf(totalVotes));
-            this.mUpvoteButton.setSelected(voteType == Constants.LIKE_THING);
-            this.mDownvoteButton.setSelected(voteType == Constants.DISLIKE_THING);
+            this.mUpVoteButton.setSelected(voteType == Constants.LIKE_THING);
+            this.mDownVoteButton.setSelected(voteType == Constants.DISLIKE_THING);
         }
         else
         {

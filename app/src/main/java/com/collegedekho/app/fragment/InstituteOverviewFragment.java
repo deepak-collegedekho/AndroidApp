@@ -128,7 +128,7 @@ public class InstituteOverviewFragment extends BaseFragment {
     private void setupFacilities(LayoutInflater inflater, LinearLayout facilityLayout, ArrayList<Facility> facilities) {
         ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
         for (Facility f : facilities) {
-            NetworkImageView imageView = (NetworkImageView) inflater.inflate(R.layout.item_facility_35dp, facilityLayout, false);
+            NetworkImageView imageView = (NetworkImageView) inflater.inflate(R.layout.item_facility_38dp, facilityLayout, false);
             imageView.setImageUrl(f.image_new, imageLoader);
             facilityLayout.addView(imageView);
         }

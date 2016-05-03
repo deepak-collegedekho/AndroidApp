@@ -1,6 +1,7 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
@@ -75,6 +76,8 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
 
         if (articles.image != null && !articles.image.isEmpty())
             articleHolder.articleImage.setImageUrl(articles.image, imageLoader);
+
+        ViewCompat.setTransitionName(articleHolder.articleImage, String.valueOf(position) + "_image");
 
         if (mViewType == Constants.VIEW_INTO_LIST) {
             articleHolder.articleContent.setText(Html.fromHtml(articles.content));
@@ -164,7 +167,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
                 flag = true;
             if (getAdapterPosition() < mArticles.size()) {
                 try {
-                    mListener.onArticleSelected(mArticles.get(getAdapterPosition()), flag);
+                    mListener.onArticleSelected(mArticles.get(getAdapterPosition()), flag, articleImage);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

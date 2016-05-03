@@ -37,8 +37,9 @@ public class MyFutureBuddy implements Parcelable {
         comments_count = source.readInt();
         members_count = source.readInt();
         index = source.readInt();
-        futureBuddiesCommentsSet=new ArrayList<>();
         futureBuddiesCommentsSet = source.createTypedArrayList(MyFutureBuddyComment.CREATOR);
+        if(futureBuddiesCommentsSet == null)
+            futureBuddiesCommentsSet=new ArrayList<>();
         source.readTypedList(futureBuddiesCommentsSet, MyFutureBuddyComment.CREATOR);
     }
 

@@ -3396,7 +3396,7 @@ public class MainActivity extends AppCompatActivity
             if (currentFragment instanceof NewsDetailFragment) {
                 (currentFragment).updateNews(news);
             }else {
-
+/*
                      Fragment fragment = NewsDetailFragment.newInstance(news, this.mNewsList);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         fragment.setSharedElementEnterTransition(new DetailsTransition());
@@ -3413,8 +3413,8 @@ public class MainActivity extends AppCompatActivity
                     fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
 
                     fragmentTransaction.addToBackStack(fragment.toString());
-                    fragmentTransaction.commit();
-                //this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
+                    fragmentTransaction.commit();*/
+                this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
             }
 
             Map<String, Object> eventValue = new HashMap<>();
@@ -3427,27 +3427,42 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onArticleSelected(Articles article, boolean addToBackstack) {
+    public void onArticleSelected(Articles article, boolean addToBackstack, View view) {
         if (article == null) return;
         if (!addToBackstack) {
             this.currentFragment.updateArticle(article);
         } else {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            Fragment fragment = fragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
-
             if (currentFragment instanceof ArticleDetailFragment) {
-                ((ArticleDetailFragment) fragment).updateArticle(article);
+                (currentFragment).updateArticle(article);
             }else {
+
+               /* Fragment fragment = ArticleDetailFragment.newInstance(article, this.mArticlesList);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    fragment.setSharedElementEnterTransition(new DetailsTransition());
+                    fragment.setEnterTransition(new Fade());
+                    fragment.setExitTransition(new Fade());
+                    fragment.setSharedElementReturnTransition(new DetailsTransition());
+                }
+
+                FragmentTransaction fragmentTransaction  = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.addSharedElement(view, getResources().getString(R.string.article_image_transaction));
+                fragmentTransaction.replace(R.id.container, fragment);//, Constants.TAG_FRAGMENT_NEWS_DETAIL);
+
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+                    fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+
+                fragmentTransaction.addToBackStack(fragment.toString());
+                fragmentTransaction.commit();*/
                 this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
             }
-
             Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(article.getId()));
-            eventValue.put(getResourceString(R.string.ACTION_NEWS_SELECTED), article.getId());
+            eventValue.put(getResourceString(R.string.ACTION_ARTICLE_SELECTED), article.getId());
 
             //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_ARTICLE), getResourceString(R.string.ACTION_ARTICLE_SELECTED), eventValue, this);
         }
+
     }
 
     @Override

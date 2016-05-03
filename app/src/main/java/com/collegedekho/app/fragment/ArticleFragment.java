@@ -208,8 +208,8 @@ public class ArticleFragment extends BaseFragment {
                 }
                 break;
             case R.id.article_detail_layout:
-
-                (( MainActivity)getActivity()).onArticleSelected(this.mArticle, true);
+                rootView = getView();
+                (( MainActivity)getActivity()).onArticleSelected(this.mArticle, true,rootView.findViewById(R.id.article_college_banner));
                 break;
             default:
                 break;

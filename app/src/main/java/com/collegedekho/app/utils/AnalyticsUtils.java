@@ -72,7 +72,7 @@ public class AnalyticsUtils {
         {
             properties.putValue(entry.getKey(), entry.getValue());
 
-            labels[index] = entry.getKey() + " : " + (String) entry.getValue();
+            labels[index] = entry.getKey() + " : " + entry.getValue().toString();
             index++;
         }
 

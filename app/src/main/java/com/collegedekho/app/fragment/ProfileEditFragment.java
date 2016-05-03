@@ -209,7 +209,7 @@ public class ProfileEditFragment extends BaseFragment {
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View rootView=inflater.inflate(R.layout.edit_profile_fragment_layout,container,false);
+            View rootView=inflater.inflate(R.layout.layout_edit_profile,container,false);
             return rootView;
         }
 
