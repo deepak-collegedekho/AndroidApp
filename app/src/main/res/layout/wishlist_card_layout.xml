@@ -151,7 +151,7 @@
                         android:layout_height="120dp"
                         android:background="@color/primary_orange_light"
                         android:paddingLeft="@dimen/m20dp"
-                        android:paddingTop="@dimen/m12dp"
+                        android:paddingTop="@dimen/m6dp"
                         android:visibility="gone"
                         >
 
@@ -166,10 +166,10 @@
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/wish_list_inner_bg"
                                 android:orientation="vertical"
-                                android:paddingBottom="@dimen/m4dp"
+                                android:paddingBottom="@dimen/m2dp"
                                 android:paddingLeft="@dimen/m10dp"
                                 android:paddingRight="@dimen/m10dp"
-                                android:paddingTop="@dimen/m4dp">
+                                android:paddingTop="@dimen/m2dp">
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -198,7 +198,7 @@
                                 android:paddingBottom="@dimen/m4dp"
                                 android:paddingLeft="@dimen/m10dp"
                                 android:paddingRight="@dimen/m10dp"
-                                android:paddingTop="@dimen/m4dp">
+                                android:paddingTop="@dimen/m2dp">
 
                                 <TextView
                                     android:layout_width="wrap_content"
