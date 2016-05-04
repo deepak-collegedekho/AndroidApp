@@ -22,9 +22,10 @@
 
                 <RelativeLayout android:id="@+id/header_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="58dp"
+                    android:gravity="center"
                     android:background="@drawable/wish_list_title_blue_bg"
-                    android:paddingTop="@dimen/m6dp"
+                    android:paddingTop="@dimen/m5dp"
                     android:paddingBottom="@dimen/m5dp"
                     android:paddingRight="@dimen/m10dp"
                     android:paddingLeft="@dimen/m10dp">
@@ -33,9 +34,11 @@
                         android:id="@+id/title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="4dp"
+                        android:layout_marginLeft="6dp"
                         android:layout_toLeftOf="@+id/share"
                         android:text="Institute Name"
+                        android:ellipsize="end"
+                        android:maxLines="2"
                         android:textColor="@color/white"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -46,8 +49,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/title"
-                        android:layout_marginLeft="4dp"
-                        android:layout_marginTop="@dimen/m2dp"
+                        android:layout_marginLeft="6dp"
                         android:layout_toLeftOf="@+id/share"
                         android:text="Institute description"
                         android:textColor="@color/white"
@@ -67,7 +69,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/m140dp">
+                    android:layout_height="@dimen/m120dp">
 
                     <com.collegedekho.app.widget.FadeInImageView
                         android:id="@+id/institute_image"
@@ -146,7 +148,7 @@
                     <LinearLayout
                         android:id="@+id/overlay_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="140dp"
+                        android:layout_height="120dp"
                         android:background="@color/primary_orange_light"
                         android:paddingLeft="@dimen/m20dp"
                         android:paddingTop="@dimen/m12dp"
@@ -600,7 +602,7 @@
                         android:layout_height="1dp"
                         android:layout_marginLeft="@dimen/m10dp"
                         android:layout_marginRight="@dimen/m10dp"
-                        android:layout_marginTop="@dimen/m8dp"
+                        android:layout_marginTop="@dimen/m5dp"
                         android:background="@color/end_gradient"/>
 
                     <LinearLayout
@@ -618,8 +620,8 @@
                             android:layout_weight="1"
                             android:background="@color/primary_orange_opacity"
                             android:maxLines="@integer/int1"
-                            android:paddingTop="@dimen/m8dp"
-                            android:paddingBottom="@dimen/m8dp"
+                            android:paddingTop="@dimen/m5dp"
+                            android:paddingBottom="@dimen/m5dp"
                             android:paddingLeft="@dimen/m5dp"
                             android:text="streams"
                             android:textColor="@color/primary_color"
@@ -633,8 +635,8 @@
                             android:layout_weight="1"
                             android:background="@color/primary_orange_opacity"
                             android:maxLines="@integer/int1"
-                            android:paddingTop="@dimen/m8dp"
-                            android:paddingBottom="@dimen/m8dp"
+                            android:paddingTop="@dimen/m5dp"
+                            android:paddingBottom="@dimen/m5dp"
                             android:paddingLeft="@dimen/m5dp"
                             android:text="Exams"
                             android:textColor="@color/primary_color"
@@ -643,9 +645,9 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/m10dp"
-                    android:layout_marginBottom="@dimen/m10dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/m8dp"
+                    android:layout_marginBottom="@dimen/m7dp"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -655,11 +657,11 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_button_blue"
                         android:drawablePadding="@dimen/m5dp"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
-                        android:text="CALL L3"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp"
+                        android:text="CALL"
                         android:gravity="center"
                         android:drawableLeft="@drawable/call"
                         android:layout_marginRight="@dimen/m8dp"
@@ -670,8 +672,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_button_orange"
-                        android:paddingLeft="12dp"
-                        android:paddingRight="12dp"
+                        android:paddingLeft="11dp"
+                        android:paddingRight="11dp"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:text="APPLY NOW"

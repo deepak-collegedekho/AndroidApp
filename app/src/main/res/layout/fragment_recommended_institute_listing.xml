@@ -22,141 +22,64 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="bottom"
-        >
-        <RelativeLayout
-            android:id="@+id/recommended_page_instuctions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:padding="@dimen/m5dp"
-            android:visibility="gone"
-            android:background="@color/bg_divider"
-            >
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                >
-                <ImageView
-                    android:id="@+id/recommended_tute_image_not_interested_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"
-                    app:srcCompat="@drawable/ic_redo"
-                    android:rotation="180"
-                    android:scaleY="-1"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerInParent="true"
-                    />
-                <TextView
-                    android:id="@+id/recommended_tute_image_not_interested"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"
-                    android:text="Not Interested"
-                    android:layout_below="@id/recommended_tute_image_not_interested_image"
-                    android:layout_marginTop="@dimen/m5dp"
-                    />
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                >
-                <ImageView
-                    android:id="@+id/recommended_tute_image_not_decided_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"
-                    app:srcCompat="@drawable/ic_redo"
-                    android:rotation="270"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerInParent="true"
-                    />
-                <TextView
-                    android:id="@+id/recommended_tute_image_not_decided"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"
-                    android:text="Decide Later"
-                    android:layout_below="@id/recommended_tute_image_not_decided_image"
-                    android:layout_marginTop="@dimen/m5dp"
-                    />
-
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                >
-                <ImageView
-                    android:id="@+id/recommended_tute_image_shortlisted_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"
-                    app:srcCompat="@drawable/ic_redo"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerInParent="true"
-                    />
-                <TextView
-                    android:id="@+id/recommended_tute_image_shortlisted"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"
-                    android:text="Shortlist"
-                    android:layout_below="@id/recommended_tute_image_shortlisted_image"
-                    android:layout_marginTop="@dimen/m5dp"
-                    />
-            </RelativeLayout>
-        </RelativeLayout>
+        android:gravity="top"
+        android:weightSum="10">
 
         <com.collegedekho.app.display.swipableList.view.CardContainerNew
             android:id="@+id/fragment_recommended_institute_cards_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="9"
+            android:layout_weight="9.1"
             android:translationZ="@dimen/m5dp"
             />
 
         <include layout="@layout/layout_empty"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="9"/>
-    <TextView
-        android:id="@+id/fragment_recommended_institute_undecided_count"
-        style="@style/AppTheme.BlackBorderButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Undecided Count - ..."
-        android:layout_gravity="center_horizontal|bottom"
-        android:gravity="bottom|center"
-        android:layout_marginBottom="@dimen/activity_horizontal_margin_small"
-        android:textSize="@dimen/m14sp"
-        android:fontFamily="sans-serif-light"
-        android:visibility="gone"
-        />
+            android:layout_weight="9.1"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".9"
+            android:weightSum="1"
+            android:orientation="horizontal"
+            >
+            <ImageView
+                android:id="@+id/cd_reco_left_arrow"
+                android:layout_width="0dp"
+                android:layout_weight=".3"
+                app:srcCompat="@drawable/ic_arrow_right_black"
+                android:scaleX="-1"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/fragment_recommended_institute_undecided_count"
+                style="@style/AppTheme.BlackBorderButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".4"
+                android:text="Undecided Count - ..."
+                android:layout_gravity="bottom|center_horizontal"
+                android:gravity="center"
+                android:textSize="@dimen/m12sp"
+                android:layout_marginBottom="@dimen/m4dp"
+                android:paddingBottom="@dimen/m8dp"
+                android:paddingTop="@dimen/m8dp"
+                app:srcCompat="@drawable/ic_arrow_right_black"
+                android:fontFamily="sans-serif-light"
+                android:visibility="visible"
+                />
+
+            <ImageView
+                android:id="@+id/cd_reco_right_arrow"
+                android:layout_width="0dp"
+                android:layout_weight=".3"
+                app:srcCompat="@drawable/ic_arrow_right_black"
+                android:layout_height="match_parent" />
+</LinearLayout>
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/recommended_tute_frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible"
-        android:importantForAccessibility="no"
-        >
-        <ImageView
-            android:id="@+id/recommended_tute_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:clickable="true"
-            android:contentDescription="@string/profile_tute_description"
-            android:src="@drawable/ic_recommended_tute"
-            />
-    </FrameLayout>
     <RelativeLayout android:id="@+id/direction_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -188,4 +111,22 @@
             android:layout_centerHorizontal="true"
             />
     </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/recommended_tute_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:importantForAccessibility="no"
+        >
+        <ImageView
+            android:id="@+id/recommended_tute_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:clickable="true"
+            android:contentDescription="@string/profile_tute_description"
+            android:src="@drawable/ic_recommended_tute"
+            />
+    </FrameLayout>
 </RelativeLayout>

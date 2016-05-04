@@ -45,7 +45,9 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     private ImageView mLikeImageView;
     private ImageView mDislikeImageView;
     private ImageView mUndecidedImageView;
-String examTag;
+    private ImageView mRightArrowImageView;
+    private ImageView mLeftArrowImageView;
+    String examTag;
     public CDRecommendedInstituteListFragment() {
         // Required empty public constructor
     }
@@ -64,7 +66,7 @@ String examTag;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-                      super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mInstitutes = this.getArguments().getParcelableArrayList(ARG_INSTITUTE);
             this.mTitle = this.getArguments().getString(ARG_TITLE);
@@ -83,13 +85,15 @@ String examTag;
         this.mCardContainer.setListener(this);
 
         this.mUndecidedCountTV = (TextView)rootView.findViewById(R.id.fragment_recommended_institute_undecided_count);
-        this.mPageTitleTV = (TextView)rootView.findViewById(R.id.recommended_page_title);
+        this.mPageTitleTV   = (TextView)rootView.findViewById(R.id.recommended_page_title);
+        this.mEmptyTextView = (TextView)rootView.findViewById(android.R.id.empty);
+        this.mRightArrowImageView = (ImageView) rootView.findViewById(R.id.cd_reco_right_arrow);
+        this.mLeftArrowImageView = (ImageView) rootView.findViewById(R.id.cd_reco_left_arrow);
+        this.mLikeImageView     =(ImageView) rootView.findViewById(R.id.like_textview);
+        this.mDislikeImageView  =(ImageView) rootView.findViewById(R.id.dislike_textview);
+        this.mUndecidedImageView=(ImageView) rootView.findViewById(R.id.decide_later_textview);
 
         try{
-            mLikeImageView=(ImageView) rootView.findViewById(R.id.like_textview);
-            mDislikeImageView=(ImageView) rootView.findViewById(R.id.dislike_textview);
-            mUndecidedImageView=(ImageView) rootView.findViewById(R.id.decide_later_textview);
-
             mLikeImageView.setImageBitmap(BitMapHolder.SHORTLISTED_BITMAP);
             mDislikeImageView.setImageBitmap(BitMapHolder.UNSHORTLISTED_BITMAP);
             mUndecidedImageView.setImageBitmap(BitMapHolder.UNDECIDED_BITMAP);
@@ -99,23 +103,23 @@ String examTag;
         }
         Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count - ", "", Constants.ANIM_SHORT_DURATION);
 
-        this.mEmptyTextView = (TextView)rootView.findViewById(android.R.id.empty);
 
         if (this.mInstitutes == null || this.mInstitutes.size() <= 0) {
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setText("No CD Recommended colleges found");
-
             this.mCardContainer.setVisibility(View.GONE);
-        }
-        else
-        {
+            this.mRightArrowImageView.setVisibility(View.INVISIBLE);
+            this.mLeftArrowImageView.setVisibility(View.INVISIBLE);
+
+        }else {
             this.mCardContainer.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
+            this.mRightArrowImageView.setVisibility(View.VISIBLE);
+            this.mLeftArrowImageView.setVisibility(View.VISIBLE);
         }
 
         this.mAdapter = new SimpleCardStackAdapterNew(getActivity(), this.getContext(), this,examTag);
         this.mAddCardInAdapter(this.mInstitutes);
-
 
         this.mCardContainer.setAdapter(this.mAdapter);
         this.mUndecidedCountTV.setOnClickListener(this);
@@ -135,11 +139,11 @@ String examTag;
 
     private void mAddCardInAdapter(List<Institute> list)
     {
-       final  ArrayList<CardModel> modelArrayList = new ArrayList<>();
+        final  ArrayList<CardModel> modelArrayList = new ArrayList<>();
         for (int i = list.size() - 1; i >= 0; i--)
         {
-             CardModel  model = new CardModel(list.get(i), this.getActivity());
-             modelArrayList.add(model);
+            CardModel  model = new CardModel(list.get(i), this.getActivity());
+            modelArrayList.add(model);
         }
         mAdapter.addAll(modelArrayList);
     }
@@ -256,9 +260,13 @@ String examTag;
             this.mEmptyTextView.setText("No CD Recommended colleges found");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.mCardContainer.setVisibility(View.GONE);
+            this.mRightArrowImageView.setVisibility(View.INVISIBLE);
+            this.mLeftArrowImageView.setVisibility(View.INVISIBLE);
         }
         else
         {
+            this.mRightArrowImageView.setVisibility(View.VISIBLE);
+            this.mLeftArrowImageView.setVisibility(View.VISIBLE);
             this.mCardContainer.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
             this.mAdapter.clear();
@@ -283,11 +291,15 @@ String examTag;
             this.mEmptyTextView.setText("No CD Recommended - Decide Later colleges found");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.mCardContainer.setVisibility(View.GONE);
+            this.mRightArrowImageView.setVisibility(View.INVISIBLE);
+            this.mLeftArrowImageView.setVisibility(View.INVISIBLE);
         }
         else
         {
             this.mCardContainer.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
+            this.mRightArrowImageView.setVisibility(View.VISIBLE);
+            this.mLeftArrowImageView.setVisibility(View.VISIBLE);
             this.mAdapter.clear();
             this.mAddCardInAdapter(this.mInstitutes);
             this.mAdapter.setLoadingNext(false);
