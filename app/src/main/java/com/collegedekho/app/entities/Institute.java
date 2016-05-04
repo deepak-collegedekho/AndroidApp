@@ -74,6 +74,7 @@ public class Institute implements Parcelable {
     private int groups_exists;
 
     private ArrayList<String> exams = new ArrayList<>();
+    private ArrayList<String> user_exams = new ArrayList<>();
 
     public Institute() {
     }
@@ -126,6 +127,8 @@ public class Institute implements Parcelable {
         shortlist_count = source.readInt();
         exams = new ArrayList<>();
         source.readStringList(exams);
+        user_exams=new ArrayList<>();
+        source.readStringList(user_exams);
         fees = source.readString();
         l3_number=source.readString();
         application_end_date=source.readString();
@@ -276,6 +279,7 @@ public class Institute implements Parcelable {
         dest.writeDouble(max_fees);
         dest.writeString(min_salary);
         dest.writeStringList(exams);
+        dest.writeStringList(user_exams);
         dest.writeInt(shortlist_count);
         dest.writeString(fees);
         dest.writeString(l3_number);
@@ -618,5 +622,13 @@ public class Institute implements Parcelable {
 
     public void setGroups_exists(int groups_exists) {
         this.groups_exists = groups_exists;
+    }
+
+    public ArrayList<String> getUser_exams() {
+        return user_exams;
+    }
+
+    public void setUser_exams(ArrayList<String> user_exams) {
+        this.user_exams = user_exams;
     }
 }

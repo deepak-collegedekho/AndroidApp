@@ -143,7 +143,7 @@
                             android:textStyle="bold"/>
                     </LinearLayout>
 
-                    <RelativeLayout
+                    <LinearLayout
                         android:id="@+id/overlay_layout"
                         android:layout_width="match_parent"
                         android:layout_height="140dp"
@@ -188,7 +188,7 @@
 
                             <LinearLayout
                                 android:id="@+id/exam_score_layout"
-                                android:layout_width="wrap_content"
+                                android:layout_width="160dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
                                 android:background="@drawable/wish_list_inner_bg"
@@ -206,16 +206,18 @@
                                     android:textSize="@dimen/m10sp"
                                     android:textStyle="bold"/>
 
-                                <TextView android:id="@+id/txt_exam_accepted"
+                                <TextView
+                                    android:id="@+id/txt_exam_accepted"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:maxLines="@integer/int4"
                                     android:text="JEE"
                                     android:textColor="@color/light_blue"
                                     android:textSize="@dimen/m10sp"
                                     />
                             </LinearLayout>
                         </LinearLayout>
-                    </RelativeLayout>
+                    </LinearLayout>
 
                     <ImageView
                         android:id="@+id/btn_details"
@@ -261,7 +263,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignBottom="@id/institute_image"
-                        android:layout_marginBottom="24dp"
+                        android:layout_marginBottom="8dp"
                         android:layout_marginRight="-8dp"
                         android:layout_toLeftOf="@id/heart_layout"
                         android:background="@color/primary_color"
@@ -287,14 +289,14 @@
                         android:background="@drawable/alarm"
                         android:gravity="center_horizontal"
                         android:orientation="vertical"
-                        android:layout_marginBottom="@dimen/m8dp"
+                        android:layout_marginBottom="@dimen/m2dp"
                         android:paddingTop="10dp">
 
                         <TextView
                             android:id="@+id/txt_month"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="APRIL"
+                            android:text="-"
                             android:textColor="@color/primary_color"
                             android:textSize="6sp"
                             />
@@ -628,7 +630,6 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="left"
-                            android:layout_marginLeft="@dimen/m10dp"
                             android:layout_weight="1"
                             android:background="@color/primary_orange_opacity"
                             android:maxLines="@integer/int1"

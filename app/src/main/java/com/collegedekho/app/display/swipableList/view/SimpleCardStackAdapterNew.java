@@ -223,10 +223,10 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             applicationStatus.setText(institute.getApplication_status());
 //            layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
             facilitiesRecycler.setLayoutManager(layoutManager);
+            View seeAllButton = convertView.findViewById(R.id.see_all_layout);
             final ArrayList<Facility> facilityArrayList = institute.getFacilities();
             if (facilityArrayList != null && !facilityArrayList.isEmpty()) {
                 facilitiesRecycler.setAdapter(new FacilitiesAdapter(facilityArrayList));
-                View seeAllButton = convertView.findViewById(R.id.see_all_layout);
 
                 if (facilityArrayList.size() > 7) {
                     seeAllButton.setOnClickListener(new View.OnClickListener() {
@@ -307,6 +307,8 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
                 } else {
                     seeAllButton.setVisibility(View.INVISIBLE);
                 }
+            }else {
+                seeAllButton.setVisibility(View.INVISIBLE);
             }
 
             if (institute.getFees() != null && !institute.getFees().isEmpty()) {
@@ -321,21 +323,45 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
                 streamText += stream;
                 streamText += "/";
             }
-            int count=0;
+
             String examsText="";
             for (String exam:institute.getExams()){
-                count++;
-                if(count==2)
-                    break;
                 examsText=examsText+exam+",";
             }
-            streamTV.setText("Stream: " + streamText.substring(0, streamText.length() - 1));
+
+            if(!examsText.trim().isEmpty()) {
+                examsAccepted.setText(examsText.substring(0, examsText.length() - 1));
+            }
+
+            String userExamsText="";
+            for (String exam:institute.getExams()){
+                userExamsText=userExamsText+exam+",";
+            }
+/*            if(streamText!=null && !streamText.trim().isEmpty()) {
+                streamTV.setText("Stream: " + streamText.substring(0, streamText.length() - 1));
+            }else {
+                streamTV.setVisibility(View.GONE);
+            }*/
+
+            streamTV.setVisibility(View.GONE);
             if(examTag!=null && !examTag.trim().isEmpty())
-            examsTv.setText("Exam:"+examTag.toUpperCase());
-            if(!examsText.trim().isEmpty())
-            examsAccepted.setText(examsText.substring(0, examsText.length() - 1));
+            if(!userExamsText.trim().isEmpty()) {
+                String[] userExams=userExamsText.split(",");
+                String examsStr=userExams[0];
+                if(userExams.length>=2){
+                    examsStr+=","+userExams[1];
+                }
+                examsTv.setText("Exam: "+examsStr);
+            }
+
             if(institute.getApplication_end_date()!=null && !institute.getApplication_end_date().trim().isEmpty()){
-                applicationEndDate.setText(institute.getApplication_end_date());
+                try {
+                    String[] arr=institute.getApplication_end_date().split(" ");
+                    ((TextView)convertView.findViewById(R.id.txt_month)).setText(arr[0]);
+                    applicationEndDate.setText(arr[1]);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }else {
                 convertView.findViewById(R.id.clock_layout).setVisibility(View.INVISIBLE);
                 convertView.findViewById(R.id.txt_last_application_text).setVisibility(View.INVISIBLE);
