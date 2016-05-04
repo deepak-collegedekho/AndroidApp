@@ -341,6 +341,8 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                     }, 300);
                 }
 
+                this.mRightArrowImageView.setVisibility(View.INVISIBLE);
+                this.mLeftArrowImageView.setVisibility(View.INVISIBLE);
                 this.mEmptyTextView.setVisibility(View.VISIBLE);
                 this.mCardContainer.setVisibility(View.GONE);
             }
@@ -364,6 +366,9 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                         }
                     }, 300);
                 }
+
+                this.mRightArrowImageView.setVisibility(View.INVISIBLE);
+                this.mLeftArrowImageView.setVisibility(View.INVISIBLE);
                 this.mEmptyTextView.setVisibility(View.VISIBLE);
                 this.mCardContainer.setVisibility(View.GONE);
             }
