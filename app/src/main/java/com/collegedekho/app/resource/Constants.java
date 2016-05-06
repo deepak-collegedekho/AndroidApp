@@ -102,6 +102,7 @@ public class Constants
     public static final String TAG_INSTITUTE_LIKE_DISLIKE = "institute_like_dislike";
     public static final String TAG_SHORTLIST_INSTITUTE = "shortlist";
     public static final String TAG_RECOMMENDED_SHORTLIST_INSTITUTE = "recommended_shortlist";
+    public static final String TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE = "recommended_apply_shortlist";
     public static final String TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE = "recommended_not_interested";
     public static final String TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE = "recommended_decide_later";
     public static final String TAG_LOAD_UNDECIDED_INSTITUTE = "load_undecided_later";
@@ -241,8 +242,6 @@ public class Constants
     public static long ANIM_AVERAGE_DURATION = 500;
     public static long ANIM_LONG_DURATION =  1000;
 
-    public static final Uri BASE_APP_URI = Uri.parse("android-app://com.collegedekho.app/http/www.collegedekho.com/");
-
     public static final String CD_RECOMMENDED_INSTITUTE_ACTION_TYPE = "cd_recommended_institute_action_type";
 
     public enum CDRecommendedInstituteType {
@@ -262,7 +261,7 @@ public class Constants
     // GCM key for Apps Flyer
     public static final String GCM_KEY_APPS_FLYER = "AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk";
 
-
+    public static final Uri BASE_APP_URI = Uri.parse("android-app://com.collegedekho.app/https/www.collegedekho.com/");
 
     public static final String NOTIFICATION_FILTER="com.notification.filter";
 

@@ -905,7 +905,6 @@ public class MainActivity extends AppCompatActivity
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         System.gc();
     }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -920,7 +919,7 @@ public class MainActivity extends AppCompatActivity
                 // TODO: If you have web page content that matches this app activity's content,
                 // make sure this auto-generated web page URL is correct.
                 // Otherwise, set the URL to null.
-                Uri.parse("http://www.collegedekho.com"),
+                Uri.parse("https://www.collegedekho.com"),
                 // TODO: Make sure this auto-generated app URL is correct.
                 Uri.parse(Constants.BASE_APP_URI.toString())
         );
@@ -938,16 +937,15 @@ public class MainActivity extends AppCompatActivity
                 // TODO: If you have web page content that matches this app activity's content,
                 // make sure this auto-generated web page URL is correct.
                 // Otherwise, set the URL to null.
-                Uri.parse("http://www.collegedekho.com"),
+                Uri.parse("https://www.collegedekho.com"),
                 // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://com.collegedekho.app/http/")
+                Uri.parse(Constants.BASE_APP_URI.toString())
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.disconnect();
     }
-
     @Override
     protected void onDestroy() {
         this.connecto.track("Session Ended", new Properties().putValue("session_end_datetime", new Date().toString()));
@@ -1465,7 +1463,7 @@ public class MainActivity extends AppCompatActivity
                     if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED)
                         ((CDRecommendedInstituteListFragment) currentFragment).showUndecidedInstitutes(this.mInstituteList, next);
                     else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED)
-                        ((CDRecommendedInstituteListFragment) currentFragment).updateList(this.mInstituteList, next);
+                        ((CDRecommendedInstituteListFragment) currentFragment).updateList(this.mInstituteList, next, false);
                 }
             } else {
                 String val = this.extractResults(response);
@@ -1490,7 +1488,7 @@ public class MainActivity extends AppCompatActivity
                         if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED)
                             ((CDRecommendedInstituteListFragment) fragment).showUndecidedInstitutes(this.mInstituteList, next);
                         else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED)
-                            ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next);
+                            ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next, false);
                     }
 
                     this.mDisplayFragment(fragment, false, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
@@ -1936,13 +1934,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case Constants.TAG_WISH_LIST_APPLIED_COURSE:
-                DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteListFragment) {
-                    if(mInstituteList!=null && mInstituteList.size()>0 && institute!=null && mInstituteList.contains(institute)) {
-                        mInstituteList.remove(institute);
-                        ((CDRecommendedInstituteListFragment) currentFragment).updateList(this.mInstituteList, next);
-                    }
-                }
+               this.removeAppliedInstituteCard();
                 break;
             case Constants.TAG_POST_QUESTION:
                 this.mInstituteQnAQuestionAdded(response);
@@ -2204,13 +2196,22 @@ public class MainActivity extends AppCompatActivity
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 if (tags.length == 3) {
                     this.mUpdateUndecidedCount(this.mUndecidedCount, true);
-                }  if (tags.length == 2)
-            {
-                this.mUpdateUndecidedCount(this.mUndecidedCount, true);
-                parentIndex = tags[1];
-                if (parentIndex.equals("true"))
+                }
+                if (tags.length == 2)
+                {
+                    this.mUpdateUndecidedCount(this.mUndecidedCount, true);
+                    parentIndex = tags[1];
+                    if (parentIndex.equals("true"))
                     this.OnCDRecommendedLoadNext();
-            }
+                }
+
+                break;
+            case Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE:
+                if (tags.length == 2) {
+                    parentIndex = tags[1];
+                    if (parentIndex.equals("true"))
+                        this.OnCDRecommendedLoadNext();
+                }
                 break;
             case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
                 this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.NOT_INERESTED);
@@ -2265,12 +2266,24 @@ public class MainActivity extends AppCompatActivity
                 if (tags.length>1)
                     DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(tags[1]));
                 break;
+
+
         }
         try {
             if(hideProgressDialog)
             hideProgressDialog();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void removeAppliedInstituteCard() {
+        DataBaseHelper.getInstance(this).deleteAllExamSummary();
+        if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteListFragment) {
+            //if(mInstituteList!=null && mInstituteList.size()>0 && institute!=null && mInstituteList.contains(institute)) {
+               // mInstituteList.remove(institute);
+                ((CDRecommendedInstituteListFragment) currentFragment).updateListAfterApplied(institute);
+            //}
         }
     }
 
@@ -2816,6 +2829,8 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_EDIT_EDUCATION_DETAILS_SUBMIT:
             case Constants.TAG_UPDATE_VIDEO_TITLE:
                 return "Loading....";
+            case Constants.TAG_WISH_LIST_APPLIED_COURSE:
+                return "Applying For institute";
             case Constants.TAG_USER_REGISTRATION:
                 return "Creating User Please Wait";
             case Constants.TAG_USER_LOGIN:
@@ -2889,6 +2904,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.ACTION_INSTITUTE_DISLIKED:
             case Constants.TAG_APPLIED_COURSE:
             case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
+            case Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE:
             case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
             case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
             case Constants.TAG_SHORTLIST_INSTITUTE:
@@ -5017,13 +5033,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void OnAppliedInstitute(Institute institute) {
+    public void OnAppliedInstitute(Institute institute, boolean islastcard) {
         if(institute.getGroups_exists()==1) {
+            this.institute=institute;
+            removeAppliedInstituteCard();
             String cafUrl = "https://m.collegedekho.com/caf-login-signup/?institute_id=" + institute.getId();
             onDisplayWebFragment(cafUrl);
         }else {
             onWishListCourseApplied(institute);
+            //this.OnCDRecommendedLoadNext();
         }
+        Log.e("CD-RE", "Like:CD Reco Institute is  Applied: " + institute.getId());
+        HashMap<String, String> params = new HashMap<>();
+        params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
+        params.put("action", String.valueOf("1"));
+
+        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE+"#"+islastcard , institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+
     }
 
     Institute institute;

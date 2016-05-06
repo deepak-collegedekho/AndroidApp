@@ -249,8 +249,18 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                 break;
         }
     }
+    public void updateListAfterApplied(Institute institute){
+        if(mInstitutes != null && mInstitutes.size() > 0 && institute!=null && mInstitutes.contains(institute)) {
+            mInstitutes.remove(institute);
+        }
+            updateList(mInstitutes,mNextUrl,true);
 
-    public void updateList(List<Institute> institutes, String next) {
+    }
+
+    public void updateList(List<Institute> institutes, String next, boolean clearList) {
+       /* if(clearList){
+            this.mInstitutes.clear();
+        }*/
         this.mInstitutes.addAll(institutes);
         IS_UNDECIDED_INSTITUTES = false;
         mUndecidedCountTV.setClickable(true);
@@ -401,8 +411,14 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
 
     @Override
     public void OnAppliedInstitute(Institute institute) {
-        if(mListener != null)
-            this.mListener.OnAppliedInstitute(institute);
+        if(mListener != null) {
+            boolean flag = false;
+            if(mInstitutes != null &&  mInstitutes.size() ==1){
+                flag = true;
+                this.mEmptyTextView.setText("Loading...");
+            }
+            this.mListener.OnAppliedInstitute(institute,flag);
+        }
     }
 
     private void sendRequestForUndecided(){
@@ -486,6 +502,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard, boolean isUndecided);
         void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard, boolean isUndecided);
         void OnCDRecommendedLoadUndecidedInstitutes(String url);
-        void OnAppliedInstitute(Institute institute);
+        void OnAppliedInstitute(Institute institute, boolean flag);
     }
 }

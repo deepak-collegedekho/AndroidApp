@@ -50,7 +50,6 @@
                 android:layout_width="0dp"
                 android:layout_weight=".3"
                 app:srcCompat="@drawable/ic_arrow_right_black"
-                android:scaleX="-1"
                 android:layout_height="match_parent" />
 
             <TextView
@@ -75,6 +74,7 @@
                 android:id="@+id/cd_reco_right_arrow"
                 android:layout_width="0dp"
                 android:layout_weight=".3"
+                android:scaleX="-1"
                 app:srcCompat="@drawable/ic_arrow_right_black"
                 android:layout_height="match_parent" />
 </LinearLayout>

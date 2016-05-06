@@ -64,7 +64,7 @@
             </intent-filter>
             <!-- ATTENTION: This intent was auto-generated. Follow instructions at
   https://g.co/AppIndexing/AndroidStudio to publish your URLs. -->
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -72,7 +72,10 @@
                   TODO: Change the host or pathPrefix as necessary. -->
                 <data
                     android:host="www.collegedekho.com"
-                    android:scheme="http" />
+                    android:scheme="https" />
+                <data
+                    android:host="www.m.collegedekho.com"
+                    android:scheme="https" />
             </intent-filter>
 
         </activity>
@@ -114,6 +117,9 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="e1dd370529095b9153aed4f44952512fc61ad3bf" />
+
+
+
         <receiver
             android:name="io.connecto.android.sdk.ConnectoGCMReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">

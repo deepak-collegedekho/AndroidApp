@@ -1,14 +1,19 @@
 package com.collegedekho.app.display.swipableList.view;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +21,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -46,7 +52,6 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
 
 
     public SimpleCardStackAdapterNew(Activity activity, Context context, OnCDRecommendedAdapterInterface listener,String examTag) {
-        //super(context);
         this.imageLoader = MySingleton.getInstance(context).getImageLoader();
         this.mListener = listener;
         this.mContext = context;
@@ -63,11 +68,15 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-
+        Log.e("getView "," step 1 position  is "+position +" time is "+System.currentTimeMillis());
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.wishlist_card_layout, parent, false);
         }
+
+        Log.e("getView "," step 2 position  is "+position +" time is "+System.currentTimeMillis());
+        setVectorDrawable(convertView);
+        Log.e("getView "," step 3 position  is "+position +" time is "+System.currentTimeMillis());
 
         final CardModel model = getCardModel(position);
         this.mParseAndPopulateCards(model, convertView);
@@ -82,7 +91,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         (convertView.findViewById(R.id.btn_apply_now)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Institute institute=((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute();
+                Institute institute=((CardModel) SimpleCardStackAdapterNew.this.getItem(position)).getInstitute();
                     mListener.OnAppliedInstitute(institute);
             }
         });
@@ -129,6 +138,8 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
 
 
     private void mParseAndPopulateCards(final CardModel model, final View convertView) {
+
+        Log.e("getView "," step 1 time is "+System.currentTimeMillis());
         final FadeInImageView fadeInImageView;
         ImageLoader.ImageListener imageListener;
         final Institute institute = model.getInstitute();
@@ -147,14 +158,17 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         else
             ((TextView) convertView.findViewById(R.id.description)).setText(text);
 
+        Log.e("getView "," step 1 time is "+System.currentTimeMillis());
         //setting institute image_new
         fadeInImageView = ((FadeInImageView) convertView.findViewById(R.id.institute_image));
         //fadeInImageView.setDefaultImageResId(R.drawable.default_banner);
         //fadeInImageView.setErrorImageResId(R.drawable.default_banner);
         if (BitMapHolder.DEFAULT_BANNER != null)
             fadeInImageView.setLocalImageBitmap(BitMapHolder.DEFAULT_BANNER);
-        fadeInImageView.setBackgroundResource(R.drawable.default_banner);
+        else
+            fadeInImageView.setBackgroundResource(R.drawable.default_banner);
 
+        Log.e("getView "," step 1 time is "+System.currentTimeMillis());
 
        /* try{
             ((ImageView) convertView.findViewById(R.id.like_textview)).setImageBitmap(BitMapHolder.SHORTLISTED_BITMAP);
@@ -164,6 +178,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             e.printStackTrace();
         }*/
 
+        Log.e("getView "," step 1 time is "+System.currentTimeMillis());
 
         if (institute.getStreams() != null && institute.getStreams().size() > 0) {
             TextView streamTV = ((TextView) convertView.findViewById(R.id.recommended_streams));
@@ -334,10 +349,10 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             }
 
             String userExamsText="";
-            for (String exam:institute.getExams()){
+            for (String exam:institute.getUser_exams()){
                 userExamsText=userExamsText+exam+",";
             }
-/*            if(streamText!=null && !streamText.trim().isEmpty()) {
+            /*if(streamText!=null && !streamText.trim().isEmpty()) {
                 streamTV.setText("Stream: " + streamText.substring(0, streamText.length() - 1));
             }else {
                 streamTV.setVisibility(View.GONE);
@@ -351,7 +366,11 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
                 if(userExams.length>=2){
                     examsStr+=","+userExams[1];
                 }
-                examsTv.setText("Exam: "+examsStr);
+                if(examsStr!=null && !examsStr.trim().isEmpty()) {
+                    examsTv.setText("Exam: " + examsStr);
+                }else {
+                    examsTv.setVisibility(View.GONE);
+                }
             }
 
             if(institute.getApplication_end_date()!=null && !institute.getApplication_end_date().trim().isEmpty()){
@@ -409,7 +428,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
                 }
             });
         }else {
-           // convertView.findViewById(R.id.btn_call_now).setVisibility(View.GONE);
+           convertView.findViewById(R.id.btn_call_now).setVisibility(View.GONE);
         }
 
         convertView.findViewById(R.id.btn_details).setOnClickListener(new View.OnClickListener() {
@@ -417,13 +436,70 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             public void onClick(View v) {
                 if(convertView.findViewById(R.id.overlay_layout).getVisibility()==View.VISIBLE){
                     convertView.findViewById(R.id.overlay_layout).setVisibility(View.GONE);
-                    ((ImageView)convertView.findViewById(R.id.btn_details)).setImageResource(R.drawable.wishlist_information);
+                    ((ImageView)convertView.findViewById(R.id.btn_details)).setImageResource(R.drawable.ic_wishlist_information);
                 }else{
                     convertView.findViewById(R.id.overlay_layout).setVisibility(View.VISIBLE);
-                    ((ImageView)convertView.findViewById(R.id.btn_details)).setImageResource(R.drawable.wish_list_close_info);
+                    ((ImageView)convertView.findViewById(R.id.btn_details)).setImageResource(R.drawable.ic_wish_list_close_info);
                 }
             }
         });
+    }
+
+
+    private Drawable drawableLike ;
+    private Drawable drawableFees ;
+    private Drawable drawablePlacement ;
+    private Drawable drawableInfo ;
+    private Drawable drawableBubble ;
+    private Drawable drawableHeart ;
+    private Drawable drawableFacilityArrow ;
+    public static Bitmap like_bitmap;
+    public static Bitmap placement_bitmap;
+    public static Bitmap fees_bitmap;
+    public static Bitmap info_bitmap;
+    public static Bitmap facilityArrow_bitmap;
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private void setVectorDrawable(View view){
+
+        if(this.drawableLike == null)
+            this.drawableLike = ContextCompat.getDrawable(mContext, R.drawable.ic_like);
+        if(this.drawableFees == null)
+            this.drawableFees = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_placement);
+        if(this.drawablePlacement == null)
+            this. drawablePlacement = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_fees);
+        if(this.drawableInfo == null)
+            this. drawableInfo = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_information);
+        if(this.drawableBubble == null)
+            this. drawableBubble = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_bubble);
+        if(this.drawableHeart == null)
+            this. drawableHeart = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_heart);
+        if(this.drawableFacilityArrow == null)
+            this. drawableFacilityArrow = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_arrow_down);
+
+        if(like_bitmap == null)
+            like_bitmap   =  Utils.getBitmapDrawable(this.drawableLike);
+        if(placement_bitmap == null)
+            placement_bitmap  =  Utils.getBitmapDrawable(this.drawablePlacement);
+        if(fees_bitmap == null)
+            fees_bitmap =  Utils.getBitmapDrawable(this.drawableFees);
+        if(info_bitmap == null)
+            info_bitmap =  Utils.getBitmapDrawable(this.drawableInfo);
+        if(facilityArrow_bitmap == null)
+            facilityArrow_bitmap =  Utils.getBitmapDrawable(this.drawableFacilityArrow);
+
+
+        if(view != null){
+            ((ImageView) view.findViewById(R.id.cd_reco_card_like)).setImageBitmap(like_bitmap);
+            ((ImageView) view.findViewById(R.id.placement_image)).setImageBitmap(placement_bitmap);
+            ((ImageView) view.findViewById(R.id.fees_range_image)).setImageBitmap(fees_bitmap);
+            ((ImageView) view.findViewById(R.id.btn_details)).setImageBitmap(info_bitmap);
+            (view.findViewById(R.id.likes_layout)).setBackground(drawableBubble);
+            (view.findViewById(R.id.heart_layout)).setBackground(drawableHeart);
+            ((ImageView) view.findViewById(R.id.see_all_image)).setImageBitmap(facilityArrow_bitmap);
+
+        }
+
     }
 
     public boolean isLoadingNext() {

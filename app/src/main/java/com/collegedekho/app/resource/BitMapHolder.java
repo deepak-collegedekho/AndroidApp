@@ -6,8 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-
 import com.collegedekho.app.R;
+import com.collegedekho.app.utils.Utils;
 
 
 /**
@@ -34,14 +34,6 @@ public class BitMapHolder {
    }
 
 
-    private Bitmap getBitmapDrawable(Drawable drawable) {
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-        return bitmap;
-    }
 
     public void  getBitMapFromResource(){
 
@@ -53,11 +45,11 @@ public class BitMapHolder {
             this. drawableUndecided = ContextCompat.getDrawable(mContext, R.drawable.decide_later);
 
         if(SHORTLISTED_BITMAP == null)
-            SHORTLISTED_BITMAP   =  getBitmapDrawable(drawableShortList);
+            SHORTLISTED_BITMAP   =  Utils.getBitmapDrawable(drawableShortList);
         if(UNSHORTLISTED_BITMAP == null)
-            UNSHORTLISTED_BITMAP =  getBitmapDrawable(drawableNotIntrested);
+            UNSHORTLISTED_BITMAP =  Utils.getBitmapDrawable(drawableNotIntrested);
         if(UNDECIDED_BITMAP == null)
-            UNDECIDED_BITMAP     =  getBitmapDrawable(drawableUndecided);
+            UNDECIDED_BITMAP     =  Utils.getBitmapDrawable(drawableUndecided);
         if(DEFAULT_BANNER == null)
             DEFAULT_BANNER       =  BitmapFactory.decodeResource(mContext.getResources(), R.drawable.default_banner);
 

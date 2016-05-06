@@ -29,8 +29,11 @@
     <dimen name="m17dp">17dp</dimen>
     <dimen name="m18dp">18dp</dimen>
     <dimen name="m20dp">20dp</dimen>
+    <dimen name="m21dp">21dp</dimen>
+    <dimen name="m22dp">22dp</dimen>
     <dimen name="m25dp">25dp</dimen>
     <dimen name="m30dp">30dp</dimen>
+    <dimen name="m31dp">31dp</dimen>
     <dimen name="m32dp">32dp</dimen>
     <dimen name="m33dp">33dp</dimen>
     <dimen name="m35dp">35dp</dimen>
@@ -39,6 +42,7 @@
     <dimen name="m45dp">45dp</dimen>
     <dimen name="m50dp">50dp</dimen>
     <dimen name="m55dp">55dp</dimen>
+    <dimen name="m58dp">58dp</dimen>
     <dimen name="m60dp">60dp</dimen>
     <dimen name="m65dp">65dp</dimen>
     <dimen name="m70dp">70dp</dimen>
