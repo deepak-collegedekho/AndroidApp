@@ -14,6 +14,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -24,7 +25,6 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -59,10 +59,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -311,7 +314,6 @@ public class MainActivity extends AppCompatActivity
     private User.Prefs userPref;
     static String type = "";
     static String resource_uri = "";
-    private HashMap<String, String> mUserSignUPParams;
     private Menu menu;
     private String mYear;
     private View view;
@@ -329,7 +331,7 @@ public class MainActivity extends AppCompatActivity
     private String mExamTag;
     private String user_phone_number;
     private int mUndecidedCount;
-    private Snackbar snackbar;
+    private Snackbar mSnackbar;
     private static Context mContext;
     public static TrueClient mTrueClient;
     /*** ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -340,6 +342,8 @@ public class MainActivity extends AppCompatActivity
     ProgressBar searchProgress;
     Handler gcmDialogHandler=new Handler();
     Runnable gcmDialogRunnable;
+    private FrameLayout mContainerFrameLayout;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -360,7 +364,7 @@ public class MainActivity extends AppCompatActivity
         String data = intent.getDataString();
 
         if (Intent.ACTION_VIEW.equals(action) && data != null) {
-            if (data.contains("www.collegedekho.com"))
+            if (data.contains("collegedekho.com"))
             {
                 this.mDeepLinkingURI = data;
                 Log.e(TAG, " DeepLinking URL is  : "+ mDeepLinkingURI);
@@ -383,8 +387,9 @@ public class MainActivity extends AppCompatActivity
 
         this.setContentView(R.layout.activity_main);
         this.getBitMapResources();
-        snackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
-        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+
+        this.mSnackbar = Snackbar.make(this.findViewById(R.id.main_activity_container), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
+        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
         layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
 
         this.networkUtils = new NetworkUtils(this, this);
@@ -471,7 +476,6 @@ public class MainActivity extends AppCompatActivity
     /**
      * This method is used with GA tracker
      */
-
     private void mRegistrationGATracker(){
 
         new Thread(new Runnable() {
@@ -493,8 +497,8 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.GASessionEvent(MainActivity.TAG);
             }
         }).start();
-
     }
+
     /**
      * This method is used to register and initialize facebook sdk
      */
@@ -545,7 +549,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is used to register Fabric Crashlyticsr
+     * This method is used to register Fabric Crashlytics
      */
     private void mRegistrationFabricCrashlytics() {
        new Thread(new Runnable() {
@@ -622,12 +626,12 @@ public class MainActivity extends AppCompatActivity
 
     private void mSetUpAPPToolBar() {
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.ic_navigation_icon);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        mToolbar.setNavigationIcon(R.drawable.ic_navigation_icon);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (currentFragment instanceof SyllabusSubjectsListFragment)
@@ -645,7 +649,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        toolbar.setNavigationContentDescription("Select to go to home screen");
+        mToolbar.setNavigationContentDescription("Select to go to home screen");
         //DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         //drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
@@ -905,6 +909,7 @@ public class MainActivity extends AppCompatActivity
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         System.gc();
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -2288,18 +2293,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private synchronized void mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType type) {
-        //Appsflyer events
+        //Events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.INSTITUTE_RESOURCE_URI), this.mInstitute.getResource_uri());
         eventValue.put(Constants.INSTITUTE_ID, String.valueOf(this.mInstitute.getId()));
-
-        //GA Event
-        //String[] lables = new String[3];
-        //lables[0] = String.valueOf(this.mInstitute.getId());
-        //lables[1] = this.mInstitute.getResource_uri();
-
-        //Connecto
-        //Properties properties = new Properties();
 
         switch (type) {
             case UNDECIDED:
@@ -3402,9 +3399,9 @@ public class MainActivity extends AppCompatActivity
 
     public void displaySnackBar(int messageId) {
         try {
-            if (snackbar != null && !snackbar.isShown()) {
-                snackbar.setText(getResources().getString(messageId));
-                snackbar.show();
+            if (mSnackbar != null && !mSnackbar.isShown()) {
+                mSnackbar.setText(getResources().getString(messageId));
+                mSnackbar.show();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -3412,8 +3409,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void hideSnackBar() {
-        if (snackbar != null && snackbar.isShown()) {
-            snackbar.dismiss();
+        if (mSnackbar != null && mSnackbar.isShown()) {
+            mSnackbar.dismiss();
         }
     }
 
@@ -4744,9 +4741,12 @@ public class MainActivity extends AppCompatActivity
         }
 
         //  show appBarLayout and toolBar
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.main_container).getLayoutParams();
-        params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
-        findViewById(R.id.main_container).setLayoutParams(params);
+        LinearLayout mainContainer;
+        mainContainer = (LinearLayout) findViewById(R.id.main_container);
+        mainContainer.setPadding(0, Utils.getToolbarHeight(this), 0, 0);
+        //RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mainContainer.getLayoutParams();
+        //params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+        //findViewById(R.id.main_container).setLayoutParams(params);
         mUserExamsList = MainActivity.user.getUser_exams();
         if (mUserExamsList == null)
             mUserExamsList = new ArrayList<>();
@@ -4770,7 +4770,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_PROFILE_LOADED), true).apply();
-
     }
 
     @Override

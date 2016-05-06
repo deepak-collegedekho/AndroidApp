@@ -56,26 +56,25 @@ public abstract class CardStackAdapter extends BaseAdapter {
     }
 
     public void add(CardModel item) {
-
-			mData.add(item);
+		mData.add(item);
 		//notifyDataSetChanged();
 	}
 
 	public void addAll(ArrayList<CardModel> item) {
-			mData.addAll(item);
+		mData.addAll(item);
 		//notifyDataSetChanged();
 	}
 
 	public CardModel pop() {
 		CardModel model;
-			model = mData.remove(mData.size() - 1);
+		model = mData.remove(mData.size() - 1);
 		notifyDataSetChanged();
 		return model;
 	}
 
 	public void clear()
 	{
-			mData.clear();
+		mData.clear();
 		notifyDataSetChanged();
 	}
 

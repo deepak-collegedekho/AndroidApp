@@ -86,7 +86,6 @@ public class InstituteInfrastructureFragment extends BaseFragment {
         }
     }
 
-
     @Override
     public void show() {
 

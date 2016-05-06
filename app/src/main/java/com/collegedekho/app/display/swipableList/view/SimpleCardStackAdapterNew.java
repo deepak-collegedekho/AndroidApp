@@ -15,15 +15,18 @@ import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
@@ -49,6 +52,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
     private Activity mActivity;
     private Vector<CardModel> mData;
     private String examTag="";
+    private TextView facilityText;
 
 
     public SimpleCardStackAdapterNew(Activity activity, Context context, OnCDRecommendedAdapterInterface listener,String examTag) {
@@ -102,6 +106,8 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             }
         });
 
+        this.facilityText = (TextView) (convertView.findViewById(R.id.facilities_text));
+
         model.setOnCardDismissedListener(new CardModel.OnCardDismissedListener() {
             @Override
             public void onLike() {
@@ -133,6 +139,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
                 }
             }
         });
+
         return convertView;
     }
 
@@ -236,13 +243,11 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             final RecyclerView facilitiesRecycler = (RecyclerView) convertView.findViewById(R.id.facilities_recycler);
             GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 7, LinearLayoutManager.VERTICAL, false);
             applicationStatus.setText(institute.getApplication_status());
-//            layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
             facilitiesRecycler.setLayoutManager(layoutManager);
             View seeAllButton = convertView.findViewById(R.id.see_all_layout);
             final ArrayList<Facility> facilityArrayList = institute.getFacilities();
             if (facilityArrayList != null && !facilityArrayList.isEmpty()) {
                 facilitiesRecycler.setAdapter(new FacilitiesAdapter(facilityArrayList));
-
                 if (facilityArrayList.size() > 7) {
                     seeAllButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -445,7 +450,6 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         });
     }
 
-
     private Drawable drawableLike ;
     private Drawable drawableFees ;
     private Drawable drawablePlacement ;
@@ -573,6 +577,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         @Override
         public void onBindViewHolder(FacilitiesAdapter.FacilitiesViewHolder holder, int position) {
             holder.image.setImageUrl(facilitiesList.get(holder.getAdapterPosition()).image_new, imageLoader);
+            holder.image.setTag(facilitiesList.get(holder.getAdapterPosition()).tag);
         }
 
         @Override
@@ -586,6 +591,14 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             public FacilitiesViewHolder(View itemView) {
                 super(itemView);
                 image = (NetworkImageView) itemView;
+                image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(mContext, (String) image.getTag(), Toast.LENGTH_SHORT).show();
+                        //facilityText.clearAnimation();
+                        //facilityText.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3)).start();
+                    }
+                });
             }
         }
     }

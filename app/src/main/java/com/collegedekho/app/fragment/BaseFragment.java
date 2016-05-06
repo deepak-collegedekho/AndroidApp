@@ -3,6 +3,7 @@ package com.collegedekho.app.fragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,8 +23,8 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     protected static final String ARG_TITLE = "title";
     protected static final String ARG_NEXT = "next";
 
-    private static final float HIDE_THRESHOLD = 100;
-    private static final float SHOW_THRESHOLD = 50;
+    private static final float HIDE_THRESHOLD = 75;
+    private static final float SHOW_THRESHOLD = 32;
 
     protected String TAG ="BaseFragment";
     protected int pastVisiblesItems, visibleItemCount, totalItemCount;
@@ -62,6 +63,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
             //  Check scrolled distance against the minimum
             if (isVisible && scrollDist > HIDE_THRESHOLD) {
                 //  Hide fab & reset scrollDist
+                Log.e("BaseFragment", "Hide :" + scrollDist);
                 hide();
                 scrollDist = 0;
                 isVisible = false;
@@ -69,8 +71,8 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
             //  -MINIMUM because scrolling up gives - dy values
             else if (!isVisible && scrollDist < -SHOW_THRESHOLD) {
                 //  Show fab & reset scrollDist
+                Log.e("BaseFragment", "Show :" + scrollDist);
                 show();
-
                 scrollDist = 0;
                 isVisible = true;
             }
@@ -78,6 +80,9 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
             //  Whether we scroll up or down, calculate scroll distance
             if ((isVisible && dy > 0) || (!isVisible && dy < 0)) {
                 scrollDist += dy;
+                Log.e("BaseFragment", "Scroll Distance is : " + scrollDist);
+                Log.e("BaseFragment", "Scroll value is : " + scrollDist);
+                Log.e("BaseFragment", "Component Visible : " + isVisible);
             }
         }
     };

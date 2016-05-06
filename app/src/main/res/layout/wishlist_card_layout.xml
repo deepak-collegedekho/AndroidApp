@@ -81,6 +81,17 @@
                         android:src="@drawable/default_banner"/>
 
                     <TextView
+                        android:id="@+id/facility_toast"
+                        style="@style/AppTheme.BlueButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="facility"
+                        android:textSize="@dimen/m10sp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@id/institute_image"
+                        />
+
+                    <TextView
                         android:id="@+id/txt_rating_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -1,5 +1,6 @@
 package com.collegedekho.app.fragment;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
@@ -78,6 +79,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     //View fabShadow;
     int fabMargin;
     AppBarLayout toolbarContainer;
+    ViewGroup mainContainer;
     boolean fadeToolbar = false;
 
     public InstituteListFragment() {
@@ -132,13 +134,13 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         toolbarHeight = Utils.getToolbarHeight(this.getActivity());
 
         toolbarContainer = (AppBarLayout) getActivity().findViewById(R.id.app_bar_layout);
+        mainContainer = (LinearLayout) getActivity().findViewById(R.id.main_container);
 
         fab = (FrameLayout) rootView.findViewById(R.id.myfab_main);
         fabBtn = (ImageButton) rootView.findViewById(R.id.button_filter);
         //fabShadow = rootView.findViewById(R.id.myfab_shadow);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //fabShadow.setVisibility(View.GONE);
             fabBtn.setBackground(this.getActivity().getDrawable(R.drawable.ripple_accent));
         }
 
@@ -162,12 +164,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         ((TextView) rootView.findViewById(R.id.textview_page_title)).setText(mTitle);
         progressBarLL = (LinearLayout)rootView.findViewById(R.id.progressBarLL);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_list);
-
-        /* Set top padding= toolbar height.
-         So there is no overlap when the toolbar hides.
-         Avoid using 0 for the other parameters as it resets padding set via XML!*/
-
-        //recyclerView.setHasFixedSize(true);
 
         if(this.mViewType == Constants.VIEW_INTO_GRID)
             layoutManager = new GridLayoutManager(getActivity(), 2);
@@ -465,18 +461,42 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
     @Override
     public void show() {
-        //toolbarContainer.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
-        //toolbarContainer.animate().alpha(1).setInterpolator(new DecelerateInterpolator(1)).start();
+        Log.e("InstituteListFragment", "Show");
+        //toolbarContainer.animate().translationY(0).setDuration(1000).setInterpolator(new DecelerateInterpolator(2)).start();
+        //toolbarContainer.animate().alpha(1).setDuration(1000).setInterpolator(new DecelerateInterpolator(1)).start();
         //toolbarContainer.setVisibility(View.VISIBLE);
-        fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+        fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3)).start();
+        //mainContainer.setPadding(0, Utils.getToolbarHeight(this.getActivity()), 0, 0);
+//        ValueAnimator animator = ValueAnimator.ofInt(0, (toolbarHeight - (toolbarHeight >> 1) >> 1), (toolbarHeight - (toolbarHeight >> 1)), (toolbarHeight - (toolbarHeight >> 2)), toolbarHeight);
+//        animator.setInterpolator(new DecelerateInterpolator(2));
+//        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator valueAnimator){
+//                mainContainer.setPadding(0, toolbarHeight, 0, 0);
+//            }
+//        });
+//        animator.setDuration(750);
+//        animator.start();
     }
 
     @Override
     public void hide() {
-        //toolbarContainer.animate().translationY(-toolbarHeight).setInterpolator(new AccelerateInterpolator(2)).start();
-        //toolbarContainer.animate().alpha(0).setInterpolator(new AccelerateInterpolator(1)).start();
+        Log.e("InstituteListFragment", "Hide");
+        //toolbarContainer.animate().translationY(-toolbarHeight).setDuration(1000).setInterpolator(new AccelerateInterpolator(2)).start();
+        //toolbarContainer.animate().alpha(0).setDuration(1000).setInterpolator(new AccelerateInterpolator(1)).start();
         //toolbarContainer.setVisibility(View.GONE);
-        fab.animate().translationY(fab.getHeight() + fabMargin).setInterpolator(new AccelerateInterpolator(2)).start();
+        fab.animate().translationY(fab.getHeight() + fabMargin).setInterpolator(new AccelerateInterpolator(3)).start();
+        //mainContainer.setPadding(0, 0, 0, 0);
+//        ValueAnimator animator = ValueAnimator.ofInt(toolbarHeight, toolbarHeight - (toolbarHeight >> 2), toolbarHeight - (toolbarHeight >> 1), (toolbarHeight - (toolbarHeight >> 1) >> 1) , 0);
+//        animator.setInterpolator(new AccelerateInterpolator(2));
+//        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator valueAnimator){
+//                mainContainer.setPadding(0, 0, 0, 0);
+//            }
+//        });
+//        animator.setDuration(750);
+//        animator.start();
     }
 
     public interface OnInstituteSelectedListener extends BaseListener {
