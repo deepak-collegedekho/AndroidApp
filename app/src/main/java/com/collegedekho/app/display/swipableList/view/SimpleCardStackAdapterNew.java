@@ -469,9 +469,9 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         if(this.drawableLike == null)
             this.drawableLike = ContextCompat.getDrawable(mContext, R.drawable.ic_like);
         if(this.drawableFees == null)
-            this.drawableFees = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_placement);
-        if(this.drawablePlacement == null)
-            this. drawablePlacement = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_fees);
+            this.drawableFees = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_fees);
+        //if(this.drawablePlacement == null)
+          //  this. drawablePlacement = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_placement);
         if(this.drawableInfo == null)
             this. drawableInfo = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_information);
         if(this.drawableBubble == null)
@@ -483,8 +483,8 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
 
         if(like_bitmap == null)
             like_bitmap   =  Utils.getBitmapDrawable(this.drawableLike);
-        if(placement_bitmap == null)
-            placement_bitmap  =  Utils.getBitmapDrawable(this.drawablePlacement);
+       // if(placement_bitmap == null)
+         //   placement_bitmap  =  Utils.getBitmapDrawable(this.drawablePlacement);
         if(fees_bitmap == null)
             fees_bitmap =  Utils.getBitmapDrawable(this.drawableFees);
         if(info_bitmap == null)
@@ -495,7 +495,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
 
         if(view != null){
             ((ImageView) view.findViewById(R.id.cd_reco_card_like)).setImageBitmap(like_bitmap);
-            ((ImageView) view.findViewById(R.id.placement_image)).setImageBitmap(placement_bitmap);
+           // ((ImageView) view.findViewById(R.id.placement_image)).setImageBitmap(placement_bitmap);
             ((ImageView) view.findViewById(R.id.fees_range_image)).setImageBitmap(fees_bitmap);
             ((ImageView) view.findViewById(R.id.btn_details)).setImageBitmap(info_bitmap);
             (view.findViewById(R.id.likes_layout)).setBackground(drawableBubble);

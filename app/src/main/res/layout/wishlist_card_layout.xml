@@ -422,6 +422,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_centerHorizontal="true"
+                                    app:srcCompat="@drawable/ic_wishlist_placement"
                                     />
 
                                 <TextView
@@ -656,8 +657,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingTop="@dimen/m8dp"
-                    android:paddingBottom="@dimen/m7dp"
+                    android:paddingTop="@dimen/m4dp"
+                    android:paddingBottom="@dimen/m4dp"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -675,6 +676,7 @@
                         android:gravity="center"
                         android:drawableLeft="@drawable/call"
                         android:layout_marginRight="@dimen/m8dp"
+                        android:textSize="@dimen/m13sp"
                         android:textColor="@color/white"/>
 
                     <TextView
@@ -687,6 +689,8 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:text="APPLY NOW"
+                        android:gravity="center"
+                        android:textSize="@dimen/m13sp"
                         android:layout_marginLeft="@dimen/m8dp"
                         android:textColor="@color/white"/>
 

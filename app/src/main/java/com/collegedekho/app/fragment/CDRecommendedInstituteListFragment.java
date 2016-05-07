@@ -226,6 +226,10 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                 view.findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
             }
         }
+        if(mInstitutes == null || mInstitutes.size() <=0){
+            if(mListener != null)
+                mListener.OnCDRecommendedLoadNext();
+        }
     }
 
     @Override
@@ -249,18 +253,134 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                 break;
         }
     }
-    public void updateListAfterApplied(Institute institute){
-        if(mInstitutes != null && mInstitutes.size() > 0 && institute!=null && mInstitutes.contains(institute)) {
-            mInstitutes.remove(institute);
-        }
-            updateList(mInstitutes,mNextUrl,true);
 
+
+
+    @Override
+    public void OnLoadNext() {
+        if (this.mNextUrl == null || this.mNextUrl.equalsIgnoreCase("null"))
+            return;
+        this.loading = true;
+        this.mAdapter.setLoadingNext(true);
+        this.mListener.OnCDRecommendedLoadNext();
     }
 
-    public void updateList(List<Institute> institutes, String next, boolean clearList) {
-       /* if(clearList){
-            this.mInstitutes.clear();
-        }*/
+    @Override
+    public void OnInstituteSelected(Institute institute) {
+        this.mListener.OnCDRecommendedInstituteSelected(institute);
+    }
+
+    @Override
+    public void OnInstituteLiked(Institute institute, boolean isLastCard) {
+        this.mRemoveInstituteFromList();
+        if(isLastCard && this.IS_UNDECIDED_INSTITUTES) {
+            if (this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null"))
+                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(this.mNextUrl);
+            else
+            {
+                if(this.mUndecidedCount >= 1){
+                    new Handler().postDelayed(new Runnable() {
+                        public void run() {
+                            sendRequestForUndecided();
+                        }
+                    }, 300);
+                }
+
+                this.mRightArrowImageView.setVisibility(View.INVISIBLE);
+                this.mLeftArrowImageView.setVisibility(View.INVISIBLE);
+                this.mEmptyTextView.setVisibility(View.VISIBLE);
+                this.mCardContainer.setVisibility(View.GONE);
+            }
+        }
+
+        this.mListener.OnCDRecommendedInstituteLiked(institute, isLastCard, this.IS_UNDECIDED_INSTITUTES);
+    }
+
+    @Override
+    public void OnInstituteDislike(Institute institute, boolean isLastCard) {
+        this.mRemoveInstituteFromList();
+        if(isLastCard && IS_UNDECIDED_INSTITUTES) {
+            if (this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null"))
+                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(this.mNextUrl);
+            else{
+
+                if(this.mUndecidedCount >= 1){
+                    new Handler().postDelayed(new Runnable() {
+                        public void run() {
+                            sendRequestForUndecided();
+                        }
+                    }, 300);
+                }
+
+                this.mRightArrowImageView.setVisibility(View.INVISIBLE);
+                this.mLeftArrowImageView.setVisibility(View.INVISIBLE);
+                this.mEmptyTextView.setVisibility(View.VISIBLE);
+                this.mCardContainer.setVisibility(View.GONE);
+            }
+        }
+
+        this.mListener.OnCDRecommendedInstituteDislike(institute, isLastCard,IS_UNDECIDED_INSTITUTES);
+    }
+
+    @Override
+    public void OnDecideLater(Institute institute, boolean isLastCard) {
+        this.mRemoveInstituteFromList();
+        if(isLastCard && IS_UNDECIDED_INSTITUTES) {
+            if (this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null"))
+                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(this.mNextUrl);
+            else
+            {
+                sendRequestForUndecided();
+                this.mEmptyTextView.setVisibility(View.VISIBLE);
+                this.mCardContainer.setVisibility(View.GONE);
+            }
+        }
+
+        this.mListener.OnCDRecommendedInstituteDecideLater(institute, isLastCard, IS_UNDECIDED_INSTITUTES);
+    }
+
+    @Override
+    public void OnShowMessage(String message) {
+        this.mEmptyTextView.setText(message);
+    }
+
+    @Override
+    public void OnAppliedInstitute(Institute institute) {
+        if(mListener != null) {
+            boolean flag = false;
+            if(mInstitutes != null &&  mInstitutes.size() ==1){
+                flag = true;
+                this.mEmptyTextView.setVisibility(View.VISIBLE);
+                this.mEmptyTextView.setText("Looking for more institutes...");
+                this.mCardContainer.setVisibility(View.GONE);
+                this.mRightArrowImageView.setVisibility(View.INVISIBLE);
+                this.mLeftArrowImageView.setVisibility(View.INVISIBLE);
+
+            }
+            this.mListener.OnAppliedInstitute(institute,flag);
+
+            if(institute.getGroups_exists()==1) {
+                removeTopCard(institute);
+            }
+        }
+    }
+
+    public void removeTopCard(Institute institute){
+        if(mInstitutes != null && mInstitutes.size() > 0 && mCardContainer != null &&
+                institute!=null && mInstitutes.contains(institute)) {
+            mInstitutes.remove(institute);
+            mCardContainer.removeTopCard();
+
+            if(IS_UNDECIDED_INSTITUTES) {
+                this.mUndecidedCount = mUndecidedCount-1;
+                Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count - ", "", Constants.ANIM_SHORT_DURATION);
+
+            }
+
+        }
+    }
+
+    public void updateList(List<Institute> institutes, String next) {
         this.mInstitutes.addAll(institutes);
         IS_UNDECIDED_INSTITUTES = false;
         mUndecidedCountTV.setClickable(true);
@@ -298,11 +418,15 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         this.mPageTitleTV.setText("CD Recommended Colleges - Decide Later");
         if (this.mInstitutes.size() == 0)
         {
-            this.mEmptyTextView.setText("No CD Recommended - Decide Later colleges found");
+            this.mEmptyTextView.setText("Looking for more institutes...");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.mCardContainer.setVisibility(View.GONE);
             this.mRightArrowImageView.setVisibility(View.INVISIBLE);
             this.mLeftArrowImageView.setVisibility(View.INVISIBLE);
+            if(mListener != null) {
+               mListener.OnCDRecommendedLoadNext();
+            }
+
         }
         else
         {
@@ -321,106 +445,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             ((MainActivity) getActivity()).hideProgressDialog();
     }
 
-    @Override
-    public void OnLoadNext() {
-        if (this.mNextUrl == null || this.mNextUrl.equalsIgnoreCase("null"))
-            return;
-        this.loading = true;
-        this.mAdapter.setLoadingNext(true);
-        this.mListener.OnCDRecommendedLoadNext();
-    }
-
-    @Override
-    public void OnInstituteSelected(Institute institute) {
-        this.mListener.OnCDRecommendedInstituteSelected(institute);
-    }
-
-    @Override
-    public void OnInstituteLiked(Institute institute, boolean isLastCard) {
-        this.mRemoveInstituteFromList();
-        if(isLastCard && this.IS_UNDECIDED_INSTITUTES) {
-            if (this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null"))
-                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(this.mNextUrl);
-            else
-            {
-                if(this.mUndecidedCount > 1){
-                    new Handler().postDelayed(new Runnable() {
-                        public void run() {
-                            sendRequestForUndecided();
-                        }
-                    }, 300);
-                }
-
-                this.mRightArrowImageView.setVisibility(View.INVISIBLE);
-                this.mLeftArrowImageView.setVisibility(View.INVISIBLE);
-                this.mEmptyTextView.setVisibility(View.VISIBLE);
-                this.mCardContainer.setVisibility(View.GONE);
-            }
-        }
-
-        this.mListener.OnCDRecommendedInstituteLiked(institute, isLastCard, this.IS_UNDECIDED_INSTITUTES);
-    }
-
-    @Override
-    public void OnInstituteDislike(Institute institute, boolean isLastCard) {
-        this.mRemoveInstituteFromList();
-        if(isLastCard && IS_UNDECIDED_INSTITUTES) {
-            if (this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null"))
-                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(this.mNextUrl);
-            else{
-
-                if(this.mUndecidedCount > 1){
-                    new Handler().postDelayed(new Runnable() {
-                        public void run() {
-                            sendRequestForUndecided();
-                        }
-                    }, 300);
-                }
-
-                this.mRightArrowImageView.setVisibility(View.INVISIBLE);
-                this.mLeftArrowImageView.setVisibility(View.INVISIBLE);
-                this.mEmptyTextView.setVisibility(View.VISIBLE);
-                this.mCardContainer.setVisibility(View.GONE);
-            }
-        }
-
-        this.mListener.OnCDRecommendedInstituteDislike(institute, isLastCard,IS_UNDECIDED_INSTITUTES);
-    }
-
-    @Override
-    public void OnDecideLater(Institute institute, boolean isLastCard) {
-        this.mRemoveInstituteFromList();
-        if(isLastCard && IS_UNDECIDED_INSTITUTES) {
-            if (this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null"))
-                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(this.mNextUrl);
-            else
-            {
-                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
-                this.mEmptyTextView.setVisibility(View.VISIBLE);
-                this.mCardContainer.setVisibility(View.GONE);
-            }
-        }
-
-        this.mListener.OnCDRecommendedInstituteDecideLater(institute, isLastCard, IS_UNDECIDED_INSTITUTES);
-    }
-
-    @Override
-    public void OnShowMessage(String message) {
-        this.mEmptyTextView.setText(message);
-    }
-
-    @Override
-    public void OnAppliedInstitute(Institute institute) {
-        if(mListener != null) {
-            boolean flag = false;
-            if(mInstitutes != null &&  mInstitutes.size() ==1){
-                flag = true;
-                this.mEmptyTextView.setText("Loading...");
-            }
-            this.mListener.OnAppliedInstitute(institute,flag);
-        }
-    }
-
     private void sendRequestForUndecided(){
         if(mListener != null)
             this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/" + "?action=3");
@@ -431,14 +455,13 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     {
         try {
             this.mInstitutes.remove(0);
-
             if(this.mInstitutes.size() <= 0) {
                 if (this.mNextUrl == null || this.mNextUrl.equalsIgnoreCase("null")) {
                     this.mEmptyTextView.setText("No CD Recommended colleges found");
                     this.mEmptyTextView.setVisibility(View.VISIBLE);
                     this.mCardContainer.setVisibility(View.GONE);
                 } else {
-                    this.mEmptyTextView.setText("Loading...");
+                    this.mEmptyTextView.setText("Looking for more institutes...");
                     this.mEmptyTextView.setVisibility(View.VISIBLE);
                     this.mCardContainer.setVisibility(View.GONE);
                 }

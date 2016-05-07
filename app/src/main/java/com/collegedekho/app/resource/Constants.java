@@ -204,8 +204,6 @@ public class Constants
     public static final int APPLY_UPDATING  = 2;
     public static final String KEY_APPLY_STATUS = "apply_status";
     public static String INSTITUTE_ID ="institute_id_set";
-    public static String YOUTUBE_DEVELOPER_KEY = "AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk";
-//    public static String YOUTUBE_DEVELOPER_KEY = "AIzaSyBIu-yzOCq2pg237na2kAGUqzlrb9su-6c";
     public static final String TAG_UPDATE_VIDEO_TITLE = "update_video_title";
 
     public static final String ACTION_VOTE_QNA_QUESTION_ENTITY = "action_qna_question_entity_vote";
@@ -260,6 +258,9 @@ public class Constants
     public static final String SENDER_ID = "864760274938";
     // GCM key for Apps Flyer
     public static final String GCM_KEY_APPS_FLYER = "AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk";
+    // You tube developer key
+    public static String YOUTUBE_DEVELOPER_KEY = "AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk";
+    //public static String YOUTUBE_DEVELOPER_KEY = "AIzaSyBIu-yzOCq2pg237na2kAGUqzlrb9su-6c";
 
     public static final Uri BASE_APP_URI = Uri.parse("android-app://com.collegedekho.app/https/www.collegedekho.com/");
 

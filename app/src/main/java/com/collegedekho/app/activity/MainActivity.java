@@ -14,7 +14,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.content.res.Configuration;
-import android.content.res.TypedArray;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -25,6 +25,7 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -292,7 +293,6 @@ public class MainActivity extends AppCompatActivity
     private List<Articles> mArticlesList;
     private Institute mInstitute;
     private String mLastScreenName = "";
-    private String instituteCourseId = "";
     private List<Widget> mWidgets;
     public  CallbackManager callbackManager;
     private Date mTimeScreenClicked = new Date();
@@ -334,6 +334,7 @@ public class MainActivity extends AppCompatActivity
     private Snackbar mSnackbar;
     private static Context mContext;
     public static TrueClient mTrueClient;
+    private Resources mResources ;
     /*** ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
@@ -386,6 +387,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         this.setContentView(R.layout.activity_main);
+
+        this.mResources = getResources();
         this.getBitMapResources();
 
         this.mSnackbar = Snackbar.make(this.findViewById(R.id.main_activity_container), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
@@ -1468,7 +1471,7 @@ public class MainActivity extends AppCompatActivity
                     if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED)
                         ((CDRecommendedInstituteListFragment) currentFragment).showUndecidedInstitutes(this.mInstituteList, next);
                     else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED)
-                        ((CDRecommendedInstituteListFragment) currentFragment).updateList(this.mInstituteList, next, false);
+                        ((CDRecommendedInstituteListFragment) currentFragment).updateList(this.mInstituteList, next);
                 }
             } else {
                 String val = this.extractResults(response);
@@ -1493,7 +1496,7 @@ public class MainActivity extends AppCompatActivity
                         if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED)
                             ((CDRecommendedInstituteListFragment) fragment).showUndecidedInstitutes(this.mInstituteList, next);
                         else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED)
-                            ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next, false);
+                            ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next);
                     }
 
                     this.mDisplayFragment(fragment, false, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
@@ -1938,9 +1941,6 @@ public class MainActivity extends AppCompatActivity
                 this.mUpdateAppliedCourses(response, extraTag, tabPosition);
                 break;
 
-            case Constants.TAG_WISH_LIST_APPLIED_COURSE:
-               this.removeAppliedInstituteCard();
-                break;
             case Constants.TAG_POST_QUESTION:
                 this.mInstituteQnAQuestionAdded(response);
                 break;
@@ -2232,7 +2232,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case Constants.TAG_LOAD_UNDECIDED_INSTITUTE:
-                if (tags.length == 3) {
+                /*if (tags.length == 3) {
 
                 }
                 if (tags.length == 2) {
@@ -2244,9 +2244,9 @@ public class MainActivity extends AppCompatActivity
                         this.OnCDRecommendedLoadNext();
                 }
                 else if (tags.length == 1)
-                {
+                {*/
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNDECIDED);
-                }
+               // }
                 break;
 
             case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
@@ -2282,15 +2282,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void removeAppliedInstituteCard() {
-        DataBaseHelper.getInstance(this).deleteAllExamSummary();
-        if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteListFragment) {
-            //if(mInstituteList!=null && mInstituteList.size()>0 && institute!=null && mInstituteList.contains(institute)) {
-               // mInstituteList.remove(institute);
-                ((CDRecommendedInstituteListFragment) currentFragment).updateListAfterApplied(institute);
-            //}
-        }
-    }
 
     private synchronized void mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType type) {
         //Events
@@ -3221,125 +3212,6 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
-    }
-
-    @Override
-    public void onCourseApplied(final int position, final int tabPosition, final InstituteCourse instituteCourse) {
-
-        final HashMap<String, String> params = new HashMap<>();
-        if (user != null) {
-            String name = user.getName();
-            String email = user.getEmail();
-            String phone = user.getPhone_no();
-
-            if (name.equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER)))
-                name = "";
-
-            if ((user.getName() == null || user.getName().isEmpty() || name.equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER))) && user.profileData[0] != null)
-                name = user.profileData[0];
-            if (phone == null || phone.isEmpty())
-                phone = user.getPrimaryPhone();
-            if (user.getEmail().contains("@anonymouscollegedekho.com"))
-                email = user.getPrimaryEmail();
-
-            if (name == null || name.isEmpty() || name.toLowerCase().contains(getResourceString(R.string.ANONYMOUS_USER).toLowerCase()) ||
-                    phone == null || phone.length() <= 6 ||
-                    email == null || email.isEmpty() || email.contains("@anonymouscollegedekho.com")) {
-                final View view = getLayoutInflater().inflate(R.layout.dialog_apply, null, false);
-                ((TextView) view.findViewById(R.id.apply_name)).setText(name);
-                ((TextView) view.findViewById(R.id.apply_email)).setText(email);
-                ((TextView) view.findViewById(R.id.apply_phone)).setText(phone);
-                Spinner datePicker = (Spinner) view.findViewById(R.id.apply_year);
-                datePicker.setAdapter(new ArrayAdapter<>(this, R.layout.item_spinner, getYears()));
-                datePicker.setOnItemSelectedListener(this);
-                final Dialog apply = new android.app.AlertDialog.Builder(this)
-                        .setView(view)
-                        .create();
-                apply.setCanceledOnTouchOutside(false);
-                apply.show();
-                (view.findViewById(R.id.submit_button)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String name = ((TextView) view.findViewById(R.id.apply_name)).getText().toString();
-                        String email = ((TextView) view.findViewById(R.id.apply_email)).getText().toString();
-                        String phone = ((TextView) view.findViewById(R.id.apply_phone)).getText().toString();
-                        if (name == null || name.isEmpty()) {
-                            displayMessage(R.string.NAME_EMPTY);
-                            return;
-                        } else if (!Utils.isValidName(name)) {
-                            displayMessage(R.string.NAME_INVALID);
-                            return;
-                        } else if (phone == null || phone.isEmpty()) {
-                            displayMessage(R.string.PHONE_EMPTY);
-                            return;
-                        } else if (phone.length() <= 9 || phone.length() > 12 || !Utils.isValidPhone(phone)) {
-                            displayMessage(R.string.PHONE_INVALID);
-                            return;
-                        } else if (email == null || email.isEmpty()) {
-                            displayMessage(R.string.EMAIL_EMPTY);
-                            return;
-                        } else if (!Utils.isValidEmail(email)) {
-                            displayMessage(R.string.EMAIL_INVALID);
-                            return;
-                        }
-                        apply.dismiss();
-                        params.put(getResourceString(R.string.USER_NAME), name);
-                        params.put(getResourceString(R.string.USER_EMAIL), email);
-                        params.put(getResourceString(R.string.USER_PHONE), phone);
-                        params.put(getResourceString(R.string.APPLY_YEAR), mYear);
-                        appplyCourse(instituteCourse, params, position, tabPosition);
-                    }
-                });
-
-                (view.findViewById(R.id.cancel_button)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        apply.dismiss();
-                        if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
-                            ((InstituteDetailFragment) currentFragment).cancleAppliedRequest();
-                    }
-                });
-            } else {
-                params.put(getResourceString(R.string.USER_NAME), name);
-                params.put(getResourceString(R.string.USER_EMAIL), email);
-                params.put(getResourceString(R.string.USER_PHONE), phone);
-
-                Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                params.put(getResourceString(R.string.APPLY_YEAR), "" + year);
-                appplyCourse(instituteCourse, params, position, tabPosition);
-            }
-        }
-    }
-
-    private void appplyCourse(InstituteCourse instituteCourse, HashMap params, int position, int tabPosition) {
-        params.put(getResourceString(R.string.APPLY_COURSE), "" + instituteCourse.getId());
-        if (mInstitute != null) {
-            params.put("institute", "" + mInstitute.getId());
-        }
-
-        String URL = Constants.BASE_URL + "lms/";
-        instituteCourseId = "" + instituteCourse.getId();
-        this.mMakeNetworkCall(Constants.TAG_APPLIED_COURSE + "#" + position + "#" + tabPosition, URL, params, Request.Method.POST);
-
-        Map<String, Object> eventValue = new HashMap<String, Object>();
-        eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(instituteCourse.getId()));
-        eventValue.put(getResourceString(R.string.APPLY_COURSE), instituteCourse.getName());
-        eventValue.put(getResourceString(R.string.APPLY_INSTITUTE), mInstitute.getResource_uri());
-        eventValue.put(getResourceString(R.string.APPLY_COURSE_ID), String.valueOf(instituteCourse.getId()));
-
-        //Events
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, this);
-    }
-
-    public ArrayList<String> getYears() {
-        ArrayList<String> years = new ArrayList<>();
-        int year = Calendar.getInstance().get(Calendar.YEAR);
-        for (int i = 0; i < 5; i++) {
-            years.add("" + (year + i));
-        }
-        mYear = years.get(0);
-        return years;
     }
 
     /**
@@ -4741,12 +4613,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         //  show appBarLayout and toolBar
-        LinearLayout mainContainer;
-        mainContainer = (LinearLayout) findViewById(R.id.main_container);
-        mainContainer.setPadding(0, Utils.getToolbarHeight(this), 0, 0);
-        //RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mainContainer.getLayoutParams();
-        //params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
-        //findViewById(R.id.main_container).setLayoutParams(params);
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.main_container).getLayoutParams();
+        params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+        findViewById(R.id.main_container).setLayoutParams(params);
         mUserExamsList = MainActivity.user.getUser_exams();
         if (mUserExamsList == null)
             mUserExamsList = new ArrayList<>();
@@ -5033,129 +4902,192 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnAppliedInstitute(Institute institute, boolean islastcard) {
+
+        this.mInstitute =institute;
+        DataBaseHelper.getInstance(this).deleteAllExamSummary();
         if(institute.getGroups_exists()==1) {
-            this.institute=institute;
-            removeAppliedInstituteCard();
             String cafUrl = "https://m.collegedekho.com/caf-login-signup/?institute_id=" + institute.getId();
             onDisplayWebFragment(cafUrl);
-        }else {
-            onWishListCourseApplied(institute);
-            //this.OnCDRecommendedLoadNext();
-        }
-        Log.e("CD-RE", "Like:CD Reco Institute is  Applied: " + institute.getId());
-        HashMap<String, String> params = new HashMap<>();
-        params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
-        params.put("action", String.valueOf("1"));
 
-        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE+"#"+islastcard , institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+            HashMap<String, String> params = new HashMap<>();
+            params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
+            params.put("action", String.valueOf("1"));
+            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE+"#"+islastcard , institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+
+
+        }else {
+            requestForApplyInstitute(Constants.TAG_WISH_LIST_APPLIED_COURSE,new HashMap<String, String>(),Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE+"#"+islastcard);
+
+            if(mInstitute != null) {
+                Map<String, Object> eventValue = new HashMap<>();
+                eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_RECO), mInstitute.getResource_uri());
+                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
+            }
+        }
 
     }
 
-    Institute institute;
-    public void onWishListCourseApplied(final Institute institute) {
-        this.institute=institute;
+
+    @Override
+    public void onCourseApplied(final int position, final int tabPosition, final InstituteCourse instituteCourse) {
+
         final HashMap<String, String> params = new HashMap<>();
-        if (user != null) {
-            String name = user.getName();
-            String email = user.getEmail();
-            String phone = user.getPhone_no();
 
-            if (name.equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER)))
-                name = "";
+        if(instituteCourse != null) {
+            params.put(getResourceString(R.string.APPLY_COURSE), "" + instituteCourse.getId());
+        }
 
-            if ((user.getName() == null || user.getName().isEmpty() || name.equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER))) && user.profileData[0] != null)
-                name = user.profileData[0];
-            if (phone == null || phone.isEmpty())
-                phone = user.getPrimaryPhone();
-            if (user.getEmail().contains("@anonymouscollegedekho.com"))
-                email = user.getPrimaryEmail();
+        String TAG = Constants.TAG_APPLIED_COURSE + "#" + position + "#" + tabPosition;
 
-            if (name == null || name.isEmpty() || name.toLowerCase().contains(getResourceString(R.string.ANONYMOUS_USER).toLowerCase()) ||
-                    phone == null || phone.length() <= 6 ||
-                    email == null || email.isEmpty() || email.contains("@anonymouscollegedekho.com")) {
-                final View view = getLayoutInflater().inflate(R.layout.dialog_apply, null, false);
-                ((TextView) view.findViewById(R.id.apply_name)).setText(name);
-                ((TextView) view.findViewById(R.id.apply_email)).setText(email);
-                ((TextView) view.findViewById(R.id.apply_phone)).setText(phone);
-                Spinner datePicker = (Spinner) view.findViewById(R.id.apply_year);
-                datePicker.setAdapter(new ArrayAdapter<>(this, R.layout.item_spinner, getYears()));
-                datePicker.setOnItemSelectedListener(this);
-                final Dialog apply = new android.app.AlertDialog.Builder(this)
-                        .setView(view)
-                        .create();
-                apply.setCanceledOnTouchOutside(false);
-                apply.show();
-                (view.findViewById(R.id.submit_button)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String name = ((TextView) view.findViewById(R.id.apply_name)).getText().toString();
-                        String email = ((TextView) view.findViewById(R.id.apply_email)).getText().toString();
-                        String phone = ((TextView) view.findViewById(R.id.apply_phone)).getText().toString();
-                        if (name == null || name.isEmpty()) {
-                            displayMessage(R.string.NAME_EMPTY);
-                            return;
-                        } else if (!Utils.isValidName(name)) {
-                            displayMessage(R.string.NAME_INVALID);
-                            return;
-                        } else if (phone == null || phone.isEmpty()) {
-                            displayMessage(R.string.PHONE_EMPTY);
-                            return;
-                        } else if (phone.length() <= 9 || phone.length() > 12 || !Utils.isValidPhone(phone)) {
-                            displayMessage(R.string.PHONE_INVALID);
-                            return;
-                        } else if (email == null || email.isEmpty()) {
-                            displayMessage(R.string.EMAIL_EMPTY);
-                            return;
-                        } else if (!Utils.isValidEmail(email)) {
-                            displayMessage(R.string.EMAIL_INVALID);
-                            return;
-                        }
-                        apply.dismiss();
-                        params.put(getResourceString(R.string.USER_NAME), name);
-                        params.put(getResourceString(R.string.USER_EMAIL), email);
-                        params.put(getResourceString(R.string.USER_PHONE), phone);
-                        params.put(getResourceString(R.string.APPLY_YEAR), mYear);
-                        params.put("institute", "" + institute.getId());
+        requestForApplyInstitute(TAG,params, "");
 
-                        String URL = Constants.BASE_URL + "lms/";
-                        mMakeNetworkCall(Constants.TAG_WISH_LIST_APPLIED_COURSE , URL, params, Request.Method.POST);
+        Map<String, Object> eventValue = new HashMap<String, Object>();
+        eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(instituteCourse.getId()));
+        eventValue.put(getResourceString(R.string.APPLY_COURSE), instituteCourse.getName());
+        if(mInstitute != null)
+            eventValue.put(getResourceString(R.string.APPLY_INSTITUTE), mInstitute.getResource_uri());
+        eventValue.put(getResourceString(R.string.APPLY_COURSE_ID), String.valueOf(instituteCourse.getId()));
 
-                        Map<String, Object> eventValue = new HashMap<String, Object>();
-                        eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_RECO), institute.getResource_uri());
-                        //Events
-                        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
+        //Events
+        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, this);
+
+
+
+    }
+
+    private void requestForApplyInstitute(final String TAG , final  HashMap params, final String ShortlistedTag) {
+
+        if(user == null)
+            return;
+
+        if (mInstitute != null) {
+            params.put("institute", "" + mInstitute.getId());
+        }
+
+        String name = user.getName();
+        String email = user.getEmail();
+        String phone = user.getPhone_no();
+
+        // get user name for apply course
+        if ((name == null || name.isEmpty() || name.contains(getResourceString(R.string.ANONYMOUS_USER))) && user.profileData[0] != null)
+            name = user.profileData[0];
+        else
+            name = getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_name),"");
+
+        // get user email for apply course
+        if (email == null || email.isEmpty() || !email.contains("@anonymouscollegedekho.com") && (user.getPrimaryEmail() != null || !user.getPrimaryEmail().isEmpty()))
+            email = user.getPrimaryEmail();
+        else
+            email = getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_email),"");
+
+        // get user email for apply course
+        if ((phone == null || phone.isEmpty()) && user.getPrimaryPhone() != null && !user.getPrimaryPhone().isEmpty())
+            phone = user.getPrimaryPhone();
+        else
+            phone = getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_phone),"");
+
+        if ( name.isEmpty() || phone.length() <= 6 || email.isEmpty()) {
+            final View view = getLayoutInflater().inflate(R.layout.dialog_apply, null, false);
+            ((TextView) view.findViewById(R.id.apply_name)).setText(name);
+            ((TextView) view.findViewById(R.id.apply_email)).setText(email);
+            ((TextView) view.findViewById(R.id.apply_phone)).setText(phone);
+            Spinner datePicker = (Spinner) view.findViewById(R.id.apply_year);
+            datePicker.setAdapter(new ArrayAdapter<>(this, R.layout.item_spinner, getYears()));
+            datePicker.setOnItemSelectedListener(this);
+            final Dialog apply = new android.app.AlertDialog.Builder(this)
+                    .setView(view)
+                    .create();
+            apply.setCanceledOnTouchOutside(false);
+            apply.show();
+            (view.findViewById(R.id.submit_button)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String name = ((TextView) view.findViewById(R.id.apply_name)).getText().toString();
+                    String email = ((TextView) view.findViewById(R.id.apply_email)).getText().toString();
+                    String phone = ((TextView) view.findViewById(R.id.apply_phone)).getText().toString();
+                    if (name == null || name.isEmpty()) {
+                        displayMessage(R.string.NAME_EMPTY);
+                        return;
+                    } else if (!Utils.isValidName(name)) {
+                        displayMessage(R.string.NAME_INVALID);
+                        return;
+                    } else if (phone == null || phone.isEmpty()) {
+                        displayMessage(R.string.PHONE_EMPTY);
+                        return;
+                    } else if (phone.length() <= 9 || phone.length() > 12 || !Utils.isValidPhone(phone)) {
+                        displayMessage(R.string.PHONE_INVALID);
+                        return;
+                    } else if (email == null || email.isEmpty()) {
+                        displayMessage(R.string.EMAIL_EMPTY);
+                        return;
+                    } else if (!Utils.isValidEmail(email)) {
+                        displayMessage(R.string.EMAIL_INVALID);
+                        return;
+                    }
+                    getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_name),name).apply();
+                    getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_email),email).apply();
+                    getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_phone),phone).apply();
+                    apply.dismiss();
+                    params.put(getResourceString(R.string.USER_NAME), name);
+                    params.put(getResourceString(R.string.USER_EMAIL), email);
+                    params.put(getResourceString(R.string.USER_PHONE), phone);
+                    params.put(getResourceString(R.string.APPLY_YEAR), mYear);
+                    mMakeNetworkCall( TAG,Constants.BASE_URL + "lms/", params, Request.Method.POST);
+
+                    // remove top card from CD reco and shortlist after  successfully  applying for the institute
+                    if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteListFragment) {
+                        ((CDRecommendedInstituteListFragment) currentFragment).removeTopCard(mInstitute);
+
+                        HashMap<String, String> shortlistParams = new HashMap<>();
+                        shortlistParams.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
+                        shortlistParams.put("action", String.valueOf("1"));
+
+                        mMakeNetworkCall(ShortlistedTag , mInstitute.getResource_uri() + "shortlist/", shortlistParams, Request.Method.POST);
 
                     }
-                });
+                }
+            });
 
-                (view.findViewById(R.id.cancel_button)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        apply.dismiss();
-                        if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
-                            ((InstituteDetailFragment) currentFragment).cancleAppliedRequest();
-                    }
-                });
-            } else {
-                params.put(getResourceString(R.string.USER_NAME), name);
-                params.put(getResourceString(R.string.USER_EMAIL), email);
-                params.put(getResourceString(R.string.USER_PHONE), phone);
+            (view.findViewById(R.id.cancel_button)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    apply.dismiss();
+                    if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
+                        ((InstituteDetailFragment) currentFragment).cancleAppliedRequest();
+                }
+            });
+        } else {
+            params.put(getResourceString(R.string.USER_NAME), name);
+            params.put(getResourceString(R.string.USER_EMAIL), email);
+            params.put(getResourceString(R.string.USER_PHONE), phone);
 
-                Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                params.put(getResourceString(R.string.APPLY_YEAR), "" + year);
-                params.put("institute", "" + institute.getId());
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            params.put(getResourceString(R.string.APPLY_YEAR), "" + year);
+            this.mMakeNetworkCall( TAG,Constants.BASE_URL + "lms/", params, Request.Method.POST);
 
-                String URL = Constants.BASE_URL + "lms/";
-                mMakeNetworkCall(Constants.TAG_WISH_LIST_APPLIED_COURSE , URL, params, Request.Method.POST);
+            // remove top card from CD reco after  successfully  applying for the institute
+            if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteListFragment) {
+                ((CDRecommendedInstituteListFragment) currentFragment).removeTopCard(mInstitute);
 
-                Map<String, Object> eventValue = new HashMap<>();
-                eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_RECO), institute.getResource_uri());
-                //Events
-                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
+                HashMap<String, String> shortlistparams = new HashMap<>();
+                shortlistparams.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
+                shortlistparams.put("action", String.valueOf("1"));
+
+                mMakeNetworkCall(ShortlistedTag , mInstitute.getResource_uri() + "shortlist/", shortlistparams, Request.Method.POST);
 
             }
         }
+ }
+
+    public ArrayList<String> getYears() {
+        ArrayList<String> years = new ArrayList<>();
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        for (int i = 0; i < 5; i++) {
+            years.add("" + (year + i));
+        }
+        mYear = years.get(0);
+        return years;
     }
 
     private List<VideoEntry> videoList;

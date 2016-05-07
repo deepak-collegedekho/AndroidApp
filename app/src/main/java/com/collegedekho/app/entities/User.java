@@ -49,8 +49,8 @@ public class User
     private String year_of_admission;
     private String preferred_mode;
 
-    private String primaryEmail;
-    private String primaryPhone;
+    private String primaryEmail ="";
+    private String primaryPhone ="";
     public String[] profileData = new String[3];
 
     public interface ProfileQuery {

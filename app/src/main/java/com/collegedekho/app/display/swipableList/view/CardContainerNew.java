@@ -698,6 +698,11 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
                 return false;
         }
     }
+
+    public void removeTopCard(){
+        removeViewInLayout(mTopCard);
+        ensureFull();
+    }
     public interface OnSwipeDirectionListener{
         void onActionDislike();
         void onActionLike();

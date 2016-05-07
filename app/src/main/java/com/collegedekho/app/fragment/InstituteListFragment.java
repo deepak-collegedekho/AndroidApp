@@ -127,14 +127,14 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
         Animation animation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.simple_grow);
 
-        toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        //toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
 
         //  FAB margin needed for animation
         fabMargin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
-        toolbarHeight = Utils.getToolbarHeight(this.getActivity());
+        //toolbarHeight = Utils.getToolbarHeight(this.getActivity());
 
-        toolbarContainer = (AppBarLayout) getActivity().findViewById(R.id.app_bar_layout);
-        mainContainer = (LinearLayout) getActivity().findViewById(R.id.main_container);
+        //toolbarContainer = (AppBarLayout) getActivity().findViewById(R.id.app_bar_layout);
+        //mainContainer = (LinearLayout) getActivity().findViewById(R.id.main_container);
 
         fab = (FrameLayout) rootView.findViewById(R.id.myfab_main);
         fabBtn = (ImageButton) rootView.findViewById(R.id.button_filter);

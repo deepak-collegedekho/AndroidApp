@@ -224,6 +224,9 @@
     <string name="USER_NAME">name</string>
     <string name="USER_FIRST_NAME">first_name</string>
     <string name="USER_LAST_NAME">last_name</string>
+    <string name="user_apply_course_name">user_apply_course_name</string>
+    <string name="user_apply_course_email">user_apply_course_email</string>
+    <string name="user_apply_course_phone">user_apply_course_phone</string>
     <string name="USER_FAMILY_NAME">family_name</string>
     <string name="USER_GIVEN_NAME">given_name</string>
     <string name="USER_PASSWORD">password</string>
