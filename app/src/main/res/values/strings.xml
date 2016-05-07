@@ -278,6 +278,7 @@
 
 
     <string name="KEY_APPLY_STATUS">apply_status</string>
+    <string name="applied_successfully">Applied Successfully</string>
     <string name="TAG_UPDATE_VIDEO_TITLE">update_video_title</string>
 
     <string name="CATEGORY_PREFERENCE">category_preference</string>
@@ -437,4 +438,5 @@
     <string name="article_image_transaction">ArticleImageTransaction</string>
     <string name="dialog_title">Share more, Gain more.\nAnd open the door of possibilities for you!</string>
     <string name="GCM_DIALOG_SELECTION_ERROR">Nothing selected</string>
+    <string name="internet_not_available">Internet is not available</string>
 </resources>

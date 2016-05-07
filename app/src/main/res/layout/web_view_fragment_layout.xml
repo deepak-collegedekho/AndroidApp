@@ -13,6 +13,39 @@
         android:layout_marginTop="-6dp"
         android:max="100"
         android:visibility="gone"/>
+    <LinearLayout
+        android:id="@+id/web_view_error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/m10dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/AppTheme.TextView.Empty"
+            android:gravity="center"
+            android:layout_marginBottom="20dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:visibility="gone"
+            android:text="@string/internet_not_available"
+            />
+
+        <TextView
+            android:id="@+id/web_view_internet_refresh"
+            style="@style/AppTheme.TextView.Empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Refresh"
+            android:drawablePadding="10dp"
+            android:textColor="@color/primaryColor"
+            android:drawableRight="@drawable/ic_refresh"
+            android:background="@drawable/bg_refresh_selected"
+            android:layout_centerInParent="true"
+            />
+
+    </LinearLayout>
     <WebView
         android:id="@+id/web_view"
         android:layout_width="match_parent"

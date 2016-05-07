@@ -62,6 +62,11 @@ public class Utils {
     public static void DisplayToast(Context context, String text){
         Toast.makeText(context, text, Toast.LENGTH_LONG).show();
     }
+    public static void DisplayToastShort(Context context, String text){
+       Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 30);
+        toast.show();
+    }
 
     public static Typeface getTypeFace(Context ctx, TypeFaceTypes mTypeFaceTypes){
         Typeface mTypeface = null;

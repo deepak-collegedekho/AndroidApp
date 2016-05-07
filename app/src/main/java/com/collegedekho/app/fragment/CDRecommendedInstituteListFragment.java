@@ -227,8 +227,10 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             }
         }
         if(mInstitutes == null || mInstitutes.size() <=0){
-            if(mListener != null)
+            if(mListener != null) {
+                this.mEmptyTextView.setText("Looking for more institutes...");
                 mListener.OnCDRecommendedLoadNext();
+            }
         }
     }
 
@@ -360,7 +362,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             this.mListener.OnAppliedInstitute(institute,flag);
 
             if(institute.getGroups_exists()==1) {
-                removeTopCard(institute);
+               removeTopCard(institute);
             }
         }
     }
@@ -381,6 +383,9 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     }
 
     public void updateList(List<Institute> institutes, String next) {
+        if(getView() == null)
+            return;
+
         this.mInstitutes.addAll(institutes);
         IS_UNDECIDED_INSTITUTES = false;
         mUndecidedCountTV.setClickable(true);

@@ -1940,7 +1940,9 @@ public class MainActivity extends AppCompatActivity
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 this.mUpdateAppliedCourses(response, extraTag, tabPosition);
                 break;
-
+            case Constants.TAG_WISH_LIST_APPLIED_COURSE:
+                Utils.DisplayToastShort(this.mContext, getResourceString(R.string.applied_successfully));
+                break;
             case Constants.TAG_POST_QUESTION:
                 this.mInstituteQnAQuestionAdded(response);
                 break;
@@ -3900,8 +3902,11 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 setupOtpRequest(false);
-            }else if (currentFragment instanceof WebViewFragment && ((WebViewFragment) currentFragment).canGoBack()){
+            }else if (currentFragment instanceof WebViewFragment){
+                boolean canGoBack = ((WebViewFragment) currentFragment).canGoBack();
+              if(canGoBack)
                 return;
+
             }
         }
 

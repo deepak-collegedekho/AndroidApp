@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -34,6 +35,8 @@ public class WebViewFragment extends BaseFragment {
     private View appBar;
     int preState = -1;
     private ProgressBar webProgress;
+    private String baseUrl ="";
+
 
     public static WebViewFragment newInstance(String link) {
 
@@ -77,6 +80,8 @@ public class WebViewFragment extends BaseFragment {
         webView = (WebView) view.findViewById(R.id.web_view);
         webProgress = (ProgressBar) view.findViewById(R.id.web_view_progress_bar);
         applyWebViewSettings(getActivity(), webView, webProgress);
+
+        view.findViewById(R.id.web_view_internet_refresh).setOnClickListener(this);
         loadUrl(link);
     }
 
@@ -101,8 +106,32 @@ public class WebViewFragment extends BaseFragment {
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()){
+            case R.id.web_view_internet_refresh:
+                if(baseUrl !=  null && !baseUrl.isEmpty())
+                    webView.clearCache(true);
+                    webView.clearHistory();
+                    webView.clearFormData();
+                    loadUrl(baseUrl);
+                break;
+            default:
+                break;
+        }
+    }
+
     public boolean canGoBack() {
         boolean goBack = webView.canGoBack();
+
+        WebBackForwardList mWebBackForwardList = webView.copyBackForwardList();
+        if (mWebBackForwardList.getCurrentIndex() > 0) {
+           String  historyUrl = mWebBackForwardList.getItemAtIndex(mWebBackForwardList.getCurrentIndex() - 1).getUrl();
+                if(historyUrl.equalsIgnoreCase("about:blank")){
+                    return false;
+                }
+        }
         if (goBack) {
             webView.goBack();
         }
@@ -122,6 +151,7 @@ public class WebViewFragment extends BaseFragment {
 //        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         webSettings.setDomStorageEnabled(true);
         webSettings.setUseWideViewPort(false);
+        //webSettings.setLoadWithOverviewMode(false);
 //        webSettings.setUserAgentString(webSettings.getUserAgentString() + ";NP-ANDROID-GPT");
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
 
@@ -130,9 +160,17 @@ public class WebViewFragment extends BaseFragment {
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
                 webProgress.setVisibility(View.VISIBLE);
                 webProgress.setProgress(0);
-                super.onPageStarted(view, url, favicon);
+
+                if(url.contains("https://m.collegedekho.com/caf-login-signup/?institute_id=")){
+                    baseUrl = url;
+                  }
+
+                View v = getView();
+                if(v != null)
+                v.findViewById(R.id.web_view_error_layout).setVisibility(View.GONE);
             }
 
             @Override
@@ -152,9 +190,16 @@ public class WebViewFragment extends BaseFragment {
 
             @Override
             public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
                 webProgress.setProgress(100);
                 webProgress.setVisibility(View.GONE);
-                super.onPageFinished(view, url);
+                if(url.contains("https://m.collegedekho.com/caf-login-signup/?institute_id=") || url.equalsIgnoreCase("about:blank")){
+                    view.clearCache(true);
+                    view.clearHistory();
+                    view.clearFormData();
+                }
+
             }
 
             @Override
@@ -166,6 +211,13 @@ public class WebViewFragment extends BaseFragment {
             public void onReceivedError(WebView view, int errorCode,
                                         String description, String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
+                if(errorCode == -2){
+                    View v = getView();
+                    if(v != null){
+                        webView.loadUrl("about:blank");
+                        v.findViewById(R.id.web_view_error_layout).setVisibility(View.VISIBLE);
+                    }
+                }
 
             }
 
