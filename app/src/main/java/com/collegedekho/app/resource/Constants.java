@@ -94,6 +94,7 @@ public class Constants
     public static final String TAG_ID = "id";
     public static final String TAG_SELECTED = "is_selected";
     public static final String TAG_NEXT_SHORTLIST_INSTITUTE = "next_shortlist_institutes";
+    public static final String TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING = "last_shortlist_institutes_while_removing";
     public static final String TAG_NEXT_INSTITUTE = "next_institutes";
     public static final String TAG_NEXT_NEWS = "next_news";
     public static final String TAG_NEXT_ARTICLES = "next_articles";

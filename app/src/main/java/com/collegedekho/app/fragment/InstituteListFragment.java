@@ -177,9 +177,9 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
         instituteView=rootView.findViewById(R.id.viewType);
         if (mInstitutes.size() == 0)
-            rootView.findViewById(R.id.viewType).setVisibility(View.GONE);
+            instituteView.setVisibility(View.GONE);
         else
-            rootView.findViewById(R.id.viewType).setVisibility(View.VISIBLE);
+            instituteView.setVisibility(View.VISIBLE);
 
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
@@ -300,6 +300,13 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         mInstitutes.clear();
         mAdapter.notifyDataSetChanged();
     }
+    public void updateLastList(List<Institute> institutes, String next)
+    {
+        if(mInstitutes != null){
+            mInstitutes.clear();
+            updateList(institutes, next);
+        }
+    }
 
     public void updateList(List<Institute> institutes, String next) {
         progressBarLL.setVisibility(View.GONE);
@@ -315,10 +322,13 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             this.mSetFilterList();
         }
         if (mInstitutes.size() == 0) {
+            instituteView.setVisibility(View.GONE);
             this.mEmptyTextView.setText("Opps! Unable to find colleges for your preferences, please change your filters in ‘*Resource Buddy*’!");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
         }
         else {
+
+            instituteView.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
         }
     }
@@ -359,7 +369,18 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
     public void updateShortlistButton(int position)
     {
-        mAdapter.updateShortlistStatus(position, this.filterAllowed,listType);
+       // mAdapter.updateShortlistStatus(position, this.filterAllowed,listType);
+        if(!this.filterAllowed &&  !Constants.IS_RECOMENDED_COLLEGE && listType!=Constants.INSTITUTE_SEARCH_TYPE)
+            if(mInstitutes != null && mInstitutes.size() > position)
+                mInstitutes.remove(position);
+            else
+                this.mAdapter.notifyItemChanged(position);
+
+        this.mAdapter.notifyDataSetChanged();
+        if(mInstitutes != null && mInstitutes.size() <=0
+                && (mNextUrl == null || mNextUrl.isEmpty() || mNextUrl.equalsIgnoreCase("null"))){
+             updateList(mInstitutes, mNextUrl);
+         }
     }
 
     public void updateFilterButton(int filterCount)

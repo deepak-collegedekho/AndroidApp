@@ -1347,6 +1347,22 @@ public class MainActivity extends AppCompatActivity
         }
     }
     /**
+     * This method is used to update institutes list of next page
+     * @param response
+     */
+    private void updateLastInstituteList(String response) {
+        try {
+            List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
+            this.mInstituteList = institutes;
+
+            if (currentFragment instanceof InstituteListFragment) {
+                ((InstituteListFragment) currentFragment).updateLastList(institutes, next);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+    /**
      * This method is used to update shorlist institutes list of next page
      * @param response
      *//*
@@ -1952,6 +1968,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_NEXT_SHORTLIST_INSTITUTE:
                 this.updateNextInstituteList(response);
+                break;
+            case Constants.TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING:
+                this.updateLastInstituteList(response);
                 break;
             case Constants.TAG_NEXT_NEWS:
                 this.updateNextNewsList(response);
@@ -2967,9 +2986,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onError(final String tag, String response, final String url, final Map<String, String> params, final int method) {
+    public void onError(final String tag, String response, int responseCode, final String url,
+                        final Map<String, String> params, final int method) {
         hideProgressDialog();
         hideErrorDialog();
+        if(tag.equalsIgnoreCase("next_shortlist_institutes") && responseCode == 404){
+            this.mMakeNetworkCall(Constants.TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+            return;
+        }
 
         if (!MainActivity.this.isFinishing()) {
           mErrorDialog =  new AlertDialog.Builder(this)

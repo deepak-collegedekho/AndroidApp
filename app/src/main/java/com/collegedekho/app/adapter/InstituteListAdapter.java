@@ -165,13 +165,13 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             this.mShortListTV.setText("Delete " + mInstitute.getShort_name() + " from your shortlist");
             this.mShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
         }*/
-        if(!isFilterAllowed &&  !Constants.IS_RECOMENDED_COLLEGE && listType!=Constants.INSTITUTE_SEARCH_TYPE)
+       /* if(!isFilterAllowed &&  !Constants.IS_RECOMENDED_COLLEGE && listType!=Constants.INSTITUTE_SEARCH_TYPE)
             if(mInstitutes != null && mInstitutes.size() > position)
                 mInstitutes.remove(position);
         else
             this.notifyItemChanged(position);
 
-        this.notifyDataSetChanged();
+        this.notifyDataSetChanged();*/
     }
 
     class InstituteHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -260,17 +260,13 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                     if (connectivityStatus != Constants.TYPE_NOT_CONNECTED){
                         if (!v.isSelected()) {
                             likeButton.setVisibility(View.GONE);
-                            //upvoteCount.setVisibility(View.GONE);
                             likeProgressBar.setVisibility(View.VISIBLE);
                             likeButton.setClickable(false);
-                            //dislikeButton.setClickable(false);
                             mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.LIKE_THING);
                         } else {
-                            //Toast.makeText(mContext, "Already liked..", Toast.LENGTH_SHORT).show();
                             likeButton.setVisibility(View.GONE);
                             likeProgressBar.setVisibility(View.VISIBLE);
                             likeButton.setClickable(false);
-                            //dislikeButton.setClickable(false);
                             mListener.onInstituteLikedDisliked(getAdapterPosition(), Constants.DISLIKE_THING);
                         }
 
