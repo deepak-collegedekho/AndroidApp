@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity
         InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         QnAQuestionDetailFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener, OnArticleSelectListener,
-        LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener,
+        LoginFragment1.OnSignUpListener, LoginFragment.OnUserSignUpListener,InstituteDetailFragment.OnInstituteDetailListener,
         UserEducationFragment.OnUserEducationInteractionListener, PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
@@ -1626,7 +1626,9 @@ public class MainActivity extends AppCompatActivity
             this.mDisplayFragment(fragment, false, SyllabusUnitListFragment.class.getSimpleName());
     }
 
-    private void mDisplayInstituteByPosition(int position) {
+    @Override
+    public void onInstituteSelected(int position) {
+        this.currentInstitute = position;
         if(position<0 || position>=mInstituteList.size()){
             return;
         }
@@ -1645,7 +1647,7 @@ public class MainActivity extends AppCompatActivity
 //        else
 //            this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE);
 
-        this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
+        //this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
         this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
 
@@ -1932,13 +1934,9 @@ public class MainActivity extends AppCompatActivity
                 this.mUpdateInstituteArticle(response);
                 break;
             case Constants.TAG_APPLIED_COURSE:
-                String tabPosition = null;
-                if (tags.length == 3) {
-                    extraTag = tags[1];
-                    tabPosition = tags[2];
-                }
+
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                this.mUpdateAppliedCourses(response, extraTag, tabPosition);
+                this.mUpdateAppliedCourses(response);
                 break;
             case Constants.TAG_WISH_LIST_APPLIED_COURSE:
                 Utils.DisplayToastShort(this.mContext, getResourceString(R.string.applied_successfully));
@@ -2899,6 +2897,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
             case Constants.TAG_SHORTLIST_INSTITUTE:
             case Constants.TAG_DELETESHORTLIST_INSTITUTE:
+            case Constants.TAG_LOAD_COURSES:
             case "":
                 return null;
             default:
@@ -2958,7 +2957,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void mUpdateAppliedCourses(String response, String extraTag, String tabPosition) {
+    private void mUpdateAppliedCourses(String response) {
         try {
             if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
                 ((InstituteDetailFragment) currentFragment).updateAppliedCourses(response);
@@ -3006,12 +3005,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (tags[0]) {
             case Constants.TAG_APPLIED_COURSE: {
-
-                if (tags.length == 3) {
-                    extraTag = tags[1];
-                    extraTag2 = tags[2];
-                }
-                this.mUpdateAppliedCourses(null, extraTag, extraTag2);
+                this.mUpdateAppliedCourses(null);
                 break;
             }
             case Constants.TAG_SHORTLIST_INSTITUTE:
@@ -3117,16 +3111,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onInstituteSelected(int position) {
-        this.currentInstitute = position;
-        this.mDisplayInstituteByPosition(position);
-    }
-    /*@Override
-    public void onShortListInstituteSelected(int position) {
-        this.currentInstitute = position;
-        this.mDisplayInstituteByPosition(position);
-    }*/
+
+
     @Override
     public void onInstituteLikedDisliked(int position, int liked) {
 
@@ -4934,19 +4920,22 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public void onCourseApplied(final int position, final int tabPosition, final InstituteCourse instituteCourse) {
+    public void onCourseApplied(final InstituteCourse instituteCourse) {
+        if(instituteCourse == null)
+            return;
 
-        final HashMap<String, String> params = new HashMap<>();
-
-        if(instituteCourse != null) {
-            params.put(getResourceString(R.string.APPLY_COURSE), "" + instituteCourse.getId());
+        if (mInstitute != null  && mInstitute.getGroups_exists()==1 ) {
+            String cafUrl = "https://m.collegedekho.com/caf-login-signup/?institute_id=" + mInstitute.getId();
+            onDisplayWebFragment(cafUrl);
+            return;
         }
 
-        String TAG = Constants.TAG_APPLIED_COURSE + "#" + position + "#" + tabPosition;
+        final HashMap<String, String> params = new HashMap<>();
+        params.put(getResourceString(R.string.APPLY_COURSE), "" + instituteCourse.getId());
 
-        requestForApplyInstitute(TAG,params, "");
+        requestForApplyInstitute( Constants.TAG_APPLIED_COURSE,params, "");
 
-        Map<String, Object> eventValue = new HashMap<String, Object>();
+        Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(instituteCourse.getId()));
         eventValue.put(getResourceString(R.string.APPLY_COURSE), instituteCourse.getName());
         if(mInstitute != null)
@@ -5084,6 +5073,11 @@ public class MainActivity extends AppCompatActivity
             }
         }
  }
+    @Override
+    public void requestForCoursesUpdate(){
+        if(mInstitute != null)
+        this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + mInstitute.getId(), null);
+    }
 
     public ArrayList<String> getYears() {
         ArrayList<String> years = new ArrayList<>();
@@ -5486,7 +5480,7 @@ public class MainActivity extends AppCompatActivity
                 int id = this.mInstituteList.get(0).getId();
                 this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute), false, Constants.TAG_FRAGMENT_INSTITUTE);
 
-                this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
+                //this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
 

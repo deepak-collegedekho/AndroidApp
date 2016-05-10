@@ -194,7 +194,7 @@ public class WebViewFragment extends BaseFragment {
 
                 webProgress.setProgress(100);
                 webProgress.setVisibility(View.GONE);
-                if(url.contains("https://m.collegedekho.com/caf-login-signup/?institute_id=") || url.equalsIgnoreCase("about:blank")){
+                if(url.contains("https://m.collegedekho.com/college-partner-list/?institute_id") || url.equalsIgnoreCase("about:blank")){
                     view.clearCache(true);
                     view.clearHistory();
                     view.clearFormData();

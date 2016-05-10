@@ -28,7 +28,11 @@ public class InstituteCourse implements Parcelable {
     public int level;
     public String duration_type_display="";
     public int is_applied;
+    public int is_paid;
+
+
     public InstituteCourse() {
+        // reuired empty constructor
     }
 
     public InstituteCourse(Parcel source) {
@@ -39,6 +43,8 @@ public class InstituteCourse implements Parcelable {
         degree_name = source.readString();
         duration = source.readInt();
         level = source.readInt();
+        is_applied = source.readInt();
+        is_paid = source.readInt();
         duration_type_display = source.readString();
     }
 
@@ -56,6 +62,8 @@ public class InstituteCourse implements Parcelable {
         dest.writeString(degree_name);
         dest.writeInt(duration);
         dest.writeInt(level);
+        dest.writeInt(is_applied);
+        dest.writeInt(is_paid);
         dest.writeString(duration_type_display);
     }
 
@@ -125,6 +133,14 @@ public class InstituteCourse implements Parcelable {
 
     public void setDegree_level(int degree_level) {
         level = degree_level - 1;
+    }
+
+    public int getIs_paid() {
+        return is_paid;
+    }
+
+    public void setIs_paid(int is_paid) {
+        this.is_paid = is_paid;
     }
 
     public enum CourseLevel {

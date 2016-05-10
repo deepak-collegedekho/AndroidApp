@@ -22,7 +22,7 @@ import java.util.ArrayList;
  *         Created: 09/07/15
  */
 public class CourseListAdapter extends RecyclerView.Adapter {
-    private ArrayList<InstituteCourse> mCourses;
+    private static ArrayList<InstituteCourse> mCourses;
     private static Context mContext;
     private static boolean mIsAppliedResponse = false; // required  not to update  view  till response doesn't come
 
@@ -84,7 +84,7 @@ public class CourseListAdapter extends RecyclerView.Adapter {
             }
             cLevel.setText(":  " + InstituteCourse.CourseLevel.values()[c.getLevel()].name().replace("_", " "));
             itemView.setTag(c);
-           // if (mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).contains("" + c.getId())) {
+
             if(c.getIs_applied() == 1){
                 cApplyBtn.setText("Applied");
                 cApplyBtn.setBackgroundResource(R.drawable.bg_button_grey);
@@ -112,7 +112,7 @@ public class CourseListAdapter extends RecyclerView.Adapter {
                         mIsAppliedResponse = true;
                         cApplyBtn.setVisibility(View.INVISIBLE);
                         cProgressBar.setVisibility(View.VISIBLE);
-                        cListener.onCourseApplied(getAdapterPosition(), InstituteCoursesFragment.getTabposition(), c);
+                        cListener.onCourseApplied(c);
                     }
                 }else {
                     this.cListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
@@ -120,6 +120,25 @@ public class CourseListAdapter extends RecyclerView.Adapter {
             }
         }
     }
+
+  /*  private static int isAnyCoursePaid(){
+        int   result = 0;
+        if(mCourses != null && mCourses.size() > 0){
+            int count = mCourses.size();
+            for (int i=0 ; i < count ; i++){
+                InstituteCourse course = mCourses.get(i);
+                if(course == null)
+                    continue;
+                if(course.getIs_paid() ==1){
+                    result =  1;
+                    break;
+                }
+
+            }
+
+        }
+        return result;
+    }*/
 
     public void updateAdapter() {
         this.mIsAppliedResponse = false;

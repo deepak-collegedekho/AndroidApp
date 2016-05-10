@@ -48,13 +48,14 @@ public class InstituteDetailFragment extends BaseFragment {
     public static final int Articles = 3;
 
     private ArrayList<ArrayList<InstituteCourse>> courses;
-    ArrayList<News> mInstituteNewsList;
-    ArrayList<Articles> mInstituteArticleList;
+    private ArrayList<News> mInstituteNewsList;
+    private ArrayList<Articles> mInstituteArticleList;
     private Institute mInstitute;
     private InstitutePagerAdapter mDetailsAdapter;
     private CustomViewPager mDetailsPager;
     private String nextArticleUrl;
     private String nextNewsUrl;
+    private OnInstituteDetailListener mListener;
 
 
     public InstituteDetailFragment() {
@@ -91,10 +92,10 @@ public class InstituteDetailFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_institute_detail, container, false);
         if(this.mDetailsAdapter == null) {
             this.mDetailsAdapter = new InstitutePagerAdapter(getChildFragmentManager(), this.mInstitute);
-        }
-        else{
+        }else{
             this.mDetailsAdapter.updateInstitutiesList(this.mInstitute);
         }
+        requestForCourseUpdate();
         this.mDetailsPager = (CustomViewPager) rootView.findViewById(R.id.college_detail_pager);
         this.mDetailsPager.setAdapter(this.mDetailsAdapter);
         this.mDetailsPager.setPageTransformer(true, new DepthPageTransformer());
@@ -148,13 +149,13 @@ public class InstituteDetailFragment extends BaseFragment {
       if(response != null) {
            try {
                JSONObject responseObj = new JSONObject(response);
-               String instituteId = responseObj.getString(MainActivity.getResourceString(R.string.APPLY_COURSE));
+               String instituteCourseId = responseObj.getString(MainActivity.getResourceString(R.string.APPLY_COURSE));
                for (int i = 0; i < courses.size() ; i++) {
                    ArrayList<InstituteCourse> instituteCourse = courses.get(i);
                    int count = instituteCourse.size();
                    for (int j = 0; j < count; j++) {
                        long id = instituteCourse.get(j).getId();
-                       long tempId = Long.parseLong(instituteId);
+                       long tempId = Long.parseLong(instituteCourseId);
 
                        if(id ==  tempId)
                        {
@@ -222,32 +223,36 @@ public class InstituteDetailFragment extends BaseFragment {
             {
                 MainActivity ma = (MainActivity) getActivity();
 
-                if (ma != null)
-                {
+                if (ma != null) {
                     mCourses = JSON.std.listOfFrom(InstituteCourse.class, ma.extractResults(response));
 
                     courses = new ArrayList<>();
-                    for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++)
-                    {
+                    for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++) {
                         courses.add(new ArrayList<InstituteCourse>());
                     }
-                    if(mCourses != null && !mCourses.isEmpty()) {
+                    if (mCourses != null && !mCourses.isEmpty()) {
                         for (InstituteCourse course : mCourses) {
                             courses.get(course.level).add(course);
                         }
                     }
+                    handleCourseUpdateResponse();
                 }
-            }
-            catch (Exception e)
-            {
+            }catch (Exception e){
                 e.printStackTrace();
             }
-
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            mDetailsAdapter.setCourses(courses);
+        }
+    }
+
+    private void handleCourseUpdateResponse ()
+    {
+        int position = mDetailsPager.getCurrentItem();
+        if (position == 1) {
             mDetailsAdapter.setCourses(courses);
         }
     }
@@ -280,13 +285,39 @@ public class InstituteDetailFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
         MainActivity mMainActivity = (MainActivity) this.getActivity();
-
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
+
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            if (context instanceof  MainActivity)
+                mListener = (OnInstituteDetailListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnInstituteSelectedListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+
+    }
+    public  interface  OnInstituteDetailListener{
+        void requestForCoursesUpdate();
+    }
+
+    private void requestForCourseUpdate(){
+        if(mListener != null)
+            mListener.requestForCoursesUpdate();
+
+    }
     @Override
     public void show() {
 
