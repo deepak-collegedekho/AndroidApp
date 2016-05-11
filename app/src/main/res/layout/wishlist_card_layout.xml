@@ -316,7 +316,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="15"
+                            android:text=""
                             android:textColor="@color/primary_color"
 
                             android:textStyle="bold"
@@ -540,7 +540,7 @@
                                 <View
                                     android:id="@+id/min_sal_bar"
                                     android:layout_width="@dimen/m8dp"
-                                    android:layout_height="@dimen/m30dp"
+                                    android:layout_height="@dimen/m4dp"
                                     android:layout_alignParentBottom="true"
                                     android:layout_marginLeft="@dimen/m4dp"
                                     android:layout_toRightOf="@id/max_sal_bar"
@@ -552,7 +552,7 @@
                                     android:layout_height="@dimen/m2dp"
                                     android:layout_alignLeft="@id/max_sal_bar"
                                     android:layout_alignParentBottom="true"
-                                    android:layout_marginBottom="@dimen/m40dp"
+                                    android:layout_marginBottom="@dimen/m25dp"
                                     android:layout_marginLeft="-4dp"
                                     android:background="@color/primary_orange"/>
 

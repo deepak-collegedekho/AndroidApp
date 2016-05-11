@@ -15,15 +15,12 @@ import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -199,34 +196,60 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             TextView applicationStatus=(TextView)convertView.findViewById(R.id.txt_interested);
             TextView examsAccepted=(TextView)convertView.findViewById(R.id.txt_exam_accepted);
             TextView applicationEndDate=(TextView)convertView.findViewById(R.id.txt_month_value);
-
+            double averageSal=0;
+            double maxSal=0;
+            double minSal=0;
             try {
-                int markerMargin=0;
-                int markerHeight=0;
-                float deviceDensity=getContext().getResources().getDimension(R.dimen.m1dp);
+                int markerMargin = 0;
+                int markerHeight = 0;
+                float deviceDensity = getContext().getResources().getDimension(R.dimen.m50dp);
+                try {
+                    averageSal = Double.parseDouble(institute.getAvg_salary());
+                    avgSalary.setText(Utils.rupeeFormatter(averageSal));
+                } catch (NumberFormatException ne) {
 
-                double averageSal=Double.parseDouble(institute.getAvg_salary());
-                double maxSal=Double.parseDouble(institute.getMax_salary());
-                double minSal=Double.parseDouble(institute.getMin_salary());
+                } catch (Exception e) {
 
-                maxSalary.setText(Utils.rupeeFormatter(maxSal));
-                minSalary.setText(Utils.rupeeFormatter(minSal));
-                avgSalary.setText(Utils.rupeeFormatter(averageSal));
+                }
 
-                double avgPercent=(averageSal/maxSal)*100;
-                markerMargin=(int)(avgPercent*50*deviceDensity)/100;
-                View averageSalMark=convertView.findViewById(R.id.avg_sal_mark);
-                RelativeLayout.LayoutParams layoutParams=(RelativeLayout.LayoutParams)averageSalMark.getLayoutParams();
-                layoutParams.setMargins(0,0,0,markerMargin);
-                averageSalMark.setLayoutParams(layoutParams);
+                try {
+                    maxSal = Double.parseDouble(institute.getMax_salary());
+                    maxSalary.setText(Utils.rupeeFormatter(maxSal));
+                } catch (NumberFormatException ne) {
 
-                double minPercent=(minSal/maxSal)*100;
-                markerHeight=(int)(minPercent*50*deviceDensity)/100;
-                View minSalMark=convertView.findViewById(R.id.min_sal_bar);
-                RelativeLayout.LayoutParams minLayoutParams=(RelativeLayout.LayoutParams)minSalMark.getLayoutParams();
-                minLayoutParams.height=markerHeight;
-                minSalMark.setLayoutParams(minLayoutParams);
+                } catch (Exception e) {
 
+                }
+
+                try {
+                    minSal = Double.parseDouble(institute.getMin_salary());
+                    minSalary.setText(Utils.rupeeFormatter(minSal));
+                } catch (NumberFormatException ne) {
+
+                } catch (Exception e) {
+
+                }
+                if(maxSal==0&&minSal==0&&averageSal==0){
+                    convertView.findViewById(R.id.salary_layout).setVisibility(View.GONE);
+                }else {
+
+                    if (maxSal > 0 && averageSal > 0) {
+                        double avgPercent = (averageSal / maxSal) * 100;
+                        markerMargin = (int) (avgPercent *  deviceDensity) / 100;
+                        View averageSalMark = convertView.findViewById(R.id.avg_sal_mark);
+                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) averageSalMark.getLayoutParams();
+                        layoutParams.setMargins(0, 0, 0, markerMargin);
+                        averageSalMark.setLayoutParams(layoutParams);
+                    }
+                    if (maxSal > 0 && minSal > 0) {
+                        double minPercent = (minSal / maxSal) * 100;
+                        markerHeight = (int) (minPercent *  deviceDensity) / 100;
+                        View minSalMark = convertView.findViewById(R.id.min_sal_bar);
+                        RelativeLayout.LayoutParams minLayoutParams = (RelativeLayout.LayoutParams) minSalMark.getLayoutParams();
+                        minLayoutParams.height = markerHeight;
+                        minSalMark.setLayoutParams(minLayoutParams);
+                    }
+                }
             } catch (NumberFormatException e) {
 
             } catch (Exception e) {
@@ -235,7 +258,8 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             if (institute.getPlacement_percentage() != null && !institute.getPlacement_percentage().isEmpty()) {
                 placementPercent.setText("" + institute.getPlacement_percentage() + "%");
             }else {
-                placementPercent.setText("---");
+                convertView.findViewById(R.id.placement_layout).setVisibility(View.GONE);
+//                placementPercent.setText("---");
             }
             TextView likes = ((TextView) convertView.findViewById(R.id.vote_count));
             likes.setText(String.valueOf(institute.getUpvotes()));
@@ -329,12 +353,14 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
                 }
             }else {
                 seeAllButton.setVisibility(View.INVISIBLE);
+                convertView.findViewById(R.id.facilities_layout).setVisibility(View.GONE);
             }
 
             if (institute.getFees() != null && !institute.getFees().isEmpty()) {
                 feesText.setText("" + institute.getFees());
             }else {
-                feesText.setText("---");
+                convertView.findViewById(R.id.salaries_layout).setVisibility(View.GONE);
+//                feesText.setText("---");
             }
 //            if (institute.getStreams().size() == 1)
 //                ((TextView) convertView.findViewById(R.id.card_recommended_streams_label)).setText("Stream :");

@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
     >
 
     <TextView
         android:id="@+id/recommended_page_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Recommended Colleges"
-        android:textSize="14sp"
         android:background="@color/primary_color_dark"
         android:padding="10dp"
+        android:text="Recommended Colleges"
         android:textColor="@color/white"
+        android:textSize="14sp"
         />
 
     <LinearLayout
-        android:layout_below="@id/recommended_page_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_below="@id/recommended_page_title"
         android:gravity="top"
+        android:orientation="vertical"
         android:weightSum="10">
 
         <com.collegedekho.app.display.swipableList.view.CardContainerNew
@@ -33,7 +33,8 @@
             android:translationZ="@dimen/m5dp"
             />
 
-        <include layout="@layout/layout_empty"
+        <include
+            layout="@layout/layout_empty"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="9.1"/>
@@ -42,73 +43,77 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".9"
-            android:weightSum="1"
             android:orientation="horizontal"
+            android:weightSum="1"
             >
+
             <ImageView
                 android:id="@+id/cd_reco_left_arrow"
                 android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight=".3"
-                app:srcCompat="@drawable/ic_arrow_right_black"
-                android:layout_height="match_parent" />
+                app:srcCompat="@drawable/ic_arrow_right_black"/>
 
             <TextView
                 android:id="@+id/fragment_recommended_institute_undecided_count"
                 style="@style/AppTheme.BlackBorderButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight=".4"
-                android:text="Undecided Count - ..."
                 android:layout_gravity="bottom|center_horizontal"
-                android:gravity="center"
-                android:textSize="@dimen/m12sp"
                 android:layout_marginBottom="@dimen/m4dp"
+                android:layout_weight=".4"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center"
                 android:paddingBottom="@dimen/m8dp"
                 android:paddingTop="@dimen/m8dp"
-                app:srcCompat="@drawable/ic_arrow_right_black"
-                android:fontFamily="sans-serif-light"
+                android:text="Undecided Count - ..."
+                android:textSize="@dimen/m12sp"
                 android:visibility="visible"
+                app:srcCompat="@drawable/ic_arrow_right_black"
                 />
 
             <ImageView
                 android:id="@+id/cd_reco_right_arrow"
                 android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight=".3"
                 android:scaleX="-1"
-                app:srcCompat="@drawable/ic_arrow_right_black"
-                android:layout_height="match_parent" />
-</LinearLayout>
+                app:srcCompat="@drawable/ic_arrow_right_black"/>
+        </LinearLayout>
     </LinearLayout>
 
-    <RelativeLayout android:id="@+id/direction_layout"
+    <RelativeLayout
+        android:id="@+id/direction_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <ImageView
             android:id="@+id/like_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
+            android:visibility="gone"
             />
 
         <ImageView
             android:id="@+id/dislike_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:visibility="gone"
             />
+
         <ImageView
             android:id="@+id/decide_later_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_above="@id/card_recommended_institute_detail"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/m5dp"
             android:layout_marginTop="@dimen/m40dp"
             android:visibility="gone"
-            android:layout_above="@id/card_recommended_institute_detail"
-            android:layout_centerHorizontal="true"
             />
     </RelativeLayout>
 
@@ -116,17 +121,273 @@
         android:id="@+id/recommended_tute_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:importantForAccessibility="no"
+        android:visibility="gone"
         >
+
         <ImageView
             android:id="@+id/recommended_tute_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
             android:clickable="true"
             android:contentDescription="@string/profile_tute_description"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_recommended_tute"
             />
     </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:orientation="horizontal">
+
+        <LinearLayout android:id="@+id/tab_buzzlist"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/m25dp"
+            android:layout_marginRight="4dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/wishlist_tab_orange_bg">
+
+                <ImageView
+                    android:id="@+id/img_cd"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginLeft="@dimen/m4dp"
+                    android:layout_marginTop="@dimen/m4dp"
+                    android:src="@drawable/ic_cd"
+                    />
+
+
+                <TextView
+                    android:id="@+id/txt_colleges_buzzlist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/m4dp"
+                    android:text="196"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/m10sp"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/txt_colleges_buzzlist"
+                    android:layout_marginRight="@dimen/m4dp"
+                    android:text="COLLEGES"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/m10sp"/>
+
+                <TextView
+                    android:id="@+id/buzz_list_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:paddingBottom="2dp"
+                    android:text="BUZZLIST"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"/>
+
+                <ImageView
+                    android:id="@+id/img_institute_buzzlist"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_above="@id/buzz_list_txt"
+                    android:layout_marginLeft="@dimen/m1dp"
+                    android:layout_marginTop="@dimen/m10dp"
+                    android:layout_toRightOf="@id/img_cd"
+                    android:src="@drawable/ic_institute"/>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/wishlist_tab_base_orange_drawable"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/wishlist_tab_base_orange_drawable"/>
+
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/tab_recommended"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/m4dp"
+            android:layout_marginRight="@dimen/m4dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/wishlist_tab_purple_bg">
+
+                <TextView
+                    android:id="@+id/txt_colleges_recommended"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/m4dp"
+                    android:text="196"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/m10sp"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/txt_colleges_recommended"
+                    android:layout_marginRight="@dimen/m4dp"
+                    android:text="COLLEGES"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/m10sp"/>
+
+                <TextView
+                    android:id="@+id/recommended_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:paddingBottom="2dp"
+                    android:text="RECOMMENDED"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/m10sp"
+                    android:textStyle="bold"/>
+
+                <ImageView
+                    android:id="@+id/img_institute_recommended"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_above="@id/recommended_text"
+                    android:layout_marginLeft="@dimen/m8dp"
+                    android:layout_marginTop="@dimen/m10dp"
+                    android:src="@drawable/ic_institute"/>
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignTop="@id/img_institute_recommended"
+                    android:layout_marginLeft="-6dp"
+                    android:layout_marginTop="-12dp"
+                    android:layout_toRightOf="@id/img_institute_recommended"
+                    android:src="@drawable/ic_rounded_check"/>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/wishlist_tab_base_purple_drawable"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/wishlist_tab_base_purple_drawable"/>
+
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/tab_wishlist"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/m4dp"
+            android:layout_marginRight="@dimen/m25dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/wishlist_tab_blue_bg">
+
+                <TextView
+                    android:id="@+id/txt_colleges_wishlist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/m4dp"
+                    android:text="196"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/m10sp"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/txt_colleges_wishlist"
+                    android:layout_marginRight="@dimen/m4dp"
+                    android:text="COLLEGES"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/m10sp"/>
+
+                <TextView
+                    android:id="@+id/wish_list_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:paddingBottom="2dp"
+                    android:text="WISHLIST"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/m10sp"
+
+                    android:textStyle="bold"/>
+
+                <ImageView
+                    android:id="@+id/img_institute"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_above="@id/wish_list_txt"
+                    android:layout_alignLeft="@id/wish_list_txt"
+                    android:layout_marginLeft="-4dp"
+                    android:layout_marginTop="@dimen/m8dp"
+                    android:src="@drawable/ic_wishlist_colleges"/>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/wishlist_tab_base_blue_drawable"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/wishlist_tab_base_blue_drawable"/>
+
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

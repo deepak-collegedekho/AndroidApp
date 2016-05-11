@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -132,6 +134,33 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         rootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
         rootView.findViewById(R.id.recommended_tute_frame).setOnClickListener(this);
 
+        rootView.findViewById(R.id.tab_buzzlist).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Animation animation = AnimationUtils.loadAnimation(getActivity(),
+                        R.anim.window_maximize_animation);
+                mCardContainer.startAnimation(animation);
+            }
+        });
+
+        rootView.findViewById(R.id.tab_recommended).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Animation animation = AnimationUtils.loadAnimation(getActivity(),
+                        R.anim.window_minimize_animation);
+                mCardContainer.startAnimation(animation);
+            }
+        });
+
+        rootView.findViewById(R.id.tab_wishlist).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Animation animation = AnimationUtils.loadAnimation(getActivity(),
+                        R.anim.window_maximize_animation);
+                mCardContainer.startAnimation(animation);
+            }
+        });
         return rootView;
     }
 

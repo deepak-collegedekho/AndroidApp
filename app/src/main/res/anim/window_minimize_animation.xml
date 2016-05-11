@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+     android:fillAfter="true"
+     android:interpolator="@android:anim/linear_interpolator">
+
+<!--    <scale
+        android:duration="400"
+        android:fromXScale="0"
+        android:fromYScale="0.02"
+        android:pivotX="50%"
+        android:pivotY="0%"
+        android:toXScale="1.0"
+        android:toYScale="1.0"/>
+
+    <translate
+        android:duration="100"
+        android:fromXDelta="0%"
+        android:fromYDelta="110%"
+        android:toXDelta="0%"
+        android:toYDelta="0%"/>-->
+
+    <!--OPPOSITE-->
+
+    <scale
+        android:duration="200"
+        android:toXScale="0.30"
+        android:toYScale="0.30"
+        android:pivotX="50%"
+        android:pivotY="0%"
+        android:fromXScale="1.0"
+        android:fromYScale="1.0"/>
+
+    <translate
+        android:duration="400"
+        android:toXDelta="0%"
+        android:toYDelta="100%"
+        android:fromXDelta="0%"
+        android:fromYDelta="0%"/>
+
+
+<!--    <translate
+        android:duration="400"
+        android:fromXDelta="0%"
+        android:fromYDelta="110%"
+        android:toXDelta="0%"
+        android:toYDelta="0%"/>
+    <scale
+        android:duration="300"
+        android:fromXScale="0"
+        android:fromYScale="0.02"
+        android:pivotX="50%"
+        android:pivotY="0%"
+        android:toXScale="1.0"
+        android:toYScale="1.0"/>-->
+
+
+<!--    <translate
+        android:duration="400"
+        android:fromXDelta="0%"
+        android:fromYDelta="110%"
+        android:toXDelta="0%"
+        android:toYDelta="0%"/>
+    <scale
+        android:duration="400"
+        android:fromXScale="0"
+        android:fromYScale="0.02"
+        android:pivotX="50%"
+        android:pivotY="0%"
+        android:toXScale="1.0"
+        android:toYScale="1.0"/>-->
+
+<!--NEW-->
+
+    <!--<translate
+        android:duration="400"
+        android:toXDelta="0%"
+        android:toYDelta="110%"
+        android:fromXDelta="0%"
+        android:fromYDelta="0%"/>
+    <scale
+        android:duration="400"
+        android:toXScale="0"
+        android:toYScale="0.02"
+        android:pivotX="50%"
+        android:pivotY="0%"
+        android:fromXScale="1.0"
+        android:fromYScale="1.0"/>-->
+
+    <!--OPPOSITE-->
+
+<!--    <translate
+        android:duration="400"
+        android:fromXDelta="0%"
+        android:fromYDelta="110%"
+        android:toXDelta="0%"
+        android:toYDelta="0%"/>
+
+    <scale
+        android:duration="400"
+        android:fromXScale="0"
+        android:fromYScale="0.02"
+        android:pivotX="50%"
+        android:pivotY="0%"
+        android:toXScale="1.0"
+        android:toYScale="1.0"/>-->
+
+    <!--NEW-->
+
+    <!-- <scale
+        android:duration="300"
+        android:fromXScale="0.08"
+        android:fromYScale="0.08"
+        android:pivotX="50%"
+        android:pivotY="0%"
+        android:toXScale="1.0"
+        android:toYScale="1.0"/>
+
+    <translate
+        android:duration="400"
+        android:fromXDelta="0%"
+        android:fromYDelta="100%"
+        android:toXDelta="0%"
+        android:toYDelta="0%"/>-->
+
+<!--OPPOSITE-->
+
+    <!--<scale
+        android:duration="300"
+        android:toXScale="0.08"
+        android:toYScale="0.08"
+        android:pivotX="50%"
+        android:pivotY="0%"
+        android:fromXScale="1.0"
+        android:fromYScale="1.0"/>
+
+    <translate
+        android:duration="400"
+        android:toXDelta="0%"
+        android:toYDelta="100%"
+        android:fromXDelta="0%"
+        android:fromYDelta="0%"/>-->
+</set>

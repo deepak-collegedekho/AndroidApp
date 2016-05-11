@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Chapters implements Parcelable {
     String exam_date;
     String yearly_exam_id;
-    String days_left;
+    int days_left;
     public float weightage;
     public int should_be_done;
     public int is_done;
@@ -25,7 +25,7 @@ public class Chapters implements Parcelable {
     protected Chapters(Parcel in) {
         exam_date = in.readString();
         yearly_exam_id = in.readString();
-        days_left = in.readString();
+        days_left = in.readInt();
         weightage = in.readFloat();
         should_be_done = in.readInt();
         is_done = in.readInt();
@@ -56,7 +56,7 @@ public class Chapters implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(exam_date);
         dest.writeString(yearly_exam_id);
-        dest.writeString(days_left);
+        dest.writeInt(days_left);
         dest.writeFloat(weightage);
         dest.writeInt(should_be_done);
         dest.writeInt(is_done);
@@ -81,11 +81,11 @@ public class Chapters implements Parcelable {
         this.yearly_exam_id = yearly_exam_id;
     }
 
-    public String getDays_left() {
+    public int getDays_left() {
         return days_left;
     }
 
-    public void setDays_left(String days_left) {
+    public void setDays_left(int days_left) {
         this.days_left = days_left;
     }
 

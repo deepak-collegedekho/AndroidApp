@@ -90,7 +90,7 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
         String examDate = chapters.getExam_date();
 //        examDate="2018-04-14";
         ArrayList<ChapterDetails> chapterDetailsList = chapters.getChapters();
-        if (chapterDetailsList == null || chapterDetailsList.isEmpty()) {
+        if (chapterDetailsList == null || chapterDetailsList.isEmpty() || chapters.getDays_left() < 0) {
             numPages=1;
             return;
         }

@@ -463,15 +463,15 @@ public class Utils {
     public static String rupeeFormatter(double rupees) {
         double rupee = rupees / 10000000;
         if (rupee >= 1) {
-            return (int) Math.ceil(rupee) + "Cr";
+            return String.format("%.1f", rupee) + "Cr";
         } else {
             rupee = rupees / 100000;
             if (rupee >= 1) {
-                return (int) Math.ceil(rupee) + "L";
+                return String.format("%.1f", rupee) + "L";
             } else {
                 rupee = rupees / 1000;
                 if (rupee >= 1) {
-                    return (int) Math.ceil(rupee) + "k";
+                    return String.format("%.1f", rupee) + "k";
                 }
             }
         }
