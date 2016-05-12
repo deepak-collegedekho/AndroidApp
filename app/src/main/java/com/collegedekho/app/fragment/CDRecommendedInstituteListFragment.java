@@ -95,16 +95,15 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         this.mDislikeImageView  =(ImageView) rootView.findViewById(R.id.dislike_textview);
         this.mUndecidedImageView=(ImageView) rootView.findViewById(R.id.decide_later_textview);
 
-        try{
+        try {
             mLikeImageView.setImageBitmap(BitMapHolder.SHORTLISTED_BITMAP);
             mDislikeImageView.setImageBitmap(BitMapHolder.UNSHORTLISTED_BITMAP);
             mUndecidedImageView.setImageBitmap(BitMapHolder.UNDECIDED_BITMAP);
-
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
         }
-        Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count - ", "", Constants.ANIM_SHORT_DURATION);
 
+        Utils.SetCounterAnimation(this.mUndecidedCountTV, this.mUndecidedCount, "Undecided Count - ", "", Constants.ANIM_SHORT_DURATION);
 
         if (this.mInstitutes == null || this.mInstitutes.size() <= 0) {
             this.mEmptyTextView.setVisibility(View.VISIBLE);
@@ -112,7 +111,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             this.mCardContainer.setVisibility(View.GONE);
             this.mRightArrowImageView.setVisibility(View.INVISIBLE);
             this.mLeftArrowImageView.setVisibility(View.INVISIBLE);
-
         }else {
             this.mCardContainer.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
@@ -120,7 +118,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             this.mLeftArrowImageView.setVisibility(View.VISIBLE);
         }
 
-        this.mAdapter = new SimpleCardStackAdapterNew(getActivity(), this.getContext(), this,examTag);
+        this.mAdapter = new SimpleCardStackAdapterNew(this.getContext(), this,examTag);
         this.mAddCardInAdapter(this.mInstitutes);
 
         this.mCardContainer.setAdapter(this.mAdapter);

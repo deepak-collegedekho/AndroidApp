@@ -1,7 +1,9 @@
 package com.collegedekho.app.display.swipableList.view;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,12 +20,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.Transformation;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
@@ -46,17 +50,15 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
     private OnCDRecommendedAdapterInterface mListener;
     private boolean mLoadingNext;
     private Context mContext;
-    private Activity mActivity;
     private Vector<CardModel> mData;
     private String examTag="";
-    private TextView facilityText;
+    private TextView mfacilityText;
 
 
-    public SimpleCardStackAdapterNew(Activity activity, Context context, OnCDRecommendedAdapterInterface listener,String examTag) {
+    public SimpleCardStackAdapterNew(Context context, OnCDRecommendedAdapterInterface listener, String examTag) {
         this.imageLoader = MySingleton.getInstance(context).getImageLoader();
         this.mListener = listener;
         this.mContext = context;
-        this.mActivity = activity;
         this.mData = new Vector<>();
         this.examTag=examTag;
 
@@ -78,6 +80,8 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         Log.e("getView "," step 2 position  is "+position +" time is "+System.currentTimeMillis());
         setVectorDrawable(convertView);
         Log.e("getView "," step 3 position  is "+position +" time is "+System.currentTimeMillis());
+
+        this.mfacilityText = (TextView) (convertView.findViewById(R.id.facility_toast));
 
         final CardModel model = getCardModel(position);
         this.mParseAndPopulateCards(model, convertView);
@@ -103,7 +107,6 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             }
         });
 
-        this.facilityText = (TextView) (convertView.findViewById(R.id.facilities_text));
 
         model.setOnCardDismissedListener(new CardModel.OnCardDismissedListener() {
             @Override
@@ -271,7 +274,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             View seeAllButton = convertView.findViewById(R.id.see_all_layout);
             final ArrayList<Facility> facilityArrayList = institute.getFacilities();
             if (facilityArrayList != null && !facilityArrayList.isEmpty()) {
-                facilitiesRecycler.setAdapter(new FacilitiesAdapter(facilityArrayList));
+                facilitiesRecycler.setAdapter(new FacilitiesAdapter(facilityArrayList, this.mfacilityText));
                 if (facilityArrayList.size() > 7) {
                     seeAllButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -587,10 +590,18 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
     class FacilitiesAdapter extends RecyclerView.Adapter<FacilitiesAdapter.FacilitiesViewHolder> {
         ArrayList<Facility> facilitiesList;
         ImageLoader imageLoader;
+        TextView facilityText;
+        //AnimationSet mAnimationSet = new AnimationSet(false);
 
-        FacilitiesAdapter(ArrayList<Facility> facilities) {
+        FacilitiesAdapter(ArrayList<Facility> facilities, TextView tempFacilityText) {
             facilitiesList = facilities;
+            facilityText = tempFacilityText;
             imageLoader = MySingleton.getInstance(getContext()).getImageLoader();
+
+            /*Animation fadeInAnimation = AnimationUtils.loadAnimation(SimpleCardStackAdapterNew.this.mContext, R.anim.fade_in);
+            Animation fadeOutAnimation = AnimationUtils.loadAnimation(SimpleCardStackAdapterNew.this.mContext, R.anim.fade_out);
+            mAnimationSet.addAnimation(fadeInAnimation);
+            mAnimationSet.addAnimation(fadeOutAnimation);*/
         }
 
         @Override
@@ -601,9 +612,21 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         }
 
         @Override
-        public void onBindViewHolder(FacilitiesAdapter.FacilitiesViewHolder holder, int position) {
+        public void onBindViewHolder(final FacilitiesAdapter.FacilitiesViewHolder holder, int position) {
             holder.image.setImageUrl(facilitiesList.get(holder.getAdapterPosition()).image_new, imageLoader);
             holder.image.setTag(facilitiesList.get(holder.getAdapterPosition()).tag);
+            holder.image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    facilityText.clearAnimation();
+                    facilityText.setText((String) holder.image.getTag());
+                    //facilityText.animate().translationY(facilityText.getHeight()).start();
+                    //facilityText.animate().alpha(1).start();
+                    //facilityText.animate().alpha(0).setStartDelay(300).start();
+                    //facilityText.startAnimation(mAnimationSet);
+                    animateView(facilityText);
+                }
+            });
         }
 
         @Override
@@ -617,15 +640,63 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             public FacilitiesViewHolder(View itemView) {
                 super(itemView);
                 image = (NetworkImageView) itemView;
-                image.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(mContext, (String) image.getTag(), Toast.LENGTH_SHORT).show();
-                        //facilityText.clearAnimation();
-                        //facilityText.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3)).start();
-                    }
-                });
             }
+        }
+
+        private void animateView(final View view)
+        {
+            final ObjectAnimator fadeIn = ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f);
+            final ObjectAnimator fadeOut = ObjectAnimator.ofFloat(view, View.ALPHA, 1f, 0f);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                fadeIn.setAutoCancel(true);
+                fadeOut.setAutoCancel(true);
+            }
+
+            fadeIn.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    Log.e("SimpleCardStack", "fade in started");
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    Log.e("SimpleCardStack", "fade in ended");
+                    fadeOut.start();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {}
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {}
+            });
+            fadeIn.setInterpolator(new LinearInterpolator());
+
+
+            fadeOut.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    Log.e("SimpleCardStack", "fade out started");
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    Log.e("SimpleCardStack", "fade out ended");
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                }
+            });
+            fadeOut.setInterpolator(new LinearInterpolator());
+            fadeOut.setStartDelay(1000);
+
+            fadeIn.start();
         }
     }
 }

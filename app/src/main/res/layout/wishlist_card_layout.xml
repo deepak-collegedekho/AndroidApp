@@ -78,17 +78,7 @@
                         android:layout_marginLeft="@dimen/m2dp"
                         android:layout_marginRight="@dimen/m2dp"
                         android:scaleType="fitXY"
-                        android:src="@drawable/default_banner"/>
-
-                    <TextView
-                        android:id="@+id/facility_toast"
-                        style="@style/AppTheme.BlueButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="facility"
-                        android:textSize="@dimen/m10sp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_below="@id/institute_image"
+                        android:src="@drawable/default_banner"
                         />
 
                     <TextView
@@ -318,11 +308,20 @@
                             android:gravity="center"
                             android:text=""
                             android:textColor="@color/primary_color"
-
                             android:textStyle="bold"
                             />
                     </LinearLayout>
 
+                    <TextView
+                        android:id="@+id/facility_toast"
+                        style="@style/AppTheme.BlueButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/m10sp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:alpha="0"
+                        />
 
                 </RelativeLayout>
 

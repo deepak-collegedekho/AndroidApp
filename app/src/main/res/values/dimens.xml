@@ -61,6 +61,8 @@
     <dimen name="m180dp">180dp</dimen>
 
     //font sizes
+    <dimen name="m8sp">8sp</dimen>
+    <dimen name="m9sp">9sp</dimen>
     <dimen name="m10sp">10sp</dimen>
     <dimen name="m11sp">11sp</dimen>
     <dimen name="m12sp">12sp</dimen>
