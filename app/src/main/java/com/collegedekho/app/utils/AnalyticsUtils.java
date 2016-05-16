@@ -70,11 +70,10 @@ public class AnalyticsUtils {
 
         for (Map.Entry<String,Object> entry : eventParams.entrySet())
         {
+            if(entry == null || entry.getValue() == null)continue;
             properties.putValue(entry.getKey(), entry.getValue());
-            if(entry.getValue() !=  null) {
-                labels[index] = entry.getKey() + " : " + entry.getValue().toString();
-                index++;
-            }
+            labels[index] = entry.getKey() + " : " + entry.getValue().toString();
+            index++;
         }
 
         //GA Events

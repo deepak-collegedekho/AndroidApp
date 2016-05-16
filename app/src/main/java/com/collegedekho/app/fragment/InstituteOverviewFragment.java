@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,7 +89,11 @@ public class InstituteOverviewFragment extends BaseFragment {
         }
 
         ((TextView) rootView.findViewById(R.id.textview_college_location)).setText(text);
-        ((TextView) rootView.findViewById(R.id.overview_text)).setText(Html.fromHtml(this.mInstitute.getDescription()));
+        Spanned spanned = Html.fromHtml(this.mInstitute.getDescription());
+        if(spanned != null){
+            ((TextView) rootView.findViewById(R.id.overview_text)).setText(spanned);
+        }
+
         ((TextView) rootView.findViewById(R.id.textview_why_join)).setText("Why join " + mInstitute.getShort_name());
         this.mShortListTV  = ((TextView) rootView.findViewById(R.id.shortlist_college));
         this.mProgressBar = ((ProgressBar) rootView.findViewById(R.id.shortList_college_progressBar));

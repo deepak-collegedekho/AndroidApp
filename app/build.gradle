@@ -31,7 +31,7 @@ android {
                 minSdkVersion 15
                 targetSdkVersion 23
                 versionCode 9
-                versionName "0.2.7-rc"
+                versionName "0.2.7"
                 multiDexEnabled true
             }
     buildTypes {
@@ -40,7 +40,7 @@ android {
               useProguard false
               proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
           }*/
-       release {
+        release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

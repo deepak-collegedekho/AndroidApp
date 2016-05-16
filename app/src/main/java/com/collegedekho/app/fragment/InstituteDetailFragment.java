@@ -286,8 +286,15 @@ public class InstituteDetailFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         MainActivity mMainActivity = (MainActivity) this.getActivity();
-        if (mMainActivity != null)
+        if (mMainActivity != null) {
             mMainActivity.currentFragment = this;
+            if (getArguments() != null) {
+                Institute institute=getArguments().getParcelable(ARG_INSTITUTE);
+                if(institute!=null) {
+                    mMainActivity.mInstitute =institute;
+                }
+            }
+        }
 
     }
 

@@ -50,6 +50,7 @@ public class NewsFragment extends BaseFragment  {
     private NewsListAdapter mAdapter;
     private int mViewType = Constants.VIEW_INTO_LIST;
     private News mNews;
+    private int selectedNewsPosition = -1;
 
     public NewsFragment() {
         // Required empty public constructor
@@ -258,8 +259,12 @@ public class NewsFragment extends BaseFragment  {
             {
                 view.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
                 view.findViewById(R.id.news_list_recyclerView).setVisibility(View.VISIBLE);
-                if(mNewsList != null && !mNewsList.isEmpty())
-                    mUpdateNewsDetail(view, mNewsList.get(0));
+                if(mNewsList != null && !mNewsList.isEmpty()) {
+                    if (selectedNewsPosition != -1 && selectedNewsPosition < mNewsList.size())
+                        mUpdateNewsDetail(view, mNewsList.get(selectedNewsPosition));
+                    else
+                        mUpdateNewsDetail(view, mNewsList.get(0));
+                }
             }
             else{
                 this.mAdapter.updateNewsAdapter(this.mNewsList);
@@ -303,12 +308,16 @@ public class NewsFragment extends BaseFragment  {
         }
         ((TextView) view.findViewById(R.id.news_pubdate)).setText(d);
         ArrayList<News> newList = new ArrayList<>();
-        for (News n : this.mNewsList) {
-            if(n.getId() == news.getId())continue;
+        int count = this.mNewsList.size();
+        for (int i=0 ; i<count ; i++ ) {
+            News n = mNewsList.get(i);
+            if(n.getId() == news.getId()) {
+                selectedNewsPosition = i;
+                continue;
+            }
             newList.add(n);
         }
         view.findViewById(R.id.news_detail_scrollView).scrollTo(0, 0);
-
         this.mAdapter.updateNewsAdapter(newList);
 
     }

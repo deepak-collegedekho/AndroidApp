@@ -291,7 +291,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Folder> mFolderList;
     private List<News> mNewsList;
     private List<Articles> mArticlesList;
-    private Institute mInstitute;
+    public Institute mInstitute;
     private String mLastScreenName = "";
     private List<Widget> mWidgets;
     public  CallbackManager callbackManager;
@@ -1648,8 +1648,7 @@ public class MainActivity extends AppCompatActivity
         if(position<0 || position>=mInstituteList.size()){
             return;
         }
-        this.mInstitute = this.mInstituteList.get(position);
-        this.mDisplayInstituteByEntity(this.mInstitute);
+        this.mDisplayInstituteByEntity(this.mInstituteList.get(position));
     }
 
     private void mDisplayInstituteByEntity(Institute institute) {
@@ -3283,6 +3282,7 @@ public class MainActivity extends AppCompatActivity
 
     public void displaySnackBar(int messageId) {
         try {
+
             if (mSnackbar != null && !mSnackbar.isShown()) {
                 mSnackbar.setText(getResources().getString(messageId));
                 mSnackbar.show();
@@ -3293,6 +3293,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void hideSnackBar() {
+
         if (mSnackbar != null && mSnackbar.isShown()) {
             mSnackbar.dismiss();
         }
@@ -4987,23 +4988,27 @@ public class MainActivity extends AppCompatActivity
         String phone = user.getPhone_no();
 
         // get user name for apply course
-        if ((name == null || name.isEmpty() || name.contains(getResourceString(R.string.ANONYMOUS_USER))) && user.profileData[0] != null)
-            name = user.profileData[0];
-        else
-            name = getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_name),"");
-
+        if (name == null || name.isEmpty() || name.contains(getResourceString(R.string.ANONYMOUS_USER)))
+        {
+            if (user.profileData[0] != null)
+                name = user.profileData[0];
+            else
+                name = getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_name), "");
+        }
         // get user email for apply course
-        if (email == null || email.isEmpty() || !email.contains("@anonymouscollegedekho.com") && (user.getPrimaryEmail() != null || !user.getPrimaryEmail().isEmpty()))
+        if (email == null || email.isEmpty() || email.contains("@anonymouscollegedekho.com")){
+          if(user.getPrimaryEmail() != null && !user.getPrimaryEmail().isEmpty())
             email = user.getPrimaryEmail();
         else
             email = getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_email),"");
-
+        }
         // get user email for apply course
-        if ((phone == null || phone.isEmpty()) && user.getPrimaryPhone() != null && !user.getPrimaryPhone().isEmpty())
+        if (phone == null || phone.isEmpty()){
+          if( user.getPrimaryPhone() != null && !user.getPrimaryPhone().isEmpty())
             phone = user.getPrimaryPhone();
         else
             phone = getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_phone),"");
-
+        }
         if ( name.isEmpty() || phone.length() <= 6 || email.isEmpty()) {
             final View view = getLayoutInflater().inflate(R.layout.dialog_apply, null, false);
             ((TextView) view.findViewById(R.id.apply_name)).setText(name);
@@ -5020,6 +5025,14 @@ public class MainActivity extends AppCompatActivity
             (view.findViewById(R.id.submit_button)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    try {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                //imm.hideSoftInputFromWindow(MainActivity.this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     String name = ((TextView) view.findViewById(R.id.apply_name)).getText().toString();
                     String email = ((TextView) view.findViewById(R.id.apply_email)).getText().toString();
                     String phone = ((TextView) view.findViewById(R.id.apply_phone)).getText().toString();
@@ -6185,10 +6198,10 @@ public class MainActivity extends AppCompatActivity
 
     private void onInstituteDetailsLinkResponse(String response) {
         try {
-            this.mInstituteList = JSON.std.listOfFrom(Institute.class, "[" + response + "]");
-            if (this.mInstituteList != null && !this.mInstituteList.isEmpty()) {
-                this.mInstitute = this.mInstituteList.get(0);
-                mDisplayInstituteByEntity(this.mInstitute);
+            List<Institute> list = JSON.std.listOfFrom(Institute.class, "[" + response + "]");
+            if (list != null && !list.isEmpty()) {
+                Institute institute = list.get(0);
+                mDisplayInstituteByEntity(institute);
             }
 
         } catch (Exception e) {

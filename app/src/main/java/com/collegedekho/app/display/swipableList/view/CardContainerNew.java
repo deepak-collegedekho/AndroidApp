@@ -504,16 +504,21 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
                 mActivePointerId = event.getPointerId(pointerIndex);
                 break;
             case MotionEvent.ACTION_MOVE:
+
                 pointerIndex = event.findPointerIndex(mActivePointerId);
-                x = event.getX(pointerIndex);
-                y = event.getY(pointerIndex);
-                if (Math.abs(x - mLastTouchX) > mTouchSlop || Math.abs(y - mLastTouchY) > mTouchSlop) {
-                    float[] points = new float[]{x - mTopCard.getLeft(), y - mTopCard.getTop()};
-                    mTopCard.getMatrix().invert(mMatrix);
-                    mMatrix.mapPoints(points);
-                    mTopCard.setPivotX(points[0]);
-                    mTopCard.setPivotY(points[1]);
-                    return true;
+                try {
+                    x = event.getX(pointerIndex);
+                    y = event.getY(pointerIndex);
+                    if (Math.abs(x - mLastTouchX) > mTouchSlop || Math.abs(y - mLastTouchY) > mTouchSlop) {
+                        float[] points = new float[]{x - mTopCard.getLeft(), y - mTopCard.getTop()};
+                        mTopCard.getMatrix().invert(mMatrix);
+                        mMatrix.mapPoints(points);
+                        mTopCard.setPivotX(points[0]);
+                        mTopCard.setPivotY(points[1]);
+                        return true;
+                    }
+                }catch (IllegalArgumentException e){
+                    e.printStackTrace();
                 }
         }
 

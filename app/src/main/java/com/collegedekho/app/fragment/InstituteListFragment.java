@@ -59,6 +59,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private static final String ARG_INSTITUTE = "institute";
     private static final String ARG_FILTER_ALLOWED = "filter_allowed";
     private static final String ARG_FILTER_COUNT = "filter_count";
+    private static final String TAG = "Institute List Fragment";
     private ArrayList<Institute> mInstitutes;
     private String mTitle;
     private InstituteListAdapter mAdapter;
@@ -67,20 +68,19 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private TextView mEmptyTextView;
     private boolean IS_TUTE_COMPLETED = true;
     private View filterBtn, filters;
-    private  int mViewType = Constants.VIEW_INTO_LIST;
+    private int mViewType = Constants.VIEW_INTO_LIST;
     private ContactsCompletionView mCompletionView;
     private ArrayAdapter<String> tokenAdapter;
     private RecyclerView recyclerView;
-    View instituteView;
-    Toolbar toolbar;
-    int toolbarHeight;
-    FrameLayout fab;
-    ImageButton fabBtn;
-    //View fabShadow;
-    int fabMargin;
-    AppBarLayout toolbarContainer;
-    ViewGroup mainContainer;
-    boolean fadeToolbar = false;
+    private View instituteView;
+    private Toolbar toolbar;
+    private int toolbarHeight;
+    private FrameLayout fab;
+    private ImageButton fabBtn;
+    private int fabMargin;
+    private AppBarLayout toolbarContainer;
+    private ViewGroup mainContainer;
+    private boolean fadeToolbar = false;
 
     public InstituteListFragment() {
         // Required empty public constructor
@@ -89,16 +89,13 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     public static InstituteListFragment newInstance(ArrayList<Institute> institutes, String title, String next, boolean filterAllowed, int filterCount,int listType) {
         InstituteListFragment fragment = new InstituteListFragment();
         Bundle args = new Bundle();
-
         args.putParcelableArrayList(ARG_INSTITUTE, institutes);
         args.putString(ARG_TITLE, title);
         args.putString(ARG_NEXT, next);
         args.putBoolean(ARG_FILTER_ALLOWED, filterAllowed);
         args.putInt(ARG_FILTER_COUNT, filterCount);
         args.putInt("list_type",listType);
-
         fragment.setArguments(args);
-
         return fragment;
     }
 
@@ -176,10 +173,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         mAdapter = new InstituteListAdapter(getActivity(), mInstitutes, this.mViewType);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
         instituteView=rootView.findViewById(R.id.viewType);
-        if (mInstitutes.size() == 0)
-            instituteView.setVisibility(View.GONE);
-        else
-            instituteView.setVisibility(View.VISIBLE);
+
 
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
@@ -187,6 +181,9 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         recyclerView.addOnScrollListener(scrollListener);
         if (filterAllowed) {
             this.mSetFilterList();
+
+            rootView.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.button_filter).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -280,9 +277,24 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         if (mInstitutes.size() == 0) {
             this.mEmptyTextView.setText("Opps! Unable to find colleges for your preferences, please change your filters in ‘*Resource Buddy*’!");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
+            this.instituteView.setVisibility(View.GONE);
+            View v = getView();
+            if(v != null) {
+                v.findViewById(R.id.button_filter).setVisibility(View.GONE);
+                v.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
+            }
         }
         else {
             this.mEmptyTextView.setVisibility(View.GONE);
+            this.instituteView.setVisibility(View.VISIBLE);
+            if(filterAllowed) {
+                View v = getView();
+                if(v != null) {
+                    v.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
+                    v.findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
+                }
+            }
+
         }
 
         updateFilterButton(filterCount);
@@ -315,25 +327,36 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         mAdapter.notifyDataSetChanged();
         loading = false;
         mNextUrl = next;
+
+
+        if (mInstitutes.size() == 0) {
+            instituteView.setVisibility(View.GONE);
+            this.mEmptyTextView.setText("Opps! Unable to find colleges for your preferences, please change your filters in ‘*Resource Buddy*’!");
+            this.mEmptyTextView.setVisibility(View.VISIBLE);
+            View v = getView();
+            if(v != null) {
+                v.findViewById(R.id.button_filter).setVisibility(View.GONE);
+                v.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
+            }
+        } else {
+            instituteView.setVisibility(View.VISIBLE);
+            this.mEmptyTextView.setVisibility(View.GONE);
+            View v = getView();
+            if(v != null && filterAllowed) {
+                v.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
+                v.findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
+            }
+        }
         if(filterAllowed) {
             if (mCompletionView != null && mCompletionView.getObjects().size() > 0) {
                 mCompletionView.clear();
             }
             this.mSetFilterList();
         }
-        if (mInstitutes.size() == 0) {
-            instituteView.setVisibility(View.GONE);
-            this.mEmptyTextView.setText("Opps! Unable to find colleges for your preferences, please change your filters in ‘*Resource Buddy*’!");
-            this.mEmptyTextView.setVisibility(View.VISIBLE);
-        }
-        else {
-
-            instituteView.setVisibility(View.VISIBLE);
-            this.mEmptyTextView.setVisibility(View.GONE);
-        }
     }
 
     public void updateSearchList(List<Institute> institutes, String next) {
+        if(getView() == null)return;
         this.listType=Constants.INSTITUTE_SEARCH_TYPE;
         filterAllowed=false;
         filterBtn.setVisibility(View.GONE);
@@ -347,13 +370,23 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         mNextUrl = next;
 
         if (mInstitutes.size() == 0) {
-            instituteView.setVisibility(View.GONE);
+            this.instituteView.setVisibility(View.GONE);
             this.mEmptyTextView.setText("Opps! No Search Result Found!");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
-        }
-        else {
-            instituteView.setVisibility(View.VISIBLE);
+            View v = getView();
+            if(v != null) {
+                v.findViewById(R.id.button_filter).setVisibility(View.GONE);
+                v.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
+            }
+        }else {
+            this.instituteView.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
+            View v = getView();
+            if(v != null &&filterAllowed) {
+                    v.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
+                    v.findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
+
+            }
         }
         if(filterAllowed) {
             if (mCompletionView != null && mCompletionView.getObjects().size() > 0) {
@@ -361,6 +394,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             }
             this.mSetFilterList();
         }
+
     }
 
     public void updateLikeButtons(int position) {

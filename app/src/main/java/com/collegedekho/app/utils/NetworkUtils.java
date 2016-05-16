@@ -117,13 +117,13 @@ public class NetworkUtils {
                             json = trimMessage(json, "detail");
                         }
                         if (json != null) {
-                            mListener.onError(tag, Constants.SERVER_FAULT, response.statusCode, url, null, method);
+                            mListener.onError(tag, Constants.SERVER_FAULT, getResponseCode(response) , url, null, method);
                         } else {
                             int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
                             if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
-                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT,response.statusCode, url, null, method);
+                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT,getResponseCode(response) , url, null, method);
                             } else {
-                                mListener.onError(tag, Constants.UNKNOWN_ERROR,response.statusCode, url, null, method);
+                                mListener.onError(tag, Constants.UNKNOWN_ERROR,getResponseCode(response) , url, null, method);
                             }
                         }
                     }
@@ -182,13 +182,13 @@ public class NetworkUtils {
                                 json = trimMessage(json, "detail");
                             }
                             if (json != null) {
-                                mListener.onError(tag, Constants.SERVER_FAULT,response.statusCode, url, null, method);
+                                mListener.onError(tag, Constants.SERVER_FAULT,getResponseCode(response) , url, null, method);
                             } else {
                                 int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
                                 if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
-                                    mListener.onError(tag, Constants.NO_CONNECTION_FAULT,response.statusCode, url, null, method);
+                                    mListener.onError(tag, Constants.NO_CONNECTION_FAULT,getResponseCode(response) , url, null, method);
                                 } else {
-                                    mListener.onError(tag, Constants.UNKNOWN_ERROR,response.statusCode, url, null, method);
+                                    mListener.onError(tag, Constants.UNKNOWN_ERROR,getResponseCode(response) , url, null, method);
                                 }
                             }
                         } catch (Exception e) {
@@ -293,13 +293,13 @@ public class NetworkUtils {
 
                         json = trimMessage(json, "detail");
                         if (json != null) {
-                            mListener.onError(tag, Constants.SERVER_FAULT,response.statusCode, url, params, method);
+                            mListener.onError(tag, Constants.SERVER_FAULT,getResponseCode(response), url, params, method);
                         } else {
                             int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
                             if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
-                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT,response.statusCode, url, params, method);
+                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT,getResponseCode(response) , url, params, method);
                             } else {
-                                mListener.onError(tag, Constants.UNKNOWN_ERROR, response.statusCode,url, params, method);
+                                mListener.onError(tag, Constants.UNKNOWN_ERROR, getResponseCode(response) ,url, params, method);
                             }
                         }
                     }
@@ -374,9 +374,9 @@ public class NetworkUtils {
                             int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
                             if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
 
-                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT, response.statusCode,url, null, method);
+                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT, getResponseCode(response),url, null, method);
                             } else {
-                                mListener.onError(tag, Constants.UNKNOWN_ERROR, response.statusCode,url, null, method);
+                                mListener.onError(tag, Constants.UNKNOWN_ERROR, getResponseCode(response),url, null, method);
                             }
                         }
                     }
@@ -464,6 +464,13 @@ public class NetworkUtils {
                 .apply();
         Toast.makeText(mContext, "Failed to apply the course, will retry after sometime.", Toast.LENGTH_LONG).show();
 
+    }
+
+    private int getResponseCode(NetworkResponse response){
+        int responseCode = -1;
+        if(response !=  null)
+            responseCode = response.statusCode;
+        return  responseCode;
     }
 
 

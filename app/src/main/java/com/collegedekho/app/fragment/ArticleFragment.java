@@ -20,6 +20,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ArticleListAdapter;
 import com.collegedekho.app.entities.Articles;
+import com.collegedekho.app.entities.News;
 import com.collegedekho.app.listener.OnArticleSelectListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
@@ -50,6 +51,7 @@ public class ArticleFragment extends BaseFragment {
     private ArticleListAdapter mAdapter;
     private int mViewType = Constants.VIEW_INTO_LIST;
     private Articles mArticle;
+    private int selectedArticlePosition = -1;
 
     public ArticleFragment() {
         // Required empty public constructor
@@ -246,8 +248,12 @@ public class ArticleFragment extends BaseFragment {
             if(this.mViewType == Constants.VIEW_INTO_GRID)
             {
                 view.findViewById(R.id.article_detail_scrollView).setVisibility(View.VISIBLE);
-                if(mArticlesList != null && !mArticlesList.isEmpty())
-                    mUpdateArticleDetail(view, mArticlesList.get(0));
+                if(mArticlesList != null && !mArticlesList.isEmpty()) {
+                    if (selectedArticlePosition != -1 && selectedArticlePosition < mArticlesList.size())
+                        mUpdateArticleDetail(view, mArticlesList.get(selectedArticlePosition));
+                    else
+                       mUpdateArticleDetail(view, mArticlesList.get(0));
+                }
             }
             else{
                 this.mAdapter.updateArticleAdapter(this.mArticlesList);
@@ -284,9 +290,14 @@ public class ArticleFragment extends BaseFragment {
         }
         ((TextView) view.findViewById(R.id.article_pubdate)).setText(d);
         ArrayList<Articles> articleList = new ArrayList<>();
-        for (Articles n : mArticlesList) {
-            if(n.getId() == article.getId())continue;
-            articleList.add(n);
+        int count = this.mArticlesList.size();
+        for (int i=0 ; i<count ; i++ ) {
+            Articles a = mArticlesList.get(i);
+            if(a.getId() == article.getId()) {
+                selectedArticlePosition = i;
+                continue;
+            }
+            articleList.add(a);
         }
         view.findViewById(R.id.article_detail_scrollView).scrollTo(0, 0);
         mAdapter.updateArticleAdapter(articleList);
