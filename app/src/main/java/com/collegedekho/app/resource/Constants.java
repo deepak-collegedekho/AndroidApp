@@ -64,6 +64,8 @@ public class Constants
     public static final String PNS_ARTICLES="pns_articles";
     public static final String WIDGET_RECOMMENDED_INSTITUTES = "recommended_institutes";
     public static final String WIDGET_SHORTLIST_INSTITUTES = "shortlist_institutes";
+    public static final String CARD_SHORTLIST_INSTITUTES = "card_shortlist_institutes";
+    public static final String CARD_BUZZLIST_INSTITUTES = "card_buzzlist_institutes";
     public static final String WIDGET_SYLLABUS = "syllabus";
     public static final String WIDGET_TEST_CALENDAR = "test_calendar";
     public static final String PLAY_VIDEO_NOTIFICATION = "play_video_notification";
@@ -108,6 +110,7 @@ public class Constants
     public static final String TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE = "recommended_decide_later";
     public static final String TAG_LOAD_UNDECIDED_INSTITUTE = "load_undecided_later";
     public static final String TAG_DELETESHORTLIST_INSTITUTE = "delete";
+    public static final String CARD_DELETE_SHORTLISTED_INSTITUTE = "card_shortlisted_delete";
     public static final int NEITHER_LIKE_NOR_DISLIKE = -1;
     public static final String TAG_LOAD_PSYCHOMETRIC_TEST = "load_psychometric_test";
     public static final String TAG_MY_ALERTS = "my_alerts";
@@ -244,7 +247,7 @@ public class Constants
     public static final String CD_RECOMMENDED_INSTITUTE_ACTION_TYPE = "cd_recommended_institute_action_type";
 
     public enum CDRecommendedInstituteType {
-        UNDECIDED, SHORTLISTED, NOT_INERESTED, UNBAISED
+        UNDECIDED, SHORTLISTED, NOT_INERESTED, UNBAISED,RECOMMENDED,BUZZLIST
     }
 
     public static String MESSAGE="message";

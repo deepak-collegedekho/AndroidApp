@@ -1,9 +1,9 @@
 package com.collegedekho.app.display.swipableList.view;
 
 import android.animation.Animator;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -20,8 +20,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.Transformation;
 import android.widget.BaseAdapter;
@@ -37,6 +35,7 @@ import com.collegedekho.app.display.swipableList.model.CardModel;
 import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.BitMapHolder;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.FadeInImageView;
@@ -55,13 +54,13 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
     private TextView mfacilityText;
 
 
-    public SimpleCardStackAdapterNew(Context context, OnCDRecommendedAdapterInterface listener, String examTag) {
+    private int cardCategory;
+    public SimpleCardStackAdapterNew(Activity activity, Context context, OnCDRecommendedAdapterInterface listener, int cardCategory) {
         this.imageLoader = MySingleton.getInstance(context).getImageLoader();
         this.mListener = listener;
         this.mContext = context;
         this.mData = new Vector<>();
-        this.examTag=examTag;
-
+        this.cardCategory =cardCategory;
     }
 
     public void addAll(ArrayList<CardModel> item) {
@@ -71,15 +70,15 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        Log.e("getView "," step 1 position  is "+position +" time is "+System.currentTimeMillis());
+        Log.e("getView ", " step 1 position  is " + position + " time is " + System.currentTimeMillis());
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.wishlist_card_layout, parent, false);
         }
 
-        Log.e("getView "," step 2 position  is "+position +" time is "+System.currentTimeMillis());
+        Log.e("getView ", " step 2 position  is " + position + " time is " + System.currentTimeMillis());
         setVectorDrawable(convertView);
-        Log.e("getView "," step 3 position  is "+position +" time is "+System.currentTimeMillis());
+        Log.e("getView ", " step 3 position  is " + position + " time is " + System.currentTimeMillis());
 
         this.mfacilityText = (TextView) (convertView.findViewById(R.id.facility_toast));
 
@@ -93,11 +92,20 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
 
             }
         });
+        if (cardCategory == Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
+            ((TextView) convertView.findViewById(R.id.btn_apply_now)).setText("REMOVE");
+        }else {
+            ((TextView) convertView.findViewById(R.id.btn_apply_now)).setText("APPLY NOW");
+        }
         (convertView.findViewById(R.id.btn_apply_now)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Institute institute=((CardModel) SimpleCardStackAdapterNew.this.getItem(position)).getInstitute();
+                Institute institute = ((CardModel) SimpleCardStackAdapterNew.this.getItem(position)).getInstitute();
+                if (cardCategory == Constants.CDRecommendedInstituteType.RECOMMENDED.ordinal() || cardCategory == Constants.CDRecommendedInstituteType.UNDECIDED.ordinal() || cardCategory == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()) {
                     mListener.OnAppliedInstitute(institute);
+                } else if (cardCategory == Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
+                    mListener.onRemoveShortlisted(institute);
+                }
             }
         });
         (convertView.findViewById(R.id.header_view)).setOnClickListener(new View.OnClickListener() {
@@ -114,7 +122,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
                 if (position > 0)
                     SimpleCardStackAdapterNew.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute(), false);
                 if (position == 0 && !SimpleCardStackAdapterNew.this.isLoadingNext()) {
-                    SimpleCardStackAdapterNew.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute(), true);
+                    SimpleCardStackAdapterNew.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute(), false);
                     SimpleCardStackAdapterNew.this.mListener.OnShowMessage("Looking for more institutes..");
                 }
             }
@@ -134,7 +142,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
                 if (position > 0)
                     SimpleCardStackAdapterNew.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute(), false);
                 if (position == 0 && !SimpleCardStackAdapterNew.this.isLoadingNext()) {
-                    SimpleCardStackAdapterNew.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute(), true);
+                    SimpleCardStackAdapterNew.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute(), false);
                     SimpleCardStackAdapterNew.this.mListener.OnShowMessage("Looking for more institutes..");
                 }
             }
@@ -187,244 +195,236 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
 
         Log.e("getView "," step 1 time is "+System.currentTimeMillis());
 
-        if (institute.getStreams() != null && institute.getStreams().size() > 0) {
-            TextView streamTV = ((TextView) convertView.findViewById(R.id.recommended_streams));
-            String streamText = "";
-            TextView examsTv=(TextView)convertView.findViewById(R.id.recommended_exams);
-            TextView maxSalary = ((TextView) convertView.findViewById(R.id.max_sal_val));
-            TextView minSalary = ((TextView) convertView.findViewById(R.id.min_sal_val));
-            TextView avgSalary = ((TextView) convertView.findViewById(R.id.avg_sal_val));
-            TextView placementPercent = ((TextView) convertView.findViewById(R.id.placement_percentage));
-            TextView feesText=(TextView)convertView.findViewById(R.id.fees_range_text);
-            TextView applicationStatus=(TextView)convertView.findViewById(R.id.txt_interested);
-            TextView examsAccepted=(TextView)convertView.findViewById(R.id.txt_exam_accepted);
-            TextView applicationEndDate=(TextView)convertView.findViewById(R.id.txt_month_value);
-            double averageSal=0;
-            double maxSal=0;
-            double minSal=0;
+        TextView streamTV = ((TextView) convertView.findViewById(R.id.recommended_streams));
+//            String streamText = "";
+        TextView examsTv=(TextView)convertView.findViewById(R.id.recommended_exams);
+        TextView maxSalary = ((TextView) convertView.findViewById(R.id.max_sal_val));
+        TextView minSalary = ((TextView) convertView.findViewById(R.id.min_sal_val));
+        TextView avgSalary = ((TextView) convertView.findViewById(R.id.avg_sal_val));
+        TextView placementPercent = ((TextView) convertView.findViewById(R.id.placement_percentage));
+        TextView feesText=(TextView)convertView.findViewById(R.id.fees_range_text);
+        TextView applicationStatus=(TextView)convertView.findViewById(R.id.txt_interested);
+        TextView examsAccepted=(TextView)convertView.findViewById(R.id.txt_exam_accepted);
+        TextView applicationEndDate=(TextView)convertView.findViewById(R.id.txt_month_value);
+        double averageSal=0;
+        double maxSal=0;
+        double minSal=0;
+        try {
+            int markerMargin = 0;
+            int markerHeight = 0;
+            float deviceDensity = getContext().getResources().getDimension(R.dimen.m50dp);
             try {
-                int markerMargin = 0;
-                int markerHeight = 0;
-                float deviceDensity = getContext().getResources().getDimension(R.dimen.m50dp);
-                try {
-                    averageSal = Double.parseDouble(institute.getAvg_salary());
-                    avgSalary.setText(Utils.rupeeFormatter(averageSal));
-                } catch (NumberFormatException ne) {
-
-                } catch (Exception e) {
-
-                }
-
-                try {
-                    maxSal = Double.parseDouble(institute.getMax_salary());
-                    maxSalary.setText(Utils.rupeeFormatter(maxSal));
-                } catch (NumberFormatException ne) {
-
-                } catch (Exception e) {
-
-                }
-
-                try {
-                    minSal = Double.parseDouble(institute.getMin_salary());
-                    minSalary.setText(Utils.rupeeFormatter(minSal));
-                } catch (NumberFormatException ne) {
-
-                } catch (Exception e) {
-
-                }
-                if(maxSal==0&&minSal==0&&averageSal==0){
-                    convertView.findViewById(R.id.salary_layout).setVisibility(View.GONE);
-                }else {
-
-                    if (maxSal > 0 && averageSal > 0) {
-                        double avgPercent = (averageSal / maxSal) * 100;
-                        markerMargin = (int) (avgPercent *  deviceDensity) / 100;
-                        View averageSalMark = convertView.findViewById(R.id.avg_sal_mark);
-                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) averageSalMark.getLayoutParams();
-                        layoutParams.setMargins(0, 0, 0, markerMargin);
-                        averageSalMark.setLayoutParams(layoutParams);
-                    }
-                    if (maxSal > 0 && minSal > 0) {
-                        double minPercent = (minSal / maxSal) * 100;
-                        markerHeight = (int) (minPercent *  deviceDensity) / 100;
-                        View minSalMark = convertView.findViewById(R.id.min_sal_bar);
-                        RelativeLayout.LayoutParams minLayoutParams = (RelativeLayout.LayoutParams) minSalMark.getLayoutParams();
-                        minLayoutParams.height = markerHeight;
-                        minSalMark.setLayoutParams(minLayoutParams);
-                    }
-                }
-            } catch (NumberFormatException e) {
+                averageSal = Double.parseDouble(institute.getAvg_salary());
+                avgSalary.setText(Utils.rupeeFormatter(averageSal));
+            } catch (NumberFormatException ne) {
 
             } catch (Exception e) {
 
             }
-            if (institute.getPlacement_percentage() != null && !institute.getPlacement_percentage().isEmpty()) {
-                placementPercent.setText("" + institute.getPlacement_percentage() + "%");
-            }else {
-                convertView.findViewById(R.id.placement_layout).setVisibility(View.GONE);
-//                placementPercent.setText("---");
+
+            try {
+                maxSal = Double.parseDouble(institute.getMax_salary());
+                maxSalary.setText(Utils.rupeeFormatter(maxSal));
+            } catch (NumberFormatException ne) {
+
+            } catch (Exception e) {
+
             }
-            TextView likes = ((TextView) convertView.findViewById(R.id.vote_count));
-            likes.setText(String.valueOf(institute.getUpvotes()));
-            ((TextView)convertView.findViewById(R.id.applied_count)).setText(""+(institute.getUpvotes()+institute.getShortlist_count()));
-            final RecyclerView facilitiesRecycler = (RecyclerView) convertView.findViewById(R.id.facilities_recycler);
-            GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 7, LinearLayoutManager.VERTICAL, false);
-            applicationStatus.setText(institute.getApplication_status());
-            facilitiesRecycler.setLayoutManager(layoutManager);
-            View seeAllButton = convertView.findViewById(R.id.see_all_layout);
-            final ArrayList<Facility> facilityArrayList = institute.getFacilities();
-            if (facilityArrayList != null && !facilityArrayList.isEmpty()) {
-                facilitiesRecycler.setAdapter(new FacilitiesAdapter(facilityArrayList, this.mfacilityText));
-                if (facilityArrayList.size() > 7) {
-                    seeAllButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            ViewGroup.LayoutParams layoutParams = facilitiesRecycler.getLayoutParams();
-                            final int height = (int) getContext().getResources().getDimension(R.dimen.m35dp);
-                            int marginLeft = (int) getContext().getResources().getDimension(R.dimen.m10dp);
-                            int marginTop = (int) getContext().getResources().getDimension(R.dimen.m6dp);
-                            ViewGroup facilitiesView = (ViewGroup) convertView.findViewById(R.id.institute_card_layout);
-                            if (layoutParams != null && layoutParams.height == height) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                    TransitionManager.beginDelayedTransition(facilitiesView);
-                                    RelativeLayout.LayoutParams lParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-                                    lParams.addRule(RelativeLayout.BELOW, R.id.facilities_text);
-                                    lParams.setMargins(marginLeft, marginTop, marginLeft, 0);
-                                    (convertView.findViewById(R.id.see_all_image)).setScaleY(-1f);
-                                    facilitiesRecycler.setLayoutParams(lParams);
-                                } else {
-                                    facilitiesRecycler.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-                                    final int targetedHeight = facilitiesRecycler.getMeasuredHeight();
-                                    facilitiesRecycler.getLayoutParams().height = 0;
-                                    facilitiesRecycler.setVisibility(View.VISIBLE);
-                                    (convertView.findViewById(R.id.see_all_image)).setScaleY(-1f);
-                                    Animation animation = new Animation() {
-                                        @Override
-                                        protected void applyTransformation(float interpolatedTime, Transformation t) {
-                                            facilitiesRecycler.getLayoutParams().height = interpolatedTime == 1
-                                                    ? RelativeLayout.LayoutParams.MATCH_PARENT
-                                                    : (int) (targetedHeight * interpolatedTime);
-                                            facilitiesRecycler.requestLayout();
-                                        }
 
-                                        @Override
-                                        public boolean willChangeBounds() {
-                                            return true;
-                                        }
-                                    };
-                                    animation.setDuration((int) (targetedHeight / facilitiesRecycler.getContext().getResources().getDisplayMetrics().density));
-                                    facilitiesRecycler.startAnimation(animation);
-                                }
-                                ((TextView) convertView.findViewById(R.id.see_all_text)).setText("SEE FEWER\nFACILITIES");
-                            } else {
-                                final RelativeLayout.LayoutParams lParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, height);
-                                lParams.addRule(RelativeLayout.BELOW, R.id.facilities_text);
-                                lParams.setMargins(marginLeft, marginTop, marginLeft, 0);
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                    TransitionManager.beginDelayedTransition(facilitiesView);
-                                    lParams.addRule(RelativeLayout.BELOW, R.id.facilities_text);
-                                    (convertView.findViewById(R.id.see_all_image)).setScaleY(1f);
-                                    facilitiesRecycler.setLayoutParams(lParams);
-                                } else {
-                                    final int initialHeight = facilitiesRecycler.getMeasuredHeight();
-                                    Animation animation = new Animation() {
-                                        @Override
-                                        protected void applyTransformation(float interpolatedTime, Transformation t) {
-                                            if (interpolatedTime == 1) {
-                                                facilitiesRecycler.setLayoutParams(lParams);
-                                            } else {
-                                                facilitiesRecycler.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
-                                                facilitiesRecycler.requestLayout();
-                                            }
-                                        }
+            try {
+                minSal = Double.parseDouble(institute.getMin_salary());
+                minSalary.setText(Utils.rupeeFormatter(minSal));
+            } catch (NumberFormatException ne) {
 
-                                        @Override
-                                        public boolean willChangeBounds() {
-                                            return true;
-                                        }
-                                    };
-                                    animation.setDuration((int) (initialHeight / facilitiesRecycler.getContext().getResources().getDisplayMetrics().density));
-                                    facilitiesRecycler.startAnimation(animation);
-                                }
-                                (convertView.findViewById(R.id.see_all_image)).setScaleY(1f);
-                                ((TextView) convertView.findViewById(R.id.see_all_text)).setText("SEE ALL\nFACILITIES");
-                            }
-                        }
-                    });
-                } else {
-                    seeAllButton.setVisibility(View.INVISIBLE);
+            } catch (Exception e) {
+
+            }
+            if(maxSal==0&&minSal==0&&averageSal==0){
+                convertView.findViewById(R.id.salary_layout).setVisibility(View.GONE);
+            }else {
+
+                if (maxSal > 0 && averageSal > 0) {
+                    double avgPercent = (averageSal / maxSal) * 100;
+                    markerMargin = (int) (avgPercent *  deviceDensity) / 100;
+                    View averageSalMark = convertView.findViewById(R.id.avg_sal_mark);
+                    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) averageSalMark.getLayoutParams();
+                    layoutParams.setMargins(0, 0, 0, markerMargin);
+                    averageSalMark.setLayoutParams(layoutParams);
                 }
-            }else {
-                seeAllButton.setVisibility(View.INVISIBLE);
-                convertView.findViewById(R.id.facilities_layout).setVisibility(View.GONE);
-            }
-
-            if (institute.getFees() != null && !institute.getFees().isEmpty()) {
-                feesText.setText("" + institute.getFees());
-            }else {
-                convertView.findViewById(R.id.salaries_layout).setVisibility(View.GONE);
-//                feesText.setText("---");
-            }
-//            if (institute.getStreams().size() == 1)
-//                ((TextView) convertView.findViewById(R.id.card_recommended_streams_label)).setText("Stream :");
-
-            for (String stream : institute.getStreams()) {
-                streamText += stream;
-                streamText += "/";
-            }
-
-            String examsText="";
-            for (String exam:institute.getExams()){
-                examsText=examsText+exam+",";
-            }
-
-            if(!examsText.trim().isEmpty()) {
-                examsAccepted.setText(examsText.substring(0, examsText.length() - 1));
-            }
-
-            String userExamsText="";
-            for (String exam:institute.getUser_exams()){
-                userExamsText=userExamsText+exam+",";
-            }
-            /*if(streamText!=null && !streamText.trim().isEmpty()) {
-                streamTV.setText("Stream: " + streamText.substring(0, streamText.length() - 1));
-            }else {
-                streamTV.setVisibility(View.GONE);
-            }*/
-
-            streamTV.setVisibility(View.GONE);
-            if(examTag!=null && !examTag.trim().isEmpty())
-            if(!userExamsText.trim().isEmpty()) {
-                String[] userExams=userExamsText.split(",");
-                String examsStr=userExams[0];
-                if(userExams.length>=2){
-                    examsStr+=","+userExams[1];
-                }
-                if(examsStr!=null && !examsStr.trim().isEmpty()) {
-                    examsTv.setText("Exam: " + examsStr);
-                }else {
-                    examsTv.setVisibility(View.GONE);
+                if (maxSal > 0 && minSal > 0) {
+                    double minPercent = (minSal / maxSal) * 100;
+                    markerHeight = (int) (minPercent *  deviceDensity) / 100;
+                    View minSalMark = convertView.findViewById(R.id.min_sal_bar);
+                    RelativeLayout.LayoutParams minLayoutParams = (RelativeLayout.LayoutParams) minSalMark.getLayoutParams();
+                    minLayoutParams.height = markerHeight;
+                    minSalMark.setLayoutParams(minLayoutParams);
                 }
             }
+        } catch (NumberFormatException e) {
 
-            if(institute.getApplication_end_date()!=null && !institute.getApplication_end_date().trim().isEmpty()){
-                try {
-                    String[] arr=institute.getApplication_end_date().split(" ");
-                    ((TextView)convertView.findViewById(R.id.txt_month)).setText(arr[0]);
-                    applicationEndDate.setText(arr[1]);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }else {
-                convertView.findViewById(R.id.clock_layout).setVisibility(View.INVISIBLE);
-                convertView.findViewById(R.id.txt_last_application_text).setVisibility(View.INVISIBLE);
-            }
-        } else {
-
-//            convertView.findViewById(R.id.card_recommended_streams_label).setVisibility(View.GONE);
-            convertView.findViewById(R.id.recommended_streams).setVisibility(View.GONE);
+        } catch (Exception e) {
 
         }
+        if (institute.getPlacement_percentage() != null && !institute.getPlacement_percentage().isEmpty()) {
+            placementPercent.setText("" + institute.getPlacement_percentage() + "%");
+        }else {
+            convertView.findViewById(R.id.placement_layout).setVisibility(View.GONE);
+//                placementPercent.setText("---");
+        }
+        TextView likes = ((TextView) convertView.findViewById(R.id.vote_count));
+        likes.setText(String.valueOf(institute.getUpvotes()));
+        ((TextView)convertView.findViewById(R.id.applied_count)).setText(""+(institute.getUpvotes()+institute.getShortlist_count()));
+        final RecyclerView facilitiesRecycler = (RecyclerView) convertView.findViewById(R.id.facilities_recycler);
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 7, LinearLayoutManager.VERTICAL, false);
+        applicationStatus.setText(institute.getApplication_status());
+        facilitiesRecycler.setLayoutManager(layoutManager);
+        View seeAllButton = convertView.findViewById(R.id.see_all_layout);
+        final ArrayList<Facility> facilityArrayList = institute.getFacilities();
+        if (facilityArrayList != null && !facilityArrayList.isEmpty()) {
+            facilitiesRecycler.setAdapter(new FacilitiesAdapter(facilityArrayList, this.mfacilityText));
+            if (facilityArrayList.size() > 7) {
+                seeAllButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ViewGroup.LayoutParams layoutParams = facilitiesRecycler.getLayoutParams();
+                        final int height = (int) getContext().getResources().getDimension(R.dimen.m35dp);
+                        int marginLeft = (int) getContext().getResources().getDimension(R.dimen.m10dp);
+                        int marginTop = (int) getContext().getResources().getDimension(R.dimen.m6dp);
+                        ViewGroup facilitiesView = (ViewGroup) convertView.findViewById(R.id.institute_card_layout);
+                        if (layoutParams != null && layoutParams.height == height) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                TransitionManager.beginDelayedTransition(facilitiesView);
+                                RelativeLayout.LayoutParams lParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                                lParams.addRule(RelativeLayout.BELOW, R.id.facilities_text);
+                                lParams.setMargins(marginLeft, marginTop, marginLeft, 0);
+                                (convertView.findViewById(R.id.see_all_image)).setScaleY(-1f);
+                                facilitiesRecycler.setLayoutParams(lParams);
+                            } else {
+                                facilitiesRecycler.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                                final int targetedHeight = facilitiesRecycler.getMeasuredHeight();
+                                facilitiesRecycler.getLayoutParams().height = 0;
+                                facilitiesRecycler.setVisibility(View.VISIBLE);
+                                (convertView.findViewById(R.id.see_all_image)).setScaleY(-1f);
+                                Animation animation = new Animation() {
+                                    @Override
+                                    protected void applyTransformation(float interpolatedTime, Transformation t) {
+                                        facilitiesRecycler.getLayoutParams().height = interpolatedTime == 1
+                                                ? RelativeLayout.LayoutParams.MATCH_PARENT
+                                                : (int) (targetedHeight * interpolatedTime);
+                                        facilitiesRecycler.requestLayout();
+                                    }
+
+                                    @Override
+                                    public boolean willChangeBounds() {
+                                        return true;
+                                    }
+                                };
+                                animation.setDuration((int) (targetedHeight / facilitiesRecycler.getContext().getResources().getDisplayMetrics().density));
+                                facilitiesRecycler.startAnimation(animation);
+                            }
+                            ((TextView) convertView.findViewById(R.id.see_all_text)).setText("SEE FEWER\nFACILITIES");
+                        } else {
+                            final RelativeLayout.LayoutParams lParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, height);
+                            lParams.addRule(RelativeLayout.BELOW, R.id.facilities_text);
+                            lParams.setMargins(marginLeft, marginTop, marginLeft, 0);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                TransitionManager.beginDelayedTransition(facilitiesView);
+                                lParams.addRule(RelativeLayout.BELOW, R.id.facilities_text);
+                                (convertView.findViewById(R.id.see_all_image)).setScaleY(1f);
+                                facilitiesRecycler.setLayoutParams(lParams);
+                            } else {
+                                final int initialHeight = facilitiesRecycler.getMeasuredHeight();
+                                Animation animation = new Animation() {
+                                    @Override
+                                    protected void applyTransformation(float interpolatedTime, Transformation t) {
+                                        if (interpolatedTime == 1) {
+                                            facilitiesRecycler.setLayoutParams(lParams);
+                                        } else {
+                                            facilitiesRecycler.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
+                                            facilitiesRecycler.requestLayout();
+                                        }
+                                    }
+
+                                    @Override
+                                    public boolean willChangeBounds() {
+                                        return true;
+                                    }
+                                };
+                                animation.setDuration((int) (initialHeight / facilitiesRecycler.getContext().getResources().getDisplayMetrics().density));
+                                facilitiesRecycler.startAnimation(animation);
+                            }
+                            (convertView.findViewById(R.id.see_all_image)).setScaleY(1f);
+                            ((TextView) convertView.findViewById(R.id.see_all_text)).setText("SEE ALL\nFACILITIES");
+                        }
+                    }
+                });
+            } else {
+                seeAllButton.setVisibility(View.INVISIBLE);
+            }
+        }else {
+            seeAllButton.setVisibility(View.INVISIBLE);
+            convertView.findViewById(R.id.facilities_layout).setVisibility(View.GONE);
+        }
+
+        if (institute.getFees() != null && !institute.getFees().isEmpty()) {
+            feesText.setText("" + institute.getFees());
+        }else {
+            convertView.findViewById(R.id.salaries_layout).setVisibility(View.GONE);
+        }
+
+//            for (String stream : institute.getStreams()) {
+//                streamText += stream;
+//                streamText += "/";
+//            }
+
+        String examsText="";
+        for (String exam:institute.getExams()){
+            examsText=examsText+exam+",";
+        }
+
+        if(!examsText.trim().isEmpty()) {
+            examsAccepted.setText(examsText.substring(0, examsText.length() - 1));
+        }
+
+        String userExamsText="";
+        for (String exam:institute.getUser_exams()){
+            userExamsText=userExamsText+exam+",";
+        }
+
+        streamTV.setVisibility(View.GONE);
+        if(!userExamsText.trim().isEmpty()) {
+            String[] userExams=userExamsText.split(",");
+            String examsStr=userExams[0];
+            if(userExams.length>=2){
+                examsStr+=","+userExams[1];
+            }
+            if(examsStr!=null && !examsStr.trim().isEmpty()) {
+                examsTv.setText("Exam: " + examsStr);
+            }else {
+                examsTv.setVisibility(View.GONE);
+            }
+        }
+
+        if(institute.getApplication_end_date()!=null && !institute.getApplication_end_date().trim().isEmpty()){
+            try {
+                String[] arr=institute.getApplication_end_date().split(" ");
+                ((TextView)convertView.findViewById(R.id.txt_month)).setText(arr[0]);
+                applicationEndDate.setText(arr[1]);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }else {
+            convertView.findViewById(R.id.clock_layout).setVisibility(View.INVISIBLE);
+            convertView.findViewById(R.id.txt_last_application_text).setVisibility(View.INVISIBLE);
+        }
+//        if (institute.getStreams() != null && institute.getStreams().size() > 0) {
+//
+//        } else {
+//
+////            convertView.findViewById(R.id.card_recommended_streams_label).setVisibility(View.GONE);
+//            convertView.findViewById(R.id.recommended_streams).setVisibility(View.GONE);
+//
+//        }
 
         imageListener = new ImageLoader.ImageListener() {
             @Override
@@ -462,7 +462,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
                 }
             });
         }else {
-           convertView.findViewById(R.id.btn_call_now).setVisibility(View.GONE);
+            convertView.findViewById(R.id.btn_call_now).setVisibility(View.GONE);
         }
 
         convertView.findViewById(R.id.btn_details).setOnClickListener(new View.OnClickListener() {
@@ -500,7 +500,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         if(this.drawableFees == null)
             this.drawableFees = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_fees);
         //if(this.drawablePlacement == null)
-          //  this. drawablePlacement = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_placement);
+        //  this. drawablePlacement = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_placement);
         if(this.drawableInfo == null)
             this. drawableInfo = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_information);
         if(this.drawableBubble == null)
@@ -512,8 +512,8 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
 
         if(like_bitmap == null)
             like_bitmap   =  Utils.getBitmapDrawable(this.drawableLike);
-       // if(placement_bitmap == null)
-         //   placement_bitmap  =  Utils.getBitmapDrawable(this.drawablePlacement);
+        // if(placement_bitmap == null)
+        //   placement_bitmap  =  Utils.getBitmapDrawable(this.drawablePlacement);
         if(fees_bitmap == null)
             fees_bitmap =  Utils.getBitmapDrawable(this.drawableFees);
         if(info_bitmap == null)
@@ -524,7 +524,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
 
         if(view != null){
             ((ImageView) view.findViewById(R.id.cd_reco_card_like)).setImageBitmap(like_bitmap);
-           // ((ImageView) view.findViewById(R.id.placement_image)).setImageBitmap(placement_bitmap);
+            // ((ImageView) view.findViewById(R.id.placement_image)).setImageBitmap(placement_bitmap);
             ((ImageView) view.findViewById(R.id.fees_range_image)).setImageBitmap(fees_bitmap);
             ((ImageView) view.findViewById(R.id.btn_details)).setImageBitmap(info_bitmap);
             (view.findViewById(R.id.likes_layout)).setBackground(drawableBubble);
@@ -557,6 +557,8 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         void OnShowMessage(String message);
 
         void OnAppliedInstitute(Institute institute);
+
+        void onRemoveShortlisted(Institute institute);
     }
 
     public void clear() {
@@ -698,5 +700,12 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
 
             fadeIn.start();
         }
+    }
+    public void setCardCategory(int category){
+        this.cardCategory=category;
+    }
+
+    public int getCardCategory() {
+        return cardCategory;
     }
 }

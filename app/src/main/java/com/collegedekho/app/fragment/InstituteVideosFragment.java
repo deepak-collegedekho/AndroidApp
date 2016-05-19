@@ -24,7 +24,6 @@ import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +40,6 @@ public class InstituteVideosFragment extends BaseFragment {
     VideoListAdapter videoListAdapter;
     String url;
     private OnTitleUpdateListener titleListener;
-    private Calendar calendar;
 
     public static InstituteVideosFragment newInstance(ArrayList<String> videoList) {
 
@@ -60,7 +58,6 @@ public class InstituteVideosFragment extends BaseFragment {
             this.videoIdList = bundle.getStringArrayList("institute_videos_list");
 
             this.videoList = new ArrayList<>();
-            calendar=Calendar.getInstance();
             StringBuilder builder = new StringBuilder();
             builder.append("https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=");
             int listSize = videoIdList.size();
@@ -92,9 +89,6 @@ public class InstituteVideosFragment extends BaseFragment {
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         videosRecycler.setLayoutManager(layoutManager);
-//        if (videoIdList != null && !videoIdList.isEmpty()) {
-//            titleListener.onUpdate(videoList, url, this);
-//        }
         videoListAdapter = new VideoListAdapter(getActivity(), videoList);
         videosRecycler.setAdapter(videoListAdapter);
         checkYouTubeApi();
@@ -150,9 +144,6 @@ public class InstituteVideosFragment extends BaseFragment {
         ArrayList<VideoEntry> videoList;
         private final Map<YouTubeThumbnailView, YouTubeThumbnailLoader> thumbnailViewToLoaderMap;
 
-        private final List<View> entryViews;
-        private final LayoutInflater inflater;
-//        private final ThumbnailListener thumbnailListener;
 
         private boolean labelsVisible;
 
@@ -163,10 +154,7 @@ public class InstituteVideosFragment extends BaseFragment {
         public VideoListAdapter(Context context, ArrayList<VideoEntry> videoList) {
             this.videoList = videoList;
 
-            entryViews = new ArrayList<>();
             thumbnailViewToLoaderMap = new HashMap<>();
-            inflater = LayoutInflater.from(context);
-//            thumbnailListener = new ThumbnailListener();
 
             labelsVisible = true;
         }
@@ -183,47 +171,6 @@ public class InstituteVideosFragment extends BaseFragment {
         @Override
         public void onBindViewHolder(VideoListViewHolder holder, int position) {
             final VideoEntry entry = videoList.get(position);
-//
-//            // There are three cases here
-//            if (view == null) {
-//                // 1) The view has not yet been created - we need to initialize the YouTubeThumbnailView.
-//                holder.thumbnail.setTag(entry.videoId);
-//                holder.thumbnail.initialize(Constants.YOUTUBE_DEVELOPER_KEY, thumbnailListener);
-//            } else {
-//                YouTubeThumbnailLoader loader = thumbnailViewToLoaderMap.get(holder.thumbnail);
-//                if (loader == null) {
-//                    // 2) The view is already created, and is currently being initialized. We store the
-//                    //    current videoId in the tag.
-//                    holder.thumbnail.setTag(entry.videoId);
-//                } else {
-//                    // 3) The view is already created and already initialized. Simply set the right videoId
-//                    //    on the loader.
-//                    holder.thumbnail.setImageResource(R.drawable.loading_thumbnail);
-//                    loader.setVideo(entry.videoId);
-//                }
-//            }
-      /*      holder.thumbnail.initialize(Constants.YOUTUBE_DEVELOPER_KEY, new YouTubeThumbnailView.OnInitializedListener() {
-                @Override
-                public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, final YouTubeThumbnailLoader youTubeThumbnailLoader) {
-                    youTubeThumbnailLoader.setVideo(entry.videoId);
-                    youTubeThumbnailLoader.setOnThumbnailLoadedListener(new YouTubeThumbnailLoader.OnThumbnailLoadedListener() {
-                        @Override
-                        public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
-                            youTubeThumbnailLoader.release();
-                        }
-
-                        @Override
-                        public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader.ErrorReason errorReason) {
-
-                        }
-                    });
-                }
-
-                @Override
-                public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult youTubeInitializationResult) {
-
-                }
-            });*/
             int state = (int) holder.thumbnail.getTag(R.id.initialize);
 
             if(state == UNINITIALIZED){
@@ -277,13 +224,6 @@ public class InstituteVideosFragment extends BaseFragment {
                         youTubeThumbnailLoader.setOnThumbnailLoadedListener(new YouTubeThumbnailLoader.OnThumbnailLoadedListener() {
                             @Override
                             public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String loadedVideoId) {
-//                                String currentVideoId = (String) thumbnail.getTag(R.id.videoid);
-//                                if(currentVideoId.equals(loadedVideoId)) {
-//                                    ivYtLogo.setBackgroundColor(transparentColor);
-//                                }
-//                                else{
-//                                    ivYtLogo.setBackgroundColor(blackColor);
-//                                }
                             }
 
                             @Override
@@ -321,35 +261,6 @@ public class InstituteVideosFragment extends BaseFragment {
         }
         }
 
-     /*   private final class ThumbnailListener implements
-                YouTubeThumbnailView.OnInitializedListener,
-                YouTubeThumbnailLoader.OnThumbnailLoadedListener {
-
-            @Override
-            public void onInitializationSuccess(
-                    YouTubeThumbnailView view, YouTubeThumbnailLoader loader) {
-                loader.setOnThumbnailLoadedListener(this);
-                thumbnailViewToLoaderMap.put(view, loader);
-                view.setImageResource(R.drawable.loading_thumbnail);
-                String videoId = (String) view.getTag();
-                loader.setVideo(videoId);
-            }
-
-            @Override
-            public void onInitializationFailure(
-                    YouTubeThumbnailView view, YouTubeInitializationResult loader) {
-                view.setImageResource(R.drawable.no_thumbnail);
-            }
-
-            @Override
-            public void onThumbnailLoaded(YouTubeThumbnailView view, String videoId) {
-            }
-
-            @Override
-            public void onThumbnailError(YouTubeThumbnailView view, YouTubeThumbnailLoader.ErrorReason errorReason) {
-                view.setImageResource(R.drawable.no_thumbnail);
-            }
-        }*/
     }
 
     @Override
@@ -371,7 +282,7 @@ public class InstituteVideosFragment extends BaseFragment {
     }
 
     public interface OnTitleUpdateListener {
-        public void onUpdate(List<VideoEntry> videoList, String url, InstituteVideosFragment fragment);
+        void onUpdate(List<VideoEntry> videoList, String url, InstituteVideosFragment fragment);
     }
 
 }

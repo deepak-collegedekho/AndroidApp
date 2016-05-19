@@ -358,7 +358,7 @@ public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
                    this.mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/",null);
                break;
             case R.id.wishList_colleges_layout_RL:
-                this.mProfileWidgetSelected(Constants.WIDGET_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+                this.mProfileWidgetSelected(Constants.CARD_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
                 break;
             case R.id.recommended_colleges_layout_RL:
                 if(this.mExamDetail != null)

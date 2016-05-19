@@ -280,128 +280,125 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
         mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
         //Log.e("CardContainer", mTopCard.isHardwareAccelerated() ? "it is Hardware Accelerated" : "it is not Hardware Accelerated");
         //Log.e("CardContainer", mTopCard.toString());
-        switch (event.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                mTopCard.getHitRect(childRect);
+        if(mListener!=null) {
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    mTopCard.getHitRect(childRect);
 
-                pointerIndex = event.getActionIndex();
-                x = event.getX(pointerIndex);
-                y = event.getY(pointerIndex);
+                    pointerIndex = event.getActionIndex();
+                    x = event.getX(pointerIndex);
+                    y = event.getY(pointerIndex);
 
-                if (!childRect.contains((int) x, (int) y)) {
-                    mTopCard.setLayerType(View.LAYER_TYPE_NONE, null);
-                    return false;
-                }
-                mLastTouchX = x;
-                mLastTouchY = y;
-                mActivePointerId = event.getPointerId(pointerIndex);
-
-
-                float[] points = new float[]{x - mTopCard.getLeft(), y - mTopCard.getTop()};
-                mTopCard.getMatrix().invert(mMatrix);
-                mMatrix.mapPoints(points);
-                mTopCard.setPivotX(points[0]);
-                mTopCard.setPivotY(points[1]);
+                    if (!childRect.contains((int) x, (int) y)) {
+                        mTopCard.setLayerType(View.LAYER_TYPE_NONE, null);
+                        return false;
+                    }
+                    mLastTouchX = x;
+                    mLastTouchY = y;
+                    mActivePointerId = event.getPointerId(pointerIndex);
 
 
-                break;
-            case MotionEvent.ACTION_MOVE:
+                    float[] points = new float[]{x - mTopCard.getLeft(), y - mTopCard.getTop()};
+                    mTopCard.getMatrix().invert(mMatrix);
+                    mMatrix.mapPoints(points);
+                    mTopCard.setPivotX(points[0]);
+                    mTopCard.setPivotY(points[1]);
 
-                pointerIndex = event.findPointerIndex(mActivePointerId);
-                x = event.getX(pointerIndex);
-                y = event.getY(pointerIndex);
 
-                dx = x - mLastTouchX;
-                dy = y - mLastTouchY;
+                    break;
+                case MotionEvent.ACTION_MOVE:
+
+                    pointerIndex = event.findPointerIndex(mActivePointerId);
+                    x = event.getX(pointerIndex);
+                    y = event.getY(pointerIndex);
+
+                    dx = x - mLastTouchX;
+                    dy = y - mLastTouchY;
 
                 /*Log.e("CardContainer", "translationX :" + mTopCard.getTranslationX());
                 Log.e("CardContainer", "translationY :" + mTopCard.getTranslationY());*/
 
-                if(mTopCard.getTranslationX() <= -60){
-                    //Log.e("CardContainer", "IN translationX <= -60");
+                    if (mTopCard.getTranslationX() <= -60) {
+                        //Log.e("CardContainer", "IN translationX <= -60");
 //                    this.mfadeInOneFadeOutAllOthers(dislikeImageView.getId());
-                    mListener.onActionDislike();
+                        mListener.onActionDislike();
 //                    mLikeImageView.setVisibility(GONE);
 //                    mDislikeImageView.setVisibility(VISIBLE);
 //                    mUndecidedImageView.setVisibility(GONE);
-                } else if(mTopCard.getTranslationX() >= 60){
-                    //Log.e("CardContainer", "IN translationX >= 60");
+                    } else if (mTopCard.getTranslationX() >= 60) {
+                        //Log.e("CardContainer", "IN translationX >= 60");
 //                    this.mfadeInOneFadeOutAllOthers(likeImageView.getId());
-                    mListener.onActionLike();
+                        mListener.onActionLike();
 //                    mLikeImageView.setVisibility(VISIBLE);
 //                    mDislikeImageView.setVisibility(GONE);
 //                    mUndecidedImageView.setVisibility(GONE);
-                }
-                else if (mTopCard.getTranslationY() <= -50)
-                {
-                    //Log.e("CardContainer", "IN translationY <= -50");
+                    } else if (mTopCard.getTranslationY() <= -50) {
+                        //Log.e("CardContainer", "IN translationY <= -50");
 //                    this.mfadeInOneFadeOutAllOthers(undecidedImageView.getId());
-                    mListener.onActionDecideLater();
+                        mListener.onActionDecideLater();
 //                    mLikeImageView.setVisibility(GONE);
 //                    mDislikeImageView.setVisibility(GONE);
 //                    mUndecidedImageView.setVisibility(VISIBLE);
-                }
-                else if(mTopCard.getTranslationX() >= -40 && mTopCard.getTranslationX() <= 40)
-                {
-                    //Log.e("CardContainer", "IN translationX() >= -40 && translationX() <= 40");
+                    } else if (mTopCard.getTranslationX() >= -40 && mTopCard.getTranslationX() <= 40) {
+                        //Log.e("CardContainer", "IN translationX() >= -40 && translationX() <= 40");
 //                    this.mfadeInOneFadeOutAllOthers(-1);
-                    mListener.onActionCancel();
+                        mListener.onActionCancel();
 //                    mLikeImageView.setVisibility(GONE);
 //                    mDislikeImageView.setVisibility(GONE);
 //                    mUndecidedImageView.setVisibility(GONE);
-                }
+                    }
+                    if (Math.abs(dx) > mTouchSlop || Math.abs(dy) > mTouchSlop) {
+                        mDragging = true;
+                    }
 
-                if (Math.abs(dx) > mTouchSlop || Math.abs(dy) > mTouchSlop) {
-                    mDragging = true;
-                }
+                    if (!mDragging) {
+                        //mTopCard.setLayerType(View.LAYER_TYPE_NONE, null);
+                        return true;
+                    }
 
-                if(!mDragging) {
-                    //mTopCard.setLayerType(View.LAYER_TYPE_NONE, null);
-                    return true;
-                }
+                    mTopCard.setTranslationX(mTopCard.getTranslationX() + dx);
+                    mTopCard.setTranslationY(mTopCard.getTranslationY() + dy);
 
-                mTopCard.setTranslationX(mTopCard.getTranslationX() + dx);
-                mTopCard.setTranslationY(mTopCard.getTranslationY() + dy);
+                    //mTopCard.setRotation(40 * mTopCard.getTranslationX() / (getWidth() / 2.f));
 
-                //mTopCard.setRotation(40 * mTopCard.getTranslationX() / (getWidth() / 2.f));
-
-                mLastTouchX = x;
-                mLastTouchY = y;
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                mListener.onActionCancel();
+                    mLastTouchX = x;
+                    mLastTouchY = y;
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    mListener.onActionCancel();
 //                mLikeImageView.setVisibility(GONE);
 //                mDislikeImageView.setVisibility(GONE);
 //                mUndecidedImageView.setVisibility(GONE);
 
-                if (!mDragging) {
-                    return true;
-                }
-                mDragging = false;
-                mActivePointerId = INVALID_POINTER_ID;
-                ValueAnimator animator = ObjectAnimator.ofPropertyValuesHolder(mTopCard,
-                        PropertyValuesHolder.ofFloat("translationX", 0),
-                        PropertyValuesHolder.ofFloat("translationY", 0),
-                        //PropertyValuesHolder.ofFloat("rotation", (float) Math.toDegrees(mRandom.nextGaussian() * DISORDERED_MAX_ROTATION_RADIANS)),
-                        PropertyValuesHolder.ofFloat("pivotX", mTopCard.getWidth() / 2.f),
-                        PropertyValuesHolder.ofFloat("pivotY", mTopCard.getHeight() / 2.f)
-                ).setDuration(250);
-                animator.setInterpolator(new AccelerateInterpolator());
-                animator.start();
-                break;
-            case MotionEvent.ACTION_POINTER_UP:
-                pointerIndex = event.getActionIndex();
-                final int pointerId = event.getPointerId(pointerIndex);
+                    if (!mDragging) {
+                        return true;
+                    }
+                    mDragging = false;
+                    mActivePointerId = INVALID_POINTER_ID;
+                    ValueAnimator animator = ObjectAnimator.ofPropertyValuesHolder(mTopCard,
+                            PropertyValuesHolder.ofFloat("translationX", 0),
+                            PropertyValuesHolder.ofFloat("translationY", 0),
+                            //PropertyValuesHolder.ofFloat("rotation", (float) Math.toDegrees(mRandom.nextGaussian() * DISORDERED_MAX_ROTATION_RADIANS)),
+                            PropertyValuesHolder.ofFloat("pivotX", mTopCard.getWidth() / 2.f),
+                            PropertyValuesHolder.ofFloat("pivotY", mTopCard.getHeight() / 2.f)
+                    ).setDuration(250);
+                    animator.setInterpolator(new AccelerateInterpolator());
+                    animator.start();
+                    break;
+                case MotionEvent.ACTION_POINTER_UP:
+                    pointerIndex = event.getActionIndex();
+                    final int pointerId = event.getPointerId(pointerIndex);
 
-                if (pointerId == mActivePointerId) {
-                    final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-                    mLastTouchX = event.getX(newPointerIndex);
-                    mLastTouchY = event.getY(newPointerIndex);
+                    if (pointerId == mActivePointerId) {
+                        final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
+                        mLastTouchX = event.getX(newPointerIndex);
+                        mLastTouchY = event.getY(newPointerIndex);
 
-                    mActivePointerId = event.getPointerId(newPointerIndex);
-                }
-                break;
+                        mActivePointerId = event.getPointerId(newPointerIndex);
+                    }
+                    break;
+            }
         }
         //mTopCard.setLayerType(View.LAYER_TYPE_NONE, null);
         return true;
@@ -570,6 +567,9 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             //Log.d("Fling", "Fling with " + velocityX + ", " + velocityY);
+            if (mListener==null){
+                return false;
+            }
             final View topCard = mTopCard;
             float dx = e2.getX() - e1.getX();
             float dy = e2.getY() - e1.getY();

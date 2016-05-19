@@ -62,11 +62,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -1462,57 +1460,60 @@ public class MainActivity extends AppCompatActivity
             case UNBAISED:
                 mDisplayCDRecommendedInstituteList(response, isHavingNextUrl, cdRecommendedInstituteType, false);
                 break;
+            case SHORTLISTED:
+                mDisplayCDRecommendedInstituteList(response, isHavingNextUrl, cdRecommendedInstituteType, false);
+                break;
+            case BUZZLIST:
+                mDisplayCDRecommendedInstituteList(response, isHavingNextUrl, cdRecommendedInstituteType, false);
+                break;
         }
     }
 
     private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl, Constants.CDRecommendedInstituteType cdRecommendedInstituteType, boolean isUpdate) {
         try {
-            //Suggesting System that its a good time to do GC
+
             System.gc();
             this.hideProgressDialog();
-            /*final ProgressDialog progress = new ProgressDialog(this);
-            progress.setCancelable(false);
-            progress.setMessage("Rendering institutes cards..");
-            progress.setIndeterminate(true);*/
 
             if (!isHavingNextUrl)
                 next = null;
-
-            int time = 1000;
 
             if (isUpdate) {
                 if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteListFragment) {
                     String val = this.extractResults(response);
                     this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
-                    if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED)
+                    if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED) {
                         ((CDRecommendedInstituteListFragment) currentFragment).showUndecidedInstitutes(this.mInstituteList, next);
-                    else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED)
+                    }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED) {
                         ((CDRecommendedInstituteListFragment) currentFragment).updateList(this.mInstituteList, next);
+                    }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.SHORTLISTED){
+                        ((CDRecommendedInstituteListFragment) currentFragment).updateWishList(this.mInstituteList, next);
+                    }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.BUZZLIST){
+                        ((CDRecommendedInstituteListFragment) currentFragment).updateBuzzList(this.mInstituteList, next);
+                    }
+
+
                 }
             } else {
                 String val = this.extractResults(response);
                 this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
-                /*if (mInstituteList.size() > 5) {
-                    time = (20 * mInstituteList.size());
-                }
-                progress.show();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (progress != null && progress.isShowing())
-                            progress.dismiss();
-                    }
-                }, time);*/
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
 
                 if (fragment == null) {
-                    this.mDisplayFragment(CDRecommendedInstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, this.mUndecidedCount,mExamTag), !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
+                    this.mDisplayFragment(CDRecommendedInstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, this.mUndecidedCount,cdRecommendedInstituteType.ordinal()), !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
                 } else {
                     if (fragment instanceof CDRecommendedInstituteListFragment) {
-                        if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED)
+                        if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED) {
                             ((CDRecommendedInstituteListFragment) fragment).showUndecidedInstitutes(this.mInstituteList, next);
-                        else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED)
+                        }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED) {
                             ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next);
+                        }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.SHORTLISTED){
+                            ((CDRecommendedInstituteListFragment) currentFragment).updateWishList(this.mInstituteList, next);
+                        }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.RECOMMENDED){
+                            ((CDRecommendedInstituteListFragment) currentFragment).updateBuzzList(this.mInstituteList, next);
+                        }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.BUZZLIST){
+                            ((CDRecommendedInstituteListFragment) currentFragment).updateBuzzList(this.mInstituteList, next);
+                        }
                     }
 
                     this.mDisplayFragment(fragment, false, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
@@ -1921,6 +1922,27 @@ public class MainActivity extends AppCompatActivity
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED);
                 }
                 break;
+
+            case Constants.CARD_SHORTLIST_INSTITUTES:
+                this.mCurrentTitle = "Shortlisted Institutes";
+                Constants.IS_RECOMENDED_COLLEGE = false;
+                if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.SHORTLISTED, true);
+                } else {
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.SHORTLISTED);
+                }
+                break;
+
+            case Constants.CARD_BUZZLIST_INSTITUTES:
+                this.mCurrentTitle = "Buzzlist Institutes";
+                Constants.IS_RECOMENDED_COLLEGE = false;
+                if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.BUZZLIST, true);
+                } else {
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.BUZZLIST);
+                }
+                break;
+
             case Constants.SEARCHED_INSTITUTES:
                 this.mCurrentTitle = "Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
@@ -1992,6 +2014,12 @@ public class MainActivity extends AppCompatActivity
                 if (tags.length == 2)
                     extraTag = tags[1];
                 this.updateShortlistInstitute(null, extraTag);
+                break;
+            case Constants.CARD_DELETE_SHORTLISTED_INSTITUTE:
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
+                if (tags.length == 2 && tags[1].equals("true") && next!=null){
+                    onNextWishList();
+                }
                 break;
             case Constants.TAG_INSTITUTE_LIKE_DISLIKE:
                 if (tags.length == 2)
@@ -3432,6 +3460,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+    @Override
+    public void onRemoveShortlistedInstitute(Institute institute,boolean isLast) {
+        if (institute != null) {
+                this.mMakeNetworkCall(Constants.CARD_DELETE_SHORTLISTED_INSTITUTE+"#"+isLast , institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
+        }
+    }
     @Override
     public void displayMessage(int messageId) {
         displaySnackBar(messageId);
@@ -4941,6 +4976,32 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+    }
+
+    @Override
+    public void onClickBuzzList() {
+        this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+    }
+
+    @Override
+    public void onClickWishList() {
+        this.mMakeNetworkCall(Constants.CARD_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+    }
+
+    @Override
+    public void onNextWishList() {
+        this.mMakeNetworkCall(Constants.CARD_SHORTLIST_INSTITUTES+"#next", next, null);
+    }
+
+    @Override
+    public void onNextBuzzList() {
+    if(next!=null)
+        this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES+"#next", next, null);
+    }
+
+    @Override
+    public void onClickRecommendedList() {
+        onHomeItemSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/", mExamTag);
     }
 
 
