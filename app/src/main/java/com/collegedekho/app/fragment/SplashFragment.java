@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +16,7 @@ import com.collegedekho.app.resource.Constants;
 
 public class SplashFragment extends BaseFragment {
 
-    private ImageView mLogoView;
-    private AnimationDrawable mFrameAnimation;
-    private boolean IS_FIRST_TIME = true;   // check id splash animation is already executed
+    private final String TAG = "Splash Fragment";
 
     public static SplashFragment newInstance() {
         SplashFragment fragment = new SplashFragment();
@@ -43,16 +42,6 @@ public class SplashFragment extends BaseFragment {
         return rootView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        //stopMainAnimation();
-    }
 
     public void isInternetAvailable(){
         int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
@@ -70,14 +59,6 @@ public class SplashFragment extends BaseFragment {
         }
     }
 
-    public void stopMainAnimation()
-    {
-        if(this.mFrameAnimation != null)
-            this.mFrameAnimation.stop();
-
-        //Start the secondary animation
-        //this.mLogoView.startAnimation(AnimationUtils.loadAnimation(getActivity().getBaseContext(), R.anim.bounce_slow));
-    }
 
     @Override
     public void show() {

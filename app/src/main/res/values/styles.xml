@@ -326,6 +326,17 @@
         <item name="android:layout_marginBottom">5dp</item>
     </style>
 
+    <style name="AppTheme.profileTextView" parent="AppTheme.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingTop">1dp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/text_lightest_grey</item>
+        <item name="android:gravity">center|left</item>
+    </style>
+
     <style name="AppTheme.TextView.courseLeftLabel" parent="AppTheme.TextView.style1">
 
         <item name="android:paddingLeft">@dimen/course_label_horizontal_margin</item>
@@ -532,5 +543,30 @@
     <style name="RatingBar" parent="Theme.AppCompat">
         <item name="colorControlNormal">@color/white</item>
         <item name="colorControlActivated">@color/primary_orange</item>
+    </style>
+
+    <style name="ProfileRadioGroup" parent="Theme.AppCompat">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="ProfileRadioButton" parent="Theme.AppCompat">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:paddingRight">@dimen/m5dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="ProfileTextView" parent="Theme.AppCompat">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textSize">@dimen/m16sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="ProfileSpinner" parent="Theme.AppCompat">
+        <item name="android:layout_height">@dimen/m80dp</item>
+        <item name="android:layout_width">match_parent</item>
     </style>
 </resources>

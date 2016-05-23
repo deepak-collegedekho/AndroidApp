@@ -134,7 +134,7 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
                         } else {
                             if (mQnAQuestionAnswers.get(getAdapterPosition()).getCurrent_user_vote_type() == Constants.LIKE_THING) {
                                 mQnAQuestionAnswers.get(getAdapterPosition()).setDownvotes(mQnAQuestionAnswers.get(getAdapterPosition()).getDownvotes() + 1);
-                                mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri() + "downvote/", Constants.NOTINTERESTED_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
+                                mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri() + "downvote/", Constants.NOT_INTERESTED_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
                             } else {
                                 mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri(), Constants.DISLIKE_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
                             }
@@ -151,7 +151,7 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
                         } else {
                             if (mQnAQuestionAnswers.get(getAdapterPosition()).getCurrent_user_vote_type() == Constants.DISLIKE_THING) {
                                 mQnAQuestionAnswers.get(getAdapterPosition()).setUpvotes(mQnAQuestionAnswers.get(getAdapterPosition()).getUpvotes() + 1);
-                                mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri() + "upvote/", Constants.NOTINTERESTED_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
+                                mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri() + "upvote/", Constants.NOT_INTERESTED_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
                             } else {
                                 mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri(), Constants.LIKE_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
                             }

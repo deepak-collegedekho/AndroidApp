@@ -118,8 +118,6 @@
             android:name="io.fabric.ApiKey"
             android:value="e1dd370529095b9153aed4f44952512fc61ad3bf" />
 
-
-
         <receiver
             android:name="io.connecto.android.sdk.ConnectoGCMReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">

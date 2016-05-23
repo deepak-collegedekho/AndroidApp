@@ -22,20 +22,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             custom:gif="@mipmap/cd_splash"/>
-
-       <!--<ImageView
-            android:id="@+id/splash_logo_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|center"
-            android:background="@drawable/file69"
-            android:layout_marginTop="100dp"
-            />-->
-   <!-- <WebView
-            android:id="@+id/spalsh_logo_animation"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"></WebView>-->
-
     </LinearLayout>
 
     <TextView

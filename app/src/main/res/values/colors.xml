@@ -17,7 +17,7 @@
     <color name="primary_color_100">#E8E9EE</color>
     <color name="white">#fff</color>
     <color name="black">#000</color>
-    <color name="text_lightest_grey">#949494</color>
+    <color name="text_lightest_grey">#aca9a9</color>
     <color name="material_button_blue">#ff1f7eeb</color>
     <color name="material_button_blue_dark">#ff1f66cb</color>
     <color name="text_subhead">#ff479efb</color>

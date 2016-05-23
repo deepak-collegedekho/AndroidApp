@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:id="@+id/Profile_screen_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/app_background"
+        android:weightSum="1">
+
+        <include layout="@layout/layout_exam_tabs"
+            android:id="@+id/pager_strip"
+            android:layout_height="0dp"
+            android:layout_weight=".05"
+            android:layout_width="match_parent"/>
+
+        <RelativeLayout
+            android:id="@+id/check_gesture"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".33"
+            android:gravity="center"
+            android:layout_gravity="center">
+
+            <include layout="@layout/layout_profile_image"
+                android:id="@+id/include_image_layout"
+                android:layout_width="150dp"
+                android:layout_marginLeft="14dp"
+                android:layout_height="150dp"/>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/include_image_layout">
+
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sashi Negi"
+                    android:gravity="left"
+                    android:textStyle="bold"
+                    android:paddingTop="10dp"
+                    android:paddingRight="10dp"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:id="@+id/user_profile_stream"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_below="@id/user_name"
+                    android:gravity="left"
+                    android:textStyle="bold"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingRight="10dp"
+                    android:textSize="18sp"/>
+
+                <LinearLayout
+                    android:id="@+id/profile_syllabus_statusLL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/user_profile_stream"
+                    android:gravity="center"
+                    android:weightSum="1">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight=".47"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/primary_orange"
+                            android:importantForAccessibility="no"
+                            android:text="SYLLABUS"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="10sp"
+                            android:text="COMPLETED"
+                            android:importantForAccessibility="no"/>
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/covered_syllabus"
+                        android:layout_width="0dp"
+                        android:layout_weight=".53"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="10dp"
+                        android:textSize="38sp"
+                        android:textColor="@color/light_blue"
+                        android:text="..."
+                        android:importantForAccessibility="no"
+                        />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/login_countRL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/m5dp"
+                    android:visibility="gone"
+                    android:layout_below="@id/profile_syllabus_statusLL"
+                    android:weightSum="1">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight=".55"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/primary_orange"
+                            android:text="TEST"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:text="GIVEN"/>
+                    </LinearLayout>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight=".45"
+                        android:layout_height="wrap_content"
+                        android:textSize="30sp"
+                        android:paddingRight="10dp"
+                        android:textColor="@color/light_blue"
+                        android:text="00"/>
+
+                </LinearLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <include layout="@layout/layout_profile_wishlist"
+            android:id="@+id/include_layout_profile_widget"
+            android:layout_height="0dp"
+            android:layout_weight=".45"
+            android:layout_width="match_parent"/>
+
+        <include layout="@layout/layout_bottom_button"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".18"
+            android:visibility="gone"
+            android:layout_marginBottom="10dp"
+            />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:visibility="visible"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/profile_guide_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:clickable="true"
+            android:contentDescription="@string/profile_tute_description"
+            android:background="@drawable/ic_profile_tute1" />
+
+    </FrameLayout>
+
+</RelativeLayout>

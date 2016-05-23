@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/profile_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/include_edit_image_layout"
+        >
+        <android.support.v4.view.PagerTabStrip
+            android:id="@+id/profile_pager_header"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/m35dp"
+            android:layout_gravity="top"
+            android:textColor="#fff"
+            android:background="@color/primaryColor"
+            android:scrollbars="none"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:tabMode="scrollable"
+            />
+    </android.support.v4.view.ViewPager>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/primary_orange"
+        android:text="SAVE"
+        android:textSize="20sp"
+        android:padding="@dimen/m4dp"
+        android:textColor="@color/white"
+        android:layout_marginBottom="@dimen/m2dp"/>
+
+</RelativeLayout>

@@ -4,9 +4,9 @@
     android:id="@+id/answer_reply_edit_text"
     android:layout_width="match_parent"
     android:layout_height="150dp"
-    android:inputType="text"
+    android:inputType="textMultiLine|textCapSentences"
     android:paddingTop="2dp"
-    android:singleLine="true"
+    android:singleLine="false"
     android:textColor="@color/textSecondary"
     android:textColorHint="#ffa7a8a8"
     />

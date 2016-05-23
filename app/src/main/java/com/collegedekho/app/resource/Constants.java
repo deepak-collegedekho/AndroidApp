@@ -84,6 +84,7 @@ public class Constants
     //public static final String BASE_URL = IP + ":8000/api/1/";
     public static final String BASE_URL = IP + "/api/1/";
     public static final String TAG_LOAD_COURSES = "load_courses";
+    public static final String TAG_LOAD_PROFILE = "load_profile";
     public static final String TAG_APPLIED_COURSE = "applied_course";
     public static final String TAG_WISH_LIST_APPLIED_COURSE = "wish_listLapplied_course";
     public static final String TAG_POST_QUESTION = "post_question";
@@ -140,7 +141,7 @@ public class Constants
     public static final String TAG_FRAGMENT_STREAMS = "fragment_streams";
     public static final int LIKE_THING = 0;
     public static final int DISLIKE_THING = 1;
-    public static final int NOTINTERESTED_THING = -1;
+    public static final int NOT_INTERESTED_THING = -1;
     public static final int SHORTLISTED_YES = 1;
     public static final int SHORTLISTED_NO = 0;
     public static final int BOOLEAN_TRUE = 1;

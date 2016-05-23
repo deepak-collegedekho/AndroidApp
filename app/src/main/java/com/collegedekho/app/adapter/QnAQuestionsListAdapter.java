@@ -222,7 +222,6 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         public void onClick(View v) {
             int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
             switch(v.getId()) {
-
                 case R.id.card_item_button_like:
                 case R.id.card_item_like_layout:
                     if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
@@ -237,7 +236,6 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
                             likeProgressBar.setVisibility(View.VISIBLE);
                             likeButton.setClickable(false);
                             mListener.onQnAQuestionVote(getAdapterPosition(), Constants.DISLIKE_THING);
-
                         }
                     }else {
                         this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);

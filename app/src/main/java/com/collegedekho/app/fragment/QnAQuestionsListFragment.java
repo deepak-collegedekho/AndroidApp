@@ -69,7 +69,6 @@ public class QnAQuestionsListFragment extends BaseFragment {
         this.progressBarLL = (LinearLayout) rootView.findViewById(R.id.progressBarLL);
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_questions_list);
-
         if(this.mViewType == Constants.VIEW_INTO_GRID)
             this.layoutManager = new GridLayoutManager(getActivity(), 2);
         else
@@ -89,13 +88,9 @@ public class QnAQuestionsListFragment extends BaseFragment {
             this.mEmptyTextView.setText("Couldn't find related questions for you. Like and Shortlist college");
             recyclerView.setVisibility(View.GONE);
             this.mToggleAskButtonVisiblity(View.GONE);
-
-        }
-        else
-        {
+        }else {
             this.mEmptyTextView.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-
             this.mToggleAskButtonVisiblity(View.VISIBLE);
             this.mAskButton.setEnabled(true);
         }
@@ -183,6 +178,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
                 if(rootView != null) {
                     if ((rootView.findViewById(R.id.qna_ask_layout)).getVisibility() == View.GONE) {
                         (rootView.findViewById(R.id.qna_ask_layout)).setVisibility(View.VISIBLE);
+                        rootView.findViewById(R.id.institute_qna_button_ask_submit).setEnabled(true);
                         rootView.findViewById(R.id.dummy_view).setVisibility(View.VISIBLE);
                         rootView.findViewById(R.id.dummy_view).setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -237,17 +233,16 @@ public class QnAQuestionsListFragment extends BaseFragment {
     public QnAQuestions validateData(View rootView)
     {
         EditText check = (EditText)rootView.findViewById(R.id.institute_qna_question_title);
-              String title =  check.getText().toString();
+        String title =  check.getText().toString();
         if (title == null || title.trim().length() <= 0) {
             mListener.displayMessage(R.string.QUESTION_TITLE_EMPTY);
              return null;
         }
-        EditText check1 = (EditText)rootView.findViewById(R.id.institute_qna_question_desc);
 
+        EditText check1 = (EditText)rootView.findViewById(R.id.institute_qna_question_desc);
         String desc =  check1.getText().toString();
         if (desc == null || desc.trim().length() <= 0) {
             mListener.displayMessage(R.string.QUESTION_TEXT_EMPTY);
-
             return null;
         }
 
@@ -261,14 +256,16 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
     public void onAskExpertSubmitButtonPressed()
     {
-        View rootView = getView();
-        if (rootView != null) {
-            QnAQuestions q = validateData(rootView);
+        View view = getView();
+        if (view != null) {
+            QnAQuestions q = validateData(view);
             if (q != null && mListener != null)
             {
+                ((EditText)view.findViewById(R.id.institute_qna_question_title)).setText("");
+                ((EditText)view.findViewById(R.id.institute_qna_question_desc)).setText("");
+                view.findViewById(R.id.institute_qna_button_ask_submit).setEnabled(false);
                 this.mListener.onQuestionAsked(q);
             }
-
         }
     }
 
