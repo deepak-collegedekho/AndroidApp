@@ -62,7 +62,7 @@
     //gradient colors
     <color name="start_gradient">#f7737272</color>
     <color name="end_gradient">#96a7aca7</color>
-    <color name="wallet_dim_foreground_holo_dark">#bebebe</color>
+    <color name="wallet_foreground_light">#bebebe</color>
     <color name="light_blue_transparent">#d13399ff</color>
     <color name="primary_color_transparent">#d11f2560</color>
     <color name="primary_orange_transparent">#d1ff8d00</color>

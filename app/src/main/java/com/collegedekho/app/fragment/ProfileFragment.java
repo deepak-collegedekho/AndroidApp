@@ -1,6 +1,8 @@
 package com.collegedekho.app.fragment;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
 
 
@@ -22,7 +25,7 @@ public class ProfileFragment extends BaseFragment {
 
     private static String TAG ="Profile Fragment";
     private static String PARAM1  = "param1";
-    private Profile mProfile ;
+    public static Profile mProfile ;
     private UserProfileListener mListener;
 
     public static ProfileFragment getInstance(Profile profile){
@@ -49,6 +52,7 @@ public class ProfileFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
         rootView.findViewById(R.id.profile_edit_btn).setOnClickListener(this);
+        rootView.findViewById(R.id.profile_show_more_info).setOnClickListener(this);
         return rootView;
     }
 
@@ -95,7 +99,7 @@ public class ProfileFragment extends BaseFragment {
 
         int currentPassingYear = profile.getCurrent_passing_year();
         if (currentPassingYear >=2016){
-            ((TextView)view.findViewById(R.id.profile_education_year)).setText(currentPassingYear);
+            ((TextView)view.findViewById(R.id.profile_education_year)).setText(""+currentPassingYear);
         }
 
         String streamName = profile.getPreferred_stream_short_name();
@@ -118,6 +122,13 @@ public class ProfileFragment extends BaseFragment {
             }
         }
        */
+    }
+
+    private void animateArrow(boolean shouldRotateUp, Drawable drawable) {
+        int start = shouldRotateUp ? 0 : 10000;
+        int end = shouldRotateUp ? 10000 : 0;
+        ObjectAnimator animator = ObjectAnimator.ofInt(drawable, "level", start, end);
+        animator.start();
     }
 
     @Override
@@ -155,6 +166,10 @@ public class ProfileFragment extends BaseFragment {
             case R.id.profile_edit_btn:
                 mOnProfileEdited();
                 break;
+            case R.id.profile_show_more_info:
+              // Drawable drawable = Utils.getDrawable(getActivity(),R.drawable.ic_spinner_arrow);
+               // animateArrow(true,drawable);
+                break;
             default:
                 break;
         }
@@ -162,10 +177,10 @@ public class ProfileFragment extends BaseFragment {
 
     private void mOnProfileEdited(){
         if(mListener != null)
-            mListener.onUserProfileEdited();
+            mListener.onUserProfileEdited(mProfile);
     }
 
     public interface  UserProfileListener{
-        void onUserProfileEdited();
+        void onUserProfileEdited(Profile profile);
     }
 }

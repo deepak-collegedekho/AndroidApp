@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.fragment;
 
 import android.annotation.SuppressLint;
@@ -34,9 +35,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+*/
 /**
  * Created by sureshsaini on 6/1/16.
- */
+ *//*
+
 public class ProfileEditFragment extends BaseFragment {
 
     private ViewPager profilePager;
@@ -209,7 +212,7 @@ public class ProfileEditFragment extends BaseFragment {
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View rootView=inflater.inflate(R.layout.layout_edit_profile,container,false);
+            View rootView=inflater.inflate(R.layout.layout_profile_edit,container,false);
             return rootView;
         }
 
@@ -430,7 +433,7 @@ public class ProfileEditFragment extends BaseFragment {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(10, 5, 10, 5);
             for (ExamDetail exam : examsList) {
-                CardView cardView = (CardView) LayoutInflater.from(context).inflate(R.layout.exams_card_layout, null);
+                CardView cardView = (CardView) LayoutInflater.from(context).inflate(R.layout.layout_exams_card, null);
                 cardView.setLayoutParams(layoutParams);
                 ((TextView) cardView.findViewById(R.id.exam_name)).setText(exam.getExam_short_name());
                 ((TextView) cardView.findViewById(R.id.exam_year)).setText(exam.getYear());
@@ -447,19 +450,19 @@ public class ProfileEditFragment extends BaseFragment {
             parentLayout.removeAllViews();
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(10, 5, 10, 5);
-            CardView cardView = (CardView) LayoutInflater.from(context).inflate(R.layout.exams_card_layout, null);
+            CardView cardView = (CardView) LayoutInflater.from(context).inflate(R.layout.layout_exams_card, null);
             cardView.setLayoutParams(layoutParams);
             ((TextView) cardView.findViewById(R.id.exam_name)).setText("Level");
             ((TextView) cardView.findViewById(R.id.exam_year)).setText(userEducation.getSublevel());
             parentLayout.addView(cardView);
 
-            CardView cardView1 = (CardView) LayoutInflater.from(context).inflate(R.layout.exams_card_layout, null);
+            CardView cardView1 = (CardView) LayoutInflater.from(context).inflate(R.layout.layout_exams_card, null);
             cardView1.setLayoutParams(layoutParams);
             ((TextView) cardView1.findViewById(R.id.exam_name)).setText("Stream");
             ((TextView) cardView1.findViewById(R.id.exam_year)).setText(userEducation.getStream());
             parentLayout.addView(cardView1);
 
-            CardView cardView2 = (CardView) LayoutInflater.from(context).inflate(R.layout.exams_card_layout, null);
+            CardView cardView2 = (CardView) LayoutInflater.from(context).inflate(R.layout.layout_exams_card, null);
             cardView2.setLayoutParams(layoutParams);
             try {
                 float mMarks=Float.valueOf(userEducation.getMarks());
@@ -482,7 +485,7 @@ public class ProfileEditFragment extends BaseFragment {
             parentLayout.removeAllViews();
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(10, 5, 10, 5);
-            CardView cardView = (CardView) LayoutInflater.from(context).inflate(R.layout.exams_card_layout, null);
+            CardView cardView = (CardView) LayoutInflater.from(context).inflate(R.layout.layout_exams_card, null);
             cardView.setLayoutParams(layoutParams);
             ((TextView) cardView.findViewById(R.id.exam_name)).setText(streamName);
             (cardView.findViewById(R.id.exam_year)).setVisibility(View.GONE);
@@ -500,7 +503,7 @@ public class ProfileEditFragment extends BaseFragment {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(10, 5, 10, 5);
             for (String streamName:streams) {
-                CardView cardView = (CardView) LayoutInflater.from(context).inflate(R.layout.exams_card_layout, null);
+                CardView cardView = (CardView) LayoutInflater.from(context).inflate(R.layout.layout_exams_card, null);
                 cardView.setLayoutParams(layoutParams);
                 ((TextView) cardView.findViewById(R.id.exam_name)).setText(streamName);
                 (cardView.findViewById(R.id.exam_year)).setVisibility(View.GONE);
@@ -554,3 +557,4 @@ public class ProfileEditFragment extends BaseFragment {
 
     }
 }
+*/

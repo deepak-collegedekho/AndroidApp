@@ -92,6 +92,7 @@ public class AnalyticsUtils {
         AppsFlyerLib.getInstance().trackEvent(context, eventName, eventParams);
 
         //Connecto Events
-        MainActivity.connecto.track(eventName, properties);
+        if(MainActivity.connecto != null)
+            MainActivity.connecto.track(eventName, properties);
     }
 }

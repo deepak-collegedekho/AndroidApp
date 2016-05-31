@@ -12,6 +12,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.entities.News;
+import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
 
@@ -117,6 +118,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     public void updateExamSummary(ExamSummary examSummary) {
 
     }
+
 
     public interface BaseListener{
         void onEndReached(String next, int type);

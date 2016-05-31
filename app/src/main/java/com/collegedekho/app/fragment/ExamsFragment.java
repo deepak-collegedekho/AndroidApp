@@ -33,6 +33,7 @@ public class ExamsFragment extends BaseFragment {
 
     private final String TAG = "ExamsFragment";
     private static String PARAM1 = "param1";
+    private static String PARAM2 = "param2";
 
     private ArrayList<Exam> mExamList ;
     private OnExamsSelectListener mListener;
@@ -89,23 +90,22 @@ public class ExamsFragment extends BaseFragment {
                 return position % 5 == 0 ? 3 : 2;
             }
         });
-//        layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
-        /*layoutManager.setSpanCount(new GridLayoutManager.SpanSizeLookup(){
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 8, true));
+        rootView.findViewById(R.id.exams_submit_button).setOnClickListener(this);
+
+        /*layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
+        layoutManager.setSpanCount(new GridLayoutManager.SpanSizeLookup(){
             @Override
             public int getSpanSize(int position) {
                 return position % 2 == 0 ? 2 : 1;
             }
-        });*/
+        });
 
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 8, true));
-        //recyclerView.setHasFixedSize(true);
-
-        rootView.findViewById(R.id.exams_submit_button).setOnClickListener(this);
-
-//        Animation pulse = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse);
-//        rootView.findViewById(R.id.exams_submit_button).startAnimation(pulse);
-       /* Animation fadeIn = new AlphaAnimation(0, 1);
+        Animation pulse = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse);
+        rootView.findViewById(R.id.exams_submit_button).startAnimation(pulse);
+        Animation fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
         fadeIn.setDuration(1000);
 
@@ -143,7 +143,6 @@ public class ExamsFragment extends BaseFragment {
         {
             recyclerView.setAdapter(mAdapter);
             mAdapter.notifyDataSetChanged();
-
             mExamSubmitButton.animate().translationY(0).setDuration(Constants.ANIM_LONG_DURATION);
             mExamSubmitButton.setVisibility(View.VISIBLE);
         }
@@ -287,15 +286,14 @@ public class ExamsFragment extends BaseFragment {
                 if(!isEditMode) {
                     mListener.displayMessage(R.string.SELECT_ONE_EXAM);
                     return;
-                }else {
-                    if(isPreSelected) {
-                        mListener.onCancelExamSubmission();
-                    }else {
-                        mListener.displayMessage(R.string.SELECT_ONE_EXAM);
-                        return;
-                    }
-                    return;
                 }
+                if(isPreSelected) {
+                    mListener.onCancelExamSubmission();
+                }else {
+                    mListener.displayMessage(R.string.SELECT_ONE_EXAM);
+                }
+                return;
+
             }
             if(!isEditMode) {
                 this.mListener.onExamsSelected(parentJsonObject);

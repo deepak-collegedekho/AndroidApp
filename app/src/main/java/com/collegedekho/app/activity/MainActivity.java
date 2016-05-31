@@ -49,6 +49,7 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -92,6 +93,7 @@ import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.entities.ProfileSpinnerObject;
 import com.collegedekho.app.entities.PsychometricTestQuestion;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
@@ -125,7 +127,6 @@ import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.NotPreparingFragment;
 import com.collegedekho.app.fragment.OTPVerificationFragment;
-import com.collegedekho.app.fragment.ProfileEditFragment;
 import com.collegedekho.app.fragment.ProfileEditFragmentNew;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.PsychometricStreamFragment;
@@ -236,8 +237,8 @@ public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, ExamsFragment.OnExamsSelectListener,
         HomeFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
         DataLoadListener, StreamFragment.OnStreamInteractionListener,PsychometricStreamFragment.OnStreamInteractionListener,AdapterView.OnItemSelectedListener,
-        InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener,
-        OnNewsSelectListener, ProfileEditFragment.onProfileUpdateListener, ProfileFragment.UserProfileListener,
+        InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener, OnNewsSelectListener,
+        /*ProfileEditFragment.onProfileUpdateListener,*/ProfileEditFragmentNew.ProfileUpdateListener, ProfileFragment.UserProfileListener,
         InstituteQnAFragment.OnQuestionAskedListener, FilterFragment.OnFilterInteractionListener,
         InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         QnAQuestionDetailFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
@@ -1042,7 +1043,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (currentFragment instanceof ProfileEditFragment || currentFragment instanceof ExamsFragment || currentFragment instanceof UserEducationFragment ||currentFragment instanceof StreamFragment || currentFragment instanceof PsychometricStreamFragment || currentFragment instanceof PsychometricTestParentFragment || currentFragment instanceof OTPVerificationFragment ||currentFragment instanceof WebViewFragment) {
+        if ( currentFragment instanceof ProfileFragment ||currentFragment instanceof ProfileEditFragmentNew || currentFragment instanceof ExamsFragment
+                || currentFragment instanceof UserEducationFragment ||currentFragment instanceof StreamFragment
+                || currentFragment instanceof PsychometricStreamFragment || currentFragment instanceof PsychometricTestParentFragment
+                || currentFragment instanceof OTPVerificationFragment ||currentFragment instanceof WebViewFragment) {
             menu.setGroupVisible(R.id.main_menu_group, false);
         }else {
             if(menu.size()>0)
@@ -1280,13 +1284,13 @@ public class MainActivity extends AppCompatActivity
      * This mthod used to show user profile fragment UI
      */
     private void mDisplayPofileFragment() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileEditFragment.class.getSimpleName());
+   /*     Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileEditFragment.class.getSimpleName());
         if (fragment == null)
             mDisplayFragment(ProfileEditFragment.newInstance(), true, ProfileEditFragment.class.getSimpleName());
         else
             mDisplayFragment(fragment, false, ProfileEditFragment.class.getSimpleName());
-
-        //this.mMakeNetworkCall(Constants.TAG_LOAD_PROFILE,Constants.BASE_URL+"profile/", null);
+*/
+        this.mMakeNetworkCall(Constants.TAG_LOAD_PROFILE,Constants.BASE_URL+"profile/", null);
     }
 
     private void mLoadUserProfile(String response){
@@ -1307,11 +1311,14 @@ public class MainActivity extends AppCompatActivity
 
     }
     @Override
-    public void onUserProfileEdited() {
+    public void onUserProfileEdited(Profile profile) {
+
+        if(profile == null)
+            return;
 
        Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileEditFragmentNew.class.getSimpleName());
         if (fragment == null)
-            mDisplayFragment(ProfileEditFragmentNew.newInstance(), true, ProfileEditFragmentNew.class.getSimpleName());
+            mDisplayFragment(ProfileEditFragmentNew.newInstance(profile), true, ProfileEditFragmentNew.class.getSimpleName());
         else
             mDisplayFragment(fragment, false, ProfileEditFragmentNew.class.getSimpleName());
 
@@ -1782,7 +1789,7 @@ public class MainActivity extends AppCompatActivity
             try {
                 HashMap<String, String> hashMap = (HashMap<String, String>) data.getSerializableExtra(Constants.DIALOG_DATA);
                 if(hashMap!=null && !hashMap.isEmpty()) {
-                    this.mMakeNetworkCall(Constants.TAG_UPDATE_USER_PROFILE, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
+                    this.mMakeNetworkCall(Constants.TAG_UPDATE_USER_PROFILE_GCM, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -1925,7 +1932,15 @@ public class MainActivity extends AppCompatActivity
                 this.mOnUserExamsSelected(response);
                 break;
             case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
+                mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_EXAMS, Constants.BASE_URL +"profile/", null);
                 this.onUserExamsEdited(response);
+                break;
+            case Constants.TAG_UPDATE_PROFILE_EXAMS:
+            case Constants.TAG_UPDATE_USER_PROFILE:
+                /*this.mStreamAndLevelUpdated(response);
+                this.mClearBackStack();*/
+                profileSuccessfullyUpdated(tags[0],response);
+                Utils.DisplayToast(getApplicationContext(),"Profile Updated");
                 break;
 //            case Constants.TAG_USER_EXAMS_SET:
 //                this.mUserExamStepCompleted(response);
@@ -1937,7 +1952,7 @@ public class MainActivity extends AppCompatActivity
                     mLoadHomeScreen(null);
                 }
                 break;
-            case Constants.TAG_UPDATE_USER_PROFILE:
+            case Constants.TAG_UPDATE_USER_PROFILE_GCM:
                 this.onUpdatePreferences(response);
                 break;
             case Constants.TAG_LOAD_USER_PREFERENCES:
@@ -2178,9 +2193,9 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 break;
-            case Constants.TAG_UPDATE_PREFRENCES:
-                this.mStreamAndLevelUpdated(response);
-                this.mClearBackStack();
+
+            case Constants.TAG_REQUEST_FOR_SPECIALIZATION:
+                updateUserSpecializationList(response);
                 break;
             case Constants.TAG_UPDATE_STREAM:
                 this.mDisplayStreams(response, true);
@@ -2930,7 +2945,7 @@ public class MainActivity extends AppCompatActivity
                 return "Loading Profile...";
             case Constants.TAG_UPDATE_INSTITUTES:
                 return "Updating Institutes...";
-            case Constants.TAG_UPDATE_PREFRENCES:
+            case Constants.TAG_UPDATE_USER_PROFILE:
                 return "Updating Profile...";
             case Constants.WIDGET_INSTITUTES:
             case Constants.WIDGET_SHORTLIST_INSTITUTES:
@@ -2990,6 +3005,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_SHORTLIST_INSTITUTE:
             case Constants.TAG_DELETESHORTLIST_INSTITUTE:
             case Constants.TAG_LOAD_COURSES:
+            case Constants.TAG_REQUEST_FOR_SPECIALIZATION:
             case "":
                 return null;
             default:
@@ -3513,6 +3529,7 @@ public class MainActivity extends AppCompatActivity
     public void displayMessage(int messageId) {
         displaySnackBar(messageId);
     }
+
 
     @Override
     public void onFilterCanceled(boolean clearAll) {
@@ -4632,6 +4649,10 @@ public class MainActivity extends AppCompatActivity
     private void mOnEditExamsLoaded(String responseJson, boolean addToBackStack) {
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
+            if(mExamList.size() <= 0){
+                Utils.DisplayToast(getApplicationContext(),"No Exams Found for your preferences");
+                return;
+            }
             this.mDisplayFragment(ExamsFragment.newEditableInstance(new ArrayList<>(mExamList)), addToBackStack, ExamsFragment.class.toString());
         } catch (IOException e) {
             e.printStackTrace();
@@ -5532,17 +5553,62 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
+    /**
+     * This method is used to update user profile whenever user update
+     *  his/her information about current education, preferred education details,
+     *  interested exams details and other basic info
+     * @param params
+     */
     @Override
-    public void onProfileUpdated(HashMap<String, String> hashMap) {
-        this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
+    public void onProfileUpdated(HashMap<String, String> params) {
+        //this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
+        this.mMakeNetworkCall(Constants.TAG_UPDATE_USER_PROFILE, Constants.BASE_URL +"profile/", params, Request.Method.POST);
+    }
+
+    /**
+     * This method is used to request for specialization list
+     * based on stream which is selected by the user while updating his/her
+     * profile
+     * @param streamId
+     */
+    @Override
+    public void requestForSpecialization(int streamId) {
+        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_SPECIALIZATION, Constants.BASE_URL +"specializations/?stream="+streamId,null, Request.Method.GET);
+    }
+
+
+    private void profileSuccessfullyUpdated(String TAG, String responseJson) {
+        try {
+            Profile profile = JSON.std.beanFrom(Profile.class, responseJson);
+            if(profile == null)
+                return;
+            ProfileFragment.mProfile= profile;
+            if(!(currentFragment instanceof ProfileEditFragmentNew))
+                return;
+            if(TAG.equalsIgnoreCase(Constants.TAG_UPDATE_PROFILE_EXAMS)){
+                ((ProfileEditFragmentNew) currentFragment).onProfileExamsSuccessfullyUpdated(profile);
+            }else {
+                ((ProfileEditFragmentNew) currentFragment).onProfileSuccessfullyUpdated(profile);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
-    @Override
-    public void onEditUserEducation() {
-        this.mMakeNetworkCall(Constants.TAG_EDIT_USER_EDUCATION, Constants.BASE_URL + "user-education/", null);
+
+    private void updateUserSpecializationList(String responseJson) {
+        if(!(currentFragment instanceof  ProfileEditFragmentNew))
+             return;
+        try {
+            List<ProfileSpinnerObject> userSpecializationList = JSON.std.listOfFrom(ProfileSpinnerObject.class, responseJson);
+            ((ProfileEditFragmentNew)currentFragment).updateUserSpecializationList((ArrayList<ProfileSpinnerObject>) userSpecializationList);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 
     private void mDisplayEditUserEducationFragment(String response) {
         try {
@@ -5566,21 +5632,27 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     @Override
+    public void onEditUserExams() {
+        this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/", null);
+    }
+    /*@Override
     public void onEditUserStreams() {
         Toast.makeText(this, "Edit Streams", Toast.LENGTH_SHORT).show();
 
     }
 
     @Override
-    public void onEditUserExams() {
-        this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/", null);
-    }
-
-    @Override
     public void onTakePsychometric() {
         this.mMakeNetworkCall(Constants.TAG_EDIT_PSYCHOMETRIC_QUESTIONS, Constants.BASE_URL + "psychometric/", null);
     }
+
+    @Override
+    public void onEditUserEducation() {
+        this.mMakeNetworkCall(Constants.TAG_EDIT_USER_EDUCATION, Constants.BASE_URL + "user-education/", null);
+    }
+    */
 
     private void onPNSNews(String response) {
         try {

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/m5dp"
+    card_view:cardPreventCornerOverlap="false"
+    app:cardElevation="@dimen/m2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="@dimen/m10dp"
+        android:paddingBottom="@dimen/m10dp"
+        android:paddingLeft="@dimen/m5dp"
+        android:paddingRight="@dimen/m10dp"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/profile_exam_name"
+            android:layout_width="0dp"
+            android:layout_weight=".62"
+            android:maxLines="4"
+            android:ellipsize="end"
+            android:layout_height="match_parent"
+            android:text="exam" />
+
+        <TextView
+            android:id="@+id/profile_exam_status"
+            android:layout_width="0dp"
+            android:layout_weight=".2"
+            android:layout_height="match_parent"
+            android:gravity="left"
+            android:text="year" />
+        <TextView
+            android:id="@+id/profile_exam_score"
+            android:layout_width="0dp"
+            android:layout_weight=".18"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="year" />
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

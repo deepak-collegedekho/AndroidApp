@@ -39,6 +39,7 @@
     <dimen name="m35dp">35dp</dimen>
     <dimen name="m38dp">38dp</dimen>
     <dimen name="m40dp">40dp</dimen>
+    <dimen name="m43dp">43dp</dimen>
     <dimen name="m45dp">45dp</dimen>
     <dimen name="m50dp">50dp</dimen>
     <dimen name="m55dp">55dp</dimen>
@@ -59,6 +60,9 @@
     <dimen name="m160dp">160dp</dimen>
     <dimen name="m170dp">170dp</dimen>
     <dimen name="m180dp">180dp</dimen>
+    <dimen name="m220dp">220dp</dimen>
+    <dimen name="m280dp">280dp</dimen>
+    <dimen name="m300dp">300dp</dimen>
 
     //font sizes
     <dimen name="m8sp">8sp</dimen>

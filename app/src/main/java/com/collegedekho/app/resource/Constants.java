@@ -41,7 +41,7 @@ public class Constants
     public static final String TAG_LOAD_USER_PREFERENCES = "load_user_preferences";
     public static final String TAG_LOAD_USER_PREFERENCES_N_BACK = "load_user_preferences_n_back";
     public static final String TAG_LAUNCH_USER_HOME = "launch_user_home";
-    public static final String TAG_UPDATE_USER_PROFILE = "update_user_profile_from_notification";
+    public static final String TAG_UPDATE_USER_PROFILE_GCM = "update_user_profile_from_notification";
     public static final String TAG_SUBMIT_EDITED_EXAMS_LIST = "submit_edited_exams_list";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_EXAM = "submit_psychometric_exam";
     public static final String TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM = "submit_edit_psychometric_exam";
@@ -127,7 +127,9 @@ public class Constants
     public static final String TAG_SUBMIT_PSYCHOMETRIC_TEST = "submit_psychometric_test";
     public static final String TAG_SUBMIT_PREFRENCES = "submit_prefrences";
     public static final String TAG_SUBMIT_EDITED_PREFRENCES = "submit_edited_prefrences";
-    public static final String TAG_UPDATE_PREFRENCES = "update_prefrences";
+    public static final String TAG_UPDATE_USER_PROFILE = "update_user_profile";
+    public static final String TAG_UPDATE_PROFILE_EXAMS = "update_profile_exams";
+    public static final String TAG_REQUEST_FOR_SPECIALIZATION = "request_for_specialization";
     public static final String TAG_UPDATE_INSTITUTES = "update_institutes";
     public static final String TAG_FRAGMENT_FILTER_LIST = "fragment_filter_list";
     public static final String TAG_FRAGMENT_QNA_QUESTION_LIST = "fragment_qna_questions_list";

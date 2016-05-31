@@ -439,4 +439,9 @@
     <string name="dialog_title">Share more, Gain more.\nAnd open the door of possibilities for you!</string>
     <string name="GCM_DIALOG_SELECTION_ERROR">Nothing selected</string>
     <string name="internet_not_available">Internet is not available</string>
+
+    <string name="fee_range_one_lac">&lt; 1Lac</string>
+    <string name="fee_range_two_lac">&lt; 2Lac</string>
+    <string name="fee_range_three_lac">&lt; 3Lac</string>
+    <string name="fee_range_four_lac">&lt; 4Lac</string>
 </resources>

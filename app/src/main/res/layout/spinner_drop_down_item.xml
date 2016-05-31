@@ -4,7 +4,6 @@
     android:singleLine="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:paddingBottom="@dimen/m10dp"
     android:paddingTop="@dimen/m10dp"
     android:gravity="center"
