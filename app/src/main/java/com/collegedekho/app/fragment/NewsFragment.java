@@ -25,6 +25,7 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -103,8 +104,8 @@ public class NewsFragment extends BaseFragment  {
         }
         recyclerView.setLayoutManager(layoutManager);
         updateViewTypeIcon(rootView, this.mViewType);
-
-        this.mAdapter = new NewsListAdapter(getActivity(), new ArrayList<News>(), mViewType);
+        if(this.mAdapter == null)
+            this.mAdapter = new NewsListAdapter(getActivity(), new ArrayList<News>(), mViewType);
         recyclerView.setAdapter(this.mAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -230,10 +231,10 @@ public class NewsFragment extends BaseFragment  {
 
     public void updateNewsList(ArrayList<News> newslist, String next) {
        progressBarLL.setVisibility(View.GONE);
-        this.mNewsList = newslist;
-        mUpdateNewsListAdapter(getView());
-        loading = false;
-        mNextUrl = next;
+       this.mNewsList = newslist;
+       mUpdateNewsListAdapter(getView());
+       loading = false;
+       mNextUrl = next;
     }
 
 
@@ -285,16 +286,33 @@ public class NewsFragment extends BaseFragment  {
     {
         if(view == null || news == null)return;
         this.mNews= news;
-        ((TextView) view.findViewById(R.id.news_title)).setText(Html.fromHtml(news.title));
-        ((TextView) view.findViewById(R.id.news_content)).setText(Html.fromHtml(news.content));
-        //((TextView) view.findViewById(R.id.news_title)).setTypeface(Utils.getTypeFace(getActivity(), TypeFaceTypes.GOTHAMBOOK));
-        //((TextView) view.findViewById(R.id.news_content)).setTypeface(Utils.getTypeFace(getActivity(), TypeFaceTypes.DROID_SERIF_BOLD));
 
+        // set title of news
+        try {
+            String response= new String(news.title.getBytes("ISO-8859-1"),"UTF-8");
+            ((TextView) view.findViewById(R.id.news_title)).setText(response);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            ((TextView) view.findViewById(R.id.news_title)).setText(news.title);
+        }
+
+        // set content of news
+        try {
+            String response= new String(news.content.getBytes("ISO-8859-1"),"UTF-8");
+            ((TextView) view.findViewById(R.id.news_content)).setText(Html.fromHtml(response));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            ((TextView) view.findViewById(R.id.news_content)).setText(Html.fromHtml(news.content));
+        }
+
+        // load news image from server
         if (news.image != null && !news.image.isEmpty()) {
             ((NetworkImageView) view.findViewById(R.id.news_college_banner)).setImageUrl(news.image, MySingleton.getInstance(getActivity()).getImageLoader());
             view.findViewById(R.id.news_college_banner).setVisibility(View.VISIBLE);
         }else
             view.findViewById(R.id.news_college_banner).setVisibility(View.GONE);
+
+        // set published date of news
         String d = "";
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
@@ -304,9 +322,9 @@ public class NewsFragment extends BaseFragment  {
             d = sdf.format(date);
         } catch (ParseException e) {
             Log.e(TAG, "Date format unknown: " + news.published_on);
-//                Utils.sendException(t, TAG, "DateFormatUnknown", r.getAddedOn());
         }
         ((TextView) view.findViewById(R.id.news_pubdate)).setText(d);
+
         ArrayList<News> newList = new ArrayList<>();
         int count = this.mNewsList.size();
         for (int i=0 ; i<count ; i++ ) {

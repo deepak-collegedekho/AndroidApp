@@ -28,7 +28,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.entities.ProfileSpinnerObject;
+import com.collegedekho.app.entities.ProfileSpinnerItem;
 
 public abstract class MaterialSpinnerBaseAdapter<T> extends BaseAdapter {
 
@@ -59,7 +59,7 @@ public abstract class MaterialSpinnerBaseAdapter<T> extends BaseAdapter {
       textView = ((ViewHolder) convertView.getTag()).textView;
     }
 
-    ProfileSpinnerObject baseObject = (ProfileSpinnerObject)getItem(position);
+    ProfileSpinnerItem baseObject = (ProfileSpinnerItem)getItem(position);
     textView.setText(baseObject.getName());
 
     if(baseObject.isSelected()){

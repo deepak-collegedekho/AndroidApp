@@ -1,33 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/exam_card"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/m20dp"
-    card_view:cardPreventCornerOverlap="false"
-    app:cardElevation="@dimen/m2dp">
+    android:weightSum="1">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/exam_name"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="@dimen/m10dp">
-
-        <TextView
-            android:id="@+id/exam_name"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:padding="@dimen/m2dp"
+        android:layout_marginLeft="@dimen/m2dp"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:background="@drawable/bg_exam_text"
+        android:shadowColor="@color/app_background"
+        android:text="Exams"
+        />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <Spinner
+            android:id="@+id/exam_year_spinner"
             android:layout_width="wrap_content"
+            android:textSize="10sp"
             android:layout_height="match_parent"
-            android:text="exam" />
+            android:gravity="center"
+            android:background="@drawable/bg_exam_spinner"
+            android:spinnerMode="dropdown"
+            />
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/exam_year"
+        <EditText
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="right"
-            android:text="year" />
-
+            android:hint="score"
+            android:textSize="14sp"
+            android:padding="@dimen/m2dp"
+            android:inputType="number"
+            android:gravity="center"
+            android:background="@drawable/bg_exam_score_text"
+            android:layout_height="match_parent" />
     </LinearLayout>
-</android.support.v7.widget.CardView>
+</LinearLayout>

@@ -213,6 +213,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             likeButton.setOnClickListener(this);
             (itemView.findViewById(R.id.card_institute_container)).setOnClickListener(this);
             (itemView.findViewById(R.id.card_institute_shortlist)).setOnClickListener(this);
+            (itemView.findViewById(R.id.card_institute_button_like_parent)).setOnClickListener(this);
             //dislikeButton.setOnClickListener(this);
             //itemView.setOnClickListener(this);
         }
@@ -257,6 +258,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
             switch (v.getId()) {
                 case R.id.card_institute_button_like:
+                case R.id.card_institute_button_like_parent:
                     if (connectivityStatus != Constants.TYPE_NOT_CONNECTED){
                         if (!v.isSelected()) {
                             likeButton.setVisibility(View.GONE);

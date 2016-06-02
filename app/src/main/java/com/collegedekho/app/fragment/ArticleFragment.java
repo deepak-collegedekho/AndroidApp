@@ -26,6 +26,7 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -105,7 +106,8 @@ public class ArticleFragment extends BaseFragment {
         }
         recyclerView.setLayoutManager(layoutManager);
         updateViewTypeIcon(rootView, this.mViewType);
-        this.mAdapter = new ArticleListAdapter(getActivity(), new ArrayList<Articles>(), mViewType);
+        if(mAdapter == null)
+            this.mAdapter = new ArticleListAdapter(getActivity(), new ArrayList<Articles>(), mViewType);
         recyclerView.setAdapter(this.mAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -270,13 +272,33 @@ public class ArticleFragment extends BaseFragment {
     {
         if(view == null || article == null)return;
         this.mArticle = article;
-        ((TextView) view.findViewById(R.id.article_title)).setText(article.title);
-        ((TextView) view.findViewById(R.id.article_content)).setText(Html.fromHtml(article.content));
+
+        try {
+            String response= new String(article.title.getBytes("ISO-8859-1"),"UTF-8");
+            ((TextView) view.findViewById(R.id.article_title)).setText(response);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            ((TextView) view.findViewById(R.id.article_title)).setText(article.title);
+        }
+
+        // set content of article
+        try {
+            String response= new String(article.content.getBytes("ISO-8859-1"),"UTF-8");
+            ((TextView) view.findViewById(R.id.article_content)).setText(Html.fromHtml(response));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            ((TextView) view.findViewById(R.id.article_content)).setText(Html.fromHtml(article.content));
+        }
+
+        // load article image from server
         if (article.image != null && !article.image.isEmpty()) {
             ((NetworkImageView) view.findViewById(R.id.article_college_banner)).setImageUrl(article.image, MySingleton.getInstance(getActivity()).getImageLoader());
             view.findViewById(R.id.article_college_banner).setVisibility(View.VISIBLE);
         }else
             view.findViewById(R.id.article_college_banner).setVisibility(View.GONE);
+
+        // set published date of article
+
         String d = "";
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());

@@ -25,6 +25,7 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -260,13 +261,22 @@ public class InstituteArticleFragment extends BaseFragment {
     {
         if(view == null || article == null)return;
         this.mArticle = article;
-        ((TextView) view.findViewById(R.id.article_title)).setText(article.title);
+        try {
+            String response= new String(mArticle.title.getBytes("ISO-8859-1"),"UTF-8");
+            ((TextView) view.findViewById(R.id.article_title)).setText(response);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            ((TextView) view.findViewById(R.id.article_title)).setText(mArticle.title);
+        }
+
         ((TextView) view.findViewById(R.id.article_content)).setText(Html.fromHtml(article.content));
+
         if (article.image != null && !article.image.isEmpty()) {
             ((NetworkImageView) view.findViewById(R.id.article_college_banner)).setImageUrl(article.image, MySingleton.getInstance(getActivity()).getImageLoader());
             view.findViewById(R.id.article_college_banner).setVisibility(View.VISIBLE);
         }else
             view.findViewById(R.id.article_college_banner).setVisibility(View.GONE);
+
         String d = "";
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
@@ -276,7 +286,6 @@ public class InstituteArticleFragment extends BaseFragment {
             d = sdf.format(date);
         } catch (ParseException e) {
             Log.e(TAG, "Date format unknown: " + article.published_on);
-//                Utils.sendException(t, TAG, "DateFormatUnknown", r.getAddedOn());
         }
 
         ((TextView) view.findViewById(R.id.article_pubdate)).setText(d);

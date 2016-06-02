@@ -16,22 +16,31 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.Spinner;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.ProfileExam;
-import com.collegedekho.app.entities.ProfileSpinnerObject;
+import com.collegedekho.app.entities.ProfileSpinnerItem;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.SegmentedGroup;
 import com.collegedekho.app.widget.spinner.MaterialSpinner;
+import com.facebook.login.LoginManager;
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.truecaller.android.sdk.TrueButton;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,9 +55,9 @@ public class ProfileEditFragmentNew extends BaseFragment {
     private int currentPosition=0;
     private ProfilePagerAdapter profileAdapter;
     private static Profile mProfile;
-    private static List<ProfileSpinnerObject> mPreferredStatesList;
-    private static List<ProfileSpinnerObject> mPreferredCitiesList;
-    private static List<ProfileSpinnerObject> mPreferredDegreesList;
+    private static List<ProfileSpinnerItem> mPreferredStatesList;
+    private static List<ProfileSpinnerItem> mPreferredCitiesList;
+    private static List<ProfileSpinnerItem> mPreferredDegreesList;
 
     private static ProfileUpdateListener mListener;
     private View mCurrentView;
@@ -83,7 +92,6 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
         View rootView = inflater.inflate(R.layout.fragment_profile_edit_new, container, false);
         rootView.findViewById(R.id.profile_save_button).setOnClickListener(this);
-
         return rootView;
     }
 
@@ -106,31 +114,37 @@ public class ProfileEditFragmentNew extends BaseFragment {
                         if(mCurrentView == null && mListener == null)
                             return;
                         int currentPosition = profilePager.getCurrentItem();
-                        if(getView() != null) {
+                        /*if(getView() != null) {
                             if (currentPosition == 3) {
                                 getView().findViewById(R.id.profile_save_button).setBackgroundColor(getResources().getColor(R.color.bg_category_item_unselected));
                             } else {
                                 getView().findViewById(R.id.profile_save_button).setBackgroundColor(getResources().getColor(R.color.primary_orange));
                             }
-                        }
+                        }*/
                         int streamId = 0 ;
                         MaterialSpinner currentSpinner =  null;
                         if(currentPosition == 1) {
                             currentSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_specialization);
                             streamId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_stream)).getSelectedSpinnerItemId();
+                            if(streamId <= 0 )
+                                streamId =  mProfile.getCurrent_stream_id();
                         } else if(currentPosition == 2) {
                             currentSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_preferred_specialization);
                             streamId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_preferred_stream)).getSelectedSpinnerItemId();
+                            if(streamId <= 0 )
+                               streamId = mProfile.getPreferred_stream_id();
                         }
+
                         if(currentSpinner != null && streamId > 0 )
                         {
                             String spinnerText = currentSpinner.getText().toString();
-                            if(spinnerText != null && spinnerText.equalsIgnoreCase("Loading..."))
+                            if(spinnerText != null && (spinnerText.isEmpty() ||
+                                    spinnerText.equalsIgnoreCase("Loading...")))
                                 mListener.requestForSpecialization(streamId);
                         }
 
                     }
-                },500);
+                },400);
             }
 
             @Override
@@ -199,6 +213,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
             case R.id.profile_save_button:
                 updateUserProfile();
                 break;
+
             default:
                 break;
 
@@ -353,7 +368,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 boolean isFirstTime = true;
                 int count = mPreferredDegreesList.size();
                 for (int i = 0; i < count; i++) {
-                    ProfileSpinnerObject dObj = mPreferredDegreesList.get(i);
+                    ProfileSpinnerItem dObj = mPreferredDegreesList.get(i);
                     if(dObj == null || !dObj.isSelected())continue;
                     if(!isFirstTime)
                         degreeIds.append(",").append(dObj.getId());
@@ -370,7 +385,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 int count = mPreferredStatesList.size();
                 boolean isFirstTime = true;
                 for (int i = 0; i < count; i++) {
-                    ProfileSpinnerObject dObj = mPreferredStatesList.get(i);
+                    ProfileSpinnerItem dObj = mPreferredStatesList.get(i);
                     if(dObj == null || !dObj.isSelected())continue;
                     if(!isFirstTime)
                       stateIds.append(",").append(dObj.getId());
@@ -387,7 +402,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 boolean isFirstTime = true;
                 int count = mPreferredCitiesList.size();
                 for (int i = 0; i < count; i++) {
-                    ProfileSpinnerObject dObj = mPreferredCitiesList.get(i);
+                    ProfileSpinnerItem dObj = mPreferredCitiesList.get(i);
                     if(dObj == null || !dObj.isSelected())continue;
                     if(!isFirstTime)
                         cityIds.append(",").append(dObj.getId());
@@ -410,8 +425,49 @@ public class ProfileEditFragmentNew extends BaseFragment {
             params.put("preferred_states_ids", "" + stateIds.toString());
             params.put("preferred_cities_ids", "" + cityIds.toString());
             params.put("preferred_loan_required", loanRequired);
-            params.put("preferred_loan_amount_needed", "" + ""+userPreferredLoanId);
+            params.put("preferred_loan_amount_needed", ""+userPreferredLoanId);
             mListener.onProfileUpdated(params);
+        }
+        else if(currentPagePosition == 3) {
+            LinearLayout layout = (LinearLayout)mCurrentView.findViewById(R.id.profile_edit_user_exams_list_layout);
+            ArrayList<ProfileExam> profileExamList = mProfile.getYearly_exams();
+            if(profileExamList == null)return;
+
+            int count = profileExamList.size();
+            JSONArray parentJsonArray = new JSONArray();
+            for (int i = 0; i < count;  i++){
+                ProfileExam profileExam = profileExamList.get(i);
+                if(profileExam == null)continue;
+
+                CardView layoutChild = (CardView)layout.getChildAt(i);
+                if(layoutChild == null)continue;
+
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.putOpt(MainActivity.getResourceString(R.string.TAG_ID),profileExam.getId());
+                    int examStatusSpinnerId = ((MaterialSpinner) layoutChild.findViewById(R.id.profile_exam_status)).getSelectedSpinnerItemId();
+                    if(examStatusSpinnerId ==1){
+                        jsonObject.putOpt(MainActivity.getResourceString(R.string.STATUS),ProfileMacro.EXAM_GIVEN);
+                        String scoreText = ((EditText)layoutChild.findViewById(R.id.profile_exam_score)).getText().toString();
+                        if(scoreText == null || scoreText.isEmpty()){
+                            Utils.DisplayToast(getContext(), "Please enter exam score for "+profileExam.getExam_name());
+                            return;
+                        }
+                        jsonObject.putOpt(MainActivity.getResourceString(R.string.SCORE),scoreText);
+                    }else{
+                        jsonObject.putOpt(MainActivity.getResourceString(R.string.STATUS),ProfileMacro.EXAM_PREPARING);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                parentJsonArray.put(jsonObject);
+
+            }
+            String examJsonString = parentJsonArray.toString();
+            HashMap<String, String> params = new HashMap<>();
+            params.put("yearly_exams", examJsonString);
+            mListener.onProfileUpdated(params);
+
         }
         else if(currentPagePosition == 4) {
             String fatherName = ((EditText) mCurrentView.findViewById(R.id.profile_edit_father_name)).getText().toString();
@@ -441,33 +497,57 @@ public class ProfileEditFragmentNew extends BaseFragment {
             this.mProfile = profile;
     }
 
-    public void onProfileExamsSuccessfullyUpdated(Profile profile){
+    public void onProfileExamsSuccessfullyUpdated(Profile profile) {
 
         this.mProfile = profile;
 
         LinearLayout parentLayout = (LinearLayout) mCurrentView.findViewById(R.id.profile_edit_user_exams_list_layout);
         parentLayout.removeAllViews();
 
-        ArrayList<ProfileExam> userExamlist = mProfile.getYearly_exams();
-        if(userExamlist == null || userExamlist.isEmpty())
+        ArrayList<ProfileExam> userExamList = mProfile.getYearly_exams();
+        if (userExamList == null || userExamList.isEmpty())
             return;
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(10, 5, 10, 5);
-        for (ProfileExam exam : userExamlist) {
-            CardView cardView = (CardView) LayoutInflater.from(getActivity()).inflate(R.layout.layout_profile_exams, null);
+        for (final ProfileExam exam : userExamList) {
+            final CardView cardView = (CardView) LayoutInflater.from(getActivity()).inflate(R.layout.layout_profile_exams, null);
             cardView.setLayoutParams(layoutParams);
             ((TextView) cardView.findViewById(R.id.profile_exam_name)).setText(exam.getExam_name());
-            if(exam.getStatus() ==1) {
-                ((TextView) cardView.findViewById(R.id.profile_exam_status)).setText("Given");
+
+            ArrayList<ProfileSpinnerItem> examStatusList = new ArrayList<>();
+            for (int i = 1; i < 3; i++) {
+                ProfileSpinnerItem baseObject = new ProfileSpinnerItem();
+                baseObject.setId(i);
+                baseObject.setName(ProfileMacro.getExamStatusName(i));
+                examStatusList.add(baseObject);
             }
-            else{
-                ((TextView) cardView.findViewById(R.id.profile_exam_status)).setText("Preparing");
+            if (exam.getStatus() == ProfileMacro.EXAM_PREPARING) {
+                cardView.findViewById(R.id.profile_exam_score).setVisibility(View.INVISIBLE);
+                examStatusList.add(0, examStatusList.remove(1));
+            } else {
+                EditText scoreText = (EditText) cardView.findViewById(R.id.profile_exam_score);
+                scoreText.setVisibility(View.VISIBLE);
+                scoreText.setText("" + exam.getScore());
             }
-            ((TextView) cardView.findViewById(R.id.profile_exam_score)).setText(""+exam.getScore());
+
+            MaterialSpinner examStatusSpinner = (MaterialSpinner) cardView.findViewById(R.id.profile_exam_status);
+            examStatusSpinner.setItems(examStatusList, false);
+            examStatusSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
+                    EditText scoreText = (EditText)cardView.findViewById(R.id.profile_exam_score);
+                    if(view.getText().toString().equalsIgnoreCase("Given")){
+                        scoreText.setVisibility(View.VISIBLE);
+                        if(exam.getScore() != 0)
+                            scoreText.setText(""+exam.getScore());
+                    }else{
+                        scoreText.setVisibility(View.INVISIBLE);
+                    }
+                }
+            });
             parentLayout.addView(cardView);
         }
-
     }
 
     @Override
@@ -480,7 +560,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
     }
 
-    public void updateUserSpecializationList(ArrayList<ProfileSpinnerObject> userSpecializationList) {
+    public void updateUserSpecializationList(ArrayList<ProfileSpinnerItem> userSpecializationList) {
 
         if(mCurrentView == null || userSpecializationList == null)
             return;
@@ -502,7 +582,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 boolean isFound = false;
                 int count = userSpecializationList.size();
                 for (int i = 0; i < count; i++) {
-                    ProfileSpinnerObject pObj = userSpecializationList.get(i);
+                    ProfileSpinnerItem pObj = userSpecializationList.get(i);
                     if (pObj == null) continue;
                     if (specializationId == pObj.getId()) {
                         userSpecializationList.remove(i);
@@ -605,6 +685,8 @@ public class ProfileEditFragmentNew extends BaseFragment {
             rootView.findViewById(R.id.profile_loan_required_yes).setOnClickListener(this);
             rootView.findViewById(R.id.profile_loan_required_maybe).setOnClickListener(this);
             rootView.findViewById(R.id.profile_exams_edit_btn).setOnClickListener(this);
+            rootView.findViewById(R.id.profile_edit_fb_icon).setOnClickListener(this);
+
             return rootView;
         }
 
@@ -626,15 +708,35 @@ public class ProfileEditFragmentNew extends BaseFragment {
             switch (v.getId()){
                 case R.id.profile_loan_required_yes:
                     rootView.findViewById(R.id.profile_loan_amount_layout).setVisibility(View.VISIBLE);
+                    final ScrollView scroll = (ScrollView)rootView.findViewById(R.id.profile_edit_scroll_view);
+                    scroll.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            scroll.scrollTo(0, scroll.getBottom());
+                        }});
                     break;
                 case R.id.profile_loan_required_no:
                     rootView.findViewById(R.id.profile_loan_amount_layout).setVisibility(View.GONE);
                     break;
                 case R.id.profile_loan_required_maybe:
                     rootView.findViewById(R.id.profile_loan_amount_layout).setVisibility(View.VISIBLE);
+                    final ScrollView scroll1 = (ScrollView)rootView.findViewById(R.id.profile_edit_scroll_view);
+                    scroll1.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            scroll1.scrollTo(0, scroll1.getBottom());
+                        }});
                     break;
                 case R.id.profile_exams_edit_btn:
                     onEditExams();
+                case R.id.profile_edit_fb_icon:
+                    if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+                        ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+                        return;
+                    }
+                    LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends", "email", "user_likes", "user_education_history"));
+
+                    break;
                 default:
                     break;
             }
@@ -729,21 +831,21 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
             try {
 
-                final  List<ProfileSpinnerObject> statesList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.PROFILE_CITIES);
-                List<ProfileSpinnerObject> citiesList = null;
+                final  List<ProfileSpinnerItem> statesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.PROFILE_CITIES);
+                List<ProfileSpinnerItem> citiesList = null;
 
                 if(stateID >= 1){
                     int stateCount = statesList.size();
                     for(int i=0 ; i< stateCount; i++){
-                        ProfileSpinnerObject pObj = statesList.get(i);
+                        ProfileSpinnerItem pObj = statesList.get(i);
                         if(pObj == null) continue;
                         if(stateID ==  pObj.getId()){
                             statesList.remove(i);
                             statesList.add(0,pObj);
-                            citiesList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getCitiJson(pObj.getId()));
+                            citiesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(pObj.getId()));
                             int cityCount = citiesList.size();
                             for(int j =0 ; j <cityCount; j++){
-                                ProfileSpinnerObject pCityObj = citiesList.get(j);
+                                ProfileSpinnerItem pCityObj = citiesList.get(j);
                                 if(pCityObj == null) continue;
                                 if(cityID ==  pCityObj.getId()) {
                                     citiesList.remove(j);
@@ -762,7 +864,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 }
 
                 if(citiesList == null){
-                    citiesList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getCitiJson(0));
+                    citiesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(0));
                     citySpinner.setItems(citiesList, true);
                     if(citiesList.size() > 1)
                         citySpinner.setText("Select City");
@@ -777,7 +879,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 @Override
                 public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
                     try {
-                        List<ProfileSpinnerObject> citiesList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getCitiJson(view.getSelectedSpinnerItemId()));
+                        List<ProfileSpinnerItem> citiesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(view.getSelectedSpinnerItemId()));
                         citySpinner.setItems(citiesList, true);
                         if(citiesList.size() > 1)
                             citySpinner.setText("Select City");
@@ -847,20 +949,20 @@ public class ProfileEditFragmentNew extends BaseFragment {
             int userStreamId = mProfile.getCurrent_stream_id();
             try {
 
-                List<ProfileSpinnerObject> currentSubLevelList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.SUB_LEVEL_JSON);
-                List<ProfileSpinnerObject> currentStreamList = null;
+                List<ProfileSpinnerItem> currentSubLevelList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.SUB_LEVEL_JSON);
+                List<ProfileSpinnerItem> currentStreamList = null;
                 if(userSubLevelId >= 1){
                     int subLevelCount = currentSubLevelList.size();
                     for(int i=0 ; i< subLevelCount; i++){
-                        ProfileSpinnerObject pObj = currentSubLevelList.get(i);
+                        ProfileSpinnerItem pObj = currentSubLevelList.get(i);
                         if(pObj == null) continue;
                         if(userSubLevelId ==  pObj.getId()){
                             currentSubLevelList.remove(i);
                             currentSubLevelList.add(0,pObj);
-                            currentStreamList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getStreamJson(pObj.getId()));
+                            currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJson(pObj.getId()));
                             int streamCount = currentStreamList.size();
                             for(int j =0 ; j < streamCount; j++){
-                                ProfileSpinnerObject pStreamObj = currentStreamList.get(j);
+                                ProfileSpinnerItem pStreamObj = currentStreamList.get(j);
                                 if(pStreamObj == null) continue;
                                 if(userStreamId ==  pStreamObj.getId()) {
                                     currentStreamList.remove(j);
@@ -886,7 +988,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 }
 
                 if(currentStreamList == null){
-                    currentStreamList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getStreamJson(2));
+                    currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJson(2));
                     currentStreamSpinner.setItems(currentStreamList, true);
                     if(currentStreamList.size() > 1)
                         currentStreamSpinner.setText("Select your Stream");
@@ -897,7 +999,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                     public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
 
                         try {
-                            List<ProfileSpinnerObject> currentStreamList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getStreamJson(view.getSelectedSpinnerItemId()));
+                            List<ProfileSpinnerItem> currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJson(view.getSelectedSpinnerItemId()));
                             currentStreamSpinner.setItems(currentStreamList, false);
                             if(currentStreamList.size() > 1)
                                 currentStreamSpinner.setText("Select your Stream");
@@ -927,12 +1029,12 @@ public class ProfileEditFragmentNew extends BaseFragment {
             // set user current degree
             int userCurrentDegreeId = mProfile.getCurrent_degree_id();
             try {
-                List<ProfileSpinnerObject> currentDegreeList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.DEGREE_JSON);
+                List<ProfileSpinnerItem> currentDegreeList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.DEGREE_JSON);
 
                 if(userCurrentDegreeId >= 1){
                     int degreeCount = currentDegreeList.size();
                     for(int i=0 ; i< degreeCount; i++){
-                        ProfileSpinnerObject pObj = currentDegreeList.get(i);
+                        ProfileSpinnerItem pObj = currentDegreeList.get(i);
                         if(pObj == null) continue;
                         if(userCurrentDegreeId ==  pObj.getId()){
                             currentDegreeList.remove(i);
@@ -981,9 +1083,9 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
             // set Current Score type
 
-            ArrayList<ProfileSpinnerObject> scoreTypeList = new ArrayList<>();
+            ArrayList<ProfileSpinnerItem> scoreTypeList = new ArrayList<>();
             for(int i= 1; i < 6; i++){
-                ProfileSpinnerObject baseObject = new ProfileSpinnerObject();
+                ProfileSpinnerItem baseObject = new ProfileSpinnerItem();
                 baseObject.setId(i);
                 baseObject.setName(ProfileMacro.getCurrentScoreTypeName(i));
                 scoreTypeList.add(baseObject);
@@ -1055,21 +1157,21 @@ public class ProfileEditFragmentNew extends BaseFragment {
             // set user preferred level
             int preferredLevelId = mProfile.getPreferred_level();
             int preferredStreamId = mProfile.getPreferred_stream_id();
-            List<ProfileSpinnerObject> streamList = null;
+            List<ProfileSpinnerItem> streamList = null;
             try {
-                List<ProfileSpinnerObject> levelList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.SUB_LEVEL_JSON);
+                List<ProfileSpinnerItem> levelList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.SUB_LEVEL_JSON);
                 if(preferredLevelId >= 1){
                     int levelCount = levelList.size();
                     for(int i=0 ; i< levelCount; i++){
-                        ProfileSpinnerObject pLevelObj = levelList.get(i);
+                        ProfileSpinnerItem pLevelObj = levelList.get(i);
                         if(pLevelObj == null) continue;
                         if(preferredLevelId ==  pLevelObj.getId()){
                             levelList.remove(i);
                             levelList.add(0,pLevelObj);
-                            streamList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getStreamJson(pLevelObj.getId()));
+                            streamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJson(pLevelObj.getId()));
                             int streamCount = streamList.size();
                             for(int j =0 ; j < streamCount; j++){
-                                ProfileSpinnerObject pStreamObj = streamList.get(j);
+                                ProfileSpinnerItem pStreamObj = streamList.get(j);
                                 if(pStreamObj == null) continue;
                                 if(preferredStreamId ==  pStreamObj.getId()) {
                                     streamList.remove(j);
@@ -1098,7 +1200,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                     public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
 
                         try {
-                            List<ProfileSpinnerObject> currentStreamList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getStreamJson(view.getSelectedSpinnerItemId()));
+                            List<ProfileSpinnerItem> currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJson(view.getSelectedSpinnerItemId()));
                             preferredStreamSpinner.setItems(currentStreamList, false);
                             if(currentStreamList.size() > 1)
                                 preferredStreamSpinner.setText("Select your Stream");
@@ -1115,9 +1217,9 @@ public class ProfileEditFragmentNew extends BaseFragment {
             if(streamList == null) {
 
                 try {
-                    List<ProfileSpinnerObject> allStreamList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getStreamJson(1));
-                    List<ProfileSpinnerObject> streamList2 = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getStreamJson(7));
-                    List<ProfileSpinnerObject> streamList3 = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getStreamJson(8));
+                    List<ProfileSpinnerItem> allStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJson(1));
+                    List<ProfileSpinnerItem> streamList2 = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJson(7));
+                    List<ProfileSpinnerItem> streamList3 = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJson(8));
                     allStreamList.addAll(streamList2);
                     allStreamList.addAll(streamList3);
 
@@ -1125,7 +1227,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                     if (preferredStreamId > 0) {
                         int streamCount = allStreamList.size();
                         for (int j = 0; j < streamCount; j++) {
-                            ProfileSpinnerObject pStreamObj = allStreamList.get(j);
+                            ProfileSpinnerItem pStreamObj = allStreamList.get(j);
                             if (pStreamObj == null) continue;
                             if (preferredStreamId == pStreamObj.getId()) {
                                 allStreamList.remove(j);
@@ -1156,14 +1258,14 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
             // set preferred degree
             try {
-               mPreferredDegreesList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.DEGREE_JSON);
+               mPreferredDegreesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.DEGREE_JSON);
 
                 ArrayList<Integer> degreesIdList = mProfile.getPreferred_degrees_ids();
                 if(degreesIdList != null && mPreferredDegreesList != null && !degreesIdList.isEmpty()){
                     for (int id :degreesIdList ) {
                         int count = mPreferredDegreesList.size();
                         for(int i =0 ; i < count ; i++){
-                            ProfileSpinnerObject obj = mPreferredDegreesList.get(i);
+                            ProfileSpinnerItem obj = mPreferredDegreesList.get(i);
                             if(obj == null)continue;;
                             if( obj.getId() == id){
                                 mPreferredDegreesList.add(0,mPreferredDegreesList.remove(i));
@@ -1188,13 +1290,13 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
             try {
 
-                 mPreferredStatesList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.PROFILE_CITIES);
+                 mPreferredStatesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.PROFILE_CITIES);
                 ArrayList<Integer> stateIdList = mProfile.getPreferred_states_ids();
                 if(stateIdList != null && mPreferredStatesList != null && !stateIdList.isEmpty()){
                     for (int id :stateIdList ) {
                         int count = mPreferredStatesList.size();
                         for(int i =0 ; i < count ; i++){
-                            ProfileSpinnerObject obj = mPreferredStatesList.get(i);
+                            ProfileSpinnerItem obj = mPreferredStatesList.get(i);
                             if(obj == null)continue;;
                             if( obj.getId() == id){
                                 mPreferredStatesList.add(0,mPreferredStatesList.remove(i));
@@ -1217,10 +1319,10 @@ public class ProfileEditFragmentNew extends BaseFragment {
                     if(mPreferredCitiesList == null)
                         mPreferredCitiesList = new ArrayList<>();
                     for (int stateId:stateIdList) {
-                        mPreferredCitiesList.addAll(JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getCitiJson(stateId)));
+                        mPreferredCitiesList.addAll(JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(stateId)));
                     }
                 }else{
-                    mPreferredCitiesList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getCitiJson(0));
+                    mPreferredCitiesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(0));
                 }
 
                 ArrayList<Integer> cityIdList = mProfile.getPreferred_cities_ids();
@@ -1228,7 +1330,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                     for (int id :cityIdList ) {
                         int count = mPreferredCitiesList.size();
                         for(int i =0 ; i < count ; i++){
-                            ProfileSpinnerObject obj = mPreferredCitiesList.get(i);
+                            ProfileSpinnerItem obj = mPreferredCitiesList.get(i);
                             if(obj == null)continue;
                             if( obj.getId() == id){
                                 mPreferredCitiesList.add(0,mPreferredCitiesList.remove(i));
@@ -1254,10 +1356,10 @@ public class ProfileEditFragmentNew extends BaseFragment {
                                 if(mPreferredCitiesList == null)
                                     mPreferredCitiesList = new ArrayList<>();
                                 for (int stateId:idStateList) {
-                                    mPreferredCitiesList.addAll(JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getCitiJson(stateId)));
+                                    mPreferredCitiesList.addAll(JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(stateId)));
                                 }
                             }
-                            //List<ProfileSpinnerObject> citiesList = JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getCitiJson(position));
+                            //List<ProfileSpinnerItem> citiesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(position));
                             preferredCitySpinner.setItems(mPreferredCitiesList, false);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -1335,9 +1437,9 @@ public class ProfileEditFragmentNew extends BaseFragment {
             else
                 view.findViewById(R.id.profile_loan_amount_layout).setVisibility(View.GONE);
 
-                ArrayList<ProfileSpinnerObject> loanRequiredAmountList = new ArrayList<>();
+                ArrayList<ProfileSpinnerItem> loanRequiredAmountList = new ArrayList<>();
                 for (int i = 1; i < 6; i++) {
-                    ProfileSpinnerObject baseObject = new ProfileSpinnerObject();
+                    ProfileSpinnerItem baseObject = new ProfileSpinnerItem();
                     baseObject.setId(i);
                     baseObject.setName(ProfileMacro.getLoanRequiredAmount(i));
                     loanRequiredAmountList.add(baseObject);
@@ -1358,15 +1460,13 @@ public class ProfileEditFragmentNew extends BaseFragment {
                     isLoanAmountSelected = true;
                 }
 
-                MaterialSpinner loanAmountpinner = (MaterialSpinner) view.findViewById(R.id.profile_edit_loan_amount_needed);
+                MaterialSpinner loanAmountSpinner = (MaterialSpinner) view.findViewById(R.id.profile_edit_loan_amount_needed);
                 if(isLoanAmountSelected) {
-                    loanAmountpinner.setItems(loanRequiredAmountList, true);
-                    loanAmountpinner.setText("Select Score Type");
+                    loanAmountSpinner.setItems(loanRequiredAmountList, true);
+                    loanAmountSpinner.setText("Select Score Type");
                 }else{
-                    loanAmountpinner.setItems(loanRequiredAmountList, false);
+                    loanAmountSpinner.setItems(loanRequiredAmountList, false);
                 }
-
-
         }
 
 
@@ -1378,26 +1478,52 @@ public class ProfileEditFragmentNew extends BaseFragment {
             LinearLayout parentLayout = (LinearLayout) view.findViewById(R.id.profile_edit_user_exams_list_layout);
             parentLayout.removeAllViews();
 
-            ArrayList<ProfileExam> userExamlist = mProfile.getYearly_exams();
-            if(userExamlist == null || userExamlist.isEmpty())
+            ArrayList<ProfileExam> userExamList = mProfile.getYearly_exams();
+            if(userExamList == null || userExamList.isEmpty())
                 return;
 
+
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-           layoutParams.setMargins(10, 5, 10, 5);
-            for (ProfileExam exam : userExamlist) {
-                CardView cardView = (CardView) LayoutInflater.from(getActivity()).inflate(R.layout.layout_profile_exams, null);
+            layoutParams.setMargins(10, 5, 10, 5);
+            for (final ProfileExam exam : userExamList) {
+                final CardView cardView = (CardView) LayoutInflater.from(getActivity()).inflate(R.layout.layout_profile_exams, null);
                 cardView.setLayoutParams(layoutParams);
                 ((TextView) cardView.findViewById(R.id.profile_exam_name)).setText(exam.getExam_name());
-                if(exam.getStatus() ==1) {
-                    ((TextView) cardView.findViewById(R.id.profile_exam_status)).setText("Given");
+
+                ArrayList<ProfileSpinnerItem> examStatusList = new ArrayList<>();
+                for( int i=1 ; i < 3 ; i++) {
+                    ProfileSpinnerItem baseObject = new ProfileSpinnerItem();
+                    baseObject.setId(i);
+                    baseObject.setName(ProfileMacro.getExamStatusName(i));
+                    examStatusList.add(baseObject);
                 }
-                else{
-                    ((TextView) cardView.findViewById(R.id.profile_exam_status)).setText("Preparing");
+                if(exam.getStatus() == ProfileMacro.EXAM_PREPARING){
+                    cardView.findViewById(R.id.profile_exam_score).setVisibility(View.INVISIBLE);
+                    examStatusList.add(0, examStatusList.remove(1));
+                }else {
+                    EditText scoreText = (EditText)cardView.findViewById(R.id.profile_exam_score);
+                    scoreText.setVisibility(View.VISIBLE);
+                    scoreText.setText(""+exam.getScore());
                 }
-                ((TextView) cardView.findViewById(R.id.profile_exam_score)).setText(""+exam.getScore());
+
+                MaterialSpinner examStatusSpinner = (MaterialSpinner) cardView.findViewById(R.id.profile_exam_status);
+                examStatusSpinner.setItems(examStatusList,false);
+                examStatusSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
+                        EditText scoreText = (EditText)cardView.findViewById(R.id.profile_exam_score);
+                        if(view.getText().toString().equalsIgnoreCase("Given")){
+                            scoreText.setVisibility(View.VISIBLE);
+                            if(exam.getScore() != 0)
+                            scoreText.setText(""+exam.getScore());
+                        }else{
+                            scoreText.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                });
+
                 parentLayout.addView(cardView);
             }
-
         }
 
 
@@ -1416,6 +1542,24 @@ public class ProfileEditFragmentNew extends BaseFragment {
             String coachingInstitute = mProfile.getCoaching_institute();
             ((EditText)view.findViewById(R.id.profile_edit_coaching_institute)).setText(coachingInstitute);
 
+            TrueButton trueButton =(TrueButton)view.findViewById(R.id.com_truecaller_android_sdk_truebutton);
+
+            if (MainActivity.user != null && MainActivity.user.is_anony()){
+                trueButton.setVisibility(View.VISIBLE);
+                view.findViewById(R.id.profile_edit_fb_login).setVisibility(View.VISIBLE);
+            }
+            else{
+                trueButton.setVisibility(View.GONE);
+                view.findViewById(R.id.profile_edit_fb_login).setVisibility(View.GONE);
+            }
+
+            boolean usable = trueButton.isUsable();
+            if (usable)
+                trueButton.setTrueClient(MainActivity.mTrueClient);
+            else
+                trueButton.setVisibility(View.GONE);
+
+
         }
 
         public void onDismissStatePopUpWindow(){
@@ -1423,14 +1567,13 @@ public class ProfileEditFragmentNew extends BaseFragment {
             if(view == null || mPreferredStatesList == null)
                 return;
 
-
             int selectedStateCount = 0;
             if(!mPreferredStatesList.isEmpty()) {
                 mPreferredCitiesList.clear();
-                for (ProfileSpinnerObject pObj : mPreferredStatesList) {
+                for (ProfileSpinnerItem pObj : mPreferredStatesList) {
                     try {
                         if(pObj.isSelected()) {
-                            mPreferredCitiesList.addAll(JSON.std.listOfFrom(ProfileSpinnerObject.class, ProfileMacro.getCitiJson(pObj.getId())));
+                            mPreferredCitiesList.addAll(JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(pObj.getId())));
                            selectedStateCount++;
                         } } catch (IOException e) {
                         e.printStackTrace();
@@ -1444,7 +1587,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
             preferredCitySpinner.setItems(mPreferredCitiesList, true);
             if(!mPreferredCitiesList.isEmpty()){
                 int selectedCityCount = 0;
-                for (ProfileSpinnerObject pObj : mPreferredCitiesList) {
+                for (ProfileSpinnerItem pObj : mPreferredCitiesList) {
                     if(pObj.isSelected())
                         selectedCityCount++;
                 }
@@ -1455,37 +1598,33 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
         public void onDismissCityPopUpWindow(){
             View view = getView();
-
             if(view == null)
                 return;
 
            if(mPreferredCitiesList != null && !mPreferredCitiesList.isEmpty()){
                 int selectedCityCount = 0;
-                for (ProfileSpinnerObject pObj : mPreferredCitiesList) {
+                for (ProfileSpinnerItem pObj : mPreferredCitiesList) {
                     if(pObj.isSelected())
                         selectedCityCount++;
                 }
                ((MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_city)).setText("City("+selectedCityCount+")");
             }
-
         }
 
 
         public void onDismissDegreePopUpWindow(){
             View view = getView();
-
             if(view == null)
                 return;
 
             if(mPreferredDegreesList != null && !mPreferredDegreesList.isEmpty()){
                 int selectedCityCount = 0;
-                for (ProfileSpinnerObject pObj : mPreferredDegreesList) {
+                for (ProfileSpinnerItem pObj : mPreferredDegreesList) {
                     if(pObj.isSelected())
                         selectedCityCount++;
                 }
                 ((MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_degree)).setText("Degree("+selectedCityCount+")");
             }
-
         }
 
 

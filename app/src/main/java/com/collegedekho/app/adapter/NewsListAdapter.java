@@ -20,6 +20,7 @@ import com.collegedekho.app.listener.OnNewsSelectListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,16 +73,34 @@ public class NewsListAdapter extends RecyclerView.Adapter {
     {
         News news = this.mNewsList.get(position);
         NewsHolder newsHolder = (NewsHolder) holder;
-        newsHolder.newsTitle.setText(Html.fromHtml(news.title));
 
+        // set news title
+        try {
+            String response= new String(news.title.getBytes("ISO-8859-1"),"UTF-8");
+            newsHolder.newsTitle.setText(response);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            newsHolder.newsTitle.setText(news.title);
+        }
+
+        // load news image from server
         if (news.image != null && !news.image.isEmpty())
             newsHolder.newsImage.setImageUrl(news.image, imageLoader);
-
 
         ViewCompat.setTransitionName(newsHolder.newsImage, String.valueOf(position) + "_image");
 
         if(this.mViewType == Constants.VIEW_INTO_LIST) {
-            newsHolder.newsContent.setText(Html.fromHtml(news.content));
+
+            // set news Content
+            try {
+                String response= new String(news.content.getBytes("ISO-8859-1"),"UTF-8");
+                newsHolder.newsContent.setText(Html.fromHtml(response));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                newsHolder.newsContent.setText(Html.fromHtml(news.content));
+            }
+
+            // set news published date
             String d = "";
             try {
                 sdf.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");

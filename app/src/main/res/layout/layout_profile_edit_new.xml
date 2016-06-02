@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profile_edit_scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -626,7 +627,7 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight=".54"
+                        android:layout_weight=".48"
                         android:gravity="center_vertical"
                         android:padding="@dimen/m5dp"
                         android:text="Exam Name"
@@ -636,20 +637,20 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight=".16"
-                        android:gravity="center_vertical|right"
+                        android:layout_weight=".2"
+                        android:gravity="center_vertical|left"
                         android:padding="@dimen/m5dp"
-                        android:text="Exam Status"
+                        android:text="Exam Score"
                         android:textColor="@color/white"
                         android:textSize="15sp" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight=".2"
-                        android:gravity="center_vertical|right"
+                        android:layout_weight=".21"
+                        android:gravity="center_vertical|left"
                         android:padding="@dimen/m5dp"
-                        android:text="Exam Score"
+                        android:text="Exam Status"
                         android:textColor="@color/white"
                         android:textSize="15sp" />
 
@@ -676,7 +677,7 @@
             android:id="@+id/profile_edit_other_info_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -729,6 +730,52 @@
                         android:layout_marginTop="@dimen/m10dp"
                         android:maxLength="35" />
                 </android.support.design.widget.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/m40dp"
+                    android:orientation="vertical">
+                <RelativeLayout
+                    android:id="@+id/profile_edit_fb_login"
+                    style="@style/AppTheme.FacebookButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_marginBottom="@dimen/m16dp"
+                    android:layout_marginTop="@dimen/m16dp"
+                    android:layout_marginRight="@dimen/m8dp"
+                    android:gravity="left"
+                    android:layout_marginLeft="4dp"
+                    android:contentDescription="@string/fb_login_description">
+
+                    <ImageView
+                        android:id="@+id/profile_edit_fb_icon"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="@string/fb_login_description"
+                        android:src="@drawable/ic_facebook_icon" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:paddingLeft="@dimen/m20dp"
+                        android:layout_toRightOf="@id/profile_edit_fb_icon"
+                        android:text="Facebook Login"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:contentDescription="@string/fb_login_description"
+                        android:textStyle="normal" />
+                </RelativeLayout>
+
+                <com.truecaller.android.sdk.TrueButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:trueButtonText="signIn"
+                    android:visibility="gone"
+                    android:layout_gravity="center_horizontal"/>
+            </LinearLayout>
 
             </LinearLayout>
         </android.support.v7.widget.CardView>

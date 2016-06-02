@@ -213,7 +213,7 @@
 
             <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_weight="6.5"
+                android:layout_weight="7.5"
                 android:layout_height="wrap_content">
 
                 <TextView
@@ -245,7 +245,7 @@
                 android:tint="@color/light_blue"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="invisible"
+                android:visibility="gone"
                 app:srcCompat="@drawable/ic_edit"/>
 
         </LinearLayout>
@@ -291,7 +291,7 @@
 
             <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_weight="6.5"
+                android:layout_weight="7.5"
                 android:layout_height="wrap_content">
 
                 <TextView
@@ -310,7 +310,7 @@
                     android:text="MAT"/>
 
                 <TextView
-                    android:id="@+id/profile_exams_stream"
+                    android:id="@+id/profile_exams_specialization"
                     style="@style/AppTheme.profileTextView"
                     android:layout_below="@id/profile_exams_name"
                     android:text="Finance"
@@ -323,7 +323,7 @@
                 android:tint="@color/light_blue"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="invisible"
+                android:visibility="gone"
                 app:srcCompat="@drawable/ic_edit"/>
 
         </LinearLayout>
@@ -381,16 +381,16 @@
                     android:textSize="16sp"
                     />
                 <TextView
-                    android:id="@+id/profile_other_package"
+                    android:id="@+id/profile_father_name"
                     style="@style/AppTheme.profileTextView"
                     android:layout_below="@id/profile_other_til"
-                    android:text="5-10 LAKH"/>
+                    android:text="Father :"/>
 
                 <TextView
-                    android:id="@+id/profile_other_type"
+                    android:id="@+id/profile_mother_name"
                     style="@style/AppTheme.profileTextView"
-                    android:layout_below="@id/profile_other_package"
-                    android:text="Campus"
+                    android:layout_below="@id/profile_father_name"
+                    android:text="Mother :"
                     />
 
             </RelativeLayout>

@@ -16,7 +16,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.display.swipableList.model.CardModel;
 import com.collegedekho.app.display.swipableList.view.CardContainerNew;
-import com.collegedekho.app.display.swipableList.view.SimpleCardStackAdapterNew;
+import com.collegedekho.app.display.swipableList.view.SimpleCardStackAdapter;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.BitMapHolder;
 import com.collegedekho.app.resource.Constants;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CDRecommendedInstituteListFragment extends BaseFragment implements SimpleCardStackAdapterNew.OnCDRecommendedAdapterInterface,CardContainerNew.OnSwipeDirectionListener {
+public class CDRecommendedInstituteListFragment extends BaseFragment implements SimpleCardStackAdapter.OnCDRecommendedAdapterInterface,CardContainerNew.OnSwipeDirectionListener {
     public static final String TITLE = "CDRecommendedInstitutes";
     private static final String ARG_INSTITUTE = "cdrecommendedinstitute";
     private static final String ARG_FILTER_ALLOWED = "filter_allowed";
@@ -34,7 +34,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     private static final String ARG_UNDECIDED_INSTITUTE_COUNT = "undecided_institute_count";
     private ArrayList<Institute> mInstitutes;
     private String mTitle;
-    private SimpleCardStackAdapterNew mAdapter;
+    private SimpleCardStackAdapter mAdapter;
     private OnCDRecommendedInstituteListener mListener;
     private boolean IS_TUTE_COMPLETED = true;
     private CardContainerNew mCardContainer;
@@ -133,7 +133,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             this.mLeftArrowImageView.setVisibility(View.VISIBLE);
         }
 
-        this.mAdapter = new SimpleCardStackAdapterNew(getActivity(), this.getContext(), this, cardCategory);
+        this.mAdapter = new SimpleCardStackAdapter(getActivity(), this.getContext(), this, cardCategory);
         this.mAddCardInAdapter(this.mInstitutes);
 
         this.mCardContainer.setAdapter(this.mAdapter);

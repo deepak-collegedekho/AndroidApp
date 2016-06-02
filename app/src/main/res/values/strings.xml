@@ -264,6 +264,8 @@
     <string name="USER_DEVICE_ID">device_id</string>
 
     <string name="EXAM_ID">exam_id</string>
+    <string name="STATUS">status</string>
+    <string name="SCORE">score</string>
     <string name="MARKS">marks</string>
     <string name="RESULTS">results</string>
     <string name="CHAPTERS">chapters</string>

@@ -26,6 +26,7 @@ import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.Utils;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -110,27 +111,28 @@ public class ArticleDetailFragment extends BaseFragment {
         {
             return;
         }
-        LinearLayout newsLayout=(LinearLayout)rootView.findViewById(R.id.news_content_layout);
+        // set article title
+        try {
+            String response= new String(mArticle.title.getBytes("ISO-8859-1"),"UTF-8");
+            ((TextView) rootView.findViewById(R.id.textview_article_title)).setText(response);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            ((TextView) rootView.findViewById(R.id.textview_article_title)).setText(mArticle.title);
+        }
+
+        // set article content
         if(mArticle.getNews_source()==2){
             ((TextView) rootView.findViewById(R.id.textview_article_content)).setText(Html.fromHtml(mArticle.content));
         }else{
-            Utils.renderHtml(getActivity(),newsLayout,mArticle.content);
+            Utils.renderHtml(getActivity(),(LinearLayout)rootView.findViewById(R.id.news_content_layout),mArticle.content);
         }
-        ((TextView) rootView.findViewById(R.id.textview_article_title)).setText(mArticle.title);
-//        ((TextView) rootView.findViewById(R.id.textview_article_content)).setText(Html.fromHtml(mArticle.content));
-        TextView contentView=(TextView) rootView.findViewById(R.id.textview_article_content);
-//        HtmlSpanner htmlspanner = new HtmlSpanner();
-//        Spannable text = htmlspanner.fromHtml(mArticle.content);
-//        contentView.setText(text);
-//        contentView.setAutoLinkMask(Linkify.WEB_URLS);
-//        contentView.setMovementMethod(LinkMovementMethod.getInstance());
-////        contentView.setText(Html.fromHtml(mArticle.content,new MyImageGetter(getActivity(),contentView),null));
-//        contentView.setText(new HtmlSpanner().fromHtml(mArticle.content));
 
+       // load article image from server
         if (mArticle.image != null && !mArticle.image.isEmpty())
             ((NetworkImageView) rootView.findViewById(R.id.image_article_expanded)).setImageUrl(mArticle.image, MySingleton.getInstance(getActivity()).getImageLoader());
         else
             rootView.findViewById(R.id.image_article_expanded).setVisibility(View.GONE);
+
         String d = "";
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());

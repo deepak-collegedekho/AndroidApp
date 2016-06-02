@@ -45,22 +45,15 @@ public class ExamsFragment extends BaseFragment {
         // required empty Constructor
     }
 
-    public static ExamsFragment newInstance(ArrayList<Exam> examsList){
+    public static ExamsFragment newInstance(ArrayList<Exam> examsList, boolean isEditable){
         ExamsFragment fragment = new ExamsFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(PARAM1,examsList);
+        args.putBoolean("is_edit_mode",isEditable);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static ExamsFragment newEditableInstance(ArrayList<Exam> examsList){
-        ExamsFragment fragment = new ExamsFragment();
-        Bundle args = new Bundle();
-        args.putParcelableArrayList(PARAM1,examsList);
-        args.putBoolean("is_edit_mode",true);
-        fragment.setArguments(args);
-        return fragment;
-    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,12 +80,12 @@ public class ExamsFragment extends BaseFragment {
         layoutManager.setSpanSizeLookup( new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                return position % 5 == 0 ? 3 : 2;
+               return position % 5 == 0 ? 3: 2;
             }
         });
 
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 8, true));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
         rootView.findViewById(R.id.exams_submit_button).setOnClickListener(this);
 
         /*layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
@@ -246,61 +239,60 @@ public class ExamsFragment extends BaseFragment {
     }
 
     private void onExamsSelected() {
+        if(this.mListener == null)
+            return;
+
         boolean isExamSelected = false;
-        if(this.mListener != null) {
-            JSONObject parentJsonObject=new JSONObject();
-            JSONArray parentArray=new JSONArray();
-            if(mExamList != null && !mExamList.isEmpty()) {
-                for (Exam exam:mExamList) {
-                    if(exam == null)continue;
-                    if(!exam.isSelected()){
-                       continue;
-                    }
-                    ArrayList<ExamDetail> detailList = exam.getExam_details();
-                    if(detailList != null && !detailList.isEmpty()) {
-                        for (ExamDetail examDetailObj:detailList) {
-                            if(!examDetailObj.isSelected())continue;
-                            JSONObject examHash = new JSONObject();
-                            try {
-                                examHash.putOpt(MainActivity.getResourceString(R.string.EXAM_ID),examDetailObj.getId());
-                                examHash.putOpt(MainActivity.getResourceString(R.string.MARKS),examDetailObj.getExam_marks());
-                                parentArray.put(examHash);
-                                isExamSelected = true;
-                                if(mainActivity!=null){
-                                    mainActivity.isBackPressEnabled=true;
-                                }
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
+        JSONObject parentJsonObject=new JSONObject();
+        JSONArray parentArray=new JSONArray();
+        if(mExamList != null && !mExamList.isEmpty()) {
+            for (Exam exam:mExamList) {
+                if(exam == null || !exam.isSelected())continue;
 
+                ArrayList<ExamDetail> detailList = exam.getExam_details();
+                if(detailList == null && detailList.isEmpty()) continue;
+
+                for (ExamDetail examDetailObj:detailList) {
+                    if(examDetailObj == null || !examDetailObj.isSelected())continue;
+                    JSONObject examHash = new JSONObject();
+                    try {
+                        examHash.putOpt(MainActivity.getResourceString(R.string.EXAM_ID),examDetailObj.getId());
+                        examHash.putOpt(MainActivity.getResourceString(R.string.MARKS),examDetailObj.getExam_marks());
+                        parentArray.put(examHash);
+                        isExamSelected = true;
+                        if(mainActivity!=null){
+                            mainActivity.isBackPressEnabled=true;
                         }
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
                 }
-            }
-            try {
-                parentJsonObject.put(MainActivity.getResourceString(R.string.RESULTS),parentArray);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if(!isExamSelected){
-                if(!isEditMode) {
-                    mListener.displayMessage(R.string.SELECT_ONE_EXAM);
-                    return;
-                }
-                if(isPreSelected) {
-                    mListener.onCancelExamSubmission();
-                }else {
-                    mListener.displayMessage(R.string.SELECT_ONE_EXAM);
-                }
-                return;
-
-            }
-            if(!isEditMode) {
-                this.mListener.onExamsSelected(parentJsonObject);
-            }else {
-                this.mListener.onExamsEdited(parentJsonObject);
             }
         }
+        try {
+            parentJsonObject.put(MainActivity.getResourceString(R.string.RESULTS),parentArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if(!isExamSelected){
+            if(!isEditMode) {
+                mListener.displayMessage(R.string.SELECT_ONE_EXAM);
+                return;
+            }
+            if(isPreSelected) {
+                mListener.onCancelExamSubmission();
+            }else {
+                mListener.displayMessage(R.string.SELECT_ONE_EXAM);
+            }
+            return;
+
+        }
+        if(!isEditMode) {
+            this.mListener.onExamsSelected(parentJsonObject);
+        }else {
+            this.mListener.onExamsEdited(parentJsonObject);
+        }
+
     }
 
     /**

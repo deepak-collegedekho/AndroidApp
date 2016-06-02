@@ -14229,6 +14229,18 @@ public class ProfileMacro {
 
     }
 
+    public static String getExamStatusName(int i) {
+        if(i == EXAM_GIVEN)
+            return "Given";
+        else
+            return "Preparing";
+    }
+
+    // language macros
+    public static int EXAM_GIVEN = 1;
+    public static int EXAM_PREPARING = 2;
+
+
    // language macros
     public static int MOTHER_TOUNGE_HINDI = 6;
     public static int MOTHER_TOUNGE_ENGLISH = 18;

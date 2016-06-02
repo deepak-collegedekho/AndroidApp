@@ -13,9 +13,12 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
+
+import java.util.ArrayList;
 
 
 /**
@@ -78,18 +81,24 @@ public class ProfileFragment extends BaseFragment {
             return;
 
         String name = profile.getName();
-        if(name != null && !name.isEmpty() &&  !name.equalsIgnoreCase(getResources().getString(R.string.ANONYMOUS_USER))){
+        if(name != null && !name.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_user_name)).setText(name);
+        }else{
+            ((TextView)view.findViewById(R.id.profile_user_name)).setText("");
         }
 
         String email = profile.getEmail();
         if (email != null && !email.isEmpty() && !email.contains("@anonymouscollegedekho.com")) {
             ((TextView)view.findViewById(R.id.profile_info_email)).setText(email);
+        }else{
+            ((TextView)view.findViewById(R.id.profile_info_email)).setText("");
         }
 
         String phone = profile.getPhone_no();
         if (phone != null && !phone.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_info_phone)).setText("+91-"+phone);
+        }else{
+            ((TextView)view.findViewById(R.id.profile_info_phone)).setText("");
         }
 
         String currentDegreeName = profile.getCurrent_degree_name();
@@ -98,21 +107,39 @@ public class ProfileFragment extends BaseFragment {
         }
 
         int currentPassingYear = profile.getCurrent_passing_year();
-        if (currentPassingYear >=2016){
-            ((TextView)view.findViewById(R.id.profile_education_year)).setText(""+currentPassingYear);
-        }
+         ((TextView)view.findViewById(R.id.profile_education_year)).setText(""+currentPassingYear);
+
 
         String streamName = profile.getPreferred_stream_short_name();
         if (streamName != null && !streamName.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(streamName);
         }
 
-       /* ArrayList<ExamDetail> examsList = profile.getUser_exams();
+        ArrayList<String> cityNamesList = profile.getPreferred_cities_names();
+
+        if (cityNamesList != null){
+            int count = cityNamesList.size();
+            String cityNames ="";
+
+        for (int i = 0; i < count; i++) {
+                if(i == 0){
+                    cityNames = cityNamesList.get(i);
+                    continue;
+                }
+                cityNames += ", "+cityNamesList.get(i);
+        }
+            ((TextView)view.findViewById(R.id.profile_preferences_location)).setText("City  :  "+cityNames);
+        }
+
+       ArrayList<ProfileExam> examsList = profile.getYearly_exams();
         if(examsList != null ){
             int count = examsList.size();
             String examsName ="";
+            if(count >6)
+                count =6;
+
             for (int i = 0; i < count; i++) {
-                ExamDetail exam = examsList.get(i);
+                ProfileExam exam = examsList.get(i);
                 if(exam == null)continue;
                 if(i == 0){
                     examsName = exam.getExam_name();
@@ -120,8 +147,25 @@ public class ProfileFragment extends BaseFragment {
                 }
                 examsName += ", "+exam.getExam_name() ;
             }
+            ((TextView)view.findViewById(R.id.profile_exams_name)).setText(examsName);
         }
-       */
+
+        String specializationName = profile.getPreferred_specialization_name();
+        if (specializationName != null && !specializationName.isEmpty()){
+            ((TextView)view.findViewById(R.id.profile_exams_specialization)).setText(specializationName);
+        }
+
+
+        String fatherName = profile.getFathers_name();
+        if (fatherName != null && !fatherName.isEmpty()){
+            ((TextView)view.findViewById(R.id.profile_father_name)).setText("Father : "+fatherName);
+        }
+
+        String motherName = profile.getMothers_name();
+        if (motherName != null && !motherName.isEmpty()){
+            ((TextView)view.findViewById(R.id.profile_mother_name)).setText("Mother : "+motherName);
+        }
+
     }
 
     private void animateArrow(boolean shouldRotateUp, Drawable drawable) {

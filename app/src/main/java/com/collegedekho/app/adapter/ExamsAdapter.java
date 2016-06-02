@@ -45,12 +45,12 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
     public ExamHolderView onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
         View convertView = inflater.inflate(R.layout.layout_exam_drop_down, parent, false);
+
         return new ExamHolderView(convertView);
     }
 
     @Override
     public void onBindViewHolder(final ExamHolderView holder, final int position) {
-
         final Exam exam = this.mExamList.get(position);
         int selectedPosition=-1;
         if(exam != null) {
@@ -73,8 +73,8 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         lastExamPosition=holder.mYearSpinner.getSelectedItemPosition();
-                        if(holder.mExamName.isSelected() && exam.getExam_details().get(lastExamPosition).isResult_out()) {
-//                            lastSelectedExam = exam;
+                        if(holder.mExamName.isSelected() &&
+                                exam.getExam_details().get(lastExamPosition).isResult_out()) {
                             displayAlert(exam.getExam_details().get(lastExamPosition),holder);
 
                         }else{
@@ -92,7 +92,6 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                                 examDetail.get(position).setSelected(true);
                             }
                         }
-
                     }
 
                     @Override

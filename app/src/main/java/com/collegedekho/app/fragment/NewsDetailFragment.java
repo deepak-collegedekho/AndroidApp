@@ -26,6 +26,9 @@ import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.Utils;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -113,15 +116,20 @@ public class NewsDetailFragment extends BaseFragment {
     private void showNewsUpdate()
     {
         if(rootView == null) return;
-
-        ((TextView) rootView.findViewById(R.id.textview_news_title)).setText(mNews.title);
-//        ((TextView) rootView.findViewById(R.id.textview_news_content)).setText(Html.fromHtml(mNews.content));
-        LinearLayout newsLayout=(LinearLayout)rootView.findViewById(R.id.news_content_layout);
-        if(mNews.getNews_source()==2){
-            ((TextView) rootView.findViewById(R.id.textview_news_content)).setText(Html.fromHtml(mNews.content));
-        }else {
-            Utils.renderHtml(getActivity(), newsLayout, mNews.content);
+        try {
+            String response= new String(mNews.title.getBytes("ISO-8859-1"),"UTF-8");
+            ((TextView) rootView.findViewById(R.id.textview_news_title)).setText(response);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            ((TextView) rootView.findViewById(R.id.textview_news_title)).setText(mNews.title);
         }
+
+        if(mNews.getNews_source()==2)
+            ((TextView) rootView.findViewById(R.id.textview_news_content)).setText(Html.fromHtml(mNews.content));
+        else
+            Utils.renderHtml(getActivity(), (LinearLayout)rootView.findViewById(R.id.news_content_layout), mNews.content);
+
+
         if (mNews.image != null && !mNews.image.isEmpty())
             ((NetworkImageView) rootView.findViewById(R.id.image_news_expanded)).setImageUrl(mNews.image, MySingleton.getInstance(getActivity()).getImageLoader());
         else

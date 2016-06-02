@@ -382,16 +382,30 @@ public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
         Utils.UnregisterReceiver(this.getActivity());
     }
 
-    private void mExamTabSelected(int position) {
-        if(this.mListener != null ) {
-           if(this.mExamDetailList != null && this.mExamDetailList.size() >position) {
-                this.mExamDetail = this.mExamDetailList.get(position);
-                this.mListener.onExamTabSelected(this.mExamDetail);
-            }else if (MainActivity.user.getIs_preparing().equals("0")) {
-                this.mListener.onExamTabSelected(this.mExamDetail);
+
+            private void mExamTabSelected(int position) {
+                if (this.mListener != null) {
+                    if (this.mExamDetailList != null && this.mExamDetailList.size() > position) {
+                        this.mExamDetail = this.mExamDetailList.get(position);
+                        this.mListener.onExamTabSelected(this.mExamDetail);
+                    } else if (MainActivity.user.getIs_preparing().equals("0")) {
+                        this.mListener.onExamTabSelected(this.mExamDetail);
+                    }
+                }
             }
-        }
-    }
+
+            /**
+             * This method is used to request to server to update syllabus
+             * when Syllabus chapters  are successfully updated or changed and
+             *  come back to home screen .
+             */
+            public void updateSyllabus() {
+                if(mExamTabPager != null) {
+                    int position = mExamTabPager.getCurrentItem();
+                    mExamTabSelected(position);
+                }
+            }
+
 
     @Override
     public void updateExamSummary(ExamSummary examSummary) {

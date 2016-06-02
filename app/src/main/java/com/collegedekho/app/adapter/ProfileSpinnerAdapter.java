@@ -21,11 +21,11 @@ import java.util.List;
 
 public class ProfileSpinnerAdapter extends BaseAdapter {
 
-    private List<ProfileSpinnerObject> spinnerList;
+    private List<ProfileSpinnerItem> spinnerList;
     private Context mContext;
     private LayoutInflater mLayoutInflater;
 
-    public ProfileSpinnerAdapter(Context context, List<ProfileSpinnerObject> spinnerList){
+    public ProfileSpinnerAdapter(Context context, List<ProfileSpinnerItem> spinnerList){
         this.spinnerList = spinnerList;
         this.mContext = context;
         this.mLayoutInflater =  LayoutInflater.from(context);
@@ -59,7 +59,7 @@ public class ProfileSpinnerAdapter extends BaseAdapter {
         else{
             holder = (ViewHolder)convertView.getTag();
         }
-        ProfileSpinnerObject baseObject =spinnerList.get(position);
+        ProfileSpinnerItem baseObject =spinnerList.get(position);
         holder.textView.setText(baseObject.getName());
 
         return convertView;

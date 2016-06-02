@@ -122,22 +122,33 @@
                     android:weightSum="1"
                     android:paddingLeft="@dimen/m3dp"
                     >
-                    <ImageView
-                        android:id="@+id/card_institute_button_like"
-                        android:layout_width="@dimen/m20dp"
-                        android:layout_height="@dimen/m20dp"
-                        android:layout_gravity="center"
-                        app:srcCompat="@drawable/ic_like"
-                        android:tint="@color/subheading_color"
-                        />
-                    <ProgressBar
-                        android:id="@+id/card_institute_like_progressBar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:layout_margin="@dimen/m10dp"
-                        style="@android:style/Widget.ProgressBar.Small"
-                        />
+                    <LinearLayout
+                        android:id="@+id/card_institute_button_like_parent"
+                        android:layout_width="@dimen/m40dp"
+                        android:layout_height="@dimen/m40dp"
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <ImageView
+                            android:id="@+id/card_institute_button_like"
+                            android:layout_width="@dimen/m20dp"
+                            android:layout_height="@dimen/m20dp"
+                            android:layout_gravity="center"
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/ic_like"
+                            android:tint="@color/subheading_color"
+                            />
+                        <ProgressBar
+                            android:id="@+id/card_institute_like_progressBar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            android:layout_gravity="center"
+                            android:layout_margin="@dimen/m10dp"
+                            style="@android:style/Widget.ProgressBar.Small"
+                            />
+                    </LinearLayout>
+
+
                     <TextView
                         android:id="@+id/card_institute_like_count"
                         android:layout_width="match_parent"

@@ -45,7 +45,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.entities.ProfileSpinnerObject;
+import com.collegedekho.app.entities.ProfileSpinnerItem;
 import com.collegedekho.app.fragment.ProfileEditFragmentNew;
 import com.collegedekho.app.utils.Utils;
 
@@ -76,7 +76,7 @@ public class MaterialSpinner extends TextView {
   private int textColor;
   private int numberOfItems;
   private boolean isMultiSelection;
-  private List<ProfileSpinnerObject> items;
+  private List<ProfileSpinnerItem> items;
   private Context mContext ;
 
   public MaterialSpinner(Context context) {
@@ -111,7 +111,7 @@ public class MaterialSpinner extends TextView {
       hideArrow = ta.getBoolean(R.styleable.MaterialSpinner_ms_hide_arrow, false);
 
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
-        popupWindowMaxHeight = ta.getDimensionPixelSize(R.styleable.MaterialSpinner_ms_dropdown_max_height, (int) getResources().getDimension(R.dimen.m280dp));
+        popupWindowMaxHeight = ta.getDimensionPixelSize(R.styleable.MaterialSpinner_ms_dropdown_max_height,(int) getResources().getDimension(R.dimen.m220dp));
       }else {
         popupWindowMaxHeight = ta.getDimensionPixelSize(R.styleable.MaterialSpinner_ms_dropdown_max_height, (int) getResources().getDimension(R.dimen.m220dp));
       }
@@ -187,7 +187,7 @@ public class MaterialSpinner extends TextView {
           position++;
         }
 
-        ProfileSpinnerObject item = (ProfileSpinnerObject)adapter.get(position);
+        ProfileSpinnerItem item = (ProfileSpinnerItem)adapter.get(position);
         if(isMultiSelection){
           if(item.isSelected()) {
             item.setSelected(false);
@@ -305,7 +305,7 @@ public class MaterialSpinner extends TextView {
       Bundle bundle = (Bundle) savedState;
       selectedIndex = bundle.getInt("selected_index");
       if (adapter != null) {
-        ProfileSpinnerObject baseObject = (ProfileSpinnerObject)adapter.get(selectedIndex);
+        ProfileSpinnerItem baseObject = (ProfileSpinnerItem)adapter.get(selectedIndex);
         setText(baseObject.getName());
         adapter.notifyItemSelected(selectedIndex);
       }
@@ -350,7 +350,7 @@ public class MaterialSpinner extends TextView {
       if (position >= 0 && position <= adapter.getCount()) {
         adapter.notifyItemSelected(position);
         selectedIndex = position;
-        ProfileSpinnerObject baseObject = (ProfileSpinnerObject)adapter.get(position);
+        ProfileSpinnerItem baseObject = (ProfileSpinnerItem)adapter.get(position);
         setText(baseObject.getName());
       } else {
         throw new IllegalArgumentException("Position must be lower than adapter count!");
@@ -387,7 +387,7 @@ public class MaterialSpinner extends TextView {
    *     The item type
    */
   public <T> void setItems(@NonNull List<T> items, boolean isItemSelected) {
-    this.items = (List<ProfileSpinnerObject>) items;
+    this.items = (List<ProfileSpinnerItem>) items;
     numberOfItems = items.size();
 
     if(numberOfItems == 1) {
@@ -436,25 +436,12 @@ public class MaterialSpinner extends TextView {
       return -1;
 
     if(selectedIndex <= adapter.getCount()){
-     ProfileSpinnerObject pObj = items.get(selectedIndex);
+     ProfileSpinnerItem pObj = items.get(selectedIndex);
      return  pObj.getId();
     }
 
     return -1;
   }
-
-  /*
-   * Set the dropdown items
-   *
-   * @param items
-   *     A list of items
-   * @param <T>
-   *     The item type
-   */
-  /*public <T> void setItems(@NonNull T... items) {
-    setItems(Arrays.asList(items));
-  }*/
-
 
 
   private void setAdapterInternal(@NonNull MaterialSpinnerBaseAdapter adapter) {
@@ -465,7 +452,7 @@ public class MaterialSpinner extends TextView {
     if(selectedIndex <  0){
       return;
     }
-    ProfileSpinnerObject baseObject = (ProfileSpinnerObject) adapter.get(selectedIndex);
+    ProfileSpinnerItem baseObject = (ProfileSpinnerItem) adapter.get(selectedIndex);
     setText(baseObject.getName());
   }
 
@@ -477,6 +464,8 @@ public class MaterialSpinner extends TextView {
       animateArrow(true);
     }
     nothingSelected = true;
+    popupWindowMaxHeight = calculatePopupWindowHeight();
+    popupWindow.setHeight(popupWindowMaxHeight);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       popupWindow.setOverlapAnchor(false);
       popupWindow.showAsDropDown(this);
@@ -547,10 +536,14 @@ public class MaterialSpinner extends TextView {
       return WindowManager.LayoutParams.WRAP_CONTENT;
     }
     float listViewHeight = adapter.getCount() * getResources().getDimension(R.dimen.m43dp);
+    if(!(adapter.getCount() >=4 )){
+      return (int)listViewHeight;
+
+    }
     if (popupWindowMaxHeight > 0 && listViewHeight > popupWindowMaxHeight) {
-      return popupWindowMaxHeight;
-    } else if (popupWindowHeight != WindowManager.LayoutParams.MATCH_PARENT
-        && popupWindowHeight != WindowManager.LayoutParams.WRAP_CONTENT
+      return 440;
+    }else if (popupWindowHeight != WindowManager.LayoutParams.MATCH_PARENT
+            && popupWindowHeight != WindowManager.LayoutParams.WRAP_CONTENT
         && popupWindowHeight <= listViewHeight) {
       return popupWindowHeight;
     }

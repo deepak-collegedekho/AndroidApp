@@ -25,6 +25,7 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -267,7 +268,13 @@ public class InstituteNewsFragment extends BaseFragment  {
     {
         if(view == null || news == null)return;
         this.mNews= news;
-        ((TextView) view.findViewById(R.id.news_title)).setText(Html.fromHtml(news.title));
+        try {
+            String response= new String(mNews.title.getBytes("ISO-8859-1"),"UTF-8");
+            ((TextView) view.findViewById(R.id.news_title)).setText(response);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            ((TextView) view.findViewById(R.id.news_title)).setText(mNews.title);
+        }
         ((TextView) view.findViewById(R.id.news_content)).setText(Html.fromHtml(news.content));
         //((TextView) view.findViewById(R.id.news_title)).setTypeface(Utils.getTypeFace(getActivity(), TypeFaceTypes.GOTHAMBOOK));
         //((TextView) view.findViewById(R.id.news_content)).setTypeface(Utils.getTypeFace(getActivity(), TypeFaceTypes.DROID_SERIF_BOLD));

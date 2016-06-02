@@ -125,7 +125,7 @@ public class Constants
     public static final String TAG_LOAD_MY_FB = "load_my_fb";
     public static final String TAG_REFRESH_MY_FB = "refresh_my_fb";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_TEST = "submit_psychometric_test";
-    public static final String TAG_SUBMIT_PREFRENCES = "submit_prefrences";
+    public static final String TAG_SUBMIT_PREFRENCES = "submit_preferences";
     public static final String TAG_SUBMIT_EDITED_PREFRENCES = "submit_edited_prefrences";
     public static final String TAG_UPDATE_USER_PROFILE = "update_user_profile";
     public static final String TAG_UPDATE_PROFILE_EXAMS = "update_profile_exams";

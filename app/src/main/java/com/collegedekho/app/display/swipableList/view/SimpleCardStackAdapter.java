@@ -43,7 +43,7 @@ import com.collegedekho.app.widget.FadeInImageView;
 import java.util.ArrayList;
 import java.util.Vector;
 
-public final class SimpleCardStackAdapterNew extends BaseAdapter {
+public final class SimpleCardStackAdapter extends BaseAdapter {
 
     private final ImageLoader imageLoader;
     private OnCDRecommendedAdapterInterface mListener;
@@ -55,7 +55,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
 
 
     private int cardCategory;
-    public SimpleCardStackAdapterNew(Activity activity, Context context, OnCDRecommendedAdapterInterface listener, int cardCategory) {
+    public SimpleCardStackAdapter(Activity activity, Context context, OnCDRecommendedAdapterInterface listener, int cardCategory) {
         this.imageLoader = MySingleton.getInstance(context).getImageLoader();
         this.mListener = listener;
         this.mContext = context;
@@ -100,7 +100,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         (convertView.findViewById(R.id.btn_apply_now)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Institute institute = ((CardModel) SimpleCardStackAdapterNew.this.getItem(position)).getInstitute();
+                Institute institute = ((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute();
                 if (cardCategory == Constants.CDRecommendedInstituteType.RECOMMENDED.ordinal() || cardCategory == Constants.CDRecommendedInstituteType.UNDECIDED.ordinal() || cardCategory == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()) {
                     mListener.OnAppliedInstitute(institute);
                 } else if (cardCategory == Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
@@ -111,7 +111,7 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
         (convertView.findViewById(R.id.header_view)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SimpleCardStackAdapterNew.this.mListener.OnInstituteSelected(((CardModel) SimpleCardStackAdapterNew.this.getItem(position)).getInstitute());
+                SimpleCardStackAdapter.this.mListener.OnInstituteSelected(((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute());
             }
         });
 
@@ -120,30 +120,30 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             @Override
             public void onLike() {
                 if (position > 0)
-                    SimpleCardStackAdapterNew.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute(), false);
-                if (position == 0 && !SimpleCardStackAdapterNew.this.isLoadingNext()) {
-                    SimpleCardStackAdapterNew.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute(), false);
-                    SimpleCardStackAdapterNew.this.mListener.OnShowMessage("Looking for more institutes..");
+                    SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
+                if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext()) {
+                    SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
+                    SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
                 }
             }
 
             @Override
             public void onDislike() {
                 if (position > 0)
-                    SimpleCardStackAdapterNew.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute(), false);
-                if (position == 0 && !SimpleCardStackAdapterNew.this.isLoadingNext()) {
-                    SimpleCardStackAdapterNew.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute(), true);
-                    SimpleCardStackAdapterNew.this.mListener.OnShowMessage("Looking for more institutes..");
+                    SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
+                if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext()) {
+                    SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), true);
+                    SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
                 }
             }
 
             @Override
             public void onUpSwipe() {
                 if (position > 0)
-                    SimpleCardStackAdapterNew.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute(), false);
-                if (position == 0 && !SimpleCardStackAdapterNew.this.isLoadingNext()) {
-                    SimpleCardStackAdapterNew.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapterNew.this.getItem(getCount() - 1 - position)).getInstitute(), false);
-                    SimpleCardStackAdapterNew.this.mListener.OnShowMessage("Looking for more institutes..");
+                    SimpleCardStackAdapter.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
+                if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext()) {
+                    SimpleCardStackAdapter.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
+                    SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
                 }
             }
         });
@@ -600,8 +600,8 @@ public final class SimpleCardStackAdapterNew extends BaseAdapter {
             facilityText = tempFacilityText;
             imageLoader = MySingleton.getInstance(getContext()).getImageLoader();
 
-            /*Animation fadeInAnimation = AnimationUtils.loadAnimation(SimpleCardStackAdapterNew.this.mContext, R.anim.fade_in);
-            Animation fadeOutAnimation = AnimationUtils.loadAnimation(SimpleCardStackAdapterNew.this.mContext, R.anim.fade_out);
+            /*Animation fadeInAnimation = AnimationUtils.loadAnimation(SimpleCardStackAdapter.this.mContext, R.anim.fade_in);
+            Animation fadeOutAnimation = AnimationUtils.loadAnimation(SimpleCardStackAdapter.this.mContext, R.anim.fade_out);
             mAnimationSet.addAnimation(fadeInAnimation);
             mAnimationSet.addAnimation(fadeOutAnimation);*/
         }

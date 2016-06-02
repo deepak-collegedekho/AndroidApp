@@ -19,6 +19,7 @@ import com.collegedekho.app.listener.OnArticleSelectListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,7 +73,14 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
 
         Articles articles = mArticles.get(position);
         ArticleHolder articleHolder = (ArticleHolder) holder;
-        articleHolder.articleTitle.setText(Html.fromHtml(articles.title));
+
+        try {
+            String response= new String(articles.title.getBytes("ISO-8859-1"),"UTF-8");
+            articleHolder.articleTitle.setText(response);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            articleHolder.articleTitle.setText(articles.title);
+        }
 
         if (articles.image != null && !articles.image.isEmpty())
             articleHolder.articleImage.setImageUrl(articles.image, imageLoader);
@@ -80,7 +88,13 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
         ViewCompat.setTransitionName(articleHolder.articleImage, String.valueOf(position) + "_image");
 
         if (mViewType == Constants.VIEW_INTO_LIST) {
-            articleHolder.articleContent.setText(Html.fromHtml(articles.content));
+            try {
+                String response= new String(articles.content.getBytes("ISO-8859-1"),"UTF-8");
+                articleHolder.articleContent.setText(Html.fromHtml(response));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                articleHolder.articleContent.setText(Html.fromHtml(articles.content));
+            }
             String d = "";
             try {
                 sdf.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");

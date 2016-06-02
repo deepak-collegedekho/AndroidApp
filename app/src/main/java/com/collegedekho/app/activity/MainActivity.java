@@ -49,7 +49,6 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -69,7 +68,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.appsflyer.AppsFlyerConversionListener;
@@ -93,7 +91,7 @@ import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.Profile;
-import com.collegedekho.app.entities.ProfileSpinnerObject;
+import com.collegedekho.app.entities.ProfileSpinnerItem;
 import com.collegedekho.app.entities.PsychometricTestQuestion;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
@@ -1297,13 +1295,26 @@ public class MainActivity extends AppCompatActivity
 
         try {
                Profile profile = JSON.std.beanFrom(Profile.class,response);
+              //TODO :: open profile edit fragment when name is available
+            if(profile == null)
+                return;
+               Fragment fragment = null;
+              if(profile.getName() == null ||profile.getName().isEmpty()
+                      ||profile.getName().equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER))){
+                  fragment = getSupportFragmentManager().findFragmentByTag(ProfileEditFragmentNew.class.getSimpleName());
+                  if (fragment == null) {
+                      mDisplayFragment(ProfileEditFragmentNew.newInstance(profile), true, ProfileEditFragmentNew.class.getSimpleName());
+                  } else
+                      mDisplayFragment(fragment, false, ProfileEditFragmentNew.class.getSimpleName());
 
-              Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
-            if (fragment == null) {
-                mDisplayFragment(ProfileFragment.getInstance(profile), true, ProfileFragment.class.getSimpleName());
-            } else
-                mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
+              }else {
+                   fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
+                  if (fragment == null) {
+                      mDisplayFragment(ProfileFragment.getInstance(profile), true, ProfileFragment.class.getSimpleName());
+                  } else
+                      mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
 
+              }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -1940,7 +1951,6 @@ public class MainActivity extends AppCompatActivity
                 /*this.mStreamAndLevelUpdated(response);
                 this.mClearBackStack();*/
                 profileSuccessfullyUpdated(tags[0],response);
-                Utils.DisplayToast(getApplicationContext(),"Profile Updated");
                 break;
 //            case Constants.TAG_USER_EXAMS_SET:
 //                this.mUserExamStepCompleted(response);
@@ -2386,8 +2396,11 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case Constants.SUBMITTED_CHAPTER_STATUS:
-                if (tags.length>1)
+                if (tags.length>1) {
                     DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(tags[1]));
+                    if(currentFragment instanceof  HomeFragment)
+                        ((HomeFragment)currentFragment).updateSyllabus();
+                }
                 break;
 
 
@@ -4472,7 +4485,7 @@ public class MainActivity extends AppCompatActivity
      */
     public void showDialogForStreamLevel(final String tag, final String URL, JSONObject jsonObj, final Map<String, String> params) {
         final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.stream_dailog);
+        dialog.setContentView(R.layout.layout_stream_conflict_dailog);
         dialog.setTitle("Select Your Stream and Level");
         RadioGroup streamRadioGroup = (RadioGroup) dialog.findViewById(R.id.stream_radio_group);
         RadioGroup levelRadioGroup = (RadioGroup) dialog.findViewById(R.id.level_radio_group);
@@ -4640,7 +4653,7 @@ public class MainActivity extends AppCompatActivity
     private void mOnExamsLoaded(String responseJson, boolean addToBackStack) {
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
-            this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)), addToBackStack, ExamsFragment.class.toString());
+            this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList), false), addToBackStack, ExamsFragment.class.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -4653,7 +4666,7 @@ public class MainActivity extends AppCompatActivity
                 Utils.DisplayToast(getApplicationContext(),"No Exams Found for your preferences");
                 return;
             }
-            this.mDisplayFragment(ExamsFragment.newEditableInstance(new ArrayList<>(mExamList)), addToBackStack, ExamsFragment.class.toString());
+            this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList), true), addToBackStack, ExamsFragment.class.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -5588,6 +5601,7 @@ public class MainActivity extends AppCompatActivity
             if(TAG.equalsIgnoreCase(Constants.TAG_UPDATE_PROFILE_EXAMS)){
                 ((ProfileEditFragmentNew) currentFragment).onProfileExamsSuccessfullyUpdated(profile);
             }else {
+                Utils.DisplayToast(getApplicationContext(),"Profile Updated");
                 ((ProfileEditFragmentNew) currentFragment).onProfileSuccessfullyUpdated(profile);
             }
         } catch (IOException e) {
@@ -5601,8 +5615,8 @@ public class MainActivity extends AppCompatActivity
         if(!(currentFragment instanceof  ProfileEditFragmentNew))
              return;
         try {
-            List<ProfileSpinnerObject> userSpecializationList = JSON.std.listOfFrom(ProfileSpinnerObject.class, responseJson);
-            ((ProfileEditFragmentNew)currentFragment).updateUserSpecializationList((ArrayList<ProfileSpinnerObject>) userSpecializationList);
+            List<ProfileSpinnerItem> userSpecializationList = JSON.std.listOfFrom(ProfileSpinnerItem.class, responseJson);
+            ((ProfileEditFragmentNew)currentFragment).updateUserSpecializationList((ArrayList<ProfileSpinnerItem>) userSpecializationList);
 
         } catch (IOException e) {
             e.printStackTrace();

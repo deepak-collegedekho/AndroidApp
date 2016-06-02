@@ -3,13 +3,13 @@ package com.collegedekho.app.entities;
 /**
  * Created by sureshsaini on 24/5/16.
  */
-public class ProfileSpinnerObject {
+public class ProfileSpinnerItem {
 
     private int id;
     private String name;
     private boolean isSelected;
 
-    public ProfileSpinnerObject(){
+    public ProfileSpinnerItem(){
         // required empty constructor
     }
 

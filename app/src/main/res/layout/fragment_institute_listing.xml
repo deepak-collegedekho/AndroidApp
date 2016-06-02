@@ -34,12 +34,14 @@
         android:paddingRight="@dimen/m2dp"
         android:visibility="gone"
         android:orientation="horizontal">
-
+           <ScrollView
+               android:layout_width="match_parent"
+               android:layout_height="match_parent">
         <com.collegedekho.app.widget.tag.textview.ContactsCompletionView
             android:id="@+id/searchView"
             android:layout_width="match_parent"
             android:background="@color/white"
-            android:layout_height="@dimen/m35dp"
+            android:layout_height="wrap_content"
             android:paddingLeft="@dimen/m5dp"
             android:paddingRight="@dimen/m5dp"
             android:imeOptions="actionDone"
@@ -47,6 +49,7 @@
             android:textSize="19sp"
             android:inputType="none"
             android:focusableInTouchMode="true" />
+        </ScrollView>
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
