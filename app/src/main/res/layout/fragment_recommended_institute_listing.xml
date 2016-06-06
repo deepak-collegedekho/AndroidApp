@@ -82,7 +82,7 @@
         android:orientation="vertical"
         android:weightSum="10">
 
-        <com.collegedekho.app.display.swipableList.view.CardContainerNew
+        <com.collegedekho.app.display.swipableList.view.CardContainer
             android:id="@+id/fragment_recommended_institute_cards_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"

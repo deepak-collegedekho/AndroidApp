@@ -487,12 +487,11 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
     private Drawable drawableHeart ;
     private Drawable drawableFacilityArrow ;
     public static Bitmap like_bitmap;
-    public static Bitmap placement_bitmap;
+    //public static Bitmap placement_bitmap;
     public static Bitmap fees_bitmap;
     public static Bitmap info_bitmap;
     public static Bitmap facilityArrow_bitmap;
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void setVectorDrawable(View view){
 
         if(this.drawableLike == null)
@@ -512,8 +511,8 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
         if(like_bitmap == null)
             like_bitmap   =  Utils.getBitmapDrawable(this.drawableLike);
-        // if(placement_bitmap == null)
-        //   placement_bitmap  =  Utils.getBitmapDrawable(this.drawablePlacement);
+        //if(placement_bitmap == null)
+        //  placement_bitmap  =  Utils.getBitmapDrawable(this.drawablePlacement);
         if(fees_bitmap == null)
             fees_bitmap =  Utils.getBitmapDrawable(this.drawableFees);
         if(info_bitmap == null)
@@ -527,12 +526,15 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             // ((ImageView) view.findViewById(R.id.placement_image)).setImageBitmap(placement_bitmap);
             ((ImageView) view.findViewById(R.id.fees_range_image)).setImageBitmap(fees_bitmap);
             ((ImageView) view.findViewById(R.id.btn_details)).setImageBitmap(info_bitmap);
-            (view.findViewById(R.id.likes_layout)).setBackground(drawableBubble);
-            (view.findViewById(R.id.heart_layout)).setBackground(drawableHeart);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                (view.findViewById(R.id.likes_layout)).setBackground(drawableBubble);
+                (view.findViewById(R.id.heart_layout)).setBackground(drawableHeart);
+            }else{
+                (view.findViewById(R.id.likes_layout)).setBackgroundResource(R.drawable.ic_wishlist_bubble);
+                (view.findViewById(R.id.heart_layout)).setBackgroundResource(R.drawable.ic_wishlist_heart);
+            }
             ((ImageView) view.findViewById(R.id.see_all_image)).setImageBitmap(facilityArrow_bitmap);
-
         }
-
     }
 
     public boolean isLoadingNext() {

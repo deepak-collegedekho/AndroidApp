@@ -13,6 +13,7 @@ public class Profile implements Parcelable{
     private String name =   "";
     private String phone_no =   "";
     private String email =  "";
+    private String image =  "";
     private String state_name = "";
     private int state_id = -1;
     private String city_name =  "";
@@ -71,6 +72,7 @@ public class Profile implements Parcelable{
         name = in.readString();
         phone_no = in.readString();
         email = in.readString();
+        image = in.readString();
         state_name = in.readString();
         state_id = in.readInt();
         city_name = in.readString();
@@ -144,6 +146,7 @@ public class Profile implements Parcelable{
         dest.writeString(name);
         dest.writeString(phone_no);
         dest.writeString(email);
+        dest.writeString(image);
         dest.writeString(state_name);
         dest.writeInt(state_id);
         dest.writeString(city_name);
@@ -215,6 +218,14 @@ public class Profile implements Parcelable{
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getState_name() {

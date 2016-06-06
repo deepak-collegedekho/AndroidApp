@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.display.swipableList.model.CardModel;
-import com.collegedekho.app.display.swipableList.view.CardContainerNew;
+import com.collegedekho.app.display.swipableList.view.CardContainer;
 import com.collegedekho.app.display.swipableList.view.SimpleCardStackAdapter;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.BitMapHolder;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CDRecommendedInstituteListFragment extends BaseFragment implements SimpleCardStackAdapter.OnCDRecommendedAdapterInterface,CardContainerNew.OnSwipeDirectionListener {
+public class CDRecommendedInstituteListFragment extends BaseFragment implements SimpleCardStackAdapter.OnCDRecommendedAdapterInterface, CardContainer.OnSwipeDirectionListener {
     public static final String TITLE = "CDRecommendedInstitutes";
     private static final String ARG_INSTITUTE = "cdrecommendedinstitute";
     private static final String ARG_FILTER_ALLOWED = "filter_allowed";
@@ -37,7 +37,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     private SimpleCardStackAdapter mAdapter;
     private OnCDRecommendedInstituteListener mListener;
     private boolean IS_TUTE_COMPLETED = true;
-    private CardContainerNew mCardContainer;
+    private CardContainer mCardContainer;
     private int mUndecidedCount;
     private TextView mUndecidedCountTV;
     private TextView mPageTitleTV;
@@ -88,7 +88,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_recommended_institute_listing, container, false);
 
-        this.mCardContainer = (CardContainerNew) rootView.findViewById(R.id.fragment_recommended_institute_cards_container);
+        this.mCardContainer = (CardContainer) rootView.findViewById(R.id.fragment_recommended_institute_cards_container);
         if(cardCategory==Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
             this.mCardContainer.setListener(null);
         }else {

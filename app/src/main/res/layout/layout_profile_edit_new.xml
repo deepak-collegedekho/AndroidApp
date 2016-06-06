@@ -13,7 +13,7 @@
             android:id="@+id/profile_edit_info_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -32,6 +32,7 @@
                     android:id="@+id/profile_edit_name"
                     style="@style/AppTheme.EditText.bg_holo_dark"
                     android:hint="Name"
+                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
                     android:inputType="textCapWords"
                     android:maxLength="35" />
                 </android.support.design.widget.TextInputLayout>
@@ -86,27 +87,27 @@
 
                     <RadioButton
                         android:id="@+id/profile_mother_tongue_hindi"
-                        style="@style/ProfileRadioButton"
+                        style="@style/ProfileRadioButton.LargeWidth"
                         android:tag="6"
                         android:text="Hindi"/>
 
                     <RadioButton
                         android:id="@+id/profile_mother_tongue_english"
-                        style="@style/ProfileRadioButton"
+                        style="@style/ProfileRadioButton.LargeWidth"
                         android:tag="18"
                         android:text="English"/>
 
                     <RadioButton
                         android:id="@+id/profile_mother_tongue_others"
-                        style="@style/ProfileRadioButton"
+                        style="@style/ProfileRadioButton.LargeWidth"
                         android:tag="17"
                         android:text="Others"/>
 
-                    <RadioButton
+                    <!--<RadioButton
                         android:id="@+id/profile_mother_tongue_na"
                         style="@style/ProfileRadioButton"
                         android:tag="0"
-                        android:text="Not Available"/>
+                        android:text="Not Available"/>-->
 
                 </com.collegedekho.app.widget.SegmentedGroup>
 
@@ -251,6 +252,7 @@
                             android:layout_height="match_parent"
                             android:layout_width="0dp"
                             android:hint="Specialization"
+                            android:text=""
                             android:layout_marginLeft="@dimen/m5dp"
                             android:layout_weight=".5"/>
 
@@ -330,6 +332,7 @@
                                 <RadioButton
                                     android:id="@+id/profile_current_passing_year_na"
                                     style="@style/ProfileRadioButton.VerySmallWidth"
+                                    android:tag="0"
                                     android:text="NA"/>
                             </com.collegedekho.app.widget.SegmentedGroup>
                     </LinearLayout>
@@ -508,6 +511,7 @@
                         style="@style/ProfileSpinner"
                         android:layout_height="match_parent"
                         android:hint="Specialization"
+                        android:text=""
                         android:layout_width="0dp"
                         android:layout_weight=".5"/>
 
@@ -677,7 +681,7 @@
             android:id="@+id/profile_edit_other_info_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"

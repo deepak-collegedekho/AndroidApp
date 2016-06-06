@@ -332,9 +332,27 @@
         <item name="android:paddingRight">5dp</item>
         <item name="android:paddingTop">1dp</item>
         <item name="android:paddingLeft">5dp</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/text_lightest_grey</item>
         <item name="android:gravity">center|left</item>
+    </style>
+
+    <style name="AppTheme.profileTextViewTitle" parent="AppTheme.profileTextView">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">.3</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="AppTheme.profileInfoTextView" parent="AppTheme.profileTextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">.7</item>
+    </style>
+
+    <style name="AppTheme.profileInfoTLayout" parent="AppTheme.LinearLayout.Horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:paddingTop">@dimen/m5dp</item>
+        <item name="android:weightSum">1</item>
     </style>
 
     <style name="AppTheme.TextView.courseLeftLabel" parent="AppTheme.TextView.style1">

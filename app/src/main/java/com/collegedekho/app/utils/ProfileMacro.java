@@ -14190,24 +14190,24 @@ public class ProfileMacro {
 
     }
 
-    public static String getLoanRequiredAmount(int position){
-        if(position == BELOW_ONE_LAKH)
+    public static String getLoanRequiredAmount(int id){
+        if(id == BELOW_ONE_LAKH)
             return "Below 1 Lakh";
-        else if(position == ONE_TO_THREE_LAKH)
+        else if(id == ONE_TO_THREE_LAKH)
             return "1-3 Lakhs";
-        else if(position == THREE_TO_FIVE_LAKH)
+        else if(id == THREE_TO_FIVE_LAKH)
             return "3-5 Lakhs";
-        else if(position == ABOVE_FIVE_LAKH)
+        else if(id == ABOVE_FIVE_LAKH)
             return "Above 5Lakhs";
 
         return "To be decided";
 
     }
 
-    public static String getStreamJson(int position) {
-        if (position == 7)
+    public static String getStreamJson(int id) {
+        if (id == 7)
             return ALL_STREAMS;
-        else if (position == 8 || position == 9)
+        else if (id == 8 || id == 9)
             return SCHOLL_STREAMS;
         else
             return UG_STREAMS;
@@ -14215,25 +14215,44 @@ public class ProfileMacro {
     }
 
 
-    public static String getCurrentScoreTypeName(int position){
-        if(position == MARKS)
+    public static String getCurrentScoreTypeName(int id){
+        if(id == MARKS)
             return "Marks";
-        else if(position == GRADES)
+        else if(id == GRADES)
             return "Grades";
-        else if(position == PERCENTAGE)
+        else if(id == PERCENTAGE)
             return "Percentage";
-        else if(position == RANK)
+        else if(id == RANK)
             return "Rank";
 
         return "Percentile";
 
     }
 
-    public static String getExamStatusName(int i) {
-        if(i == EXAM_GIVEN)
+    public static String getExamStatusName(int id) {
+        if(id == EXAM_GIVEN)
             return "Given";
         else
             return "Preparing";
+    }
+    public static String getMotherTongueName(int id) {
+        if(id == MOTHER_TONGUE_HINDI)
+            return "Hindi";
+        else if(id == MOTHER_TONGUE_HINDI)
+            return "English";
+        return "Other";
+    }
+
+    public static String getFeeRangeName(int id) {
+        if(id == 1)
+            return "0-1 lac";
+        else if(id == 2)
+            return "1-2 lacs";
+        else if(id == 3)
+            return "2-3 lacs";
+        else if(id == 4)
+            return "3-4 lacs";
+        return "Above 4 lacs";
     }
 
     // language macros
@@ -14242,9 +14261,9 @@ public class ProfileMacro {
 
 
    // language macros
-    public static int MOTHER_TOUNGE_HINDI = 6;
-    public static int MOTHER_TOUNGE_ENGLISH = 18;
-    public static int MOTHER_TOUNGE_OTHER = 17;
+    public static int MOTHER_TONGUE_HINDI = 6;
+    public static int MOTHER_TONGUE_ENGLISH = 18;
+    public static int MOTHER_TONGUE_OTHER = 17;
 
    //  social category
     public static int CATEGORY_GENERAL = 1;

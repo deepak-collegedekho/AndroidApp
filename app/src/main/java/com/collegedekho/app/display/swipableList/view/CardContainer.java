@@ -33,7 +33,7 @@ import com.collegedekho.app.display.swipableList.model.Orientations;
 
 import java.util.Random;
 
-public class CardContainerNew extends AdapterView<ListAdapter> {
+public class CardContainer extends AdapterView<ListAdapter> {
     public static final int INVALID_POINTER_ID = -1;
     private int mActivePointerId = INVALID_POINTER_ID;
     private static final double DISORDERED_MAX_ROTATION_RADIANS = Math.PI / 64;
@@ -78,7 +78,7 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
     private boolean mDragging;
     private Context mContext;
 
-    public CardContainerNew(Context context) {
+    public CardContainer(Context context) {
         super(context);
         mContext = context;
         //setOrientation(Orientations.OrientationType.Disordered);
@@ -86,14 +86,14 @@ public class CardContainerNew extends AdapterView<ListAdapter> {
         init();
     }
 
-    public CardContainerNew(Context context, AttributeSet attrs) {
+    public CardContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         initFromXml(attrs);
         init();
     }
 
-    public CardContainerNew(Context context, AttributeSet attrs, int defStyle) {
+    public CardContainer(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mContext = context;
         initFromXml(attrs);

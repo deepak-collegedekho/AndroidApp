@@ -47,6 +47,8 @@ public class MaterialSpinnerAdapter<T> extends MaterialSpinnerBaseAdapter {
   }
 
   @Override public T get(int position) {
+      if(position < 0)
+        position =0;
       return items.get(position);
   }
 

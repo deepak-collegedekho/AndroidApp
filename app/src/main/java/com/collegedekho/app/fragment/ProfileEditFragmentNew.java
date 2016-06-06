@@ -52,12 +52,16 @@ public class ProfileEditFragmentNew extends BaseFragment {
     private static final String PARAM1 = "param1" ;
     private final String TAG = "Profile Edit fragment" ;
     private ViewPager profilePager;
-    private int currentPosition=0;
+    private int currentPosition =0;
     private ProfilePagerAdapter profileAdapter;
     private static Profile mProfile;
     private static List<ProfileSpinnerItem> mPreferredStatesList;
     private static List<ProfileSpinnerItem> mPreferredCitiesList;
     private static List<ProfileSpinnerItem> mPreferredDegreesList;
+    private static List<ProfileSpinnerItem> mPreferredSpecializationList;
+    private static List<ProfileSpinnerItem> mCurrentSpecializationList;
+    private static int mCurrentSelectedSpecializationId;
+    private static int mPreferredSelectedSpecializationId;
 
     private static ProfileUpdateListener mListener;
     private View mCurrentView;
@@ -66,7 +70,6 @@ public class ProfileEditFragmentNew extends BaseFragment {
         // required empty constructor
     }
 
-
     public static ProfileEditFragmentNew newInstance(Profile profile) {
         ProfileEditFragmentNew fragment = new ProfileEditFragmentNew();
         Bundle args = new Bundle();
@@ -74,7 +77,6 @@ public class ProfileEditFragmentNew extends BaseFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,11 +87,9 @@ public class ProfileEditFragmentNew extends BaseFragment {
         }
     }
 
-
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedIstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile_edit_new, container, false);
         rootView.findViewById(R.id.profile_save_button).setOnClickListener(this);
         return rootView;
@@ -98,7 +98,23 @@ public class ProfileEditFragmentNew extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         profilePager=(ViewPager)view.findViewById(R.id.profile_view_pager);
+        profilePager.setOffscreenPageLimit(2);
+        if(profileAdapter == null) {
+            ArrayList<String> titleList = new ArrayList<>();
+            titleList.add("Info");
+            titleList.add("Education");
+            titleList.add("Preferred");
+            titleList.add("Exams");
+            titleList.add("Others");
+            profileAdapter = new ProfilePagerAdapter(getChildFragmentManager(), titleList.size(), titleList);
+        }
+
+        profilePager.setAdapter(profileAdapter);
+        profilePager.setOffscreenPageLimit(4);
+        profilePager.setCurrentItem(currentPosition);
+
         profilePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -107,42 +123,82 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
             @Override
             public void onPageSelected(int position) {
-
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(mCurrentView == null && mListener == null)
+                        if(mListener == null)
                             return;
                         int currentPosition = profilePager.getCurrentItem();
-                        /*if(getView() != null) {
-                            if (currentPosition == 3) {
-                                getView().findViewById(R.id.profile_save_button).setBackgroundColor(getResources().getColor(R.color.bg_category_item_unselected));
-                            } else {
-                                getView().findViewById(R.id.profile_save_button).setBackgroundColor(getResources().getColor(R.color.primary_orange));
-                            }
-                        }*/
                         int streamId = 0 ;
+                        int spinnerId = 0 ;
                         MaterialSpinner currentSpinner =  null;
+                        List<ProfileSpinnerItem> spinnerList = null;
+
+                        if(mCurrentView == null)
+                            return;
                         if(currentPosition == 1) {
                             currentSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_specialization);
-                            streamId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_stream)).getSelectedSpinnerItemId();
-                            if(streamId <= 0 )
-                                streamId =  mProfile.getCurrent_stream_id();
+                            spinnerId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_stream)).getSelectedSpinnerItemId();
+                            streamId =  mProfile.getCurrent_stream_id();
+                            spinnerList = mCurrentSpecializationList;
                         } else if(currentPosition == 2) {
                             currentSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_preferred_specialization);
-                            streamId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_preferred_stream)).getSelectedSpinnerItemId();
-                            if(streamId <= 0 )
-                               streamId = mProfile.getPreferred_stream_id();
+                            spinnerId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_preferred_stream)).getSelectedSpinnerItemId();
+                            streamId = mProfile.getPreferred_stream_id();
+                            spinnerList = mPreferredSpecializationList;
                         }
 
-                        if(currentSpinner != null && streamId > 0 )
-                        {
-                            String spinnerText = currentSpinner.getText().toString();
-                            if(spinnerText != null && (spinnerText.isEmpty() ||
-                                    spinnerText.equalsIgnoreCase("Loading...")))
+                        // set current specialization
+                        if(spinnerId == streamId && spinnerList != null){
+                            boolean found = false;
+                            int specializationCount = spinnerList.size();
+                            for (int i = 0; i < specializationCount; i++) {
+                                ProfileSpinnerItem pObj = spinnerList.get(i);
+                                if (pObj == null) continue;
+                                if (streamId == pObj.getId()) {
+                                    spinnerList.add(0, spinnerList.remove(i));
+                                    found = true;
+                                    currentSpinner.setItems(spinnerList, false);
+                                    break;
+                                }
+                            }
+                            if(!found) {
+                                currentSpinner.setText("Loading...");
+                                currentSpinner.hideArrow();
+                                if(spinnerId > 0)
+                                    mListener.requestForSpecialization(spinnerId);
+                                else if(streamId > 0)
+                                    mListener.requestForSpecialization(streamId);
+                            }
+
+                        }else if(streamId != spinnerId && spinnerId > 0 && spinnerList != null ) {
+                            int specializationCount = spinnerList.size();
+                            boolean found = false;
+                            for (int i = 0; i < specializationCount; i++) {
+                                ProfileSpinnerItem pObj = spinnerList.get(i);
+                                if (pObj == null) continue;
+                                if (spinnerId == pObj.getId()) {
+                                    spinnerList.add(0, spinnerList.remove(i));
+                                    found = true;
+                                    currentSpinner.setItems(spinnerList, false);
+                                    break;
+                                }
+                            }
+                            if(!found) {
+                                currentSpinner.setText("Loading...");
+                                currentSpinner.hideArrow();
+                                if(spinnerId > 0)
+                                    mListener.requestForSpecialization(spinnerId);
+                                else if(streamId > 0)
+                                    mListener.requestForSpecialization(streamId);
+                            }
+                        }
+                        else{
+                            if(spinnerId > 0)
+                                mListener.requestForSpecialization(spinnerId);
+                            else if(streamId > 0)
                                 mListener.requestForSpecialization(streamId);
                         }
-
                     }
                 },400);
             }
@@ -172,15 +228,6 @@ public class ProfileEditFragmentNew extends BaseFragment {
         try {
             MainActivity activity = (MainActivity) getActivity();
             activity.currentFragment=this;
-            ArrayList<String> titleList = new ArrayList<>();
-            titleList.add("Info");
-            titleList.add("Education");
-            titleList.add("Preferred");
-            titleList.add("Exams");
-            titleList.add("Others");
-            profileAdapter=new ProfilePagerAdapter(getChildFragmentManager(),titleList.size(),titleList);
-            profilePager.setAdapter(profileAdapter);
-            profilePager.setCurrentItem(currentPosition);
         } catch (ClassCastException e) {
             e.printStackTrace();
         }
@@ -227,13 +274,19 @@ public class ProfileEditFragmentNew extends BaseFragment {
         int currentPagePosition = profilePager.getCurrentItem();
         if(currentPagePosition == 0) {
             String userName = ((EditText) mCurrentView.findViewById(R.id.profile_edit_name)).getText().toString();
-            if (userName == null || userName.isEmpty()) {
-                Utils.DisplayToast(getContext(), "Enter your name.");
+            if (userName == null || userName.trim().isEmpty()) {
+                mListener.displayMessage(R.string.NAME_EMPTY);
+                return;
+            } else if (!Utils.isValidName(userName)) {
+                mListener.displayMessage(R.string.NAME_INVALID);
                 return;
             }
             String userPhoneNumber = ((EditText) mCurrentView.findViewById(R.id.profile_edit_phone)).getText().toString();
-            if (userPhoneNumber == null || userPhoneNumber.isEmpty()) {
-                Utils.DisplayToast(getContext(), "Please enter your phone number.");
+            if (userPhoneNumber == null || userPhoneNumber.trim().isEmpty()) {
+                mListener.displayMessage(R.string.PHONE_EMPTY);
+                return;
+            } else if (userPhoneNumber.length() <= 9 || !Utils.isValidPhone(userPhoneNumber)) {
+                mListener.displayMessage(R.string.PHONE_INVALID);
                 return;
             }
             int userStateId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_state)).getSelectedSpinnerItemId();
@@ -571,9 +624,11 @@ public class ProfileEditFragmentNew extends BaseFragment {
         if(currentPosition == 1) {
             specializationSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_specialization);
             specializationId = mProfile.getCurrent_specialization_id();
+            mCurrentSpecializationList = userSpecializationList;
         } else if(currentPosition == 2) {
             specializationSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_preferred_specialization);
             specializationId = mProfile.getPreferred_specialization_id();
+            mPreferredSpecializationList = userSpecializationList;
         }
          if(specializationSpinner == null)
              return;
@@ -616,8 +671,8 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
     class ProfilePagerAdapter extends FragmentStatePagerAdapter{
         private int NUM_PAGES=1;
-        ArrayList<String> titleList;
-        public ProfileChildFragment profileChildFragment;
+        private ArrayList<String> titleList;
+        private ProfileChildFragment profileChildragment;
 
         public ProfilePagerAdapter(FragmentManager fm, int pageCount, ArrayList<String> titleList) {
             super(fm);
@@ -627,12 +682,14 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
         @Override
         public Fragment getItem(int position) {
-            profileChildFragment= ProfileChildFragment.newInstance();
+
+             profileChildragment = ProfileChildFragment.newInstance();
+
             Bundle b=new Bundle();
-            b.putInt("position", position);
             b.putString("title",titleList.get(position));
-            profileChildFragment.setArguments(b);
-            return  profileChildFragment;
+            b.putInt("position",position);
+            profileChildragment.setArguments(b);
+            return  profileChildragment;
         }
         @Override
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
@@ -651,10 +708,13 @@ public class ProfileEditFragmentNew extends BaseFragment {
             builder.append(" ");
             return builder.toString();
         }
+
     }
 
     @SuppressLint("ValidFragment")
     public static class ProfileChildFragment extends BaseFragment {
+
+        private View rootView;
         private int position;
         private CardView userInfoLayout, userEducationLayout, userPreferredLayout, userExamsLayout, userOtherInfoLayout;
 
@@ -671,21 +731,22 @@ public class ProfileEditFragmentNew extends BaseFragment {
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            if(getArguments()!=null) {
-                position = getArguments().getInt("position");
+            Bundle args = getArguments();
+            if(args != null){
+                position = args.getInt("position");
             }
         }
 
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View rootView=inflater.inflate(R.layout.layout_profile_edit_new,container,false);
+            rootView  = inflater.inflate(R.layout.layout_profile_edit_new,container,false);
 
             rootView.findViewById(R.id.profile_loan_required_no).setOnClickListener(this);
             rootView.findViewById(R.id.profile_loan_required_yes).setOnClickListener(this);
             rootView.findViewById(R.id.profile_loan_required_maybe).setOnClickListener(this);
             rootView.findViewById(R.id.profile_exams_edit_btn).setOnClickListener(this);
-            rootView.findViewById(R.id.profile_edit_fb_icon).setOnClickListener(this);
+            rootView.findViewById(R.id.profile_edit_fb_login).setOnClickListener(this);
 
             return rootView;
         }
@@ -699,6 +760,17 @@ public class ProfileEditFragmentNew extends BaseFragment {
             userPreferredLayout = (CardView) view.findViewById(R.id.profile_edit_preferences_layout);
             userExamsLayout = (CardView) view.findViewById(R.id.profile_edit_exam_layout);
             userOtherInfoLayout = (CardView) view.findViewById(R.id.profile_edit_other_info_layout);
+
+            if(position == 0)
+                loadUserInfoLayout();
+            else if(position == 1)
+                loadUserCurrentEducation();
+            else if(position == 2)
+                loadUserPreferredInfo();
+            else if(position == 3)
+                loadUserExamsInfo();
+            else if(position == 4)
+                loadUserOtherInfo();
         }
 
         @Override
@@ -729,7 +801,8 @@ public class ProfileEditFragmentNew extends BaseFragment {
                     break;
                 case R.id.profile_exams_edit_btn:
                     onEditExams();
-                case R.id.profile_edit_fb_icon:
+                    break;
+                case R.id.profile_edit_fb_login:
                     if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
                         ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
                         return;
@@ -747,59 +820,28 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 mListener.onEditUserExams();
         }
 
-
         @Override
         public void onResume() {
             super.onResume();
-            if(getArguments()!=null) {
-                position = getArguments().getInt("position");
-                String title = getArguments().getString("title");
-                if(title!=null){
-                    switch (title) {
-                        case "Info":
-                            userInfoLayout.setVisibility(View.VISIBLE);
-                            userEducationLayout.setVisibility(View.GONE);
-                            userPreferredLayout.setVisibility(View.GONE);
-                            userExamsLayout.setVisibility(View.GONE);
-                            userOtherInfoLayout.setVisibility(View.GONE);
-                            loadUserInfoLayout();
-                            break;
-                        case "Education":
-                            userInfoLayout.setVisibility(View.GONE);
-                            userEducationLayout.setVisibility(View.VISIBLE);
-                            userPreferredLayout.setVisibility(View.GONE);
-                            userExamsLayout.setVisibility(View.GONE);
-                            userOtherInfoLayout.setVisibility(View.GONE);
-                            loadUserCurrentEducation();
-                            break;
-                        case "Preferred":
-                            userInfoLayout.setVisibility(View.GONE);
-                            userEducationLayout.setVisibility(View.GONE);
-                            userPreferredLayout.setVisibility(View.VISIBLE);
-                            userExamsLayout.setVisibility(View.GONE);
-                            userOtherInfoLayout.setVisibility(View.GONE);
-                           loadUserPreferredInfo();
-                            break;
-                        case "Exams":
-                            userInfoLayout.setVisibility(View.GONE);
-                            userEducationLayout.setVisibility(View.GONE);
-                            userPreferredLayout.setVisibility(View.GONE);
-                            userExamsLayout.setVisibility(View.VISIBLE);
-                            userOtherInfoLayout.setVisibility(View.GONE);
-                            loadUserExamsInfo();
-                            break;
-                        case "Others":
-                            userInfoLayout.setVisibility(View.GONE);
-                            userEducationLayout.setVisibility(View.GONE);
-                            userPreferredLayout.setVisibility(View.GONE);
-                            userExamsLayout.setVisibility(View.GONE);
-                            userOtherInfoLayout.setVisibility(View.VISIBLE);
-                           loadUserOtherInfo();
-                            break;
-                    }
-                }
-            }
+        }
 
+        private void updatePagerView(int position){
+            userInfoLayout.setVisibility(View.GONE);
+            userEducationLayout.setVisibility(View.GONE);
+            userPreferredLayout.setVisibility(View.GONE);
+            userExamsLayout.setVisibility(View.GONE);
+            userOtherInfoLayout.setVisibility(View.GONE);
+            if(position == 0 ){
+                userInfoLayout.setVisibility(View.VISIBLE);
+            }else  if(position == 1 ){
+                userEducationLayout.setVisibility(View.VISIBLE);
+            }else  if(position == 2 ){
+                userPreferredLayout.setVisibility(View.VISIBLE);
+            }else  if(position == 3 ){
+                userExamsLayout.setVisibility(View.VISIBLE);
+            }else  if(position == 4 ){
+                userOtherInfoLayout.setVisibility(View.VISIBLE);
+            }
         }
 
         /**
@@ -809,22 +851,22 @@ public class ProfileEditFragmentNew extends BaseFragment {
          */
 
         private void loadUserInfoLayout(){
-            View view = getView();
-            if (mProfile == null || view == null)
+            updatePagerView(0);
+            if (mProfile == null || rootView == null)
                 return;
 
             String name = mProfile.getName();
             if(name != null && !name.isEmpty() &&  !name.equalsIgnoreCase(getResources().getString(R.string.ANONYMOUS_USER))){
-                ((TextView)view.findViewById(R.id.profile_edit_name)).setText(name);
+                ((TextView)rootView.findViewById(R.id.profile_edit_name)).setText(name);
             }
 
             String phone = mProfile.getPhone_no();
             if (phone != null && !phone.isEmpty()){
-                ((TextView)view.findViewById(R.id.profile_edit_phone)).setText(phone);
+                ((TextView)rootView.findViewById(R.id.profile_edit_phone)).setText(phone);
             }
 
-            final MaterialSpinner stateSpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_state);
-            final MaterialSpinner citySpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_city);
+            final MaterialSpinner stateSpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_state);
+            final MaterialSpinner citySpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_city);
 
             final int stateID = mProfile.getState_id();
             final int cityID = mProfile.getCity_id();
@@ -891,39 +933,39 @@ public class ProfileEditFragmentNew extends BaseFragment {
             });
             // set Mother tongue
             int  motherTongueId = mProfile.getMother_tongue();
-            if(motherTongueId == ProfileMacro.MOTHER_TOUNGE_HINDI){
-                ((RadioButton)view.findViewById(R.id.profile_mother_tongue_hindi)).setChecked(true);
+            if(motherTongueId == ProfileMacro.MOTHER_TONGUE_HINDI){
+                ((RadioButton)rootView.findViewById(R.id.profile_mother_tongue_hindi)).setChecked(true);
             }
-            else if(motherTongueId == ProfileMacro.MOTHER_TOUNGE_ENGLISH){
-                ((RadioButton)view.findViewById(R.id.profile_mother_tongue_english)).setChecked(true);
+            else if(motherTongueId == ProfileMacro.MOTHER_TONGUE_ENGLISH){
+                ((RadioButton)rootView.findViewById(R.id.profile_mother_tongue_english)).setChecked(true);
             }
-            else if(motherTongueId == ProfileMacro.MOTHER_TOUNGE_OTHER){
-                ((RadioButton)view.findViewById(R.id.profile_mother_tongue_others)).setChecked(true);
+            else {//if(motherTongueId == ProfileMacro.MOTHER_TONGUE_OTHER){
+                ((RadioButton)rootView.findViewById(R.id.profile_mother_tongue_others)).setChecked(true);
             }
-            else {
-                ((RadioButton)view.findViewById(R.id.profile_mother_tongue_na)).setChecked(true);
-            }
+           /* else {
+                ((RadioButton)rootView.findViewById(R.id.profile_mother_tongue_na)).setChecked(true);
+            }*/
 
 
             // set user social category
             int  socialCategoryId = mProfile.getSocial_category();
             if(socialCategoryId == ProfileMacro.CATEGORY_GENERAL){
-                ((RadioButton)view.findViewById(R.id.profile_category_general)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_category_general)).setChecked(true);
             }
             else if(socialCategoryId ==  ProfileMacro.CATEGORY_OBC){
-                ((RadioButton)view.findViewById(R.id.profile_category_obc)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_category_obc)).setChecked(true);
             }
             else if(socialCategoryId ==  ProfileMacro.CATEGORY_SC){
-                ((RadioButton)view.findViewById(R.id.profile_category_sc)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_category_sc)).setChecked(true);
             }
             else if(socialCategoryId ==  ProfileMacro.CATEGORY_ST){
-                ((RadioButton)view.findViewById(R.id.profile_category_st)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_category_st)).setChecked(true);
             }
             else if(socialCategoryId ==  ProfileMacro.CATEGORY_OTHERS){
-                ((RadioButton)view.findViewById(R.id.profile_category_other)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_category_other)).setChecked(true);
             }
             else if(socialCategoryId <= 0){
-                ((RadioButton)view.findViewById(R.id.profile_category_na)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_category_na)).setChecked(true);
             }
         }
 
@@ -935,15 +977,15 @@ public class ProfileEditFragmentNew extends BaseFragment {
          */
 
         private void loadUserCurrentEducation(){
-            View view = getView();
-            if (mProfile == null || view == null)
+            updatePagerView(1);
+            if (mProfile == null || rootView == null)
                 return;
 
             // set sub level
-            MaterialSpinner currentSubLevelSpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_current_sub_level);
-            final MaterialSpinner currentStreamSpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_current_stream);
-            final MaterialSpinner currentSpecializationSpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_current_specialization);
-            MaterialSpinner currentDegreeSpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_current_degree);
+            MaterialSpinner currentSubLevelSpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_current_sub_level);
+            final MaterialSpinner currentStreamSpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_current_stream);
+            final MaterialSpinner currentSpecializationSpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_current_specialization);
+            MaterialSpinner currentDegreeSpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_current_degree);
 
             int userSubLevelId = mProfile.getCurrent_sublevel_id();
             int userStreamId = mProfile.getCurrent_stream_id();
@@ -967,11 +1009,6 @@ public class ProfileEditFragmentNew extends BaseFragment {
                                 if(userStreamId ==  pStreamObj.getId()) {
                                     currentStreamList.remove(j);
                                     currentStreamList.add(0, pStreamObj);
-//                                    if(mListener != null) {
-//                                        mListener.requestForSpecialization(pStreamObj.getId());
-                                       currentSpecializationSpinner.setText("Loading...");
-                                       currentSpecializationSpinner.hideArrow();
-//                                    }
                                     break;
                                 }
                             }
@@ -986,6 +1023,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                     currentSubLevelSpinner.setItems(currentSubLevelList, true);
                     currentSubLevelSpinner.setText("Select Your Level");
                 }
+
 
                 if(currentStreamList == null){
                     currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJson(2));
@@ -1024,6 +1062,13 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 }
             });
 
+            currentSpecializationSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
+                    mCurrentSelectedSpecializationId = view.getSelectedSpinnerItemId();
+                }
+            });
+
 
 
             // set user current degree
@@ -1056,29 +1101,29 @@ public class ProfileEditFragmentNew extends BaseFragment {
             // set education mode
             int  currentEducationModeId = mProfile.getCurrent_mode();
             if(currentEducationModeId == 1){
-                ((RadioButton)view.findViewById(R.id.profile_current_education_full_type)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_current_education_full_type)).setChecked(true);
             }
             else if(currentEducationModeId == 2){
-                ((RadioButton)view.findViewById(R.id.profile_current_education_part_type)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_current_education_part_type)).setChecked(true);
             }
             else if(currentEducationModeId == 4){
-                ((RadioButton)view.findViewById(R.id.profile_current_education_distance)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_current_education_distance)).setChecked(true);
             }
             else if(currentEducationModeId == 5){
-                ((RadioButton)view.findViewById(R.id.profile_current_education_executive)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_current_education_executive)).setChecked(true);
             }
             else if(currentEducationModeId == 6){
-                ((RadioButton)view.findViewById(R.id.profile_current_education_online)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_current_education_online)).setChecked(true);
             }
             else{
-                ((RadioButton)view.findViewById(R.id.profile_current_education_na)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_current_education_na)).setChecked(true);
             }
 
             // set Current Score
 
             int currentScore = mProfile.getCurrent_score();
             if(currentScore > 0){
-                ((EditText)view.findViewById(R.id.profile_edit_current_score)).setText(""+currentScore);
+                ((EditText)rootView.findViewById(R.id.profile_edit_current_score)).setText(""+currentScore);
             }
 
             // set Current Score type
@@ -1108,7 +1153,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 isScoretypeSelected = true;
             }
 
-            MaterialSpinner currentScoreTypeSpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_current_score_type);
+            MaterialSpinner currentScoreTypeSpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_current_score_type);
             if(isScoretypeSelected) {
                 currentScoreTypeSpinner.setItems(scoreTypeList, true);
                 currentScoreTypeSpinner.setText("Select Score Type");
@@ -1119,23 +1164,23 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
             // set current passing year info about user
             int  currentPassingYear = mProfile.getCurrent_passing_year();
-            if(currentPassingYear  < 2015){
-                ((RadioButton)view.findViewById(R.id.profile_current_passing_before_2015)).setChecked(true);
+            if(currentPassingYear > 2000 && currentPassingYear  < 2015){
+                ((RadioButton)rootView.findViewById(R.id.profile_current_passing_before_2015)).setChecked(true);
             }
             else if(currentPassingYear < 2015){
-                ((RadioButton)view.findViewById(R.id.profile_current_passing_year_2015)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_current_passing_year_2015)).setChecked(true);
             }
             else if(currentPassingYear ==  2016){
-                ((RadioButton)view.findViewById(R.id.profile_current_passing_year_2016)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_current_passing_year_2016)).setChecked(true);
             }
             else if(currentPassingYear == 2017){
-                ((RadioButton)view.findViewById(R.id.profile_current_passing_year_2017)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_current_passing_year_2017)).setChecked(true);
             }
             else if(currentPassingYear > 2017){
-                ((RadioButton)view.findViewById(R.id.profile_current_passing_year_after_2017)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_current_passing_year_after_2017)).setChecked(true);
             }
             else{
-                ((RadioButton)view.findViewById(R.id.profile_current_passing_year_na)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_current_passing_year_na)).setChecked(true);
             }
 
         }
@@ -1147,12 +1192,12 @@ public class ProfileEditFragmentNew extends BaseFragment {
          */
 
         private void loadUserPreferredInfo(){
-            View view = getView();
-            if(view == null || mProfile == null)
+            updatePagerView(2);
+            if(rootView == null || mProfile == null)
                 return;
-            MaterialSpinner preferredLevelSpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_level);
-            final MaterialSpinner preferredStreamSpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_stream);
-            final MaterialSpinner preferredSpecializationSpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_specialization);
+            MaterialSpinner preferredLevelSpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_preferred_level);
+            final MaterialSpinner preferredStreamSpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_preferred_stream);
+            final MaterialSpinner preferredSpecializationSpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_preferred_specialization);
 
             // set user preferred level
             int preferredLevelId = mProfile.getPreferred_level();
@@ -1176,11 +1221,6 @@ public class ProfileEditFragmentNew extends BaseFragment {
                                 if(preferredStreamId ==  pStreamObj.getId()) {
                                     streamList.remove(j);
                                     streamList.add(0, pStreamObj);
-//                                    if(mListener != null) {
-//                                        mListener.requestForSpecialization(pStreamObj.getId());
-                                        preferredSpecializationSpinner.setText("Loading...");
-                                        preferredSpecializationSpinner.hideArrow();
-//                                    }
                                     break;
                                 }
                             }
@@ -1256,6 +1296,13 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 }
             });
 
+            preferredSpecializationSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
+                    mPreferredSelectedSpecializationId = view.getSelectedSpinnerItemId();
+                }
+            });
+
             // set preferred degree
             try {
                mPreferredDegreesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.DEGREE_JSON);
@@ -1276,7 +1323,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                     }
                 }
 
-                MaterialSpinner preferredDegreeSpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_degree);
+                MaterialSpinner preferredDegreeSpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_preferred_degree);
                 preferredDegreeSpinner.setMutliSelection(true);
                 preferredDegreeSpinner.setItems(mPreferredDegreesList, true);
                 if(degreesIdList != null)
@@ -1306,7 +1353,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                         }
                     }
                 }
-                MaterialSpinner preferredStateSpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_state);
+                MaterialSpinner preferredStateSpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_preferred_state);
                 preferredStateSpinner.setMutliSelection(true);
                 preferredStateSpinner.setFragmentListener(this);
                 preferredStateSpinner.setItems(mPreferredStatesList, true);
@@ -1341,32 +1388,12 @@ public class ProfileEditFragmentNew extends BaseFragment {
                     }
                 }
 
-                final MaterialSpinner preferredCitySpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_city);
+                final MaterialSpinner preferredCitySpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_preferred_city);
                 preferredCitySpinner.setMutliSelection(true);
                 preferredCitySpinner.setItems(mPreferredCitiesList, true);
                 if(cityIdList != null)
                     preferredCitySpinner.setText("City("+cityIdList.size()+")");
 
-                /*preferredStateSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
-                        try {
-                            ArrayList<Integer> idStateList = mProfile.getPreferred_states_ids();
-                            if(idStateList != null && !idStateList.isEmpty()){
-                                if(mPreferredCitiesList == null)
-                                    mPreferredCitiesList = new ArrayList<>();
-                                for (int stateId:idStateList) {
-                                    mPreferredCitiesList.addAll(JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(stateId)));
-                                }
-                            }
-                            //List<ProfileSpinnerItem> citiesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(position));
-                            preferredCitySpinner.setItems(mPreferredCitiesList, false);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                });*/
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -1374,68 +1401,68 @@ public class ProfileEditFragmentNew extends BaseFragment {
             // set Preferred Year
             int  preferredAdmissionYear = mProfile.getPreferred_year_of_admission();
             if(preferredAdmissionYear == 2017){
-                ((RadioButton)view.findViewById(R.id.profile_preferred_admission_year_2017)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_preferred_admission_year_2017)).setChecked(true);
             }
             else if(preferredAdmissionYear >= 2018){
-                ((RadioButton)view.findViewById(R.id.profile_preferred_admission_year_after_2017)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_preferred_admission_year_after_2017)).setChecked(true);
             }
             else{
-                ((RadioButton)view.findViewById(R.id.profile_preferred_admission_year_2016)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_preferred_admission_year_2016)).setChecked(true);
             }
 
             // set preferred education mode
             int  preferredEducationModeId = mProfile.getPreferred_mode();
            if(preferredEducationModeId == 1){
-                ((RadioButton)view.findViewById(R.id.profile_preferred_mode_full_type)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_preferred_mode_full_type)).setChecked(true);
             }
             else if(preferredEducationModeId == 2){
-                ((RadioButton)view.findViewById(R.id.profile_preferred_mode_part_type)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_preferred_mode_part_type)).setChecked(true);
             }
             else if(preferredEducationModeId == 4){
-                ((RadioButton)view.findViewById(R.id.profile_preferred_mode_distance)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_preferred_mode_distance)).setChecked(true);
             }
             else if(preferredEducationModeId == 5){
-                ((RadioButton)view.findViewById(R.id.profile_preferred_mode_executive)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_preferred_mode_executive)).setChecked(true);
             }else if(preferredEducationModeId == 6){
-                ((RadioButton)view.findViewById(R.id.profile_preferred_mode_online)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_preferred_mode_online)).setChecked(true);
             }else{
-                ((RadioButton)view.findViewById(R.id.profile_preferred_mode_na)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_preferred_mode_na)).setChecked(true);
             }
 
             // set preferred fee range
             int  maxfeerangeId = mProfile.getPreferred_fee_range_max();
             if(maxfeerangeId == 1){
-                ((RadioButton)view.findViewById(R.id.profile_fee_range_one_lac)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_fee_range_one_lac)).setChecked(true);
             }else  if(maxfeerangeId == 2){
-                ((RadioButton)view.findViewById(R.id.profile_fee_range_two_lac)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_fee_range_two_lac)).setChecked(true);
             }else  if(maxfeerangeId == 3){
-                ((RadioButton)view.findViewById(R.id.profile_fee_range_three_lac)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_fee_range_three_lac)).setChecked(true);
             }else  if(maxfeerangeId == 4){
-                ((RadioButton)view.findViewById(R.id.profile_fee_range_four_lac)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_fee_range_four_lac)).setChecked(true);
             }else  if(maxfeerangeId == 5){
-                ((RadioButton)view.findViewById(R.id.profile_fee_range_above_4)).setChecked(true);
+                ((RadioButton)rootView.findViewById(R.id.profile_fee_range_above_4)).setChecked(true);
             }
 
             // set preferred loan required
             int  loanRequiredId = mProfile.getPreferred_loan_required();
             if(loanRequiredId == 1){
-                view.findViewById(R.id.profile_loan_amount_layout).setVisibility(View.VISIBLE);
-                ((RadioButton)view.findViewById(R.id.profile_loan_required_yes)).setChecked(true);
+                rootView.findViewById(R.id.profile_loan_amount_layout).setVisibility(View.VISIBLE);
+                ((RadioButton)rootView.findViewById(R.id.profile_loan_required_yes)).setChecked(true);
             }
             else if(loanRequiredId == 2){
-                view.findViewById(R.id.profile_loan_amount_layout).setVisibility(View.VISIBLE);
-                ((RadioButton)view.findViewById(R.id.profile_loan_required_maybe)).setChecked(true);
+                rootView.findViewById(R.id.profile_loan_amount_layout).setVisibility(View.VISIBLE);
+                ((RadioButton)rootView.findViewById(R.id.profile_loan_required_maybe)).setChecked(true);
             }
             else {
-                view.findViewById(R.id.profile_loan_amount_layout).setVisibility(View.GONE);
-                ((RadioButton)view.findViewById(R.id.profile_loan_required_no)).setChecked(true);
+                rootView.findViewById(R.id.profile_loan_amount_layout).setVisibility(View.GONE);
+                ((RadioButton)rootView.findViewById(R.id.profile_loan_required_no)).setChecked(true);
             }
 
             // set preferred required loan amount
             if(loanRequiredId >= 1)
-                view.findViewById(R.id.profile_loan_amount_layout).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.profile_loan_amount_layout).setVisibility(View.VISIBLE);
             else
-                view.findViewById(R.id.profile_loan_amount_layout).setVisibility(View.GONE);
+                rootView.findViewById(R.id.profile_loan_amount_layout).setVisibility(View.GONE);
 
                 ArrayList<ProfileSpinnerItem> loanRequiredAmountList = new ArrayList<>();
                 for (int i = 1; i < 6; i++) {
@@ -1460,7 +1487,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                     isLoanAmountSelected = true;
                 }
 
-                MaterialSpinner loanAmountSpinner = (MaterialSpinner) view.findViewById(R.id.profile_edit_loan_amount_needed);
+                MaterialSpinner loanAmountSpinner = (MaterialSpinner) rootView.findViewById(R.id.profile_edit_loan_amount_needed);
                 if(isLoanAmountSelected) {
                     loanAmountSpinner.setItems(loanRequiredAmountList, true);
                     loanAmountSpinner.setText("Select Score Type");
@@ -1472,10 +1499,10 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
         private void loadUserExamsInfo() {
 
-            View view = getView();
-            if(view == null || mProfile == null)
+            updatePagerView(3);
+            if(rootView == null || mProfile == null)
                 return;
-            LinearLayout parentLayout = (LinearLayout) view.findViewById(R.id.profile_edit_user_exams_list_layout);
+            LinearLayout parentLayout = (LinearLayout) rootView.findViewById(R.id.profile_edit_user_exams_list_layout);
             parentLayout.removeAllViews();
 
             ArrayList<ProfileExam> userExamList = mProfile.getYearly_exams();
@@ -1529,28 +1556,28 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
         private void loadUserOtherInfo()
         {
-            View view = getView();
-            if(view == null || mProfile == null)
+            updatePagerView(4);
+            if(rootView == null || mProfile == null)
                 return;
 
             String fatherName = mProfile.getFathers_name();
-            ((EditText)view.findViewById(R.id.profile_edit_father_name)).setText(fatherName);
+            ((EditText)rootView.findViewById(R.id.profile_edit_father_name)).setText(fatherName);
 
             String motherName = mProfile.getMothers_name();
-            ((EditText)view.findViewById(R.id.profile_edit_mother_name)).setText(motherName);
+            ((EditText)rootView.findViewById(R.id.profile_edit_mother_name)).setText(motherName);
 
             String coachingInstitute = mProfile.getCoaching_institute();
-            ((EditText)view.findViewById(R.id.profile_edit_coaching_institute)).setText(coachingInstitute);
+            ((EditText)rootView.findViewById(R.id.profile_edit_coaching_institute)).setText(coachingInstitute);
 
-            TrueButton trueButton =(TrueButton)view.findViewById(R.id.com_truecaller_android_sdk_truebutton);
+            TrueButton trueButton =(TrueButton)rootView.findViewById(R.id.com_truecaller_android_sdk_truebutton);
 
             if (MainActivity.user != null && MainActivity.user.is_anony()){
                 trueButton.setVisibility(View.VISIBLE);
-                view.findViewById(R.id.profile_edit_fb_login).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.profile_edit_fb_login).setVisibility(View.VISIBLE);
             }
             else{
                 trueButton.setVisibility(View.GONE);
-                view.findViewById(R.id.profile_edit_fb_login).setVisibility(View.GONE);
+                rootView.findViewById(R.id.profile_edit_fb_login).setVisibility(View.GONE);
             }
 
             boolean usable = trueButton.isUsable();
@@ -1563,8 +1590,8 @@ public class ProfileEditFragmentNew extends BaseFragment {
         }
 
         public void onDismissStatePopUpWindow(){
-            View view = getView();
-            if(view == null || mPreferredStatesList == null)
+
+            if(rootView == null || mPreferredStatesList == null)
                 return;
 
             int selectedStateCount = 0;
@@ -1581,8 +1608,8 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 }
             }
 
-            ((MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_state)).setText("State("+selectedStateCount+")");
-            MaterialSpinner preferredCitySpinner = (MaterialSpinner)view. findViewById(R.id.profile_edit_preferred_city);
+            ((MaterialSpinner)rootView. findViewById(R.id.profile_edit_preferred_state)).setText("State("+selectedStateCount+")");
+            MaterialSpinner preferredCitySpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_preferred_city);
             preferredCitySpinner.setMutliSelection(true);
             preferredCitySpinner.setItems(mPreferredCitiesList, true);
             if(!mPreferredCitiesList.isEmpty()){
