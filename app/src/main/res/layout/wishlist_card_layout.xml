@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/wish_list_layout"
+    android:id="@+id/cd_reco_card_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/m2dp"
@@ -11,7 +11,8 @@
     android:background="@color/primary_color"
     android:elevation="@dimen/m1dp"
     android:orientation="vertical"
-    card_view:cardCornerRadius="20dp">
+    card_view:cardCornerRadius="20dp"
+    >
 
             <LinearLayout
                 android:id="@+id/institute_card_layout"
@@ -29,8 +30,8 @@
                     android:paddingTop="@dimen/m5dp"
                     android:paddingBottom="@dimen/m5dp"
                     android:paddingRight="@dimen/m10dp"
-                    android:paddingLeft="@dimen/m10dp">
-
+                    android:paddingLeft="@dimen/m10dp"
+                    >
                     <TextView
                         android:id="@+id/title"
                         android:layout_width="match_parent"

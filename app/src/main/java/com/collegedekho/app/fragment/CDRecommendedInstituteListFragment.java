@@ -241,8 +241,6 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         return rootView;
     }
 
-
-
     private void mAddCardInAdapter(List<Institute> list)
     {
         final  ArrayList<CardModel> modelArrayList = new ArrayList<>();

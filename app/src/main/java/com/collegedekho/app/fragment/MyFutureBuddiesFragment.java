@@ -85,7 +85,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         (rootView.findViewById(R.id.fb_push_chat)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
+                int connectivityStatus= NetworkUtils.getConnectivityStatus();
                 if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
                 final String value = mChatText.getText().toString();
                 if (value.trim().equals(""))

@@ -40,7 +40,6 @@ public class ChapterDetails implements Parcelable {
         yearly_exam_chapter_id = in.readString();
         days_to_complete = in.readString();
         isSelected=in.readByte()!=0;
-
     }
 
     public String getSubject_id() {

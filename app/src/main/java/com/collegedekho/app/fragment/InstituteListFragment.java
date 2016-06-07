@@ -1,6 +1,5 @@
 package com.collegedekho.app.fragment;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
@@ -174,7 +173,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
         instituteView=rootView.findViewById(R.id.viewType);
 
-
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -231,7 +229,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     }
 
 
-  @Override
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
@@ -294,7 +292,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                     v.findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
                 }
             }
-
         }
 
         updateFilterButton(filterCount);
@@ -517,41 +514,13 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     @Override
     public void show() {
         Log.e("InstituteListFragment", "Show");
-        //toolbarContainer.animate().translationY(0).setDuration(1000).setInterpolator(new DecelerateInterpolator(2)).start();
-        //toolbarContainer.animate().alpha(1).setDuration(1000).setInterpolator(new DecelerateInterpolator(1)).start();
-        //toolbarContainer.setVisibility(View.VISIBLE);
         fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3)).start();
-        //mainContainer.setPadding(0, Utils.getToolbarHeight(this.getActivity()), 0, 0);
-//        ValueAnimator animator = ValueAnimator.ofInt(0, (toolbarHeight - (toolbarHeight >> 1) >> 1), (toolbarHeight - (toolbarHeight >> 1)), (toolbarHeight - (toolbarHeight >> 2)), toolbarHeight);
-//        animator.setInterpolator(new DecelerateInterpolator(2));
-//        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator valueAnimator){
-//                mainContainer.setPadding(0, toolbarHeight, 0, 0);
-//            }
-//        });
-//        animator.setDuration(750);
-//        animator.start();
     }
 
     @Override
     public void hide() {
         Log.e("InstituteListFragment", "Hide");
-        //toolbarContainer.animate().translationY(-toolbarHeight).setDuration(1000).setInterpolator(new AccelerateInterpolator(2)).start();
-        //toolbarContainer.animate().alpha(0).setDuration(1000).setInterpolator(new AccelerateInterpolator(1)).start();
-        //toolbarContainer.setVisibility(View.GONE);
         fab.animate().translationY(fab.getHeight() + fabMargin).setInterpolator(new AccelerateInterpolator(3)).start();
-        //mainContainer.setPadding(0, 0, 0, 0);
-//        ValueAnimator animator = ValueAnimator.ofInt(toolbarHeight, toolbarHeight - (toolbarHeight >> 2), toolbarHeight - (toolbarHeight >> 1), (toolbarHeight - (toolbarHeight >> 1) >> 1) , 0);
-//        animator.setInterpolator(new AccelerateInterpolator(2));
-//        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator valueAnimator){
-//                mainContainer.setPadding(0, 0, 0, 0);
-//            }
-//        });
-//        animator.setDuration(750);
-//        animator.start();
     }
 
     public interface OnInstituteSelectedListener extends BaseListener {

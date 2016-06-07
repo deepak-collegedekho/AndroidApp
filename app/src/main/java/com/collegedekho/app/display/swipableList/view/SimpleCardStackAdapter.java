@@ -115,7 +115,6 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             }
         });
 
-
         model.setOnCardDismissedListener(new CardModel.OnCardDismissedListener() {
             @Override
             public void onLike() {
@@ -175,11 +174,11 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
         Log.e("getView "," step 1 time is "+System.currentTimeMillis());
         //setting institute image_new
-        fadeInImageView = ((FadeInImageView) convertView.findViewById(R.id.institute_image));
         //fadeInImageView.setDefaultImageResId(R.drawable.default_banner);
         //fadeInImageView.setErrorImageResId(R.drawable.default_banner);
+        fadeInImageView = ((FadeInImageView) convertView.findViewById(R.id.institute_image));
         if (BitMapHolder.DEFAULT_BANNER != null)
-            fadeInImageView.setLocalImageBitmap(BitMapHolder.DEFAULT_BANNER);
+            fadeInImageView.setLocalImageBitmap(BitMapHolder.DEFAULT_BANNER, true);
         else
             fadeInImageView.setBackgroundResource(R.drawable.default_banner);
 
@@ -196,7 +195,6 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         Log.e("getView "," step 1 time is "+System.currentTimeMillis());
 
         TextView streamTV = ((TextView) convertView.findViewById(R.id.recommended_streams));
-//            String streamText = "";
         TextView examsTv=(TextView)convertView.findViewById(R.id.recommended_exams);
         TextView maxSalary = ((TextView) convertView.findViewById(R.id.max_sal_val));
         TextView minSalary = ((TextView) convertView.findViewById(R.id.min_sal_val));
@@ -430,7 +428,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                 if (response.getBitmap() != null) {
-                    fadeInImageView.setLocalImageBitmap(response.getBitmap());
+                    fadeInImageView.setLocalImageBitmap(response.getBitmap(), true);
                 }
             }
 

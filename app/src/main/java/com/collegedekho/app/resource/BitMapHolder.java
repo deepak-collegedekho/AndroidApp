@@ -3,9 +3,9 @@ package com.collegedekho.app.resource;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+
 import com.collegedekho.app.R;
 import com.collegedekho.app.utils.Utils;
 

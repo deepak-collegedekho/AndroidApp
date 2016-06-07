@@ -117,6 +117,7 @@ public class Constants
     public static final String TAG_MY_ALERTS = "my_alerts";
     public static final String TAG_LOAD_INSTITUTE_QNA_QUESTIONS = "institute_qna";
     public static final String TAG_FRAGMENT_INSTITUTE_LIST = "fragment_institute_list";
+    public static final String TAG_FRAGMENT_WISHLIST_INSTITUTE_LIST = "fragment_wishlist_institute_list";
     public static final String QTYPE_SINGLE = "single";
     public static final String QTYPE_MULTIPLE = "multiple";
     public static final String QTYPE_DROPDOWN = "dropdown";
@@ -253,6 +254,11 @@ public class Constants
         UNDECIDED, SHORTLISTED, NOT_INERESTED, UNBAISED,RECOMMENDED,BUZZLIST
     }
 
+    public enum CDInstituteType {
+        PARTNER, NON_PARTNER
+    }
+
+
     public static String MESSAGE="message";
     public static String COLLAPSE_KEY="collapse_key";
     public static String URL="url";
@@ -283,4 +289,9 @@ public class Constants
     public static final String GCM_DIALOG_RESULT="gcm_dialog_result";
     public static final String DIALOG_DATA="gcm_dialog_data";
 
+    public static final int TYPE_STANDARD = 0;
+    public static final int TYPE_LONGHOLD = 1;
+    public static final int TYPE_FLING = 2;
+    public static final int TYPE_HOLD_AND_RELEASE = 3;
+    public static final int TYPE_EXAMPLE = 4;
 }

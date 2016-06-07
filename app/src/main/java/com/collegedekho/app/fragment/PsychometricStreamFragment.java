@@ -135,7 +135,6 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
         //void onStreamUpdated(String stream, String streamName);
     }
 
-
     @Override
     public void onResume() {
         super.onResume();

@@ -140,6 +140,7 @@ import com.collegedekho.app.fragment.UserAlertsFragment;
 import com.collegedekho.app.fragment.UserAlertsParentFragment;
 import com.collegedekho.app.fragment.UserEducationFragment;
 import com.collegedekho.app.fragment.WebViewFragment;
+import com.collegedekho.app.fragment.WishlistFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.listener.DataLoadListener;
@@ -246,8 +247,7 @@ public class MainActivity extends AppCompatActivity
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
         UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteListFragment.OnCDRecommendedInstituteListener,
-        InstituteVideosFragment.OnTitleUpdateListener,OTPVerificationFragment.OTPVerificationListener, ITrueCallback
-
+        InstituteVideosFragment.OnTitleUpdateListener,OTPVerificationFragment.OTPVerificationListener, ITrueCallback, WishlistFragment.WishlistInstituteInteractionListener
 {
 
     static {
@@ -1404,13 +1404,25 @@ public class MainActivity extends AppCompatActivity
      * This method is used to update institutes list of next page
      * @param response
      */
-    private void updateNextInstituteList(String response) {
+    private void updateNextInstituteList(String response, int listType) {
         try {
             List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
             this.mInstituteList.addAll(institutes);
 
-            if (currentFragment instanceof InstituteListFragment) {
-                ((InstituteListFragment) currentFragment).updateList(institutes, next);
+            switch (listType)
+            {
+                case Constants.SHORTLIST_TYPE:
+                {
+                    if (currentFragment instanceof WishlistFragment)
+                        ((WishlistFragment) currentFragment).updateList(institutes, next);
+
+                    break;
+                }
+                default:
+                {
+                    if (currentFragment instanceof InstituteListFragment)
+                        ((InstituteListFragment) currentFragment).updateList(institutes, next);
+                }
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -1619,6 +1631,33 @@ public class MainActivity extends AppCompatActivity
                 ((InstituteListFragment) fragment).updateFilterButton(this.mFilterCount);
             }else {
                 this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount,listType), !isFromNotification, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+            }
+
+            if(listType==Constants.SHORTLIST_TYPE){
+                if(MainActivity.user.getPartner_shortlist_count()>0) {
+                    requestOtp();
+                }
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    private void mDisplayWishlistInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl, int listType) {
+        try {
+            String val = this.extractResults(response);
+            this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
+
+            if (!isHavingNextUrl)
+                next = null;
+
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
+
+            if (currentFragment instanceof WishlistFragment) {
+                ((WishlistFragment) fragment).clearList();
+                ((WishlistFragment) fragment).updateList(this.mInstituteList, next);
+            }else {
+                this.mDisplayFragment(WishlistFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, listType), !isFromNotification, Constants.TAG_FRAGMENT_WISHLIST_INSTITUTE_LIST);
             }
 
             if(listType==Constants.SHORTLIST_TYPE){
@@ -1985,7 +2024,8 @@ public class MainActivity extends AppCompatActivity
             case Constants.WIDGET_SHORTLIST_INSTITUTES:
                 this.mCurrentTitle = "WishList Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
-                this.mDisplayInstituteList(response, false, true, Constants.SHORTLIST_TYPE);
+                //this.mDisplayInstituteList(response, false, true, Constants.SHORTLIST_TYPE);
+                this.mDisplayWishlistInstituteList(response, false, true, Constants.SHORTLIST_TYPE);
                 break;
             case Constants.WIDGET_INSTITUTES:
                 this.mCurrentTitle = "Institutes";
@@ -2050,7 +2090,6 @@ public class MainActivity extends AppCompatActivity
                 this.mUpdateInstituteArticle(response);
                 break;
             case Constants.TAG_APPLIED_COURSE:
-
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 this.mUpdateAppliedCourses(response);
                 break;
@@ -2064,10 +2103,10 @@ public class MainActivity extends AppCompatActivity
                 this.updateFilterList(response);
                 break;
             case Constants.TAG_NEXT_INSTITUTE:
-                this.updateNextInstituteList(response);
+                this.updateNextInstituteList(response, Constants.INSTITUTE_TYPE);
                 break;
             case Constants.TAG_NEXT_SHORTLIST_INSTITUTE:
-                this.updateNextInstituteList(response);
+                this.updateNextInstituteList(response, Constants.SHORTLIST_TYPE);
                 break;
             case Constants.TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING:
                 this.updateLastInstituteList(response);
@@ -2099,8 +2138,11 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.CARD_DELETE_SHORTLISTED_INSTITUTE:
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                if (tags.length == 2 && tags[1].equals("true") && next!=null){
-                    onNextWishList();
+                if (tags.length == 2 ){
+                    if (tags[1].equals("true") && next!=null)
+                        onNextWishList();
+                    else
+                        RemoveInstituteFromWishlist(Integer.parseInt(tags[1]));
                 }
                 break;
             case Constants.TAG_INSTITUTE_LIKE_DISLIKE:
@@ -2411,6 +2453,11 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void RemoveInstituteFromWishlist(int i) {
+        if (currentFragment instanceof WishlistFragment)
+            ((WishlistFragment) currentFragment).RemoveInstitute(i);
     }
 
 
@@ -3233,15 +3280,11 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
         } else {
             this.mMakeNetworkCall(Constants.TAG_SUBMIT_EDITED_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
-
         }
     }
 
-
-
     @Override
     public void onInstituteLikedDisliked(int position, int liked) {
-
         if (position >= 0 && mInstituteList != null && mInstituteList.size() > position) {
             Institute institute = this.mInstituteList.get(position);
             this.onInstituteLikedDislikedByEntity(institute, liked, Constants.TAG_INSTITUTE_LIKE_DISLIKE + "#" + position, Constants.INSTITUTE_LIKE_DISLIKE);
@@ -3278,6 +3321,45 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayFragment(FilterFragment.newInstance(this.mFolderList), true, Constants.TAG_FRAGMENT_FILTER_LIST);
             else
                 this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_FILTER_LIST);
+        }
+    }
+
+    @Override
+    public void OnWishlistInstituteSelected(Institute institute) {
+        this.mDisplayInstituteByEntity(institute);
+    }
+
+    @Override
+    public void OnWishlistInstituteApplied(Institute institute, int position) {
+        this.mInstitute =institute;
+        DataBaseHelper.getInstance(this).deleteAllExamSummary();
+        if(institute.getGroups_exists()==1) {
+            String cafUrl = "https://m.collegedekho.com/caf-login-signup/?institute_id=" + institute.getId();
+            onDisplayWebFragment(cafUrl);
+/*
+            HashMap<String, String> params = new HashMap<>();
+            params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
+            params.put("action", String.valueOf("1"));
+            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE+"#"+islastcard , institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+*/
+
+
+        }else {
+            requestForApplyInstitute(Constants.TAG_WISH_LIST_APPLIED_COURSE,new HashMap<String, String>(),Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE);
+
+            if(mInstitute != null) {
+                Map<String, Object> eventValue = new HashMap<>();
+                eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_RECO), mInstitute.getResource_uri());
+                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
+            }
+        }
+
+    }
+
+    @Override
+    public void OnWishlistInstituteRemoved(Institute institute, int position) {
+        if (institute != null) {
+            this.mMakeNetworkCall(Constants.CARD_DELETE_SHORTLISTED_INSTITUTE + "#" + position , institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
         }
     }
 
@@ -4406,7 +4488,6 @@ public class MainActivity extends AppCompatActivity
 
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
         Map<String, Object> eventValue = new HashMap<String, Object>();
-        String[] examNames = new String[this.mUserExamsList.size()];
 
         for (int n = 0; n < this.mUserExamsList.size(); n++) {
             ExamDetail examDetail = this.mUserExamsList.get(n);
@@ -4420,7 +4501,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mUserEducationStepCompleted(String responseJson) {
-
         try {
             User userObj = JSON.std.beanFrom(User.class, responseJson);
             this.user.setLevel(userObj.getLevel());
@@ -4459,19 +4539,6 @@ public class MainActivity extends AppCompatActivity
                     .setAction(action)
                     .setLabel(label)
                     .build());
-        }
-    }
-
-    public static void GATrackerEvent(String category, String action, String[] labels) {
-        if (MainActivity.tracker != null) {
-            HitBuilders.EventBuilder eventBuilder = new HitBuilders.EventBuilder();
-            eventBuilder.setCategory(category);
-            eventBuilder.setAction(action);
-
-            for (String label : labels)
-                eventBuilder.setLabel(label);
-
-            MainActivity.tracker.send(eventBuilder.build());
         }
     }
 
@@ -4704,6 +4771,7 @@ public class MainActivity extends AppCompatActivity
 
     private void onNotPreparingEducationResponse(String response) {
         this.mDisplayFragment(NotPreparingFragment.newInstance(), true, NotPreparingFragment.class.toString());
+
         try {
             UserEducation education = JSON.std.beanFrom(UserEducation.class, response);
             MainActivity.user.setIs_preparing("0");
@@ -4716,6 +4784,7 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
 
         }
+
         //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.USER_CURRENT_SUBLEVEL), user.getSublevel());
@@ -5033,29 +5102,32 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnAppliedInstitute(Institute institute, boolean islastcard) {
-
-        this.mInstitute =institute;
+        this.mInstitute = institute;
+        Map<String, Object> eventValue = new HashMap<>();
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
-        if(institute.getGroups_exists()==1) {
+        if(institute.getGroups_exists()==1)
+        {
+            eventValue.put(MainActivity.getResourceString(R.string.APPLY_INSTITUTE), Constants.CDInstituteType.PARTNER.toString());
+
             String cafUrl = "https://m.collegedekho.com/caf-login-signup/?institute_id=" + institute.getId();
             onDisplayWebFragment(cafUrl);
 
             HashMap<String, String> params = new HashMap<>();
             params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
             params.put("action", String.valueOf("1"));
+
             this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE+"#"+islastcard , institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-
-
-        }else {
+        }
+        else
+        {
+            eventValue.put(MainActivity.getResourceString(R.string.APPLY_INSTITUTE), Constants.CDInstituteType.NON_PARTNER.toString());
             requestForApplyInstitute(Constants.TAG_WISH_LIST_APPLIED_COURSE,new HashMap<String, String>(),Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE+"#"+islastcard);
-
-            if(mInstitute != null) {
-                Map<String, Object> eventValue = new HashMap<>();
-                eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_RECO), mInstitute.getResource_uri());
-                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
-            }
         }
 
+        if(this.mInstitute != null) {
+            eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_WISHLIST), this.mInstitute.getResource_uri());
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
+        }
     }
 
     @Override
@@ -6032,7 +6104,6 @@ public class MainActivity extends AppCompatActivity
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 return;
         }
-
 
         Log.e(TAG, "Permission not granted: results len = " + grantResults.length +
                 " Result code = " + (grantResults.length > 0 ? grantResults[0] : "(empty)"));

@@ -72,6 +72,7 @@ public class Institute implements Parcelable {
     private String application_end_date;
     private String application_status;
     private int groups_exists;
+    private int is_applied;
 
     private ArrayList<String> exams = new ArrayList<>();
     private ArrayList<String> user_exams = new ArrayList<>();
@@ -134,6 +135,7 @@ public class Institute implements Parcelable {
         application_end_date=source.readString();
         application_status=source.readString();
         groups_exists=source.readInt();
+        is_applied = source.readInt();
     }
 
     public String getCurrent_user_vote_url() {
@@ -286,6 +288,7 @@ public class Institute implements Parcelable {
         dest.writeString(application_end_date);
         dest.writeString(application_status);
         dest.writeInt(groups_exists);
+        dest.writeInt(is_applied);
     }
 
     public String getLogo() {
@@ -630,5 +633,14 @@ public class Institute implements Parcelable {
 
     public void setUser_exams(ArrayList<String> user_exams) {
         this.user_exams = user_exams;
+    }
+
+
+    public boolean is_applied() {
+        return (is_applied == 1);
+    }
+
+    public void setIs_applied(boolean is_applied) {
+        this.is_applied = is_applied ? 1 : 0;
     }
 }

@@ -108,6 +108,7 @@ public class InstitutePagerAdapter extends FragmentStatePagerAdapter {
         }
         return super.getPageTitle(position);
     }
+
     public void updateInstitutiesList(Institute institute){
         this.mInstitute = institute;
     }

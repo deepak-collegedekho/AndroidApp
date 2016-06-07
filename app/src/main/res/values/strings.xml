@@ -276,6 +276,7 @@
     <string name="APPLY_COURSE">institute_course</string>
     <string name="APPLY_COURSE_ID">institute_course_id</string>
     <string name="APPLY_INSTITUTE">institute</string>
+    <string name="APPLY_INSTITUTE_FROM_WISHLIST">applied_institute_from_wishlist</string>
     <string name="APPLY_INSTITUTE_FROM_RECO">institute_from_reco</string>
 
 
@@ -427,6 +428,7 @@
     <string name="profile_tute_description">Tutorial: select to vanish</string>
     <string name="news_image_description">Image for current news</string>
     <string name="article_image_description">Image for current Article</string>
+    <string name="institute_logo_description">Logo for wishlist college</string>
 
     <!-- TRUE CALLER Debug key--><!--
     <string name="partnerKey">baLWqkLO85xFIlFrAi5phqW1zSfCceMb</string>-->

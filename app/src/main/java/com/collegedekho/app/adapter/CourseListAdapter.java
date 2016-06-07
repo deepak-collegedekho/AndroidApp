@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.InstituteCourse;
-import com.collegedekho.app.fragment.InstituteCoursesFragment;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;

@@ -6,16 +6,12 @@ import android.net.Uri;
 import com.appsflyer.AppsFlyerLib;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.resource.Constants;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.tagmanager.DataLayer;
 import com.google.android.gms.tagmanager.TagManager;
 
-import org.apache.tools.ant.Main;
-
-import java.util.HashMap;
 import java.util.Map;
 
 import io.connecto.android.sdk.Properties;

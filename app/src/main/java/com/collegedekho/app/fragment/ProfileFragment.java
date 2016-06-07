@@ -148,9 +148,9 @@ public class ProfileFragment extends BaseFragment {
 
         int currentPassingYear = mProfile.getCurrent_passing_year();
         if(currentPassingYear >= 2000)
-         ((TextView)view.findViewById(R.id.profile_education_year)).setText(": "+currentPassingYear);
+            ((TextView)view.findViewById(R.id.profile_education_year)).setText(": "+currentPassingYear);
         else
-          ((TextView)view.findViewById(R.id.profile_education_year)).setText(": na");
+            ((TextView)view.findViewById(R.id.profile_education_year)).setText(": na");
 
         String currentStream = mProfile.getCurrent_stream_name();
         if (currentStream != null && !currentStream.isEmpty()){
@@ -179,7 +179,7 @@ public class ProfileFragment extends BaseFragment {
 
 
         // set user preferred info
-         setPreferredEducationInfo(false);
+        setPreferredEducationInfo(false);
 
         //  set User Exams Names
         setUserExamsInfo(false);
@@ -279,7 +279,7 @@ public class ProfileFragment extends BaseFragment {
                 degreesNameBuffer.append(", ").append(degreeNameList.get(i));
             }
             if(!isShowAllInfo && degreeNameList.size() > count) {
-                    ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(degreesNameBuffer.toString()+"....");
+                ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(degreesNameBuffer.toString()+"....");
             }else{
                 ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(degreesNameBuffer.toString());
             }
@@ -405,7 +405,7 @@ public class ProfileFragment extends BaseFragment {
                 }
                 break;
             case R.id.profile_show_more_education:
-                 rootView = getView();
+                rootView = getView();
                 if(rootView != null){
                     View view = rootView.findViewById(R.id.profile_more_education);
                     if(view.getVisibility()== View.VISIBLE)

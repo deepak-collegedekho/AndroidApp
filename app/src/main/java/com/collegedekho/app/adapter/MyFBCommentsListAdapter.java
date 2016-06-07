@@ -43,8 +43,6 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
     public MyFBCommentsListAdapter(Context context, ArrayList<MyFutureBuddyComment> myFBCommentList) {
         this.mMyFBCommentList = myFBCommentList;
         this.mContext = context;
-        //this.mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-        //this.mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     @Override
