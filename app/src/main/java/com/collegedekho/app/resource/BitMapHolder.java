@@ -19,7 +19,7 @@ public class BitMapHolder {
     private Drawable drawableNotInterested;
     private Drawable drawableUndecided ;
     public static Bitmap SHORTLISTED_BITMAP;
-    public static Bitmap UN_SHORTLISTED_BITMAP;
+    public static Bitmap UNSHORTLISTED_BITMAP;
     public static Bitmap UNDECIDED_BITMAP;
     public static Bitmap DEFAULT_BANNER;
     private Context mContext;
@@ -46,8 +46,8 @@ public class BitMapHolder {
 
         if(SHORTLISTED_BITMAP == null)
             SHORTLISTED_BITMAP   =  Utils.getBitmapDrawable(drawableShortList);
-        if(UN_SHORTLISTED_BITMAP == null)
-            UN_SHORTLISTED_BITMAP =  Utils.getBitmapDrawable(drawableNotInterested);
+        if(UNSHORTLISTED_BITMAP == null)
+            UNSHORTLISTED_BITMAP =  Utils.getBitmapDrawable(drawableNotInterested);
         if(UNDECIDED_BITMAP == null)
             UNDECIDED_BITMAP     =  Utils.getBitmapDrawable(drawableUndecided);
         if(DEFAULT_BANNER == null)

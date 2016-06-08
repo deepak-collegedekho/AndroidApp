@@ -18,6 +18,7 @@
     <color name="white">#fff</color>
     <color name="black">#000</color>
     <color name="text_lightest_grey">#aca9a9</color>
+    <color name="dark_aplha">#55343435</color>
     <color name="material_button_blue">#ff1f7eeb</color>
     <color name="material_button_blue_dark">#ff1f66cb</color>
     <color name="text_subhead">#ff479efb</color>
@@ -60,7 +61,7 @@
     <color name="card_bg">#EBEBEB</color>
     <color name="card_outline">#D0D0CE</color>
     //gradient colors
-    <color name="start_gradient">#f7737272</color>
+    <color name="start_gradient">#8dfffefe</color>
     <color name="end_gradient">#96a7aca7</color>
     <color name="wallet_foreground_light">#bebebe</color>
     <color name="light_blue_transparent">#d13399ff</color>

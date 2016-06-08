@@ -236,8 +236,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-public class
-MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, ExamsFragment.OnExamsSelectListener,
         HomeFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
         DataLoadListener, StreamFragment.OnStreamInteractionListener,PsychometricStreamFragment.OnStreamInteractionListener,AdapterView.OnItemSelectedListener,
@@ -2138,7 +2137,7 @@ MainActivity extends AppCompatActivity
                 this.mDisplayStreams(response, true);
                 break;
             case Constants.WIDGET_SHORTLIST_INSTITUTES:
-                this.mCurrentTitle = "WishList Institutes";
+                this.mCurrentTitle = "Wishlist Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 //this.mDisplayInstituteList(response, false, true, Constants.SHORTLIST_TYPE);
                 this.mDisplayWishlistInstituteList(response, false, true, Constants.SHORTLIST_TYPE);

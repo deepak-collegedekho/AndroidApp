@@ -184,7 +184,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
        /* try{
             ((ImageView) convertView.findViewById(R.id.like_textview)).setImageBitmap(BitMapHolder.SHORTLISTED_BITMAP);
-            ((ImageView) convertView.findViewById(R.id.dislike_textview)).setImageBitmap(BitMapHolder.UN_SHORTLISTED_BITMAP);
+            ((ImageView) convertView.findViewById(R.id.dislike_textview)).setImageBitmap(BitMapHolder.UNSHORTLISTED_BITMAP);
             ((ImageView) convertView.findViewById(R.id.decide_later_textview)).setImageBitmap(BitMapHolder.UNDECIDED_BITMAP);
         }catch (Exception e){
             e.printStackTrace();
@@ -375,11 +375,11 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
         String examsText="";
         for (String exam:institute.getExams()){
-            examsText=examsText+exam+",";
+            examsText = examsText + exam + ", ";
         }
 
         if(!examsText.trim().isEmpty()) {
-            examsAccepted.setText(examsText.substring(0, examsText.length() - 1));
+            examsAccepted.setText(examsText.substring(0, examsText.length() - 2));
         }
 
         String userExamsText="";
@@ -388,11 +388,12 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         }
 
         streamTV.setVisibility(View.GONE);
+        //Showing max of two exams here
         if(!userExamsText.trim().isEmpty()) {
             String[] userExams=userExamsText.split(",");
             String examsStr=userExams[0];
             if(userExams.length>=2){
-                examsStr+=","+userExams[1];
+                examsStr += ", " + userExams[1];
             }
             if(examsStr!=null && !examsStr.trim().isEmpty()) {
                 examsTv.setText("Exam: " + examsStr);

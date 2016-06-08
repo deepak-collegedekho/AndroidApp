@@ -364,12 +364,12 @@
 
                 <RelativeLayout
                     android:id="@+id/wishlist_institute_see_all_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/m40dp"
+                    android:layout_height="@dimen/m35dp"
                     android:layout_alignParentRight="true"
                     android:layout_alignTop="@id/wishlist_institute_facilities_text"
-                    android:layout_marginRight="@dimen/m10dp">
-
+                    android:layout_marginRight="@dimen/m10dp"
+                    >
                     <TextView
                         android:id="@+id/wishlist_institute_see_all_text"
                         android:layout_width="wrap_content"
@@ -378,14 +378,16 @@
                         android:text="SEE ALL\nFACILITIES"
                         android:textColor="@color/primary_color"
                         android:textSize="6sp"
-                        android:visibility="gone"/>
-
+                        android:visibility="gone"
+                        />
                     <ImageView
                         android:id="@+id/wishlist_institute_see_all_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/wishlist_institute_see_all_text"
-                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:paddingRight="@dimen/m8dp"
                         android:layout_marginTop="@dimen/m1dp" />
                 </RelativeLayout>
 

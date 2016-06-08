@@ -33,7 +33,6 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.BitMapHolder;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.FadeInImageView;
@@ -61,7 +60,7 @@ public final class WishlistCardAdapter {
         this.mListener = listener;
         this.mContext = context;
 
-        this.mFacilitiesViewHeight = (int) getContext().getResources().getDimension(R.dimen.m35dp);
+        this.mFacilitiesViewHeight = (int) getContext().getResources().getDimension(R.dimen.m40dp);
         this.mMarginHorizontal = (int) getContext().getResources().getDimension(R.dimen.m10dp);
         this.mMarginVertical = (int) getContext().getResources().getDimension(R.dimen.m6dp);
     }
@@ -212,13 +211,13 @@ public final class WishlistCardAdapter {
         if (facilityArrayList != null && !facilityArrayList.isEmpty()) {
             this.mCardPeekView.findViewById(R.id.wishlist_institute_facilities_layout).setVisibility(View.VISIBLE);
             mFacilitiesRecycler.setAdapter(new FacilitiesAdapter(facilityArrayList, this.mfacilityText));
-            if (facilityArrayList.size() < 7) {
-                seeAllButton.setVisibility(View.INVISIBLE);
+            if (facilityArrayList.size() <= 7) {
+                seeAllButton.setVisibility(View.GONE);
             } else {
                 seeAllButton.setVisibility(View.VISIBLE);
             }
         } else {
-            seeAllButton.setVisibility(View.INVISIBLE);
+            seeAllButton.setVisibility(View.GONE);
             this.mCardPeekView.findViewById(R.id.wishlist_institute_facilities_layout).setVisibility(View.GONE);
         }
 
@@ -231,11 +230,11 @@ public final class WishlistCardAdapter {
 
         String examsText = "";
         for (String exam : this.mInstitute.getExams()) {
-            examsText = examsText + exam + ",";
+            examsText = examsText + exam + ", ";
         }
 
         if (!examsText.trim().isEmpty()) {
-            examsAccepted.setText(examsText.substring(0, examsText.length() - 1));
+            examsAccepted.setText(examsText.substring(0, examsText.length() - 2));
         }
 
         String userExamsText = "";
@@ -245,11 +244,12 @@ public final class WishlistCardAdapter {
 
         //TODO: Check if we have to make it visible in any case
         streamTV.setVisibility(View.GONE);
+        //Showing max of two exams here
         if (!userExamsText.trim().isEmpty()) {
             String[] userExams = userExamsText.split(",");
             String examsStr = userExams[0];
             if (userExams.length >= 2) {
-                examsStr += "," + userExams[1];
+                examsStr += ", " + userExams[1];
             }
             if (examsStr != null && !examsStr.trim().isEmpty()) {
                 examsTv.setVisibility(View.VISIBLE);
@@ -501,33 +501,33 @@ public final class WishlistCardAdapter {
 
         @Override
         public FacilitiesAdapter.FacilitiesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            NetworkImageView imageView = (NetworkImageView) LayoutInflater.
-                    from(parent.getContext()).inflate(R.layout.item_facility_38dp, parent, false);
+            RelativeLayout imageView = (RelativeLayout) LayoutInflater.
+                    from(parent.getContext()).inflate(R.layout.item_facility_40dp, parent, false);
             return new FacilitiesViewHolder(imageView);
         }
 
         @Override
         public void onBindViewHolder(final FacilitiesAdapter.FacilitiesViewHolder holder, int position) {
+            //Removing trailing whitespaces
+            String facility = facilitiesList.get(holder.getAdapterPosition()).tag;
+            facility = facility.replaceFirst("\\s+$", "");
+
             holder.image.setImageUrl(facilitiesList.get(holder.getAdapterPosition()).image_new, imageLoader);
             holder.image.setTag(facilitiesList.get(holder.getAdapterPosition()).tag);
-/*
-            holder.image.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    facilityText.clearAnimation();
-                    facilityText.setText((String) holder.image.getTag());
-                    animateView(facilityText);
-                }
-            });
-*/
+            holder.text.setText(facility);
+
             holder.image.setOnHoverListener(new View.OnHoverListener(){
 
                 @Override
                 public boolean onHover(View v, MotionEvent event) {
-                    facilityText.clearAnimation();
-                    facilityText.setText((String) holder.image.getTag());
-                    animateView(facilityText);
-                    return true;
+                    if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER)
+                    {
+                        facilityText.clearAnimation();
+                        facilityText.setText((String) holder.image.getTag());
+                        animateView(facilityText);
+                    }
+
+                    return false;
                 }
             });
         }
@@ -539,10 +539,12 @@ public final class WishlistCardAdapter {
 
         class FacilitiesViewHolder extends RecyclerView.ViewHolder {
             NetworkImageView image;
+            TextView text;
 
-            public FacilitiesViewHolder(View itemView) {
+            public FacilitiesViewHolder(ViewGroup itemView) {
                 super(itemView);
-                image = (NetworkImageView) itemView;
+                image = (NetworkImageView) itemView.findViewById(R.id.facility_image);
+                text = (TextView) itemView.findViewById(R.id.facility_text);
             }
         }
 
