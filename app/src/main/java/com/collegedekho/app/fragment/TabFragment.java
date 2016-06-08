@@ -82,30 +82,30 @@ private View mExamsTabLayout;
 
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
-        if(MainActivity.user != null) {
+        if(MainActivity.mProfile != null) {
 
-            String name = MainActivity.user.getName();
+            String name = MainActivity.mProfile.getName();
             if(name.contains("Anonymous User"))
             {
-                if(MainActivity.user.profileData[0] != null)
-                {
-                    mProfileName.setText(MainActivity.user.profileData[0]);
-                    mProfileName.setVisibility(View.VISIBLE);
-                    mProfileName.setContentDescription(MainActivity.user.profileData[0]);
-                }else {
-                    mProfileName.setText("");
-                    mProfileName.setVisibility(View.GONE);
-                }
+                mProfileName.setText("");
+                mProfileName.setVisibility(View.GONE);
             }else {
                 mProfileName.setText(name);
                 mProfileName.setVisibility(View.VISIBLE);
             }
-            String image = MainActivity.user.getImage();
+            String image = MainActivity.mProfile.getImage();
             if (image != null && ! image.isEmpty()) {
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
                 mProfileImage.setVisibility(View.VISIBLE);
+            }else{
+                if(MainActivity.user != null) {
+                    image = MainActivity.user.getImage();
+                    if (image != null && !image.isEmpty())
+                        mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+                }
             }
-            String streamName = MainActivity.user.getStream_name();
+
+            String streamName = MainActivity.mProfile.getCurrent_stream_name();
             if(streamName != null && !streamName.isEmpty()){
                 mStreamName.setVisibility(View.VISIBLE);
                 mStreamName.setText(streamName);

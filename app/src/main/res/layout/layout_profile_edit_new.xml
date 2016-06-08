@@ -472,7 +472,7 @@
                     <RadioButton
                         android:id="@+id/profile_fee_range_above_4"
                         style="@style/ProfileRadioButton"
-                        android:text="Above 4 Lakh"
+                        android:text="Above 4 Lacs"
                         android:tag="5"/>
                 </com.collegedekho.app.widget.SegmentedGroup>
                 <LinearLayout
@@ -747,7 +747,7 @@
                     android:layout_height="45dp"
                     android:layout_marginBottom="@dimen/m16dp"
                     android:layout_marginTop="@dimen/m16dp"
-                    android:layout_marginRight="@dimen/m8dp"
+                    android:layout_marginRight="@dimen/m6dp"
                     android:gravity="left"
                     android:layout_marginLeft="4dp"
                     android:contentDescription="@string/fb_login_description">

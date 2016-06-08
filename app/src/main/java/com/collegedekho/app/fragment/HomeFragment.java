@@ -224,23 +224,46 @@ public class HomeFragment extends BaseFragment
 
         Constants.READY_TO_CLOSE = false;
 
-        if(MainActivity.user != null)
+        if(MainActivity.mProfile != null)
         {
-            String name = MainActivity.user.getName();
+            String name = MainActivity.mProfile.getName();
             if(name!=null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()))
             {
-                if(MainActivity.user.profileData[0] != null && !MainActivity.user.profileData[0].equalsIgnoreCase(Constants.ANONYMOUS_USER))
-                {
-                    mProfileName.setText(MainActivity.user.profileData[0]);
-                    mProfileName.setVisibility(View.VISIBLE);
-                }else {
-                    mProfileName.setText("");
-                    mProfileName.setVisibility(View.GONE);
-                }
+                mProfileName.setText("");
+                mProfileName.setVisibility(View.GONE);
             }else {
                 mProfileName.setText(name);
                 mProfileName.setVisibility(View.VISIBLE);
             }
+            String image = MainActivity.mProfile.getImage();
+            if (image != null && ! image.isEmpty())
+                mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+            else{
+                 image = MainActivity.user.getImage();
+                if (image != null && ! image.isEmpty())
+                    mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+
+            }
+            String streamName = MainActivity.mProfile.getCurrent_stream_name();
+            if(streamName != null && !streamName.isEmpty()){
+                mStreamName.setVisibility(View.VISIBLE);
+                mStreamName.setText(streamName);
+            }
+            else{
+                mStreamName.setVisibility(View.GONE);
+            }
+        }else if(MainActivity.user != null){
+
+            String name = MainActivity.user.getName();
+            if(name!=null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()))
+            {
+                mProfileName.setText("");
+                mProfileName.setVisibility(View.GONE);
+            }else {
+                mProfileName.setText(name);
+                mProfileName.setVisibility(View.VISIBLE);
+            }
+
             String image = MainActivity.user.getImage();
             if (image != null && ! image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
@@ -253,6 +276,7 @@ public class HomeFragment extends BaseFragment
             else{
                 mStreamName.setVisibility(View.GONE);
             }
+
         }
 
         MainActivity mainActivity = (MainActivity) getActivity();

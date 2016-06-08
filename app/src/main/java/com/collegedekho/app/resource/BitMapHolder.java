@@ -16,10 +16,10 @@ import com.collegedekho.app.utils.Utils;
 public class BitMapHolder {
 
     private Drawable drawableShortList ;
-    private Drawable drawableNotIntrested ;
+    private Drawable drawableNotInterested;
     private Drawable drawableUndecided ;
     public static Bitmap SHORTLISTED_BITMAP;
-    public static Bitmap UNSHORTLISTED_BITMAP;
+    public static Bitmap UN_SHORTLISTED_BITMAP;
     public static Bitmap UNDECIDED_BITMAP;
     public static Bitmap DEFAULT_BANNER;
     private Context mContext;
@@ -39,15 +39,15 @@ public class BitMapHolder {
 
         if(this.drawableShortList == null)
             this.drawableShortList = ContextCompat.getDrawable(mContext, R.drawable.move_to_wishlist);
-        if(this.drawableNotIntrested == null)
-            this.drawableNotIntrested = ContextCompat.getDrawable(mContext, R.drawable.not_interested);
+        if(this.drawableNotInterested == null)
+            this.drawableNotInterested = ContextCompat.getDrawable(mContext, R.drawable.not_interested);
         if(this.drawableUndecided == null)
             this. drawableUndecided = ContextCompat.getDrawable(mContext, R.drawable.decide_later);
 
         if(SHORTLISTED_BITMAP == null)
             SHORTLISTED_BITMAP   =  Utils.getBitmapDrawable(drawableShortList);
-        if(UNSHORTLISTED_BITMAP == null)
-            UNSHORTLISTED_BITMAP =  Utils.getBitmapDrawable(drawableNotIntrested);
+        if(UN_SHORTLISTED_BITMAP == null)
+            UN_SHORTLISTED_BITMAP =  Utils.getBitmapDrawable(drawableNotInterested);
         if(UNDECIDED_BITMAP == null)
             UNDECIDED_BITMAP     =  Utils.getBitmapDrawable(drawableUndecided);
         if(DEFAULT_BANNER == null)

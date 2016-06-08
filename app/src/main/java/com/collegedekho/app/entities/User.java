@@ -163,7 +163,7 @@ public class User
         this.name = name;
     }
 
-    public String getImage() {
+   public String getImage() {
         return image;
     }
 

@@ -85,6 +85,7 @@ public class Constants
     public static final String BASE_URL = IP + "/api/1/";
     public static final String TAG_LOAD_COURSES = "load_courses";
     public static final String TAG_LOAD_PROFILE = "load_profile";
+    public static final String TAG_GET_USER_PROFILE = "get_user_profile";
     public static final String TAG_APPLIED_COURSE = "applied_course";
     public static final String TAG_WISH_LIST_APPLIED_COURSE = "wish_listLapplied_course";
     public static final String TAG_POST_QUESTION = "post_question";
@@ -163,6 +164,7 @@ public class Constants
     public static final String SEARCH_ARTICLES = "search_articles";
     public static final String SEARCH_NEWS = "search_news";
     public static final String SEARCH_QNA = "search_qna";
+    public static final int PICK_IMAGE = 2 ;
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;
@@ -251,7 +253,7 @@ public class Constants
     public static final String CD_RECOMMENDED_INSTITUTE_ACTION_TYPE = "cd_recommended_institute_action_type";
 
     public enum CDRecommendedInstituteType {
-        UNDECIDED, SHORTLISTED, NOT_INERESTED, UNBAISED,RECOMMENDED,BUZZLIST
+        UNDECIDED, SHORTLISTED, NOT_INERESTED, UNBAISED, BUZZLIST
     }
 
     public enum CDInstituteType {

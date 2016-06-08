@@ -1,23 +1,42 @@
 package com.collegedekho.app.fragment;
 
 import android.animation.ObjectAnimator;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ScaleDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.widget.CircularImageView;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -81,7 +100,13 @@ public class ProfileFragment extends BaseFragment {
         String image = mProfile.getImage();
         if (image != null && !image.isEmpty())
             mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-
+        else{
+            if(MainActivity.user != null) {
+                image = MainActivity.user.getImage();
+                if (image != null && !image.isEmpty())
+                    mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+            }
+        }
     }
 
     public void updateUserProfile() {
@@ -90,15 +115,18 @@ public class ProfileFragment extends BaseFragment {
             return;
 
 
-        // update current basic info
         String name = mProfile.getName();
         if(name != null && !name.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_user_name)).setText(name);
         }
 
+        // update current basic info
+
+        int infoProgressStatus =0;
         String email = mProfile.getEmail();
         if (email != null && !email.isEmpty() && !email.contains("@anonymouscollegedekho.com")) {
             ((TextView)view.findViewById(R.id.profile_info_email)).setText(": "+email);
+            infoProgressStatus +=18;
         }else{
             ((TextView)view.findViewById(R.id.profile_info_email)).setText(": na");
         }
@@ -106,6 +134,7 @@ public class ProfileFragment extends BaseFragment {
         String phone = mProfile.getPhone_no();
         if (phone != null && !phone.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_info_phone)).setText(": +91-"+phone);
+            infoProgressStatus +=18;
         }else{
             ((TextView)view.findViewById(R.id.profile_info_phone)).setText(": na");
         }
@@ -113,6 +142,7 @@ public class ProfileFragment extends BaseFragment {
         String city = mProfile.getCity_name();
         if (city != null && !city.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_info_city)).setText(": "+city);
+            infoProgressStatus +=16;
         }else{
             ((TextView)view.findViewById(R.id.profile_info_city)).setText(": na");
         }
@@ -120,6 +150,7 @@ public class ProfileFragment extends BaseFragment {
         String  state = mProfile.getState_name();
         if (state != null && !state.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_info_state)).setText(": "+state);
+            infoProgressStatus +=16;
         }else{
             ((TextView)view.findViewById(R.id.profile_info_state)).setText(": na");
         }
@@ -127,6 +158,7 @@ public class ProfileFragment extends BaseFragment {
         String motherTongue = mProfile.getMother_tongue_name();
         if (motherTongue != null && !motherTongue.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_info_mother_tongue)).setText(": "+motherTongue);
+            infoProgressStatus +=16;
         }else{
             ((TextView)view.findViewById(R.id.profile_info_mother_tongue)).setText(": na");
         }
@@ -134,27 +166,36 @@ public class ProfileFragment extends BaseFragment {
         String category = mProfile.getSocial_category_name();
         if (category != null && !category.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_info_category)).setText(": "+category);
+            infoProgressStatus +=16;
         }else{
             ((TextView)view.findViewById(R.id.profile_info_category)).setText(": na");
         }
+        // set basic info progress
+        setProfileProgressStatus((ProgressBar)view.findViewById(R.id.profile_info_progress), infoProgressStatus);
+
 
         // set user  current education info
+        int currentEducationStatus = 0;
         String currentDegreeName = mProfile.getCurrent_degree_name();
         if (currentDegreeName != null && !currentDegreeName.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_education_degree)).setText(": "+currentDegreeName);
+            currentEducationStatus +=18;
         }else{
             ((TextView)view.findViewById(R.id.profile_education_degree)).setText(": na");
         }
 
         int currentPassingYear = mProfile.getCurrent_passing_year();
-        if(currentPassingYear >= 2000)
-            ((TextView)view.findViewById(R.id.profile_education_year)).setText(": "+currentPassingYear);
-        else
-            ((TextView)view.findViewById(R.id.profile_education_year)).setText(": na");
 
+        if(currentPassingYear >= 2000) {
+            ((TextView) view.findViewById(R.id.profile_education_year)).setText(": " + currentPassingYear);
+            currentEducationStatus +=18;
+        } else {
+            ((TextView) view.findViewById(R.id.profile_education_year)).setText(": na");
+        }
         String currentStream = mProfile.getCurrent_stream_name();
         if (currentStream != null && !currentStream.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_education_stream)).setText(": "+currentStream);
+            currentEducationStatus +=17;
         }else{
             ((TextView)view.findViewById(R.id.profile_education_stream)).setText(": na");
         }
@@ -162,6 +203,7 @@ public class ProfileFragment extends BaseFragment {
         String currentSpecialization = mProfile.getCurrent_specialization_name();
         if (currentSpecialization != null && !currentSpecialization.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_education_specialization)).setText(": "+currentSpecialization);
+            currentEducationStatus +=17;
         }else{
             ((TextView)view.findViewById(R.id.profile_education_specialization)).setText(": na");
         }
@@ -170,12 +212,19 @@ public class ProfileFragment extends BaseFragment {
         int scoreType = mProfile.getCurrent_score_type();
         if (scoreType <  0){
             ((TextView)view.findViewById(R.id.profile_education_score)).setText(": "+currentScore);
+            currentEducationStatus +=16;
         }else{
-            ((TextView)view.findViewById(R.id.profile_education_score)).setText(": "+ ProfileMacro.getCurrentScoreTypeName(scoreType));
+            ((TextView)view.findViewById(R.id.profile_education_score)).setText(": "+currentScore +" "+  ProfileMacro.getCurrentScoreTypeName(scoreType));
         }
 
         int currentMode = mProfile.getCurrent_mode();
-        ((TextView)view.findViewById(R.id.profile_education_mode)).setText(": "+ProfileMacro.getMotherTongueName(currentMode));
+        {
+            currentEducationStatus +=14;
+            ((TextView) view.findViewById(R.id.profile_education_mode)).setText(": " + ProfileMacro.getEducationMode(currentMode));
+        }
+        setProfileProgressStatus((ProgressBar)view.findViewById(R.id.profile_education_progress), currentEducationStatus);
+
+
 
 
         // set user preferred info
@@ -185,9 +234,11 @@ public class ProfileFragment extends BaseFragment {
         setUserExamsInfo(false);
 
         //  set User Others Info
+        int otherInfoStatus =0;
         String fatherName = mProfile.getFathers_name();
         if (fatherName != null && !fatherName.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_father_name)).setText(": "+fatherName);
+            otherInfoStatus += 34;
         }else{
             ((TextView)view.findViewById(R.id.profile_father_name)).setText(": ");
         }
@@ -196,6 +247,7 @@ public class ProfileFragment extends BaseFragment {
         String motherName = mProfile.getMothers_name();
         if (motherName != null && !motherName.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_mother_name)).setText(": "+motherName);
+            otherInfoStatus += 33;
         }else{
             ((TextView)view.findViewById(R.id.profile_mother_name)).setText(": ");
         }
@@ -203,9 +255,11 @@ public class ProfileFragment extends BaseFragment {
         String coachingName = mProfile.getCoaching_institute();
         if (coachingName != null && !coachingName.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_coaching_institute_name)).setText(" : "+coachingName);
+            otherInfoStatus += 33;
         }else{
             ((TextView)view.findViewById(R.id.profile_coaching_institute_name)).setText(": ");
         }
+        setProfileProgressStatus((ProgressBar)view.findViewById(R.id.profile_other_progress), otherInfoStatus);
 
     }
 
@@ -219,9 +273,13 @@ public class ProfileFragment extends BaseFragment {
         if (mProfile == null || view == null)
             return;
 
+        int preferredInfoStatus = 0;
+
         String preferredStream = mProfile.getPreferred_stream_short_name();
         if (preferredStream != null && !preferredStream.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_preferences_stream)).setText(": "+preferredStream);
+             preferredInfoStatus += 15;
+
         }else{
             ((TextView)view.findViewById(R.id.profile_preferences_stream)).setText("na");
 
@@ -230,30 +288,34 @@ public class ProfileFragment extends BaseFragment {
         String preferredSpecialization = mProfile.getPreferred_specialization_name();
         if (preferredSpecialization != null && !preferredSpecialization.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_preferences_specialization)).setText(": "+preferredSpecialization);
+            preferredInfoStatus += 12;
         }else{
             ((TextView)view.findViewById(R.id.profile_preferences_specialization)).setText("na");
 
         }
 
         int preferredYear = mProfile.getPreferred_year_of_admission();
-        if(preferredYear >= 2000)
-            ((TextView)view.findViewById(R.id.profile_preferences_year)).setText(": "+preferredYear);
-        else
+        if(preferredYear >= 2000 ){
+            ((TextView) view.findViewById(R.id.profile_preferences_year)).setText(": " + preferredYear);
+            preferredInfoStatus += 13;
+        }else
             ((TextView)view.findViewById(R.id.profile_preferences_year)).setText(": na");
 
 
         int preferredMode = mProfile.getPreferred_mode();
-        ((TextView)view.findViewById(R.id.profile_preferences_mode)).setText(": "+ProfileMacro.getMotherTongueName(preferredMode));
+        ((TextView)view.findViewById(R.id.profile_preferences_mode)).setText(": "+ProfileMacro.getEducationMode(preferredMode));
+        preferredInfoStatus += 10;
 
         int feeRange = mProfile.getPreferred_fee_range_max();
-        if(feeRange >= 1)
-            ((TextView)view.findViewById(R.id.profile_preferences_fee_range)).setText(": "+ProfileMacro.getFeeRangeName(feeRange));
-        else
+        if(feeRange >= 1) {
+            ((TextView) view.findViewById(R.id.profile_preferences_fee_range)).setText(": " + ProfileMacro.getFeeRangeName(feeRange));
+            preferredInfoStatus += 13;
+        }else
             ((TextView)view.findViewById(R.id.profile_preferences_fee_range)).setText(": na");
 
         int loanRequired = mProfile.getPreferred_loan_required();
         if(loanRequired >= 1) {
-
+            preferredInfoStatus += 12;
             int loanAmount = mProfile.getPreferred_loan_amount_needed();
             view.findViewById(R.id.profile_preferences_loan_required_layout).setVisibility(View.VISIBLE);
             ((TextView) view.findViewById(R.id.profile_preferences_loan_amount)).setText(": " + ProfileMacro.getLoanRequiredAmount(loanAmount));
@@ -265,7 +327,7 @@ public class ProfileFragment extends BaseFragment {
 
         // set degree names
         ArrayList<String> degreeNameList = mProfile.getPreferred_degrees_names();
-        if(degreeNameList != null ){
+        if(degreeNameList != null && !degreeNameList.isEmpty() ){
             int count = degreeNameList.size();
             if(!isShowAllInfo && count >4)
                 count =4;
@@ -279,14 +341,16 @@ public class ProfileFragment extends BaseFragment {
                 degreesNameBuffer.append(", ").append(degreeNameList.get(i));
             }
             if(!isShowAllInfo && degreeNameList.size() > count) {
-                ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(degreesNameBuffer.toString()+"....");
+                    ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(": "+degreesNameBuffer.toString()+"....");
+
             }else{
-                ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(degreesNameBuffer.toString());
+                ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(": "+degreesNameBuffer.toString());
             }
+            preferredInfoStatus += 12;
         }
         // set City names
         ArrayList<String> cityNameList = mProfile.getPreferred_cities_names();
-        if(cityNameList != null ){
+        if(cityNameList != null  && !cityNameList.isEmpty()){
             int count = cityNameList.size();
             if(!isShowAllInfo && count >4)
                 count =4;
@@ -300,11 +364,14 @@ public class ProfileFragment extends BaseFragment {
                 cityNameBuffer.append(", ").append(cityNameList.get(i));
             }
             if(!isShowAllInfo && cityNameList.size() > count) {
-                ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(cityNameBuffer.toString()+"....");
+                ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(": "+cityNameBuffer.toString()+"....");
             }else{
-                ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(cityNameBuffer.toString());
+                ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(": "+cityNameBuffer.toString());
             }
+            preferredInfoStatus += 12;
         }
+
+        setProfileProgressStatus((ProgressBar)view.findViewById(R.id.profile_preferences_progress), preferredInfoStatus);
 
     }
 
@@ -334,18 +401,24 @@ public class ProfileFragment extends BaseFragment {
                 }
                 examsNameBuffer.append(", ").append(exam.getExam_name()) ;
             }
-            if( examsList.size() > count) {
-                if(showAll)
-                    ((TextView)view.findViewById(R.id.profile_exams_name)).setText(examsNameBuffer.toString()+"....");
-                else
-                    ((TextView)view.findViewById(R.id.profile_exams_name)).setText(examsNameBuffer.toString());
+            if(!showAll && examsList.size() > count) {
 
-                view.findViewById(R.id.profile_show_more_exams).setVisibility(View.VISIBLE);
+                ((TextView) view.findViewById(R.id.profile_exams_name)).setText(": "+examsNameBuffer.toString() + "....");
+                view.findViewById(R.id.profile_exams_name).setSelected(false);
+
             }else{
-                view.findViewById(R.id.profile_show_more_exams).setVisibility(View.VISIBLE);
-                ((TextView)view.findViewById(R.id.profile_exams_name)).setText(examsNameBuffer.toString());
+                view.findViewById(R.id.profile_exams_name).setSelected(true);
+                ((TextView)view.findViewById(R.id.profile_exams_name)).setText(": "+examsNameBuffer.toString());
             }
         }
+    }
+
+    public void setProfileProgressStatus(ProgressBar  progressbar, int progress)
+    {
+        progressbar.setProgress(0);
+        progressbar.setMax(100);
+        progressbar.setProgress(50);
+
     }
 
     private void animateArrow(boolean shouldRotateUp, Drawable drawable) {
@@ -397,10 +470,13 @@ public class ProfileFragment extends BaseFragment {
                 View rootView = getView();
                 if(rootView != null){
                     View view = rootView.findViewById(R.id.profile_more_info);
-                    if(view.getVisibility()== View.VISIBLE)
+                    if(view.getVisibility()== View.VISIBLE) {
                         view.setVisibility(View.GONE);
-                    else
+                        v.setScaleY(1f);
+                    }else {
                         view.setVisibility(View.VISIBLE);
+                        v.setScaleY(-1f);
+                    }
 
                 }
                 break;
@@ -408,10 +484,13 @@ public class ProfileFragment extends BaseFragment {
                 rootView = getView();
                 if(rootView != null){
                     View view = rootView.findViewById(R.id.profile_more_education);
-                    if(view.getVisibility()== View.VISIBLE)
+                    if(view.getVisibility()== View.VISIBLE) {
                         view.setVisibility(View.GONE);
-                    else
+                        v.setScaleY(1f);
+                    }else {
                         view.setVisibility(View.VISIBLE);
+                        v.setScaleY(-1f);
+                    }
 
                 }
                 break;
@@ -419,10 +498,15 @@ public class ProfileFragment extends BaseFragment {
                 rootView = getView();
                 if(rootView != null){
                     View view = rootView.findViewById(R.id.profile_more_preferences);
-                    if(view.getVisibility()== View.VISIBLE)
+                    if(view.getVisibility()== View.VISIBLE) {
+                        setPreferredEducationInfo(false);
                         view.setVisibility(View.GONE);
-                    else
+                        v.setScaleY(1f);
+                    } else {
                         view.setVisibility(View.VISIBLE);
+                        setPreferredEducationInfo(true);
+                        v.setScaleY(-1f);
+                    }
 
                 }
                 break;
@@ -430,18 +514,28 @@ public class ProfileFragment extends BaseFragment {
                 rootView = getView();
                 if(rootView != null){
                     View view = rootView.findViewById(R.id.profile_more_other_info);
-                    if(view.getVisibility()== View.VISIBLE)
+                    if(view.getVisibility()== View.VISIBLE) {
                         view.setVisibility(View.GONE);
-                    else
+                        v.setScaleY(1f);
+                    }else {
                         view.setVisibility(View.VISIBLE);
-
-                    setPreferredEducationInfo(true);
+                        v.setScaleY(-1f);
+                    }
 
                 }
                 break;
 
             case R.id.profile_show_more_exams:
-                setUserExamsInfo(true);
+                rootView = getView();
+                if(rootView != null) {
+                    if(rootView.findViewById(R.id.profile_exams_name).isSelected() == true) {
+                        setUserExamsInfo(false);
+                        v.setScaleY(1f);
+                    }else{
+                        setUserExamsInfo(true);
+                        v.setScaleY(-1f);
+                    }
+                }
                 break;
             default:
                 break;
@@ -450,12 +544,46 @@ public class ProfileFragment extends BaseFragment {
 
     private void mOnProfileImageUpdate() {
 
+        // Determine Uri of camera image to save.
+        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "MyDir" + File.separator);
+        root.mkdirs();
+        final String fname = "img_"+ System.currentTimeMillis() + ".jpg";
+        final File sdImageMainDirectory = new File(root, fname);
+        Uri outputFileUri = Uri.fromFile(sdImageMainDirectory);
+
+
+        // Camera.
+        List<Intent> cameraIntents = new ArrayList<Intent>();
+        Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        PackageManager packageManager = getActivity().getPackageManager();
+        List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+        for(ResolveInfo res : listCam) {
+            final String packageName = res.activityInfo.packageName;
+            Intent intent = new Intent(captureIntent);
+            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            intent.setPackage(packageName);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            cameraIntents.add(intent);
+        }
+
+        // Filesystem.
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        // Chooser of filesystem options.
+        Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+
+        // Add the camera options.
+       // chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
+
+        getActivity().startActivityForResult(chooserIntent, Constants.PICK_IMAGE);
     }
 
     private void mOnProfileEdited(){
         if(mListener != null)
             mListener.onUserProfileEdited(mProfile);
     }
+
 
 
     public interface  UserProfileListener{

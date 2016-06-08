@@ -6,7 +6,6 @@
     android:id="@+id/cd_reco_card_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/m2dp"
     android:fitsSystemWindows="true"
     android:background="@color/primary_color"
     android:elevation="@dimen/m1dp"
@@ -70,7 +69,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/m120dp">
+                    android:layout_height="@dimen/m115dp">
 
                     <com.collegedekho.app.widget.FadeInImageView
                         android:id="@+id/institute_image"
@@ -149,7 +148,7 @@
                     <LinearLayout
                         android:id="@+id/overlay_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="120dp"
+                        android:layout_height="115dp"
                         android:background="@color/primary_orange_light"
                         android:paddingLeft="@dimen/m20dp"
                         android:paddingTop="@dimen/m6dp"
@@ -400,7 +399,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="@dimen/m10dp">
+                        android:layout_marginTop="@dimen/m8dp">
 
                         <LinearLayout
                             android:layout_width="0dp"

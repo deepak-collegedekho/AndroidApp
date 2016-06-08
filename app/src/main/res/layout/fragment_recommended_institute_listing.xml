@@ -1,35 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
 <RelativeLayout android:id="@+id/title_view"
     android:layout_width="match_parent"
+    android:background="@color/primary_color_dark"
     android:layout_height="wrap_content">
+
     <TextView
         android:id="@+id/recommended_page_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary_color_dark"
         android:padding="10dp"
         android:text="Recommended Colleges"
         android:textColor="@color/white"
         android:textSize="14sp"
         />
 
-    <TextView
-        android:id="@+id/badge_counter"
+    <LinearLayout
+        android:id="@+id/badge_counter_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/m4dp"
-        android:background="@drawable/bg_rounded_orange_border_box"
-        android:padding="@dimen/m4dp"
-        android:text="0"
-        android:layout_centerVertical="true"
-        android:textColor="@color/primary_color"
-        />
+        android:gravity="center"
+        android:paddingTop="@dimen/m2dp"
+        android:paddingRight="@dimen/m3dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/badge_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/m4dp"
+            android:background="@drawable/bg_rounded_orange_border_box"
+            android:padding="@dimen/m4dp"
+            android:text="0"
+            android:layout_centerVertical="true"
+            android:textColor="@color/primary_color"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="Undecided"
+            />
+    </LinearLayout>
+
+
 </RelativeLayout>
 
     <RelativeLayout
@@ -57,7 +78,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/btn_cancel"
+                android:id="@+id/request_for_undecided_no"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/m16dp"
@@ -65,7 +86,7 @@
                 android:text="NO"/>
 
             <TextView
-                android:id="@+id/btn_ok"
+                android:id="@+id/request_for_undecided_ok"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/m16dp"
@@ -86,58 +107,32 @@
             android:id="@+id/fragment_recommended_institute_cards_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="9.1"
+            android:layout_weight="8.8"
             android:translationZ="@dimen/m5dp"
+            />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/cd_reco_wish_list_institute_grid"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            android:layout_weight="8.8"
             />
 
         <include
             layout="@layout/layout_empty"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="9.1"/>
+            android:layout_weight="10"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight=".9"
-            android:orientation="horizontal"
-            android:weightSum="1"
-            >
-
-            <ImageView
-                android:id="@+id/cd_reco_left_arrow"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight=".3"
-                app:srcCompat="@drawable/ic_arrow_right_black"/>
-
-            <TextView
-                android:id="@+id/fragment_recommended_institute_undecided_count"
-                style="@style/AppTheme.BlackBorderButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginBottom="@dimen/m4dp"
-                android:layout_weight=".4"
-                android:fontFamily="sans-serif-light"
-                android:gravity="center"
-                android:paddingBottom="@dimen/m8dp"
-                android:paddingTop="@dimen/m8dp"
-                android:text="Undecided Count - ..."
-                android:textSize="@dimen/m12sp"
-                android:visibility="visible"
-                app:srcCompat="@drawable/ic_arrow_right_black"
-                />
-
-            <ImageView
-                android:id="@+id/cd_reco_right_arrow"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight=".3"
-                android:scaleX="-1"
-                app:srcCompat="@drawable/ic_arrow_right_black"/>
-        </LinearLayout>
     </LinearLayout>
+
+    <include layout="@layout/layout_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/m50dp"
+        />
 
     <RelativeLayout
         android:id="@+id/direction_layout"
@@ -174,28 +169,10 @@
             />
     </RelativeLayout>
 
-    <FrameLayout
-        android:id="@+id/recommended_tute_frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:importantForAccessibility="no"
-        android:visibility="gone"
-        >
-
-        <ImageView
-            android:id="@+id/recommended_tute_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clickable="true"
-            android:contentDescription="@string/profile_tute_description"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_recommended_tute"
-            />
-    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="57dp"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
@@ -209,7 +186,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="45dp"
                 android:background="@drawable/wishlist_tab_orange_bg">
 
                 <ImageView
@@ -295,7 +272,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="45dp"
                 android:background="@drawable/wishlist_tab_purple_bg">
 
                 <TextView
@@ -379,7 +356,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="45dp"
                 android:background="@drawable/wishlist_tab_blue_bg">
 
                 <TextView
@@ -414,7 +391,6 @@
                     android:text="WISHLIST"
                     android:textColor="@color/white"
                     android:textSize="@dimen/m10sp"
-
                     android:textStyle="bold"/>
 
                 <ImageView
@@ -448,4 +424,22 @@
     </LinearLayout>
 
 
+    <FrameLayout
+        android:id="@+id/recommended_tute_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:visibility="gone"
+        >
+
+        <ImageView
+            android:id="@+id/recommended_tute_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:contentDescription="@string/profile_tute_description"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_recommended_tute"
+            />
+    </FrameLayout>
 </RelativeLayout>

@@ -14235,12 +14235,27 @@ public class ProfileMacro {
         else
             return "Preparing";
     }
+
     public static String getMotherTongueName(int id) {
         if(id == MOTHER_TONGUE_HINDI)
             return "Hindi";
         else if(id == MOTHER_TONGUE_HINDI)
             return "English";
         return "Other";
+    }
+
+    public static String getEducationMode(int id) {
+        if(id == MODE_FULL_TYPE)
+            return "Full Type";
+        else  if(id == MODE_PART_TYPE)
+            return "Part Type";
+        else  if(id == MODE_EXECUTIVE)
+            return "Executive Type";
+        else  if(id == MODE_DISTANCE)
+            return "Distance-Learning";
+        else  if(id == MODE_ONLINE)
+            return "Online/e-Learning";
+        return "na";
     }
 
     public static String getFeeRangeName(int id) {
@@ -14285,5 +14300,13 @@ public class ProfileMacro {
     public static int THREE_TO_FIVE_LAKH = 3;
     public static int ABOVE_FIVE_LAKH = 4;
     public static int TO_BE_DECIDED = 5;
+
+    // required loan Amount
+    public static int MODE_FULL_TYPE = 1;
+    public static int MODE_PART_TYPE = 2;
+    public static int MODE_EXECUTIVE = 5;
+    public static int MODE_DISTANCE = 4;
+    public static int MODE_ONLINE = 6;
+    public static int MODE_OTHER = 0;
 
 }

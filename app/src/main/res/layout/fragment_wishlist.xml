@@ -13,6 +13,7 @@
         android:paddingRight="55dp"
         android:text="Wishlist"
         />
+
     <include layout="@layout/layout_secondary_header"
         android:id="@+id/viewType"
         android:layout_width="match_parent"

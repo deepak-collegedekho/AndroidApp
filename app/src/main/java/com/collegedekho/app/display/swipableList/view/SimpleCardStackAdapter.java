@@ -54,13 +54,13 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
     private TextView mfacilityText;
 
 
-    private int cardCategory;
+    //private int cardCategory;
     public SimpleCardStackAdapter(Activity activity, Context context, OnCDRecommendedAdapterInterface listener, int cardCategory) {
         this.imageLoader = MySingleton.getInstance(context).getImageLoader();
         this.mListener = listener;
         this.mContext = context;
         this.mData = new Vector<>();
-        this.cardCategory =cardCategory;
+       // this.cardCategory =cardCategory;
     }
 
     public void addAll(ArrayList<CardModel> item) {
@@ -75,10 +75,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.wishlist_card_layout, parent, false);
         }
-
-        Log.e("getView ", " step 2 position  is " + position + " time is " + System.currentTimeMillis());
         setVectorDrawable(convertView);
-        Log.e("getView ", " step 3 position  is " + position + " time is " + System.currentTimeMillis());
 
         this.mfacilityText = (TextView) (convertView.findViewById(R.id.facility_toast));
 
@@ -92,20 +89,21 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
             }
         });
-        if (cardCategory == Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
+       /* if (cardCategory == Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
             ((TextView) convertView.findViewById(R.id.btn_apply_now)).setText("REMOVE");
-        }else {
+        }else {*/
             ((TextView) convertView.findViewById(R.id.btn_apply_now)).setText("APPLY NOW");
-        }
+        //}
         (convertView.findViewById(R.id.btn_apply_now)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Institute institute = ((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute();
-                if (cardCategory == Constants.CDRecommendedInstituteType.RECOMMENDED.ordinal() || cardCategory == Constants.CDRecommendedInstituteType.UNDECIDED.ordinal() || cardCategory == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()) {
+               /* if (cardCategory == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()
+                        || cardCategory == Constants.CDRecommendedInstituteType.UNDECIDED.ordinal()){*/
                     mListener.OnAppliedInstitute(institute);
-                } else if (cardCategory == Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
+               /* } else if (cardCategory == Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
                     mListener.onRemoveShortlisted(institute);
-                }
+                }*/
             }
         });
         (convertView.findViewById(R.id.header_view)).setOnClickListener(new View.OnClickListener() {
@@ -186,7 +184,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
        /* try{
             ((ImageView) convertView.findViewById(R.id.like_textview)).setImageBitmap(BitMapHolder.SHORTLISTED_BITMAP);
-            ((ImageView) convertView.findViewById(R.id.dislike_textview)).setImageBitmap(BitMapHolder.UNSHORTLISTED_BITMAP);
+            ((ImageView) convertView.findViewById(R.id.dislike_textview)).setImageBitmap(BitMapHolder.UN_SHORTLISTED_BITMAP);
             ((ImageView) convertView.findViewById(R.id.decide_later_textview)).setImageBitmap(BitMapHolder.UNDECIDED_BITMAP);
         }catch (Exception e){
             e.printStackTrace();
@@ -558,7 +556,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
         void OnAppliedInstitute(Institute institute);
 
-        void onRemoveShortlisted(Institute institute);
+        //void onRemoveShortlisted(Institute institute);
     }
 
     public void clear() {
@@ -701,11 +699,11 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             fadeIn.start();
         }
     }
-    public void setCardCategory(int category){
+   /* public void setCardCategory(int category){
         this.cardCategory=category;
     }
 
     public int getCardCategory() {
         return cardCategory;
-    }
+    }*/
 }

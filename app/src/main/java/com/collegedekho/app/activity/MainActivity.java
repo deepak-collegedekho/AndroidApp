@@ -16,6 +16,8 @@ import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -23,6 +25,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -187,6 +190,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -232,7 +236,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-public class MainActivity extends AppCompatActivity
+public class
+MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, ExamsFragment.OnExamsSelectListener,
         HomeFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
         DataLoadListener, StreamFragment.OnStreamInteractionListener,PsychometricStreamFragment.OnStreamInteractionListener,AdapterView.OnItemSelectedListener,
@@ -312,6 +317,7 @@ public class MainActivity extends AppCompatActivity
     // private CharSequence mTitle;
     private List<ExamDetail> mUserExamsList = new ArrayList<>();
     public static User user;
+    public static Profile mProfile;
     private User.Prefs userPref;
     static String type = "";
     static String resource_uri = "";
@@ -829,7 +835,7 @@ public class MainActivity extends AppCompatActivity
                         if (MainActivity.user == null)
                             MainActivity.user = new User();
 
-                        MainActivity.user.setImage(image);
+                       MainActivity.user.setImage(image);
 
                         HashMap hashMap = new HashMap<>();
                         hashMap.put(getResourceString(R.string.USER_FIRST_NAME), json.getString("first_name"));
@@ -1108,7 +1114,7 @@ public class MainActivity extends AppCompatActivity
 
         int id = item.getItemId();
         if (id == R.id.action_profile) {
-            mDisplayPofileFragment();
+            mDisplayProfileFragment();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -1279,47 +1285,58 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This mthod used to show user profile fragment UI
+     * This method used to show user profile fragment UI
      */
-    private void mDisplayPofileFragment() {
-   /*     Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileEditFragment.class.getSimpleName());
-        if (fragment == null)
-            mDisplayFragment(ProfileEditFragment.newInstance(), true, ProfileEditFragment.class.getSimpleName());
-        else
-            mDisplayFragment(fragment, false, ProfileEditFragment.class.getSimpleName());
-*/
-        this.mMakeNetworkCall(Constants.TAG_LOAD_PROFILE,Constants.BASE_URL+"profile/", null);
+    private void mDisplayProfileFragment() {
+        //if(MainActivity.mProfile == null) {
+            this.mMakeNetworkCall(Constants.TAG_LOAD_PROFILE, Constants.BASE_URL + "profile/", null);
+        /*}else{
+            showProfileScreen(MainActivity.mProfile);
+        }*/
+    }
+
+
+    private void mSetProfileUser(String response) {
+
+        try {
+            MainActivity.mProfile = JSON.std.beanFrom(Profile.class,response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void mLoadUserProfile(String response){
 
         try {
-               Profile profile = JSON.std.beanFrom(Profile.class,response);
-              //TODO :: open profile edit fragment when name is available
-            if(profile == null)
-                return;
-               Fragment fragment = null;
-              if(profile.getName() == null ||profile.getName().isEmpty()
-                      ||profile.getName().equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER))){
-                  fragment = getSupportFragmentManager().findFragmentByTag(ProfileEditFragmentNew.class.getSimpleName());
-                  if (fragment == null) {
-                      mDisplayFragment(ProfileEditFragmentNew.newInstance(profile), true, ProfileEditFragmentNew.class.getSimpleName());
-                  } else
-                      mDisplayFragment(fragment, false, ProfileEditFragmentNew.class.getSimpleName());
-
-              }else {
-                   fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
-                  if (fragment == null) {
-                      mDisplayFragment(ProfileFragment.getInstance(profile), true, ProfileFragment.class.getSimpleName());
-                  } else
-                      mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
-
-              }
-
+               MainActivity.mProfile = JSON.std.beanFrom(Profile.class,response);
+               showProfileScreen(MainActivity.mProfile);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void showProfileScreen(Profile profile){
+        //TODO :: open profile edit fragment when name is available
+        if(profile == null)
+            return;
+        Fragment fragment = null;
+        if(profile.getName() == null ||profile.getName().isEmpty()
+                ||profile.getName().equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER))){
+            fragment = getSupportFragmentManager().findFragmentByTag(ProfileEditFragmentNew.class.getSimpleName());
+            if (fragment == null) {
+                mDisplayFragment(ProfileEditFragmentNew.newInstance(profile), true, ProfileEditFragmentNew.class.getSimpleName());
+            } else
+                mDisplayFragment(fragment, false, ProfileEditFragmentNew.class.getSimpleName());
+
+        }else {
+            fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
+            if (fragment == null) {
+                mDisplayFragment(ProfileFragment.getInstance(profile), true, ProfileFragment.class.getSimpleName());
+            } else
+                mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
+
+        }
     }
     @Override
     public void onUserProfileEdited(Profile profile) {
@@ -1334,6 +1351,66 @@ public class MainActivity extends AppCompatActivity
             mDisplayFragment(fragment, false, ProfileEditFragmentNew.class.getSimpleName());
 
     }
+
+    /**
+     * This method is used to update user profile whenever user update
+     *  his/her information about current education, preferred education details,
+     *  interested exams details and other basic info
+     * @param params
+     */
+    @Override
+    public void onProfileUpdated(HashMap<String, String> params) {
+        //this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
+        this.mMakeNetworkCall(Constants.TAG_UPDATE_USER_PROFILE, Constants.BASE_URL +"profile/", params, Request.Method.POST);
+    }
+
+    /**
+     * This method is used to request for specialization list
+     * based on stream which is selected by the user while updating his/her
+     * profile
+     * @param streamId
+     */
+    @Override
+    public void requestForSpecialization(int streamId) {
+        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_SPECIALIZATION, Constants.BASE_URL +"specializations/?stream="+streamId,null, Request.Method.GET);
+    }
+
+
+    private void profileSuccessfullyUpdated(String TAG, String responseJson) {
+        try {
+            Profile profile = JSON.std.beanFrom(Profile.class, responseJson);
+            if(profile == null)
+                return;
+            ProfileFragment.mProfile= profile;
+            MainActivity.mProfile = profile;
+            if(!(currentFragment instanceof ProfileEditFragmentNew))
+                return;
+            if(TAG.equalsIgnoreCase(Constants.TAG_UPDATE_PROFILE_EXAMS)){
+                ((ProfileEditFragmentNew) currentFragment).onProfileExamsSuccessfullyUpdated(profile);
+            }else {
+                Utils.DisplayToast(getApplicationContext(),"Profile Updated");
+                ((ProfileEditFragmentNew) currentFragment).onProfileSuccessfullyUpdated(profile);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    private void updateUserSpecializationList(String responseJson) {
+        if(!(currentFragment instanceof  ProfileEditFragmentNew))
+            return;
+        try {
+            List<ProfileSpinnerItem> userSpecializationList = JSON.std.listOfFrom(ProfileSpinnerItem.class, responseJson);
+            ((ProfileEditFragmentNew)currentFragment).updateUserSpecializationList((ArrayList<ProfileSpinnerItem>) userSpecializationList);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     /**
      * This method is used to split response json
@@ -1542,11 +1619,7 @@ public class MainActivity extends AppCompatActivity
                 mDisplayCDRecommendedInstituteList(response, isHavingNextUrl, cdRecommendedInstituteType, true);
                 break;
             case UNBAISED:
-                mDisplayCDRecommendedInstituteList(response, isHavingNextUrl, cdRecommendedInstituteType, false);
-                break;
             case SHORTLISTED:
-                mDisplayCDRecommendedInstituteList(response, isHavingNextUrl, cdRecommendedInstituteType, false);
-                break;
             case BUZZLIST:
                 mDisplayCDRecommendedInstituteList(response, isHavingNextUrl, cdRecommendedInstituteType, false);
                 break;
@@ -1570,8 +1643,6 @@ public class MainActivity extends AppCompatActivity
                         ((CDRecommendedInstituteListFragment) currentFragment).showUndecidedInstitutes(this.mInstituteList, next);
                     }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED) {
                         ((CDRecommendedInstituteListFragment) currentFragment).updateList(this.mInstituteList, next);
-                    }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.SHORTLISTED){
-                        ((CDRecommendedInstituteListFragment) currentFragment).updateWishList(this.mInstituteList, next);
                     }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.BUZZLIST){
                         ((CDRecommendedInstituteListFragment) currentFragment).updateBuzzList(this.mInstituteList, next);
                     }
@@ -1593,8 +1664,6 @@ public class MainActivity extends AppCompatActivity
                             ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next);
                         }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.SHORTLISTED){
                             ((CDRecommendedInstituteListFragment) currentFragment).updateWishList(this.mInstituteList, next);
-                        }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.RECOMMENDED){
-                            ((CDRecommendedInstituteListFragment) currentFragment).updateBuzzList(this.mInstituteList, next);
                         }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.BUZZLIST){
                             ((CDRecommendedInstituteListFragment) currentFragment).updateBuzzList(this.mInstituteList, next);
                         }
@@ -1799,7 +1868,51 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if (requestCode == PsychometricAnalysisActivity.GET_PSYCHOMETRIC_RESULTS) {
+        if(requestCode == Constants.PICK_IMAGE && resultCode == RESULT_OK
+                && null != data){
+            // Get the Image from data
+
+            Uri filePath = data.getData();
+          String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            // Get the cursor
+            Cursor cursor = getContentResolver().query(filePath,
+                    filePathColumn, null, null, null);
+            // Move to first row
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String imgDecodableString = cursor.getString(columnIndex);
+            cursor.close();
+            String fileNameSegments[] = imgDecodableString.split("/");
+            String fileName = fileNameSegments[fileNameSegments.length - 1];
+
+            try {
+                //Getting the Bitmap from Gallery
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+                byte[] imageBytes = baos.toByteArray();
+                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
+                Map<String, String> params = new HashMap<>();
+
+                params.put("image", encodedImage);
+                params.put("filename", fileName);
+
+                byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+
+                networkUtils.imageUpload("IMAGE_UPLOAD", Constants.BASE_URL+"upload-image/", params, Request.Method.PUT);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }else if (requestCode == PsychometricAnalysisActivity.GET_PSYCHOMETRIC_RESULTS) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
                 if (PsychometricQuestionFragment.getAnswers() != null) {
@@ -1950,6 +2063,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_TRUE_SDK_LOGIN:
             case Constants.TAG_FACEBOOK_LOGIN:
                 this.mUpdateUserPreferences(response);
+                break;
+            case Constants.TAG_GET_USER_PROFILE:
+                this.mSetProfileUser(response);
                 break;
             case Constants.TAG_USER_EDUCATION:
                 this.mDisplayUserEducationFragment(response);
@@ -2139,9 +2255,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.CARD_DELETE_SHORTLISTED_INSTITUTE:
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 if (tags.length == 2 ){
-                    if (tags[1].equals("true") && next!=null)
+                    /*if (tags[1].equals("true") && next!=null)
                         onNextWishList();
-                    else
+                    else*/
                         RemoveInstituteFromWishlist(Integer.parseInt(tags[1]));
                 }
                 break;
@@ -2458,7 +2574,10 @@ public class MainActivity extends AppCompatActivity
     private void RemoveInstituteFromWishlist(int i) {
         if (currentFragment instanceof WishlistFragment)
             ((WishlistFragment) currentFragment).RemoveInstitute(i);
+        else if(currentFragment instanceof CDRecommendedInstituteListFragment)
+             ((CDRecommendedInstituteListFragment) currentFragment).RemoveInstitute(i);
     }
+
 
 
     private synchronized void mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType type) {
@@ -3614,12 +3733,12 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @Override
+   /* @Override
     public void onRemoveShortlistedInstitute(Institute institute,boolean isLast) {
         if (institute != null) {
                 this.mMakeNetworkCall(Constants.CARD_DELETE_SHORTLISTED_INSTITUTE+"#"+isLast , institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
         }
-    }
+    }*/
     @Override
     public void displayMessage(int messageId) {
         displaySnackBar(messageId);
@@ -4201,6 +4320,8 @@ public class MainActivity extends AppCompatActivity
         try {
             MainActivity.user = JSON.std.beanFrom(User.class, jsonResponse);
             this.networkUtils.setToken(user.getToken());
+
+            this.mMakeNetworkCall(Constants.TAG_GET_USER_PROFILE,Constants.BASE_URL+"profile/", null);
             if (tempUser != null){
                 MainActivity.user.setImage(tempUser.getImage());
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
@@ -5132,7 +5253,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClickBuzzList() {
-        this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+        Map<String , String> params = this.mGetTheFilters();
+
+        if(this.mExamTag != null && !this.mExamTag.isEmpty())
+            params.put("tag_uris[" + (params.size()) + "]", this.mExamTag);
+
+        this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2", params);
     }
 
     @Override
@@ -5140,10 +5266,10 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.CARD_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
     }
 
-    @Override
+   /* @Override
     public void onNextWishList() {
         this.mMakeNetworkCall(Constants.CARD_SHORTLIST_INSTITUTES+"#next", next, null);
-    }
+    }*/
 
     @Override
     public void onNextBuzzList() {
@@ -5637,64 +5763,6 @@ public class MainActivity extends AppCompatActivity
             getBaseContext().getResources().updateConfiguration(configuration, metrics);
         }
     }
-
-    /**
-     * This method is used to update user profile whenever user update
-     *  his/her information about current education, preferred education details,
-     *  interested exams details and other basic info
-     * @param params
-     */
-    @Override
-    public void onProfileUpdated(HashMap<String, String> params) {
-        //this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
-        this.mMakeNetworkCall(Constants.TAG_UPDATE_USER_PROFILE, Constants.BASE_URL +"profile/", params, Request.Method.POST);
-    }
-
-    /**
-     * This method is used to request for specialization list
-     * based on stream which is selected by the user while updating his/her
-     * profile
-     * @param streamId
-     */
-    @Override
-    public void requestForSpecialization(int streamId) {
-        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_SPECIALIZATION, Constants.BASE_URL +"specializations/?stream="+streamId,null, Request.Method.GET);
-    }
-
-
-    private void profileSuccessfullyUpdated(String TAG, String responseJson) {
-        try {
-            Profile profile = JSON.std.beanFrom(Profile.class, responseJson);
-            if(profile == null)
-                return;
-            ProfileFragment.mProfile= profile;
-            if(!(currentFragment instanceof ProfileEditFragmentNew))
-                return;
-            if(TAG.equalsIgnoreCase(Constants.TAG_UPDATE_PROFILE_EXAMS)){
-                ((ProfileEditFragmentNew) currentFragment).onProfileExamsSuccessfullyUpdated(profile);
-            }else {
-                Utils.DisplayToast(getApplicationContext(),"Profile Updated");
-                ((ProfileEditFragmentNew) currentFragment).onProfileSuccessfullyUpdated(profile);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
-    private void updateUserSpecializationList(String responseJson) {
-        if(!(currentFragment instanceof  ProfileEditFragmentNew))
-             return;
-        try {
-            List<ProfileSpinnerItem> userSpecializationList = JSON.std.listOfFrom(ProfileSpinnerItem.class, responseJson);
-            ((ProfileEditFragmentNew)currentFragment).updateUserSpecializationList((ArrayList<ProfileSpinnerItem>) userSpecializationList);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     private void mDisplayEditUserEducationFragment(String response) {
         try {

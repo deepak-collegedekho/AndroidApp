@@ -130,8 +130,9 @@ public class SignInFragment extends  BaseFragment implements View.OnClickListene
                         JSONObject pictureJsonObj = json.getJSONObject("picture");
                         JSONObject data = pictureJsonObj.getJSONObject("data");
                         String image = data.getString("url");
-                        if(MainActivity.user != null)
-                            MainActivity.user.setImage(image);
+
+                        /*if(MainActivity.user != null)
+                            MainActivity.user.setImage(image);*/
 
                         HashMap hashMap = new HashMap<>();
                         hashMap.put(MainActivity.getResourceString(R.string.USER_FIRST_NAME), json.getString("first_name"));

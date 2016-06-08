@@ -223,15 +223,16 @@ public class NetworkUtils {
     public void postOrPutData(final String tag, final String url, final Map<String, String> params, final int method)
     {
         final Calendar calendar=Calendar.getInstance();
-        StringRequest request = new StringRequest(method, url, new Response.Listener<String>()
-        {
-            @Override
-            public void onResponse(String response)
-            {
-                Utils.logApiResponseTime(calendar, tag + " " + url);
-                mListener.onDataLoaded(tag, response);
-            }
-        },
+        StringRequest request = new StringRequest(method, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response)
+                    {
+                        Utils.logApiResponseTime(calendar, tag + " " + url);
+                        mListener.onDataLoaded(tag, response);
+                    }
+                },
                 new Response.ErrorListener()
                 {
                     @Override
@@ -435,6 +436,10 @@ public class NetworkUtils {
                 break;
         }
     }
+    public void imageUpload(String tag, String url, Map<String, String> params, int method) {
+
+        this.postOrPutData(tag, url, params, method);
+    }
 
     public void networkDataWithObjectParam(String tag, String url, JSONObject params, int method)
     {
@@ -448,6 +453,8 @@ public class NetworkUtils {
         else
             networkData(tag, url, null, Request.Method.GET);
     }
+
+
 
     private void saveToSharedPref(Map<String , String> params)
     {

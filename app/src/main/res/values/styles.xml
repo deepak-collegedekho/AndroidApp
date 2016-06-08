@@ -340,13 +340,13 @@
     <style name="AppTheme.profileTextViewTitle" parent="AppTheme.profileTextView">
         <item name="android:textColor">@color/white</item>
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">.3</item>
+        <item name="android:layout_weight">.28</item>
         <item name="android:textSize">15sp</item>
     </style>
 
     <style name="AppTheme.profileInfoTextView" parent="AppTheme.profileTextView">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">.7</item>
+        <item name="android:layout_weight">.72</item>
     </style>
 
     <style name="AppTheme.profileInfoTLayout" parent="AppTheme.LinearLayout.Horizontal">
