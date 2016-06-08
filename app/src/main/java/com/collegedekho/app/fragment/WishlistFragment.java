@@ -59,7 +59,7 @@ public class WishlistFragment extends BaseFragment {
      *
      * @return A new instance of fragment WishlistFragment.
      */
-    public static WishlistFragment newInstance(ArrayList<Institute> institutes, String title, String next, boolean filterAllowed, int listType) {
+    public static WishlistFragment newInstance(ArrayList<Institute> institutes, String title, String next, boolean filterAllowed) {
         WishlistFragment fragment = new WishlistFragment();
 
         Bundle args = new Bundle();
@@ -81,6 +81,7 @@ public class WishlistFragment extends BaseFragment {
             this.mTitle = getArguments().getString(ARG_TITLE);
             this.mNextUrl = getArguments().getString(ARG_NEXT);
             this.filterAllowed = getArguments().getBoolean(ARG_FILTER_ALLOWED);
+            listType = Constants.WISH_LIST_TYPE;
         }
     }
 
@@ -210,6 +211,7 @@ public class WishlistFragment extends BaseFragment {
     }
 
     public void updateList(List<Institute> institutes, String next) {
+
         progressBarLL.setVisibility(View.GONE);
         this.mWishlistInstituteListAdapter.lastPosition = this.mInstitutes.size() - 1;
         mInstitutes.addAll(institutes);

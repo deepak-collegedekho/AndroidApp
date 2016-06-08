@@ -131,6 +131,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                         int currentPosition = profilePager.getCurrentItem();
                         int streamId = 0 ;
                         int spinnerId = 0 ;
+                        int specializationId = 0 ;
                         MaterialSpinner currentSpinner =  null;
                         List<ProfileSpinnerItem> spinnerList = null;
 
@@ -140,11 +141,13 @@ public class ProfileEditFragmentNew extends BaseFragment {
                             currentSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_specialization);
                             spinnerId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_stream)).getSelectedSpinnerItemId();
                             streamId =  mProfile.getCurrent_stream_id();
+                            specializationId = mProfile.getCurrent_specialization_id();
                             spinnerList = mCurrentSpecializationList;
                         } else if(currentPosition == 2) {
                             currentSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_preferred_specialization);
                             spinnerId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_preferred_stream)).getSelectedSpinnerItemId();
                             streamId = mProfile.getPreferred_stream_id();
+                            specializationId = mProfile.getPreferred_specialization_id();
                             spinnerList = mPreferredSpecializationList;
                         }
 
@@ -155,7 +158,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                             for (int i = 0; i < specializationCount; i++) {
                                 ProfileSpinnerItem pObj = spinnerList.get(i);
                                 if (pObj == null) continue;
-                                if (streamId == pObj.getId()) {
+                                if (specializationId == pObj.getId()) {
                                     spinnerList.add(0, spinnerList.remove(i));
                                     found = true;
                                     currentSpinner.setItems(spinnerList, false);
@@ -177,7 +180,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                             for (int i = 0; i < specializationCount; i++) {
                                 ProfileSpinnerItem pObj = spinnerList.get(i);
                                 if (pObj == null) continue;
-                                if (spinnerId == pObj.getId()) {
+                                if (specializationId == pObj.getId()) {
                                     spinnerList.add(0, spinnerList.remove(i));
                                     found = true;
                                     currentSpinner.setItems(spinnerList, false);

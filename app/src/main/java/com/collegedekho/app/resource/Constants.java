@@ -97,7 +97,8 @@ public class Constants
     public static final String TAG_TAGS = "tags";
     public static final String TAG_ID = "id";
     public static final String TAG_SELECTED = "is_selected";
-    public static final String TAG_NEXT_SHORTLIST_INSTITUTE = "next_shortlist_institutes";
+    public static final String TAG_NEXT_SHORTLIST_INSTITUTE = "next_wish_list_institutes";
+    public static final String TAG_NEXT_WISHLIST_INSTITUTE = "next_shortlist_institutes";
     public static final String TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING = "last_shortlist_institutes_while_removing";
     public static final String TAG_NEXT_INSTITUTE = "next_institutes";
     public static final String TAG_NEXT_NEWS = "next_news";
@@ -208,6 +209,7 @@ public class Constants
     public static final int QNA_LIST_TYPE    = 5 ;
     public static final int FORUM_LIST_TYPE  = 6 ;
     public static final int INSTITUTE_SEARCH_TYPE   = 7 ;
+    public static final int WISH_LIST_TYPE   = 8;
 
     public static final int APPLY_COMPLETE  = 0;
     public static final int APPLY_PENDING   = 1;

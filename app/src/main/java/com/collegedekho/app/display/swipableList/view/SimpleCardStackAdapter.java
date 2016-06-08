@@ -119,7 +119,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
                 if (position > 0)
                     SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
                 if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext()) {
-                    SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
+                    SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), true);
                     SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
                 }
             }
@@ -139,7 +139,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
                 if (position > 0)
                     SimpleCardStackAdapter.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
                 if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext()) {
-                    SimpleCardStackAdapter.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
+                    SimpleCardStackAdapter.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), true);
                     SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
                 }
             }
@@ -283,9 +283,9 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View view) {
                         ViewGroup.LayoutParams layoutParams = facilitiesRecycler.getLayoutParams();
-                        final int height = (int) getContext().getResources().getDimension(R.dimen.m35dp);
+                        final int height = (int) getContext().getResources().getDimension(R.dimen.m33dp);
                         int marginLeft = (int) getContext().getResources().getDimension(R.dimen.m10dp);
-                        int marginTop = (int) getContext().getResources().getDimension(R.dimen.m6dp);
+                        int marginTop = (int) getContext().getResources().getDimension(R.dimen.m4dp);
                         ViewGroup facilitiesView = (ViewGroup) convertView.findViewById(R.id.institute_card_layout);
                         if (layoutParams != null && layoutParams.height == height) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

@@ -1725,7 +1725,7 @@ public class MainActivity extends AppCompatActivity
                 ((WishlistFragment) fragment).clearList();
                 ((WishlistFragment) fragment).updateList(this.mInstituteList, next);
             }else {
-                this.mDisplayFragment(WishlistFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, listType), !isFromNotification, Constants.TAG_FRAGMENT_WISHLIST_INSTITUTE_LIST);
+                this.mDisplayFragment(WishlistFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed), !isFromNotification, Constants.TAG_FRAGMENT_WISHLIST_INSTITUTE_LIST);
             }
 
             if(listType==Constants.SHORTLIST_TYPE){
@@ -2136,6 +2136,12 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_STREAM:
                 this.mDisplayStreams(response, true);
                 break;
+            case Constants.TAG_NEXT_SHORTLIST_INSTITUTE:
+                this.updateNextInstituteList(response, Constants.SHORTLIST_TYPE);
+                break;
+            case Constants.TAG_NEXT_WISHLIST_INSTITUTE:
+                this.updateNextWishlistInstitutes(response);
+                break;
             case Constants.WIDGET_SHORTLIST_INSTITUTES:
                 this.mCurrentTitle = "Wishlist Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
@@ -2160,11 +2166,11 @@ public class MainActivity extends AppCompatActivity
             case Constants.CARD_SHORTLIST_INSTITUTES:
                 this.mCurrentTitle = "Shortlisted Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
-                if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
+                /*if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.SHORTLISTED, true);
-                } else {
+                } else {*/
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.SHORTLISTED);
-                }
+                //}
                 break;
 
             case Constants.CARD_BUZZLIST_INSTITUTES:
@@ -2219,9 +2225,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_NEXT_INSTITUTE:
                 this.updateNextInstituteList(response, Constants.INSTITUTE_TYPE);
-                break;
-            case Constants.TAG_NEXT_SHORTLIST_INSTITUTE:
-                this.updateNextInstituteList(response, Constants.SHORTLIST_TYPE);
                 break;
             case Constants.TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING:
                 this.updateLastInstituteList(response);
@@ -2575,6 +2578,23 @@ public class MainActivity extends AppCompatActivity
             ((WishlistFragment) currentFragment).RemoveInstitute(i);
         else if(currentFragment instanceof CDRecommendedInstituteListFragment)
              ((CDRecommendedInstituteListFragment) currentFragment).RemoveInstitute(i);
+    }
+
+
+    private void updateNextWishlistInstitutes(String response) {
+
+        String val = this.extractResults(response);
+        try {
+           List<Institute> nextList = JSON.std.listOfFrom(Institute.class, val);
+            this.mInstituteList.addAll(nextList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (currentFragment instanceof WishlistFragment) {
+            ((WishlistFragment) currentFragment).clearList();
+            ((WishlistFragment) currentFragment).updateLastList(mInstituteList, next);
+        }else if(currentFragment instanceof CDRecommendedInstituteListFragment)
+            ((CDRecommendedInstituteListFragment) currentFragment).updateWishList(mInstituteList, next);
     }
 
 
@@ -3172,6 +3192,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_NEXT_NEWS:
             case Constants.TAG_NEXT_QNA_LIST:
             case Constants.TAG_NEXT_SHORTLIST_INSTITUTE:
+            case Constants.TAG_NEXT_WISHLIST_INSTITUTE:
             case Constants.TAG_INSTITUTE_LIKE_DISLIKE:
             case Constants.TAG_QUESTION_LIKE_DISLIKE:
             case Constants.ACTION_INSTITUTE_DISLIKED:
@@ -3488,6 +3509,8 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_NEXT_INSTITUTE, next, this.mFilterKeywords);
         else if (listType == Constants.SHORTLIST_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_SHORTLIST_INSTITUTE, next, null);
+        else if (listType == Constants.WISH_LIST_TYPE)
+            this.mMakeNetworkCall(Constants.TAG_NEXT_WISHLIST_INSTITUTE, next, null);
         else if (listType == Constants.NEWS_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_NEWS, next, null);
         else if (listType == Constants.ARTICLES_TYPE)

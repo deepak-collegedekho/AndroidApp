@@ -59,6 +59,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     private PeekAndPop peekAndPop;
     private WishlistInstituteListAdapter mWishlistInstituteListAdapter;
 
+
     public CDRecommendedInstituteListFragment() {
         // Required empty public constructor
     }
@@ -101,9 +102,10 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
             rootView.findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
             rootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
         }
-
+         listType = Constants.WISH_LIST_TYPE;
         this.mCardContainer = (CardContainer) rootView.findViewById(R.id.fragment_recommended_institute_cards_container);
         this.mCardContainer.setListener(this);
+
 
         this.mPageTitleTV       = (TextView)rootView.findViewById(R.id.recommended_page_title);
         this.mEmptyTextView     = (TextView)rootView.findViewById(android.R.id.empty);
@@ -210,6 +212,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
         try {
             if (context instanceof MainActivity)
                 this.mListener = (OnCDRecommendedInstituteListener) context;
+                listener = (OnCDRecommendedInstituteListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnCDRecommendedInstituteListener");
@@ -230,6 +233,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     public void onDetach() {
         super.onDetach();
         this.mListener = null;
+        listener = null;
     }
 
     @Override
@@ -261,6 +265,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
                     Utils.DisplayToast(getActivity(), "You don't have any undecided Institute.");
                     return;
                 }
+                CARD_CATEGORY = Constants.CDRecommendedInstituteType.UNDECIDED.ordinal();
                 mRequestForUndecidedInstitutes();
                 break;
             case R.id.recommended_tute_image:
