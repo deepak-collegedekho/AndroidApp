@@ -329,8 +329,8 @@ public class ProfileFragment extends BaseFragment {
         ArrayList<String> degreeNameList = mProfile.getPreferred_degrees_names();
         if(degreeNameList != null && !degreeNameList.isEmpty() ){
             int count = degreeNameList.size();
-            if(!isShowAllInfo && count >4)
-                count =4;
+            if(!isShowAllInfo && count >3)
+                count =3;
 
             StringBuffer degreesNameBuffer = new StringBuffer("");
             for (int i = 0; i < count; i++) {
@@ -347,6 +347,8 @@ public class ProfileFragment extends BaseFragment {
                 ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(": "+degreesNameBuffer.toString());
             }
             preferredInfoStatus += 12;
+        }else{
+            ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(": na");
         }
         // set City names
         ArrayList<String> cityNameList = mProfile.getPreferred_cities_names();
@@ -369,6 +371,9 @@ public class ProfileFragment extends BaseFragment {
                 ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(": "+cityNameBuffer.toString());
             }
             preferredInfoStatus += 12;
+        }else{
+            ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(": na ");
+
         }
 
         setProfileProgressStatus((ProgressBar)view.findViewById(R.id.profile_preferences_progress), preferredInfoStatus);

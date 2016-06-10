@@ -130,7 +130,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
                             return;
                         int currentPosition = profilePager.getCurrentItem();
                         int streamId = 0 ;
-                        int spinnerId = 0 ;
+                        int spinnerStreamId = 0 ;
                         int specializationId = 0 ;
                         MaterialSpinner currentSpinner =  null;
                         List<ProfileSpinnerItem> spinnerList = null;
@@ -139,20 +139,26 @@ public class ProfileEditFragmentNew extends BaseFragment {
                             return;
                         if(currentPosition == 1) {
                             currentSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_specialization);
-                            spinnerId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_stream)).getSelectedSpinnerItemId();
+                            spinnerStreamId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_stream)).getSelectedSpinnerItemId();
                             streamId =  mProfile.getCurrent_stream_id();
                             specializationId = mProfile.getCurrent_specialization_id();
                             spinnerList = mCurrentSpecializationList;
+                            if(spinnerStreamId != streamId) {
+                                specializationId = mCurrentSelectedSpecializationId;
+                            }
                         } else if(currentPosition == 2) {
                             currentSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_preferred_specialization);
-                            spinnerId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_preferred_stream)).getSelectedSpinnerItemId();
+                            spinnerStreamId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_preferred_stream)).getSelectedSpinnerItemId();
                             streamId = mProfile.getPreferred_stream_id();
                             specializationId = mProfile.getPreferred_specialization_id();
                             spinnerList = mPreferredSpecializationList;
+                            if(spinnerStreamId != streamId) {
+                                specializationId = mPreferredSelectedSpecializationId;
+                            }
                         }
 
                         // set current specialization
-                        if(spinnerId == streamId && spinnerList != null){
+                        if(spinnerStreamId == streamId && spinnerList != null){
                             boolean found = false;
                             int specializationCount = spinnerList.size();
                             for (int i = 0; i < specializationCount; i++) {
@@ -168,13 +174,13 @@ public class ProfileEditFragmentNew extends BaseFragment {
                             if(!found) {
                                 currentSpinner.setText("Loading...");
                                 currentSpinner.hideArrow();
-                                if(spinnerId > 0)
-                                    mListener.requestForSpecialization(spinnerId);
+                                if(spinnerStreamId > 0)
+                                    mListener.requestForSpecialization(spinnerStreamId);
                                 else if(streamId > 0)
                                     mListener.requestForSpecialization(streamId);
                             }
 
-                        }else if(streamId != spinnerId && spinnerId > 0 && spinnerList != null ) {
+                        }else if(streamId != spinnerStreamId && spinnerStreamId > 0 && spinnerList != null ) {
                             int specializationCount = spinnerList.size();
                             boolean found = false;
                             for (int i = 0; i < specializationCount; i++) {
@@ -190,15 +196,15 @@ public class ProfileEditFragmentNew extends BaseFragment {
                             if(!found) {
                                 currentSpinner.setText("Loading...");
                                 currentSpinner.hideArrow();
-                                if(spinnerId > 0)
-                                    mListener.requestForSpecialization(spinnerId);
+                                if(spinnerStreamId > 0)
+                                    mListener.requestForSpecialization(spinnerStreamId);
                                 else if(streamId > 0)
                                     mListener.requestForSpecialization(streamId);
                             }
                         }
                         else{
-                            if(spinnerId > 0)
-                                mListener.requestForSpecialization(spinnerId);
+                            if(spinnerStreamId > 0)
+                                mListener.requestForSpecialization(spinnerStreamId);
                             else if(streamId > 0)
                                 mListener.requestForSpecialization(streamId);
                         }
@@ -212,6 +218,62 @@ public class ProfileEditFragmentNew extends BaseFragment {
             }
         });
 
+    }
+
+
+    public void updateUserSpecializationList(ArrayList<ProfileSpinnerItem> userSpecializationList) {
+
+        if(mCurrentView == null || userSpecializationList == null)
+            return;
+        int currentPosition = profilePager.getCurrentItem();
+        MaterialSpinner specializationSpinner = null;
+        MaterialSpinner streamSpinner = null;
+        int specializationId = 0;
+
+        if(currentPosition == 1) {
+            specializationSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_specialization);
+            streamSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_stream);
+            specializationId = mProfile.getCurrent_specialization_id();
+            if(streamSpinner != null && streamSpinner.getSelectedSpinnerItemId() != mProfile.getCurrent_stream_id() ) {
+                specializationId = mCurrentSelectedSpecializationId;
+            }
+            mCurrentSpecializationList = userSpecializationList;
+        } else if(currentPosition == 2) {
+            specializationSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_preferred_specialization);
+            specializationId = mProfile.getPreferred_specialization_id();
+            if(streamSpinner != null && streamSpinner.getSelectedSpinnerItemId() != mProfile.getPreferred_stream_id()) {
+                specializationId = mPreferredSelectedSpecializationId;
+            }
+            mPreferredSpecializationList = userSpecializationList;
+        }
+        if(specializationSpinner == null)
+            return;
+
+        if(specializationId > 0){
+            boolean isFound = false;
+            int count = userSpecializationList.size();
+            for (int i = 0; i < count; i++) {
+                ProfileSpinnerItem pObj = userSpecializationList.get(i);
+                if (pObj == null) continue;
+                if (specializationId == pObj.getId()) {
+                    userSpecializationList.remove(i);
+                    userSpecializationList.add(0, pObj);
+                    isFound = true;
+                    break;
+                }
+            }
+            if(isFound){
+                specializationSpinner.setItems(userSpecializationList, false);
+            }else {
+                specializationSpinner.setItems(userSpecializationList, true);
+                if(userSpecializationList.size() > 1)
+                    specializationSpinner.setText("Specialization");
+            }
+        }else {
+            specializationSpinner.setItems(userSpecializationList, true);
+            if(userSpecializationList.size() > 1)
+                specializationSpinner.setText("Specialization");
+        }
     }
 
     @Override
@@ -331,10 +393,16 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 Utils.DisplayToast(getContext(), "Please Select your Stream.");
                 return;
             }
-            int userCurrentSpecializationId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_specialization)).getSelectedSpinnerItemId();
-            if (userCurrentSpecializationId < 0) {
-                Utils.DisplayToast(getContext(), "Please Select your Specialization.");
-                return;
+            int userCurrentSpecializationId =0;
+            if(userCurrentStreamId == 16 || userCurrentStreamId == 7 || userCurrentStreamId == 33 ||userCurrentStreamId == 34 ||
+                    userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37){
+                userCurrentSpecializationId = mProfile.getCurrent_specialization_id();
+            }else {
+                userCurrentSpecializationId= ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_specialization)).getSelectedSpinnerItemId();
+                if (userCurrentSpecializationId < 0) {
+                    Utils.DisplayToast(getContext(), "Please Select your Specialization.");
+                    return;
+                }
             }
             int userCurrentDegreeId = ((MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_degree)).getSelectedSpinnerItemId();
             if (userCurrentDegreeId < 0) {
@@ -616,53 +684,6 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
     }
 
-    public void updateUserSpecializationList(ArrayList<ProfileSpinnerItem> userSpecializationList) {
-
-        if(mCurrentView == null || userSpecializationList == null)
-            return;
-        int currentPosition = profilePager.getCurrentItem();
-        MaterialSpinner specializationSpinner = null;
-        int specializationId = 0;
-
-        if(currentPosition == 1) {
-            specializationSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_current_specialization);
-            specializationId = mProfile.getCurrent_specialization_id();
-            mCurrentSpecializationList = userSpecializationList;
-        } else if(currentPosition == 2) {
-            specializationSpinner = (MaterialSpinner) mCurrentView.findViewById(R.id.profile_edit_preferred_specialization);
-            specializationId = mProfile.getPreferred_specialization_id();
-            mPreferredSpecializationList = userSpecializationList;
-        }
-         if(specializationSpinner == null)
-             return;
-
-         if(specializationId > 0){
-                boolean isFound = false;
-                int count = userSpecializationList.size();
-                for (int i = 0; i < count; i++) {
-                    ProfileSpinnerItem pObj = userSpecializationList.get(i);
-                    if (pObj == null) continue;
-                    if (specializationId == pObj.getId()) {
-                        userSpecializationList.remove(i);
-                        userSpecializationList.add(0, pObj);
-                        isFound = true;
-                        break;
-                    }
-                }
-             if(isFound){
-                 specializationSpinner.setItems(userSpecializationList, false);
-             }else {
-                 specializationSpinner.setItems(userSpecializationList, true);
-                 if(userSpecializationList.size() > 1)
-                     specializationSpinner.setText("Specialization");
-             }
-         }else {
-             specializationSpinner.setItems(userSpecializationList, true);
-             if(userSpecializationList.size() > 1)
-             specializationSpinner.setText("Specialization");
-         }
-    }
-
 
     public interface ProfileUpdateListener {
         void onProfileUpdated(HashMap<String, String> params);
@@ -863,9 +884,17 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 ((TextView)rootView.findViewById(R.id.profile_edit_name)).setText(name);
             }
 
-            String phone = mProfile.getPhone_no();
-            if (phone != null && !phone.isEmpty()){
-                ((TextView)rootView.findViewById(R.id.profile_edit_phone)).setText(phone);
+
+            if(mProfile.getIs_verified() == 1){
+                rootView.findViewById(R.id.profile_edit_phone_til).setVisibility(View.GONE);
+            }
+            else{
+                rootView.findViewById(R.id.profile_edit_phone_til).setVisibility(View.VISIBLE);
+                String phone = mProfile.getPhone_no();
+                if (phone != null && !phone.isEmpty()){
+                    ((TextView)rootView.findViewById(R.id.profile_edit_phone)).setText(phone);
+                }
+
             }
 
             final MaterialSpinner stateSpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_state);
@@ -992,6 +1021,12 @@ public class ProfileEditFragmentNew extends BaseFragment {
 
             int userSubLevelId = mProfile.getCurrent_sublevel_id();
             int userStreamId = mProfile.getCurrent_stream_id();
+            if(userStreamId == 16 || userStreamId == 33|| userStreamId == 34 || userStreamId == 35
+                    || userStreamId == 36 || userStreamId == 37 || userStreamId == 7){
+                currentSpecializationSpinner.setVisibility(View.GONE);
+            }else{
+                currentSpecializationSpinner.setVisibility(View.VISIBLE);
+            }
             try {
 
                 List<ProfileSpinnerItem> currentSubLevelList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.SUB_LEVEL_JSON);
@@ -1018,7 +1053,6 @@ public class ProfileEditFragmentNew extends BaseFragment {
                             break;
                         }
                     }
-
                     currentSubLevelSpinner.setItems(currentSubLevelList, false);
                     currentStreamSpinner.setItems(currentStreamList, false);
                 }
@@ -1040,10 +1074,16 @@ public class ProfileEditFragmentNew extends BaseFragment {
                     public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
 
                         try {
-                            List<ProfileSpinnerItem> currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJson(view.getSelectedSpinnerItemId()));
+                            int selectedId = view.getSelectedSpinnerItemId();
+                            List<ProfileSpinnerItem> currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJson(selectedId));
                             currentStreamSpinner.setItems(currentStreamList, false);
                             if(currentStreamList.size() > 1)
                                 currentStreamSpinner.setText("Select your Stream");
+                            if(selectedId == 7 || selectedId == 8 || selectedId == 9){
+                                currentSpecializationSpinner.setVisibility(View.GONE);
+                            }else{
+                                currentSpecializationSpinner.setVisibility(View.VISIBLE);
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -1059,6 +1099,13 @@ public class ProfileEditFragmentNew extends BaseFragment {
                 public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
                      if(mListener == null)
                          return;
+                      int streamId = view.getSelectedSpinnerItemId();
+                      if(streamId == 16 || streamId == 33|| streamId == 34 || streamId == 35
+                              || streamId == 36 || streamId == 37){
+                          currentSpecializationSpinner.setVisibility(View.GONE);
+                      }else{
+                          currentSpecializationSpinner.setVisibility(View.VISIBLE);
+                      }
                       mListener.requestForSpecialization(view.getSelectedSpinnerItemId());
                      currentSpecializationSpinner.setText("Loading...");
                      currentSpecializationSpinner.hideArrow();
@@ -1207,7 +1254,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
             int preferredStreamId = mProfile.getPreferred_stream_id();
             List<ProfileSpinnerItem> streamList = null;
             try {
-                List<ProfileSpinnerItem> levelList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.SUB_LEVEL_JSON);
+                List<ProfileSpinnerItem> levelList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.PREFE_SUB_LEVEL_JSON);
                 if(preferredLevelId >= 1){
                     int levelCount = levelList.size();
                     for(int i=0 ; i< levelCount; i++){
@@ -1518,7 +1565,7 @@ public class ProfileEditFragmentNew extends BaseFragment {
             for (final ProfileExam exam : userExamList) {
                 final CardView cardView = (CardView) LayoutInflater.from(getActivity()).inflate(R.layout.layout_profile_exams, null);
                 cardView.setLayoutParams(layoutParams);
-                ((TextView) cardView.findViewById(R.id.profile_exam_name)).setText(exam.getExam_name());
+                ((TextView) cardView.findViewById(R.id.profile_exam_name)).setText(exam.getExam_name()+"("+exam.getYear()+")");
 
                 ArrayList<ProfileSpinnerItem> examStatusList = new ArrayList<>();
                 for( int i=1 ; i < 3 ; i++) {

@@ -14,12 +14,14 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         style="@style/AppTheme.HeadDivider"/>
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/apply_name_til"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/m15dp"
         android:layout_marginRight="@dimen/m15dp">
+
     <EditText android:id="@+id/apply_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

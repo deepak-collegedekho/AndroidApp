@@ -200,13 +200,11 @@
 
 
                 <TextView
-                    android:id="@+id/txt_colleges_buzzlist"
+                    android:id="@+id/cd_reco_buzzlist_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="@dimen/m4dp"
-                    android:text="196"
-                    android:visibility="invisible"
                     android:textColor="@color/white"
                     android:textSize="@dimen/m10sp"
                     android:textStyle="bold"
@@ -216,7 +214,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_below="@id/txt_colleges_buzzlist"
+                    android:layout_below="@id/cd_reco_buzzlist_count"
                     android:layout_marginRight="@dimen/m4dp"
                     android:text="COLLEGES"
                     android:textColor="@color/white"
@@ -277,13 +275,11 @@
                 android:background="@drawable/wishlist_tab_purple_bg">
 
                 <TextView
-                    android:id="@+id/txt_colleges_recommended"
+                    android:id="@+id/cd_reco_recommended_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="@dimen/m4dp"
-                    android:text="196"
-                    android:visibility="invisible"
                     android:textColor="@color/white"
                     android:textSize="@dimen/m10sp"
                     android:textStyle="bold"
@@ -293,7 +289,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_below="@id/txt_colleges_recommended"
+                    android:layout_below="@id/cd_reco_recommended_count"
                     android:layout_marginRight="@dimen/m4dp"
                     android:text="COLLEGES"
                     android:textColor="@color/white"
@@ -362,13 +358,11 @@
                 android:background="@drawable/wishlist_tab_blue_bg">
 
                 <TextView
-                    android:id="@+id/txt_colleges_wishlist"
+                    android:id="@+id/cd_reco_wishlist_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="@dimen/m4dp"
-                    android:text="196"
-                    android:visibility="invisible"
                     android:textColor="@color/white"
                     android:textSize="@dimen/m10sp"
                     android:textStyle="bold"
@@ -378,7 +372,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_below="@id/txt_colleges_wishlist"
+                    android:layout_below="@id/cd_reco_wishlist_count"
                     android:layout_marginRight="@dimen/m4dp"
                     android:text="COLLEGES"
                     android:textColor="@color/white"

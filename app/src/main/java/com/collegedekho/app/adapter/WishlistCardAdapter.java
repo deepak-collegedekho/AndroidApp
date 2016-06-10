@@ -37,6 +37,7 @@ import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.FadeInImageView;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 public final class WishlistCardAdapter {
@@ -97,8 +98,15 @@ public final class WishlistCardAdapter {
     private void mParseAndPopulateCards() {
         final FadeInImageView fadeInImageView;
         ImageLoader.ImageListener imageListener;
+
         // set institute name
-        ((TextView) this.mCardPeekView.findViewById(R.id.wishlist_institute_title)).setText(this.mInstitute.getName());
+        try {
+            String instituteName= new String(this.mInstitute.getName().getBytes("ISO-8859-1"),"UTF-8");
+            ((TextView) this.mCardPeekView.findViewById(R.id.wishlist_institute_title)).setText(instituteName);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            ((TextView) this.mCardPeekView.findViewById(R.id.wishlist_institute_title)).setText(this.mInstitute.getName());
+        }
 
         //setting location
         String text = "";

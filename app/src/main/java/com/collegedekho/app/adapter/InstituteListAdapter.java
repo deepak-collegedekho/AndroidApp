@@ -153,25 +153,9 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         this.notifyDataSetChanged();
     }
 
-    public void updateShortlistStatus(int position , boolean isFilterAllowed,int listType)
+    public void updatelist(ArrayList<Institute> instituteList)
     {
-        /*this.mShortListTV.setEnabled(true);
-        this.mShortListTV.setVisibility(View.VISIBLE);
-        this.mProgressBar.setVisibility(View.GONE);
-        if (mInstitute.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
-            this.mShortListTV.setText("Shortlist " + mInstitute.getShort_name());
-            this.mShortListTV.setBackgroundResource(R.drawable.bg_button_blue);
-        } else {
-            this.mShortListTV.setText("Delete " + mInstitute.getShort_name() + " from your shortlist");
-            this.mShortListTV.setBackgroundResource(R.drawable.bg_button_grey);
-        }*/
-       /* if(!isFilterAllowed &&  !Constants.IS_RECOMENDED_COLLEGE && listType!=Constants.INSTITUTE_SEARCH_TYPE)
-            if(mInstitutes != null && mInstitutes.size() > position)
-                mInstitutes.remove(position);
-        else
-            this.notifyItemChanged(position);
 
-        this.notifyDataSetChanged();*/
     }
 
     class InstituteHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

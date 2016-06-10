@@ -239,10 +239,11 @@ public class HomeFragment extends BaseFragment
             if (image != null && ! image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
             else{
-                 image = MainActivity.user.getImage();
-                if (image != null && ! image.isEmpty())
-                    mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-
+                if(MainActivity.user != null) {
+                    image = MainActivity.user.getImage();
+                    if (image != null && !image.isEmpty())
+                        mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+                }
             }
             String streamName = MainActivity.mProfile.getCurrent_stream_name();
             if(streamName != null && !streamName.isEmpty()){
@@ -301,58 +302,73 @@ public class HomeFragment extends BaseFragment
         }
     }
 
-public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
-    this.mExamDetailList=userExamsList;
-    View rootView=getView();
-    if(rootView==null){
-        return;
-    }
-    if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
-        rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.VISIBLE);
-        rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.VISIBLE);
-        this.mExamTabPager.setVisibility(View.VISIBLE);
-        this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
-        this.mExamTabPager.setAdapter(this.mDetailsAdapter);
-        rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
-        rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
-        rootView.findViewById(R.id.pager_strip).setVisibility(View.VISIBLE);
+            public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
+                this.mExamDetailList=userExamsList;
+                View rootView=getView();
+                if(rootView==null){
+                    return;
+                }
+                if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
+                    rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.VISIBLE);
+                    rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.VISIBLE);
+                    this.mExamTabPager.setVisibility(View.VISIBLE);
+                    this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
+                    this.mExamTabPager.setAdapter(this.mDetailsAdapter);
+                    rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
+                    rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
+                    rootView.findViewById(R.id.pager_strip).setVisibility(View.VISIBLE);
 
-    }else{
+                }else{
 
-        if(this.mListener != null)
-        {
-            this.mExamDetail = new ExamDetail();
-            this.mExamDetail.setId("0");
-            this.mListener.onExamTabSelected(this.mExamDetail);
-        }
+                    if(this.mListener != null)
+                    {
+                        this.mExamDetail = new ExamDetail();
+                        this.mExamDetail.setId("0");
+                        this.mListener.onExamTabSelected(this.mExamDetail);
+                    }
 
-        rootView.findViewById(R.id.pager_strip).setVisibility(View.GONE);
-        rootView.findViewById(R.id.prep_buddies).setVisibility(View.GONE);
-        rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.GONE);
-        rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.GONE);
-        rootView.findViewById(R.id.backup_colleges_layout_RL).setVisibility(View.GONE);
-    }
+                    rootView.findViewById(R.id.pager_strip).setVisibility(View.GONE);
+                    rootView.findViewById(R.id.prep_buddies).setVisibility(View.GONE);
+                    rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.GONE);
+                    rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.GONE);
+                    rootView.findViewById(R.id.backup_colleges_layout_RL).setVisibility(View.GONE);
+                }
 
-}
+            }
+            public void updateUserName(){
+                if(MainActivity.mProfile != null){
+                    String name = MainActivity.mProfile.getName();
+                    if(name!=null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()))
+                    {
+                        mProfileName.setText("");
+                        mProfileName.setVisibility(View.GONE);
+                    }else {
+                        mProfileName.setText(name);
+                        mProfileName.setVisibility(View.VISIBLE);
+                    }
+                }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try{
-            if (context instanceof MainActivity)
-                this.mListener = (OnTabSelectListener) context;
-        }
-        catch (ClassCastException e){
-            throw  new ClassCastException(context.toString()
-                    +"must implement OnTabSelectListener");
-        }
-    }
+            }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        this.mListener = null;
-    }
+
+            @Override
+            public void onAttach(Context context) {
+                super.onAttach(context);
+                try{
+                    if (context instanceof MainActivity)
+                        this.mListener = (OnTabSelectListener) context;
+                }
+                catch (ClassCastException e){
+                    throw  new ClassCastException(context.toString()
+                            +"must implement OnTabSelectListener");
+                }
+            }
+
+            @Override
+            public void onDetach() {
+                super.onDetach();
+                this.mListener = null;
+            }
 
             @Override
             public void show() {
@@ -372,34 +388,34 @@ public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
         {
             case R.id.profile_syllabus_statusLL:
                 if(this.mExamDetail != null)
-                    this.mProfileWidgetSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/"+ this.mExamDetail.getId()+"/syllabus/",null);
+                    this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/"+ this.mExamDetail.getId()+"/syllabus/",null);
                 this.getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  mExamDetail.getId()).commit();
                 break;
             case R.id.backup_colleges_layout_RL:
                if(this.mExamDetail != null)
-                   this.mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mExamDetail.getExam_tag());
+                   this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mExamDetail.getExam_tag());
                else
-                   this.mProfileWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/",null);
+                   this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/",null);
                break;
             case R.id.wishList_colleges_layout_RL:
-                this.mProfileWidgetSelected(Constants.WIDGET_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+                this.mHomeWidgetSelected(Constants.WIDGET_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
                 break;
             case R.id.recommended_colleges_layout_RL:
                 if(this.mExamDetail != null)
-                    this.mProfileWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/", this.mExamDetail.getExam_tag());
+                    this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/", this.mExamDetail.getExam_tag());
                 else
-                    this.mProfileWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
+                    this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
                 break;
             case R.id.important_date_layout_RL:
                 if(this.mExamDetail != null)
-                    this.mProfileWidgetSelected(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", null);
+                    this.mHomeWidgetSelected(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", null);
                 break;
             default:
                 break;
         }
     }
 
-    private void mProfileWidgetSelected(String requestType, String url, String examTag)
+    private void mHomeWidgetSelected(String requestType, String url, String examTag)
     {
         if(this.mListener != null)
             this.mListener.onHomeItemSelected(requestType, url, examTag);

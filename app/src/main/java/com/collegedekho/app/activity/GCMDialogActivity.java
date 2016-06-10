@@ -106,30 +106,6 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
             e.printStackTrace();
         }
 
-/*        if (stepByStepQuestions != null) {
-            if (!stepByStepQuestions.isEmpty()) {
-                question = stepByStepQuestions.get(0);
-            } else {
-                try {
-                    stepByStepQuestions = getQuestionsList();
-                    question = stepByStepQuestions.get(0);
-                } catch (IOException e) {
-
-                }
-//                finish();
-//                return;
-            }
-        }
-        try {
-            stepByStepQuestions = getQuestionsList();
-            question = stepByStepQuestions.get(0);
-        } catch (IOException e) {
-
-        }*/
-//setup();
-//        StepByStepFragment stepByStepFragment = StepByStepFragment.newInstance(stepByStepQuestions);
-//getSupportFragmentManager().beginTransaction().replace(R.id.gcm_dialog_container,stepByStepFragment).commit();
-
         if (question != null) {
             String type = question.getType();
             if (type != null && !type.trim().matches("")) {
@@ -157,25 +133,6 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
         } else {
             finishWithData(null);
         }
-/*        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            String val = bundle.getString("question_type");
-            if (val != null && !val.trim().matches(""))
-                try {
-                    questionType = Integer.parseInt(val);
-                } catch (NumberFormatException e) {
-
-                }
-            if (questionType > 0) {
-                View questionLayout = setupContentView(questionType);
-                if (questionLayout != null) {
-                    parentLayout.addView(questionLayout);
-                    prepareContentView(questionType);
-                }
-            } else {
-                finish();
-            }
-        }*/
 
         btnCancel = (Button) findViewById(R.id.gcm_btn_cancel);
         btnCancel.setOnClickListener(this);
@@ -341,7 +298,7 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
                     finishWithData(hashMap);
                 }
             } else {
-                if (userInput.length() > 4) {
+                if (userInput.length() > 3) {
                     questionAnswered(question);
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put(getResourceString(R.string.USER_NAME), userInput);
@@ -440,77 +397,80 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
 
     private StepByStepQuestion getQuestion(ArrayList<StepByStepQuestion> questionArrayList) throws IOException {
 
-        if (questionArrayList != null && !questionArrayList.isEmpty()) {
-            StepByStepQuestion question = questionArrayList.get(0);
-            if (question.getName().equals("gender")) {
+        if (MainActivity.mProfile == null || questionArrayList == null || questionArrayList.isEmpty())
+            return  null;
+
+        StepByStepQuestion question = questionArrayList.get(0);
+
+        if (question.getName().equals("name")) {
+            String name = MainActivity.mProfile.getName();
+            if ( name == null || name.length() == 0  ||
+                    name.equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER))) {
+                return question;
+            } else {
+                questionAnswered(question);
+                return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
+            }
+        } else if (question.getName().equals("gender")) {
                 if (MainActivity.user.getGender() == null) {
                     return question;
                 } else {
                     questionAnswered(question);
                     return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
                 }
-            } else if (question.getName().equals("social_category")) {
-                if (MainActivity.user.getSocial_category() == null) {
+        } else if (question.getName().equals("social_category")) {
+                if (MainActivity.mProfile.getSocial_category() == -1) {
                     return question;
                 } else {
                     questionAnswered(question);
                     return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
                 }
-            } else if (question.getName().equals("year_of_admission")) {
-                if (MainActivity.user.getYear_of_admission() == null) {
+        } else if (question.getName().equals("current_passing_year")) {
+                if (MainActivity.mProfile.getCurrent_passing_year() == -1) {
                     return question;
                 } else {
                     questionAnswered(question);
                     return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
                 }
-            } else if (question.getName().equals("preferred_mode")) {
-                if (MainActivity.user.getPreferred_mode() == null) {
+        } else if (question.getName().equals("preferred_mode")) {
+                if (MainActivity.mProfile.getPreferred_mode() == -1) {
                     return question;
                 } else {
                     questionAnswered(question);
                     return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
                 }
-            } else if (question.getName().equals("name")) {
-                if (MainActivity.user.getUsername() == null) {
+        } else  if (question.getName().equals("phone_no")) {
+                if (MainActivity.mProfile.getPhone_no() == null || MainActivity.mProfile.getPhone_no() .isEmpty()) {
                     return question;
                 } else {
                     questionAnswered(question);
                     return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
                 }
-            } else if (question.getName().equals("number")) {
-                if (MainActivity.user.getPhone_no() == null) {
+        }else if (question.getName().equals("preferred_streams")) {
+                if (MainActivity.mProfile.getCurrent_stream_id() == -1) {
                     return question;
                 } else {
                     questionAnswered(question);
                     return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
                 }
-            }else if (question.getName().equals("preferred_streams")) {
-                if (MainActivity.user.getStream_name() == null) {
-                    return question;
-                } else {
-                    questionAnswered(question);
-                    return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
-                }
-            } else {
+        } else {
                 return question;
-            }
         }
-        return null;
     }
 
     private ArrayList<StepByStepQuestion> getQuestionsList() throws IOException {
         String name = "{\"selected_choice\":null,\"last\":0,\"name\":\"name\",\"text\":\"What is your name?\",\"image\":0,\"required\":1,\"type\":\"text\",\"other_choices\":[],\"choices\":[]}";
 
-        String phoneNumber = "{\"selected_choice\":null,\"last\":0,\"name\":\"number\",\"text\":\"Where should we contact you?\",\"image\":0,\"required\":1,\"type\":\"number\",\"other_choices\":[],\"choices\":[]}";
+        String phoneNumber = "{\"selected_choice\":null,\"last\":0,\"name\":\"phone_no\",\"text\":\"Where should we contact you?\",\"image\":0,\"required\":1,\"type\":\"number\",\"other_choices\":[],\"choices\":[]}";
 
         String preferredMode = "{\"selected_choice\":null,\"last\":0,\"name\":\"preferred_mode\",\"text\":\"What is your preferred mode?\",\"image\":0,\"required\":1,\"type\":\"single\",\"other_choices\":[],\"choices\":[{\"image\":\"\",\"id\":1,\"name\":\"Regular\"},{\"image\":\"\",\"id\":2,\"name\":\"Part Time\"},{\"image\":\"\",\"id\":4,\"name\":\"Distancce / Correspondence\"},{\"image\":\"\",\"id\":5,\"name\":\"Executive\"},{\"image\":\"\",\"id\":6,\"name\":\"Online / E-Learning\"}]}";
 
-        String yearOfAdmission = "{\"selected_choice\":null,\"last\":0,\"name\":\"year_of_admission\",\"text\":\"When did you graduate?\",\"image\":0,\"required\":1,\"type\":\"single\",\"other_choices\":[],\"choices\":[{\"image\":\"\",\"id\":2015,\"name\":\"2015\"},{\"image\":\"\",\"id\":2016,\"name\":\"2016\"},{\"image\":\"\",\"id\":2017,\"name\":\"2017\"},{\"image\":\"\",\"id\":2018,\"name\":\"2018\"},{\"image\":\"\",\"id\":2019,\"name\":\"2019\"},{\"image\":\"\",\"id\":2020,\"name\":\"2020\"}]}";
+        String yearOfAdmission = "{\"selected_choice\":null,\"last\":0,\"name\":\"current_passing_year\",\"text\":\"When did you graduate?\",\"image\":0,\"required\":1,\"type\":\"single\",\"other_choices\":[],\"choices\":[{\"image\":\"\",\"id\":2014,\"name\":\"Before 2015\"},{\"image\":\"\",\"id\":2015,\"name\":\"2015\"},{\"image\":\"\",\"id\":2016,\"name\":\"2016\"},{\"image\":\"\",\"id\":2017,\"name\":\"After 2016\"}]}";
 
 
         String gender = "{\"selected_choice\":null,\"last\":0,\"name\":\"gender\",\"text\":\"Select your gender\",\"image\":0,\"required\":1,\"type\":\"single\",\"other_choices\":[],\"choices\":[{\"image\":\"\",\"id\":1,\"name\":\"Male\"},{\"image\":\"\",\"id\":2,\"name\":\"Female\"}]}";
 
-        String feesRange = "{\"selected_choice\":null,\"last\":0,\"name\":\"fees_range\",\"text\":\"What is your preferred fee range?\",\"image\":0,\"required\":1,\"type\":\"single\",\"other_choices\":[],\"choices\":[{\"image\":\"\",\"uri\":\"lt1\",\"id\":1,\"name\":\"< 1 Lakh\"},{\"image\":\"\",\"uri\":\"gt1_lt2\",\"id\":2,\"name\":\"< 2 Lakh\"},{\"image\":\"\",\"uri\":\"gt2_lt3\",\"id\":3,\"name\":\"< 4 Lakh\"},{\"image\":\"\",\"uri\":\"gt3_lt4\",\"id\":3,\"name\":\"< 5 Lakh\"},{\"image\":\"\",\"uri\":\"gt5\",\"id\":4,\"name\":\"Above 5 Lakh\"}]}";
+        String feesRange = "{\"selected_choice\":null,\"last\":0,\"name\":\"preferred_fee_range_max\",\"text\":\"What is your preferred fee range?\",\"image\":0,\"required\":1,\"type\":\"single\",\"other_choices\":[],\"choices\":[{\"image\":\"\",\"uri\":\"lt1\",\"id\":1,\"name\":\"< 1 Lakh\"},{\"image\":\"\",\"uri\":\"gt1_lt2\",\"id\":2,\"name\":\"< 2 Lakh\"},{\"image\":\"\",\"uri\":\"gt2_lt3\",\"id\":3,\"name\":\"< 3 Lakh\"},{\"image\":\"\",\"uri\":\"gt2_lt3\",\"id\":4,\"name\":\"< 4 Lakh\"},{\"image\":\"\",\"uri\":\"gt3_lt4\",\"id\":5,\"name\":\"< 5 Lakh\"},{\"image\":\"\",\"uri\":\"gt5\",\"id\":4,\"name\":\"Above 5 Lakh\"}]}";
 
 
         String preferredStream = "{\"selected_choice\":null,\"last\":0,\"name\":\"preferred_streams\",\"text\":\"What is your preferred stream?\",\"image\":1,\"required\":1,\"type\":\"single\",\"other_choices\":[{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/banking-l_Yf4vlTI.png\",\"uri\":\"commerce-banking\",\"id\":1,\"name\":\"Commerce / Banking\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/design-l_V4ioQbT.png\",\"uri\":\"design\",\"id\":2,\"name\":\"Design\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/engineering-l_wUddKPm.png\",\"uri\":\"engineering\",\"id\":3,\"name\":\"Engineering\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/management-l_2CUexFe.png\",\"uri\":\"mba\",\"id\":4,\"name\":\"Management\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/hospitality-l_nTFEyei.png\",\"uri\":\"hospitality-aviation\",\"id\":5,\"name\":\"Hospitality / Aviation\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/it-l_Sk3FDbD.png\",\"uri\":\"information-technology\",\"id\":6,\"name\":\"IT\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/mass-l_nJYRxT6.png\",\"uri\":\"mass-comm\",\"id\":7,\"name\":\"Mass Comm\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/medicine-l_UXFAzql.png\",\"uri\":\"medical\",\"id\":8,\"name\":\"Medical\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/retail-l_d5b7NNv.png\",\"uri\":\"retail\",\"id\":9,\"name\":\"Retail\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/arts-l.png\",\"uri\":\"arts\",\"id\":12,\"name\":\"Arts\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/law-l_icYZJ7Z.png\",\"uri\":\"law-humanities\",\"id\":13,\"name\":\"Law / Humanities\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/science-l_Y1CiAX7.png\",\"uri\":\"sciences\",\"id\":14,\"name\":\"Sciences\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/vocational-l_w9iINmW.png\",\"uri\":\"vocational\",\"id\":15,\"name\":\"Vocational\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/others-l_jYO9R6G.png\",\"uri\":\"others\",\"id\":16,\"name\":\"Others\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/physical-l_Oh2tYYs.png\",\"uri\":\"physical-education\",\"id\":18,\"name\":\"Physical Education\"},{\"image\":\"https://d1wvhegsi0wquf.cloudfront.net/media/img/stream/multimedia-l_dyO4KwI.png\",\"uri\":\"animation\",\"id\":32,\"name\":\"Animation / Multimedia\"}],\"choices\":[]}";
@@ -519,19 +479,14 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
         String socialCategory = "{\"selected_choice\":null,\"last\":0,\"name\":\"social_category\",\"text\":\"Which social category do you belong to?\",\"image\":0,\"required\":1,\"type\":\"single\",\"other_choices\":[],\"choices\":[{\"image\":\"\",\"id\":0,\"name\":\"Not Available\"},{\"image\":\"\",\"id\":1,\"name\":\"General\"},{\"image\":\"\",\"id\":2,\"name\":\"OBC\"},{\"image\":\"\",\"id\":3,\"name\":\"SC\"},{\"image\":\"\",\"id\":4,\"name\":\"ST\"},{\"image\":\"\",\"id\":5,\"name\":\"Others\"}]}";
 
         ArrayList<StepByStepQuestion> questionArrayList = new ArrayList<>();
-        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, preferredStream));
-        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, yearOfAdmission));
-//        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, preferredSpecialization));
-//        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, preferredStates));
-//        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, preferredCities));
-        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, feesRange));
-        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, preferredMode));
-////        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, loanRequired));
-////        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, loanAmount));
-        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, socialCategory));
+        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, name));
         questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, gender));
         questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, phoneNumber));
-        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, name));
+        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, yearOfAdmission));
+        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, preferredStream));
+        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, feesRange));
+        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, preferredMode));
+        questionArrayList.add(JSON.std.beanFrom(StepByStepQuestion.class, socialCategory));
 
         return questionArrayList;
     }
@@ -540,7 +495,7 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
         if (userChoiceList == null || userChoiceList.isEmpty()) {
             return;
         }
-        if (question.getName().equals("fees_range") || question.getName().equals("preferred_states") || question.getName().equals("preferred_streams") || question.getName().equals("college_location_cities")) {
+        if (question.getName().equals("fees_range") || question.getName().equals("preferred_streams")){
             Map<String, String> map = new HashMap<>();
             SharedPreferences sp = getSharedPreferences(getResources().getString(R.string.PREFS), MODE_PRIVATE);
             String value = sp.getString(Constants.SELECTED_FILTERS, null);

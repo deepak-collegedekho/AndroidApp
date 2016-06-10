@@ -75,8 +75,8 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
         ArticleHolder articleHolder = (ArticleHolder) holder;
 
         try {
-            String response= new String(articles.title.getBytes("ISO-8859-1"),"UTF-8");
-            articleHolder.articleTitle.setText(response);
+            String articleName= new String(articles.title.getBytes("ISO-8859-1"),"UTF-8");
+            articleHolder.articleTitle.setText(articleName);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             articleHolder.articleTitle.setText(articles.title);
@@ -89,8 +89,8 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
 
         if (mViewType == Constants.VIEW_INTO_LIST) {
             try {
-                String response= new String(articles.content.getBytes("ISO-8859-1"),"UTF-8");
-                articleHolder.articleContent.setText(Html.fromHtml(response));
+                String articleContent= new String(articles.content.getBytes("ISO-8859-1"),"UTF-8");
+                articleHolder.articleContent.setText(Html.fromHtml(articleContent));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 articleHolder.articleContent.setText(Html.fromHtml(articles.content));

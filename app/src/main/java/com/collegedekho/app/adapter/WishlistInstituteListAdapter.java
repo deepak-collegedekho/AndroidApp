@@ -270,6 +270,8 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
 
             this.instituteShortName = (TextView) itemView.findViewById(R.id.wishlist_institute_shortname);
             this.instituteLogo = (FadeInImageView) itemView.findViewById(R.id.wishlist_institute_logo);
+            this.instituteLogo.setDefaultImageResId(R.drawable.ic_default_image);
+            this.instituteLogo.setErrorImageResId(R.drawable.ic_default_image);
         }
     }
 

@@ -15,6 +15,7 @@ public class Exam implements Parcelable{
 
     private ArrayList<ExamDetail> exam_details;
     private boolean isSelected;
+    private boolean isPreparing;
 
     public Exam(){
         // required empty constructor
@@ -74,6 +75,14 @@ public class Exam implements Parcelable{
 
     public void setExam_short_name(String exam_short_name) {
         this.exam_short_name = exam_short_name;
+    }
+
+    public boolean isPreparing() {
+        return isPreparing;
+    }
+
+    public void setPreparing(boolean preparing) {
+        isPreparing = preparing;
     }
 
     public String getExam_name() {

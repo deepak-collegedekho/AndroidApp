@@ -3,6 +3,7 @@ package com.collegedekho.app.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -34,11 +35,13 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
     private ArrayList<Exam> mExamList;
     private int lastExamPosition=-1;
     private int lastPosition=-1;
+    private int textColorId;
 
 
     public ExamsAdapter(Context context, ArrayList<Exam> examList){
         this.mContext = context;
         this.mExamList = examList;
+        textColorId = this.mContext.getResources().getColor(R.color.text_light_grey);
     }
 
     @Override
@@ -55,20 +58,46 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
         int selectedPosition=-1;
         if(exam != null) {
             holder.mExamName.setText(exam.getExam_name());
-            ArrayList<ExamDetail> examDetail = exam.getExam_details();
+           ArrayList<ExamDetail> examDetail = exam.getExam_details();
             if(examDetail != null){
                 final int count = examDetail.size();
                 final String year[] = new String[count];
                 for (int i = 0; i < count; i++) {
                     ExamDetail obj = examDetail.get(i);
                     if(obj == null)continue;
-                    if(i==0)obj.setSelected(true);
+                    //if(i==0)obj.setSelected(true);
                     year[i] = obj.getYear();
                     if(obj.is_preparing()){
                         selectedPosition=i;
+                        obj.setSelected(true);
+                        exam.setSelected(true);
+                        exam.setPreparing(true);
                     }
                 }
                 holder.mYearSpinner.setAdapter(new ArrayAdapter<>(this.mContext, R.layout.spinner_drop_down_item, year));
+
+                if (exam.isSelected()) {
+                    holder.mExamName.setSelected(true);
+                    holder.mYearSpinner.setSelected(true);
+                    int spinnerItemCount = holder.mYearSpinner.getCount();
+                    if(selectedPosition > spinnerItemCount)
+                        selectedPosition =0;
+                    holder.mYearSpinner.setSelection(selectedPosition);
+                    holder.mExamName.setTextColor(Color.WHITE);
+                    if(exam.isPreparing()){
+                        holder.mExamName.setEnabled(false);
+                        holder.mYearSpinner.setEnabled(false);
+                    }else{
+                        holder.mExamName.setEnabled(true);
+                        holder.mYearSpinner.setEnabled(true);
+                    }
+                }else {
+                    holder.mExamName.setSelected(false);
+                    holder.mYearSpinner.setSelected(false);
+                    holder.mExamName.setEnabled(true);
+                    holder.mYearSpinner.setEnabled(true);
+                    holder.mExamName.setTextColor(textColorId);
+                }
                 holder.mYearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -88,8 +117,9 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                                 if (obj == null) continue;
                                 obj.setSelected(false);
                             }
-                            if(count>=position) {
+                            if(holder.mExamName.isSelected() && count>=position) {
                                 examDetail.get(position).setSelected(true);
+                                exam.setSelected(true);
                             }
                         }
                     }
@@ -102,20 +132,13 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
 
                         }else{
                         }
+                        lastExamPosition=holder.mYearSpinner.getSelectedItemPosition();
+                        if(holder.mExamName.isSelected() && exam.getExam_details().get(lastExamPosition) != null) {
+                            exam.getExam_details().get(lastExamPosition) .setSelected(true);
+                            exam.setSelected(true);
+                        }
                     }
                 });
-                if (selectedPosition >= 0) {
-//                    examDetail.get(selectedPosition).setSelected(true);
-                    holder.mYearSpinner.setSelection(selectedPosition);
-                    holder.mYearSpinner.setSelected(true);
-                    holder.mExamName.setSelected(true);
-                    holder.mExamName.setTextColor(ExamsAdapter.this.mContext.getResources().getColor(R.color.white));
-                    holder.mExamName.setEnabled(false);
-                    holder.mYearSpinner.setEnabled(false);
-                }else {
-                    holder.mExamName.setEnabled(true);
-                    holder.mYearSpinner.setEnabled(true);
-                }
                 holder.mExamName.setOnClickListener(new View.OnClickListener(){
                     @Override
                     public void onClick(View v) {
@@ -124,32 +147,41 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
 //                        displayAlert(lastSelectedExam.getExam_details().get(lastExamPosition));
 //                            return;
 //                        }
-                        if (holder.mExamName.isSelected())
+                        if (v.isSelected())
                         {
-                            holder.mExamName.setSelected(false);
+                            v.setSelected(false);
+                            exam.setSelected(false);
                             holder.mYearSpinner.setSelected(false);
-                            holder.mExamName.setTextColor(ExamsAdapter.this.mContext.getResources().getColor(R.color.text_light_grey));
-                        }
-                        else{
-                            lastExamPosition=holder.mYearSpinner.getSelectedItemPosition();
-                            if(exam.getExam_details().get(lastExamPosition).isResult_out()) {
-                                displayAlert(exam.getExam_details().get(lastExamPosition),holder);
-
-                            }else{
+                            holder.mExamName.setTextColor(textColorId);
+                            ArrayList<ExamDetail> examDetailList = exam.getExam_details();
+                            if(examDetailList != null) {
+                                final int count = examDetailList.size();
+                                for (int i = 0; i < count; i++) {
+                                    ExamDetail obj = examDetailList.get(i);
+                                    if (obj == null) continue;
+                                    obj.setSelected(false);
+                                }
                             }
-                            holder.mExamName.setSelected(true);
-                            holder.mExamName.setTextColor(ExamsAdapter.this.mContext.getResources().getColor(R.color.white));
+
+                        }else{
+                            v.setSelected(true);
+                            exam.setSelected(true);
+                            holder.mYearSpinner.setSelected(true);
+                            holder.mExamName.setTextColor(Color.WHITE);
                             if(count>1) {
                                 holder.mYearSpinner.performClick();
                             }else{
-                                //holder.mYearSpinner.setSelected(true);
-                                if(exam.getExam_details().get(lastExamPosition).isResult_out()) {
+                                lastExamPosition=holder.mYearSpinner.getSelectedItemPosition();
+                                ExamDetail examDetailObj = exam.getExam_details().get(lastExamPosition);
+                                if(examDetailObj.isResult_out()) {
                                     displayAlert(exam.getExam_details().get(lastExamPosition),holder);
+
                                 }
+
+                                holder.mYearSpinner.setSelection(lastExamPosition);
+                                examDetailObj.setSelected(true);
                             }
-                            holder.mYearSpinner.setSelected(v.isSelected());
                         }
-                        exam.setSelected(holder.mExamName.isSelected());
                     }
                 });
             }

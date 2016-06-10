@@ -16,6 +16,7 @@ public class Profile implements Parcelable{
     private String image =  "";
     private String state_name = "";
     private int state_id = -1;
+    private int is_verified = 0;
     private String city_name =  "";
     private int city_id = -1;
     private String mother_tongue_name = "";
@@ -75,6 +76,7 @@ public class Profile implements Parcelable{
         image = in.readString();
         state_name = in.readString();
         state_id = in.readInt();
+        is_verified = in.readInt();
         city_name = in.readString();
         city_id = in.readInt();
         mother_tongue_name = in.readString();
@@ -149,6 +151,7 @@ public class Profile implements Parcelable{
         dest.writeString(image);
         dest.writeString(state_name);
         dest.writeInt(state_id);
+        dest.writeInt(is_verified);
         dest.writeString(city_name);
         dest.writeInt(city_id);
         dest.writeString(mother_tongue_name);
@@ -242,6 +245,14 @@ public class Profile implements Parcelable{
 
     public void setState_id(int state_id) {
         this.state_id = state_id;
+    }
+
+    public int getIs_verified() {
+        return is_verified;
+    }
+
+    public void setIs_verified(int is_verified) {
+        this.is_verified = is_verified;
     }
 
     public String getCity_name() {

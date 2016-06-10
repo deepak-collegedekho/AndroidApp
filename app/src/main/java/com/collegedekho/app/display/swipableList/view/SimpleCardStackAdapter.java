@@ -40,6 +40,7 @@ import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.FadeInImageView;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -156,7 +157,14 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         ImageLoader.ImageListener imageListener;
         final Institute institute = model.getInstitute();
         // set institute name
-        ((TextView) convertView.findViewById(R.id.title)).setText(institute.getName());
+
+        try {
+            String instituteName= new String(institute.getName().getBytes("ISO-8859-1"),"UTF-8");
+            ((TextView) convertView.findViewById(R.id.title)).setText(instituteName);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            ((TextView) convertView.findViewById(R.id.title)).setText(institute.getName());
+        }
 
         //setting location
         String text = "";
@@ -170,30 +178,16 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         else
             ((TextView) convertView.findViewById(R.id.description)).setText(text);
 
-        Log.e("getView "," step 1 time is "+System.currentTimeMillis());
-        //setting institute image_new
-        //fadeInImageView.setDefaultImageResId(R.drawable.default_banner);
-        //fadeInImageView.setErrorImageResId(R.drawable.default_banner);
+
         fadeInImageView = ((FadeInImageView) convertView.findViewById(R.id.institute_image));
         if (BitMapHolder.DEFAULT_BANNER != null)
             fadeInImageView.setLocalImageBitmap(BitMapHolder.DEFAULT_BANNER, true);
         else
             fadeInImageView.setBackgroundResource(R.drawable.default_banner);
 
-        Log.e("getView "," step 1 time is "+System.currentTimeMillis());
-
-       /* try{
-            ((ImageView) convertView.findViewById(R.id.like_textview)).setImageBitmap(BitMapHolder.SHORTLISTED_BITMAP);
-            ((ImageView) convertView.findViewById(R.id.dislike_textview)).setImageBitmap(BitMapHolder.UNSHORTLISTED_BITMAP);
-            ((ImageView) convertView.findViewById(R.id.decide_later_textview)).setImageBitmap(BitMapHolder.UNDECIDED_BITMAP);
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
-
-        Log.e("getView "," step 1 time is "+System.currentTimeMillis());
 
         TextView streamTV = ((TextView) convertView.findViewById(R.id.recommended_streams));
-        TextView examsTv=(TextView)convertView.findViewById(R.id.recommended_exams);
+        TextView examsTv   =(TextView)convertView.findViewById(R.id.recommended_exams);
         TextView maxSalary = ((TextView) convertView.findViewById(R.id.max_sal_val));
         TextView minSalary = ((TextView) convertView.findViewById(R.id.min_sal_val));
         TextView avgSalary = ((TextView) convertView.findViewById(R.id.avg_sal_val));
@@ -368,11 +362,6 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             convertView.findViewById(R.id.salaries_layout).setVisibility(View.GONE);
         }
 
-//            for (String stream : institute.getStreams()) {
-//                streamText += stream;
-//                streamText += "/";
-//            }
-
         String examsText="";
         for (String exam:institute.getExams()){
             examsText = examsText + exam + ", ";
@@ -388,7 +377,6 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         }
 
         streamTV.setVisibility(View.GONE);
-        //Showing max of two exams here
         if(!userExamsText.trim().isEmpty()) {
             String[] userExams=userExamsText.split(",");
             String examsStr=userExams[0];
@@ -398,7 +386,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             if(examsStr!=null && !examsStr.trim().isEmpty()) {
                 examsTv.setText("Exam: " + examsStr);
             }else {
-                examsTv.setVisibility(View.GONE);
+                examsTv.setText("Exam: Not Available");
             }
         }
 
@@ -414,14 +402,6 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             convertView.findViewById(R.id.clock_layout).setVisibility(View.INVISIBLE);
             convertView.findViewById(R.id.txt_last_application_text).setVisibility(View.INVISIBLE);
         }
-//        if (institute.getStreams() != null && institute.getStreams().size() > 0) {
-//
-//        } else {
-//
-////            convertView.findViewById(R.id.card_recommended_streams_label).setVisibility(View.GONE);
-//            convertView.findViewById(R.id.recommended_streams).setVisibility(View.GONE);
-//
-//        }
 
         imageListener = new ImageLoader.ImageListener() {
             @Override

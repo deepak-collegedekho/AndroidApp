@@ -13941,6 +13941,54 @@ public class ProfileMacro {
             "    }\n" +
             "]";
 
+
+    public static String PREFE_SUB_LEVEL_JSON = "[\n" +
+            "    {\n" +
+            "        \"id\": 1,\n" +
+            "        \"name\": \"College 1st Yr\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 2,\n" +
+            "        \"name\": \"College 2nd Yr\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 3,\n" +
+            "        \"name\": \"College 3rd Yr\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 4,\n" +
+            "        \"name\": \"College 4th Yr\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 5,\n" +
+            "        \"name\": \"PG-I\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 6,\n" +
+            "        \"name\": \"PG-II\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10,\n" +
+            "        \"name\": \"Ph.D-I\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 11,\n" +
+            "        \"name\": \"Ph.D-II\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 12,\n" +
+            "        \"name\": \"Ph.D-III\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 13,\n" +
+            "        \"name\": \"Certificate\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 14,\n" +
+            "        \"name\": \"Diploma\"\n" +
+            "    }\n" +
+            "]";
+
     public static String ALL_STREAMS = " [\n" +
             "                {\n" +
             "                    \"id\": 37,\n" +

@@ -51,7 +51,7 @@ public class SegmentedGroup extends RadioGroup {
         super(context, attrs);
         resources = getResources();
         mTintColor = resources.getColor(R.color.primary_orange);
-        mUnCheckedTintColor = resources.getColor(info.hoang8f.android.segmented.R.color.radio_button_unselected_color);
+        mUnCheckedTintColor = resources.getColor(R.color.radio_button_unselected_color);
         mMarginDp = (int) getResources().getDimension(R.dimen.m2dp);
         mCornerRadius = getResources().getDimension(R.dimen.m10dp);
         initAttrs(attrs);
@@ -68,11 +68,11 @@ public class SegmentedGroup extends RadioGroup {
         try {
             mMarginDp = (int) typedArray.getDimension(
                     R.styleable.SegmentedGroup_sc_border_width,
-                    getResources().getDimension(info.hoang8f.android.segmented.R.dimen.radio_button_stroke_border));
+                    getResources().getDimension(R.dimen.m1dp));
 
             mCornerRadius = typedArray.getDimension(
                     R.styleable.SegmentedGroup_sc_corner_radius,
-                    getResources().getDimension(info.hoang8f.android.segmented.R.dimen.radio_button_conner_radius));
+                    getResources().getDimension(R.dimen.m5dp));
 
             mTintColor = typedArray.getColor(
                     R.styleable.SegmentedGroup_sc_tint_color,
@@ -84,7 +84,7 @@ public class SegmentedGroup extends RadioGroup {
 
             mUnCheckedTintColor = typedArray.getColor(
                     R.styleable.SegmentedGroup_sc_unchecked_tint_color,
-                    getResources().getColor(info.hoang8f.android.segmented.R.color.radio_button_unselected_color));
+                    getResources().getColor(R.color.radio_button_unselected_color));
         } finally {
             typedArray.recycle();
         }
@@ -223,8 +223,8 @@ public class SegmentedGroup extends RadioGroup {
 
         private int children;
         private int child;
-        private final int SELECTED_LAYOUT = info.hoang8f.android.segmented.R.drawable.radio_checked;
-        private final int UNSELECTED_LAYOUT = info.hoang8f.android.segmented.R.drawable.radio_unchecked;
+        private final int SELECTED_LAYOUT = R.drawable.radio_checked;
+        private final int UNSELECTED_LAYOUT = R.drawable.radio_unchecked;
 
         private float r;    //this is the radios read by attributes or xml dimens
         private final float r1 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP

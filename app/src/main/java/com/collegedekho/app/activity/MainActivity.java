@@ -110,7 +110,7 @@ import com.collegedekho.app.entities.YoutubeVideoDetails;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.BaseFragment;
-import com.collegedekho.app.fragment.CDRecommendedInstituteListFragment;
+import com.collegedekho.app.fragment.CDRecommendedInstituteFragment;
 import com.collegedekho.app.fragment.CalendarParentFragment;
 import com.collegedekho.app.fragment.ExamsFragment;
 import com.collegedekho.app.fragment.FilterFragment;
@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity
         HomeFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
         DataLoadListener, StreamFragment.OnStreamInteractionListener,PsychometricStreamFragment.OnStreamInteractionListener,AdapterView.OnItemSelectedListener,
         InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener, OnNewsSelectListener,
-        /*ProfileEditFragment.onProfileUpdateListener,*/ProfileEditFragmentNew.ProfileUpdateListener, ProfileFragment.UserProfileListener,
+        ProfileEditFragmentNew.ProfileUpdateListener, ProfileFragment.UserProfileListener,
         InstituteQnAFragment.OnQuestionAskedListener, FilterFragment.OnFilterInteractionListener,
         InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         QnAQuestionDetailFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity
         UserEducationFragment.OnUserEducationInteractionListener, PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
-        UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteListFragment.OnCDRecommendedInstituteListener,
+        UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteFragment.OnCDRecommendedInstituteListener,
         InstituteVideosFragment.OnTitleUpdateListener,OTPVerificationFragment.OTPVerificationListener, ITrueCallback, WishlistFragment.WishlistInstituteInteractionListener
 {
 
@@ -336,7 +336,9 @@ public class MainActivity extends AppCompatActivity
     private String mDeepLinkingURI;
     private String mExamTag;
     private String user_phone_number;
-    private int mUndecidedCount;
+    private int mUndecidedInstitutesCount;
+    private int mShortListInstituteCount;
+    private int mBuzzListInstituteCount;
     private Snackbar mSnackbar;
     private static Context mContext;
     public static TrueClient mTrueClient;
@@ -456,18 +458,24 @@ public class MainActivity extends AppCompatActivity
         gcmDialogRunnable = new Runnable() {
             @Override
             public void run() {
-                if(IN_FOREGROUND && IS_PROFILE_LOADED){
-                    if(!IS_NETWORK_TASK_RUNNING) {
+                if(mProfile == null){
+                    gcmDialogHandler.removeCallbacks(gcmDialogRunnable);
+                    gcmDialogHandler.postDelayed(gcmDialogRunnable,3000);
+
+                }else  if(IN_FOREGROUND && IS_PROFILE_LOADED ){
+
+                    if(!IS_NETWORK_TASK_RUNNING &&  currentFragment != null &&
+                            !(currentFragment instanceof ProfileEditFragmentNew)) {
                         Intent gcmIntent = new Intent(MainActivity.this, GCMDialogActivity.class);
                         MainActivity.this.startActivityForResult(gcmIntent,Constants.GCM_RESULT_DATA_KEY);
                     }else {
                         gcmDialogHandler.removeCallbacks(gcmDialogRunnable);
-                        gcmDialogHandler.postDelayed(gcmDialogRunnable,5000);
+                        gcmDialogHandler.postDelayed(gcmDialogRunnable,3000);
                     }
                 }
             }
         };
-        gcmDialogHandler.postDelayed(gcmDialogRunnable,15000);
+        gcmDialogHandler.postDelayed(gcmDialogRunnable,20000);
     }
 
 
@@ -1129,6 +1137,7 @@ public class MainActivity extends AppCompatActivity
                 // user id register
                 setUserIdWithAllEvents();
 
+                this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_GCM,Constants.BASE_URL+"profile/", null);
                 // this code for backward compatibility because in first release user stream and level
                 // were saved in uri form instead of IDs. it can be remove after some releases
                 if (MainActivity.user != null && MainActivity.user.getStream() != null && MainActivity.user.getLevel() != null) {
@@ -1359,7 +1368,6 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onProfileUpdated(HashMap<String, String> params) {
-        //this.mMakeNetworkCall(Constants.TAG_UPDATE_PREFRENCES, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
         this.mMakeNetworkCall(Constants.TAG_UPDATE_USER_PROFILE, Constants.BASE_URL +"profile/", params, Request.Method.POST);
     }
 
@@ -1384,12 +1392,17 @@ public class MainActivity extends AppCompatActivity
             MainActivity.mProfile = profile;
             if(!(currentFragment instanceof ProfileEditFragmentNew))
                 return;
-            if(TAG.equalsIgnoreCase(Constants.TAG_UPDATE_PROFILE_EXAMS)){
-                ((ProfileEditFragmentNew) currentFragment).onProfileExamsSuccessfullyUpdated(profile);
-            }else {
-                Utils.DisplayToast(getApplicationContext(),"Profile Updated");
-                ((ProfileEditFragmentNew) currentFragment).onProfileSuccessfullyUpdated(profile);
+            if(currentFragment instanceof  ProfileEditFragmentNew) {
+                if (TAG.equalsIgnoreCase(Constants.TAG_UPDATE_PROFILE_EXAMS)) {
+                    ((ProfileEditFragmentNew) currentFragment).onProfileExamsSuccessfullyUpdated(profile);
+                } else if (TAG.equalsIgnoreCase(Constants.TAG_UPDATE_USER_PROFILE)) {
+                    Utils.DisplayToast(getApplicationContext(), "Profile Updated");
+                    ((ProfileEditFragmentNew) currentFragment).onProfileSuccessfullyUpdated(profile);
+                }
+            }else if(currentFragment instanceof  HomeFragment){
+                ((HomeFragment)currentFragment).updateUserName();
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1430,7 +1443,13 @@ public class MainActivity extends AppCompatActivity
                 this.mFilters = JSON.std.asString(map.get("filters"));
 
             if (map.containsKey("undecided_count"))
-                this.mUndecidedCount = Integer.valueOf(JSON.std.asString(map.get("undecided_count")));
+                this.mUndecidedInstitutesCount = Integer.valueOf(JSON.std.asString(map.get("undecided_count")));
+
+            if (map.containsKey("shortlist_count"))
+                this.mShortListInstituteCount = Integer.valueOf(JSON.std.asString(map.get("shortlist_count")));
+
+            if (map.containsKey("buzzlist_count"))
+                this.mBuzzListInstituteCount = Integer.valueOf(JSON.std.asString(map.get("buzzlist_count")));
 
             return JSON.std.asString(map.get("results"));
         } catch (Exception e) {
@@ -1483,21 +1502,22 @@ public class MainActivity extends AppCompatActivity
     private void updateNextInstituteList(String response, int listType) {
         try {
             List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
-            this.mInstituteList.addAll(institutes);
+            switch (listType) {
+                case Constants.WISH_LIST_TYPE: {
 
-            switch (listType)
-            {
-                case Constants.SHORTLIST_TYPE:
-                {
-                    if (currentFragment instanceof WishlistFragment)
-                        ((WishlistFragment) currentFragment).updateList(institutes, next);
-
+                    this.mInstituteList.addAll(institutes);
+                    if (currentFragment instanceof WishlistFragment) {
+                        ((WishlistFragment) currentFragment).clearList();
+                        ((WishlistFragment) currentFragment).updateLastList(mInstituteList, next);
+                    } else if (currentFragment instanceof CDRecommendedInstituteFragment)
+                        ((CDRecommendedInstituteFragment) currentFragment).updateWishList(mInstituteList, next);
                     break;
                 }
-                default:
-                {
-                    if (currentFragment instanceof InstituteListFragment)
+                default: {
+                    if (currentFragment instanceof InstituteListFragment) {
+                        this.mInstituteList.addAll(institutes);
                         ((InstituteListFragment) currentFragment).updateList(institutes, next);
+                    }
                 }
             }
         } catch (IOException e) {
@@ -1612,22 +1632,9 @@ public class MainActivity extends AppCompatActivity
         this.mDisplayInstituteList(response, filterAllowed, isHavingNextUrl, Constants.INSTITUTE_TYPE);
     }
 
-    private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl, Constants.CDRecommendedInstituteType cdRecommendedInstituteType) {
-        switch (cdRecommendedInstituteType) {
-            case UNDECIDED:
-                mDisplayCDRecommendedInstituteList(response, isHavingNextUrl, cdRecommendedInstituteType, true);
-                break;
-            case UNBAISED:
-            case SHORTLISTED:
-            case BUZZLIST:
-                mDisplayCDRecommendedInstituteList(response, isHavingNextUrl, cdRecommendedInstituteType, false);
-                break;
-        }
-    }
 
     private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl, Constants.CDRecommendedInstituteType cdRecommendedInstituteType, boolean isUpdate) {
         try {
-
             System.gc();
             this.hideProgressDialog();
 
@@ -1635,15 +1642,15 @@ public class MainActivity extends AppCompatActivity
                 next = null;
 
             if (isUpdate) {
-                if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteListFragment) {
+                if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteFragment) {
                     String val = this.extractResults(response);
                     this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
                     if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED) {
-                        ((CDRecommendedInstituteListFragment) currentFragment).showUndecidedInstitutes(this.mInstituteList, next);
+                        ((CDRecommendedInstituteFragment) currentFragment).showUndecidedInstitutes(this.mInstituteList, next);
                     }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED) {
-                        ((CDRecommendedInstituteListFragment) currentFragment).updateList(this.mInstituteList, next);
+                        ((CDRecommendedInstituteFragment) currentFragment).updateList(this.mInstituteList, next);
                     }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.BUZZLIST){
-                        ((CDRecommendedInstituteListFragment) currentFragment).updateBuzzList(this.mInstituteList, next);
+                        ((CDRecommendedInstituteFragment) currentFragment).updateBuzzList(this.mInstituteList, next);
                     }
 
 
@@ -1654,17 +1661,18 @@ public class MainActivity extends AppCompatActivity
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
 
                 if (fragment == null) {
-                    this.mDisplayFragment(CDRecommendedInstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, this.mUndecidedCount,cdRecommendedInstituteType.ordinal()), !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
+                    this.mDisplayFragment(CDRecommendedInstituteFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next,
+                            this.mUndecidedInstitutesCount, this.mShortListInstituteCount, this.mBuzzListInstituteCount,cdRecommendedInstituteType.ordinal()), !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
                 } else {
-                    if (fragment instanceof CDRecommendedInstituteListFragment) {
+                    if (fragment instanceof CDRecommendedInstituteFragment) {
                         if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED) {
-                            ((CDRecommendedInstituteListFragment) fragment).showUndecidedInstitutes(this.mInstituteList, next);
+                            ((CDRecommendedInstituteFragment) fragment).showUndecidedInstitutes(this.mInstituteList, next);
                         }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED) {
-                            ((CDRecommendedInstituteListFragment) fragment).updateList(this.mInstituteList, next);
+                            ((CDRecommendedInstituteFragment) fragment).updateList(this.mInstituteList, next);
                         }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.SHORTLISTED){
-                            ((CDRecommendedInstituteListFragment) currentFragment).updateWishList(this.mInstituteList, next);
+                            ((CDRecommendedInstituteFragment) currentFragment).updateWishList(this.mInstituteList, next);
                         }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.BUZZLIST){
-                            ((CDRecommendedInstituteListFragment) currentFragment).updateBuzzList(this.mInstituteList, next);
+                            ((CDRecommendedInstituteFragment) currentFragment).updateBuzzList(this.mInstituteList, next);
                         }
                     }
 
@@ -1701,7 +1709,7 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount,listType), !isFromNotification, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
             }
 
-            if(listType==Constants.SHORTLIST_TYPE){
+            if(listType==Constants.WISH_LIST_TYPE){
                 if(MainActivity.user.getPartner_shortlist_count()>0) {
                     requestOtp();
                 }
@@ -1728,7 +1736,7 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayFragment(WishlistFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed), !isFromNotification, Constants.TAG_FRAGMENT_WISHLIST_INSTITUTE_LIST);
             }
 
-            if(listType==Constants.SHORTLIST_TYPE){
+            if(listType==Constants.WISH_LIST_TYPE){
                 if(MainActivity.user.getPartner_shortlist_count()>0) {
                     requestOtp();
                 }
@@ -1905,7 +1913,7 @@ public class MainActivity extends AppCompatActivity
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
 
-                networkUtils.imageUpload("IMAGE_UPLOAD", Constants.BASE_URL+"upload-image/", params, Request.Method.PUT);
+               // networkUtils.imageUpload("IMAGE_UPLOAD", Constants.BASE_URL+"upload-image/", params, Request.Method.PUT);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -1949,10 +1957,10 @@ public class MainActivity extends AppCompatActivity
             return;
         }else if(requestCode==Constants.GCM_RESULT_DATA_KEY && resultCode==RESULT_OK){
             try {
-                HashMap<String, String> hashMap = (HashMap<String, String>) data.getSerializableExtra(Constants.DIALOG_DATA);
-                if(hashMap!=null && !hashMap.isEmpty()) {
-                    this.mMakeNetworkCall(Constants.TAG_UPDATE_USER_PROFILE_GCM, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
-                }
+                HashMap<String, String> params = (HashMap<String, String>) data.getSerializableExtra(Constants.DIALOG_DATA);
+                if(params!=null && !params.isEmpty()) {
+                    this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_GCM, Constants.BASE_URL +"profile/", params, Request.Method.POST);
+                   }
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -2063,9 +2071,6 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_FACEBOOK_LOGIN:
                 this.mUpdateUserPreferences(response);
                 break;
-            case Constants.TAG_GET_USER_PROFILE:
-                this.mSetProfileUser(response);
-                break;
             case Constants.TAG_USER_EDUCATION:
                 this.mDisplayUserEducationFragment(response);
                 break;
@@ -2102,22 +2107,18 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_UPDATE_PROFILE_EXAMS:
             case Constants.TAG_UPDATE_USER_PROFILE:
-                /*this.mStreamAndLevelUpdated(response);
-                this.mClearBackStack();*/
+            case Constants.TAG_UPDATE_PROFILE_GCM:
                 profileSuccessfullyUpdated(tags[0],response);
                 break;
-//            case Constants.TAG_USER_EXAMS_SET:
-//                this.mUserExamStepCompleted(response);
-//                break;
+            case Constants.TAG_GET_USER_PROFILE:
+                this.mSetProfileUser(response);
+                break;
             case Constants.TAG_LAUNCH_USER_HOME:
                 this.onUpdateUserPreferences(response);
                 if (!IS_PROFILE_LOADED) {
                     this.mClearBackStack();
                     mLoadHomeScreen(null);
                 }
-                break;
-            case Constants.TAG_UPDATE_USER_PROFILE_GCM:
-                this.onUpdatePreferences(response);
                 break;
             case Constants.TAG_LOAD_USER_PREFERENCES:
                 this.onUpdateUserPreferences(response);
@@ -2136,17 +2137,11 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_STREAM:
                 this.mDisplayStreams(response, true);
                 break;
-            case Constants.TAG_NEXT_SHORTLIST_INSTITUTE:
-                this.updateNextInstituteList(response, Constants.SHORTLIST_TYPE);
-                break;
-            case Constants.TAG_NEXT_WISHLIST_INSTITUTE:
-                this.updateNextWishlistInstitutes(response);
-                break;
             case Constants.WIDGET_SHORTLIST_INSTITUTES:
                 this.mCurrentTitle = "Wishlist Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 //this.mDisplayInstituteList(response, false, true, Constants.SHORTLIST_TYPE);
-                this.mDisplayWishlistInstituteList(response, false, true, Constants.SHORTLIST_TYPE);
+                this.mDisplayWishlistInstituteList(response, false, true, Constants.WISH_LIST_TYPE);
                 break;
             case Constants.WIDGET_INSTITUTES:
                 this.mCurrentTitle = "Institutes";
@@ -2159,30 +2154,45 @@ public class MainActivity extends AppCompatActivity
                 if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED, true);
                 } else {
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED);
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED, false);
                 }
                 break;
 
             case Constants.CARD_SHORTLIST_INSTITUTES:
                 this.mCurrentTitle = "Shortlisted Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
-                /*if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.SHORTLISTED, true);
-                } else {*/
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.SHORTLISTED);
-                //}
+                this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.SHORTLISTED, false);
                 break;
-
             case Constants.CARD_BUZZLIST_INSTITUTES:
                 this.mCurrentTitle = "Buzzlist Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.BUZZLIST, true);
                 } else {
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.BUZZLIST);
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.BUZZLIST, false);
                 }
                 break;
-
+            case Constants.TAG_NEXT_WISHLIST_INSTITUTE:
+                this.updateNextInstituteList(response, Constants.WISH_LIST_TYPE);
+                break;
+            case Constants.TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING:
+                this.updateLastInstituteList(response);
+                break;
+            case Constants.TAG_NEXT_INSTITUTE:
+                this.updateNextInstituteList(response, Constants.INSTITUTE_TYPE);
+                break;
+            case Constants.TAG_NEXT_NEWS:
+                this.updateNextNewsList(response);
+                break;
+            case Constants.TAG_NEXT_ARTICLES:
+                this.updateNextArticlesList(response);
+                break;
+            case Constants.TAG_NEXT_QNA_LIST:
+                this.updateNextQnaList(response);
+                break;
+            case Constants.TAG_NEXT_FORUMS_LIST:
+                this.updateNextForumsList(response);
+                break;
             case Constants.SEARCHED_INSTITUTES:
                 this.mCurrentTitle = "Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
@@ -2225,24 +2235,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_FILTERS:
                 this.updateFilterList(response);
                 break;
-            case Constants.TAG_NEXT_INSTITUTE:
-                this.updateNextInstituteList(response, Constants.INSTITUTE_TYPE);
-                break;
-            case Constants.TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING:
-                this.updateLastInstituteList(response);
-                break;
-            case Constants.TAG_NEXT_NEWS:
-                this.updateNextNewsList(response);
-                break;
-            case Constants.TAG_NEXT_ARTICLES:
-                this.updateNextArticlesList(response);
-                break;
-            case Constants.TAG_NEXT_QNA_LIST:
-                this.updateNextQnaList(response);
-                break;
-            case Constants.TAG_NEXT_FORUMS_LIST:
-                this.updateNextForumsList(response);
-                break;
+
             case Constants.TAG_LOAD_PROFILE:
                 this.mLoadUserProfile(response);
                 break;
@@ -2489,17 +2482,14 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
                 this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.SHORTLISTED);
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                if (tags.length == 3) {
-                    this.mUpdateUndecidedCount(this.mUndecidedCount, true);
-                }
-                if (tags.length == 2)
-                {
-                    this.mUpdateUndecidedCount(this.mUndecidedCount, true);
+                this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
+                this.mUpdateWishListCount();
+                if (tags.length == 2) {
+                    this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
                     parentIndex = tags[1];
                     if (parentIndex.equals("true"))
                     this.OnCDRecommendedLoadNext();
                 }
-
                 break;
             case Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE:
                 if (tags.length == 2) {
@@ -2511,42 +2501,24 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
                 this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.NOT_INERESTED);
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                if (tags.length == 3) {
-                    this.mUpdateUndecidedCount(this.mUndecidedCount, true);
-                }
+                this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
                 if (tags.length == 2) {
-                    this.mUpdateUndecidedCount(this.mUndecidedCount, true);
                     parentIndex = tags[1];
                     if (parentIndex.equals("true"))
                         this.OnCDRecommendedLoadNext();
                 }
                 break;
             case Constants.TAG_LOAD_UNDECIDED_INSTITUTE:
-                /*if (tags.length == 3) {
-
-                }
-                if (tags.length == 2) {
-                    ++this.mUndecidedCount;
-                    this.mUpdateUndecidedCount(this.mUndecidedCount, false);
-                    this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.UNDECIDED);
-                    parentIndex = tags[1];
-                    if (parentIndex.equals("true"))
-                        this.OnCDRecommendedLoadNext();
-                }
-                else if (tags.length == 1)
-                {*/
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNDECIDED);
-               // }
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNDECIDED, true);
                 break;
-
             case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 if (tags.length == 3) {
 
                 }
                 if (tags.length == 2) {
-                    ++this.mUndecidedCount;
-                    this.mUpdateUndecidedCount(this.mUndecidedCount, false);
+                    ++this.mUndecidedInstitutesCount;
+                    this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, false);
                     this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.UNDECIDED);
                     parentIndex = tags[1];
                     if (parentIndex.equals("true"))
@@ -2554,7 +2526,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 else if (tags.length == 1)
                 {
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNDECIDED);
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNDECIDED, true);
                 }
                 break;
             case Constants.SUBMITTED_CHAPTER_STATUS:
@@ -2579,35 +2551,16 @@ public class MainActivity extends AppCompatActivity
     {
         if (currentFragment instanceof WishlistFragment)
             ((WishlistFragment) currentFragment).UpdateAppliedStatus(i);
-        else if(currentFragment instanceof CDRecommendedInstituteListFragment)
-            ((CDRecommendedInstituteListFragment) currentFragment).UpdateAppliedStatus(i);
+        else if(currentFragment instanceof CDRecommendedInstituteFragment)
+            ((CDRecommendedInstituteFragment) currentFragment).UpdateAppliedStatus(i);
     }
 
     private void RemoveInstituteFromWishlist(int i) {
         if (currentFragment instanceof WishlistFragment)
             ((WishlistFragment) currentFragment).RemoveInstitute(i);
-        else if(currentFragment instanceof CDRecommendedInstituteListFragment)
-             ((CDRecommendedInstituteListFragment) currentFragment).RemoveInstitute(i);
+        else if(currentFragment instanceof CDRecommendedInstituteFragment)
+             ((CDRecommendedInstituteFragment) currentFragment).RemoveInstitute(i);
     }
-
-
-    private void updateNextWishlistInstitutes(String response) {
-
-        String val = this.extractResults(response);
-        try {
-           List<Institute> nextList = JSON.std.listOfFrom(Institute.class, val);
-            this.mInstituteList.addAll(nextList);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (currentFragment instanceof WishlistFragment) {
-            ((WishlistFragment) currentFragment).clearList();
-            ((WishlistFragment) currentFragment).updateLastList(mInstituteList, next);
-        }else if(currentFragment instanceof CDRecommendedInstituteListFragment)
-            ((CDRecommendedInstituteListFragment) currentFragment).updateWishList(mInstituteList, next);
-    }
-
-
 
     private synchronized void mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType type) {
         //Events
@@ -2632,8 +2585,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mUpdateUndecidedCount(int i, boolean isIncremented) {
-        if (currentFragment instanceof CDRecommendedInstituteListFragment)
-            ((CDRecommendedInstituteListFragment) currentFragment).mUpdateUndecidedCount(i, isIncremented);
+        if (currentFragment instanceof CDRecommendedInstituteFragment)
+            ((CDRecommendedInstituteFragment) currentFragment).mUpdateUndecidedCount(i, isIncremented);
+    }
+
+    private void mUpdateWishListCount() {
+        if (currentFragment instanceof CDRecommendedInstituteFragment)
+            ((CDRecommendedInstituteFragment) currentFragment).mUpdateWishListCount();
     }
 
     private void mOnPsychometricTestCompleted(String streamId, String streamName, String response) {
@@ -3201,7 +3159,6 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_NEXT_INSTITUTE:
             case Constants.TAG_NEXT_NEWS:
             case Constants.TAG_NEXT_QNA_LIST:
-            case Constants.TAG_NEXT_SHORTLIST_INSTITUTE:
             case Constants.TAG_NEXT_WISHLIST_INSTITUTE:
             case Constants.TAG_INSTITUTE_LIKE_DISLIKE:
             case Constants.TAG_QUESTION_LIKE_DISLIKE:
@@ -3509,9 +3466,7 @@ public class MainActivity extends AppCompatActivity
         if (next == null || next.equalsIgnoreCase("null")) return;
         if (listType == Constants.INSTITUTE_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_INSTITUTE, next, this.mFilterKeywords);
-        else if (listType == Constants.SHORTLIST_TYPE)
-            this.mMakeNetworkCall(Constants.TAG_NEXT_SHORTLIST_INSTITUTE, next, null);
-        else if (listType == Constants.WISH_LIST_TYPE)
+       else if (listType == Constants.WISH_LIST_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_WISHLIST_INSTITUTE, next, null);
         else if (listType == Constants.NEWS_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_NEWS, next, null);
@@ -3757,12 +3712,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-   /* @Override
-    public void onRemoveShortlistedInstitute(Institute institute,boolean isLast) {
-        if (institute != null) {
-                this.mMakeNetworkCall(Constants.CARD_DELETE_SHORTLISTED_INSTITUTE+"#"+isLast , institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
-        }
-    }*/
     @Override
     public void displayMessage(int messageId) {
         displaySnackBar(messageId);
@@ -5177,16 +5126,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void OnCDRecommendedLoadNext()
-    {
-        Map<String , String> params = this.mGetTheFilters();
-
-        if(this.mExamTag != null && !this.mExamTag.isEmpty())
-            params.put("tag_uris[" + (params.size()) + "]", this.mExamTag);
-
-        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES + "#" + "next", Constants.BASE_URL + "personalize/recommended-institutes/", params);
-    }
 
     @Override
     public void OnCDRecommendedInstituteSelected(Institute institute) {
@@ -5290,11 +5229,6 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.CARD_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
     }
 
-   /* @Override
-    public void onNextWishList() {
-        this.mMakeNetworkCall(Constants.CARD_SHORTLIST_INSTITUTES+"#next", next, null);
-    }*/
-
     @Override
     public void onNextBuzzList() {
     if(next!=null)
@@ -5306,6 +5240,14 @@ public class MainActivity extends AppCompatActivity
         onHomeItemSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/", mExamTag);
     }
 
+    @Override
+    public void OnCDRecommendedLoadNext()
+    {
+        Map<String , String> params = this.mGetTheFilters();
+        if(this.mExamTag != null && !this.mExamTag.isEmpty())
+            params.put("tag_uris[" + (params.size()) + "]", this.mExamTag);
+        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES + "#" + "next", Constants.BASE_URL + "personalize/recommended-institutes/", params);
+    }
 
     @Override
     public void onCourseApplied(final InstituteCourse instituteCourse) {
@@ -5427,8 +5369,8 @@ public class MainActivity extends AppCompatActivity
                     mMakeNetworkCall( TAG,Constants.BASE_URL + "lms/", params, Request.Method.POST);
 
                     // remove top card from CD reco and shortlist after  successfully  applying for the institute
-                    if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteListFragment) {
-                        ((CDRecommendedInstituteListFragment) currentFragment).removeTopCard(mInstitute);
+                    if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteFragment) {
+                        ((CDRecommendedInstituteFragment) currentFragment).removeTopCard(mInstitute);
 
                         HashMap<String, String> shortlistParams = new HashMap<>();
                         shortlistParams.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
@@ -5459,8 +5401,8 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall( TAG,Constants.BASE_URL + "lms/", params, Request.Method.POST);
 
             // remove top card from CD reco after  successfully  applying for the institute
-            if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteListFragment) {
-                ((CDRecommendedInstituteListFragment) currentFragment).removeTopCard(mInstitute);
+            if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteFragment) {
+                ((CDRecommendedInstituteFragment) currentFragment).removeTopCard(mInstitute);
 
                 HashMap<String, String> shortlistparams = new HashMap<>();
                 shortlistparams.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));

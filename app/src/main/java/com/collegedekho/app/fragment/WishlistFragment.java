@@ -109,8 +109,7 @@ public class WishlistFragment extends BaseFragment {
         recyclerView = (RecyclerView) rootView.findViewById(R.id.wishlist_institute_grid);
 
         layoutManager = new GridLayoutManager(getActivity(), 3);
-
-        //this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
+        this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
 
         this.recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 0, false));
         this.recyclerView.setLayoutManager(layoutManager);
@@ -119,6 +118,13 @@ public class WishlistFragment extends BaseFragment {
         this.recyclerView.addOnScrollListener(scrollListener);
 
         this.setupPeekAndPopStandard();
+
+        if(mInstitutes == null || mInstitutes.size() <= 0){
+            mEmptyTextView.setVisibility(View.VISIBLE);
+            mEmptyTextView.setText("You Don't have any WishList College Please Shortlist college in Recommended...");
+        }else{
+            mEmptyTextView.setVisibility(View.GONE);
+        }
 
         return rootView;
     }

@@ -422,6 +422,7 @@ public class MaterialSpinner extends TextView {
     this.isMultiSelection = isMutiselction;
     if(isMutiselction){
       doneButton.setVisibility(VISIBLE);
+      listView.setPadding(0,0,0, Utils.getPadding(mContext, (int)getResources().getDimension(R.dimen.m20dp)));
     }
     popupWindow.setOutsideTouchable(false);
   }
@@ -536,8 +537,11 @@ public class MaterialSpinner extends TextView {
       return WindowManager.LayoutParams.WRAP_CONTENT;
     }
     float listViewHeight = adapter.getCount() * getResources().getDimension(R.dimen.m43dp);
-    if(!(adapter.getCount() >=4 )){
+    if(!(adapter.getCount() >= 6 )){
       return (int)listViewHeight;
+    }
+    if(adapter.getCount() >=20){
+      return WindowManager.LayoutParams.WRAP_CONTENT;
     }
     if (popupWindowMaxHeight > 0 && listViewHeight > popupWindowMaxHeight) {
       return 440;

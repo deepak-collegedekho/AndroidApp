@@ -41,7 +41,7 @@ public class Constants
     public static final String TAG_LOAD_USER_PREFERENCES = "load_user_preferences";
     public static final String TAG_LOAD_USER_PREFERENCES_N_BACK = "load_user_preferences_n_back";
     public static final String TAG_LAUNCH_USER_HOME = "launch_user_home";
-    public static final String TAG_UPDATE_USER_PROFILE_GCM = "update_user_profile_from_notification";
+    //public static final String TAG_UPDATE_USER_PROFILE_GCM = "update_user_profile_from_notification";
     public static final String TAG_SUBMIT_EDITED_EXAMS_LIST = "submit_edited_exams_list";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_EXAM = "submit_psychometric_exam";
     public static final String TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM = "submit_edit_psychometric_exam";
@@ -98,8 +98,7 @@ public class Constants
     public static final String TAG_TAGS = "tags";
     public static final String TAG_ID = "id";
     public static final String TAG_SELECTED = "is_selected";
-    public static final String TAG_NEXT_SHORTLIST_INSTITUTE = "next_wish_list_institutes";
-    public static final String TAG_NEXT_WISHLIST_INSTITUTE = "next_shortlist_institutes";
+    public static final String TAG_NEXT_WISHLIST_INSTITUTE = "next_wish_list_institutes";
     public static final String TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING = "last_shortlist_institutes_while_removing";
     public static final String TAG_NEXT_INSTITUTE = "next_institutes";
     public static final String TAG_NEXT_NEWS = "next_news";
@@ -133,6 +132,7 @@ public class Constants
     public static final String TAG_SUBMIT_EDITED_PREFRENCES = "submit_edited_prefrences";
     public static final String TAG_UPDATE_USER_PROFILE = "update_user_profile";
     public static final String TAG_UPDATE_PROFILE_EXAMS = "update_profile_exams";
+    public static final String TAG_UPDATE_PROFILE_GCM = "update_profile_gcm";
     public static final String TAG_REQUEST_FOR_SPECIALIZATION = "request_for_specialization";
     public static final String TAG_UPDATE_INSTITUTES = "update_institutes";
     public static final String TAG_FRAGMENT_FILTER_LIST = "fragment_filter_list";
@@ -206,7 +206,7 @@ public class Constants
     public static final int INSTITUTE_TYPE   = 1 ;
     public static final int NEWS_TYPE        = 2 ;
     public static final int ARTICLES_TYPE    = 3 ;
-    public static final int SHORTLIST_TYPE   = 4 ;
+   // public static final int SHORTLIST_TYPE   = 4 ;
     public static final int QNA_LIST_TYPE    = 5 ;
     public static final int FORUM_LIST_TYPE  = 6 ;
     public static final int INSTITUTE_SEARCH_TYPE   = 7 ;

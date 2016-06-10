@@ -2,13 +2,10 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;

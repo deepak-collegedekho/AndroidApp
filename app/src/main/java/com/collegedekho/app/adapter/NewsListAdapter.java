@@ -76,8 +76,8 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
         // set news title
         try {
-            String response= new String(news.title.getBytes("ISO-8859-1"),"UTF-8");
-            newsHolder.newsTitle.setText(response);
+            String newsName= new String(news.title.getBytes("ISO-8859-1"),"UTF-8");
+            newsHolder.newsTitle.setText(newsName);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             newsHolder.newsTitle.setText(news.title);
@@ -93,8 +93,8 @@ public class NewsListAdapter extends RecyclerView.Adapter {
 
             // set news Content
             try {
-                String response= new String(news.content.getBytes("ISO-8859-1"),"UTF-8");
-                newsHolder.newsContent.setText(Html.fromHtml(response));
+                String newsContent= new String(news.content.getBytes("ISO-8859-1"),"UTF-8");
+                newsHolder.newsContent.setText(Html.fromHtml(newsContent));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 newsHolder.newsContent.setText(Html.fromHtml(news.content));
