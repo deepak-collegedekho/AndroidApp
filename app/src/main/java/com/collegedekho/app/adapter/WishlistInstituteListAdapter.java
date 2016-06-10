@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -24,6 +25,9 @@ import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.widget.FadeInImageView;
 
 import java.util.ArrayList;
+
+import static com.collegedekho.app.resource.Constants.HOLD_ENTER_VIBRATION_DURATION;
+import static com.collegedekho.app.resource.Constants.HOLD_REMOVE_VIBRATION_DURATION;
 
 public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistInstituteListAdapter.InstituteHolder> {
 
@@ -46,7 +50,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
         this.mPeekPopViewType = type;
         this.mPeekAndPop = peekAndPop;
         this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
-        this.mPeekViewAdapter = new WishlistCardAdapter(context, null);
+        this.mPeekViewAdapter = new WishlistCardAdapter(context);
 
         this.mPeekView = this.mPeekAndPop.getPeekView();
 
@@ -58,11 +62,21 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
         this.mPeekAndPop.setOnGeneralActionListener(new PeekAndPop.OnGeneralActionListener() {
             @Override
             public void onPeek(View view, int position) {
-                WishlistInstituteListAdapter.this.mShowInstituteCard(position);
+                WishlistInstituteListAdapter.this.mShowInstituteCardOnLongPress(position);
             }
 
             @Override
             public void onPop(View view, int position) {
+            }
+
+            @Override
+            public void onClickPeek(View view, int position) {
+
+            }
+
+            @Override
+            public void onClickPop(View view, int position) {
+
             }
         });
 
@@ -80,24 +94,22 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
             @Override
             public void onEnter(View view, int position) {
                 Log.d("WlInsAdap", "onEnter:");
-                vibratorService.vibrate(50);
+                vibratorService.vibrate(HOLD_ENTER_VIBRATION_DURATION);
             }
 
             @Override
             public void onLongHold(View view, int position) {
+                vibratorService.vibrate(HOLD_REMOVE_VIBRATION_DURATION);
                 if (view.getId() == R.id.wishlist_institute_see_all_layout) {
-                    vibratorService.vibrate(100);
                     WishlistInstituteListAdapter.this.mPeekViewAdapter.ToggleFacilitiesLayout();
                 }
                 else if (view.getId() == R.id.wishlist_btn_details)
                 {
-                    vibratorService.vibrate(100);
                     WishlistInstituteListAdapter.this.mPeekViewAdapter.ToggleWishlistInstituteDetails();
                 }
                 else if (view.getId() == R.id.wishlist_header_view)
                 {
                     //show institute
-                    vibratorService.vibrate(100);
                     WishlistInstituteListAdapter.this.mListener.OnWishlistInstituteSelected(WishlistInstituteListAdapter.this.mInstitutes.get(position));
                 }
             }
@@ -106,17 +118,15 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
         this.mPeekAndPop.setOnHoldAndReleaseListener(new PeekAndPop.OnHoldAndReleaseListener() {
             @Override
             public void onHold(View view, int position) {
-                vibratorService.vibrate(50);
+                vibratorService.vibrate(HOLD_ENTER_VIBRATION_DURATION);
             }
 
             @Override
-            public void onLeave(View view, int position) {
-                vibratorService.vibrate(10);
-            }
+            public void onLeave(View view, int position) {}
 
             @Override
             public void onRelease(View view, int position) {
-                vibratorService.vibrate(100);
+                vibratorService.vibrate(HOLD_REMOVE_VIBRATION_DURATION);
 
                 String message = "";
 
@@ -263,7 +273,12 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
         }
     }
 
-    public void mShowInstituteCard(int position)
+    public void mShowInstituteCardOnLongPress(int position)
+    {
+        this.mPeekViewAdapter.ShowInstituteCard(this.mInstitutes.get(position), this.mPeekView);
+    }
+
+    public void mShowInstituteCardOnClick(int position)
     {
         this.mPeekViewAdapter.ShowInstituteCard(this.mInstitutes.get(position), this.mPeekView);
     }

@@ -45,15 +45,15 @@ public class PeekAndPop {
 
     private static final int PEEK_VIEW_MARGIN = 12;
 
-    protected static final long LONG_CLICK_DURATION = 400;
-    protected static final long LONG_HOLD_DURATION = 850;
+    protected static final long LONG_CLICK_DURATION = 100;
+    protected static final long LONG_HOLD_DURATION = 550;
     protected static final long HOLD_AND_RELEASE_DURATION = 50;
 
     private static final int FLING_VELOCITY_THRESHOLD = 3000;
     private static final float FLING_VELOCITY_MAX = 1000;
 
-    protected static final int ANIMATION_PEEK_DURATION = 275;
-    protected static final int ANIMATION_POP_DURATION = 250;
+    protected static final int ANIMATION_PEEK_DURATION = 675;
+    protected static final int ANIMATION_POP_DURATION = 650;
 
     protected Builder builder;
     protected View peekView;
@@ -123,12 +123,6 @@ public class PeekAndPop {
     protected void initialisePeekView() {
         LayoutInflater inflater = LayoutInflater.from(builder.activity);
         contentView = (ViewGroup) builder.activity.findViewById(android.R.id.content).getRootView();
-        /*View view = builder.fragment.getView();
-
-        if (view instanceof RelativeLayout) {
-            contentView = (RelativeLayout) view;
-            Log.e("PeekAndPop", "view found");
-        }*/
 
         // Center onPeek view in the onPeek layout and add to the container view group
         peekLayout = (FrameLayout) inflater.inflate(R.layout.peek_background, contentView, false);
@@ -244,6 +238,7 @@ public class PeekAndPop {
             }
         }
     }
+
 
     /**
      * Check all the HoldAndRelease views to see if they are being held and if so for how long
@@ -543,7 +538,6 @@ public class PeekAndPop {
 
         // essentials
         protected final Activity activity;
-        protected final Fragment fragment;
         protected int peekLayoutId = -1;
 
         // optional extras
@@ -560,13 +554,10 @@ public class PeekAndPop {
         protected boolean allowUpwardsFling = true;
         protected boolean allowDownwardsFling = true;
 
-
-        public Builder(@NonNull Activity activity, @NonNull Fragment fragment) {
+        public Builder(@NonNull Activity activity) {
             this.activity = activity;
-            this.fragment = fragment;
             this.longClickViews = new ArrayList<>();
         }
-
 
         /**
          * Peek layout resource id, which will be inflated into the onPeek view
@@ -699,6 +690,7 @@ public class PeekAndPop {
 
         private int position;
         private Timer longHoldTimer;
+        private Runnable longHoldRunnable;
         private boolean peekShown;
 
         public PeekAndPopOnTouchListener(int position) {
@@ -708,19 +700,38 @@ public class PeekAndPop {
 
         @Override
         public boolean onTouch(final View view, MotionEvent event) {
-            Log.d("PeekAndPop", "onTouch: type is : " + event.getAction() + "view :" + view);
-
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 peekShown = false;
                 startTimer(view);
             } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
-                longHoldTimer.cancel();
+                cancelPendingTimer(view);
             }
 
             if (peekShown)
                 handleTouch(view, event, position);
 
             return peekShown;
+        }
+
+        /**
+         * Cancel pending timer and if the timer has already activated, run another runnable to
+         * pop the view.
+         *
+         * @param view
+         */
+        private void cancelPendingTimer(@NonNull final View view){
+            longHoldTimer.cancel();
+            if(longHoldRunnable != null){
+                longHoldRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        peekShown = false;
+                        pop(view, position);
+                        longHoldRunnable = null;
+                    }
+                };
+                builder.activity.runOnUiThread(longHoldRunnable);
+            }
         }
 
         /**
@@ -733,13 +744,15 @@ public class PeekAndPop {
             longHoldTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    builder.activity.runOnUiThread(new Runnable() {
+                    longHoldRunnable = new Runnable() {
                         @Override
                         public void run() {
                             peekShown = true;
                             peek(view, position);
+                            longHoldRunnable = null;
                         }
-                    });
+                    };
+                    builder.activity.runOnUiThread(longHoldRunnable);
                 }
             }, LONG_CLICK_DURATION);
         }
@@ -817,6 +830,10 @@ public class PeekAndPop {
         void onPeek(View longClickView, int position);
 
         void onPop(View longClickView, int position);
+
+        void onClickPeek(View longClickView, int position);
+
+        void onClickPop(View longClickView, int position);
     }
 
     public interface OnLongHoldListener {
@@ -832,5 +849,4 @@ public class PeekAndPop {
 
         void onRelease(View view, int position);
     }
-
 }

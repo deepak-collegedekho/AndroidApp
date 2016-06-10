@@ -92,6 +92,13 @@ public class WishlistFragment extends BaseFragment {
         this.mWishlistInstituteListAdapter.notifyDataSetChanged();
     }
 
+    public void UpdateAppliedStatus(int position)
+    {
+        this.mInstitutes.get(position).setIs_applied(true);
+        this.mWishlistInstituteListAdapter.notifyItemChanged(position);
+        this.mWishlistInstituteListAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -117,7 +124,7 @@ public class WishlistFragment extends BaseFragment {
     }
 
     private void setupPeekAndPopStandard(){
-        peekAndPop = new PeekAndPop.Builder(this.getActivity(), WishlistFragment.this)
+        peekAndPop = new PeekAndPop.Builder(this.getActivity())
                 .blurBackground(true)
                 .peekLayout(R.layout.peek_view)
                 .parentViewGroupToDisallowTouchEvents(recyclerView)
@@ -125,7 +132,7 @@ public class WishlistFragment extends BaseFragment {
         
         this.mWishlistInstituteListAdapter = new WishlistInstituteListAdapter(this.getActivity(), this.mInstitutes, Constants.TYPE_STANDARD, peekAndPop);
 
-        recyclerView.setAdapter(this.mWishlistInstituteListAdapter);
+        this.recyclerView.setAdapter(this.mWishlistInstituteListAdapter);
     }
 
     @Override

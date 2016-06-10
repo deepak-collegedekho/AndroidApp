@@ -2216,6 +2216,8 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_WISH_LIST_APPLIED_COURSE:
                 Utils.DisplayToastShort(this.mContext, getResourceString(R.string.applied_successfully));
+                if (tags.length > 1)
+                    this.mUpdateAppliedInstituteWishlist(Integer.parseInt(tags[1]));
                 break;
             case Constants.TAG_POST_QUESTION:
                 this.mInstituteQnAQuestionAdded(response);
@@ -2571,6 +2573,14 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void mUpdateAppliedInstituteWishlist(int i)
+    {
+        if (currentFragment instanceof WishlistFragment)
+            ((WishlistFragment) currentFragment).UpdateAppliedStatus(i);
+        else if(currentFragment instanceof CDRecommendedInstituteListFragment)
+            ((CDRecommendedInstituteListFragment) currentFragment).UpdateAppliedStatus(i);
     }
 
     private void RemoveInstituteFromWishlist(int i) {
@@ -3470,21 +3480,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnWishlistInstituteApplied(Institute institute, int position) {
-        this.mInstitute =institute;
+        this.mInstitute = institute;
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
         if(institute.getGroups_exists()==1) {
-            String cafUrl = "https://m.collegedekho.com/caf-login-signup/?institute_id=" + institute.getId();
+            String cafUrl = Constants.CAF_URL + "?institute_id=" + institute.getId() + "&&user_id=" + MainActivity.user.getId();
             onDisplayWebFragment(cafUrl);
-/*
-            HashMap<String, String> params = new HashMap<>();
-            params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
-            params.put("action", String.valueOf("1"));
-            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE+"#"+islastcard , institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-*/
-
-
         }else {
-            requestForApplyInstitute(Constants.TAG_WISH_LIST_APPLIED_COURSE,new HashMap<String, String>(),Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE);
+            requestForApplyInstitute(Constants.TAG_WISH_LIST_APPLIED_COURSE + "#" + position,new HashMap<String, String>(),Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE);
 
             if(mInstitute != null) {
                 Map<String, Object> eventValue = new HashMap<>();
@@ -5252,7 +5254,7 @@ public class MainActivity extends AppCompatActivity
         {
             eventValue.put(MainActivity.getResourceString(R.string.APPLY_INSTITUTE), Constants.CDInstituteType.PARTNER.toString());
 
-            String cafUrl = "https://m.collegedekho.com/caf-login-signup/?institute_id=" + institute.getId();
+            String cafUrl = Constants.CAF_URL + "?institute_id=" + institute.getId() + "&&user_id=" + MainActivity.user.getId();
             onDisplayWebFragment(cafUrl);
 
             HashMap<String, String> params = new HashMap<>();
@@ -5311,7 +5313,7 @@ public class MainActivity extends AppCompatActivity
             return;
 
         if (mInstitute != null  && mInstitute.getGroups_exists()==1 ) {
-            String cafUrl = "https://m.collegedekho.com/caf-login-signup/?institute_id=" + mInstitute.getId();
+            String cafUrl = Constants.CAF_URL + "?institute_id=" + mInstitute.getId() + "&&user_id=" + MainActivity.user.getId();
             onDisplayWebFragment(cafUrl);
             return;
         }

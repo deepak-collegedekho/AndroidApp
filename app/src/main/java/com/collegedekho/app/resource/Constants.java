@@ -83,6 +83,7 @@ public class Constants
     //public static final String IP = "http://192.168.56.1";
     //public static final String BASE_URL = IP + ":8000/api/1/";
     public static final String BASE_URL = IP + "/api/1/";
+    public static final String CAF_URL = "https://m.collegedekho.com/caf-login-signup/";
     public static final String TAG_LOAD_COURSES = "load_courses";
     public static final String TAG_LOAD_PROFILE = "load_profile";
     public static final String TAG_GET_USER_PROFILE = "get_user_profile";
@@ -251,6 +252,8 @@ public class Constants
     public static long ANIM_SHORT_DURATION = 200;
     public static long ANIM_AVERAGE_DURATION = 500;
     public static long ANIM_LONG_DURATION =  1000;
+    public static long HOLD_ENTER_VIBRATION_DURATION = 30;
+    public static long HOLD_REMOVE_VIBRATION_DURATION = 100;
 
     public static final String CD_RECOMMENDED_INSTITUTE_ACTION_TYPE = "cd_recommended_institute_action_type";
 

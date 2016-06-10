@@ -184,7 +184,7 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     }
 
     private void setupPeekAndPopStandard(){
-        peekAndPop = new PeekAndPop.Builder(this.getActivity(), CDRecommendedInstituteListFragment.this)
+        peekAndPop = new PeekAndPop.Builder(this.getActivity())
                 .blurBackground(true)
                 .peekLayout(R.layout.peek_view)
                 .parentViewGroupToDisallowTouchEvents(wishListRecyclerView)
@@ -792,6 +792,13 @@ public class CDRecommendedInstituteListFragment extends BaseFragment implements 
     {
         this.mInstitutes.remove(position);
         this.mWishlistInstituteListAdapter.notifyItemRemoved(position);
+        this.mWishlistInstituteListAdapter.notifyDataSetChanged();
+    }
+
+    public void UpdateAppliedStatus(int position)
+    {
+        this.mInstitutes.get(position).setIs_applied(true);
+        this.mWishlistInstituteListAdapter.notifyItemChanged(position);
         this.mWishlistInstituteListAdapter.notifyDataSetChanged();
     }
 

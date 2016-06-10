@@ -42,7 +42,6 @@ import java.util.ArrayList;
 public final class WishlistCardAdapter {
 
     private final ImageLoader mImageLoader;
-    private OnWishlistAdapterInterface mListener;
     private boolean mLoadingNext;
     private Context mContext;
     private Institute mInstitute;
@@ -55,9 +54,8 @@ public final class WishlistCardAdapter {
     private int mMarginHorizontal;
     private int mMarginVertical;
 
-    public WishlistCardAdapter(Context context, OnWishlistAdapterInterface listener) {
+    public WishlistCardAdapter(Context context) {
         this.mImageLoader = MySingleton.getInstance(context).getImageLoader();
-        this.mListener = listener;
         this.mContext = context;
 
         this.mFacilitiesViewHeight = (int) getContext().getResources().getDimension(R.dimen.m40dp);
@@ -461,23 +459,6 @@ public final class WishlistCardAdapter {
         this.mLoadingNext = mLoadingNext;
     }
 
-    public interface OnWishlistAdapterInterface {
-
-        void OnWishlistInstituteSelected(Institute institute);
-
-        void OnWishlistInstituteLiked(Institute institute);
-
-        void OnWishlistInstituteDislike(Institute institute);
-
-        void OnWishlistInstituteDecideLater(Institute institute);
-
-        void OnShowMessage(String message);
-
-        void OnAppliedInstitute(Institute institute);
-
-        void onRemoveShortlisted(Institute institute);
-    }
-
     public Context getContext() {
         return mContext;
     }
@@ -610,23 +591,6 @@ public final class WishlistCardAdapter {
 
     public int getCardCategory() {
         return cardCategory;
-    }
-
-    private void mResetViewVisiblity()
-    {
-        this.mCardPeekView.findViewById(R.id.wishlist_institute_description).setVisibility(View.VISIBLE);
-        this.mCardPeekView.findViewById(R.id.wishlist_institute_salary_layout).setVisibility(View.VISIBLE);
-        this.mCardPeekView.findViewById(R.id.wishlist_institute_placement_layout).setVisibility(View.VISIBLE);
-        this.mCardPeekView.findViewById(R.id.wishlist_institute_see_all_layout).setVisibility(View.VISIBLE);
-        this.mCardPeekView.findViewById(R.id.wishlist_institute_facilities_layout).setVisibility(View.VISIBLE);
-        this.mCardPeekView.findViewById(R.id.wishlist_institute_salaries_layout).setVisibility(View.VISIBLE);
-        this.mCardPeekView.findViewById(R.id.wishlist_institute_recommended_streams).setVisibility(View.VISIBLE);
-        this.mCardPeekView.findViewById(R.id.wishlist_institute_recommended_exams).setVisibility(View.VISIBLE);
-        this.mCardPeekView.findViewById(R.id.wishlist_clock_layout).setVisibility(View.VISIBLE);
-        this.mCardPeekView.findViewById(R.id.wishlist_txt_last_application_text).setVisibility(View.VISIBLE);
-        this.mCardPeekView.findViewById(R.id.wishlist_institute_btn_call_now).setVisibility(View.VISIBLE);
-        this.mCardPeekView.findViewById(R.id.wishlist_overlay_layout).setVisibility(View.VISIBLE);
-        this.mCardPeekView.findViewById(R.id.wishlist_institute_facilities_recycler).setVisibility(View.VISIBLE);
     }
 
     private void mResetViews()
