@@ -9,7 +9,7 @@
     android:paddingBottom="@dimen/m10dp"
     android:paddingLeft="@dimen/m50dp"
     android:paddingRight="@dimen/m50dp"
-    android:paddingTop="@dimen/m100dp">
+    android:paddingTop="@dimen/m50dp">
 
 
     <ImageView

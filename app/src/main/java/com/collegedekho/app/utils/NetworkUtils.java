@@ -368,9 +368,15 @@ public class NetworkUtils {
 
                         }
                         json = trimMessage(json, "detail");
-                        if (json != null)
-                            mListener.onJsonObjectRequestError(tag, Constants.SERVER_FAULT, url, params, method);
-                        else
+                        if (json != null) {
+                            int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+                            if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+
+                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT, getResponseCode(response),url, null, method);
+                            } else {
+                                mListener.onJsonObjectRequestError(tag, Constants.SERVER_FAULT, url, params, method);
+                            }
+                        }else
                         {
                             int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
                             if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {

@@ -749,6 +749,7 @@
                     style="@style/AppTheme.FacebookButton"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
+                    android:visibility="gone"
                     android:layout_marginBottom="@dimen/m16dp"
                     android:layout_marginTop="@dimen/m16dp"
                     android:layout_marginRight="@dimen/m6dp"

@@ -48,6 +48,7 @@
     <color name="chat_time_blue">#32c7ff</color>
 
     <color name="arrow_color">#7C7C7C</color>
+    <color name="skip_btn_color">#e1515253</color>
     <color name="heading_color">#555B4A</color>
     <color name="subheading_color">#56574A</color>
     <color name="like_fill_color">#7D7D7D</color>

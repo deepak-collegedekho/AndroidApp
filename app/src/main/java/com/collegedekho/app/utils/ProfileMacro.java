@@ -12907,6 +12907,852 @@ public class ProfileMacro {
             "]";
 
 
+    public static String DEGREE_LEVEL_1_JSON = "[\n" +
+            "    {\n" +
+            "        \"id\": 10531,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10531/\",\n" +
+            "        \"name\": \"Auxiliary Nursing and Midwifery-A.N.M\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10498,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10498/\",\n" +
+            "        \"name\": \"B. Com + MBA\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10458,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10458/\",\n" +
+            "        \"name\": \"B.A.+LL.B\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10619,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10619/\",\n" +
+            "        \"name\": \"B.B.A. + L.L.B.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10459,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10459/\",\n" +
+            "        \"name\": \"B.Com+LL.B\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10652,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10652/\",\n" +
+            "        \"name\": \"B.Com+MBA\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10510,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10510/\",\n" +
+            "        \"name\": \"B.Com. + B.Ed.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10639,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10639/\",\n" +
+            "        \"name\": \"B.Com. + M.Com.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10544,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10544/\",\n" +
+            "        \"name\": \"B.Des + M.Des (Integrated)\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10636,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10636/\",\n" +
+            "        \"name\": \"B.Des. + M.B.A.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10640,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10640/\",\n" +
+            "        \"name\": \"B.Ed+M.Ed\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10449,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10449/\",\n" +
+            "        \"name\": \"B.Ed.-B.Ed.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10536,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10536/\",\n" +
+            "        \"name\": \"B.Pharm + M.Pharm\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10537,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10537/\",\n" +
+            "        \"name\": \"B.Pharm + MBA\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10451,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10451/\",\n" +
+            "        \"name\": \"B.Pharma\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10649,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10649/\",\n" +
+            "        \"name\": \"B.S. + M.DES.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10647,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10647/\",\n" +
+            "        \"name\": \"B.S. + M.TECH.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10650,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10650/\",\n" +
+            "        \"name\": \"B.S. + MBA\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10610,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10610/\",\n" +
+            "        \"name\": \"B.S.L. +  LL.B\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10630,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10630/\",\n" +
+            "        \"name\": \"B.sc+ MBA\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10509,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10509/\",\n" +
+            "        \"name\": \"B.Sc. + B.Ed\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10500,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10500/\",\n" +
+            "        \"name\": \"B.Sc. + LL.B\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10550,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10550/\",\n" +
+            "        \"name\": \"B.Tech + L.L.B\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10549,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10549/\",\n" +
+            "        \"name\": \"B.Tech + L.L.M\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10541,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10541/\",\n" +
+            "        \"name\": \"B.Tech + M.S.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10453,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10453/\",\n" +
+            "        \"name\": \"B.Tech + M.Tech\",\n" +
+            "        \"short_name\": \"B.Tech + M.Tech\",\n" +
+            "        \"uri\": \"btech_mtech\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 30.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10588,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10588/\",\n" +
+            "        \"name\": \"B.tech+M.tech\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10635,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10635/\",\n" +
+            "        \"name\": \"B.Tech+MBA\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10648,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10648/\",\n" +
+            "        \"name\": \"B.TECH. + M.DES.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10592,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10592/\",\n" +
+            "        \"name\": \"B.Tech. + M.Sc.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10508,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10508/\",\n" +
+            "        \"name\": \"BA + B.Ed\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10503,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10503/\",\n" +
+            "        \"name\": \"Bachelor in Banking and Insurance-B.B.I.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10606,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10606/\",\n" +
+            "        \"name\": \"Bachelor in Event Management-B.E.M\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10546,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10546/\",\n" +
+            "        \"name\": \"Bachelor in Hospitality management\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10545,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10545/\",\n" +
+            "        \"name\": \"Bachelor in Risk Management\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10519,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10519/\",\n" +
+            "        \"name\": \"Bachelor of Applied Management-B.A.M\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 1494,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/1494/\",\n" +
+            "        \"name\": \"Bachelor of Architecture-B.Arch\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10483,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10483/\",\n" +
+            "        \"name\": \"Bachelor of Arts in Journalism and Mass Communication-BAJM\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10567,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10567/\",\n" +
+            "        \"name\": \"Bachelor of Arts+Bachelor of Education-B.A.+B.Ed.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10573,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10573/\",\n" +
+            "        \"name\": \"Bachelor of Arts+Bachelor of Law - B.A.+L.L.B.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10614,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10614/\",\n" +
+            "        \"name\": \"Bachelor of Arts+Master of Arts\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 9567,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/9567/\",\n" +
+            "        \"name\": \"Bachelor of Arts-B.A.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10426,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10426/\",\n" +
+            "        \"name\": \"Bachelor of Ayurvedic Medicine and Surgery-B.A.M.S.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10622,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10622/\",\n" +
+            "        \"name\": \"Bachelor of Business Administration + Master of Management Studies (B.B.A. + M.M.S.)\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10556,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10556/\",\n" +
+            "        \"name\": \"Bachelor of Business Administration+Hospitality and Events Management-B.B.A.+H.E.M.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 9417,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/9417/\",\n" +
+            "        \"name\": \"Bachelor of Business Administration-B.B.A.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 9420,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/9420/\",\n" +
+            "        \"name\": \"Bachelor of Business Management-B.B.M.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 9469,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/9469/\",\n" +
+            "        \"name\": \"Bachelor of Business Studies-B.B.S.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10444,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10444/\",\n" +
+            "        \"name\": \"Bachelor of Commerce-B.Com\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10626,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10626/\",\n" +
+            "        \"name\": \"Bachelor of Computer Application + Master of Business Administration [B.C.A. + M.B.A.]\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10507,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10507/\",\n" +
+            "        \"name\": \"Bachelor of Dental Surgery-B.D.S.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10530,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10530/\",\n" +
+            "        \"name\": \"Bachelor of Dental Surgery-B.D.S.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10484,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10484/\",\n" +
+            "        \"name\": \"Bachelor of Design-B.Des\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10574,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10574/\",\n" +
+            "        \"name\": \"Bachelor of Elementary Education-B.El.Ed\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10423,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10423/\",\n" +
+            "        \"name\": \"Bachelor of Engineering-B.E.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10481,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10481/\",\n" +
+            "        \"name\": \"Bachelor of Fashion and Apparel Design-B.F.A.D.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10552,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10552/\",\n" +
+            "        \"name\": \"Bachelor of Fashion Technology\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10615,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10615/\",\n" +
+            "        \"name\": \"BACHELOR OF FILM AND TELEVISION TECHNOLOGY-B.F.T.T.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10631,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10631/\",\n" +
+            "        \"name\": \"BACHELOR OF FINANCIAL MARKETING MANAGEMENT (BFMM)\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10580,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10580/\",\n" +
+            "        \"name\": \"Bachelor of Financial Markets-B.F.M\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10418,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10418/\",\n" +
+            "        \"name\": \"Bachelor of Fine Arts-B.F.A.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 9664,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/9664/\",\n" +
+            "        \"name\": \"Bachelor of Fishery Science-B. F. Sc.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 9468,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/9468/\",\n" +
+            "        \"name\": \"Bachelor of Foreign Trade-B.F.T.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10584,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10584/\",\n" +
+            "        \"name\": \"Bachelor of Home Science- B.H.S.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10425,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10425/\",\n" +
+            "        \"name\": \"Bachelor of Homoeopathic Medicine and Surgery-B.H.M.S.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10582,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10582/\",\n" +
+            "        \"name\": \"Bachelor of Hospital Management\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10532,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10532/\",\n" +
+            "        \"name\": \"Bachelor of Hospitality Science-B.H.S.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10491,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10491/\",\n" +
+            "        \"name\": \"Bachelor of Hotel Management & Catering Technology-B.H.M.C.T.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10613,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10613/\",\n" +
+            "        \"name\": \"Bachelor of Hotel Management and Catering Technology + Master of Business Administration-B.HM.C.T + M.B.A.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 9366,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/9366/\",\n" +
+            "        \"name\": \"Bachelor of Hotel Management-B.H.M.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10591,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10591/\",\n" +
+            "        \"name\": \"Bachelor of Human Resources Management\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 9594,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/9594/\",\n" +
+            "        \"name\": \"Bachelor of Information & Management-B.I.M.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 9557,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/9557/\",\n" +
+            "        \"name\": \"Bachelor of International Business Administration-B.I.B.A.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10598,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10598/\",\n" +
+            "        \"name\": \"Bachelor of International Hospitality Administration\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10468,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10468/\",\n" +
+            "        \"name\": \"Bachelor of Journalism and Mass Communication-B.J.M.C.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10612,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10612/\",\n" +
+            "        \"name\": \"Bachelor of Law + Master of Law (L.L.B.+L.L.M.)\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10439,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10439/\",\n" +
+            "        \"name\": \"Bachelor of Law-LLB\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10629,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10629/\",\n" +
+            "        \"name\": \"BACHELOR OF LEGAL SCIENCE (B.L.S) + BACHELOR OF LAW (LL.B.)\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10593,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10593/\",\n" +
+            "        \"name\": \"Bachelor of Legal Science + Bachelor of Law-B. L. S. + LL. B\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10539,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10539/\",\n" +
+            "        \"name\": \"Bachelor of Library Sciences-B.Lib\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 9424,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/9424/\",\n" +
+            "        \"name\": \"Bachelor of Management Studies-B.M.S.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10492,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10492/\",\n" +
+            "        \"name\": \"Bachelor of Mass Communication-B.M.C.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 9514,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/9514/\",\n" +
+            "        \"name\": \"Bachelor of Mass Media-B.M.M.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10628,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10628/\",\n" +
+            "        \"name\": \"Bachelor of Media Science- B.M.S.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10560,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10560/\",\n" +
+            "        \"name\": \"Bachelor of Medical Lab Technology-B.M.L.T.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 8480,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/8480/\",\n" +
+            "        \"name\": \"Bachelor of Medicine and Bachelor of Surgery-M.B.B.S.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10568,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10568/\",\n" +
+            "        \"name\": \"Bachelor of Multimedia communication-B.M.M.C\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10572,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10572/\",\n" +
+            "        \"name\": \"Bachelor of multimedia-B.M.M.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10586,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10586/\",\n" +
+            "        \"name\": \"Bachelor of Music-B.Mus.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10577,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10577/\",\n" +
+            "        \"name\": \"Bachelor of Naturopathy and Yogic Sciences-B.N.Y.S\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10554,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10554/\",\n" +
+            "        \"name\": \"Bachelor of Occupational Therapy\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10617,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10617/\",\n" +
+            "        \"name\": \"Bachelor of Optometry\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10559,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10559/\",\n" +
+            "        \"name\": \"Bachelor of Para Medical Technology- B.P.M.T.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10558,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10558/\",\n" +
+            "        \"name\": \"Bachelor of Paramedical Technology\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 9850,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/9850/\",\n" +
+            "        \"name\": \"Bachelor of Physical Education-B. P. E. D.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10427,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10427/\",\n" +
+            "        \"name\": \"Bachelor of Physiotherapy-B.P.Th.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10479,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10479/\",\n" +
+            "        \"name\": \"Bachelor of Planning-B.Plan.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10595,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10595/\",\n" +
+            "        \"name\": \"Bachelor of Science+Master of Science-B.Sc+M.Sc\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10477,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10477/\",\n" +
+            "        \"name\": \"Bachelor of Science-B.S\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 9518,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/9518/\",\n" +
+            "        \"name\": \"Bachelor of Science-B.Sc.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10621,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10621/\",\n" +
+            "        \"name\": \"Bachelor of Siddha Medicine and Surgery - B.S.M.S.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10601,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10601/\",\n" +
+            "        \"name\": \"Bachelor of Social Welfare- B.S.W.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10522,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10522/\",\n" +
+            "        \"name\": \"Bachelor of Social Work-B.S.W.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 2090,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/2090/\",\n" +
+            "        \"name\": \"Bachelor of Technology-B.Tech\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10597,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10597/\",\n" +
+            "        \"name\": \"Bachelor of Textile-B.Text.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10616,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10616/\",\n" +
+            "        \"name\": \"Bachelor of Tourism & Travel Management-B.T.T.M.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10463,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10463/\",\n" +
+            "        \"name\": \"Bachelor of Tourism Management-B.T.M.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10566,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10566/\",\n" +
+            "        \"name\": \"Bachelor of Unani Medicine and Surgery-B.U.M.S.\",\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10505,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10505/\",\n" +
+            "        \"name\": \"Bachelor of Veterinary Science-B.Vs.\",\n" +
+            "        \"short_name\": \"B.Vs.\",\n" +
+            "        \"uri\": \"bvs\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 20.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10533,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10533/\",\n" +
+            "        \"name\": \"Bachelor of Visual Arts-B.V.A.\",\n" +
+            "        \"short_name\": \"B.V.A.\",\n" +
+            "        \"uri\": \"bachelor-of-visual-arts-bva\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 720.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10625,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10625/\",\n" +
+            "        \"name\": \"Bachelor of Visual Communication-B.V.C.\",\n" +
+            "        \"short_name\": \"B.V.C.\",\n" +
+            "        \"uri\": \"bachelor-of-visual-communication-bvc\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 1600.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10565,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10565/\",\n" +
+            "        \"name\": \"Bachelor of Vocational-B.Voc.\",\n" +
+            "        \"short_name\": \"B.Voc\",\n" +
+            "        \"uri\": \"bachelor-of-vocational-bvoc\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 1000.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10583,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10583/\",\n" +
+            "        \"name\": \"Bachelor Preparatory Programme- B.P.P.\",\n" +
+            "        \"short_name\": \"B.P.P.\",\n" +
+            "        \"uri\": \"bachelor-preparatory-programme-bpp\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 2900.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10431,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10431/\",\n" +
+            "        \"name\": \"Bachelors in Accounting and Finance-BAF\",\n" +
+            "        \"short_name\": \"BAF\",\n" +
+            "        \"uri\": \"baf\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 33100.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10578,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10578/\",\n" +
+            "        \"name\": \"Bachelors of Homoeopathic Medical Science\",\n" +
+            "        \"short_name\": \"B.H.O.M.\",\n" +
+            "        \"uri\": \"bachelors-of-homoeopathic-medical-science\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 210.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10262,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10262/\",\n" +
+            "        \"name\": \"BAM+MAM\",\n" +
+            "        \"short_name\": \"BM/BAM + MAM\",\n" +
+            "        \"uri\": \"bam_mam\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 10.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10511,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10511/\",\n" +
+            "        \"name\": \"BBA + B.Ed.\",\n" +
+            "        \"short_name\": \"B.B.A. + B.Ed.\",\n" +
+            "        \"uri\": \"bba_bed\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 0.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10488,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10488/\",\n" +
+            "        \"name\": \"BBA + BDBM\",\n" +
+            "        \"short_name\": \"BBA + BDBM\",\n" +
+            "        \"uri\": \"bba_bdbm\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 0.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10460,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10460/\",\n" +
+            "        \"name\": \"BBA+LL.B\",\n" +
+            "        \"short_name\": \"BBA (Hons.)+LL.B\",\n" +
+            "        \"uri\": \"bba_llb\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 0.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10632,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10632/\",\n" +
+            "        \"name\": \"BBA+LLB\",\n" +
+            "        \"short_name\": \"BBA+LLB\",\n" +
+            "        \"uri\": \"bballb\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 880.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10237,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10237/\",\n" +
+            "        \"name\": \"BBA+MBA\",\n" +
+            "        \"short_name\": \"BBA+MBA\",\n" +
+            "        \"uri\": \"bba_mba\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 260.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10627,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10627/\",\n" +
+            "        \"name\": \"BBA-MBA\",\n" +
+            "        \"short_name\": \"BBA\",\n" +
+            "        \"uri\": \"bba-mba\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 27100.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10247,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10247/\",\n" +
+            "        \"name\": \"BBM+MBA\",\n" +
+            "        \"short_name\": \"BBM+MBA\",\n" +
+            "        \"uri\": \"bbm_mba\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 10.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10457,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10457/\",\n" +
+            "        \"name\": \"BCA\",\n" +
+            "        \"short_name\": \"BCA + MCA\",\n" +
+            "        \"uri\": \"bca\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 170.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10490,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10490/\",\n" +
+            "        \"name\": \"BCA + BDCM\",\n" +
+            "        \"short_name\": \"BCA + BDCM\",\n" +
+            "        \"uri\": \"bca_bdcm\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 0.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10521,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10521/\",\n" +
+            "        \"name\": \"BCA + MCA (Dual Degree)\",\n" +
+            "        \"short_name\": \"BCA + MCA\",\n" +
+            "        \"uri\": \"bca_mca\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 170.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10637,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10637/\",\n" +
+            "        \"name\": \"BCA+MBA\",\n" +
+            "        \"short_name\": \"BCA+MBA\",\n" +
+            "        \"uri\": \"bcamba\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 40.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10638,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10638/\",\n" +
+            "        \"name\": \"BCA+MSC\",\n" +
+            "        \"short_name\": \"BCA+MSC\",\n" +
+            "        \"uri\": \"bcamsc\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 0.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10456,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10456/\",\n" +
+            "        \"name\": \"BS+MS\",\n" +
+            "        \"short_name\": \"BS+MS\",\n" +
+            "        \"uri\": \"bs_ms\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 140.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10517,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10517/\",\n" +
+            "        \"name\": \"BSW + LLB\",\n" +
+            "        \"short_name\": \"BSW LLB\",\n" +
+            "        \"uri\": \"bsw_llb\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 20.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10279,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10279/\",\n" +
+            "        \"name\": \"Btech+MBA\",\n" +
+            "        \"short_name\": \"B.Tech. + MBA\",\n" +
+            "        \"uri\": \"btech_mba\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 90.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10430,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10430/\",\n" +
+            "        \"name\": \"Charted Accountant-C.A.\",\n" +
+            "        \"short_name\": \"C.A.\",\n" +
+            "        \"uri\": \"ca\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 74000.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10561,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10561/\",\n" +
+            "        \"name\": \"Doctor of Pharmacy-Pharm.D.\",\n" +
+            "        \"short_name\": \"Pharm.D.\",\n" +
+            "        \"uri\": \"doctor-of-pharmacy-pharmd\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 6600.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10624,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10624/\",\n" +
+            "        \"name\": \"Female Multipurpose Health Worker\",\n" +
+            "        \"short_name\": \"\",\n" +
+            "        \"uri\": \"female-multipurpose-health-worker\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 0.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10506,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10506/\",\n" +
+            "        \"name\": \"General Nursing & Midwifery-G.N.M.\",\n" +
+            "        \"short_name\": \"G.N.M.\",\n" +
+            "        \"uri\": \"gnm\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 12100.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10607,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10607/\",\n" +
+            "        \"name\": \"Global Integrated Engineering Degree - B.S.+M.S.\",\n" +
+            "        \"short_name\": \"B.S.+M.S.\",\n" +
+            "        \"uri\": \"global-integrated-engineering-degree-bsms\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 140.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10654,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10654/\",\n" +
+            "        \"name\": \"Graduate Diploma Program\",\n" +
+            "        \"short_name\": \"diploma\",\n" +
+            "        \"uri\": \"ug-diploma\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 22200.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10645,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10645/\",\n" +
+            "        \"name\": \"LLB+MBA\",\n" +
+            "        \"short_name\": \"LLB+MBA\",\n" +
+            "        \"uri\": \"llbmba\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 50.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10623,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10623/\",\n" +
+            "        \"name\": \"Male Multipurpose Health Worker\",\n" +
+            "        \"short_name\": \"\",\n" +
+            "        \"uri\": \"male-multipurpose-health-worker\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 0.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10602,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10602/\",\n" +
+            "        \"name\": \"Revised Auxiliary Nurse and Midwife-R.A.N.M.\",\n" +
+            "        \"short_name\": \"R.A.N.M.\",\n" +
+            "        \"uri\": \"revised-auxiliary-nurse-and-midwife-ranm\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 210.0\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 10603,\n" +
+            "        \"resource_uri\": \"http://www.collegedekho.com/api/1/degrees/10603/\",\n" +
+            "        \"name\": \"Revised General Nursing and Midwifery-R.G.N.M.\",\n" +
+            "        \"short_name\": \"R.G.N.M.\",\n" +
+            "        \"uri\": \"revised-general-nursing-and-midwifery-rgnm\",\n" +
+            "        \"level\": 1,\n" +
+            "        \"popular_score\": 140.0\n" +
+            "    }\n" +
+            "]";
+
+
+
     public static String DEGREE_JSON = "[\n" +
             "    {\n" +
             "        \"id\": 10531,\n" +
@@ -13912,26 +14758,6 @@ public class ProfileMacro {
             "        \"name\": \"College 4th Yr\"\n" +
             "    },\n" +
             "    {\n" +
-            "        \"id\": 5,\n" +
-            "        \"name\": \"PG-I\"\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"id\": 6,\n" +
-            "        \"name\": \"PG-II\"\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"id\": 10,\n" +
-            "        \"name\": \"Ph.D-I\"\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"id\": 11,\n" +
-            "        \"name\": \"Ph.D-II\"\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"id\": 12,\n" +
-            "        \"name\": \"Ph.D-III\"\n" +
-            "    },\n" +
-            "    {\n" +
             "        \"id\": 13,\n" +
             "        \"name\": \"Certificate\"\n" +
             "    },\n" +
@@ -13942,7 +14768,7 @@ public class ProfileMacro {
             "]";
 
 
-    public static String PREFE_SUB_LEVEL_JSON = "[\n" +
+    public static String PREF_SUB_LEVEL_JSON = "[\n" +
             "    {\n" +
             "        \"id\": 1,\n" +
             "        \"name\": \"College 1st Yr\"\n" +
@@ -13967,7 +14793,7 @@ public class ProfileMacro {
             "        \"id\": 6,\n" +
             "        \"name\": \"PG-II\"\n" +
             "    },\n" +
-            "    {\n" +
+           /* "    {\n" +
             "        \"id\": 10,\n" +
             "        \"name\": \"Ph.D-I\"\n" +
             "    },\n" +
@@ -13978,7 +14804,7 @@ public class ProfileMacro {
             "    {\n" +
             "        \"id\": 12,\n" +
             "        \"name\": \"Ph.D-III\"\n" +
-            "    },\n" +
+            "    },\n" +*/
             "    {\n" +
             "        \"id\": 13,\n" +
             "        \"name\": \"Certificate\"\n" +
@@ -14356,5 +15182,18 @@ public class ProfileMacro {
     public static int MODE_DISTANCE = 4;
     public static int MODE_ONLINE = 6;
     public static int MODE_OTHER = 0;
+
+    // sub level Ids
+    public static int CURRENT_EDUCATION_SCHOOL  = 8;
+    public static int CURRENT_EDUCATION_COLLEGE = 1;
+    public static int PREFERRED_LEVEL_UNDER_GRADUATE = 1;
+    public static int PREFERRED_LEVEL_POST_GRADUATE = 2;
+
+    // user is preparing for exma
+    public static int PREPARING_FOR_EXAM  = 1;
+    public static int NOT_PREPARING_FOR_EXAM = 0;
+
+    // profile Map keys
+    public static String IS_PREPARING = "is_preparing";
 
 }

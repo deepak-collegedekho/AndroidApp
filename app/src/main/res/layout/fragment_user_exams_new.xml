@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/app_background"
+    android:paddingTop="@dimen/m40dp"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/user_exam_info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/m30dp"
+        android:layout_marginLeft="@dimen/m30dp"
+        android:background="@color/primary_color"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/m10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/AppTheme.profileTextViewTitle"
+                android:layout_width="0dp"
+                android:layout_weight=".53"
+                android:layout_height="wrap_content"
+                android:text="Your Current Level"/>
+
+            <TextView
+                android:id="@+id/user_exam_preparing_level"
+                android:layout_width="0dp"
+                android:layout_weight=".47"
+                style="@style/AppTheme.profileTextViewTitle"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/m10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/AppTheme.profileTextViewTitle"
+                android:layout_width="0dp"
+                android:layout_weight=".53"
+                android:layout_height="wrap_content"
+                android:text="Preparing For Exam"/>
+
+            <TextView
+                android:id="@+id/user_exam_is_preparing"
+                android:layout_width="0dp"
+                android:layout_weight=".47"
+                style="@style/AppTheme.profileTextViewTitle"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/user_exam_select_text"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/m15dp"
+        android:layout_below="@id/user_exam_info_layout"
+        android:layout_height="@dimen/m30dp"
+        android:text="Select Your Exams"
+        android:gravity="left|center"
+        android:textSize="@dimen/m16sp"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/m12dp"/>
+
+    <TextView
+        android:id="@+id/user_exam_submit_button"
+        style="@style/AppTheme.OrangeButton"
+        android:background="@color/primary_orange"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
+        android:textSize="21sp"
+        android:paddingBottom="@dimen/m9dp"
+        android:paddingTop="@dimen/m9dp"
+        android:foregroundGravity="center"
+        android:visibility="visible"
+        android:text="SUBMIT"/>
+
+    <LinearLayout
+        android:id="@+id/user_exam_education_layout"
+        android:layout_width="match_parent"
+        android:layout_below="@id/user_exam_select_text"
+        android:layout_above="@id/user_exam_submit_button"
+        android:paddingLeft="@dimen/m8dp"
+        android:paddingRight="@dimen/m8dp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:weightSum="1"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_weight=".6"
+            android:layout_height="match_parent">
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/user_exam_recycler_view"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_height="match_parent"
+            android:paddingRight="@dimen/m3dp"
+            android:visibility="gone"
+            android:paddingTop="@dimen/m10dp"
+            android:gravity="center"
+            />
+            <TextView
+                android:id="@+id/user_exam_recycler_view_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="@dimen/m16dp"
+                android:text="Loading Exams..."
+                android:textStyle="italic"/>
+
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight=".4"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:background="@color/app_background"
+                android:layout_gravity="center"
+                android:textSize="@dimen/m16sp"
+                android:text="Filter By Preferred Stream"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/user_exam_stream_recycler_view"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+</RelativeLayout>

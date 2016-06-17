@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/app_background"
+        android:paddingRight="@dimen/m30dp"
+        android:paddingLeft="@dimen/m30dp"
+        android:paddingBottom="@dimen/m20dp"
+        android:paddingTop="@dimen/m50dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="17sp"
+            android:paddingRight="@dimen/m40dp"
+            android:paddingLeft="@dimen/m40dp"
+            android:paddingBottom="@dimen/m12dp"
+            android:text="ARE YOU PLANNING TO APPEAR IN EXAMS"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_exams_user"/>
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/user_preparing_education_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/m6dp"
+        android:layout_marginTop="@dimen/m15dp"
+        android:layout_marginRight="@dimen/m30dp"
+        android:layout_marginLeft="@dimen/m30dp"
+        android:paddingTop="@dimen/m6dp"
+        android:background="@color/primary_color"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_weight="1.8"
+            android:layout_height="@dimen/m50dp"
+            app:srcCompat="@drawable/ic_profile_education"/>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_weight="7.1"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/is_preparing_education_til"
+                style="@style/AppTheme.profileTextView"
+                android:text="EDUCATION"
+                android:paddingBottom="@dimen/m1dp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/is_preparing_education_til"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    style="@style/AppTheme.profileInfoTLayout">
+
+                    <TextView
+                        style="@style/AppTheme.profileTextViewTitle"
+                        android:layout_width="0dp"
+                        android:layout_weight=".5"
+                        android:textStyle="bold"
+                        android:text="Your Current Level"/>
+
+                    <TextView
+                        android:id="@+id/is_preparing_level"
+                        android:layout_width="0dp"
+                        android:layout_weight=".5"
+                        style="@style/AppTheme.profileTextViewTitle"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/is_preparing_education_edit_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1.1"
+            android:paddingRight="@dimen/m5dp"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:tint="@color/white"
+                android:visibility="visible"
+                android:padding="@dimen/m10dp"
+                android:layout_gravity="right|top"
+                app:srcCompat="@drawable/ic_edit_vector"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/user_preparing_education_progress_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/m30dp"
+        android:layout_marginLeft="@dimen/m30dp"
+        android:background="@color/primary_color">
+
+        <ProgressBar
+            android:id="@+id/is_preparing_education_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layerType="software"
+            android:progress="60"
+            android:max="100"
+            android:background="@drawable/bg_dotted_line"
+            android:progressTint="@color/light_blue"
+            style="?android:attr/progressBarStyleHorizontal" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left|center"
+        android:orientation="vertical"
+        android:layout_marginRight="@dimen/m30dp"
+        android:layout_marginLeft="@dimen/m30dp"
+        android:layout_marginTop="@dimen/m50dp"
+        android:background="@color/app_background"
+        android:layout_marginBottom="@dimen/m1dp"
+        android:weightSum="1">
+
+        <TextView android:id="@+id/preparing_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/m2dp"
+            android:paddingTop="@dimen/m2dp"
+            android:textSize="14sp"
+            android:maxLines="3"
+            android:gravity="center"
+            android:text="Preparing/Prepared for \ncompetitive exams \nlike JEE, CAT, AIPMT"
+            />
+
+        <RadioGroup android:id="@+id/is_preparing_rd_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/m5dp"
+            >
+            <RadioButton android:id="@+id/is_preparing_rd_btn_yes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yes"
+                android:tag="1"
+                android:textSize="20sp"
+                android:layout_marginRight="@dimen/m40dp"
+                />
+            <RadioButton android:id="@+id/is_preparing_rd_btn_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:tag="0"
+                android:layout_marginLeft="@dimen/m40dp"
+                android:text="No"
+                />
+
+        </RadioGroup>
+    </LinearLayout>
+
+    <TextView
+        style="@style/AppTheme.OrangeButton"
+        android:background="@color/primary_orange"
+        android:id="@+id/is_preparing_submit_button"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/m40dp"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/m9dp"
+        android:paddingTop="@dimen/m9dp"
+        android:textSize="21sp"
+        android:visibility="gone"
+        android:foregroundGravity="center"
+        android:text="SUBMIT"/>
+
+</LinearLayout>

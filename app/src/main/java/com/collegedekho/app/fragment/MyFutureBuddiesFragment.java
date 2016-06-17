@@ -333,11 +333,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             this.mSubmittingState = val;
         }
     }
-    private void mUserLoginRequired(String value) {
-        if (mListener != null)
-            mListener.onUserLoginRequired(value);
 
-    }
 
     @Override
     public void show() {
@@ -352,7 +348,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     public interface OnMyFBInteractionListener {
         void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex);
         void onMyFBUpdated(int commentsSize, int myFbIndex);
-        void onUserLoginRequired(String value);
         void onNameUpdated(HashMap params, String msg);
         void displayMessage(int messageId);
     }

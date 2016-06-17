@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="@color/app_background"
-    android:fitsSystemWindows="true"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/app_background"
-            android:paddingTop="20dp">
+        android:layout_height="match_parent"
+        android:background="@color/app_background">
+
+
             <RelativeLayout
                 android:id="@+id/education_point_layout"
-                android:layout_marginBottom="@dimen/m10dp"
+                android:layout_marginTop="@dimen/m30dp"
                 style="@style/AppTheme.RelativeLayout.Rounded">
+
                 <TextView
                     style="@style/AppTheme.TextView"
                     android:id="@+id/first_login"
@@ -30,7 +26,6 @@
                     android:textSize="16sp"
                     android:text="CONGRATULATIONS ON YOUR FIRST LOGIN"/>
 
-
             </RelativeLayout>
 
             <TextView
@@ -39,134 +34,75 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textStyle="bold"
+                android:layout_marginTop="@dimen/m20dp"
                 android:layout_below="@id/education_point_layout"
                 android:textSize="17sp"
                 android:paddingRight="@dimen/m30dp"
                 android:paddingLeft="@dimen/m30dp"
-                android:paddingBottom="@dimen/m15dp"
                 android:text="YOU ARE JUST 3 STEPS AWAY FROM FINDING THE RIGHT COLLEGE!"/>
 
             <include layout="@layout/layout_user_step"
                 android:id="@+id/step_ui"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/m20dp"
                 android:layout_below="@id/step_textview"/>
 
-            <LinearLayout
-                android:id="@+id/user_education_layout"
+              <LinearLayout
                 android:layout_width="match_parent"
-                android:orientation="horizontal"
+                android:layout_height="match_parent"
                 android:layout_below="@id/step_ui"
-                android:layout_height="wrap_content"
+                android:gravity="top|right"
+                android:orientation="vertical"
                 android:background="@color/white"
+                android:padding="@dimen/m20dp"
                 android:weightSum="1">
 
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_below="@id/user_education_layout"
+                    android:background="@color/white"
+                    android:paddingTop="@dimen/m20dp"
+                    android:layout_alignParentBottom="true"
+                    android:weightSum="1">
 
-                <include layout="@layout/layout_number_picker"/>
+                    <Button
+                        android:id="@+id/user_education_school"
+                        style="@style/AppTheme.OrangeButton"
+                        android:textSize="18sp"
+                        android:visibility="visible"
+                        android:text="@string/currently_in_school"/>
+
+                    <Button
+                        android:id="@+id/user_education_college"
+                        style="@style/AppTheme.OrangeButton"
+                        android:textSize="18sp"
+                        android:visibility="visible"
+                        android:layout_marginTop="@dimen/m20dp"
+                        android:text="@string/currently_in_graduation"/>
 
                 </LinearLayout>
-        </RelativeLayout>
-    </ScrollView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="left|center"
-        android:orientation="vertical"
-        android:background="@color/app_background"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/m1dp"
-        android:weightSum="1">
+                  <TextView
+                      android:id="@+id/user_education_skip_button"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="@dimen/m15dp"
+                      android:layout_gravity="center|right"
+                      android:text="@string/TAG_SKIP"
+                      android:paddingTop="@dimen/m8dp"
+                      android:paddingBottom="@dimen/m2dp"
+                      android:paddingRight="@dimen/m2dp"
+                      android:paddingLeft="@dimen/m2dp"
+                      android:gravity="center"
+                      android:textStyle="bold"
+                      android:textColor="@color/skip_btn_color"
+                      android:background="@drawable/border_bottom"
+                      android:textSize="18sp" />
 
-        <TextView android:id="@+id/preparing_msg"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/m2dp"
-            android:paddingTop="@dimen/m2dp"
-            android:textSize="14sp"
-            android:gravity="center"
-            android:text="Are you preparing for exams \nlike JEE, CAT, AIPMT"
-            />
-
-       <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-           android:visibility="gone"
-            android:orientation="horizontal">
-
-        <TextView
-            style="@style/AppTheme.BlueButton"
-            android:id="@+id/is_preparing_for_exam"
-            android:layout_width="0dp"
-            android:layout_weight=".5"
-            android:background="@drawable/bg_button_blue_grey"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:paddingBottom="4dp"
-            android:paddingTop="4dp"
-            android:textSize="16sp"
-            android:text="Yes"/>
-
-        <TextView
-            style="@style/AppTheme.BlueButton"
-            android:id="@+id/is_not_preparing_for_exam"
-            android:layout_width="0dp"
-            android:layout_weight=".5"
-            android:layout_marginLeft="@dimen/m1dp"
-            android:background="@drawable/bg_button_blue_grey"
-            android:layout_height="match_parent"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:text="No"
-            />
-        </LinearLayout>
-        <RadioGroup android:id="@+id/exam_rd_group"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="@dimen/m5dp"
-            >
-            <RadioButton android:id="@+id/rd_btn_yes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Yes"
-                android:textSize="20sp"
-                android:layout_marginRight="@dimen/m40dp"
-                />
-            <RadioButton android:id="@+id/rd_btn_no"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_marginLeft="@dimen/m40dp"
-                android:text="No"
-                />
-        </RadioGroup>
-        <TextView
-            style="@style/AppTheme.OrangeButton"
-            android:background="@color/primary_orange"
-            android:id="@+id/education_submit_button"
-            android:layout_width="match_parent"
-            android:layout_marginTop="3dp"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/m9dp"
-            android:paddingTop="@dimen/m9dp"
-            android:textSize="21sp"
-            android:visibility="gone"
-            android:foregroundGravity="center"
-            android:text="SUBMIT"/>
-
-
-    </LinearLayout>
-
-
-        <ImageView
-            android:id="@+id/education_tour_guide_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:clickable="true"
-            android:contentDescription="@string/profile_tute_description"
-            app:srcCompat="@drawable/ic_education_tute" />
-
-</RelativeLayout>
+            </LinearLayout>
+    </RelativeLayout>
+</ScrollView>

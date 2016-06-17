@@ -28,6 +28,7 @@ public class Constants
     public static final String TAG_FACEBOOK_LOGIN = "user_facebook_login";
     public static final String TAG_TRUE_SDK_LOGIN = "true_sdk_login";
     public static final String TAG_SKIP_LOGIN = "skip_login";
+    public static final String TAG_PHONE_NUMBER_LOGIN = "phone_number_login";
     public static final String TAG_USER_LOGIN = "user_login";
     public static final String TAG_USER_REGISTRATION = "user_registration";
     public static final String TAG_EDUCATION_DETAILS_SUBMIT = "user_education_submit";
@@ -38,7 +39,9 @@ public class Constants
     public static final String TAG_LOAD_EXAMS_LIST = "load_exams_list";
 
     public static final String TAG_SUBMIT_EXAMS_LIST = "submit_exams_list";
+    public static final String TAG_USER_EXAMS_SUBMISSION = "user_exam_submission";
     public static final String TAG_LOAD_USER_PREFERENCES = "load_user_preferences";
+    public static final String TAKE_ME_TO_RECOMMENDED = "take_me_to_recommended";
     public static final String TAG_LOAD_USER_PREFERENCES_N_BACK = "load_user_preferences_n_back";
     public static final String TAG_LAUNCH_USER_HOME = "launch_user_home";
     //public static final String TAG_UPDATE_USER_PROFILE_GCM = "update_user_profile_from_notification";
@@ -52,8 +55,6 @@ public class Constants
     public static final String TAG_PSYCHOMETRIC_RESPONSE = "load_psychometric_response";
     public static final String TAG_EDIT_PSYCHOMETRIC_QUESTIONS = "load_edit_psychometric_questions";
     public static final String TAG_LOAD_STEP_BY_STEP = "load_step_by_step";
-    public static final String TAG_USER_EDUCATION = "load_user_education";
-    public static final String TAG_EDIT_USER_EDUCATION = "load_edit_user_education";
     public static final String TAG_UPDATE_STREAM = "update_stream";
     public static final String WIDGET_INSTITUTES = "institutes";
     public static final String PNS_INSTITUTES = "pns_institutes";
@@ -132,8 +133,10 @@ public class Constants
     public static final String TAG_SUBMIT_EDITED_PREFRENCES = "submit_edited_prefrences";
     public static final String TAG_UPDATE_USER_PROFILE = "update_user_profile";
     public static final String TAG_UPDATE_PROFILE_EXAMS = "update_profile_exams";
-    public static final String TAG_UPDATE_PROFILE_GCM = "update_profile_gcm";
+    public static final String TAG_UPDATE_PROFILE_OBJECT = "update_profile_object";
     public static final String TAG_REQUEST_FOR_SPECIALIZATION = "request_for_specialization";
+    public static final String TAG_REQUEST_FOR_EXAMS = "request_for_exams";
+    public static final String TAG_USER_EXAM_SPECIALIZATION = "user_exam_for_specialization";
     public static final String TAG_UPDATE_INSTITUTES = "update_institutes";
     public static final String TAG_FRAGMENT_FILTER_LIST = "fragment_filter_list";
     public static final String TAG_FRAGMENT_QNA_QUESTION_LIST = "fragment_qna_questions_list";
@@ -232,10 +235,12 @@ public class Constants
     public static final String OTP_INTENT_FILTER = "com.cld.user.otp.filter";
     public static final String OTP_BODY = "Dear User,\nYour OTP for college app verification is-";
     public static final String OTP_CODE = "code";
+    public static final String OTP_NUMBER = "CLDAPP";
     public static final String OTP_VERIFICATION = "otp_verification";
     public static final String LOGIN_TYPE_ANONYMOUS = "anonymous";
     public static final String LOGIN_TYPE_FACEBOOK  = "facebook";
     public static final String LOGIN_TYPE_TRUECALLER = "truecaller";
+    public static final String LOGIN_TYPE_PHONE_NUMBER = "phone_no";
 
     // for close app
     public static boolean READY_TO_CLOSE = false;
@@ -252,6 +257,7 @@ public class Constants
     public static long ANIM_SHORT_DURATION = 200;
     public static long ANIM_AVERAGE_DURATION = 500;
     public static long ANIM_LONG_DURATION =  1000;
+    public static long ANIM_LONGEST_DURATION =  2000;
     public static long HOLD_ENTER_VIBRATION_DURATION = 30;
     public static long HOLD_REMOVE_VIBRATION_DURATION = 100;
 

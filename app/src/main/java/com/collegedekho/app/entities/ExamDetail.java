@@ -2,6 +2,9 @@ package com.collegedekho.app.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.collegedekho.app.utils.ProfileMacro;
+
 /**
  * Created by sureshsaini on 4/12/15.
  */
@@ -10,8 +13,9 @@ public class ExamDetail implements Parcelable
     private String id ;
     private String year;
     private String exam_date;
+    private int status = ProfileMacro.EXAM_PREPARING;
     private boolean result_out;
-    private String exam_marks="";
+    private int score ;
     private String exam_name="";
     private String exam_tag="";
     private String exam_short_name="Exam";
@@ -36,6 +40,7 @@ public class ExamDetail implements Parcelable
         id = in.readString();
         year = in.readString();
         exam_date = in.readString();
+        status = in.readInt();
         exam_name = in.readString();
         exam_tag = in.readString();
         exam_short_name = in.readString();
@@ -65,6 +70,7 @@ public class ExamDetail implements Parcelable
         dest.writeString(id);
         dest.writeString(year);
         dest.writeString(exam_date);
+        dest.writeInt(status);
         dest.writeString(exam_name);
         dest.writeString(exam_tag);
         dest.writeString(exam_short_name);
@@ -96,6 +102,14 @@ public class ExamDetail implements Parcelable
         this.exam_date = exam_date;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public boolean isResult_out() {
         return result_out;
     }
@@ -104,12 +118,12 @@ public class ExamDetail implements Parcelable
         this.result_out = result_out;
     }
 
-    public void setExam_marks(String marks){
-        this.exam_marks=marks;
+    public void setScore(int marks){
+        this.score =marks;
     }
 
-    public String getExam_marks(){
-        return exam_marks;
+    public int getScore(){
+        return score;
     }
 
     public String getExam_name() {

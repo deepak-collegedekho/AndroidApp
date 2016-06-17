@@ -75,6 +75,7 @@
     <string name="TAG_CREATE_ANONY_USER">create_anony_user</string>
     <string name="TAG_CREATE_FACEBOOK_ANONY_USER">create_facebook_anony_user</string>
     <string name="TAG_SKIP_LOGIN">skip_login</string>
+    <string name="TAG_SKIP">Skip</string>
     <string name="TAG_USER_SIGNUP">user_sign_up</string>
     <string name="TAG_USER_FACEBOOK_LOGIN">user_facebook_login</string>
     <string name="TAG_USER_LOGIN">user_login</string>
@@ -105,7 +106,7 @@
     <string name="TAG_UPDATE_STREAM">update_stream</string>
     <string name="KEY_STREAMS">streams</string>
     <string name="USER_CREATED">user_created</string>
-    <string name="USER_PROFILE_LOADED">user_profile_loaded</string>
+    <string name="USER_HOME_LOADED">user_home_loaded</string>
     <string name="CAN_ASK_OTP_TODAY">can_ask_otp_today</string>
     <string name="WIDGET_INSTITUTES">institutes</string>
     <string name="PNS_INSTITUTES">pns_institutes</string>
@@ -235,6 +236,9 @@
     <string name="USER_EMAIL">email</string>
     <string name="USER_VERIFIED_EMAIL">verified_email</string>
     <string name="USER_STREAM">stream</string>
+    <string name="stream">Stream</string>
+    <string name="degree">Degree</string>
+    <string name="specialization">Specialization</string>
     <string name="USER_LEVEL">level</string>
     <string name="USER_STREAM_NAME">stream_name</string>
     <string name="USER_CURRENT_STREAM_NAME">current_stream_name</string>
@@ -403,6 +407,7 @@
     <string name="otp_verification">OTP Verification</string>
     <string name="enter_6_digit_OTP">Enter 6 digit OTP</string>
     <string name="verify">VERIFY</string>
+    <string name="verify_your_phone">Verify Your Phone</string>
     <string name="otp_title">Help us understand you better</string>
     <string name="enter_mobile_number">Enter Your Mobile Number</string>
     <string name="otp_sent_message">OTP has been sent to your mobile number</string>
@@ -448,4 +453,13 @@
     <string name="fee_range_two_lac">&lt; 2Lac</string>
     <string name="fee_range_three_lac">&lt; 3Lac</string>
     <string name="fee_range_four_lac">&lt; 4Lac</string>
+
+    <string name="currently_in_school">Currently in School/Done Schooling</string>
+    <string name="currently_in_graduation">In College/Graduated College</string>
+    <string name="please_select_your_degree">Please Select Your Degree</string>
+    <string name="take_me_to_recommended">Take Me to Recommended Colleges</string>
+    <string name="take_to_me_dash_board">Take Me to My DashBoard</string>
+    <string name="take_to_me_profile">Personalize the App Further</string>
+    <string name="please_select_your_specialization">Please Select Your Specialization</string>
+    <string name="please_select_your_stream">Please Select your Stream</string>
 </resources>

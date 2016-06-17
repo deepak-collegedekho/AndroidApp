@@ -8,7 +8,7 @@
 <TextView android:id="@+id/dialog_title"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="Enter Marks"
+    android:text="Result is out for this exam Please enter your marks first"
 
     />
     <View
@@ -22,6 +22,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="number"
+        android:digits="1234567890"
+        android:maxLength="@integer/int3"
+        android:maxLines="@integer/int1"
         android:layout_marginTop="@dimen/m30dp"
         />
 

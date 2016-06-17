@@ -28,7 +28,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
-        <Spinner
+        <com.collegedekho.app.widget.ExamYearSpinner
             android:id="@+id/exam_year_spinner"
             android:layout_width="wrap_content"
             android:textSize="10sp"

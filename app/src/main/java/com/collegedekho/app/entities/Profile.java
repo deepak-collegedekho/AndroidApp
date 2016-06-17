@@ -17,6 +17,7 @@ public class Profile implements Parcelable{
     private String state_name = "";
     private int state_id = -1;
     private int is_verified = 0;
+    private int is_preparing = 0;
     private String city_name =  "";
     private int city_id = -1;
     private String mother_tongue_name = "";
@@ -77,6 +78,7 @@ public class Profile implements Parcelable{
         state_name = in.readString();
         state_id = in.readInt();
         is_verified = in.readInt();
+        is_preparing = in.readInt();
         city_name = in.readString();
         city_id = in.readInt();
         mother_tongue_name = in.readString();
@@ -152,6 +154,7 @@ public class Profile implements Parcelable{
         dest.writeString(state_name);
         dest.writeInt(state_id);
         dest.writeInt(is_verified);
+        dest.writeInt(is_preparing);
         dest.writeString(city_name);
         dest.writeInt(city_id);
         dest.writeString(mother_tongue_name);
@@ -253,6 +256,14 @@ public class Profile implements Parcelable{
 
     public void setIs_verified(int is_verified) {
         this.is_verified = is_verified;
+    }
+
+    public int getIs_preparing() {
+        return is_preparing;
+    }
+
+    public void setIs_preparing(int is_preparing) {
+        this.is_preparing = is_preparing;
     }
 
     public String getCity_name() {

@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.adapter;
 
 import android.support.v4.app.Fragment;
@@ -7,9 +8,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.collegedekho.app.fragment.SignInFragment;
 import com.collegedekho.app.fragment.SignUpFragment;
 
+*/
 /**
  * Created by sureshsaini on 20/10/15.
- */
+ *//*
+
 public class LoginTypeAdapter extends FragmentPagerAdapter
 {
     private static final int SIGNUP = 1;
@@ -49,3 +52,4 @@ public class LoginTypeAdapter extends FragmentPagerAdapter
         return super.getPageTitle(position);
     }
 }
+*/

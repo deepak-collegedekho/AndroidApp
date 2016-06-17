@@ -3,7 +3,6 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/m8dp"
     android:weightSum="10">
 
     <View
@@ -25,7 +24,7 @@
         android:textColor="@color/text_lightest_grey"
         android:layout_gravity="center"
         android:text="OR"
-        android:textSize="18sp"
+        android:textSize="15sp"
         android:maxLines="@integer/int1"
         />
         </LinearLayout>

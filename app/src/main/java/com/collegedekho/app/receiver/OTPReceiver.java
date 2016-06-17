@@ -24,24 +24,19 @@ public class OTPReceiver extends BroadcastReceiver {
                         for (int i = 0; i < pdu.length; i++) {
 
                             SmsMessage sms = SmsMessage.createFromPdu((byte[]) pdu[i]);
-                            String sender = sms.getDisplayOriginatingAddress();
-                            String text = sender;
-                            String body = sms.getMessageBody();
-                            String otp;
-                            if (body != null && body.startsWith(Constants.OTP_BODY)) {
-                                otp = body.replace(Constants.OTP_BODY, "").trim();
-                            } else {
-                                return;
-                            }
-                            if (!otp.matches("") && otp.length() > 0) {
+                            String senderAddress = sms.getDisplayOriginatingAddress();
+                            if(senderAddress != null && senderAddress.contains(Constants.OTP_NUMBER)) {
 
-//                            Toast.makeText(context, sender+": "+otp, Toast.LENGTH_SHORT).show();
-                                Intent otpIntent = new Intent(Constants.OTP_INTENT_FILTER);
-                                otpIntent.putExtra(Constants.USER_OTP, otp);
-                                LocalBroadcastManager.getInstance(context).sendBroadcast(otpIntent);
+                                String body = sms.getMessageBody();
+                                if (body == null || !body.startsWith(Constants.OTP_BODY))
+                                    return;
 
-                            } else {
-                                return;
+                                String otp = body.replace(Constants.OTP_BODY, "").trim();
+                                if (!otp.matches("") && otp.length() > 0) {
+                                    Intent otpIntent = new Intent(Constants.OTP_INTENT_FILTER);
+                                    otpIntent.putExtra(Constants.USER_OTP, otp);
+                                    LocalBroadcastManager.getInstance(context).sendBroadcast(otpIntent);
+                                }
                             }
                         }
                     }

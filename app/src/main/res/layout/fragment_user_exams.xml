@@ -19,11 +19,11 @@
         android:text="SELECT THE EXAMS YOU ARE PLANNING TO APPEAR"/>
 
     <ImageView
-              android:id="@+id/exam_image"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_below="@id/exam_textview"
-              app:srcCompat="@drawable/ic_exams_user"/>
+        android:id="@+id/exam_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/exam_textview"
+        app:srcCompat="@drawable/ic_exams_user"/>
 
 
         <TextView

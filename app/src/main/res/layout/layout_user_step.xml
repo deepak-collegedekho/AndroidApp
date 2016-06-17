@@ -23,7 +23,7 @@
                     android:id="@+id/first_step_user_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:srcCompat="@drawable/ic_user"/>
             </LinearLayout>
 
@@ -35,7 +35,7 @@
                 android:weightSum="1">
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
+                    android:layout_height="100dp"
                     android:orientation="horizontal"
                     android:weightSum="1">
 
@@ -50,7 +50,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
-                            android:visibility="visible"
+                            android:visibility="gone"
                             app:srcCompat="@drawable/ic_user"/>
                     </LinearLayout>
 
@@ -62,7 +62,7 @@
                         android:weightSum="1">
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="40dp"
+                            android:layout_height="50dp"
                             android:orientation="horizontal"
                             android:weightSum="1">
 
@@ -99,7 +99,7 @@
                         </LinearLayout>
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="40dp"
+                            android:layout_height="50dp"
                             android:background="@color/white"
                             android:orientation="horizontal"
                             android:weightSum="1">
@@ -127,7 +127,7 @@
                     </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="50dp"
                     android:orientation="horizontal"
                     android:background="@color/white"
                     android:weightSum="1">

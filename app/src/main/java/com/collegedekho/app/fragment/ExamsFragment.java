@@ -257,7 +257,7 @@ public class ExamsFragment extends BaseFragment {
                     JSONObject examHash = new JSONObject();
                     try {
                         examHash.putOpt(MainActivity.getResourceString(R.string.EXAM_ID),examDetailObj.getId());
-                        examHash.putOpt(MainActivity.getResourceString(R.string.MARKS),examDetailObj.getExam_marks());
+                        examHash.putOpt(MainActivity.getResourceString(R.string.MARKS),examDetailObj.getScore());
                         parentArray.put(examHash);
                         isExamSelected = true;
                         if(mainActivity!=null){

@@ -46,7 +46,7 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
-import com.collegedekho.app.fragment.ProfileEditFragmentNew;
+import com.collegedekho.app.fragment.ProfileEditFragment;
 import com.collegedekho.app.utils.Utils;
 
 import java.lang.reflect.Method;
@@ -57,7 +57,7 @@ import java.util.List;
  */
 public class MaterialSpinner extends TextView {
 
-  private static ProfileEditFragmentNew.ProfileChildFragment fragmentListener;
+  private static ProfileEditFragment.ProfileChildFragment fragmentListener;
   private OnNothingSelectedListener onNothingSelectedListener;
   private OnItemSelectedListener onItemSelectedListener;
   private MaterialSpinnerBaseAdapter adapter;
@@ -94,7 +94,7 @@ public class MaterialSpinner extends TextView {
     init(context, attrs);
   }
 
-  public void setFragmentListener(ProfileEditFragmentNew.ProfileChildFragment fragmentListener) {
+  public void setFragmentListener(ProfileEditFragment.ProfileChildFragment fragmentListener) {
     MaterialSpinner.fragmentListener = fragmentListener;
   }
 
@@ -341,7 +341,6 @@ public class MaterialSpinner extends TextView {
 
   /**
    * Set the default spinner item using its index
-   *
    * @param position
    *     the item's position
    */

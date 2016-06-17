@@ -69,9 +69,7 @@ public class OTPVerificationFragment extends BaseFragment {
         btnTerms = (TextView) view.findViewById(R.id.txt_terms);
         btnTerms.setOnClickListener(this);
         imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//        btnTerms.setMovementMethod(LinkMovementMethod.getInstance());
-//        String text = "<a href='https://m.collegedekho.com/terms-and-conditions/'> terms and conditions </a>";
-//        btnTerms.setText(Html.fromHtml(text));
+
 
         edtMobileNumber = (EditText) view.findViewById(R.id.edt_mobile_number);
         edtOTP = (EditText) view.findViewById(R.id.edt_otp_number);
@@ -133,7 +131,7 @@ public class OTPVerificationFragment extends BaseFragment {
                     String number = edtMobileNumber.getText().toString();
                     if (number != null && !number.trim().equals("") && number.trim().length() == 10 && TextUtils.isDigitsOnly(number)) {
                         if (cbTerms.isChecked()) {
-                            mListener.onSubmitMobileNumber(number);
+                            mListener.onSubmitPhoneNumber(number);
                         } else {
                             mListener.displayMessage(R.string.ACCEPT_TERMS_AND_CONDITIONS);
                         }
@@ -241,7 +239,7 @@ public class OTPVerificationFragment extends BaseFragment {
     }
 
     public interface OTPVerificationListener {
-        void onSubmitMobileNumber(String mobileNumber);
+        void onSubmitPhoneNumber(String mobileNumber);
         void onSubmitOTP(String mobileNumber, String otp);
         void onResendOTP(String mobileNumber);
         void displayMessage(int messageId);
