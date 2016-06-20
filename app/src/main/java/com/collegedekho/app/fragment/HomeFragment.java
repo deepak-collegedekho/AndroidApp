@@ -43,8 +43,6 @@ public class HomeFragment extends BaseFragment
     private ViewPager mExamTabPager  = null;
     private boolean IS_TUTE_COMPLETED = true;
     private int i = 0;
-    private static boolean IS_COMING_FROM_ON_CREATE = false;
-    private static String SavedExamSummary = "saved_exam_summary";
 
     public static HomeFragment newInstance(ArrayList<ExamDetail> examList) {
         HomeFragment fragment = new HomeFragment();
@@ -134,7 +132,6 @@ public class HomeFragment extends BaseFragment
                     rootView.findViewById(R.id.profile_guide_image).setBackgroundResource(R.drawable.ic_profile_tute2);
                 }else if(i ==1) {
                     i++;
-                    //v.setBackgroundResource(R.drawable.ic_profile_tute3);
                     rootView.findViewById(R.id.profile_guide_image).setBackgroundResource(R.drawable.ic_profile_tute3);
                 }
                 else if(i ==2) {
@@ -147,7 +144,6 @@ public class HomeFragment extends BaseFragment
                 }else {
                     v.setVisibility(View.GONE);
                     IS_TUTE_COMPLETED = true;
-                    //getActivity().findViewById(R.id.bottom_tab_layout).setVisibility(View.VISIBLE);
                     View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                     bottomMenu.animate().translationY(0);
                     bottomMenu.setVisibility(View.VISIBLE);
@@ -163,21 +159,7 @@ public class HomeFragment extends BaseFragment
         rootView.findViewById(R.id.important_date_layout_RL).setOnClickListener(this);
         rootView.findViewById(R.id.profile_syllabus_statusLL).setOnClickListener(this);
 
-/*
-        if (savedInstanceState != null)
-        {
-            try {
-                ExamSummary examSummary = JSON.std.beanFrom(ExamSummary.class, savedInstanceState.get(HomeFragment.SavedExamSummary).toString());
 
-                if (examSummary != null)
-                    this.updateExamSummary(examSummary);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-*/
         return rootView;
     }
 
@@ -232,19 +214,14 @@ public class HomeFragment extends BaseFragment
                 mProfileName.setText("");
                 mProfileName.setVisibility(View.GONE);
             }else {
-                mProfileName.setText(name);
+                String userName = name.substring(0, 1).toUpperCase()+name.substring(1);
+                mProfileName.setText(userName);
                 mProfileName.setVisibility(View.VISIBLE);
             }
             String image = MainActivity.mProfile.getImage();
             if (image != null && ! image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-            else{
-                if(MainActivity.user != null) {
-                    image = MainActivity.user.getImage();
-                    if (image != null && !image.isEmpty())
-                        mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-                }
-            }
+
             String streamName = MainActivity.mProfile.getCurrent_stream_name();
             if(streamName != null && !streamName.isEmpty()){
                 mStreamName.setVisibility(View.VISIBLE);
@@ -253,7 +230,7 @@ public class HomeFragment extends BaseFragment
             else{
                 mStreamName.setVisibility(View.GONE);
             }
-        }else if(MainActivity.user != null){
+        }/*else if(MainActivity.user != null){
 
             String name = MainActivity.user.getName();
             if(name!=null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()))
@@ -279,7 +256,7 @@ public class HomeFragment extends BaseFragment
             }
 
         }
-
+        */
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
@@ -346,6 +323,11 @@ public class HomeFragment extends BaseFragment
                         mProfileName.setText(name);
                         mProfileName.setVisibility(View.VISIBLE);
                     }
+
+                    String image = MainActivity.mProfile.getImage();
+                    if (image != null && ! image.isEmpty())
+                        mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+
                 }
 
             }

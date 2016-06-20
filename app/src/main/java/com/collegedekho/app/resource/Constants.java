@@ -17,6 +17,9 @@ public class Constants
     public static final int RC_HANDLE_STORAGE_PERM =3;
     public static final int RC_HANDLE_SMS_PERM=4;
     public static final int RC_QUIT_VIDEO_PLAYER=5;
+    public static final int GCM_RESULT_DATA_KEY=201;
+    public static final int REQUEST_PICK_IMAGE = 2 ;
+    public static final int REQUEST_CROP_IMAGE = 3 ;
 
     public static final int[] headImages = {R.drawable.ic_question, 0, R.drawable.ic_cap};
     public static final String[] headLabels = {"I am not sure where to start", "",
@@ -169,7 +172,6 @@ public class Constants
     public static final String SEARCH_ARTICLES = "search_articles";
     public static final String SEARCH_NEWS = "search_news";
     public static final String SEARCH_QNA = "search_qna";
-    public static final int PICK_IMAGE = 2 ;
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;
@@ -297,7 +299,6 @@ public class Constants
     public static final String GCM_QUESTIONS_LIST_PREFERENCES_KEY = "gcm_questions_list_preferences";
     public static final String GCM_QUESTIONS_LIST_COMPLETED_KEY = "gcm_questions_list_completed";
     public static final String QUESTIONS_LIST_KEY = "questions_list";
-    public static final int GCM_RESULT_DATA_KEY=201;
     public static final String SELECTED_PREFERENCE_FILTERS = "selected_preference_filters";
     public static final String GCM_DIALOG_RESULT="gcm_dialog_result";
     public static final String DIALOG_DATA="gcm_dialog_data";

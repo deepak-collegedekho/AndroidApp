@@ -6,24 +6,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -33,6 +28,10 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.widget.CircularImageView;
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.ProgressCallback;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,6 +47,8 @@ public class ProfileFragment extends BaseFragment {
     private static String PARAM1  = "param1";
     public static Profile mProfile ;
     private UserProfileListener mListener;
+    private TextView mProfileName;
+    private CircularImageView mProfileImage;
 
     public static ProfileFragment getInstance(Profile profile){
         ProfileFragment fragment = new ProfileFragment();
@@ -72,6 +73,7 @@ public class ProfileFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        mProfileName = (TextView)rootView.findViewById(R.id.profile_user_name);
         rootView.findViewById(R.id.profile_edit_btn).setOnClickListener(this);
         rootView.findViewById(R.id.profile_image_update_btn).setOnClickListener(this);
         rootView.findViewById(R.id.profile_show_more_info).setOnClickListener(this);
@@ -93,7 +95,7 @@ public class ProfileFragment extends BaseFragment {
         View view = getView();
         if (mProfile == null || view == null)
             return;
-        CircularImageView mProfileImage = (CircularImageView) view.findViewById(R.id.profile_image);
+        mProfileImage = (CircularImageView) view.findViewById(R.id.profile_image);
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
 
@@ -117,7 +119,7 @@ public class ProfileFragment extends BaseFragment {
 
         String name = mProfile.getName();
         if(name != null && !name.isEmpty()){
-            ((TextView)view.findViewById(R.id.profile_user_name)).setText(name);
+           mProfileName.setText(name);
         }
 
         // update current basic info
@@ -581,7 +583,7 @@ public class ProfileFragment extends BaseFragment {
         // Add the camera options.
        // chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
 
-        getActivity().startActivityForResult(chooserIntent, Constants.PICK_IMAGE);
+        getActivity().startActivityForResult(chooserIntent, Constants.REQUEST_PICK_IMAGE);
     }
 
     private void mOnProfileEdited(){
@@ -589,9 +591,86 @@ public class ProfileFragment extends BaseFragment {
             mListener.onUserProfileEdited(mProfile);
     }
 
+    public void uploadUserProfileImage(Intent data) {
+
+        if(MainActivity.user == null || data == null)
+            return;
+
+        // Get the Image from data
+         Uri filePath = data.getData();
+        String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+        // Get the cursor
+        Cursor cursor = getActivity().getContentResolver().query(filePath,
+                filePathColumn, null, null, null);
+        // Move to first row
+        cursor.moveToFirst();
+
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String imgDecodableString = cursor.getString(columnIndex);
+        cursor.close();
+
+        Ion.with(getActivity().getApplicationContext())
+                .load("PUT",Constants.BASE_URL+"upload-image/")
+                .uploadProgressHandler(new ProgressCallback() {
+                    @Override
+                    public void onProgress(long uploaded, long total) {
+                        // Displays the progress bar for the first time.
+                        System.out.println("UPLOADED " + uploaded + "TOTAL `" + total);
+                        MainActivity activity = (MainActivity) getActivity();
+                        if(activity != null){
+                            activity.showProgressDialog("Uploading Image");
+                        }
+                    }
+                })
+                .setTimeout(60 * 60 * 1000)
+                .setHeader("Authorization","Token "+MainActivity.user.getToken())
+                .setMultipartFile("image", "application/json", new File(imgDecodableString))
+                .asJsonObject()
+                // run a callback on completion
+                .setCallback(new FutureCallback<JsonObject>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result) {
+                        // When the loop is finished, updates the notification
+                        if (e != null) {
+                            Toast.makeText(getActivity().getApplicationContext(), "Error uploading file", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        else {
+                            if(mListener != null)
+                                      mListener.onProfileImageUploaded();
+                        }
+                        System.out.println("UPLOAD RESULT" + result.toString());
+
+
+                    }
+                });
+    }
+
+    public void updateUserName(){
+        if(MainActivity.mProfile != null){
+            String name = MainActivity.mProfile.getName();
+            if(name!=null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()))
+            {
+                mProfileName.setText("");
+                mProfileName.setVisibility(View.GONE);
+            }else {
+                mProfileName.setText(name);
+                mProfileName.setVisibility(View.VISIBLE);
+            }
+
+            String image = MainActivity.mProfile.getImage();
+            if (image != null && ! image.isEmpty())
+                mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+
+        }
+
+
+    }
 
 
     public interface  UserProfileListener{
         void onUserProfileEdited(Profile profile);
+        void onProfileImageUploaded();
     }
 }

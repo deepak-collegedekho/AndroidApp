@@ -347,7 +347,7 @@ public class ProfileEditFragment extends BaseFragment {
                 return;
             }
             String userPhoneNumber = mProfile.getPhone_no();
-            if(mCurrentView.findViewById(R.id.profile_edit_phone).getVisibility() == View.VISIBLE) {
+            if(mProfile.getIs_verified() != 1) {
                  userPhoneNumber = ((EditText) mCurrentView.findViewById(R.id.profile_edit_phone)).getText().toString();
                 if (userPhoneNumber == null || userPhoneNumber.trim().isEmpty()) {
                     mListener.displayMessage(R.string.PHONE_EMPTY);
@@ -1626,11 +1626,11 @@ public class ProfileEditFragment extends BaseFragment {
 
             if (MainActivity.user != null && MainActivity.user.is_anony()){
                 trueButton.setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.profile_edit_fb_login).setVisibility(View.VISIBLE);
+               // rootView.findViewById(R.id.profile_edit_fb_login).setVisibility(View.VISIBLE);
             }
             else{
                 trueButton.setVisibility(View.GONE);
-                rootView.findViewById(R.id.profile_edit_fb_login).setVisibility(View.GONE);
+               // rootView.findViewById(R.id.profile_edit_fb_login).setVisibility(View.GONE);
             }
 
             boolean usable = trueButton.isUsable();

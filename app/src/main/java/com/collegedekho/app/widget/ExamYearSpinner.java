@@ -22,6 +22,7 @@ public class ExamYearSpinner extends Spinner {
       super.setSelection(position, animate);
       if (sameSelected) {
           // Spinner does not call the OnItemSelectedListener if the same item is selected, so do it manually now
+          if(getOnItemSelectedListener() != null)
           getOnItemSelectedListener().onItemSelected(this, getSelectedView(), position, getSelectedItemId());
       }
   }
@@ -33,7 +34,9 @@ public class ExamYearSpinner extends Spinner {
         boolean sameSelected = position == getSelectedItemPosition();
         super.setSelection(position);
         if (sameSelected) {
+
         // Spinner does not call the OnItemSelectedListener if the same item is selected, so do it manually now
+            if(getOnItemSelectedListener() != null)
             getOnItemSelectedListener().onItemSelected(this, getSelectedView(), position, getSelectedItemId());
         }
     }

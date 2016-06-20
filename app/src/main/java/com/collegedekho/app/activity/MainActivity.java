@@ -12,12 +12,11 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -25,7 +24,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.ContactsContract;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -189,7 +187,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -1357,6 +1354,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onProfileImageUploaded() {
+        mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL +"profile/", null);
+    }
+
     /**
      * This method is used to update user profile whenever user update
      *  his/her information about current education, preferred education details,
@@ -1398,6 +1400,8 @@ public class MainActivity extends AppCompatActivity
                 }
             }else if(currentFragment instanceof  HomeFragment){
                 ((HomeFragment)currentFragment).updateUserName();
+            }else if(currentFragment instanceof  ProfileFragment){
+                ((ProfileFragment)currentFragment).updateUserName();
             }
 
         } catch (IOException e) {
@@ -1867,49 +1871,33 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if(requestCode == Constants.PICK_IMAGE && resultCode == RESULT_OK
-                && null != data){
-            // Get the Image from data
+        if(requestCode == Constants.REQUEST_PICK_IMAGE && resultCode == RESULT_OK && data != null) {
+            // TODO :: profile image croping
+           /* Intent intent = new Intent("com.android.camera.action.CROP");
+            intent.setType("image*//*");
+            List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 0);
+            int size = list.size();*/
 
-            Uri filePath = data.getData();
-          String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            //if (size == 0) {
+                if (currentFragment instanceof ProfileFragment)
+                    ((ProfileFragment) currentFragment).uploadUserProfileImage(data);
 
-            // Get the cursor
-            Cursor cursor = getContentResolver().query(filePath,
-                    filePathColumn, null, null, null);
-            // Move to first row
-            cursor.moveToFirst();
-
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String imgDecodableString = cursor.getString(columnIndex);
-            cursor.close();
-            String fileNameSegments[] = imgDecodableString.split("/");
-            String fileName = fileNameSegments[fileNameSegments.length - 1];
-
-            try {
-                //Getting the Bitmap from Gallery
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-
-                byte[] imageBytes = baos.toByteArray();
-                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-
-                Map<String, String> params = new HashMap<>();
-
-                params.put("image", encodedImage);
-                params.put("filename", fileName);
-
-                byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
-
-               // networkUtils.imageUpload("IMAGE_UPLOAD", Constants.BASE_URL+"upload-image/", params, Request.Method.PUT);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            /*} else {
+                // File file = new File(filePath);
+                Uri uri = data.getData();
+                intent.setData(uri);
+                intent.putExtra("crop", "true");
+                intent.putExtra("aspectX", 1);
+                intent.putExtra("aspectY", 1);
+                intent.putExtra("outputX", 96);
+                intent.putExtra("outputY", 96);
+                intent.putExtra("noFaceDetection", true);
+                intent.putExtra("return-data", true);
+                startActivityForResult(intent, Constants.REQUEST_CROP_IMAGE);
+            }*/
+        }else  if(requestCode == Constants.REQUEST_CROP_IMAGE && resultCode == RESULT_OK){
+            if (currentFragment instanceof ProfileFragment)
+                ((ProfileFragment) currentFragment).uploadUserProfileImage(data);
 
         }else if (requestCode == PsychometricAnalysisActivity.GET_PSYCHOMETRIC_RESULTS) {
             // Make sure the request was successful
@@ -2015,7 +2003,7 @@ public class MainActivity extends AppCompatActivity
             if (addToBackstack)
                 fragmentTransaction.addToBackStack(fragment.toString());
 
-            fragmentTransaction.commitNow();
+            fragmentTransaction.commit();
 
             if (this.currentFragment instanceof HomeFragment) {
                 if (findViewById(R.id.app_bar_layout).getVisibility() != View.VISIBLE)
