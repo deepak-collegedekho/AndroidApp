@@ -91,7 +91,7 @@ public class LoginFragment extends  BaseFragment {
 
         });
 
-        rootView.findViewById(R.id.sign_up_skip).setOnClickListener(this);
+        rootView.findViewById(R.id.sign_up_skip_layout).setOnClickListener(this);
         (rootView.findViewById(R.id.fb_login)).setOnClickListener(this);
         (rootView.findViewById(R.id.login_verify_phone_button)).setOnClickListener(this);
         (rootView.findViewById(R.id.login_phone_submit_button)).setOnClickListener(this);
@@ -139,7 +139,7 @@ public class LoginFragment extends  BaseFragment {
             return;
         }
         switch (view.getId()) {
-            case R.id.sign_up_skip:
+            case R.id.sign_up_skip_layout:
                 mSkipUserLogin();
                 break;
             case R.id.fb_login:
@@ -224,6 +224,9 @@ public class LoginFragment extends  BaseFragment {
         }
         @Override
         public void afterTextChanged(Editable s) {
+           if(s.length() >= 10 && getView() != null){
+               getView().findViewById(R.id.login_phone_submit_button).setVisibility(View.VISIBLE);
+           }
         }
     };
 

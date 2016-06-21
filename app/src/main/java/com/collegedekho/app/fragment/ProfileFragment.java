@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -34,6 +35,11 @@ import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +55,8 @@ public class ProfileFragment extends BaseFragment {
     private UserProfileListener mListener;
     private TextView mProfileName;
     private CircularImageView mProfileImage;
+    private File uploadTempImageFile;
+    private Uri mImageCaptureUri;
 
     public static ProfileFragment getInstance(Profile profile){
         ProfileFragment fragment = new ProfileFragment();
@@ -471,7 +479,7 @@ public class ProfileFragment extends BaseFragment {
                 mOnProfileEdited();
                 break;
             case R.id.profile_image_update_btn:
-                mOnProfileImageUpdate();
+                mRequestForImageCapture();
                 break;
             case R.id.profile_show_more_info:
                 View rootView = getView();
@@ -549,14 +557,13 @@ public class ProfileFragment extends BaseFragment {
         }
     }
 
-    private void mOnProfileImageUpdate() {
+    private void mRequestForImageCapture() {
 
         // Determine Uri of camera image to save.
-        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "MyDir" + File.separator);
-        root.mkdirs();
-        final String fname = "img_"+ System.currentTimeMillis() + ".jpg";
-        final File sdImageMainDirectory = new File(root, fname);
-        Uri outputFileUri = Uri.fromFile(sdImageMainDirectory);
+
+        uploadTempImageFile = new File(Environment.getExternalStorageDirectory(),
+                "tmp_avatar_" + String.valueOf(System.currentTimeMillis()) + ".jpg");
+        mImageCaptureUri = Uri.fromFile(uploadTempImageFile);
 
 
         // Camera.
@@ -569,7 +576,7 @@ public class ProfileFragment extends BaseFragment {
             Intent intent = new Intent(captureIntent);
             intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
             intent.setPackage(packageName);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
             cameraIntents.add(intent);
         }
 
@@ -581,9 +588,85 @@ public class ProfileFragment extends BaseFragment {
         Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
 
         // Add the camera options.
-       // chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
+       chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
 
         getActivity().startActivityForResult(chooserIntent, Constants.REQUEST_PICK_IMAGE);
+    }
+
+    public void requestForCropImage(Intent data) {
+
+        if (data != null) {
+            // Get the Image from data
+            Uri filePath = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            // Get the cursor
+            Cursor cursor = getActivity().getContentResolver().query(filePath,
+                    filePathColumn, null, null, null);
+            // Move to first row
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String imgDecodableString = cursor.getString(columnIndex);
+            cursor.close();
+
+            File sourceFile =  new File(imgDecodableString);
+            FileChannel source = null;
+            FileChannel destination = null;
+            try {
+                source = new FileInputStream(sourceFile).getChannel();
+                destination = new FileOutputStream(uploadTempImageFile).getChannel();
+                if (destination != null && source != null) {
+                    try {
+                        destination.transferFrom(source, 0, source.size());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (source != null) {
+                    try {
+                        source.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (destination != null) {
+                    try {
+                        destination.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+
+            mImageCaptureUri = Uri.fromFile(uploadTempImageFile);
+        }
+
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setType("image/*");
+        List<ResolveInfo> list = getActivity().getPackageManager().queryIntentActivities(intent, 0);
+        int size = list.size();
+
+        if (size <= 0) {
+            uploadUserProfileImage();
+        } else {
+            intent.setData(mImageCaptureUri);
+
+            intent.putExtra("outputX", 200);
+            intent.putExtra("outputY", 200);
+            intent.putExtra("aspectX", 1);
+            intent.putExtra("aspectY", 1);
+            intent.putExtra("scale", true);
+            intent.putExtra("return-data", true);
+
+            Intent i = new Intent(intent);
+            ResolveInfo res = list.get(0);
+            i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            getActivity().startActivityForResult(i, Constants.REQUEST_CROP_IMAGE);
+        }
     }
 
     private void mOnProfileEdited(){
@@ -591,24 +674,13 @@ public class ProfileFragment extends BaseFragment {
             mListener.onUserProfileEdited(mProfile);
     }
 
-    public void uploadUserProfileImage(Intent data) {
+    public void uploadUserProfileImage() {
 
-        if(MainActivity.user == null || data == null)
+        if(MainActivity.user == null)
             return;
 
-        // Get the Image from data
-         Uri filePath = data.getData();
-        String[] filePathColumn = { MediaStore.Images.Media.DATA };
-
-        // Get the cursor
-        Cursor cursor = getActivity().getContentResolver().query(filePath,
-                filePathColumn, null, null, null);
-        // Move to first row
-        cursor.moveToFirst();
-
-        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String imgDecodableString = cursor.getString(columnIndex);
-        cursor.close();
+        final File imageFile = new File(mImageCaptureUri.getPath());
+        final boolean  processCount[] = new boolean[1];
 
         Ion.with(getActivity().getApplicationContext())
                 .load("PUT",Constants.BASE_URL+"upload-image/")
@@ -618,14 +690,15 @@ public class ProfileFragment extends BaseFragment {
                         // Displays the progress bar for the first time.
                         System.out.println("UPLOADED " + uploaded + "TOTAL `" + total);
                         MainActivity activity = (MainActivity) getActivity();
-                        if(activity != null){
+                        if(activity != null && !processCount[0] ){
+                            processCount[0] =true;
                             activity.showProgressDialog("Uploading Image");
                         }
                     }
                 })
                 .setTimeout(60 * 60 * 1000)
                 .setHeader("Authorization","Token "+MainActivity.user.getToken())
-                .setMultipartFile("image", "application/json", new File(imgDecodableString))
+                .setMultipartFile("image", "application/json", imageFile)
                 .asJsonObject()
                 // run a callback on completion
                 .setCallback(new FutureCallback<JsonObject>() {
@@ -636,10 +709,17 @@ public class ProfileFragment extends BaseFragment {
                             Toast.makeText(getActivity().getApplicationContext(), "Error uploading file", Toast.LENGTH_LONG).show();
                             return;
                         }
-                        else {
-                            if(mListener != null)
-                                      mListener.onProfileImageUploaded();
+                        else if(mListener != null){
+                            mListener.onProfileImageUploaded();
                         }
+
+                        MainActivity activity = (MainActivity) getActivity();
+                        if(activity != null){
+                            activity.hideProgressDialog();
+                        }
+
+                        if (imageFile.exists()) imageFile.delete();
+
                         System.out.println("UPLOAD RESULT" + result.toString());
 
 

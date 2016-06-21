@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
@@ -45,27 +46,29 @@ public class UserEducationFragment extends BaseFragment {
     // TODO: Rename and change types and number of parameters
     public static UserEducationFragment newInstance() {
         UserEducationFragment fragment = new UserEducationFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-
         return fragment;
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_user_education, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_user_education, container, false);
+    }
 
-        TextView cdTextView = (TextView) rootView.findViewById(R.id.user_cd_recommendation_text);
-        Spanned text = Html.fromHtml("GET <b><font color='#ff8d00'>C</font><font color='#1f2560'>D</font></b> <br>RECOMMEDATIONS");
-        cdTextView.setText(text);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        rootView.findViewById(R.id.user_education_college).setOnClickListener(this);
-        rootView.findViewById(R.id.user_education_school).setOnClickListener(this);
-        rootView.findViewById(R.id.user_education_skip_button).setOnClickListener(this);
-        return rootView;
+        view.findViewById(R.id.user_education_college).setOnClickListener(this);
+        view.findViewById(R.id.user_education_school).setOnClickListener(this);
+        view.findViewById(R.id.user_education_skip_button).setOnClickListener(this);
+        if(MainActivity.user != null){
+            String phone = MainActivity.user.getPhone_no();
+            if(phone != null && !phone.isEmpty())
+            ((TextView)view.findViewById(R.id.user_education_phone)).setText(":  "+phone);
+            else
+                ((TextView)view.findViewById(R.id.user_education_phone)).setText(":  NA");
+        }
     }
 
     @Override

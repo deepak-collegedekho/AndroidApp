@@ -45,7 +45,7 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //View rootView = LayoutInflater.from(mContext).inflate(R.layout.card_qna_answer, parent, false);
-        View rootView = LayoutInflater.from(mContext).inflate(R.layout.card_qna_answer_new_design, parent, false);
+        View rootView = LayoutInflater.from(mContext).inflate(R.layout.card_qna_answer, parent, false);
         try {
             return new QnAAnswerHolder(rootView, (QnAQuestionDetailFragment.OnQnAAnswerInteractionListener) mContext);
         } catch (ClassCastException e) {

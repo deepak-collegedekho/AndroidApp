@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,6 +25,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -146,7 +148,6 @@ import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.listener.OnArticleSelectListener;
 import com.collegedekho.app.listener.OnNewsSelectListener;
-import com.collegedekho.app.resource.BitMapHolder;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.utils.AnalyticsUtils;
@@ -395,7 +396,7 @@ public class MainActivity extends AppCompatActivity
         this.setContentView(R.layout.activity_main);
 
         this.mResources = getResources();
-        this.getBitMapResources();
+        //this.getBitMapResources();
 
         this.mSnackbar = Snackbar.make(this.findViewById(R.id.main_activity_container), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
         Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
@@ -636,7 +637,7 @@ public class MainActivity extends AppCompatActivity
         }).start();
 
     }
-    private void getBitMapResources(){
+   /* private void getBitMapResources(){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -646,7 +647,7 @@ public class MainActivity extends AppCompatActivity
             }
         }).start();
 
-    }
+    }*/
     @Override
     public void onGifCompleted() {
         new Handler().postDelayed(new Runnable() {
@@ -1871,33 +1872,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if(requestCode == Constants.REQUEST_PICK_IMAGE && resultCode == RESULT_OK && data != null) {
-            // TODO :: profile image croping
-           /* Intent intent = new Intent("com.android.camera.action.CROP");
-            intent.setType("image*//*");
-            List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 0);
-            int size = list.size();*/
+        if(requestCode == Constants.REQUEST_PICK_IMAGE && resultCode == RESULT_OK ) {
 
-            //if (size == 0) {
-                if (currentFragment instanceof ProfileFragment)
-                    ((ProfileFragment) currentFragment).uploadUserProfileImage(data);
-
-            /*} else {
-                // File file = new File(filePath);
-                Uri uri = data.getData();
-                intent.setData(uri);
-                intent.putExtra("crop", "true");
-                intent.putExtra("aspectX", 1);
-                intent.putExtra("aspectY", 1);
-                intent.putExtra("outputX", 96);
-                intent.putExtra("outputY", 96);
-                intent.putExtra("noFaceDetection", true);
-                intent.putExtra("return-data", true);
-                startActivityForResult(intent, Constants.REQUEST_CROP_IMAGE);
-            }*/
-        }else  if(requestCode == Constants.REQUEST_CROP_IMAGE && resultCode == RESULT_OK){
             if (currentFragment instanceof ProfileFragment)
-                ((ProfileFragment) currentFragment).uploadUserProfileImage(data);
+                ((ProfileFragment) currentFragment).requestForCropImage(data);
+
+        }else  if(requestCode == Constants.REQUEST_CROP_IMAGE && resultCode == RESULT_OK){
+
+            if (currentFragment instanceof ProfileFragment)
+                ((ProfileFragment) currentFragment).uploadUserProfileImage();
 
         }else if (requestCode == PsychometricAnalysisActivity.GET_PSYCHOMETRIC_RESULTS) {
             // Make sure the request was successful

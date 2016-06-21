@@ -7,14 +7,25 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingBottom="@dimen/m7dp"
-    android:paddingTop="@dimen/m50dp"
+    android:paddingTop="@dimen/m40dp"
     android:paddingLeft="@dimen/m45dp"
     android:paddingRight="@dimen/m45dp">
 
 
     <ImageView
-        style="@style/AppTheme.ImageView"
+        android:layout_height="100dp"
+        android:layout_width="wrap_content"
         android:src="@drawable/college_logo" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:fontFamily="sans-serif-light"
+        android:text=" User login step "/>
+
 
     <LinearLayout
         android:id="@+id/login_layout"
@@ -43,7 +54,7 @@
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:contentDescription="@string/fb_login_description"
-                android:src="@drawable/ic_facebook_icon" />
+                app:srcCompat="@drawable/ic_facebook_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -88,6 +99,7 @@
             android:layout_marginTop="@dimen/m20dp"
             style="@style/AppTheme.OrangeButton"
             android:text="NEXT"
+            android:visibility="gone"
             android:textSize="17sp"
             android:textColor="@color/white"/>
 
@@ -176,24 +188,26 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/sign_up_skip"
+    <LinearLayout
+        android:id="@+id/sign_up_skip_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/m2dp"
         android:layout_gravity="center|right"
+        android:padding="@dimen/m8dp"
+        android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/TAG_SKIP"
         android:textAllCaps="true"
-        android:paddingTop="@dimen/m8dp"
-        android:paddingRight="@dimen/m2dp"
-        android:paddingLeft="@dimen/m2dp"
-        android:gravity="center|top"
+        android:gravity="center"
         android:textStyle="bold"
         android:textColor="@color/skip_btn_color"
         android:background="@drawable/border_bottom"
         android:contentDescription="@string/sign_up_skip_description"
         android:textSize="18sp" />
-
+</LinearLayout>
 
     <TextView
         android:id="@+id/splash_no_internet_info_layout"

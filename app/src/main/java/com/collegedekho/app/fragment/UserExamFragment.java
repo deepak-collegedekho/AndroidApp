@@ -58,7 +58,7 @@ public class UserExamFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_user_exams_new, container, false);
 
         if(MainActivity.mProfile != null){
-            TextView  currentLevelTxtView = (TextView)rootView.findViewById(R.id.user_exam_preparing_level);
+            TextView  currentLevelTxtView = (TextView)rootView.findViewById(R.id.user_exam_education_level);
             int currentEducationId = MainActivity.mProfile.getCurrent_sublevel_id();
             if(currentEducationId == ProfileMacro.CURRENT_EDUCATION_SCHOOL){
                 currentLevelTxtView.setText(":  School");
@@ -73,6 +73,12 @@ public class UserExamFragment extends BaseFragment {
                 //TODO:: check this bug
                 preParingTxtView.setText(":  Yes");
             }
+
+            String phone = MainActivity.mProfile.getPhone_no();
+            if(phone != null && !phone.isEmpty())
+                ((TextView)rootView.findViewById(R.id.user_exam_phone)).setText(":  "+phone);
+            else
+                ((TextView)rootView.findViewById(R.id.user_exam_phone)).setText(":  NA");
         }
 
         RecyclerView examRecyclerView = (RecyclerView)rootView.findViewById(R.id.user_exam_recycler_view);
@@ -103,6 +109,8 @@ public class UserExamFragment extends BaseFragment {
         streamRecyclerView.setAdapter(mStreamAdapter);
 
         rootView.findViewById(R.id.user_exam_submit_button).setOnClickListener(this);
+        rootView.findViewById(R.id.user_exam_education_edit_btn).setOnClickListener(this);
+        rootView.findViewById(R.id.user_exam_preparing_edit_btn).setOnClickListener(this);
         return rootView;
     }
 
@@ -154,6 +162,13 @@ public class UserExamFragment extends BaseFragment {
         {
             case R.id.user_exam_submit_button:
                 onExamsSelected();
+                break;
+            case R.id.user_exam_education_edit_btn:
+                getActivity().onBackPressed();
+                getActivity().onBackPressed();
+                break;
+            case R.id.user_exam_preparing_edit_btn:
+                getActivity().onBackPressed();
                 break;
             default:
                 break;

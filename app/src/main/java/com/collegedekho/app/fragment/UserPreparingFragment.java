@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -25,13 +24,9 @@ import java.util.HashMap;
 public class UserPreparingFragment extends  BaseFragment {
 
     private OnIsPreparingListener mListener;
-    private int selectedPosition = 0;
 
-    public static UserPreparingFragment newInstance()
-    {
+    public static UserPreparingFragment newInstance(){
         UserPreparingFragment fragment = new UserPreparingFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
         return  fragment;
     }
 
@@ -46,19 +41,25 @@ public class UserPreparingFragment extends  BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_user_preparing, container, false);
 
         if(MainActivity.mProfile != null){
-            TextView  currentLevelTxtView = (TextView)rootView.findViewById(R.id.is_preparing_level);
+            TextView  currentLevelTxtView = (TextView)rootView.findViewById(R.id.user_preparing_education_level);
             int currentEducationId = MainActivity.mProfile.getCurrent_sublevel_id();
             if(currentEducationId == ProfileMacro.CURRENT_EDUCATION_SCHOOL){
-                currentLevelTxtView.setText("School");
+                currentLevelTxtView.setText(":  School");
             }else{
-                currentLevelTxtView.setText("College");
+                currentLevelTxtView.setText(":  College");
             }
         }
+        if(MainActivity.user != null){
+            String phone = MainActivity.user.getPhone_no();
+            if(phone != null && !phone.isEmpty())
+                ((TextView)rootView.findViewById(R.id.user_preparing_phone)).setText(":  "+phone);
+            else
+                ((TextView)rootView.findViewById(R.id.user_preparing_phone)).setText(":  NA");
+        }
 
-        rootView.findViewById(R.id.is_preparing_rd_btn_yes).setOnClickListener(this);
-        rootView.findViewById(R.id.is_preparing_rd_btn_no).setOnClickListener(this);
-        rootView.findViewById(R.id.is_preparing_submit_button).setOnClickListener(this);
-        rootView.findViewById(R.id.is_preparing_education_edit_btn).setOnClickListener(this);
+        rootView.findViewById(R.id.user_preparing_rd_btn_yes).setOnClickListener(this);
+        rootView.findViewById(R.id.user_preparing_rd_btn_no).setOnClickListener(this);
+        rootView.findViewById(R.id.user_preparing_education_edit_btn).setOnClickListener(this);
         return rootView;
     }
 
@@ -76,7 +77,7 @@ public class UserPreparingFragment extends  BaseFragment {
     @Override
     public void onResume() {
         if(getView() != null){
-            ((RadioGroup)getView().findViewById(R.id.is_preparing_rd_group)).clearCheck();
+            ((RadioGroup)getView().findViewById(R.id.user_preparing_rd_group)).clearCheck();
         }
         super.onResume();
     }
@@ -101,16 +102,13 @@ public class UserPreparingFragment extends  BaseFragment {
     public void onClick(View v) {
 
         switch(v.getId()) {
-            case R.id.is_preparing_rd_btn_yes:
+            case R.id.user_preparing_rd_btn_yes:
                 mPreparingForExam(ProfileMacro.PREPARING_FOR_EXAM);
                 break;
-            case R.id.is_preparing_rd_btn_no:
+            case R.id.user_preparing_rd_btn_no:
                 mPreparingForExam(ProfileMacro.NOT_PREPARING_FOR_EXAM);
                 break;
-            case R.id.is_preparing_submit_button:
-                mSelectedIsPreparing();
-                break;
-            case R.id.is_preparing_education_edit_btn:
+            case R.id.user_preparing_education_edit_btn:
                 getActivity().onBackPressed();
                 break;
             default:
@@ -119,29 +117,11 @@ public class UserPreparingFragment extends  BaseFragment {
     }
 
 
-   private void mPreparingForExam(int IS_PREPARING)
-    {
-        View view = getView();
-        if(view == null)
-            return;
-      /* View submitView =  view.findViewById(R.id.is_preparing_submit_button);
-        if(submitView.getVisibility() == View.GONE){
-            submitView.setVisibility(View.VISIBLE);
+    private void mPreparingForExam(int IS_PREPARING){
 
-        }*/
         if(MainActivity.mProfile != null)
             MainActivity.mProfile.setIs_preparing(IS_PREPARING);
 
-        if(IS_PREPARING  == ProfileMacro.PREPARING_FOR_EXAM){
-            selectedPosition = 1;
-        }else{
-            selectedPosition = 2;
-        }
-        mSelectedIsPreparing();
-
-    }
-
-    private void mSelectedIsPreparing(){
         if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
@@ -152,7 +132,7 @@ public class UserPreparingFragment extends  BaseFragment {
 
         HashMap<String, String> params = new HashMap<>();
         if(getView() != null){
-          int checkedRadioBtnId = ((RadioGroup)getView().findViewById(R.id.is_preparing_rd_group)).getCheckedRadioButtonId();
+          int checkedRadioBtnId = ((RadioGroup)getView().findViewById(R.id.user_preparing_rd_group)).getCheckedRadioButtonId();
            String is_Preparing = getView().findViewById(checkedRadioBtnId).getTag().toString();
             params.put(ProfileMacro.IS_PREPARING,is_Preparing);
         }

@@ -1,107 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:background="@color/app_background"
+    android:paddingTop="@dimen/m20dp"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/app_background">
+        <LinearLayout
+            android:id="@+id/user_education_phone_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/m10dp"
+            android:gravity="center"
+            android:layout_margin="@dimen/m30dp"
+            android:background="@color/primary_color"
+            android:orientation="horizontal">
 
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight=".1"
+                android:layout_height="@dimen/m50dp"
+                app:srcCompat="@drawable/ic_phone"/>
 
-            <RelativeLayout
-                android:id="@+id/education_point_layout"
-                android:layout_marginTop="@dimen/m30dp"
-                style="@style/AppTheme.RelativeLayout.Rounded">
-
-                <TextView
-                    style="@style/AppTheme.TextView"
-                    android:id="@+id/first_login"
-                    android:gravity="center"
-                    android:textStyle="bold"
-                    android:paddingRight="@dimen/m30dp"
-                    android:paddingLeft="@dimen/m30dp"
-                    android:maxLines="3"
-                    android:textSize="16sp"
-                    android:text="CONGRATULATIONS ON YOUR FIRST LOGIN"/>
-
-            </RelativeLayout>
 
             <TextView
-                android:id="@+id/step_textview"
-                android:layout_width="match_parent"
+                style="@style/AppTheme.profileTextViewTitle"
+                android:layout_width="0dp"
+                android:layout_weight=".3"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textStyle="bold"
-                android:layout_marginTop="@dimen/m20dp"
-                android:layout_below="@id/education_point_layout"
-                android:textSize="17sp"
-                android:paddingRight="@dimen/m30dp"
-                android:paddingLeft="@dimen/m30dp"
-                android:text="YOU ARE JUST 3 STEPS AWAY FROM FINDING THE RIGHT COLLEGE!"/>
+                android:text="Phone"/>
 
-            <include layout="@layout/layout_user_step"
-                android:id="@+id/step_ui"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/user_education_phone"
+                android:layout_width="0dp"
+                android:layout_weight=".6"
+                style="@style/AppTheme.profileTextViewTitle"/>
+
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/user_education_skip_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|right"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/m20dp"
+        android:layout_marginBottom="@dimen/m30dp"
+        android:padding="@dimen/m8dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/TAG_SKIP"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/skip_btn_color"
+            android:background="@drawable/border_bottom"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/user_education_phone_layout"
+            android:layout_above="@id/user_education_skip_button"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/m20dp"
+            android:background="@color/white"
+            android:padding="@dimen/m20dp"
+            android:gravity="center"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/m20dp"
-                android:layout_below="@id/step_textview"/>
+                android:textSize="@dimen/m20sp"
+                android:fontFamily="serif-monospace"
+                android:textColor="@color/black"
+                android:text="WHAT ARE YOU UPTO"/>
 
-              <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/step_ui"
-                android:gravity="top|right"
-                android:orientation="vertical"
-                android:background="@color/white"
-                android:padding="@dimen/m20dp"
-                android:weightSum="1">
+                <Button
+                    android:id="@+id/user_education_school"
+                    style="@style/AppTheme.OrangeButton"
+                    android:textSize="18sp"
+                    android:visibility="visible"
+                    android:layout_marginTop="@dimen/m30dp"
+                    android:text="@string/currently_in_school"/>
 
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:background="@color/white"
-                    android:paddingTop="@dimen/m20dp"
-                    android:layout_alignParentBottom="true"
-                    android:weightSum="1">
+                <Button
+                    android:id="@+id/user_education_college"
+                    style="@style/AppTheme.OrangeButton"
+                    android:textSize="18sp"
+                    android:visibility="visible"
+                    android:layout_marginTop="@dimen/m30dp"
+                    android:text="@string/currently_in_graduation"/>
+        </LinearLayout>
 
-                    <Button
-                        android:id="@+id/user_education_school"
-                        style="@style/AppTheme.OrangeButton"
-                        android:textSize="18sp"
-                        android:visibility="visible"
-                        android:text="@string/currently_in_school"/>
-
-                    <Button
-                        android:id="@+id/user_education_college"
-                        style="@style/AppTheme.OrangeButton"
-                        android:textSize="18sp"
-                        android:visibility="visible"
-                        android:layout_marginTop="@dimen/m20dp"
-                        android:text="@string/currently_in_graduation"/>
-
-                </LinearLayout>
-
-                  <TextView
-                      android:id="@+id/user_education_skip_button"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_marginTop="@dimen/m15dp"
-                      android:layout_gravity="center|right"
-                      android:text="@string/TAG_SKIP"
-                      android:paddingTop="@dimen/m8dp"
-                      android:paddingBottom="@dimen/m2dp"
-                      android:paddingRight="@dimen/m2dp"
-                      android:paddingLeft="@dimen/m2dp"
-                      android:gravity="center"
-                      android:textStyle="bold"
-                      android:textColor="@color/skip_btn_color"
-                      android:background="@drawable/border_bottom"
-                      android:textSize="18sp" />
-
-            </LinearLayout>
-    </RelativeLayout>
-</ScrollView>
+</RelativeLayout>

@@ -32,7 +32,6 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
-import com.collegedekho.app.resource.BitMapHolder;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.FadeInImageView;
@@ -123,9 +122,9 @@ public final class WishlistCardAdapter {
         }
 
         fadeInImageView = ((FadeInImageView) this.mCardPeekView.findViewById(R.id.wishlist_institute_image));
-        if (BitMapHolder.DEFAULT_BANNER != null)
+     /*   if (BitMapHolder.DEFAULT_BANNER != null)
             fadeInImageView.setLocalImageBitmap(BitMapHolder.DEFAULT_BANNER, true);
-        else
+        else*/
             fadeInImageView.setBackgroundResource(R.drawable.default_banner);
 
         TextView streamTV = ((TextView) this.mCardPeekView.findViewById(R.id.wishlist_institute_recommended_streams));

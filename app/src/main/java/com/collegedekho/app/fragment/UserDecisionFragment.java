@@ -62,6 +62,12 @@ public class UserDecisionFragment extends BaseFragment {
             } else {
                 currentLevelTxtView.setText(":  College");
             }
+
+            String phone = MainActivity.mProfile.getPhone_no();
+            if(phone != null && !phone.isEmpty())
+                ((TextView)rootView.findViewById(R.id.user_decision_phone)).setText(":  "+phone);
+            else
+                ((TextView)rootView.findViewById(R.id.user_decision_phone)).setText(":  NA");
         }
         if(MainActivity.user != null) {
             ArrayList<ExamDetail>  userExamList = MainActivity.user.getUser_exams();
@@ -82,9 +88,14 @@ public class UserDecisionFragment extends BaseFragment {
 
         }
 
+        ((TextView)rootView.findViewById(R.id.user_decision_is_preparing)).setText("  :Yes");
+
         rootView.findViewById(R.id.user_decision_to_recommended).setOnClickListener(this);
         rootView.findViewById(R.id.user_decision_to_dash_board).setOnClickListener(this);
         rootView.findViewById(R.id.user_decision_to_profile).setOnClickListener(this);
+        rootView.findViewById(R.id.user_decision_education_edit_btn).setOnClickListener(this);
+        rootView.findViewById(R.id.user_decision_preparing_edit_btn).setOnClickListener(this);
+        rootView.findViewById(R.id.user_decision_exam_edit_btn).setOnClickListener(this);
         return rootView;
     }
 
@@ -143,6 +154,18 @@ public class UserDecisionFragment extends BaseFragment {
                 break;
             case R.id.user_decision_to_profile:
                 mTakeMeToProfile();
+                break;
+            case R.id.user_decision_education_edit_btn:
+                getActivity().onBackPressed();
+                getActivity().onBackPressed();
+                getActivity().onBackPressed();
+                break;
+            case R.id.user_decision_preparing_edit_btn:
+                getActivity().onBackPressed();
+                getActivity().onBackPressed();
+                break;
+            case R.id.user_decision_exam_edit_btn:
+                getActivity().onBackPressed();
                 break;
             default:
                 break;

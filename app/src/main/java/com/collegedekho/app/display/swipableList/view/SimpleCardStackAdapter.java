@@ -34,8 +34,6 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.display.swipableList.model.CardModel;
 import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
-import com.collegedekho.app.resource.BitMapHolder;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.FadeInImageView;
@@ -180,9 +178,9 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
 
         fadeInImageView = ((FadeInImageView) convertView.findViewById(R.id.institute_image));
-        if (BitMapHolder.DEFAULT_BANNER != null)
+       /* if (BitMapHolder.DEFAULT_BANNER != null)
             fadeInImageView.setLocalImageBitmap(BitMapHolder.DEFAULT_BANNER, true);
-        else
+        else*/
             fadeInImageView.setBackgroundResource(R.drawable.default_banner);
 
 

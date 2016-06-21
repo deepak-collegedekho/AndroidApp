@@ -24,7 +24,6 @@ import com.collegedekho.app.display.swipableList.model.CardModel;
 import com.collegedekho.app.display.swipableList.view.CardContainer;
 import com.collegedekho.app.display.swipableList.view.SimpleCardStackAdapter;
 import com.collegedekho.app.entities.Institute;
-import com.collegedekho.app.resource.BitMapHolder;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
@@ -142,9 +141,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.wishListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         this.wishListRecyclerView.addOnScrollListener(scrollListener);
 
-        this.mLikeImageView.setImageBitmap(BitMapHolder.SHORTLISTED_BITMAP);
+        /*this.mLikeImageView.setImageBitmap(BitMapHolder.SHORTLISTED_BITMAP);
         this.mDislikeImageView.setImageBitmap(BitMapHolder.UNSHORTLISTED_BITMAP);
-        this.mUndecidedImageView.setImageBitmap(BitMapHolder.UNDECIDED_BITMAP);
+        this.mUndecidedImageView.setImageBitmap(BitMapHolder.UNDECIDED_BITMAP);*/
 
         this.mUndecidedCountText.setText(""+this.mUndecidedCount);
         this.mRecommendedCountText.setText(""+this.mRecomendedCount);

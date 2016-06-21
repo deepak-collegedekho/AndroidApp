@@ -1,5 +1,6 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:background="@color/app_background"
     android:paddingTop="@dimen/m40dp"
@@ -11,27 +12,37 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/m30dp"
         android:layout_marginLeft="@dimen/m30dp"
-        android:paddingBottom="@dimen/m30dp"
+        android:background="@color/primary_color"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/m10dp"
-            android:background="@color/primary_color"
+            android:paddingTop="@dimen/m5dp"
+            android:paddingBottom="@dimen/m5dp"
+            android:paddingLeft="@dimen/m6dp"
+            android:gravity="center"
             android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight=".1"
+                android:layout_height="@dimen/m45dp"
+                app:srcCompat="@drawable/ic_phone"/>
+
 
             <TextView
                 style="@style/AppTheme.profileTextViewTitle"
                 android:layout_width="0dp"
-                android:layout_weight=".3"
+                android:layout_weight=".28"
+                android:fontFamily="monospace"
                 android:layout_height="wrap_content"
-                android:text="Education"/>
+                android:text="Phone"/>
 
             <TextView
-                android:id="@+id/user_decision_education_level"
+                android:id="@+id/user_decision_phone"
                 android:layout_width="0dp"
-                android:layout_weight=".7"
+                android:layout_weight=".62"
                 style="@style/AppTheme.profileTextViewTitle"/>
 
         </LinearLayout>
@@ -39,22 +50,145 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/m10dp"
-            android:background="@color/primary_color"
+            android:paddingTop="@dimen/m5dp"
+            android:paddingBottom="@dimen/m5dp"
+            android:paddingLeft="@dimen/m6dp"
+            android:gravity="center"
             android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight=".1"
+                android:layout_height="@dimen/m45dp"
+                app:srcCompat="@drawable/ic_profile_education"/>
 
             <TextView
                 style="@style/AppTheme.profileTextViewTitle"
                 android:layout_width="0dp"
-                android:layout_weight=".3"
+                android:layout_weight=".28"
+                android:layout_height="wrap_content"
+                android:text="Education"/>
+
+            <TextView
+                android:id="@+id/user_decision_education_level"
+                android:layout_width="0dp"
+                android:layout_weight=".5"
+                style="@style/AppTheme.profileTextViewTitle"/>
+
+            <LinearLayout
+                android:id="@+id/user_decision_education_edit_btn"
+                android:layout_width="0dp"
+                android:layout_weight=".12"
+                android:paddingRight="@dimen/m5dp"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:tint="@color/white"
+                    android:visibility="visible"
+                    android:padding="@dimen/m10dp"
+                    android:layout_gravity="right|top"
+                    app:srcCompat="@drawable/ic_edit_vector"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/m5dp"
+            android:paddingBottom="@dimen/m5dp"
+            android:paddingLeft="@dimen/m6dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight=".1"
+                android:layout_height="@dimen/m45dp"
+                app:srcCompat="@drawable/ic_exams_user"/>
+
+            <TextView
+                style="@style/AppTheme.profileTextViewTitle"
+                android:layout_width="0dp"
+                android:layout_weight=".28"
+                android:layout_height="wrap_content"
+                android:text="Preparing For Exam"/>
+
+            <TextView
+                android:id="@+id/user_decision_is_preparing"
+                android:layout_width="0dp"
+                android:layout_weight=".5"
+                style="@style/AppTheme.profileTextViewTitle"/>
+
+            <LinearLayout
+                android:id="@+id/user_decision_preparing_edit_btn"
+                android:layout_width="0dp"
+                android:layout_weight=".12"
+                android:paddingRight="@dimen/m5dp"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:tint="@color/white"
+                    android:visibility="visible"
+                    android:padding="@dimen/m10dp"
+                    android:layout_gravity="right|top"
+                    app:srcCompat="@drawable/ic_edit_vector"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/m5dp"
+            android:paddingBottom="@dimen/m5dp"
+            android:paddingLeft="@dimen/m6dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight=".1"
+                android:layout_height="@dimen/m45dp"
+                app:srcCompat="@drawable/ic_exam"/>
+
+            <TextView
+                style="@style/AppTheme.profileTextViewTitle"
+                android:layout_width="0dp"
+                android:layout_weight=".28"
                 android:layout_height="wrap_content"
                 android:text="Exam"/>
 
             <TextView
                 android:id="@+id/user_decision_exams"
                 android:layout_width="0dp"
-                android:layout_weight=".7"
+                android:layout_weight=".52"
                 style="@style/AppTheme.profileTextViewTitle"/>
+
+            <LinearLayout
+                android:id="@+id/user_decision_exam_edit_btn"
+                android:layout_width="0dp"
+                android:layout_weight=".1"
+                android:gravity="left"
+                android:paddingRight="@dimen/m5dp"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:tint="@color/white"
+                    android:visibility="visible"
+                    android:padding="@dimen/m10dp"
+                    android:layout_gravity="left"
+                    app:srcCompat="@drawable/ic_edit_vector"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
