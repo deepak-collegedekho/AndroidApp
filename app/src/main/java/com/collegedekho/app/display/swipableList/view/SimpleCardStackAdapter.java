@@ -24,6 +24,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.Transformation;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -51,6 +52,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
     private Vector<CardModel> mData;
     private String examTag="";
     private TextView mfacilityText;
+    private Drawable backgroundBorder;
 
 
     //private int cardCategory;
@@ -59,12 +61,17 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         this.mListener = listener;
         this.mContext = context;
         this.mData = new Vector<>();
+        backgroundBorder = mContext.getResources().getDrawable(R.drawable.bg_rounded_blue_border_box);
        // this.cardCategory =cardCategory;
     }
 
     public void addAll(ArrayList<CardModel> item) {
         mData.addAll(item);
         notifyDataSetChanged();
+    }
+
+    public void setDrawableBorderBackground(Drawable drawable){
+        this.backgroundBorder = drawable;
     }
 
     @Override
@@ -74,6 +81,9 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.wishlist_card_layout, parent, false);
         }
+
+        ((LinearLayout) convertView.findViewById(R.id.institute_card_layout)).setBackground(backgroundBorder);
+
         setVectorDrawable(convertView);
 
         this.mfacilityText = (TextView) (convertView.findViewById(R.id.facility_toast));

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,14 @@ import com.collegedekho.app.adapter.ExamsAdapter;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
+import com.collegedekho.app.listener.ExamOnQueryListener;
+import com.collegedekho.app.listener.ExamSearchCloseListener;
+import com.collegedekho.app.listener.StreamOnQueryListener;
+import com.collegedekho.app.listener.StreamSearchCloseListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
+import com.collegedekho.app.widget.CustomAutoCompleteView;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
 import com.fasterxml.jackson.jr.ob.JSON;
 
@@ -32,10 +38,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class UserExamFragment extends BaseFragment {
+public class UserExamFragment extends BaseFragment implements SearchView.OnQueryTextListener{
 
     private final String TAG = "User Exam Fragment";
 
+    SearchView mExamSearchView;
+    SearchView mStreamSearchView;
+
+    CustomAutoCompleteView autoSearchExam;
+    CustomAutoCompleteView autoSearchStream;
+
+    ExamOnQueryListener cExamListener;
+    StreamOnQueryListener cStreamListener;
     private ArrayList<Exam> mExamList ;
     private OnUserExamsSelectListener mListener;
     private ExamsAdapter mExamAdapter;
@@ -88,6 +102,12 @@ public class UserExamFragment extends BaseFragment {
             mExamAdapter = new ExamsAdapter(getActivity(), new ArrayList<Exam>());
         examRecyclerView.setAdapter(mExamAdapter);
 
+        mExamSearchView = (SearchView) rootView.findViewById(R.id.auto_search_exam);
+        cExamListener = new ExamOnQueryListener(mExamList,mExamAdapter);
+        this.mExamSearchView.setOnQueryTextListener(cExamListener);
+        mExamSearchView.setOnSearchClickListener(this);
+        mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(rootView.findViewById(R.id.search_exam_hint)));
+
         RecyclerView streamRecyclerView = (RecyclerView)rootView.findViewById(R.id.user_exam_stream_recycler_view);
         streamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         streamRecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
@@ -105,13 +125,50 @@ public class UserExamFragment extends BaseFragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ExamStreamAdapter mStreamAdapter = new ExamStreamAdapter(getActivity(), (ArrayList<ProfileSpinnerItem>)streamList);
+        ExamStreamAdapter mStreamAdapter = new ExamStreamAdapter(getActivity(), (ArrayList<ProfileSpinnerItem>)streamList,mExamSearchView);
         streamRecyclerView.setAdapter(mStreamAdapter);
 
+        mStreamSearchView = (SearchView) rootView.findViewById(R.id.auto_search_stream);
+        cStreamListener = new StreamOnQueryListener((ArrayList<ProfileSpinnerItem>) streamList,mStreamAdapter);
+        this.mStreamSearchView.setOnQueryTextListener(cStreamListener);
+        mStreamSearchView.setOnSearchClickListener(this);
+        mStreamSearchView.setOnCloseListener(new StreamSearchCloseListener(rootView.findViewById(R.id.search_stream_hint)));
+        mStreamAdapter.setmStreamSearchView(mStreamSearchView);
+
         rootView.findViewById(R.id.user_exam_submit_button).setOnClickListener(this);
+
         rootView.findViewById(R.id.user_exam_education_edit_btn).setOnClickListener(this);
         rootView.findViewById(R.id.user_exam_preparing_edit_btn).setOnClickListener(this);
+
         return rootView;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        try{
+
+            ArrayList<Exam> searchResults = new ArrayList<>();
+            for(Exam exam : mExamList){
+                if((exam.getExam_name().toLowerCase()).contains((newText.toString().toLowerCase())) || (exam.getExam_short_name().toLowerCase()).contains((newText.toString().toLowerCase()))){
+                    searchResults.add(exam);
+                }
+            }
+//            if(searchResults.size() != 0){
+            mExamAdapter.updateExamList(searchResults);
+//            } else {
+//
+//            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 
@@ -119,14 +176,14 @@ public class UserExamFragment extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-            try{
-                if (context instanceof MainActivity)
-                    this.mListener = (OnUserExamsSelectListener)context;
-            }
-            catch (ClassCastException e){
-                throw  new ClassCastException(context.toString()
-                        +"must implement OnExamsSelectListener");
-            }
+        try{
+            if (context instanceof MainActivity)
+                this.mListener = (OnUserExamsSelectListener)context;
+        }
+        catch (ClassCastException e){
+            throw  new ClassCastException(context.toString()
+                    +"must implement OnExamsSelectListener");
+        }
 
     }
 
@@ -139,7 +196,7 @@ public class UserExamFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-       MainActivity mainActivity = (MainActivity) getActivity();
+        MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
         }
@@ -169,6 +226,21 @@ public class UserExamFragment extends BaseFragment {
                 break;
             case R.id.user_exam_preparing_edit_btn:
                 getActivity().onBackPressed();
+                break;
+            case R.id.auto_search_stream:
+//                super.onClick(view);
+                if(!view.isActivated()){
+                    getView().findViewById(R.id.search_stream_hint).setVisibility(View.GONE);
+                } else {
+                    getView().findViewById(R.id.search_stream_hint).setVisibility(View.VISIBLE);
+                }
+                break;
+            case R.id.auto_search_exam:
+                if(!view.isActivated()){
+                    getView().findViewById(R.id.search_exam_hint).setVisibility(View.GONE);
+                } else {
+                    getView().findViewById(R.id.search_exam_hint).setVisibility(View.VISIBLE);
+                }
                 break;
             default:
                 break;
@@ -225,18 +297,22 @@ public class UserExamFragment extends BaseFragment {
 
     public void updateUserExams(ArrayList<Exam> examList){
         this.mExamList = examList;
+        cExamListener.setmExamList(examList);
         if(mExamAdapter == null)
             return;
         mExamAdapter.updateExamList(examList);
         if(examList != null && examList.size() >0
                 &&getView() != null){
+
             getView().findViewById(R.id.user_exam_recycler_view_text).setVisibility(View.GONE);
             getView().findViewById(R.id.user_exam_recycler_view).setVisibility(View.VISIBLE);
+            mExamSearchView.setVisibility(View.VISIBLE);
         }else{
             ((TextView)getView().findViewById(R.id.user_exam_recycler_view_text)).setText("No Exams Found");
         }
 
     }
+
 
 
     /**
@@ -248,7 +324,7 @@ public class UserExamFragment extends BaseFragment {
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
-*/
+     */
 
     public  interface OnUserExamsSelectListener {
         void onUserExamSelected(JSONObject examJson);

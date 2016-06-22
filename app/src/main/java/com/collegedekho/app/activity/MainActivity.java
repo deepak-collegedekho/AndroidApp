@@ -5019,8 +5019,8 @@ public class MainActivity extends AppCompatActivity
               //  streamBuffer.append(",").append(streamObj.getId());
 
         }
-        if(streamBuffer.length() <= 0)
-            return;
+//        if(streamBuffer.length() <= 0)
+//            return;
         this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, Constants.BASE_URL +"stream-yearly-exams/?level="+mProfile.getPreferred_level()+streamBuffer.toString(),null, Request.Method.GET);
     }
 

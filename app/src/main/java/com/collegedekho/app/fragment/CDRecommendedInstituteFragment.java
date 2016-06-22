@@ -1,5 +1,6 @@
 package com.collegedekho.app.fragment;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -65,6 +66,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     private int mRecomendedCount;
     private int mWishListCount;
     private int mBuzzListCount;
+    private View currentTab;
 
 
     public CDRecommendedInstituteFragment() {
@@ -192,6 +194,13 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         rootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
         rootView.findViewById(R.id.recommended_tute_frame).setOnClickListener(this);
 
+        currentTab = rootView.findViewById(R.id.tab_recommended);
+        currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
+//        ObjectAnimator anim = ObjectAnimator.ofFloat(currentTab,"scaleY",1.2f);
+//        anim.setDuration(3000); // duration 3 seconds
+//        anim.start();
+
+
         return rootView;
     }
 
@@ -282,6 +291,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     @Override
     public void onClick(View v) {
         super.onClick(v);
+        ObjectAnimator anim;
+        ObjectAnimator anim1;
         switch (v.getId()){
             case R.id.badge_counter_layout:
                 if(mUndecidedCount <= 0){
@@ -302,6 +313,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), true).apply();
                 break;
             case R.id.tab_buzzlist:
+                v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
+                currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
+                mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_orange_border_box));
+
                 if (CARD_CATEGORY != Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()) {
                    /* if(cardState!=null && !cardState.toString().equals("MINIMIZED")
                             && mAdapter.getCardCategory() != Constants.CDRecommendedInstituteType.UNDECIDED.ordinal()) {
@@ -313,8 +328,14 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                     mEmptyTextView.setVisibility(View.VISIBLE);
                     mListener.onClickBuzzList();
                 }
+
+                currentTab =v;
                 break;
             case R.id.tab_recommended:
+                v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
+                currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
+                mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_blue_border_box));
+
                 if (CARD_CATEGORY != Constants.CDRecommendedInstituteType.UNBAISED.ordinal()) {
                     /*if(cardState != null && !cardState.toString().equals("MINIMIZED")
                             && mAdapter.getCardCategory() != Constants.CDRecommendedInstituteType.UNDECIDED.ordinal()) {
@@ -326,8 +347,13 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                     mEmptyTextView.setVisibility(View.VISIBLE);
                     mListener.onClickRecommendedList();
                 }
+
+                currentTab =v;
                 break;
             case R.id.tab_wishlist:
+                v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
+                currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
+
                 if (CARD_CATEGORY != Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
                     /*if(cardState!=null && !cardState.toString().equals("MINIMIZED")
                             && mAdapter.getCardCategory() != Constants.CDRecommendedInstituteType.UNDECIDED.ordinal()) {
@@ -340,6 +366,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                     mListener.onClickWishList();
                 }
 
+                currentTab =v;
                 break;
             case R.id.request_for_undecided_no:
                 if(IS_UNDECIDED_INSTITUTES) {

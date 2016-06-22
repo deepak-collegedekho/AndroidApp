@@ -176,7 +176,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="57dp"
+        android:layout_height="75dp"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
@@ -185,7 +185,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/m25dp"
             android:layout_marginRight="4dp"
+            android:layout_marginBottom="@dimen/m4dp"
             android:layout_weight="1"
+            android:layout_gravity="bottom"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -267,10 +269,12 @@
 
         <LinearLayout android:id="@+id/tab_recommended"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/m4dp"
             android:layout_marginRight="@dimen/m4dp"
+            android:layout_marginBottom="@dimen/m4dp"
             android:layout_weight="1"
+            android:layout_gravity="bottom"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -350,10 +354,12 @@
 
         <LinearLayout android:id="@+id/tab_wishlist"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/m4dp"
             android:layout_marginRight="@dimen/m25dp"
+            android:layout_marginBottom="@dimen/m4dp"
             android:layout_weight="1"
+            android:layout_gravity="bottom"
             android:orientation="vertical">
 
             <RelativeLayout
