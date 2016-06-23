@@ -8,7 +8,7 @@
     <LinearLayout
         android:id="@+id/image_layout"
         android:layout_width="match_parent"
-        android:layout_marginLeft="10dp"
+        android:gravity="center"
         android:paddingTop="@dimen/m5dp"
         android:paddingBottom="@dimen/m5dp"
         android:layout_height="wrap_content">

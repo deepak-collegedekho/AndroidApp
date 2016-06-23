@@ -9,8 +9,8 @@
     <LinearLayout
         android:id="@+id/image_layout"
         android:layout_width="match_parent"
-        android:layout_marginLeft="10dp"
         android:paddingTop="@dimen/m10dp"
+        android:gravity="center"
         android:layout_height="wrap_content">
 
         <ImageView
