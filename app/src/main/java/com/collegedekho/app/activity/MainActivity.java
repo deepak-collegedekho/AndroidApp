@@ -1964,7 +1964,7 @@ public class MainActivity extends AppCompatActivity
 
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
             fragmentTransaction.replace(R.id.container, fragment, getResourceString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
-
+            fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
             fragmentTransaction.commit();
 
         } catch (Exception e) {

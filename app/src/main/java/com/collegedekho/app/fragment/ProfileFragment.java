@@ -93,10 +93,10 @@ public class ProfileFragment extends BaseFragment {
         rootView.findViewById(R.id.profile_show_more_preferences).setOnClickListener(this);
         rootView.findViewById(R.id.profile_show_more_exams).setOnClickListener(this);
         rootView.findViewById(R.id.profile_show_more_other_info).setOnClickListener(this);
-//        if(isAnony){
-//            rootView.findViewById(R.id.profile_login_button).setVisibility(View.VISIBLE);
-//            rootView.findViewById(R.id.profile_login_button).setOnClickListener(this);
-//        }
+        if(isAnony){
+            rootView.findViewById(R.id.profile_login_button).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.profile_login_button).setOnClickListener(this);
+        }
         return rootView;
     }
 
