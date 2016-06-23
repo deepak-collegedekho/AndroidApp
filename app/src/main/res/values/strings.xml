@@ -196,6 +196,7 @@
     <string name="TAG_FRAGMENT_USER_EDUCATION">fragment_user_education</string>
     <string name="TAG_FRAGMENT_SIGNIN">fragment_signin</string>
     <string name="TAG_FRAGMENT_LOGIN">fragment_login</string>
+    <string name="TAG_FRAGMENT_POST_ANONYMOUS_LOGIN">fragment_post_anonymous_login</string>
 
     <string name="METHOD_GET">GET</string>
     <string name="METHOD_POST">POST</string>

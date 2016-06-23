@@ -25,7 +25,6 @@ import com.collegedekho.app.listener.StreamSearchCloseListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
-import com.collegedekho.app.widget.CustomAutoCompleteView;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
 import com.fasterxml.jackson.jr.ob.JSON;
 
@@ -44,9 +43,6 @@ public class UserExamFragment extends BaseFragment implements SearchView.OnQuery
 
     SearchView mExamSearchView;
     SearchView mStreamSearchView;
-
-    CustomAutoCompleteView autoSearchExam;
-    CustomAutoCompleteView autoSearchStream;
 
     ExamOnQueryListener cExamListener;
     StreamOnQueryListener cStreamListener;

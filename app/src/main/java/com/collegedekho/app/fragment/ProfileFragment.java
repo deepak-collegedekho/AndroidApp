@@ -51,17 +51,20 @@ public class ProfileFragment extends BaseFragment {
 
     private static String TAG ="Profile Fragment";
     private static String PARAM1  = "param1";
+    private static String PARAM2  = "param2";
     public static Profile mProfile ;
     private UserProfileListener mListener;
     private TextView mProfileName;
     private CircularImageView mProfileImage;
     private File uploadTempImageFile;
     private Uri mImageCaptureUri;
+    private boolean isAnony;
 
-    public static ProfileFragment getInstance(Profile profile){
+    public static ProfileFragment getInstance(Profile profile,boolean isAnony){
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         args.putParcelable(PARAM1, profile);
+        args.putBoolean(PARAM2, isAnony);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,6 +76,7 @@ public class ProfileFragment extends BaseFragment {
         Bundle args = getArguments();
         if(args != null){
             this.mProfile = args.getParcelable(PARAM1);
+            this.isAnony = args.getBoolean(PARAM2);
         }
     }
 
@@ -89,6 +93,10 @@ public class ProfileFragment extends BaseFragment {
         rootView.findViewById(R.id.profile_show_more_preferences).setOnClickListener(this);
         rootView.findViewById(R.id.profile_show_more_exams).setOnClickListener(this);
         rootView.findViewById(R.id.profile_show_more_other_info).setOnClickListener(this);
+        if(isAnony){
+            rootView.findViewById(R.id.profile_login_button).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.profile_login_button).setOnClickListener(this);
+        }
         return rootView;
     }
 
@@ -475,6 +483,9 @@ public class ProfileFragment extends BaseFragment {
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()){
+            case R.id.profile_login_button:
+                mListener.onPostAnonymousLogin();
+                break;
             case R.id.profile_edit_btn:
                 mOnProfileEdited();
                 break;
@@ -752,5 +763,6 @@ public class ProfileFragment extends BaseFragment {
     public interface  UserProfileListener{
         void onUserProfileEdited(Profile profile);
         void onProfileImageUploaded();
+        void onPostAnonymousLogin();
     }
 }

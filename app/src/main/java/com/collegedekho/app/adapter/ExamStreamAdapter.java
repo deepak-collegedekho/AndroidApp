@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
 import com.collegedekho.app.fragment.UserExamFragment;
-import com.collegedekho.app.widget.CustomAutoCompleteView;
 
 import java.util.ArrayList;
 

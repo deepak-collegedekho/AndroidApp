@@ -744,7 +744,7 @@
                 <TextView
                     android:id="@+id/profile_user_name"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:text="@string/ANONYMOUS_USER"
                     android:gravity="left|top"
                     android:paddingLeft="@dimen/m5dp"
@@ -753,7 +753,24 @@
                     android:textSize="18sp"
                     android:textColor="@color/black"/>
 
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/profile_login_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Login"
+                    android:gravity="left|top"
+                    android:layout_margin="@dimen/m5dp"
+                    android:paddingLeft="@dimen/m10dp"
+                    android:paddingRight="@dimen/m10dp"
+                    android:paddingTop="@dimen/m2dp"
+                    android:paddingBottom="@dimen/m2dp"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/bg_button_orange"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

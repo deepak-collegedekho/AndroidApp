@@ -2,7 +2,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:gravity="center"
     android:layout_gravity="center"
     android:orientation="horizontal"
     android:paddingLeft="@dimen/m20dp"
@@ -17,6 +16,7 @@
         android:layout_weight=".25"
         android:tag="1"
         android:text="PREP \nBUDDY"
+        android:layout_marginTop="10dp"
         android:animateLayoutChanges="true"
         />
     <TextView
@@ -26,6 +26,7 @@
         android:layout_weight=".25"
         android:tag="2"
         android:text="RESOURCE \nBUDDY"
+        android:layout_marginTop="10dp"
         android:animateLayoutChanges="true"
         />
     <TextView
@@ -35,6 +36,7 @@
         android:layout_weight=".25"
         android:tag="3"
         android:text="FUTURE \nBUDDY"
+        android:layout_marginTop="10dp"
         android:animateLayoutChanges="true"
         />
     <TextView
@@ -44,6 +46,7 @@
         android:layout_weight=".25"
         android:tag="4"
         android:text="MY \n ALERTS "
+        android:layout_marginTop="10dp"
         android:animateLayoutChanges="true"
         />
 </LinearLayout>

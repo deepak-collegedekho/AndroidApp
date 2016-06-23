@@ -116,6 +116,7 @@ import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
 import com.collegedekho.app.fragment.InstituteVideosFragment;
+import com.collegedekho.app.fragment.PostAnonymousLoginFragment;
 import com.collegedekho.app.fragment.UserDecisionFragment;
 import com.collegedekho.app.fragment.UserPreparingFragment;
 import com.collegedekho.app.fragment.LoginFragment;
@@ -244,7 +245,7 @@ public class MainActivity extends AppCompatActivity
         InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         QnAQuestionDetailFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener, OnArticleSelectListener,
-        LoginFragment.OnUserLoginListener,InstituteDetailFragment.OnInstituteDetailListener,
+        LoginFragment.OnUserLoginListener,PostAnonymousLoginFragment.OnUserPostAnonymousLoginListener,InstituteDetailFragment.OnInstituteDetailListener,
         UserEducationFragment.OnUserEducationInteractionListener,
         PsychometricTestParentFragment.OnPsychometricTestSubmitListener,UserDecisionFragment.OnUserDecisionListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
@@ -352,6 +353,7 @@ public class MainActivity extends AppCompatActivity
     Runnable gcmDialogRunnable;
     private FrameLayout mContainerFrameLayout;
     private Toolbar mToolbar;
+    private View currentBottomItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -908,6 +910,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus)
+    {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus)
+        {
+            if(currentBottomItem != null){
+                currentBottomItem.animate().translationYBy(0f).setDuration(1000).start();
+            }
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         IN_FOREGROUND=true;
@@ -1335,7 +1349,7 @@ public class MainActivity extends AppCompatActivity
         }else {
             fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
             if (fragment == null) {
-                mDisplayFragment(ProfileFragment.getInstance(profile), backStack, ProfileFragment.class.getSimpleName());
+                mDisplayFragment(ProfileFragment.getInstance(profile,user.is_anony()), backStack, ProfileFragment.class.getSimpleName());
             } else
                 mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
 
@@ -1358,6 +1372,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onProfileImageUploaded() {
         mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL +"profile/", null);
+    }
+
+
+    // TODO :: EDIT THIS TO MAKE POST ANONYOUS LOGIN
+    @Override
+    public void onPostAnonymousLogin(){
+        mDisplayPostAnonymousLoginFragment();
     }
 
     /**
@@ -1927,6 +1948,42 @@ public class MainActivity extends AppCompatActivity
             }catch (Exception e){
                 e.printStackTrace();
             }
+        }
+    }
+
+    // TODO :: EDIT THIS POST ANONYMOUS LOGIN FRAGMENT
+    private void mDisplayPostAnonymousLoginFragment() {
+        PostAnonymousLoginFragment fragment = PostAnonymousLoginFragment.newInstance();
+        try {
+
+            this.currentFragment = fragment;
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+            fragmentTransaction.replace(R.id.container, fragment, getResourceString(R.string.TAG_FRAGMENT_LOGIN));
+
+            fragmentTransaction.commitAllowingStateLoss();
+
+        } catch (Exception e) {
+            Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
+        } finally {
+            //Send GA Session
+            MainActivity.GAScreenEvent(getResourceString(R.string.TAG_FRAGMENT_LOGIN));
+
+            HashMap<String, Object> eventValue = new HashMap<String, Object>();
+
+            eventValue.put(getResourceString(R.string.SCREEN_NAME), getResourceString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
+            eventValue.put(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
+            eventValue.put(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
+
+            this.mTimeScreenClicked = new Date();
+
+            this.mLastScreenName = getResourceString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN);
+
+            //Events
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
         }
     }
 
@@ -4154,6 +4211,11 @@ public class MainActivity extends AppCompatActivity
         if (!isBackPressEnabled) {
             return;
         }
+        if(currentBottomItem != null){
+            currentBottomItem.animate().translationYBy(10f).setDuration(300).start();
+            currentBottomItem=null;
+        }
+
         int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
         if (currentFragment != null) {
             if (currentFragment instanceof SyllabusSubjectsListFragment) {
@@ -5523,11 +5585,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onOTPVerifiedResponse(String response) {
-        if(currentFragment instanceof LoginFragment){
+        if(currentFragment instanceof LoginFragment || currentFragment instanceof PostAnonymousLoginFragment){
             try {
                 Map<String, Object> responseMap = JSON.std.mapFrom(response);
                 if(responseMap.containsKey("verified")){
-                    ((LoginFragment) currentFragment).onInvalidOtp();
+                    if(currentFragment instanceof LoginFragment){
+                        ((LoginFragment) currentFragment).onInvalidOtp();
+                    }else if (currentFragment instanceof PostAnonymousLoginFragment){
+                        ((PostAnonymousLoginFragment) currentFragment).onInvalidOtp();
+                    }
                 }else{
                     mUpdateUserPreferences(response);
                     HashMap<String, Object> eventValue = new HashMap<>();
@@ -5761,12 +5827,21 @@ public class MainActivity extends AppCompatActivity
             }
             if (postion == 3) {
                 MainActivity.this.onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL + "personalize/forums", null);
+                if(currentBottomItem != null){
+                    currentBottomItem.animate().translationYBy(10f).setDuration(100).start();
+                }
+                currentBottomItem=null;
                 return;
             }
             if (postion == 4) {
                 MainActivity.this.mMakeNetworkCall(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", null);
+                if(currentBottomItem != null){
+                    currentBottomItem.animate().translationYBy(10f).setDuration(0).start();
+                }
+                currentBottomItem=null;
                 return;
             }
+
             mUpdateTabMenuItem(postion);
             onTabMenuSelected(postion);
         }
@@ -5778,10 +5853,27 @@ public class MainActivity extends AppCompatActivity
         futureBuddies.setSelected(false);
         myAlerts.setSelected(false);
 
-        if (tabPosition == 1)
+        if (tabPosition == 1) {
             prepBuddies.setSelected(true);
-        if (tabPosition == 2)
+            if(currentBottomItem != prepBuddies ){
+                prepBuddies.animate().translationYBy(-10f).setDuration(300).start();
+            }
+            if(currentBottomItem != null && currentBottomItem != prepBuddies){
+                currentBottomItem.animate().translationYBy(10f).setDuration(300).start();
+            }
+            currentBottomItem = prepBuddies;
+        }else if (tabPosition == 2) {
             resourceBuddies.setSelected(true);
+            if(currentBottomItem != resourceBuddies) {
+                resourceBuddies.animate().translationYBy(-10f).setDuration(300).start();
+            }
+            if(currentBottomItem != null && currentBottomItem != resourceBuddies){
+                currentBottomItem.animate().translationYBy(10f).setDuration(300).start();
+            }
+            currentBottomItem = resourceBuddies;
+        }else {
+            currentBottomItem=null;
+        }
 
     }
 
