@@ -52,7 +52,7 @@ public class UserPreparingFragment extends  BaseFragment {
         if(MainActivity.user != null){
             String phone = MainActivity.user.getPhone_no();
             if(phone != null && !phone.isEmpty())
-                ((TextView)rootView.findViewById(R.id.user_preparing_phone)).setText(":  "+phone);
+                ((TextView)rootView.findViewById(R.id.user_preparing_phone)).setText(":  +91-"+phone);
             else
                 ((TextView)rootView.findViewById(R.id.user_preparing_phone)).setText(":  NA");
         }

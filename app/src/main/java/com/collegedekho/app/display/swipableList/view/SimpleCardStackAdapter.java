@@ -396,6 +396,8 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             }else {
                 examsTv.setText("Exam: Not Available");
             }
+        }else{
+            examsTv.setText("Exam: Not Available");
         }
 
         if(institute.getApplication_end_date()!=null && !institute.getApplication_end_date().trim().isEmpty()){

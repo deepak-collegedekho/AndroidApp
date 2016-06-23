@@ -87,6 +87,12 @@ public class WishlistFragment extends BaseFragment {
 
     public void RemoveInstitute(int position)
     {
+        if(mInstitutes == null || mInstitutes.size() <= 0){
+            mEmptyTextView.setVisibility(View.VISIBLE);
+            mEmptyTextView.setText("You Don't have any WishList College Please Shortlist college in Recommended...");
+        }else{
+            mEmptyTextView.setVisibility(View.GONE);
+        }
         this.mInstitutes.remove(position);
         this.mWishlistInstituteListAdapter.notifyItemRemoved(position);
         this.mWishlistInstituteListAdapter.notifyDataSetChanged();

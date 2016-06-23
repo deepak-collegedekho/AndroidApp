@@ -97,7 +97,7 @@
             android:layout_height="3dp"
             android:layout_gravity="center"
             android:layout_margin="2dp"
-            app:srcCompat="@drawable/ic_send_vector"
+            android:src="@drawable/ic_send"
             fab:fab_type="normal"
             fab:fab_colorNormal="@color/primaryColor"
             fab:fab_colorPressed="@color/primaryColorDark"

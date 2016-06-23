@@ -65,7 +65,7 @@ public class UserDecisionFragment extends BaseFragment {
 
             String phone = MainActivity.mProfile.getPhone_no();
             if(phone != null && !phone.isEmpty())
-                ((TextView)rootView.findViewById(R.id.user_decision_phone)).setText(":  "+phone);
+                ((TextView)rootView.findViewById(R.id.user_decision_phone)).setText(":  +91-"+phone);
             else
                 ((TextView)rootView.findViewById(R.id.user_decision_phone)).setText(":  NA");
         }

@@ -65,7 +65,7 @@ public class UserEducationFragment extends BaseFragment {
         if(MainActivity.user != null){
             String phone = MainActivity.user.getPhone_no();
             if(phone != null && !phone.isEmpty())
-            ((TextView)view.findViewById(R.id.user_education_phone)).setText(":  "+phone);
+            ((TextView)view.findViewById(R.id.user_education_phone)).setText(":  +91-"+phone);
             else
                 ((TextView)view.findViewById(R.id.user_education_phone)).setText(":  NA");
         }

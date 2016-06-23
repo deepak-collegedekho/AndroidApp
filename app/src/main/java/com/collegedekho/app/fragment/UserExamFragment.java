@@ -86,7 +86,7 @@ public class UserExamFragment extends BaseFragment implements SearchView.OnQuery
 
             String phone = MainActivity.mProfile.getPhone_no();
             if(phone != null && !phone.isEmpty())
-                ((TextView)rootView.findViewById(R.id.user_exam_phone)).setText(":  "+phone);
+                ((TextView)rootView.findViewById(R.id.user_exam_phone)).setText(":  +91-"+phone);
             else
                 ((TextView)rootView.findViewById(R.id.user_exam_phone)).setText(":  NA");
         }

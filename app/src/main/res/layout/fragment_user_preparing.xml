@@ -7,11 +7,26 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/image_layout"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:paddingTop="@dimen/m10dp"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_navigation_icon"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/m30dp"
-        android:layout_marginTop="@dimen/m30dp"
         android:layout_marginLeft="@dimen/m30dp"
+        android:layout_marginTop="@dimen/m30dp"
         android:background="@color/primary_color"
         android:orientation="vertical">
 

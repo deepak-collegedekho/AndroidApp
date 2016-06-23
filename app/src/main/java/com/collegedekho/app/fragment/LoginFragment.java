@@ -184,6 +184,8 @@ public class LoginFragment extends  BaseFragment {
             if (mListener != null) {
                 mListener.onOtpReceived(mPhoneNumberET.getText().toString(), otp);
             }
+        }else{
+            mOtpET.setError("Invalid OTP");
         }
 
     }

@@ -51,7 +51,7 @@
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_weight="2.2"
-                    android:layout_height="@dimen/m50dp"
+                    android:layout_height="@dimen/m45dp"
                     app:srcCompat="@drawable/ic_profile_info"/>
 
                 <RelativeLayout
@@ -192,6 +192,7 @@
                     <EditText
                         android:id="@+id/profile_edit_name"
                         style="@style/AppTheme.EditText.bg_holo_dark"
+                        android:layout_height="@dimen/m40dp"
                         android:hint="Name"
                         android:maxLines="1"
                         android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -207,6 +208,7 @@
                     <EditText
                         android:id="@+id/profile_edit_phone"
                         style="@style/AppTheme.EditText.bg_holo_dark"
+                        android:layout_height="@dimen/m40dp"
                         android:hint="Phone"
                         android:maxLines="1"
                         android:inputType="phone"
@@ -282,7 +284,7 @@
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_weight="2.2"
-                    android:layout_height="@dimen/m60dp"
+                    android:layout_height="@dimen/m50dp"
                     app:srcCompat="@drawable/ic_profile_education"/>
 
                 <RelativeLayout
@@ -526,7 +528,7 @@
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_weight="2.2"
-                    android:layout_height="@dimen/m60dp"
+                    android:layout_height="@dimen/m50dp"
                     app:srcCompat="@drawable/ic_profile_preferences"/>
 
                 <RelativeLayout
@@ -783,7 +785,7 @@
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_weight="2.2"
-                    android:layout_height="@dimen/m60dp"
+                    android:layout_height="@dimen/m50dp"
                     app:srcCompat="@drawable/ic_profile_exams"/>
 
                 <RelativeLayout
@@ -870,7 +872,7 @@
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_weight="2.2"
-                    android:layout_height="@dimen/m60dp"
+                    android:layout_height="@dimen/m50dp"
                     app:srcCompat="@drawable/ic_profile_other"/>
 
                 <RelativeLayout
@@ -985,6 +987,7 @@
                         style="@style/AppTheme.EditText.bg_holo_dark"
                         android:hint="Mother Name"
                         android:inputType="textCapWords"
+                        android:layout_height="@dimen/m40dp"
                         android:maxLines="@integer/int1"
                         android:maxLength="35" />
                 </android.support.design.widget.TextInputLayout>
@@ -999,6 +1002,7 @@
                         android:id="@+id/profile_edit_coaching_institute"
                         style="@style/AppTheme.EditText.bg_holo_dark"
                         android:hint="Coaching Institute"
+                        android:layout_height="@dimen/m40dp"
                         android:inputType="textCapWords"
                         android:maxLength="35" />
                 </android.support.design.widget.TextInputLayout>
@@ -1100,8 +1104,7 @@
                 android:paddingRight="@dimen/m10dp"
                 android:paddingTop="@dimen/m2dp"
                 android:paddingBottom="@dimen/m2dp"
-                android:textStyle="bold"
-                android:textSize="18sp"
+                android:textSize="17sp"
                 android:textColor="@color/white"
                 android:background="@drawable/bg_button_orange"
                 android:visibility="visible"/>
