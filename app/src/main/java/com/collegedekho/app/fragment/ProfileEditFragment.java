@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
@@ -92,6 +93,7 @@ public class ProfileEditFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedIstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile_edit, container, false);
         rootView.findViewById(R.id.profile_save_button).setOnClickListener(this);
+        ((ViewPager.LayoutParams) ((PagerTabStrip) rootView.findViewById(R.id.profile_pager_header)).getLayoutParams()).isDecor = true;
         return rootView;
     }
 

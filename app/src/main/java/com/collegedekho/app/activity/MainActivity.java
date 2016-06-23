@@ -1954,6 +1954,7 @@ public class MainActivity extends AppCompatActivity
     // TODO :: EDIT THIS POST ANONYMOUS LOGIN FRAGMENT
     private void mDisplayPostAnonymousLoginFragment() {
         PostAnonymousLoginFragment fragment = PostAnonymousLoginFragment.newInstance();
+        currentFragment = fragment;
         try {
 
             this.currentFragment = fragment;
@@ -1962,15 +1963,15 @@ public class MainActivity extends AppCompatActivity
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
-            fragmentTransaction.replace(R.id.container, fragment, getResourceString(R.string.TAG_FRAGMENT_LOGIN));
+            fragmentTransaction.replace(R.id.container, fragment, getResourceString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
 
-            fragmentTransaction.commitAllowingStateLoss();
+            fragmentTransaction.commit();
 
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
         } finally {
             //Send GA Session
-            MainActivity.GAScreenEvent(getResourceString(R.string.TAG_FRAGMENT_LOGIN));
+            MainActivity.GAScreenEvent(getResourceString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
 
             HashMap<String, Object> eventValue = new HashMap<String, Object>();
 

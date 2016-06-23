@@ -3,6 +3,7 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -159,6 +160,7 @@ public class HomeFragment extends BaseFragment
         rootView.findViewById(R.id.important_date_layout_RL).setOnClickListener(this);
         rootView.findViewById(R.id.profile_syllabus_statusLL).setOnClickListener(this);
 
+        ((ViewPager.LayoutParams) ((PagerTabStrip) rootView.findViewById(R.id.exam_pager_header)).getLayoutParams()).isDecor = true;
 
         return rootView;
     }
