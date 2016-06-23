@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:fitsSystemWindows="true"
@@ -96,7 +97,7 @@
             android:layout_height="3dp"
             android:layout_gravity="center"
             android:layout_margin="2dp"
-            android:src="@drawable/ic_send"
+            app:srcCompat="@drawable/ic_send_vector"
             fab:fab_type="normal"
             fab:fab_colorNormal="@color/primaryColor"
             fab:fab_colorPressed="@color/primaryColorDark"

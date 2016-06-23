@@ -42,7 +42,7 @@
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:contentDescription="@string/fb_login_description"
-                android:src="@drawable/ic_facebook_icon" />
+                app:srcCompat="@drawable/ic_facebook_icon" />
 
             <TextView
                 android:layout_width="wrap_content"

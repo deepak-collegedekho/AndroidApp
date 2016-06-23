@@ -64,6 +64,15 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
             trueButton.setVisibility(View.GONE);
             rootView.findViewById(R.id.login_or_line_layout).setVisibility(View.GONE);
         }
+        if(MainActivity.mProfile != null && (MainActivity.mProfile.getIs_verified() == 1)){
+            rootView.findViewById(R.id.login_or_line_layout).setVisibility(View.GONE);
+            rootView.findViewById(R.id.login_phone_til).setVisibility(View.GONE);
+
+        }else{
+            rootView.findViewById(R.id.login_or_line_layout).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.login_phone_til).setVisibility(View.VISIBLE);
+
+        }
 
 
         mPhoneNumberET = (EditText) rootView.findViewById(R.id.login_phone_edit_text);

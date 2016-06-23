@@ -140,16 +140,16 @@ public class UserEducationFragment extends BaseFragment {
         params.put("current_sublevel_id",""+currentLevelID);
 
         if(currentLevelID == ProfileMacro.CURRENT_EDUCATION_SCHOOL)
-            params.put("preferred_level",""+ProfileMacro.PREFERRED_LEVEL_UNDER_GRADUATE);
+            params.put("preferred_level",""+ProfileMacro.LEVEL_UNDER_GRADUATE);
         else
-            params.put("preferred_level",""+ProfileMacro.PREFERRED_LEVEL_POST_GRADUATE);
+            params.put("preferred_level",""+ProfileMacro.LEVEL_POST_GRADUATE);
 
         if(MainActivity.mProfile != null){
             MainActivity.mProfile.setCurrent_sublevel_id(currentLevelID);
             if(currentLevelID == ProfileMacro.CURRENT_EDUCATION_SCHOOL)
-                MainActivity.mProfile.setPreferred_level(ProfileMacro.PREFERRED_LEVEL_UNDER_GRADUATE);
+                MainActivity.mProfile.setPreferred_level(ProfileMacro.LEVEL_UNDER_GRADUATE);
             else
-               MainActivity.mProfile.setPreferred_level(ProfileMacro.PREFERRED_LEVEL_POST_GRADUATE);
+               MainActivity.mProfile.setPreferred_level(ProfileMacro.LEVEL_POST_GRADUATE);
         }
 
         this.mListener.onSelectedCurrentEducation(params);

@@ -148,7 +148,7 @@ public class CircularProgressBar extends View {
     /**
      * Set the progress with an animation.
      * Note that the {@link ObjectAnimator} Class automatically set the progress
-     * so don't call the {@link CircularProgressBar#setProgress(float)} directly within this method.
+     * so don't ic_call_vector the {@link CircularProgressBar#setProgress(float)} directly within this method.
      *
      * @param progress The progress it should animate to it.
      */
@@ -159,7 +159,7 @@ public class CircularProgressBar extends View {
     /**
      * Set the progress with an animation.
      * Note that the {@link ObjectAnimator} Class automatically set the progress
-     * so don't call the {@link CircularProgressBar#setProgress(float)} directly within this method.
+     * so don't ic_call_vector the {@link CircularProgressBar#setProgress(float)} directly within this method.
      *
      * @param progress The progress it should animate to it.
      * @param duration The length of the animation, in milliseconds.

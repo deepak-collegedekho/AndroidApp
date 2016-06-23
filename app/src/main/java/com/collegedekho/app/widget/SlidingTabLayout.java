@@ -36,7 +36,7 @@ import android.widget.TextView;
  * the user's scroll progress.
  * <p/>
  * To use the component, simply add it to your view hierarchy. Then in your
- * {@link android.app.Activity} or {@link android.support.v4.app.Fragment} call
+ * {@link android.app.Activity} or {@link android.support.v4.app.Fragment} ic_call_vector
  * {@link #setViewPager(android.support.v4.view.ViewPager)} providing it the ViewPager this layout is being used for.
  * <p/>
  * The colors can be customized in two ways. The first and simplest is to provide an array of colors
@@ -131,7 +131,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     /**
      * Sets the associated view pager. Note that the assumption here is that the pager content
-     * (number of tabs and tab titles) does not change after this call has been made.
+     * (number of tabs and tab titles) does not change after this ic_call_vector has been made.
      */
     public void setViewPager(ViewPager viewPager) {
         mTabStrip.removeAllViews();

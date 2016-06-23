@@ -1,4 +1,4 @@
-/*package com.collegedekho.app.resource;
+package com.collegedekho.app.resource;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,9 +10,9 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.utils.Utils;
 
 
-*//**
+/**
  * Created by sureshsaini on 5/4/16.
- *//*
+ */
 public class BitMapHolder {
 
     private Drawable drawableShortList ;
@@ -54,4 +54,4 @@ public class BitMapHolder {
             DEFAULT_BANNER       =  BitmapFactory.decodeResource(mContext.getResources(), R.drawable.default_banner);
 
     }
-}*/
+}

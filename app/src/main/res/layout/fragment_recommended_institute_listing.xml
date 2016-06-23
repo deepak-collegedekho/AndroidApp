@@ -201,7 +201,7 @@
                     android:layout_height="16dp"
                     android:layout_marginLeft="@dimen/m4dp"
                     android:layout_marginTop="@dimen/m4dp"
-                    android:src="@drawable/ic_cd"
+                    app:srcCompat="@drawable/ic_cd"
                     />
 
 
@@ -246,7 +246,7 @@
                     android:layout_marginLeft="@dimen/m1dp"
                     android:layout_marginTop="@dimen/m10dp"
                     android:layout_toRightOf="@id/img_cd"
-                    android:src="@drawable/ic_institute"/>
+                    app:srcCompat="@drawable/ic_institute"/>
             </RelativeLayout>
 
             <View
@@ -322,7 +322,7 @@
                     android:layout_above="@id/recommended_text"
                     android:layout_marginLeft="@dimen/m8dp"
                     android:layout_marginTop="@dimen/m10dp"
-                    android:src="@drawable/ic_institute"/>
+                    app:srcCompat="@drawable/ic_institute"/>
 
                 <ImageView
                     android:layout_width="16dp"
@@ -331,7 +331,7 @@
                     android:layout_marginLeft="-6dp"
                     android:layout_marginTop="-12dp"
                     android:layout_toRightOf="@id/img_institute_recommended"
-                    android:src="@drawable/ic_rounded_check"/>
+                    app:srcCompat="@drawable/ic_rounded_check"/>
             </RelativeLayout>
 
             <View
@@ -408,7 +408,7 @@
                     android:layout_alignLeft="@id/wish_list_txt"
                     android:layout_marginLeft="-4dp"
                     android:layout_marginTop="@dimen/m8dp"
-                    android:src="@drawable/ic_wishlist_colleges"/>
+                    app:srcCompat="@drawable/ic_wishlist_colleges"/>
             </RelativeLayout>
 
             <View

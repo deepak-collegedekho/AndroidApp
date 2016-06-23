@@ -59,12 +59,12 @@ public class UrlImageParser implements Html.ImageGetter {
 
         @Override
         protected void onPostExecute(Drawable result) {
-            // set the correct bound according to the result from HTTP call
+            // set the correct bound according to the result from HTTP ic_call_vector
             urlDrawable.setBounds(0, 0, 0 + result.getIntrinsicWidth(), 0
                     + result.getIntrinsicHeight());
 
             // change the reference of the current drawable to the result
-            // from the HTTP call
+            // from the HTTP ic_call_vector
             urlDrawable.drawable = result;
 
             // redraw the image_new by invalidating the container

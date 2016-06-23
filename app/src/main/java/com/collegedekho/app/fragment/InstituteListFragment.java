@@ -423,11 +423,11 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             this.filterCount = filterCount;
             if (filterCount <= 2) {
                 getView().findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
-                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter), this.getActivity().getResources().getColor(R.color.white)));
+                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter_vector), this.getActivity().getResources().getColor(R.color.white)));
             }
             else {
                 getView().findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
-                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter), this.getActivity().getResources().getColor(R.color.primary_orange)));
+                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter_vector), this.getActivity().getResources().getColor(R.color.primary_orange)));
             }
        }
     }

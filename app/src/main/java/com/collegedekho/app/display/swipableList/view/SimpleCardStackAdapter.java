@@ -82,7 +82,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.wishlist_card_layout, parent, false);
         }
 
-        ((LinearLayout) convertView.findViewById(R.id.institute_card_layout)).setBackground(backgroundBorder);
+        convertView.findViewById(R.id.institute_card_layout).setBackground(backgroundBorder);
 
         setVectorDrawable(convertView);
 

@@ -3,9 +3,13 @@ package com.collegedekho.app.adapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Vibrator;
 import android.support.design.widget.Snackbar;
+import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,8 +55,8 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
         this.mPeekAndPop = peekAndPop;
         this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
         this.mPeekViewAdapter = new WishlistCardAdapter(context);
-
         this.mPeekView = this.mPeekAndPop.getPeekView();
+
 
         this.mSetupPeekAndPopStandard();
     }

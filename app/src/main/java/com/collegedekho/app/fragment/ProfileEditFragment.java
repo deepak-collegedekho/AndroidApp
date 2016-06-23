@@ -693,7 +693,7 @@ public class ProfileEditFragment extends BaseFragment {
     public interface ProfileUpdateListener {
         void onProfileUpdated(HashMap<String, String> params);
         void displayMessage(int messageId);
-        void onEditUserExams();
+        void onRequestForUserExamsUpdate();
         void requestForSpecialization(int streamId);
     }
 
@@ -846,7 +846,7 @@ public class ProfileEditFragment extends BaseFragment {
 
         private void onEditExams() {
             if(mListener != null)
-                mListener.onEditUserExams();
+                mListener.onRequestForUserExamsUpdate();
         }
 
         @Override
@@ -1259,7 +1259,7 @@ public class ProfileEditFragment extends BaseFragment {
             int preferredStreamId = mProfile.getPreferred_stream_id();
             List<ProfileSpinnerItem> streamList = null;
             try {
-                List<ProfileSpinnerItem> levelList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.PREF_SUB_LEVEL_JSON);
+                List<ProfileSpinnerItem> levelList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.PREF_LEVEL_JSON);
                 if(preferredLevelId >= 1){
                     int levelCount = levelList.size();
                     for(int i=0 ; i< levelCount; i++){
@@ -1410,7 +1410,7 @@ public class ProfileEditFragment extends BaseFragment {
                 }
                 MaterialSpinner preferredStateSpinner = (MaterialSpinner)rootView. findViewById(R.id.profile_edit_preferred_state);
                 preferredStateSpinner.setMutliSelection(true);
-                preferredStateSpinner.setFragmentListener(this);
+                //preferredStateSpinner.setFragmentListener(this);
                 preferredStateSpinner.setItems(mPreferredStatesList, true);
                 if(stateIdList != null)
                     preferredStateSpinner.setText("State("+stateIdList.size()+")");

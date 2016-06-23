@@ -11,7 +11,7 @@
         android:layout_gravity="center"
         android:textStyle="bold"
         android:textColor="@color/primary_orange"
-        android:drawableRight="@drawable/ic_add_inline"
+        android:drawableRight="@drawable/ic_add_inline35dp"
         android:textSize="18sp"
         android:gravity="center"/>
 

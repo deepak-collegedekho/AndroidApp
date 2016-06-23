@@ -209,7 +209,11 @@ private View mExamsTabLayout;
     @Override
     public void onPause() {
         super.onPause();
-
+        MainActivity mainActivity = (MainActivity)getActivity();
+        if(mainActivity.currentBottomItem != null){
+            mainActivity.currentBottomItem.animate().translationYBy(10f).setDuration(300).start();
+            mainActivity.currentBottomItem = null;
+        }
         View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
         bottomMenu.animate().translationY(bottomMenu.getHeight());
         bottomMenu.setVisibility(View.GONE);

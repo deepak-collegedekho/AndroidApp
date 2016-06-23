@@ -32,6 +32,9 @@
     <dimen name="m21dp">21dp</dimen>
     <dimen name="m22dp">22dp</dimen>
     <dimen name="m25dp">25dp</dimen>
+    <dimen name="m26dp">26dp</dimen>
+    <dimen name="m28dp">28dp</dimen>
+    <dimen name="m29dp">28dp</dimen>
     <dimen name="m30dp">30dp</dimen>
     <dimen name="m31dp">31dp</dimen>
     <dimen name="m32dp">32dp</dimen>

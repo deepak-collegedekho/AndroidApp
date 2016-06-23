@@ -24,7 +24,7 @@
             style="@style/AppTheme.TextView"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:drawableTop="@drawable/ic_add_inline_white"
+            android:drawableTop="@drawable/ic_add_inline23dp"
             android:text="12"
             android:gravity="center"/>
 

@@ -55,7 +55,7 @@ import java.util.Map;
  * HtmlSpanner provides an alternative to Html.fromHtml() from the Android
  * libraries.
  *
- * In its simplest form, just call new HtmlSpanner().fromHtml() to get a similar
+ * In its simplest form, just ic_call_vector new HtmlSpanner().fromHtml() to get a similar
  * result. The real strength is in being able to register custom NodeHandlers.
  *
  * @author work

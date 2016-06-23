@@ -209,7 +209,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         super.onDetach();
 
         //If number of comments received in the comments set is more than received in one
-        // go then call the function to update the comments count value
+        // go then ic_call_vector the function to update the comments count value
         // TODO: track number of times next page is called (say N) and multiply Constants.NUMBER_OF_COMMENTS_IN_ONE_GO with the N, once next page provision is there
         if (this.mMyFBCommentsSet.size() > Constants.NUMBER_OF_COMMENTS_IN_ONE_GO)
         {

@@ -79,6 +79,7 @@ public class HomeFragment extends BaseFragment
         mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
+       
 
         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
 

@@ -197,7 +197,7 @@
                         android:id="@+id/card_institute_close"
                         android:layout_width="@dimen/m15dp"
                         android:layout_height="@dimen/m15dp"
-                        android:src="@android:drawable/ic_delete"
+                        app:srcCompat="@android:drawable/ic_delete"
                         android:tint="@color/subheading_color"
                         android:fadingEdge="horizontal"
                         />

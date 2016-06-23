@@ -138,6 +138,7 @@ public class Constants
     public static final String TAG_UPDATE_PROFILE_EXAMS = "update_profile_exams";
     public static final String TAG_UPDATE_PROFILE_OBJECT = "update_profile_object";
     public static final String TAG_REQUEST_FOR_SPECIALIZATION = "request_for_specialization";
+    public static final String TAG_REQUEST_FOR_DEGREES = "request_for_degrees";
     public static final String TAG_REQUEST_FOR_EXAMS = "request_for_exams";
     public static final String TAG_USER_EXAM_SPECIALIZATION = "user_exam_for_specialization";
     public static final String TAG_UPDATE_INSTITUTES = "update_institutes";

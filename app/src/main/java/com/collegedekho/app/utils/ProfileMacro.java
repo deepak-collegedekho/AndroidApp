@@ -1,5 +1,9 @@
 package com.collegedekho.app.utils;
 
+import com.collegedekho.app.entities.ProfileSpinnerItem;
+
+import java.util.ArrayList;
+
 /**
  * Created by sureshsaini on 23/5/16.
  *
@@ -14768,50 +14772,26 @@ public class ProfileMacro {
             "]";
 
 
-    public static String PREF_SUB_LEVEL_JSON = "[\n" +
+    public static String PREF_LEVEL_JSON = "[\n" +
             "    {\n" +
             "        \"id\": 1,\n" +
-            "        \"name\": \"College 1st Yr\"\n" +
+            "        \"name\": \"Under Graduation\"\n" +
             "    },\n" +
             "    {\n" +
             "        \"id\": 2,\n" +
-            "        \"name\": \"College 2nd Yr\"\n" +
+            "        \"name\": \"Post Graduation\"\n" +
             "    },\n" +
             "    {\n" +
             "        \"id\": 3,\n" +
-            "        \"name\": \"College 3rd Yr\"\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"id\": 4,\n" +
-            "        \"name\": \"College 4th Yr\"\n" +
+            "        \"name\": \"Diploma\"\n" +
             "    },\n" +
             "    {\n" +
             "        \"id\": 5,\n" +
-            "        \"name\": \"PG-I\"\n" +
+            "        \"name\": \"Certification\"\n" +
             "    },\n" +
             "    {\n" +
-            "        \"id\": 6,\n" +
-            "        \"name\": \"PG-II\"\n" +
-            "    },\n" +
-           /* "    {\n" +
-            "        \"id\": 10,\n" +
-            "        \"name\": \"Ph.D-I\"\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"id\": 11,\n" +
-            "        \"name\": \"Ph.D-II\"\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"id\": 12,\n" +
-            "        \"name\": \"Ph.D-III\"\n" +
-            "    },\n" +*/
-            "    {\n" +
-            "        \"id\": 13,\n" +
-            "        \"name\": \"Certificate\"\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"id\": 14,\n" +
-            "        \"name\": \"Diploma\"\n" +
+            "        \"id\": 4,\n" +
+            "        \"name\": \"PHD\"\n" +
             "    }\n" +
             "]";
 
@@ -15111,15 +15091,69 @@ public class ProfileMacro {
     }
 
     public static String getMotherTongueName(int id) {
-        if(id == MOTHER_TONGUE_HINDI)
+        if(id == MOTHER_TONGUE_ASSAMESE)
+            return "Assamese";
+        else if(id ==  MOTHER_TONGUE_BENGALI)
+            return "Bengali";
+        else if(id ==  MOTHER_TONGUE_BODO)
+            return "Bodo";
+        else if(id ==  MOTHER_TONGUE_DOGRI)
+            return "Dogri";
+        else if(id == MOTHER_TONGUE_GUJRATI)
+            return "Gujarati";
+        else if(id ==  MOTHER_TONGUE_HINDI)
             return "Hindi";
-        else if(id == MOTHER_TONGUE_HINDI)
+        else if(id ==  MOTHER_TONGUE_KANNADA)
+            return "Kannada";
+        else if(id ==  MOTHER_TONGUE_KASHMIRI)
+            return "Kashmiri";
+        else if(id ==  MOTHER_TONGUE_KONKANI)
+            return "Konkani";
+        else if(id == MOTHER_TONGUE_MAITHILI)
+            return "Maithili";
+        else if(id == MOTHER_TONGUE_MALAYALAM )
+            return "Malayalam";
+        else if(id ==  MOTHER_TONGUE_MANIPURI)
+            return "Manipuri";
+        else if(id ==  MOTHER_TONGUE_MARATHI)
+            return "Marathi";
+        else if(id ==  MOTHER_TONGUE_NEPALI)
+            return "Nepali";
+        else if(id == MOTHER_TONGUE_ODIA)
+            return "Odia";
+        else if(id ==  MOTHER_TONGUE_PUNJABI)
+            return "Punjabi";
+        else if(id ==  MOTHER_TONGUE_SANSKRIT)
+            return "Sanskrit";
+        else if(id == MOTHER_TONGUE_SANTALI)
+            return "Santali";
+        else if(id == MOTHER_TONGUE_SINDHI)
+            return "Sindhi";
+        else if(id == MOTHER_TONGUE_TAMIL)
+            return "Tamil";
+        else if(id ==  MOTHER_TONGUE_TELUGU)
+            return "Telugu";
+        else if(id ==  MOTHER_TONGUE_URDU)
+            return "Urdu";
+        else if(id == MOTHER_TONGUE_ENGLISH)
             return "English";
         return "Other";
     }
+    public static String getSocialCategoryName(int id) {
+        if(id == CATEGORY_GENERAL)
+            return "General";
+        else  if(id == CATEGORY_OBC)
+            return "OBC";
+        else  if(id == CATEGORY_SC)
+            return "SC";
+        else  if(id == CATEGORY_ST)
+            return "ST";
+        return "Other";
+    }
 
-    public static String getEducationMode(int id) {
-        if(id == MODE_FULL_TYPE)
+
+    public static String getEducationModeName(int id) {
+        if(id == MODE_FULL_TIME)
             return "Full Type";
         else  if(id == MODE_PART_TYPE)
             return "Part Type";
@@ -15129,7 +15163,23 @@ public class ProfileMacro {
             return "Distance-Learning";
         else  if(id == MODE_ONLINE)
             return "Online/e-Learning";
-        return "na";
+        return "Other";
+    }
+
+    public static String getYearName(int id) {
+        if(id == YEAR_2013)
+            return "Before 2013";
+        else  if(id == YEAR_2014)
+            return "2014";
+        else  if(id == YEAR_2015)
+            return "2015";
+        else  if(id == YEAR_2016)
+            return "2016";
+        else  if(id == YEAR_2017)
+            return "2017";
+        else  if(id == YEAR_2018)
+            return "2018";
+        return "After 2018";
     }
 
     public static String getFeeRangeName(int id) {
@@ -15144,15 +15194,146 @@ public class ProfileMacro {
         return "Above 4 lacs";
     }
 
-    // language macros
-    public static int EXAM_GIVEN = 1;
-    public static int EXAM_PREPARING = 2;
+
+    public static ArrayList<ProfileSpinnerItem> getMotherTongueList(){
+        if(motherTongueList == null)
+            motherTongueList = new ArrayList<>();
+
+        if(motherTongueList.size() == 24)
+            return  motherTongueList;
+
+        for (int i = 1; i < 25; i++) {
+            ProfileSpinnerItem item = new  ProfileSpinnerItem();
+            item.setId(i);
+            item.setName(getMotherTongueName(i));
+            motherTongueList.add(item);
+
+        }
+        return  motherTongueList;
+    }
+
+    public static ArrayList<ProfileSpinnerItem> getSocialCategoryList(){
+        if(socialCategoryList == null)
+            socialCategoryList = new ArrayList<>();
+
+        if(socialCategoryList.size() == 5)
+            return socialCategoryList;
+
+        for (int i = 1; i < 6; i++) {
+            ProfileSpinnerItem item = new  ProfileSpinnerItem();
+            item.setId(i);
+            item.setName(getSocialCategoryName(i));
+            socialCategoryList.add(item);
+        }
+        return socialCategoryList;
+    }
+
+    /**
+     *
+     * @return
+     */
+
+    public static ArrayList<ProfileSpinnerItem> getFeesRangeList(){
+        if(feesRangeList == null)
+            feesRangeList = new ArrayList<>();
+
+        if(feesRangeList.size() == 5)
+            return feesRangeList;
+
+        for (int i = 1; i < 6; i++) {
+            ProfileSpinnerItem item = new  ProfileSpinnerItem();
+            item.setId(i);
+            item.setName(getFeeRangeName(i));
+            feesRangeList.add(item);
+        }
+        return feesRangeList;
+    }
+
+
+    public static ArrayList<ProfileSpinnerItem> getEducationModeList(){
+        if(educationModeList == null)
+            educationModeList = new ArrayList<>();
+
+        if(educationModeList.size() == 6)
+            return educationModeList;
+
+        for (int i = 1; i < 7; i++) {
+            ProfileSpinnerItem item = new  ProfileSpinnerItem();
+            item.setId(i);
+            item.setName(getEducationModeName(i));
+            educationModeList.add(item);
+        }
+        return educationModeList;
+    }
+
+    public static ArrayList<ProfileSpinnerItem> getCurrentPassingYearList(){
+        if(currentPassingYearList == null)
+            currentPassingYearList = new ArrayList<>();
+
+        if(currentPassingYearList.size() == 4)
+            return currentPassingYearList;
+
+        for (int i = 2013; i < 2017; i++) {
+            ProfileSpinnerItem item = new  ProfileSpinnerItem();
+            item.setId(i);
+            item.setName(getYearName(i));
+            currentPassingYearList.add(item);
+        }
+        return currentPassingYearList;
+    }
+    public static ArrayList<ProfileSpinnerItem> getPreferredAdmissionYearList(){
+        if(preferredAddmisionYearList == null)
+            preferredAddmisionYearList = new ArrayList<>();
+
+        if(preferredAddmisionYearList.size() == 4)
+            return preferredAddmisionYearList;
+
+        for (int i = 2016; i < 2020; i++) {
+            ProfileSpinnerItem item = new  ProfileSpinnerItem();
+            item.setId(i);
+            item.setName(getYearName(i));
+            preferredAddmisionYearList.add(item);
+        }
+        return preferredAddmisionYearList;
+    }
+
 
 
    // language macros
+    public static int MOTHER_TONGUE_ASSAMESE = 1;
+    public static int MOTHER_TONGUE_BENGALI = 2;
+    public static int MOTHER_TONGUE_BODO = 3;
+    public static int MOTHER_TONGUE_DOGRI = 4;
+    public static int MOTHER_TONGUE_GUJRATI = 5;
     public static int MOTHER_TONGUE_HINDI = 6;
+    public static int MOTHER_TONGUE_MARATHI = 7;
+    public static int MOTHER_TONGUE_NEPALI = 8;
+    public static int MOTHER_TONGUE_ODIA = 9;
+    public static int MOTHER_TONGUE_PUNJABI = 10;
+    public static int MOTHER_TONGUE_SANSKRIT = 11;
+    public static int MOTHER_TONGUE_SANTALI = 12;
+    public static int MOTHER_TONGUE_SINDHI = 13;
+    public static int MOTHER_TONGUE_TAMIL = 14;
+    public static int MOTHER_TONGUE_TELUGU = 15;
+    public static int MOTHER_TONGUE_URDU = 16;
+    public static int MOTHER_TONGUE_OTHERS = 17;
     public static int MOTHER_TONGUE_ENGLISH = 18;
-    public static int MOTHER_TONGUE_OTHER = 17;
+    public static int MOTHER_TONGUE_KASHMIRI = 19;
+    public static int MOTHER_TONGUE_KONKANI = 20;
+    public static int MOTHER_TONGUE_MAITHILI = 21;
+    public static int MOTHER_TONGUE_MALAYALAM = 22;
+    public static int MOTHER_TONGUE_MANIPURI = 23;
+    public static int MOTHER_TONGUE_KANNADA = 24;
+
+
+    // passing year
+    public static int YEAR_2013 = 2013;
+    public static int YEAR_2014 = 2014;
+    public static int YEAR_2015 = 2015;
+    public static int YEAR_2016 = 2016;
+    public static int YEAR_2017 = 2017;
+    public static int YEAR_2018 = 2018;
+
 
    //  social category
     public static int CATEGORY_GENERAL = 1;
@@ -15176,7 +15357,7 @@ public class ProfileMacro {
     public static int TO_BE_DECIDED = 5;
 
     // required loan Amount
-    public static int MODE_FULL_TYPE = 1;
+    public static int MODE_FULL_TIME = 1;
     public static int MODE_PART_TYPE = 2;
     public static int MODE_EXECUTIVE = 5;
     public static int MODE_DISTANCE = 4;
@@ -15186,14 +15367,37 @@ public class ProfileMacro {
     // sub level Ids
     public static int CURRENT_EDUCATION_SCHOOL  = 8;
     public static int CURRENT_EDUCATION_COLLEGE = 1;
-    public static int PREFERRED_LEVEL_UNDER_GRADUATE = 1;
-    public static int PREFERRED_LEVEL_POST_GRADUATE = 2;
 
-    // user is preparing for exma
+    // set preferred level
+    public static int LEVEL_UNDER_GRADUATE = 1;
+    public static int LEVEL_POST_GRADUATE = 2;
+    public static int LEVEL_DIPLOMA = 3;
+    public static int LEVEL_PHD = 4;
+    public static int LEVEL_CERTIFICATION = 5;
+    public static int LEVEL_TENTH = 6;
+    public static int LEVEL_TWELFTH= 7;
+
+
+    // user is preparing for exams
     public static int PREPARING_FOR_EXAM  = 1;
     public static int NOT_PREPARING_FOR_EXAM = 0;
 
     // profile Map keys
     public static String IS_PREPARING = "is_preparing";
+
+    // language macros
+    public static int EXAM_GIVEN = 1;
+    public static int EXAM_PREPARING = 2;
+
+    // Request Macros
+    public static String CURRENT_EDUCATION = "current_education";
+    public static String PREFERRED_EDUCATION = "preferred_education";
+
+    private static ArrayList<ProfileSpinnerItem> motherTongueList ;
+    private static ArrayList<ProfileSpinnerItem> socialCategoryList;
+    private static ArrayList<ProfileSpinnerItem> feesRangeList;
+    private static ArrayList<ProfileSpinnerItem> educationModeList;
+    private static ArrayList<ProfileSpinnerItem> currentPassingYearList;
+    private static ArrayList<ProfileSpinnerItem> preferredAddmisionYearList;
 
 }

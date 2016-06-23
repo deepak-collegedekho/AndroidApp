@@ -46,7 +46,7 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
-import com.collegedekho.app.fragment.ProfileEditFragment;
+import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.utils.Utils;
 
 import java.lang.reflect.Method;
@@ -57,7 +57,7 @@ import java.util.List;
  */
 public class MaterialSpinner extends TextView {
 
-  private static ProfileEditFragment.ProfileChildFragment fragmentListener;
+  private static ProfileFragment fragmentListener;
   private OnNothingSelectedListener onNothingSelectedListener;
   private OnItemSelectedListener onItemSelectedListener;
   private MaterialSpinnerBaseAdapter adapter;
@@ -94,7 +94,7 @@ public class MaterialSpinner extends TextView {
     init(context, attrs);
   }
 
-  public void setFragmentListener(ProfileEditFragment.ProfileChildFragment fragmentListener) {
+  public void setFragmentListener(ProfileFragment fragmentListener) {
     MaterialSpinner.fragmentListener = fragmentListener;
   }
 
@@ -390,6 +390,9 @@ public class MaterialSpinner extends TextView {
     numberOfItems = items.size();
 
     if(numberOfItems == 1) {
+      if(isMultiSelection){
+        ((ProfileSpinnerItem) items.get(0)).setSelected(true);
+      }
       isItemSelected = false;
       setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
     }else{
@@ -460,9 +463,15 @@ public class MaterialSpinner extends TextView {
    * Show the dropdown menu
    */
   public void expand() {
+
+    //  hide arrow for list size on 1
+    if(numberOfItems <= 1)
+      return;
+
     if (!hideArrow) {
       animateArrow(true);
     }
+
     nothingSelected = true;
     popupWindowMaxHeight = calculatePopupWindowHeight();
     popupWindow.setHeight(popupWindowMaxHeight);
@@ -537,6 +546,9 @@ public class MaterialSpinner extends TextView {
     }
     float listViewHeight = adapter.getCount() * getResources().getDimension(R.dimen.m43dp);
     if(!(adapter.getCount() >= 6 )){
+      if(isMultiSelection){
+        return (int)((adapter.getCount() +1)* getResources().getDimension(R.dimen.m43dp));
+      }
       return (int)listViewHeight;
     }
     if(adapter.getCount() >=20){

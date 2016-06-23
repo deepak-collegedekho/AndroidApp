@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/myfab_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,7 +13,7 @@
         android:id="@+id/button_filter"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:src="@drawable/ic_filter"
+        app:srcCompat="@drawable/ic_filter_vector"
         fab:fab_type="normal"
         android:layout_gravity="bottom|end"
         android:layout_marginStart="@dimen/activity_horizontal_margin"

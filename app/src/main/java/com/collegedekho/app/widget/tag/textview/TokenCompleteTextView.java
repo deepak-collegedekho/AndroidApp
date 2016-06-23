@@ -965,7 +965,7 @@ public void callbackFragment()
             }
         } else {
             hiddenSpans.add(tokenSpan);
-            //Need to manually call onSpanAdded here as we're not putting the span on the text
+            //Need to manually ic_call_vector onSpanAdded here as we're not putting the span on the text
             spanWatcher.onSpanAdded(editable, tokenSpan, 0, 0);
             updateCountSpan();
         }
@@ -1393,7 +1393,7 @@ public void callbackFragment()
     public boolean canDeleteSelection(int beforeLength) {
         if (objects.size() < 1) return true;
 
-        // if beforeLength is 1, we either have no selection or the call is coming from OnKey Event.
+        // if beforeLength is 1, we either have no selection or the ic_call_vector is coming from OnKey Event.
         // In these scenarios, getSelectionStart() will return the correct value.
 
         int endSelection = getSelectionEnd();

@@ -134,8 +134,8 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
 
         /*
 		 * You have to set the onCheckChangedListener to null
-		 * before restoring check states because each call to
-		 * "setChecked" is accompanied by a call to the
+		 * before restoring check states because each ic_call_vector to
+		 * "setChecked" is accompanied by a ic_call_vector to the
 		 * onCheckChangedListener
 		*/
         childViewHolder.childChapterCheckBox.setOnCheckedChangeListener(null);

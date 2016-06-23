@@ -144,7 +144,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
 
                 //if on last question in the questions list
                 //check the number of iteration for the questionlist
-                //if it is 1 or 2. call for next set of questions
+                //if it is 1 or 2. ic_call_vector for next set of questions
                 //if it is 3. prepare the post data, send it back and be done with this.
                 inContextFragment = StepByStepFragment.this.mQuestionAdapter.getFragment(StepByStepFragment.this.mViewPager.getCurrentItem());
 
