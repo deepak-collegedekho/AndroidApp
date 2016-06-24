@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollbars="none">
@@ -10,7 +11,6 @@
         android:layout_height="match_parent"
         android:weightSum="1"
         android:orientation="vertical">
-
                 <com.collegedekho.app.display.CustomViewPager
                     android:id="@+id/college_detail_pager"
                     android:layout_width="match_parent"
@@ -19,7 +19,7 @@
                     <android.support.v4.view.PagerTabStrip
                         android:id="@+id/pager_header"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="60dp"
                         android:layout_gravity="top"
                         android:textColor="#fff"
                         android:background="@color/primaryColor"
@@ -28,6 +28,56 @@
                         app:tabMode="scrollable"
                         />
                 </com.collegedekho.app.display.CustomViewPager>
-
     </LinearLayout>
-</android.support.v7.widget.CardView>
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        app:menu_labels_ellipsize="end"
+        app:menu_labels_singleLine="true"
+        app:menu_labels_position="left"
+        app:menu_labels_colorNormal="@color/heading_color"
+        app:menu_fab_label="Actions"
+        app:menu_backgroundColor="#ccffffff"
+        app:menu_colorNormal="@color/primary_color"
+        app:menu_colorPressed="@color/primaryColorDark"
+        android:visibility="gone"
+        >
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/remove_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_delete_forever_white_24dp"
+            app:fab_size="mini"
+            app:fab_colorNormal="@color/primary_color"
+            app:fab_colorPressed="@color/primaryColorDark"
+            app:fab_label="@string/ACTION_REMOVE_COLLEGE"
+            />
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/apply_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/apply"
+            app:fab_size="mini"
+            app:fab_colorNormal="@color/primary_color"
+            app:fab_label="@string/ACTION_APPLY_COLLEGE"
+            android:visibility="gone"
+            />
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/call_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_phone_in_talk_white_24dp"
+            app:fab_size="mini"
+            app:fab_colorNormal="@color/primary_color"
+            app:fab_label="@string/ACTION_CALL_COLLEGE"
+            android:visibility="gone"
+            />
+    </com.github.clans.fab.FloatingActionMenu>
+</RelativeLayout>

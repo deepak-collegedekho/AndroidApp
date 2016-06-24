@@ -24,6 +24,8 @@
     <dimen name="m9dp">9dp</dimen>
     <dimen name="m10dp">10dp</dimen>
     <dimen name="m12dp">12dp</dimen>
+    <dimen name="m13dp">13dp</dimen>
+    <dimen name="m14dp">14dp</dimen>
     <dimen name="m15dp">15dp</dimen>
     <dimen name="m16dp">16dp</dimen>
     <dimen name="m17dp">17dp</dimen>

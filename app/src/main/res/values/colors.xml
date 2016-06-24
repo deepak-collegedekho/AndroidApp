@@ -57,6 +57,7 @@
     <color name="app_background">#e8eaee</color>
     <color name="transparent">#00000000</color>
     <color name="primary_text_default_material_dark">#adacac</color>
+    <color name="alpha_component">#53757575</color>
 
     //swipeble card colors
     <color name="card_bg">#EBEBEB</color>

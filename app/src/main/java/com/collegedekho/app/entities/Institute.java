@@ -26,6 +26,7 @@ public class Institute implements Parcelable {
         }
     };
     private int id;
+    private int position = -1;
     private int course_count;
     private String logo;
     private String acronym;
@@ -643,4 +644,13 @@ public class Institute implements Parcelable {
     public void setIs_applied(boolean is_applied) {
         this.is_applied = is_applied ? 1 : 0;
     }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
 }

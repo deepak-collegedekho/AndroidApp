@@ -1,5 +1,7 @@
 package com.collegedekho.app.adapter;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,10 +15,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.LinearInterpolator;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -25,13 +28,13 @@ import com.collegedekho.app.display.peekandpop.BlurBuilder;
 import com.collegedekho.app.display.peekandpop.PeekAndPop;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.fragment.WishlistFragment;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.widget.FadeInImageView;
 
 import java.util.ArrayList;
 
-import static com.collegedekho.app.resource.Constants.HOLD_ENTER_VIBRATION_DURATION;
-import static com.collegedekho.app.resource.Constants.HOLD_REMOVE_VIBRATION_DURATION;
+import static com.collegedekho.app.activity.MainActivity.getResourceString;
 
 public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistInstituteListAdapter.InstituteHolder> {
 
@@ -46,6 +49,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
     private View mPeekView;
     private WishlistCardAdapter mPeekViewAdapter;
     private WishlistFragment.WishlistInstituteInteractionListener mListener;
+    private TextView mCalloutButton;
 
     public WishlistInstituteListAdapter(Activity context, ArrayList<Institute> institutes, int type, PeekAndPop peekAndPop) {
         this.mInstitutes = institutes;
@@ -56,6 +60,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
         this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
         this.mPeekViewAdapter = new WishlistCardAdapter(context);
         this.mPeekView = this.mPeekAndPop.getPeekView();
+        this.mCalloutButton = (TextView) this.mPeekView.findViewById(R.id.wishlist_institute_btn_callout);
 
 
         this.mSetupPeekAndPopStandard();
@@ -75,19 +80,17 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
 
             @Override
             public void onClickPeek(View view, int position) {
-
+                WishlistInstituteListAdapter.this.mShowInstituteCardOnClick(position);
             }
 
             @Override
             public void onClickPop(View view, int position) {
-
             }
         });
 
         this.mPeekAndPop.addLongHoldView(R.id.wishlist_institute_see_all_layout, true);
         this.mPeekAndPop.addLongHoldView(R.id.wishlist_btn_details, true);
         this.mPeekAndPop.addLongHoldView(R.id.wishlist_header_view, true);
-        //this.mPeekAndPop.addLongHoldView(R.id.facility_image, true);
 
         this.mPeekAndPop.addHoldAndReleaseView(R.id.wishlist_institute_btn_call_now);
         this.mPeekAndPop.addHoldAndReleaseView(R.id.wishlist_institute_btn_apply_now);
@@ -98,12 +101,12 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
             @Override
             public void onEnter(View view, int position) {
                 Log.d("WlInsAdap", "onEnter:");
-                vibratorService.vibrate(HOLD_ENTER_VIBRATION_DURATION);
+                vibratorService.vibrate(Constants.HOLD_ENTER_VIBRATION_DURATION);
             }
 
             @Override
             public void onLongHold(View view, int position) {
-                vibratorService.vibrate(HOLD_REMOVE_VIBRATION_DURATION);
+                vibratorService.vibrate(Constants.HOLD_REMOVE_VIBRATION_DURATION);
                 if (view.getId() == R.id.wishlist_institute_see_all_layout) {
                     WishlistInstituteListAdapter.this.mPeekViewAdapter.ToggleFacilitiesLayout();
                 }
@@ -114,7 +117,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
                 else if (view.getId() == R.id.wishlist_header_view)
                 {
                     //show institute
-                    WishlistInstituteListAdapter.this.mListener.OnWishlistInstituteSelected(WishlistInstituteListAdapter.this.mInstitutes.get(position));
+                    WishlistInstituteListAdapter.this.mListener.OnWishlistInstituteSelected(WishlistInstituteListAdapter.this.mInstitutes.get(position), true);
                 }
             }
         });
@@ -122,15 +125,40 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
         this.mPeekAndPop.setOnHoldAndReleaseListener(new PeekAndPop.OnHoldAndReleaseListener() {
             @Override
             public void onHold(View view, int position) {
-                vibratorService.vibrate(HOLD_ENTER_VIBRATION_DURATION);
+                if (view.getId() == R.id.wishlist_institute_btn_call_now)
+                    WishlistInstituteListAdapter.this.mCalloutButton.setText(getResourceString(R.string.ACTION_CALL_COLLEGE));
+                else if (view.getId() == R.id.wishlist_institute_btn_apply_now)
+                    WishlistInstituteListAdapter.this.mCalloutButton.setText(getResourceString(R.string.ACTION_APPLY_COLLEGE));
+                else if (view.getId() == R.id.wishlist_institute_btn_remove_shortlist)
+                    WishlistInstituteListAdapter.this.mCalloutButton.setText(getResourceString(R.string.ACTION_REMOVE_COLLEGE));
+
+                vibratorService.vibrate(Constants.HOLD_ENTER_VIBRATION_DURATION);
+
+                WishlistInstituteListAdapter.this.mCalloutButton.animate()
+                        .setDuration(100)
+                        .alpha(1f)
+                        .setInterpolator(new LinearInterpolator())
+                        .y(((WishlistInstituteListAdapter.this.mPeekView.getHeight() >> 1) >> 1));
             }
 
             @Override
-            public void onLeave(View view, int position) {}
+            public void onLeave(View view, int position) {
+                WishlistInstituteListAdapter.this.mCalloutButton.animate()
+                        .setDuration(50)
+                        .alpha(0f)
+                        .setInterpolator(new LinearInterpolator())
+                        .y(WishlistInstituteListAdapter.this.mPeekView.getHeight() + WishlistInstituteListAdapter.this.mPeekView.getHeight() >> 1);
+            }
 
             @Override
             public void onRelease(View view, int position) {
-                vibratorService.vibrate(HOLD_REMOVE_VIBRATION_DURATION);
+                WishlistInstituteListAdapter.this.mCalloutButton.animate()
+                        .setDuration(100)
+                        .scaleXBy(2f)
+                        .alpha(0f)
+                        .setInterpolator(new LinearInterpolator());
+
+                vibratorService.vibrate(Constants.HOLD_REMOVE_VIBRATION_DURATION);
 
                 String message = "";
 
@@ -170,16 +198,22 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
 
     @Override
     public void onBindViewHolder(final InstituteHolder instituteHolder, int position) {
+        if (instituteHolder.instituteCard.getTag() == null)
+            instituteHolder.instituteCard.setTag("");
+
         Institute institute = this.mInstitutes.get(position);
+        institute.setPosition(position);
 
         WishlistInstituteListAdapter.this.mPeekAndPop.addLongClickView(instituteHolder.instituteCard, position);
 
         String text = "";
 
-        if (institute.getAcronym() != null && institute.getAcronym().equalsIgnoreCase("None") && !institute.getAcronym().isEmpty())
+        if (institute.getAcronym() != null && !institute.getAcronym().equalsIgnoreCase("None") && !institute.getAcronym().isEmpty())
             text = institute.getAcronym();
         else if (institute.getShort_name() != null && !institute.getShort_name().equalsIgnoreCase("None") && !institute.getShort_name().isEmpty())
             text += institute.getShort_name();
+        else
+            text = institute.getName();
 
         if (institute.getCity_name() != null && !institute.getCity_name().isEmpty())
             if (! text.toLowerCase().contains(institute.getCity_name().toLowerCase()))
@@ -190,66 +224,25 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
         instituteHolder.instituteLogo.setDefaultImageResId(R.drawable.ic_cd);
         instituteHolder.instituteLogo.setErrorImageResId(R.drawable.ic_cd);
 
-/*
-        ImageLoader.ImageListener imageListener = new ImageLoader.ImageListener() {
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                if (response.getBitmap() != null) {
-                    instituteHolder.instituteLogo.setLocalImageBitmap(response.getBitmap(), true);
-                    //applyBlur(instituteHolder);
-                }
-            }
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        };
-*/
-
-        if (institute.getLogo() != null && !institute.getLogo().isEmpty()) {
-            //this.mImageLoader.get(institute.getLogo(), imageListener);
+        if (institute.getLogo() != null && !institute.getLogo().isEmpty())
             instituteHolder.instituteLogo.setImageUrl(institute.getLogo(), this.mImageLoader);
-        }
 
         instituteHolder.instituteShortName.setText(text);
 
         //Setting event listener on textview, so that when layout phase is over we get a callback and do our thing \m/ !!
-        instituteHolder.instituteShortName.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                instituteHolder.instituteShortName.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                instituteHolder.instituteShortName.setBackgroundDrawable(new BitmapDrawable(WishlistInstituteListAdapter.this.mContext.getResources(), BlurBuilder.blur(instituteHolder.instituteShortName)));
-            }
-        });
+        if (!instituteHolder.instituteCard.getTag().equals("set"))
+        {
+            instituteHolder.instituteShortName.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    instituteHolder.instituteShortName.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    instituteHolder.instituteShortName.setBackgroundDrawable(new BitmapDrawable(WishlistInstituteListAdapter.this.mContext.getResources(), BlurBuilder.blur(instituteHolder.instituteShortName)));
+                }
+            });
+        }
+
+        instituteHolder.instituteCard.setTag("set");
     }
-
-    /*private void applyBlur(final InstituteHolder instituteHolder) {
-        instituteHolder.instituteLogo.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                instituteHolder.instituteLogo.getViewTreeObserver().removeOnPreDrawListener(this);
-                instituteHolder.instituteLogo.buildDrawingCache();
-
-                Bitmap bmp = instituteHolder.instituteLogo.getDrawingCache();
-                blur(bmp, instituteHolder.instituteShortName);
-
-                return true;
-            }
-        });
-    }
-
-    private void blur(Bitmap bkg, View view) {
-        long startMs = System.currentTimeMillis();
-        float radius = 20;
-
-        Bitmap overlay = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(overlay);
-        canvas.translate(-view.getLeft(), -view.getTop());
-        canvas.drawBitmap(bkg, 0, 0, null);
-        overlay = Utils.FastBlur(overlay, 2.0f, (int)radius);
-        view.setBackground(new BitmapDrawable(this.mContext.getResources(), overlay));
-    }*/
 
     @Override
     public void onViewDetachedFromWindow(InstituteHolder holder) {
@@ -264,7 +257,6 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
 
     public static class InstituteHolder extends RecyclerView.ViewHolder{
         View instituteCard;
-
         TextView instituteShortName;
         FadeInImageView instituteLogo;
 
@@ -286,6 +278,6 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
 
     public void mShowInstituteCardOnClick(int position)
     {
-        this.mPeekViewAdapter.ShowInstituteCard(this.mInstitutes.get(position), this.mPeekView);
+        this.mListener.OnWishlistInstituteSelected(WishlistInstituteListAdapter.this.mInstitutes.get(position), false);
     }
 }

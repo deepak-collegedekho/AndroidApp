@@ -267,6 +267,8 @@ public class MainActivity extends AppCompatActivity
         Constants.FilterCategoryMap.put(Constants.ID_SPECIALIZATION, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
         Constants.FilterCategoryMap.put(Constants.ID_DEGREE, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
         Constants.FilterCategoryMap.put(Constants.ID_EXAM, Constants.FILTER_CATEGORY_COURSE_AND_SPECIALIZATION);
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
     private static final String TAG = "MainActivity";
@@ -277,7 +279,7 @@ public class MainActivity extends AppCompatActivity
 
     public static NetworkUtils networkUtils;
     private ActionBarDrawerToggle mToggle;
-    public BaseFragment currentFragment;
+    public volatile BaseFragment currentFragment;
     private List<Institute> mInstituteList;
     private List<Chapters> chaptersList;
     private List<PsychometricTestQuestion> psychometricQuestionsList;
@@ -296,7 +298,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Folder> mFolderList;
     private List<News> mNewsList;
     private List<Articles> mArticlesList;
-    public Institute mInstitute;
+    private Institute mInstitute;
     private String mLastScreenName = "";
     private List<Widget> mWidgets;
     public  CallbackManager callbackManager;
@@ -1004,8 +1006,8 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         this.connecto.track("Session Ended", new Properties().putValue("session_end_datetime", new Date().toString()));
 
-        super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
+        super.onDestroy();
     }
 
     SearchView searchView = null;
@@ -1872,17 +1874,20 @@ public class MainActivity extends AppCompatActivity
         if(position<0 || position>=mInstituteList.size()){
             return;
         }
-        this.mDisplayInstituteByEntity(this.mInstituteList.get(position));
+        this.mDisplayInstituteByEntity(this.mInstituteList.get(position), Constants.CDRecommendedInstituteType.UNBAISED);
     }
 
-    private void mDisplayInstituteByEntity(Institute institute) {
+    private void mDisplayInstituteByEntity(Institute institute, Constants.CDRecommendedInstituteType instituteType) {
         this.mInstitute = institute;
         int id = institute.getId();
 
 //        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE);
 //
 //        if (fragment == null)
-        this.mDisplayFragment(InstituteDetailFragment.newInstance(institute), true, Constants.TAG_FRAGMENT_INSTITUTE);
+        if (instituteType == Constants.CDRecommendedInstituteType.SHORTLISTED)
+            this.mDisplayFragment(InstituteDetailFragment.newInstance(institute, Constants.CDRecommendedInstituteType.SHORTLISTED), true, Constants.TAG_FRAGMENT_INSTITUTE);
+        else
+            this.mDisplayFragment(InstituteDetailFragment.newInstance(institute, Constants.CDRecommendedInstituteType.UNBAISED), true, Constants.TAG_FRAGMENT_INSTITUTE);
 //        else
 //            this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE);
 
@@ -2300,7 +2305,7 @@ public class MainActivity extends AppCompatActivity
                     /*if (tags[1].equals("true") && next!=null)
                         onNextWishList();
                     else*/
-                        RemoveInstituteFromWishlist(Integer.parseInt(tags[1]));
+                    RemoveInstituteFromWishlist(Integer.parseInt(tags[1]));
                 }
                 break;
             case Constants.TAG_INSTITUTE_LIKE_DISLIKE:
@@ -2590,8 +2595,6 @@ public class MainActivity extends AppCompatActivity
                         ((HomeFragment)currentFragment).updateSyllabus();
                 }
                 break;
-
-
         }
         try {
             if(hideProgressDialog)
@@ -2601,20 +2604,28 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     private void mUpdateAppliedInstituteWishlist(int i)
     {
+        this.mInstitute.setIs_applied(true);
+
         if (currentFragment instanceof WishlistFragment)
             ((WishlistFragment) currentFragment).UpdateAppliedStatus(i);
         else if(currentFragment instanceof CDRecommendedInstituteFragment)
             ((CDRecommendedInstituteFragment) currentFragment).UpdateAppliedStatus(i);
+        else if (currentFragment instanceof InstituteDetailFragment && i < 0)
+            ((InstituteDetailFragment) currentFragment).OnInstituteApplied();
     }
 
-    private void RemoveInstituteFromWishlist(int i) {
+    private void RemoveInstituteFromWishlist(int i)
+    {
+        this.mInstitute.setIs_shortlisted(0);
+
         if (currentFragment instanceof WishlistFragment)
             ((WishlistFragment) currentFragment).RemoveInstitute(i);
         else if(currentFragment instanceof CDRecommendedInstituteFragment)
              ((CDRecommendedInstituteFragment) currentFragment).RemoveInstitute(i);
+        else if(currentFragment instanceof InstituteDetailFragment && i < 0)
+            ((InstituteDetailFragment) currentFragment).OnInstituteRemoved();
     }
 
     private synchronized void mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType type) {
@@ -3479,8 +3490,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void OnWishlistInstituteSelected(Institute institute) {
-        this.mDisplayInstituteByEntity(institute);
+    public void OnWishlistInstituteSelected(Institute institute, boolean isFromCard) {
+        this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.SHORTLISTED);
     }
 
     @Override
@@ -3504,6 +3515,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnWishlistInstituteRemoved(Institute institute, int position) {
+        this.mInstitute = institute;
         if (institute != null) {
             this.mMakeNetworkCall(Constants.CARD_DELETE_SHORTLISTED_INSTITUTE + "#" + position , institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
         }
@@ -5210,7 +5222,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnCDRecommendedInstituteSelected(Institute institute) {
-        this.mDisplayInstituteByEntity(institute);
+        this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.UNBAISED);
         Log.e("CD-RE", "Selected:CD Reco Institute is : " + institute.getId());
     }
 
@@ -5498,6 +5510,32 @@ public class MainActivity extends AppCompatActivity
     public void requestForCoursesUpdate(){
         if(mInstitute != null)
         this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + mInstitute.getId(), null);
+    }
+
+    @Override
+    public void OnInstituteAppliedFromDetail(Institute institute) {
+        this.mInstitute = institute;
+        DataBaseHelper.getInstance(this).deleteAllExamSummary();
+        if(institute.getGroups_exists()==1) {
+            String cafUrl = Constants.CAF_URL + "?institute_id=" + institute.getId() + "&&user_id=" + MainActivity.user.getId();
+            onDisplayWebFragment(cafUrl);
+        }else {
+            requestForApplyInstitute(Constants.TAG_WISH_LIST_APPLIED_COURSE + "#" + "-1", new HashMap<String, String>(),Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE);
+
+            if(this.mInstitute != null) {
+                Map<String, Object> eventValue = new HashMap<>();
+                eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_WISHLIST), mInstitute.getResource_uri());
+                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
+            }
+        }
+    }
+
+    @Override
+    public void OnInstituteRemovedFromDetail(Institute institute) {
+        this.mInstitute = institute;
+        if (this.mInstitute != null) {
+            this.mMakeNetworkCall(Constants.CARD_DELETE_SHORTLISTED_INSTITUTE + "#" + "-1" , institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
+        }
     }
 
     public ArrayList<String> getYears() {
@@ -5978,7 +6016,7 @@ public class MainActivity extends AppCompatActivity
             if (this.mInstituteList != null && !this.mInstituteList.isEmpty()) {
                 this.mInstitute = this.mInstituteList.get(0);
                 int id = this.mInstituteList.get(0).getId();
-                this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute), false, Constants.TAG_FRAGMENT_INSTITUTE);
+                this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute, Constants.CDRecommendedInstituteType.UNBAISED), false, Constants.TAG_FRAGMENT_INSTITUTE);
 
                 //this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
@@ -6446,7 +6484,7 @@ public class MainActivity extends AppCompatActivity
             List<Institute> list = JSON.std.listOfFrom(Institute.class, "[" + response + "]");
             if (list != null && !list.isEmpty()) {
                 Institute institute = list.get(0);
-                mDisplayInstituteByEntity(institute);
+                this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.UNBAISED);
             }
 
         } catch (Exception e) {
@@ -6475,5 +6513,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public Institute getCurrentInstitute() {
+        return mInstitute;
+    }
 
+    public void setCurrentInstitute(Institute mInstitute) {
+        this.mInstitute = mInstitute;
+    }
 }

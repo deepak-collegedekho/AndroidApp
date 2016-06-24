@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -119,6 +120,8 @@ private View mExamsTabLayout;
             this.mExamTabPager.setVisibility(View.VISIBLE);
             this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
             this.mExamTabPager.setAdapter(this.mDetailsAdapter);
+            ((ViewPager.LayoutParams) ((PagerTabStrip) rootView.findViewById(R.id.exam_pager_header)).getLayoutParams()).isDecor = true;
+
 
             this.mExamTabPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override

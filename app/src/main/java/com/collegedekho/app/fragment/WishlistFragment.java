@@ -48,6 +48,7 @@ public class WishlistFragment extends BaseFragment {
     private CardView wishlistInstituteCard;
     private PeekAndPop peekAndPop;
     private WishlistInstituteListAdapter mWishlistInstituteListAdapter;
+    private MainActivity mMainActivity;
 
     public WishlistFragment() {
         // Required empty public constructor
@@ -117,7 +118,7 @@ public class WishlistFragment extends BaseFragment {
         layoutManager = new GridLayoutManager(getActivity(), 3);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
 
-        this.recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 0, false));
+        this.recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 0, true));
         this.recyclerView.setLayoutManager(layoutManager);
         this.recyclerView.setHasFixedSize(true);
         this.recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -193,25 +194,35 @@ public class WishlistFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        MainActivity mMainActivity = (MainActivity) this.getActivity();
+        this.mMainActivity = (MainActivity) this.getActivity();
 
-        if (mMainActivity != null)
-            mMainActivity.currentFragment = this;
+        if (this.mMainActivity != null)
+        {
+            this.mMainActivity.currentFragment = this;
 
-/*
-        if (mInstitutes.size() == 0) {
-            this.mEmptyTextView.setText("Opps! Unable to find colleges for your preferences, please change your filters in ‘*Resource Buddy*’!");
-            this.mEmptyTextView.setVisibility(View.VISIBLE);
+            Institute institute = this.mMainActivity.getCurrentInstitute();
+
+            if (institute != null && institute.getPosition() >= 0)
+            {
+                //removed from shortlist
+                if (institute.getIs_shortlisted() == 0)
+                    this.mInstitutes.remove(institute.getPosition());
+                //applied
+                else
+                    this.mInstitutes.set(institute.getPosition(), institute);
+
+                //update the list
+                this.mWishlistInstituteListAdapter.notifyDataSetChanged();
+
+                this.mMainActivity.setCurrentInstitute(null);
+            }
         }
-        else {
-            this.mEmptyTextView.setVisibility(View.GONE);
-        }
-*/
     }
 
     @Override
     public void onDestroy() {
         this.peekAndPop.destroy();
+        this.mMainActivity.setCurrentInstitute(null);
         super.onDestroy();
     }
 
@@ -223,35 +234,24 @@ public class WishlistFragment extends BaseFragment {
 
     public void updateLastList(List<Institute> institutes, String next)
     {
-        if(mInstitutes != null){
-            mInstitutes.clear();
+        if(this.mInstitutes != null){
+            this.mInstitutes.clear();
             updateList(institutes, next);
         }
     }
 
     public void updateList(List<Institute> institutes, String next) {
-
-        progressBarLL.setVisibility(View.GONE);
+        this.progressBarLL.setVisibility(View.GONE);
         this.mWishlistInstituteListAdapter.lastPosition = this.mInstitutes.size() - 1;
-        mInstitutes.addAll(institutes);
+        this.mInstitutes.addAll(institutes);
         this.mWishlistInstituteListAdapter.notifyDataSetChanged();
-        loading = false;
-        mNextUrl = next;
-
-/*
-        if (mInstitutes.size() == 0) {
-            this.mEmptyTextView.setText("Opps! Unable to find colleges for your preferences, please change your filters in ‘*Resource Buddy*’!");
-            this.mEmptyTextView.setVisibility(View.VISIBLE);
-        } else {
-            this.mEmptyTextView.setVisibility(View.GONE);
-        }
-*/
+        this.loading = false;
+        this.mNextUrl = next;
     }
-
 
     public interface WishlistInstituteInteractionListener extends BaseListener {
 
-        void OnWishlistInstituteSelected(Institute institute);
+        void OnWishlistInstituteSelected(Institute institute, boolean isFromCard);
         void OnWishlistInstituteApplied(Institute institute, int position);
         void OnWishlistInstituteRemoved(Institute institute, int position);
 

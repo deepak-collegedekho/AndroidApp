@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:textColor="#fff"
-            android:background="@color/primaryColor"
+            android:background="@color/primary_color"
             android:scrollbars="none"
             app:layout_scrollFlags="scroll|enterAlways"
             app:tabMode="scrollable"

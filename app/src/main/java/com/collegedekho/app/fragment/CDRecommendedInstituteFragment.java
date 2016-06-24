@@ -67,6 +67,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     private int mWishListCount;
     private int mBuzzListCount;
     private View currentTab;
+    private MainActivity mMainActivity;
 
 
     public CDRecommendedInstituteFragment() {
@@ -282,10 +283,34 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         if (getView() != null)
             getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-        MainActivity mMainActivity = (MainActivity) this.getActivity();
-        if (mMainActivity != null)
-            mMainActivity.currentFragment = this;
+        this.mMainActivity = (MainActivity) this.getActivity();
+        if (this.mMainActivity != null)
+            this.mMainActivity.currentFragment = this;
 
+        Institute institute = this.mMainActivity.getCurrentInstitute();
+
+        if (institute != null && institute.getPosition() >= 0)
+        {
+            //removed from shortlist
+            if (institute.getIs_shortlisted() == 0)
+                this.mInstitutes.remove(institute.getPosition());
+                //applied
+            else
+                this.mInstitutes.set(institute.getPosition(), institute);
+
+
+            //update the list
+            this.mWishlistInstituteListAdapter.notifyDataSetChanged();
+
+            this.mMainActivity.setCurrentInstitute(null);
+        }
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        this.mMainActivity.setCurrentInstitute(null);
+        super.onDestroy();
     }
 
     @Override
@@ -406,7 +431,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     public void OnInstituteSelected(Institute institute) {
         this.mListener.OnCDRecommendedInstituteSelected(institute);
     }
-
 
     @Override
     public void OnInstituteLiked(Institute institute, boolean isLastCard) {
@@ -635,7 +659,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         void onClickWishList();
         void onClickRecommendedList();
         void onNextBuzzList();
-        void OnWishlistInstituteSelected(Institute institute);
+        void OnWishlistInstituteSelected(Institute institute, boolean isFromCard);
         void OnWishlistInstituteApplied(Institute institute, int position);
         void OnWishlistInstituteRemoved(Institute institute, int position);
         @Override

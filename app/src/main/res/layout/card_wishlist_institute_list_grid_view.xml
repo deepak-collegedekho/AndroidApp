@@ -13,12 +13,14 @@
     android:paddingTop="@dimen/activity_vertical_margin_small"
     android:clickable="true"
     android:focusableInTouchMode="true"
-    android:focusable="true">
+    android:focusable="true"
+    >
 
     <RelativeLayout
         android:id="@+id/card_institute_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <com.collegedekho.app.widget.FadeInImageView
             android:id="@+id/wishlist_institute_logo"
@@ -28,7 +30,9 @@
             android:scaleType="center"
             android:saveEnabled="true"
             android:contentDescription="@string/institute_logo_description"
-            android:drawingCacheQuality="high"/>
+            android:drawingCacheQuality="high"
+            android:background="@drawable/bg_wishlist_card"
+            />
 
         <TextView
             android:id="@+id/wishlist_institute_shortname"

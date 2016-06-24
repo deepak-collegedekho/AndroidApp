@@ -584,17 +584,6 @@
                             />
 
                         <TextView
-                            android:id="@+id/wishlist_institute_min_sal_txt"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_above="@+id/wishlist_institute_min_sal_val"
-                            android:layout_marginLeft="@dimen/m10dp"
-                            android:layout_toRightOf="@id/wishlist_institute_min_sal_bar"
-                            android:text="Min"
-                            android:textColor="@color/black"
-                            android:textSize="10sp"/>
-
-                        <TextView
                             android:id="@+id/wishlist_institute_min_sal_val"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -606,6 +595,16 @@
                             android:textSize="11sp"
                             android:textStyle="bold"
                             />
+                        <TextView
+                            android:id="@+id/wishlist_institute_min_sal_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@id/wishlist_institute_min_sal_val"
+                            android:layout_marginLeft="@dimen/m10dp"
+                            android:layout_toRightOf="@id/wishlist_institute_min_sal_bar"
+                            android:text="Min"
+                            android:textColor="@color/black"
+                            android:textSize="10sp"/>
                     </RelativeLayout>
                 </RelativeLayout>
             </LinearLayout>
@@ -658,7 +657,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
                 <LinearLayout
+                    android:id="@+id/wishlist_institute_action_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:paddingTop="@dimen/m4dp"
@@ -721,4 +722,26 @@
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
+    <TextView
+        android:id="@+id/wishlist_institute_btn_callout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_callout"
+        android:paddingLeft="@dimen/m5dp"
+        android:paddingRight="@dimen/m5dp"
+        android:paddingTop="@dimen/m5dp"
+        android:paddingBottom="@dimen/m13dp"
+        android:layout_marginBottom="@dimen/m40dp"
+        android:text="callout"
+        android:layout_gravity="bottom|center"
+        android:gravity="center"
+        android:alpha="0"
+        android:textAlignment="center"
+        android:textSize="@dimen/m16sp"
+        android:textColor="@color/black"
+        android:shadowColor="#000"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="50"
+        />
 </android.support.v7.widget.CardView>

@@ -10,7 +10,8 @@
             <enum name="fill_parent" value="-1"/>
             <enum name="match_parent" value="-1"/>
             <enum name="wrap_content" value="-2"/>
-        </attr></declare-styleable>
+        </attr>
+    </declare-styleable>
     <dimen name="ms__item_height">48dp</dimen>
     <dimen name="ms__padding_left">24dp</dimen>
     <dimen name="ms__padding_top">12dp</dimen>

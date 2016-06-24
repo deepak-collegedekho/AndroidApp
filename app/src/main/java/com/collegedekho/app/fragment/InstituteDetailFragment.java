@@ -2,15 +2,21 @@ package com.collegedekho.app.fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -25,6 +31,8 @@ import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +47,7 @@ import java.util.List;
  */
 public class InstituteDetailFragment extends BaseFragment {
     private static final String ARG_INSTITUTE = "param1";
+    private static final String ARG_FROM_WISHLIST = "param2";
     public static final int Videos = 4;
     public static final int QnA = 1;
     public static final int News = 2;
@@ -53,7 +62,10 @@ public class InstituteDetailFragment extends BaseFragment {
     private String nextArticleUrl;
     private String nextNewsUrl;
     private OnInstituteDetailListener mListener;
-
+    private FloatingActionMenu mFloatingMenu;
+    private Constants.CDRecommendedInstituteType mInstituteType;
+    private FloatingActionButton mFabApply;
+    private int fabMargin;
 
     public InstituteDetailFragment() {
         // Required empty public constructor
@@ -64,12 +76,14 @@ public class InstituteDetailFragment extends BaseFragment {
      * this fragment using the provided parameters.
      *
      * @param institute Parameter 1.
+     * @param institutesType
      * @return A new instance of fragment InstituteOverviewFragment.
      */
-    public static InstituteDetailFragment newInstance(Institute institute) {
+    public static InstituteDetailFragment newInstance(Institute institute, Constants.CDRecommendedInstituteType institutesType) {
         InstituteDetailFragment fragment = new InstituteDetailFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_INSTITUTE, institute);
+        args.putSerializable(ARG_FROM_WISHLIST, institutesType);
         fragment.setArguments(args);
 
         return fragment;
@@ -80,6 +94,7 @@ public class InstituteDetailFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mInstitute = getArguments().getParcelable(ARG_INSTITUTE);
+            this.mInstituteType = (Constants.CDRecommendedInstituteType) getArguments().getSerializable(ARG_FROM_WISHLIST);
         }
     }
 
@@ -87,12 +102,72 @@ public class InstituteDetailFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_institute_detail, container, false);
+
+        Animation animation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.simple_grow);
+
+        //  FAB margin needed for animation
+        this.fabMargin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
+
+        this.mFloatingMenu = (FloatingActionMenu) rootView.findViewById(R.id.fab_menu);
+
+        this.mFloatingMenu.startAnimation(animation);
+
+        if (this.mInstituteType == Constants.CDRecommendedInstituteType.SHORTLISTED)
+        {
+            this.mFloatingMenu.setVisibility(View.VISIBLE);
+
+            FloatingActionButton fabRemove = (FloatingActionButton) rootView.findViewById(R.id.remove_button);
+            this.mFabApply = (FloatingActionButton) rootView.findViewById(R.id.apply_button);
+            FloatingActionButton fabCall = (FloatingActionButton) rootView.findViewById(R.id.call_button);
+
+            if (this.mInstitute.getGroups_exists() == 1)
+            {
+                //Show Call button number exists
+                if (this.mInstitute.getL3_number() != null && !this.mInstitute.getL3_number().isEmpty() && this.mInstitute.getL3_number() != " ")
+                    fabCall.setVisibility(View.VISIBLE);
+                else
+                    fabCall.setVisibility(View.GONE);
+
+                //Show Apply Now if Partner and not yet applied
+                if (!this.mInstitute.is_applied())
+                    this.mFabApply.setVisibility(View.VISIBLE);
+                else
+                    this.mFabApply.setVisibility(View.GONE);
+            }
+
+            fabRemove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    InstituteDetailFragment.this.mListener.OnInstituteRemovedFromDetail(InstituteDetailFragment.this.mInstitute);
+                }
+            });
+
+            fabCall.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Call intent
+                    Uri number = Uri.parse("tel:" + InstituteDetailFragment.this.mInstitute.getL3_number());
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+                    InstituteDetailFragment.this.getActivity().startActivity(callIntent);
+                }
+            });
+
+            this.mFabApply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    InstituteDetailFragment.this.mListener.OnInstituteAppliedFromDetail(InstituteDetailFragment.this.mInstitute);
+                }
+            });
+        }
+
         if(this.mDetailsAdapter == null) {
             this.mDetailsAdapter = new InstitutePagerAdapter(getChildFragmentManager(), this.mInstitute);
         }else{
             this.mDetailsAdapter.updateInstitutiesList(this.mInstitute);
         }
+
         requestForCourseUpdate();
+
         this.mDetailsPager = (CustomViewPager) rootView.findViewById(R.id.college_detail_pager);
         this.mDetailsPager.setAdapter(this.mDetailsAdapter);
         this.mDetailsPager.setPageTransformer(true, new DepthPageTransformer());
@@ -124,6 +199,16 @@ public class InstituteDetailFragment extends BaseFragment {
         return rootView;
     }
 
+    public void OnInstituteRemoved()
+    {
+        this.getActivity().onBackPressed();
+    }
+
+    public void OnInstituteApplied()
+    {
+        this.mFabApply.setVisibility(View.GONE);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -140,6 +225,18 @@ public class InstituteDetailFragment extends BaseFragment {
         Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_INSTITUTE_LIST  + "/institutes/" + this.mInstitute.getId());
 
         AnalyticsUtils.AppIndexingView("CollegeDekho - Colleges - " + this.mInstitute.getUri_slug(), val, val, (MainActivity) this.getActivity(), false);
+    }
+
+    @Override
+    public void show() {
+        Log.e("InstituteDetailFragment", "Show");
+        mFloatingMenu.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3)).start();
+    }
+
+    @Override
+    public void hide() {
+        Log.e("InstituteDetailFragment", "Hide");
+        mFloatingMenu.animate().translationY(mFloatingMenu.getHeight() + fabMargin).setInterpolator(new AccelerateInterpolator(3)).start();
     }
 
     public void updateCourses(String response ) { new LoadCoursesAsyncTask().execute(response);  }
@@ -285,7 +382,7 @@ public class InstituteDetailFragment extends BaseFragment {
             if (getArguments() != null) {
                 Institute institute=getArguments().getParcelable(ARG_INSTITUTE);
                 if(institute!=null) {
-                    mMainActivity.mInstitute =institute;
+                    mMainActivity.setCurrentInstitute(institute);
                 }
             }
         }
@@ -312,20 +409,13 @@ public class InstituteDetailFragment extends BaseFragment {
     }
     public  interface  OnInstituteDetailListener{
         void requestForCoursesUpdate();
+        void OnInstituteAppliedFromDetail(Institute institute);
+        void OnInstituteRemovedFromDetail(Institute institute);
     }
 
     private void requestForCourseUpdate(){
         if(mListener != null)
             mListener.requestForCoursesUpdate();
-
-    }
-    @Override
-    public void show() {
-
-    }
-
-    @Override
-    public void hide() {
 
     }
 }

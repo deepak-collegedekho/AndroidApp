@@ -694,19 +694,31 @@ public class PeekAndPop {
         private int position;
         private Timer longHoldTimer;
         private Runnable longHoldRunnable;
-        private boolean peekShown;
+        private volatile boolean peekShown;
+        private volatile boolean clickPeekShown;
 
         public PeekAndPopOnTouchListener(int position) {
             this.position = position;
             longHoldTimer = new Timer();
         }
 
+        /*
+         * On Action Down, we need to start timer for peek event and send touchStart event (to show progress bar for Peek Delay Duration).
+         * On Action Up or Cancel,
+         * 1) If peek or clickPeek is shown, we send pop or clickPop event respectively.
+         * 2) If peek or clickPeek is still not shown, we send touchStop event and clickPeek.
+         *
+         */
         @Override
         public boolean onTouch(final View view, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 peekShown = false;
                 startTimer(view);
             } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+
+                if (!peekShown)
+                    onGeneralActionListener.onClickPeek(view, position);
+
                 cancelPendingTimer(view);
             }
 
