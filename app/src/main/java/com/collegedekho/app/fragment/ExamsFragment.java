@@ -287,11 +287,11 @@ public class ExamsFragment extends BaseFragment {
             return;
 
         }
-        if(!isEditMode) {
+        /*if(!isEditMode) {
             this.mListener.onExamsSelected(parentJsonObject);
-        }else {
+        }else {*/
             this.mListener.onExamsEdited(parentJsonObject);
-        }
+       // }
 
     }
 
@@ -306,7 +306,7 @@ public class ExamsFragment extends BaseFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public  interface OnExamsSelectListener {
-        void onExamsSelected(JSONObject params);
+       // void onExamsSelected(JSONObject params);
         void onExamsEdited(JSONObject params);
         void onCancelExamSubmission();
         void displayMessage(int messageId);

@@ -221,7 +221,7 @@
     <string name="NO_CONNECTION_FAULT">You are not connected to internet. Please connect and try again.</string>
     <string name="TAG_FRAGMENT_SHORTLISTED_INSTITUTE">fragment_shortlisted_institute</string>
 
-
+    <!-- user profile Strings-->
     <string name="USER_LOGIN_TYPE">login_type</string>
     <string name="USER_NAME">name</string>
     <string name="USER_FIRST_NAME">first_name</string>

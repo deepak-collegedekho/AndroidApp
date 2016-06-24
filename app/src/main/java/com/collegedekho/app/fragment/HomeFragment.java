@@ -234,52 +234,19 @@ public class HomeFragment extends BaseFragment
             else{
                 mStreamName.setVisibility(View.GONE);
             }
-        }/*else if(MainActivity.user != null){
-
-            String name = MainActivity.user.getName();
-            if(name!=null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()))
-            {
-                mProfileName.setText("");
-                mProfileName.setVisibility(View.GONE);
-            }else {
-                mProfileName.setText(name);
-                mProfileName.setVisibility(View.VISIBLE);
-            }
-
-            String image = MainActivity.user.getImage();
-            if (image != null && ! image.isEmpty())
-                mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-
-            String streamName = MainActivity.user.getStream_name();
-            if(streamName != null && !streamName.isEmpty()){
-                mStreamName.setVisibility(View.VISIBLE);
-                mStreamName.setText(streamName);
-            }
-            else{
-                mStreamName.setVisibility(View.GONE);
-            }
-
         }
-        */
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
             mainActivity.mUpdateTabMenuItem(-1,100);
         }
 
-//        if (Utils.isScreenGotOff() == true)
-//        {
-//            Utils.setScreenGotOff(false);
-//            return;
-//        }
 
         updateExamSummaryHandler.postDelayed(updateExamSummaryRunnable,300);
         if(((MainActivity)getActivity()).isReloadProfile && this.mListener!=null){
             ((MainActivity)getActivity()).isReloadProfile=false;
             this.mExamDetailList=MainActivity.user.getUser_exams();
-//            mListener.onReloadProfile();
-//            getActivity().getSupportFragmentManager().beginTransaction().detach(this).attach(this).commit();
-            updateUserProfile(this.mExamDetailList);
+          updateUserProfile(this.mExamDetailList);
         }
     }
 

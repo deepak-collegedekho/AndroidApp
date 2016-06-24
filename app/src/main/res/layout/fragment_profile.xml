@@ -52,6 +52,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="2.2"
                     android:layout_height="@dimen/m45dp"
+                    android:layout_gravity="top"
                     app:srcCompat="@drawable/ic_profile_info"/>
 
                 <RelativeLayout
@@ -195,7 +196,7 @@
                         android:layout_height="@dimen/m40dp"
                         android:hint="Name"
                         android:maxLines="1"
-                        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                        android:digits=" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
                         android:inputType="textCapWords"
                         android:maxLength="35" />
                 </android.support.design.widget.TextInputLayout>
@@ -285,6 +286,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="2.2"
                     android:layout_height="@dimen/m50dp"
+                    android:layout_gravity="top"
                     app:srcCompat="@drawable/ic_profile_education"/>
 
                 <RelativeLayout
@@ -529,6 +531,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="2.2"
                     android:layout_height="@dimen/m50dp"
+                    android:layout_gravity="top"
                     app:srcCompat="@drawable/ic_profile_preferences"/>
 
                 <RelativeLayout
@@ -786,6 +789,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="2.2"
                     android:layout_height="@dimen/m50dp"
+                    android:layout_gravity="top"
                     app:srcCompat="@drawable/ic_profile_exams"/>
 
                 <RelativeLayout
@@ -873,6 +877,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="2.2"
                     android:layout_height="@dimen/m50dp"
+                    android:layout_gravity="top"
                     app:srcCompat="@drawable/ic_profile_other"/>
 
                 <RelativeLayout
@@ -1060,7 +1065,7 @@
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight=".45"
+                android:layout_weight=".4"
                 android:layout_height="match_parent"
                 android:gravity="center|right"
                 android:orientation="vertical">
@@ -1075,7 +1080,7 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight=".55"
+            android:layout_weight=".6"
             android:layout_height="match_parent"
             android:gravity="center|left"
             android:orientation="vertical">
@@ -1125,14 +1130,14 @@
 
         <View
             android:layout_width="0dp"
-            android:layout_weight=".36"
+            android:layout_weight=".31"
             android:layout_height="match_parent"
             android:gravity="center|right"
             android:orientation="vertical"/>
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight=".64"
+            android:layout_weight=".69"
             android:layout_height="match_parent"
             android:gravity="bottom"
             android:orientation="vertical">
@@ -1159,11 +1164,5 @@
                 <!--app:srcCompat="@drawable/ic_edit_image"/>-->
             </LinearLayout>
        </LinearLayout>
-        <com.truecaller.android.sdk.TrueButton
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:trueButtonText="signIn"
-            android:visibility="gone"
-            android:layout_gravity="center_horizontal"/>
-    </FrameLayout>
+         </FrameLayout>
 </ScrollView>

@@ -77,8 +77,8 @@ public class OTPVerificationFragment extends BaseFragment {
         edtOTP.addTextChangedListener(otpWatcher);
         cbTerms = (CheckBox) view.findViewById(R.id.cb_terms);
         edtMobileNumber.requestFocus();
-//        if(imm!=null)
-//        imm.showSoftInput(edtMobileNumber, InputMethodManager.SHOW_IMPLICIT);
+
+        view.findViewById(R.id.otp_verify_skip_button).setOnClickListener(this);
 
     }
 
@@ -125,6 +125,10 @@ public class OTPVerificationFragment extends BaseFragment {
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
+
+            case R.id.otp_verify_skip_button:
+                getActivity().onBackPressed();
+                break;
             case R.id.btn_submit_mobile:
                 if (mListener != null) {
 
@@ -223,13 +227,8 @@ public class OTPVerificationFragment extends BaseFragment {
         mobileNumberLayout.setVisibility(View.GONE);
         otpLayout.setVisibility(View.VISIBLE);
         edtOTP.requestFocus();
-//        if(imm!=null) {
-//            try {
-//                imm.showSoftInput(getView().findViewById(R.id.edt_otp_number), InputMethodManager.SHOW_IMPLICIT);
-//            }catch (Exception e){
-//
-//            }
-//        }
+        if(getView() != null)
+            getView().findViewById(R.id.otp_verify_skip_button).setVisibility(View.GONE);
     }
 
     public void onInvalidOtp() {

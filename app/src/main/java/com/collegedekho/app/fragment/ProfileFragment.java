@@ -1,6 +1,5 @@
 package com.collegedekho.app.fragment;
 
-import android.animation.ObjectAnimator;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -42,7 +41,6 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
-import com.truecaller.android.sdk.TrueButton;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,7 +67,6 @@ public class ProfileFragment extends BaseFragment {
     private CircularImageView mProfileImage;
     private File uploadTempImageFile;
     private Uri mImageCaptureUri;
-    private boolean isAnony;
     private View mRootView;
     private Drawable mPlusDrawable;
     private Drawable mMinusDrawable;
@@ -77,11 +74,10 @@ public class ProfileFragment extends BaseFragment {
     private static List<ProfileSpinnerItem> mPreferredCitiesList;
     private static List<ProfileSpinnerItem> mPreferredDegreesList;
 
-    public static ProfileFragment getInstance(Profile profile,boolean isAnony){
+    public static ProfileFragment getInstance(Profile profile){
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         args.putParcelable(PARAM1, profile);
-        args.putBoolean(PARAM2, isAnony);
         fragment.setArguments(args);
         return fragment;
     }
@@ -93,7 +89,6 @@ public class ProfileFragment extends BaseFragment {
         Bundle args = getArguments();
         if(args != null){
             this.mProfile = args.getParcelable(PARAM1);
-            this.isAnony = args.getBoolean(PARAM2);
         }
     }
 
@@ -102,16 +97,11 @@ public class ProfileFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        if(isAnony){
-            mRootView.findViewById(R.id.profile_login_button).setVisibility(View.VISIBLE);
-            mRootView.findViewById(R.id.profile_login_button).setOnClickListener(this);
-        }
 
-        TrueButton trueButton =(TrueButton)mRootView.findViewById(R.id.com_truecaller_android_sdk_truebutton);
-        boolean usable = trueButton.isUsable();
-        if (!usable &&  (mProfile.getIs_verified() == 1)){
+        if(mProfile.getIs_verified() == ProfileMacro.NUMBER_VERIFIED)
             mRootView.findViewById(R.id.profile_login_button).setVisibility(View.GONE);
-        }
+        else
+           mRootView.findViewById(R.id.profile_login_button).setVisibility(View.VISIBLE);
 
 
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -126,6 +116,7 @@ public class ProfileFragment extends BaseFragment {
 
 
         mProfileName = (TextView)mRootView.findViewById(R.id.profile_user_name);
+        mRootView.findViewById(R.id.profile_login_button).setOnClickListener(this);
         mRootView.findViewById(R.id.profile_image_update_btn).setOnClickListener(this);
         mRootView.findViewById(R.id.include_edit_image_layout).setOnClickListener(this);
         mRootView.findViewById(R.id.profile_info_edit_btn).setOnClickListener(this);
@@ -1424,13 +1415,7 @@ public class ProfileFragment extends BaseFragment {
         String image = mProfile.getImage();
         if (image != null && !image.isEmpty())
             mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-        else{
-            if(MainActivity.user != null) {
-                image = MainActivity.user.getImage();
-                if (image != null && !image.isEmpty())
-                    mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-            }
-        }
+
     }
 
 
@@ -1490,7 +1475,7 @@ public class ProfileFragment extends BaseFragment {
         params.put("city_id", "" + userCityId);
         params.put("social_category", ""+userSocialCategoryId);
         params.put("mother_tongue",""+ userMotherTongueId);
-        mListener.onProfileUpdated(params,0);
+        mListener.requestForUserProfileUpdate(params,0);
     }
     /**
      * This method is used to request to update user current
@@ -1557,7 +1542,7 @@ public class ProfileFragment extends BaseFragment {
         params.put("current_score", userCurrentScore);
         params.put("current_score_type", ""+userCurrentScoreId);
         params.put("current_passing_year", ""+passingYear);
-        mListener.onProfileUpdated(params, 1);
+        mListener.requestForUserProfileUpdate(params, 1);
     }
 
     /**
@@ -1680,7 +1665,7 @@ public class ProfileFragment extends BaseFragment {
         params.put("preferred_cities_ids", "" + cityIds.toString());
         //params.put("preferred_loan_required", loanRequired);
         //params.put("preferred_loan_amount_needed", ""+userPreferredLoanId);
-        mListener.onProfileUpdated(params, 2);
+        mListener.requestForUserProfileUpdate(params, 2);
     }
 
     /**
@@ -1706,7 +1691,7 @@ public class ProfileFragment extends BaseFragment {
         params.put("fathers_name", fatherName);
         params.put("mothers_name", motherName);
         params.put("coaching_institute", coachingInstitute);
-        mListener.onProfileUpdated(params, 4);
+        mListener.requestForUserProfileUpdate(params, 4);
     }
 
 
@@ -2097,7 +2082,7 @@ public class ProfileFragment extends BaseFragment {
             }else {
                 degreeSpinner.setItems(userDegreesList, true);
                 if(userDegreesList.size() > 1)
-                    degreeSpinner.setText("Specialization");
+                    degreeSpinner.setText("Select Degree");
             }
 
         } else {
@@ -2132,7 +2117,7 @@ public class ProfileFragment extends BaseFragment {
 
 
     public interface  UserProfileListener{
-        void onProfileUpdated(HashMap<String, String> params, int ViewPosition);
+        void requestForUserProfileUpdate(HashMap<String, String> params, int ViewPosition);
         void displayMessage(int messageId);
         void onProfileImageUploaded();
         void onPostAnonymousLogin();

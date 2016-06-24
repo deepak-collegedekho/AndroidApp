@@ -35,6 +35,7 @@ import com.collegedekho.app.entities.StepByStepChoice;
 import com.collegedekho.app.entities.StepByStepQuestion;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.ProfileMacro;
 import com.fasterxml.jackson.jr.ob.JSON;
 
 import java.io.BufferedReader;
@@ -412,7 +413,7 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
                 return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
             }
         } else if (question.getName().equals("gender")) {
-                if (MainActivity.user.getGender() == null) {
+                if (MainActivity.mProfile.getGender() == ProfileMacro.GENDER_NOT_PROVIDED) {
                     return question;
                 } else {
                     questionAnswered(question);
@@ -440,7 +441,7 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
                     return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
                 }
         } else  if (question.getName().equals("phone_no")) {
-                if (MainActivity.mProfile.getPhone_no() == null || MainActivity.mProfile.getPhone_no() .isEmpty()) {
+                if (MainActivity.mProfile.getPhone_no() == null || MainActivity.mProfile.getPhone_no().isEmpty()) {
                     return question;
                 } else {
                     questionAnswered(question);

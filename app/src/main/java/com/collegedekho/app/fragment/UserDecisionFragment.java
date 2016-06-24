@@ -74,6 +74,8 @@ public class UserDecisionFragment extends BaseFragment {
             StringBuffer examsNameBuffer = new StringBuffer();
             if(userExamList != null) {
                 int count = userExamList.size();
+                if(count >= 4)
+                    count = 4;
                 for (int i = 0; i < count; i++) {
                     if(i==0)
                         examsNameBuffer.append(userExamList.get(i).getExam_name());
@@ -81,6 +83,9 @@ public class UserDecisionFragment extends BaseFragment {
                         examsNameBuffer.append(", ").append(userExamList.get(i).getExam_name());
 
                 }
+                if(count < userExamList.size())
+                    examsNameBuffer.append(".....");
+
             }
 
             TextView  userExamSTxtView = (TextView)rootView.findViewById(R.id.user_decision_exams);

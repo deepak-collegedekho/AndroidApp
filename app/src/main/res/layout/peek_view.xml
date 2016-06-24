@@ -726,7 +726,7 @@
         android:id="@+id/wishlist_institute_btn_callout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_callout"
+        android:background="@drawable/ic_callout"
         android:paddingLeft="@dimen/m5dp"
         android:paddingRight="@dimen/m5dp"
         android:paddingTop="@dimen/m5dp"

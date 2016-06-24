@@ -15,9 +15,11 @@ public class Profile implements Parcelable{
     private String email =  "";
     private String image =  "";
     private String state_name = "";
+    private int gender = 0;
     private int state_id = -1;
     private int is_verified = 0;
     private int is_preparing = 0;
+    private int is_anony = 0;
     private String city_name =  "";
     private int city_id = -1;
     private String mother_tongue_name = "";
@@ -76,9 +78,11 @@ public class Profile implements Parcelable{
         email = in.readString();
         image = in.readString();
         state_name = in.readString();
+        gender = in.readInt();
         state_id = in.readInt();
         is_verified = in.readInt();
         is_preparing = in.readInt();
+        is_anony = in.readInt();
         city_name = in.readString();
         city_id = in.readInt();
         mother_tongue_name = in.readString();
@@ -152,9 +156,11 @@ public class Profile implements Parcelable{
         dest.writeString(email);
         dest.writeString(image);
         dest.writeString(state_name);
+        dest.writeInt(gender);
         dest.writeInt(state_id);
         dest.writeInt(is_verified);
         dest.writeInt(is_preparing);
+        dest.writeInt(is_anony);
         dest.writeString(city_name);
         dest.writeInt(city_id);
         dest.writeString(mother_tongue_name);
@@ -242,6 +248,14 @@ public class Profile implements Parcelable{
         this.state_name = state_name;
     }
 
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
+
     public int getState_id() {
         return state_id;
     }
@@ -249,6 +263,7 @@ public class Profile implements Parcelable{
     public void setState_id(int state_id) {
         this.state_id = state_id;
     }
+
 
     public int getIs_verified() {
         return is_verified;
@@ -264,6 +279,14 @@ public class Profile implements Parcelable{
 
     public void setIs_preparing(int is_preparing) {
         this.is_preparing = is_preparing;
+    }
+
+    public int getIs_anony() {
+        return is_anony;
+    }
+
+    public void setIs_anony(int is_anony) {
+        this.is_anony = is_anony;
     }
 
     public String getCity_name() {

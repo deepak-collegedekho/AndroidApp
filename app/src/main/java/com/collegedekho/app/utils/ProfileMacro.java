@@ -14965,7 +14965,6 @@ public class ProfileMacro {
             "            ]";
 
 
-
     public static String getCitiJson(int position) {
         if(position == 1)
             return  ANDMAN_CITIES;
@@ -15392,6 +15391,16 @@ public class ProfileMacro {
     // Request Macros
     public static String CURRENT_EDUCATION = "current_education";
     public static String PREFERRED_EDUCATION = "preferred_education";
+
+    // verified
+
+    public static int NUMBER_VERIFIED = 1;
+    public static int ANONYMOUS_USER = 1;
+
+    // gender
+    public static int GENDER_NOT_PROVIDED = 0;
+    public static int GENDER_MALE = 1;
+    public static int GENDER_FEMALE = 2;
 
     private static ArrayList<ProfileSpinnerItem> motherTongueList ;
     private static ArrayList<ProfileSpinnerItem> socialCategoryList;

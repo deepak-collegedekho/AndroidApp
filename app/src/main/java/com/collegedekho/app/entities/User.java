@@ -25,7 +25,6 @@ public class User
     private String image = "";
     private String token = "";
     private boolean is_anony;
-    private Prefs pref;
     private String stream = "";
     private String level = "";
     private String phone_no = "";
@@ -131,13 +130,6 @@ public class User
         return is_anony;
     }
 
-    public Prefs getPref() {
-        return pref;
-    }
-
-    public void setPref(Prefs pref) {
-        this.pref = pref;
-    }
 
     public String getEmail() {
         return email;
@@ -195,9 +187,6 @@ public class User
         this.token = token;
     }
 
-    public enum Prefs {
-        NOT_SURE, STREAMKNOWN
-    }
 
     public String getStream() {
         return stream;

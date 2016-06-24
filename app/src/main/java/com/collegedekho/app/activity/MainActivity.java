@@ -319,29 +319,26 @@ public class MainActivity extends AppCompatActivity
     private List<ExamDetail> mUserExamsList = new ArrayList<>();
     public static User user;
     public static Profile mProfile;
-    private User.Prefs userPref;
     static String type = "";
     static String resource_uri = "";
     private Menu menu;
     private String mYear;
-    private View view;
     private TextView prepBuddies;
     private TextView resourceBuddies;
     private TextView futureBuddies;
     private TextView myAlerts;
 
-    private boolean IS_HOME_LOADED;
-    private boolean IS_USER_CREATED;
     private List<MyAlertDate> myAlertsList;
     private boolean isFromNotification;
     private boolean isFromDeepLinking;
     private String mDeepLinkingURI;
     private String mExamTag;
-    private String user_phone_number;
     private int mUndecidedInstitutesCount;
     private int mShortListInstituteCount;
     private int mBuzzListInstituteCount;
     private Snackbar mSnackbar;
+    private boolean IS_USER_CREATED;
+    public  boolean IS_HOME_LOADED;
     private static Context mContext;
     public static TrueClient mTrueClient;
     private Resources mResources ;
@@ -461,11 +458,7 @@ public class MainActivity extends AppCompatActivity
         gcmDialogRunnable = new Runnable() {
             @Override
             public void run() {
-                if(mProfile == null){
-                    gcmDialogHandler.removeCallbacks(gcmDialogRunnable);
-                    gcmDialogHandler.postDelayed(gcmDialogRunnable,3000);
-
-                }else  if(IN_FOREGROUND && IS_HOME_LOADED){
+                 if(IN_FOREGROUND && IS_HOME_LOADED){
 
                     if(!IS_NETWORK_TASK_RUNNING &&  currentFragment != null &&
                             !(currentFragment instanceof ProfileFragment)) {
@@ -1344,7 +1337,7 @@ public class MainActivity extends AppCompatActivity
             return;
            Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
             if (fragment == null) {
-                mDisplayFragment(ProfileFragment.getInstance(profile,user.is_anony()), backStack, ProfileFragment.class.getSimpleName());
+                mDisplayFragment(ProfileFragment.getInstance(profile), backStack, ProfileFragment.class.getSimpleName());
             } else
                 mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
     }
@@ -1367,10 +1360,25 @@ public class MainActivity extends AppCompatActivity
      *  his/her information about basic info , current education, preferred education details,
      *  interested exams details and other basic info
      * @param params
+     * @param viewPosition  send -1 if you want to update any info without showing updating
+     *                      profile dialog
      */
     @Override
-    public void onProfileUpdated(HashMap<String, String> params, int viewPostion) {
-        this.mMakeNetworkCall(Constants.TAG_UPDATE_USER_PROFILE+"#"+viewPostion, Constants.BASE_URL +"profile/", params, Request.Method.POST);
+    public void requestForUserProfileUpdate(HashMap<String, String> params, int viewPosition) {
+        if(params == null)
+            return;
+
+        if(viewPosition == -1){
+            mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL +"profile/", params, Request.Method.POST);
+            return;
+        }
+
+        if(mProfile != null && (mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER)) {
+                String email = Utils.getDeviceEmail(getApplicationContext());
+                params.put("email", email);
+        }
+
+        this.mMakeNetworkCall(Constants.TAG_UPDATE_USER_PROFILE+"#"+viewPosition, Constants.BASE_URL +"profile/", params, Request.Method.POST);
     }
 
     /**
@@ -1519,7 +1527,7 @@ public class MainActivity extends AppCompatActivity
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
             this.mClearBackStack();
             this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams),addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
-            requestOtp();
+            mDisplayOtpVerificationFragment();
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1531,7 +1539,7 @@ public class MainActivity extends AppCompatActivity
             String results = JSON.std.asString(map.get("results"));
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
             this.mDisplayFragment(PsychometricStreamFragment.newEditableInstance(new ArrayList(streams),addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
-            requestOtp();
+            mDisplayOtpVerificationFragment();
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1722,7 +1730,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             if (MainActivity.user.getPartner_shortlist_count() > 0) {
-                requestOtp();
+                mDisplayOtpVerificationFragment();
             }
         } catch (IOException e) {
             this.hideProgressDialog();
@@ -1753,7 +1761,7 @@ public class MainActivity extends AppCompatActivity
 
             if(listType==Constants.WISH_LIST_TYPE){
                 if(MainActivity.user.getPartner_shortlist_count()>0) {
-                    requestOtp();
+                    mDisplayOtpVerificationFragment();
                 }
             }
         } catch (IOException e) {
@@ -1780,7 +1788,7 @@ public class MainActivity extends AppCompatActivity
 
             if(listType==Constants.WISH_LIST_TYPE){
                 if(MainActivity.user.getPartner_shortlist_count()>0) {
-                    requestOtp();
+                    mDisplayOtpVerificationFragment();
                 }
             }
         } catch (IOException e) {
@@ -1970,6 +1978,7 @@ public class MainActivity extends AppCompatActivity
             try {
                 HashMap<String, String> params = (HashMap<String, String>) data.getSerializableExtra(Constants.DIALOG_DATA);
                 if(params!=null && !params.isEmpty()) {
+
                     this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL +"profile/", params, Request.Method.POST);
                    }
             }catch (Exception e){
@@ -2139,9 +2148,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_LOAD_EXAMS_LIST:
                 this.mOnExamsLoaded(response, false);
-                break;
-            case Constants.TAG_SUBMIT_EXAMS_LIST:
-                this.mOnUserExamsSelected(response);
                 break;
             case Constants.TAG_USER_EXAMS_SUBMISSION:
                 mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_EXAMS, Constants.BASE_URL +"profile/", null);
@@ -2395,7 +2401,7 @@ public class MainActivity extends AppCompatActivity
                     if (tags.length > 3)
                         extraTag = tags[3];
 
-                    this.mStreamAndLevelSelected(response, parentIndex, childIndex, extraTag);
+                    this.mStreamAndLevelSelected(response, parentIndex, childIndex, extraTag, false);
                 }
 
                 break;
@@ -2681,7 +2687,7 @@ public class MainActivity extends AppCompatActivity
         }
         if (!isUpdateStreams) {
             this.mClearBackStack();
-            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST, Constants.BASE_URL + "user-exams/", null, 0);
+            this.mMakeJsonObjectNetworkCall(Constants.TAG_USER_EXAMS_SUBMISSION, Constants.BASE_URL + "user-exams/", null, 0);
         } else {
             this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST, Constants.BASE_URL + "user-exams/", null, 0);
         }
@@ -2827,7 +2833,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         //save the preferences locally
-        MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
         if (tempUser != null) {
             MainActivity.user.setPhone_no(tempUser.getPhone_no());
             MainActivity.user.setName(tempUser.getName());
@@ -2853,9 +2858,7 @@ public class MainActivity extends AppCompatActivity
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_LEVEL_UPDATED), eventValue, this);
     }
 
-    private void mStreamAndLevelSelected(String response, String level, String stream, String streamName) {
-        this.mStreamAndLevelSelected(response, level, stream, streamName, false);
-    }
+
 
     //Saved on DB, now save it in shared preferences.
     private void mStreamAndLevelSelected(String response, String level, String stream, String streamName, boolean isUpdateStreams) {
@@ -2871,7 +2874,6 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
             //save the preferences locally
-            MainActivity.user.setPref(User.Prefs.STREAMKNOWN);
             if (tempUser != null) {
                 MainActivity.user.setToken(tempUser.getToken());
                 MainActivity.user.setImage(tempUser.getImage());
@@ -3166,7 +3168,6 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
             case Constants.WIDGET_SYLLABUS:
                 return "Loading....";
-            case Constants.TAG_SUBMIT_EXAMS_LIST:
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
                 return "Loading Profile...";
             case Constants.TAG_UPDATE_INSTITUTES:
@@ -3768,7 +3769,7 @@ public class MainActivity extends AppCompatActivity
         if (mInstituteList != null && mInstituteList.size() > position && position>=0) {
             Institute institute = this.mInstituteList.get(position);
             if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
-                    requestOtp();
+                    mDisplayOtpVerificationFragment();
                 this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
             } else
                 this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
@@ -4449,8 +4450,6 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //save the preferences locally
-        this.user.setPref(User.Prefs.STREAMKNOWN);
         if (tempUser != null) {
             MainActivity.user.setStream(tempUser.getStream());
             MainActivity.user.setLevel(tempUser.getLevel());
@@ -4488,7 +4487,6 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
         //save the preferences locally
-        user.setPref(User.Prefs.STREAMKNOWN);
         user.setImage(tempUser.getImage());
         String u = null;
         try {
@@ -4821,16 +4819,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * This method is used to send exam list to server which are
-     * selected by user
-     *
-     * @param params
-     */
-    @Override
-    public void onExamsSelected(JSONObject params) {
-        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/", params, 1);
-    }
 
     @Override
     public void onExamsEdited(JSONObject params) {
@@ -5100,7 +5088,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onUserExamSelected(JSONObject examJson) {
-
         this.mMakeJsonObjectNetworkCall(Constants.TAG_USER_EXAMS_SUBMISSION, Constants.BASE_URL + "yearly-exams/", examJson, Request.Method.POST);
     }
 
@@ -5147,7 +5134,8 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_LOAD_USER_PREFERENCES, Constants.BASE_URL + "preferences/", null);
         this.mClearBackStack();
         showProfileScreen(MainActivity.mProfile, false);
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_HOME_LOADED), true).apply();
+        getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_HOME_LOADED), true).apply();
+
 
         isFromNotification = true;
 
@@ -5237,9 +5225,8 @@ public class MainActivity extends AppCompatActivity
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("1"));
-//        if (institute.getPartner_status() > 0) {
-            requestOtp();
-//        }
+
+        mDisplayOtpVerificationFragment();
         if (isUndecided)
             this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard + "#" + isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
         else
@@ -5286,7 +5273,7 @@ public class MainActivity extends AppCompatActivity
         this.mInstitute = institute;
         Map<String, Object> eventValue = new HashMap<>();
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
-        if(institute.getGroups_exists()==1)
+        if(institute.getGroups_exists() == 1)
         {
             eventValue.put(MainActivity.getResourceString(R.string.APPLY_INSTITUTE), Constants.CDInstituteType.PARTNER.toString());
 
@@ -5376,40 +5363,38 @@ public class MainActivity extends AppCompatActivity
 
     private void requestForApplyInstitute(final String TAG , final  HashMap params, final String ShortlistedTag) {
 
-        if(user == null)
+        if(mProfile == null)
             return;
 
         if (mInstitute != null) {
             params.put("institute", "" + mInstitute.getId());
         }
 
-        String name = user.getName();
-        String email = user.getEmail();
-        String phone = user.getPhone_no();
+        String name = mProfile.getName();
+        String email = mProfile.getEmail();
+        String phone = mProfile.getPhone_no();
 
         // get user name for apply course
         if (name == null || name.isEmpty() || name.equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER)))
         {
-            if (user.profileData[0] != null)
-                name = user.profileData[0];
-            else
-                name = getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_name), "");
+            name = getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_name), "");
         }
         // get user email for apply course
         if (email == null || email.isEmpty() || email.contains("@anonymouscollegedekho.com")){
-          if(user.getPrimaryEmail() != null && !user.getPrimaryEmail().isEmpty())
-            email = user.getPrimaryEmail();
-        else
             email = getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_email),"");
+
+            if(email.isEmpty())
+                email = Utils.getDeviceEmail(getApplicationContext());
         }
         // get user email for apply course
         if (phone == null || phone.isEmpty()){
-          if( user.getPrimaryPhone() != null && !user.getPrimaryPhone().isEmpty())
-            phone = user.getPrimaryPhone();
-        else
+            if(user != null && user.getPrimaryPhone() != null && !user.getPrimaryPhone().isEmpty())
+                phone = user.getPrimaryPhone();
+            else
             phone = getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_phone),"");
         }
-        if ( name.isEmpty() || phone.length() <= 6 || email.isEmpty()) {
+
+        if ( name.isEmpty() || phone.length() < 10 || email.isEmpty()) {
             final View view = getLayoutInflater().inflate(R.layout.dialog_apply, null, false);
             ((TextView) view.findViewById(R.id.apply_name)).setText(name);
             ((TextView) view.findViewById(R.id.apply_email)).setText(email);
@@ -5427,7 +5412,6 @@ public class MainActivity extends AppCompatActivity
                 public void onClick(View v) {
                     try {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                //imm.hideSoftInputFromWindow(MainActivity.this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                     }
                     catch (Exception e) {
@@ -5442,19 +5426,20 @@ public class MainActivity extends AppCompatActivity
                     } else if (!Utils.isValidName(name)) {
                         displayMessage(R.string.NAME_INVALID);
                         return;
-                    } else if (phone == null || phone.isEmpty()) {
-                        displayMessage(R.string.PHONE_EMPTY);
-                        return;
-                    } else if (phone.length() <= 9 || phone.length() > 12 || !Utils.isValidPhone(phone)) {
-                        displayMessage(R.string.PHONE_INVALID);
-                        return;
-                    } else if (email == null || email.isEmpty()) {
+                    }  else if (email == null || email.isEmpty()) {
                         displayMessage(R.string.EMAIL_EMPTY);
                         return;
                     } else if (!Utils.isValidEmail(email)) {
                         displayMessage(R.string.EMAIL_INVALID);
                         return;
+                    }else if (phone == null || phone.isEmpty()) {
+                        displayMessage(R.string.PHONE_EMPTY);
+                        return;
+                    } else if (phone.length() <= 9 || phone.length() > 12 || !Utils.isValidPhone(phone)) {
+                        displayMessage(R.string.PHONE_INVALID);
+                        return;
                     }
+
                     getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_name),name).apply();
                     getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_email),email).apply();
                     getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_phone),phone).apply();
@@ -5464,6 +5449,20 @@ public class MainActivity extends AppCompatActivity
                     params.put(getResourceString(R.string.USER_PHONE), phone);
                     params.put(getResourceString(R.string.APPLY_YEAR), mYear);
                     mMakeNetworkCall( TAG,Constants.BASE_URL + "lms/", params, Request.Method.POST);
+
+                    // update user profile  also with apply form data
+                    final HashMap<String, String> profileParams = new HashMap<>();
+
+                    if(mProfile.getName().equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER)))
+                        profileParams.put(getResourceString(R.string.USER_NAME), name);
+
+                    if(mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER)
+                        profileParams.put(getResourceString(R.string.USER_EMAIL), email);
+
+                    if(mProfile.getPhone_no() == null ||  mProfile.getPhone_no().length() < 10)
+                        profileParams.put(getResourceString(R.string.USER_PHONE), phone);
+
+                      requestForUserProfileUpdate(profileParams, -1);
 
                     // remove top card from CD reco and shortlist after  successfully  applying for the institute
                     if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteFragment) {
@@ -5695,8 +5694,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void requestOtp() {
-        if (MainActivity.user.getIs_otp_verified() == 0 && setupOtpRequest(true)) {
+    private void mDisplayOtpVerificationFragment() {
+        if (MainActivity.mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED && setupOtpRequest(true)) {
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(OTPVerificationFragment.class.getSimpleName());
             if (fragment == null)
                 mDisplayFragment(OTPVerificationFragment.newInstance(), true, OTPVerificationFragment.class.getSimpleName());
@@ -5792,15 +5791,7 @@ public class MainActivity extends AppCompatActivity
         try {
             User tempuser = JSON.std.beanFrom(User.class, response);
 
-            //save the preferences locally
-            user.setPref(User.Prefs.STREAMKNOWN);
             if (tempuser != null) {
-//            user.setToken(tempuser.getToken());
-//            user.setImage(tempuser.getImage());
-//            user.setLevel_name(tempuser.getLevel_name());
-//            user.setStream_name(tempuser.getStream_name());
-//            user.setStream(tempuser.getStream());
-//            user.setLevel(tempuser.getLevel());
                 user.setPrimaryEmail(tempuser.getPrimaryEmail());
                 user.setPrimaryPhone(tempuser.getPrimaryPhone());
                 String userName = tempuser.getName();
@@ -5808,10 +5799,7 @@ public class MainActivity extends AppCompatActivity
                     user.setName(userName);
                     user.profileData[0] = userName;
                 }
-//            user.setSublevel(tempuser.getSublevel());
-//            user.setIs_preparing(tempuser.getIs_preparing());
                 user.setResource_uri(tempuser.getResource_uri());
-//            user.profileData = tempuser.profileData;
             }
         } catch (IOException e) {
             e.printStackTrace();
