@@ -1316,6 +1316,10 @@ public class MainActivity extends AppCompatActivity
         }*/
     }
 
+    public void displayProfileFrragment(){
+        mDisplayProfileFragment();
+    }
+
 
     private void mSetProfileUser(String response) {
         try {
@@ -5887,12 +5891,12 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
 
-            mUpdateTabMenuItem(postion);
+            mUpdateTabMenuItem(postion,100);
             onTabMenuSelected(postion);
         }
     };
 
-    public void mUpdateTabMenuItem(int tabPosition) {
+    public void mUpdateTabMenuItem(int tabPosition, int duration) {
         prepBuddies.setSelected(false);
         resourceBuddies.setSelected(false);
         futureBuddies.setSelected(false);
@@ -5901,19 +5905,19 @@ public class MainActivity extends AppCompatActivity
         if (tabPosition == 1) {
             prepBuddies.setSelected(true);
             if(currentBottomItem != prepBuddies ){
-                prepBuddies.animate().translationYBy(-10f).setDuration(300).start();
+                prepBuddies.animate().translationYBy(-10f).setDuration(duration).start();
             }
             if(currentBottomItem != null && currentBottomItem != prepBuddies){
-                currentBottomItem.animate().translationYBy(10f).setDuration(300).start();
+                currentBottomItem.animate().translationYBy(10f).setDuration(duration).start();
             }
             currentBottomItem = prepBuddies;
         }else if (tabPosition == 2) {
             resourceBuddies.setSelected(true);
             if(currentBottomItem != resourceBuddies) {
-                resourceBuddies.animate().translationYBy(-10f).setDuration(300).start();
+                resourceBuddies.animate().translationYBy(-10f).setDuration(duration).start();
             }
             if(currentBottomItem != null && currentBottomItem != resourceBuddies){
-                currentBottomItem.animate().translationYBy(10f).setDuration(300).start();
+                currentBottomItem.animate().translationYBy(10f).setDuration(duration).start();
             }
             currentBottomItem = resourceBuddies;
         }else {

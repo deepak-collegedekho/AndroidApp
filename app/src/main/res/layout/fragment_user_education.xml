@@ -95,9 +95,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/m20sp"
-                android:fontFamily="serif-monospace"
-                android:textColor="@color/black"
-                android:text="WHAT ARE YOU UPTO"/>
+                android:fontFamily="serif"
+                android:textColor="@color/primary_text_default_material_dark"
+                android:text="What are you upto ?" />
 
                 <Button
                     android:id="@+id/user_education_school"

@@ -80,20 +80,28 @@
 
             <TextView
                 android:id="@+id/request_for_undecided_no"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/m16dp"
+                android:padding="@dimen/m10dp"
                 android:textSize="18sp"
-                android:text="NO"/>
+                android:text="NO"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_button_orange"
+                android:gravity="center"/>
 
             <TextView
                 android:id="@+id/request_for_undecided_ok"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/m16dp"
+                android:padding="@dimen/m10dp"
                 android:layout_marginLeft="@dimen/m30dp"
                 android:textSize="18sp"
-                android:text="YES"/>
+                android:text="YES"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_button_orange"
+                android:gravity="center"/>
         </LinearLayout>
     </RelativeLayout>
     <LinearLayout
@@ -233,7 +241,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:paddingBottom="2dp"
-                    android:text="BUZZLIST"
+                    android:text="TRENDING"
                     android:textColor="@color/white"
                     android:textSize="10sp"
                     android:textStyle="bold"/>
@@ -395,7 +403,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:paddingBottom="2dp"
-                    android:text="WISHLIST"
+                    android:text="SHORTLIST"
                     android:textColor="@color/white"
                     android:textSize="@dimen/m10sp"
                     android:textStyle="bold"/>

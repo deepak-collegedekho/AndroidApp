@@ -24,8 +24,8 @@
         android:gravity="center"
         android:textSize="14sp"
         android:fontFamily="sans-serif-light"
-        android:text="Help us know you better, to create your personalized dashboard of colleges"/>
-
+        android:text="Personalize your app for a perfect set of recommended colleges based on preference"
+        android:textStyle="bold"/>
 
 
     <LinearLayout

@@ -160,6 +160,7 @@ public class HomeFragment extends BaseFragment
         rootView.findViewById(R.id.recommended_colleges_layout_RL).setOnClickListener(this);
         rootView.findViewById(R.id.important_date_layout_RL).setOnClickListener(this);
         rootView.findViewById(R.id.profile_syllabus_statusLL).setOnClickListener(this);
+        rootView.findViewById(R.id.profile_image).setOnClickListener(this);
 
         ((ViewPager.LayoutParams) ((PagerTabStrip) rootView.findViewById(R.id.exam_pager_header)).getLayoutParams()).isDecor = true;
 
@@ -263,7 +264,7 @@ public class HomeFragment extends BaseFragment
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
-            mainActivity.mUpdateTabMenuItem(-1);
+            mainActivity.mUpdateTabMenuItem(-1,100);
         }
 
 //        if (Utils.isScreenGotOff() == true)
@@ -394,6 +395,9 @@ public class HomeFragment extends BaseFragment
             case R.id.important_date_layout_RL:
                 if(this.mExamDetail != null)
                     this.mHomeWidgetSelected(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", null);
+                break;
+            case R.id.profile_image:
+                ((MainActivity) getActivity()).displayProfileFrragment();
                 break;
             default:
                 break;

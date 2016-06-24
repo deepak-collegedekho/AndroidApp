@@ -338,10 +338,11 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), true).apply();
                 break;
             case R.id.tab_buzzlist:
-                v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
-                currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
-                mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_orange_border_box));
-
+                if(v.getId() != currentTab.getId()) {
+                    v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
+                    currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
+                    mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_orange_border_box));
+                }
                 if (CARD_CATEGORY != Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()) {
                    /* if(cardState!=null && !cardState.toString().equals("MINIMIZED")
                             && mAdapter.getCardCategory() != Constants.CDRecommendedInstituteType.UNDECIDED.ordinal()) {
@@ -357,9 +358,12 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 currentTab =v;
                 break;
             case R.id.tab_recommended:
-                v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
-                currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
-                mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_blue_border_box));
+                if(v.getId() != currentTab.getId()){
+                    v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
+                    currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
+                    mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_blue_border_box));
+                }
+
 
                 if (CARD_CATEGORY != Constants.CDRecommendedInstituteType.UNBAISED.ordinal()) {
                     /*if(cardState != null && !cardState.toString().equals("MINIMIZED")
@@ -376,8 +380,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 currentTab =v;
                 break;
             case R.id.tab_wishlist:
-                v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
-                currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
+                if(v.getId() != currentTab.getId()) {
+                    v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
+                    currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
+                }
 
                 if (CARD_CATEGORY != Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
                     /*if(cardState!=null && !cardState.toString().equals("MINIMIZED")
@@ -776,7 +782,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mUndecidedCountText.setClickable(true);
         this.mBuzzListCount = this.mInstitutes.size();
         this.mBuzzListCountText.setText(""+mBuzzListCount);
-        mTitle = "Buzzlist Colleges";
+        mTitle = "Trending Colleges";
         this.mPageTitleTV.setText(mTitle);
         //this.mCardContainer.setListener(null);
         // boolean canAnimate = mAdapter.getCardCategory() != Constants.CDRecommendedInstituteType.BUZZLIST.ordinal();

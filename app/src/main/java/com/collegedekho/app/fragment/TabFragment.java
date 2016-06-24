@@ -44,7 +44,8 @@ public class TabFragment extends  BaseFragment{
     private ViewPager mExamTabPager  = null;
     private boolean isFistTime = false;
     private boolean IS_TUTE_COMPLETED = true;
-private View mExamsTabLayout;
+    private View mExamsTabLayout;
+
     public static TabFragment newInstance(int tabPosoition,ArrayList<ExamDetail> examList) {
         TabFragment fragment = new TabFragment();
         Bundle args = new Bundle();
@@ -188,7 +189,7 @@ private View mExamsTabLayout;
                 this.mExamDetailList = MainActivity.user.getUser_exams();
                 this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
                 mExamTabPager.setAdapter(this.mDetailsAdapter);
-                mainActivity.mUpdateTabMenuItem(this.selectedTabPosition);
+                mainActivity.mUpdateTabMenuItem(this.selectedTabPosition,0);
                 if (selectedTabPosition < mExamDetailList.size())
                     mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
             }else {
@@ -212,10 +213,11 @@ private View mExamsTabLayout;
     @Override
     public void onPause() {
         super.onPause();
-        MainActivity mainActivity = (MainActivity)getActivity();
+        final MainActivity mainActivity = (MainActivity)getActivity();
         if(mainActivity.currentBottomItem != null){
-            mainActivity.currentBottomItem.animate().translationYBy(10f).setDuration(300).start();
+            mainActivity.currentBottomItem.animate().translationYBy(10f).setDuration(0).start();
             mainActivity.currentBottomItem = null;
+
         }
         View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
         bottomMenu.animate().translationY(bottomMenu.getHeight());

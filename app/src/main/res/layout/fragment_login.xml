@@ -24,7 +24,8 @@
         android:gravity="center"
         android:textSize="14sp"
         android:fontFamily="sans-serif-light"
-        android:text="Help us know you better, to create your personalized dashboard of colleges"/>
+        android:text="Personalize your app for a perfect set of recommended colleges based on preference"
+        android:textStyle="bold"/>
 
 
     <LinearLayout
@@ -203,7 +204,7 @@
         android:textAllCaps="true"
         android:gravity="center"
         android:textStyle="bold"
-        android:textColor="@color/skip_btn_color"
+        android:textColor="@color/heading_color"
         android:background="@drawable/border_bottom"
         android:contentDescription="@string/sign_up_skip_description"
         android:textSize="18sp" />
