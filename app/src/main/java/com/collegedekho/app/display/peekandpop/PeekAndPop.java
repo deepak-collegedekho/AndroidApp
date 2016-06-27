@@ -48,15 +48,15 @@ public class PeekAndPop {
 
     private static final int PEEK_VIEW_MARGIN = 12;
 
-    protected static final long LONG_CLICK_DURATION = 100;
+    protected static final long LONG_CLICK_DURATION = 250;
     protected static final long LONG_HOLD_DURATION = 550;
     protected static final long HOLD_AND_RELEASE_DURATION = 50;
 
     private static final int FLING_VELOCITY_THRESHOLD = 3000;
     private static final float FLING_VELOCITY_MAX = 1000;
 
-    protected static final int ANIMATION_PEEK_DURATION = 675;
-    protected static final int ANIMATION_POP_DURATION = 650;
+    protected static final int ANIMATION_PEEK_DURATION = 475;
+    protected static final int ANIMATION_POP_DURATION = 450;
 
     protected Builder builder;
     protected View peekView;

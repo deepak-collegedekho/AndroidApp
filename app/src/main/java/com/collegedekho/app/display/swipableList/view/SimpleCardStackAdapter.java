@@ -417,7 +417,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                 if (response.getBitmap() != null) {
-                    fadeInImageView.setLocalImageBitmap(response.getBitmap(), true);
+                    fadeInImageView.setLocalImageBitmap(response.getBitmap(), false);
                 }
             }
 

@@ -154,7 +154,6 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
             public void onRelease(View view, int position) {
                 WishlistInstituteListAdapter.this.mCalloutButton.animate()
                         .setDuration(100)
-                        .scaleXBy(2f)
                         .alpha(0f)
                         .setInterpolator(new LinearInterpolator());
 
@@ -198,8 +197,8 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
 
     @Override
     public void onBindViewHolder(final InstituteHolder instituteHolder, int position) {
-        if (instituteHolder.instituteCard.getTag() == null)
-            instituteHolder.instituteCard.setTag("");
+        /*if (instituteHolder.instituteCard.getTag() == null)
+            instituteHolder.instituteCard.setTag("");*/
 
         Institute institute = this.mInstitutes.get(position);
         institute.setPosition(position);
@@ -227,10 +226,11 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
         if (institute.getLogo() != null && !institute.getLogo().isEmpty())
             instituteHolder.instituteLogo.setImageUrl(institute.getLogo(), this.mImageLoader);
 
+        //setting handmade shortname as shortname for institute
         instituteHolder.instituteShortName.setText(text);
 
         //Setting event listener on textview, so that when layout phase is over we get a callback and do our thing \m/ !!
-        if (!instituteHolder.instituteCard.getTag().equals("set"))
+        /*if (!instituteHolder.instituteCard.getTag().equals("set"))
         {
             instituteHolder.instituteShortName.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
@@ -239,7 +239,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
                     instituteHolder.instituteShortName.setBackgroundDrawable(new BitmapDrawable(WishlistInstituteListAdapter.this.mContext.getResources(), BlurBuilder.blur(instituteHolder.instituteShortName)));
                 }
             });
-        }
+        }*/
 
         instituteHolder.instituteCard.setTag("set");
     }

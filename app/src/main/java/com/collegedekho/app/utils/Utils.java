@@ -22,10 +22,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -541,34 +537,6 @@ public class Utils {
             }
         }
         return "" + rupees;
-    }
-
-    public static Bitmap blurRenderScript(Context context, Bitmap smallBitmap, int radius) {
-        try {
-            smallBitmap = RGB565toARGB888(smallBitmap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        Bitmap bitmap = Bitmap.createBitmap(
-                smallBitmap.getWidth(), smallBitmap.getHeight(),
-                Bitmap.Config.ARGB_8888);
-
-        RenderScript renderScript = RenderScript.create(context);
-
-        Allocation blurInput = Allocation.createFromBitmap(renderScript, smallBitmap);
-        Allocation blurOutput = Allocation.createFromBitmap(renderScript, bitmap);
-
-        ScriptIntrinsicBlur blur = ScriptIntrinsicBlur.create(renderScript,
-                Element.U8_4(renderScript));
-        blur.setInput(blurInput);
-        blur.setRadius(radius); // radius must be 0 < r <= 25
-        blur.forEach(blurOutput);
-
-        blurOutput.copyTo(bitmap);
-        renderScript.destroy();
-
-        return bitmap;
     }
 
     private static Bitmap RGB565toARGB888(Bitmap img) throws Exception {

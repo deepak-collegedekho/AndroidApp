@@ -687,7 +687,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void logUser() {
-        // You can ic_call_vector any combination of these three methods
         if (MainActivity.user != null) {
             Crashlytics.setUserIdentifier(MainActivity.user.getId());
             Crashlytics.setUserEmail(MainActivity.user.getEmail());

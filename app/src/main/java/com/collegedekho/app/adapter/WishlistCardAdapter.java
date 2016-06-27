@@ -82,9 +82,9 @@ public final class WishlistCardAdapter {
         {
             //Show Call button number exists
             if (this.mInstitute.getL3_number() != null && !this.mInstitute.getL3_number().isEmpty() && this.mInstitute.getL3_number() != " ")
-                this.mCardPeekView.findViewById(R.id.wishlist_institute_btn_apply_now).setVisibility(View.VISIBLE);
+                this.mCardPeekView.findViewById(R.id.wishlist_institute_btn_call_now).setVisibility(View.VISIBLE);
             else
-                this.mCardPeekView.findViewById(R.id.wishlist_institute_btn_apply_now).setVisibility(View.GONE);
+                this.mCardPeekView.findViewById(R.id.wishlist_institute_btn_call_now).setVisibility(View.GONE);
 
             //Show Apply Now if Partner and not yet applied
             if (!this.mInstitute.is_applied())
@@ -92,6 +92,12 @@ public final class WishlistCardAdapter {
             else
                 this.mCardPeekView.findViewById(R.id.wishlist_institute_btn_apply_now).setVisibility(View.GONE);
         }
+        else
+        {
+            this.mCardPeekView.findViewById(R.id.wishlist_institute_btn_call_now).setVisibility(View.GONE);
+            this.mCardPeekView.findViewById(R.id.wishlist_institute_btn_apply_now).setVisibility(View.GONE);
+        }
+
     }
 
     private void mParseAndPopulateCards() {
@@ -143,7 +149,7 @@ public final class WishlistCardAdapter {
         try {
             int markerMargin = 0;
             int markerHeight = 0;
-            float deviceDensity = getContext().getResources().getDimension(R.dimen.m50dp);
+            float deviceDensity = getContext().getResources().getDimension(R.dimen.m58dp);
             try {
                 averageSal = Double.parseDouble(this.mInstitute.getAvg_salary());
                 avgSalary.setText(Utils.rupeeFormatter(averageSal));
@@ -284,7 +290,7 @@ public final class WishlistCardAdapter {
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                 if (response.getBitmap() != null) {
-                    fadeInImageView.setLocalImageBitmap(response.getBitmap(), true);
+                    fadeInImageView.setLocalImageBitmap(response.getBitmap(), false);
                 }
             }
 
