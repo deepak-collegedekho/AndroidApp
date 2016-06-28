@@ -3395,6 +3395,21 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+    @Override
+    public void onStreamSelected(int streamId) {
+        String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put(getResourceString(R.string.preferred_stream_id), ""+streamId);
+        params.put(getResourceString(R.string.USER_DEVICE_ID), deviceId);
+        getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), true).apply();
+
+        this.requestForUserProfileUpdate(params, -1);
+
+        this.mLoadHomeScreen(null);
+    }
+
     @Override
     public void onStreamSelected(final String stream, final String streamName) {
 //        new AlertDialog.Builder(this)

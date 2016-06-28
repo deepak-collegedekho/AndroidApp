@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:left="@dimen/m6dp" android:bottom="@dimen/m6dp"
+        android:right="@dimen/m6dp" android:top="@dimen/m6dp"
+        android:drawable="@drawable/bg_downvote"/>
+</layer-list>

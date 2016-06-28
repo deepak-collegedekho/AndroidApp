@@ -14795,7 +14795,7 @@ public class ProfileMacro {
             "    }\n" +
             "]";
 
-    public static String ALL_STREAMS = " [\n" +
+    public static String STREAMS_10TH = " [\n" +
             "                {\n" +
             "                    \"id\": 37,\n" +
             "                    \"name\": \"All Subjects\"\n" +
@@ -14828,23 +14828,11 @@ public class ProfileMacro {
     public static String UG_STREAMS ="[\n" +
             "                {\n" +
             "                    \"id\": 1,\n" +
-            "                    \"name\": \"Banking \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 1,\n" +
-            "                    \"name\": \" Finance \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 1,\n" +
-            "                    \"name\": \" Accounts \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 1,\n" +
-            "                    \"name\": \" Commerce\"\n" +
+            "                    \"name\": \"Finance / Commerce / Accounts / Banking\"\n" +
             "                },\n" +
             "                {\n" +
             "                    \"id\": 2,\n" +
-            "                    \"name\": \"Design\"\n" +
+            "                    \"name\": \"Designing\"\n" +
             "                },\n" +
             "                {\n" +
             "                    \"id\": 3,\n" +
@@ -14852,15 +14840,7 @@ public class ProfileMacro {
             "                },\n" +
             "                {\n" +
             "                    \"id\": 4,\n" +
-            "                    \"name\": \"BBA \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 4,\n" +
-            "                    \"name\": \" MBA \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 4,\n" +
-            "                    \"name\": \" Management PGDM\"\n" +
+            "                    \"name\": \"Management \"\n" +
             "                },\n" +
             "                {\n" +
             "                    \"id\": 5,\n" +
@@ -14876,35 +14856,15 @@ public class ProfileMacro {
             "                },\n" +
             "                {\n" +
             "                    \"id\": 6,\n" +
-            "                    \"name\": \"IT- BCA \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 6,\n" +
-            "                    \"name\": \" IT -MCA \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 6,\n" +
-            "                    \"name\": \" IT - Computers\"\n" +
+            "                    \"name\": \"Information Technology\"\n" +
             "                },\n" +
             "                {\n" +
             "                    \"id\": 7,\n" +
-            "                    \"name\": \"Media Films \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 7,\n" +
-            "                    \"name\": \" Mass Communication\"\n" +
+            "                    \"name\": \"Media Films / Mass Communication\"\n" +
             "                },\n" +
             "                {\n" +
             "                    \"id\": 8,\n" +
-            "                    \"name\": \"Medicine \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 8,\n" +
-            "                    \"name\": \" Beauty \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 8,\n" +
-            "                    \"name\": \" Health Care\"\n" +
+            "                    \"name\": \"Beauty / Medicine / Health Care\"\n" +
             "                },\n" +
             "                {\n" +
             "                    \"id\": 9,\n" +
@@ -14912,27 +14872,11 @@ public class ProfileMacro {
             "                },\n" +
             "                {\n" +
             "                    \"id\": 12,\n" +
-            "                    \"name\": \"Languages \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 12,\n" +
-            "                    \"name\": \" Arts \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 12,\n" +
-            "                    \"name\": \" Literature\"\n" +
+            "                    \"name\": \" Arts / Languages / Literature\"\n" +
             "                },\n" +
             "                {\n" +
             "                    \"id\": 13,\n" +
-            "                    \"name\": \"Politics \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 13,\n" +
-            "                    \"name\": \" Law \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 13,\n" +
-            "                    \"name\": \" Humanities\"\n" +
+            "                    \"name\": \"Law / Politics /Humanities\"\n" +
             "                },\n" +
             "                {\n" +
             "                    \"id\": 14,\n" +
@@ -14940,15 +14884,7 @@ public class ProfileMacro {
             "                },\n" +
             "                {\n" +
             "                    \"id\": 15,\n" +
-            "                    \"name\": \"Professional Courses\"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 15,\n" +
-            "                    \"name\": \" Vocational Courses\"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 16,\n" +
-            "                    \"name\": \"Others\"\n" +
+            "                    \"name\": \"Professional /Vocational Courses\"\n" +
             "                },\n" +
             "                {\n" +
             "                    \"id\": 18,\n" +
@@ -14956,11 +14892,11 @@ public class ProfileMacro {
             "                },\n" +
             "                {\n" +
             "                    \"id\": 32,\n" +
-            "                    \"name\": \"Animation \"\n" +
+            "                    \"name\": \"Animation /Multimedia\"\n" +
             "                },\n" +
             "                {\n" +
-            "                    \"id\": 32,\n" +
-            "                    \"name\": \" Multimedia\"\n" +
+            "                    \"id\": 16,\n" +
+            "                    \"name\": \"Others\"\n" +
             "                }\n" +
             "            ]";
 
@@ -15059,7 +14995,7 @@ public class ProfileMacro {
 
     public static String getStreamJson(int id) {
         if (id == 7)
-            return ALL_STREAMS;
+            return STREAMS_10TH;
         else if (id == 8 || id == 9)
             return SCHOLL_STREAMS;
         else
@@ -15257,11 +15193,17 @@ public class ProfileMacro {
             return educationModeList;
 
         for (int i = 1; i < 7; i++) {
+            if(i == 3)continue; // For 3 value,  we don't have any mode name.
             ProfileSpinnerItem item = new  ProfileSpinnerItem();
             item.setId(i);
             item.setName(getEducationModeName(i));
             educationModeList.add(item);
         }
+        // add other in the last
+        ProfileSpinnerItem item = new  ProfileSpinnerItem();
+        item.setId(0);
+        item.setName(getEducationModeName(0));
+        educationModeList.add(item);
         return educationModeList;
     }
 

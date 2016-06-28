@@ -57,15 +57,6 @@ public class NetworkUtils {
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
-/*        if (null != activeNetwork)
-        {
-            if(activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
-                return Constants.TYPE_WIFI;
-
-            if(activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
-                return Constants.TYPE_MOBILE;
-        }*/
-
         if (activeNetwork != null
                 && activeNetwork.isAvailable()
                 && activeNetwork.isConnected()) {

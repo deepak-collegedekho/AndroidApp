@@ -19,13 +19,13 @@ public class Stream implements Parcelable {
             return new Stream[size];
         }
     };
-    public String resourceUri;
-    public String name;
-    public String shortName;
-    public String uri;
-    public String image;
-    public String description;
-    public int score;
+    private String resourceUri;
+    private String name;
+    private String shortName;
+    private String uri;
+    private String image;
+    private String description;
+    private int score;
 
     public int getScore() {
         return score;

@@ -115,7 +115,7 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Stream streamObj =  streams.get(position);
-        onStreamSelected(streamObj.resourceUri,streamObj.getName());
+        onStreamSelected(streamObj.getResourceUri(),streamObj.getName());
     }
 
     @Override
@@ -132,7 +132,6 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
     public interface OnStreamInteractionListener {
         void onStreamSelected(String stream, String streamName);
         void onEditedStreamSelected(String stream, String streamName);
-        //void onStreamUpdated(String stream, String streamName);
     }
 
     @Override

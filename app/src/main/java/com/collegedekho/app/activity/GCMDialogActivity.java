@@ -197,6 +197,8 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
         if (isNumber) {
             edtUserInput.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
             edtUserInput.setInputType(InputType.TYPE_CLASS_PHONE);
+        }else{
+            edtUserInput.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         }
         edtUserInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -420,14 +422,14 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
                     return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
                 }
         } else if (question.getName().equals("social_category")) {
-                if (MainActivity.mProfile.getSocial_category() == -1) {
+                if (MainActivity.mProfile.getSocial_category() == 0) {
                     return question;
                 } else {
                     questionAnswered(question);
                     return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
                 }
         } else if (question.getName().equals("current_passing_year")) {
-                if (MainActivity.mProfile.getCurrent_passing_year() == -1) {
+                if (MainActivity.mProfile.getCurrent_passing_year() == 0) {
                     return question;
                 } else {
                     questionAnswered(question);

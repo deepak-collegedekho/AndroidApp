@@ -5,24 +5,19 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:background="@drawable/rounded_box_blue">
-    <LinearLayout
-        android:id="@+id/question_ask_cross"
-        android:layout_width="wrap_content"
-        android:layout_gravity="right|center"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="10dp"
-        android:layout_height="wrap_content">
+
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/question_ask_cross"
+            android:layout_width="@dimen/m30dp"
+            android:layout_height="@dimen/m30dp"
             android:visibility="visible"
-            android:layout_gravity="center"
+            android:layout_gravity="right"
             android:scaleType="centerCrop"
+            android:padding="@dimen/m7dp"
+            android:layout_marginRight="@dimen/m7dp"
+            android:layout_marginTop="@dimen/m7dp"
             app:srcCompat="@drawable/ic_cross_icon"/>
-        </LinearLayout>
-
 
         <TextView
             android:layout_width="match_parent"
@@ -30,24 +25,26 @@
             android:text="ASK A QUESTION"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:paddingTop="@dimen/m15dp"
-            android:paddingBottom="@dimen/m20dp"
             android:textSize="16sp"
             android:gravity="center"
             />
+
         <android.support.design.widget.TextInputLayout
             android:id="@+id/institute_qna_question_title_til"
             android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/m10dp"
             android:layout_height="wrap_content"
             >
             <EditText
                 style="@style/AppTheme.EditText.bg_white"
                 android:id="@+id/institute_qna_question_title"
                 android:hint="Question Title"
-                android:inputType="text|textCapSentences"
+                android:layout_height="70dp"
+                android:inputType="textMultiLine|textCapSentences"
                 android:paddingTop="2dp"
-                android:singleLine="true"
-                android:textColorHint="@color/light_blue"
+                android:gravity="top"
+                android:maxLines="10"
+                android:textColorHint="@color/white"
                 />
         </android.support.design.widget.TextInputLayout>
 
@@ -55,24 +52,25 @@
             android:id="@+id/institute_qna_question_content_til"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/m20dp"
+            android:layout_marginTop="@dimen/m15dp"
             >
             <EditText
                 style="@style/AppTheme.EditText.bg_white"
                 android:id="@+id/institute_qna_question_desc"
+                android:layout_height="120dp"
                 android:hint="Your Question"
-                android:inputType="text|textCapSentences"
+                android:inputType="textMultiLine|textCapSentences"
                 android:paddingTop="2dp"
-                android:singleLine="true"
-                android:maxLines="4"
-                android:textColorHint="@color/light_blue"
+                android:gravity="top"
+                android:maxLines="30"
+                android:textColorHint="@color/white"
                 />
         </android.support.design.widget.TextInputLayout>
 
             <TextView
                 android:id="@+id/institute_qna_button_ask_submit"
                 style="@style/AppTheme.OrangeButton"
-                android:layout_marginTop="@dimen/m30dp"
+                android:layout_marginTop="@dimen/m20dp"
                 android:layout_width="wrap_content"
                 android:gravity="center"
                 android:text="SUBMIT"
@@ -80,7 +78,8 @@
                 android:paddingRight="@dimen/m15dp"
                 android:paddingTop="@dimen/m10dp"
                 android:paddingBottom="@dimen/m10dp"
-                android:textSize="15sp"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 android:layout_marginBottom="@dimen/m20dp"
                 android:layout_gravity="center"       />
 

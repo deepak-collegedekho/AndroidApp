@@ -226,9 +226,6 @@
     <string name="USER_NAME">name</string>
     <string name="USER_FIRST_NAME">first_name</string>
     <string name="USER_LAST_NAME">last_name</string>
-    <string name="user_apply_course_name">user_apply_course_name</string>
-    <string name="user_apply_course_email">user_apply_course_email</string>
-    <string name="user_apply_course_phone">user_apply_course_phone</string>
     <string name="USER_FAMILY_NAME">family_name</string>
     <string name="USER_GIVEN_NAME">given_name</string>
     <string name="USER_PASSWORD">password</string>
@@ -237,6 +234,7 @@
     <string name="USER_EMAIL">email</string>
     <string name="USER_VERIFIED_EMAIL">verified_email</string>
     <string name="USER_STREAM">stream</string>
+    <string name="preferred_stream_id">preferred_stream_id</string>
     <string name="stream">Stream</string>
     <string name="degree">Degree</string>
     <string name="specialization">Specialization</string>
@@ -466,4 +464,11 @@
     <string name="take_to_me_profile">Personalize the App Further</string>
     <string name="please_select_your_specialization">Please Select Your Specialization</string>
     <string name="please_select_your_stream">Please Select your Stream</string>
+
+
+    <!-- user Coures apply form data-->
+    <string name="user_apply_course_name">user_apply_course_name</string>
+    <string name="user_apply_course_email">user_apply_course_email</string>
+    <string name="user_apply_course_phone">user_apply_course_phone</string>
+
 </resources>

@@ -8,7 +8,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,15 +87,20 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         answersCount = (TextView) rootView.findViewById(R.id.answers_count);
         String simpleDate = "";
         try {
-            mSDF.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
-            Date date = mSDF.parse(this.mQnAQuestion.getAdded_on());
-            mSDF.applyPattern("MMMM d, yyyy KK:mm a");
-            simpleDate = mSDF.format(date);
+            if(mQnAQuestion != null && mSDF != null) {
+                mSDF.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
+                if(this.mQnAQuestion.getAdded_on() !=  null
+                        && !this.mQnAQuestion.getAdded_on().isEmpty()) {
+                    Date date = mSDF.parse(this.mQnAQuestion.getAdded_on());
+                    mSDF.applyPattern("MMMM d, yyyy KK:mm a");
+                    simpleDate = mSDF.format(date);
+                }
+            }
         } catch (ParseException e) {
-            Log.e(TAG, "Date format unknown: " + this.mQnAQuestion.getAdded_on());
+            e.printStackTrace();
         }
 
-        if (this.mQnAAnswersSet.size() == 0)
+        if ( this.mQnAAnswersSet != null && this.mQnAAnswersSet.size() == 0)
             (this.mEmptyTextView).setText("Be the first one to answer.");
 
         tagsContainer = (LinearLayout) rootView.findViewById(R.id.tags_container);
@@ -129,20 +133,22 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         (rootView.findViewById(R.id.answer_reply)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int connectivityStatus = new NetworkUtils(v.getContext(), null).getConnectivityStatus();
-                if (connectivityStatus == Constants.TYPE_NOT_CONNECTED) {
-                    mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
-                    return;
-                }
+
                 AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
                 alert.setTitle("Enter your answer");
 
                 // Set an EditText view to get user input
-                final EditText input = (EditText) LayoutInflater.from(getActivity()).inflate(R.layout.item_text_edit, null);
+                final EditText input = (EditText) LayoutInflater.from(getActivity()).inflate(R.layout.layout_qna_answer, null);
                 alert.setView(input);
 
                 alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+
+                        int connectivityStatus = new NetworkUtils(getActivity().getApplicationContext(), null).getConnectivityStatus();
+                        if (connectivityStatus == Constants.TYPE_NOT_CONNECTED) {
+                            mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
+                            return;
+                        }
                         String value = input.getText().toString();
                         if (value.trim().equals("")) {
                             mListener.displayMessage(R.string.ENTER_YOUR_ANSWER);
@@ -266,7 +272,6 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         if (answerIndex < 0)
         {
             //update question vote
-            //Log.e(QnAQuestionDetailFragment.class.getName(), String.valueOf(questionIndex));
             int totalVotes = Integer.parseInt(this.mVoteCounts.getText().toString());
 
             if (voteType == Constants.LIKE_THING)
@@ -300,27 +305,12 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         else
         {
             //update answer vote
-            //Log.e(QnAQuestionDetailFragment.class.getName(), String.valueOf(questionIndex) + " and " + String.valueOf(answerIndex));
             QnAAnswers qnaAns = mQnAAnswersSet.get(answerIndex);
-
             if (voteType == Constants.LIKE_THING)
-            {
-//                if (qnaAns.getCurrent_user_vote_type() == Constants.DISLIKE_THING)
-//                    qnaAns.setDownvotes(qnaAns.getDownvotes() - 1);
-
-//                qnaAns.setCurrent_user_vote_type(Constants.LIKE_THING);
                 qnaAns.setUpvotes(qnaAns.getUpvotes() + 1);
-            }
             else if(voteType == Constants.DISLIKE_THING)
-            {
-//                if (qnaAns.getCurrent_user_vote_type() == Constants.LIKE_THING)
-//                    qnaAns.setUpvotes(qnaAns.getUpvotes() - 1);
-
-//                qnaAns.setCurrent_user_vote_type(Constants.DISLIKE_THING);
                 qnaAns.setDownvotes(qnaAns.getDownvotes() + 1);
-            }else {
 
-            }
             qnaAns.setCurrent_user_vote_type(voteType);
 
             this.mQnAAnswersSet.remove(answerIndex);
@@ -374,6 +364,5 @@ public class QnAQuestionDetailFragment extends BaseFragment{
     @Override
     public void onPause() {
         super.onPause();
-        Log.e(TAG, "onResume()");
     }
 }

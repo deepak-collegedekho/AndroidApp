@@ -23,6 +23,7 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
 
     private OnStreamInteractionListener mListener;
     private static boolean isStreamUpdate;
+
     public StreamFragment() {
         // Required empty public constructor
     }
@@ -56,11 +57,6 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
     }
 
 
-    public void onStreamSelected(String uri, String name) {
-        if (mListener != null) {
-                mListener.onStreamSelected(uri, name);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -84,11 +80,29 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Stream streamObj =  streams.get(position);
-//        if(isStreamUpdate) {
-//            onStreamUpdated(streamObj.resourceUri, streamObj.getName() );
-//        }
-//        else
-        onStreamSelected(streamObj.resourceUri,streamObj.getName());
+
+        if(streamObj == null)
+            return;
+
+        String resourceUri = streamObj.getResourceUri();
+        String resourceUriTags[] = resourceUri.split("/");
+        int streamId = -1;
+        try {
+            streamId = Integer.parseInt(resourceUriTags[resourceUriTags.length-1]);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(streamId == -1)
+            return;
+
+        onStreamSelected(streamId);
+    }
+
+
+    public void onStreamSelected(int streamId) {
+        if (mListener != null) {
+            mListener.onStreamSelected(streamId);
+        }
     }
 
     @Override
@@ -100,14 +114,6 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
     public void hide() {
 
     }
-
-
-    public interface OnStreamInteractionListener {
-        void onStreamSelected(String stream, String streamName);
-        void onEditedStreamSelected(String stream, String streamName);
-        //void onStreamUpdated(String stream, String streamName);
-    }
-
 
     @Override
     public void onResume() {
@@ -125,4 +131,10 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
         outState.putParcelableArrayList(ARG_STREAMS, streams);
         outState.putBoolean(ARG_STREAM_UPDATE, this.isStreamUpdate);
     }
+
+
+    public interface OnStreamInteractionListener {
+        void onStreamSelected(int streamId);
+    }
+
 }

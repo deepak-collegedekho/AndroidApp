@@ -64,7 +64,7 @@ public class StreamAdapter extends BaseAdapter {
         }
         Stream s = getItem(position);
         holder.tag.setText(s.getShort_name());
-        if (s.image != null && !s.image.isEmpty())
+        if (s.getImage() != null && !s.getImage().isEmpty())
             holder.image.setImageUrl(s.getImage(), mImageLoader);
         return convertView;
     }

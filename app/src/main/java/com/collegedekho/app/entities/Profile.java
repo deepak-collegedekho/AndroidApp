@@ -25,7 +25,7 @@ public class Profile implements Parcelable{
     private String mother_tongue_name = "";
     private int mother_tongue = -1;
     private String social_category_name =   "";
-    private int social_category = -1;
+    private int social_category = 0;
     private String current_sublevel_name =  "";
     private int current_sublevel_id = -1;
     private String current_mode_name ="";
@@ -41,7 +41,7 @@ public class Profile implements Parcelable{
     private int current_score = -1;
     private String current_score_type_name ="";
     private int current_score_type = -1;
-    private int current_passing_year = -1;
+    private int current_passing_year = 0;
     private int preferred_year_of_admission = -1;
     private String preferred_mode_name ="";
     private int preferred_mode = -1;

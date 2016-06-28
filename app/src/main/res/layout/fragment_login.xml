@@ -4,10 +4,10 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_splash"
-    android:gravity="center_horizontal"
+    android:gravity="center"
     android:orientation="vertical"
     android:paddingBottom="@dimen/m7dp"
-    android:paddingTop="@dimen/m40dp"
+    android:paddingTop="@dimen/m7dp"
     android:paddingLeft="@dimen/m45dp"
     android:paddingRight="@dimen/m45dp">
 
@@ -23,9 +23,9 @@
         android:layout_marginTop="5dp"
         android:gravity="center"
         android:textSize="14sp"
-        android:fontFamily="sans-serif-light"
+        android:fontFamily="serif"
         android:text="Personalize your app for a perfect set of recommended colleges based on preference"
-        android:textStyle="bold"/>
+       />
 
 
     <LinearLayout
