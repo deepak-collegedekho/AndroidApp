@@ -5526,7 +5526,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void requestForCoursesUpdate(){
         if(mInstitute != null)
-        this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + mInstitute.getId(), null);
+            this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + mInstitute.getId(), null);
     }
 
     @Override

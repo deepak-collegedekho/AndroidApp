@@ -2,6 +2,7 @@ package com.collegedekho.app.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +22,13 @@ import java.util.ArrayList;
  *         Created: 09/07/15
  */
 public class CourseListAdapter extends RecyclerView.Adapter {
-    private static ArrayList<InstituteCourse> mCourses;
-    private static Context mContext;
+    private ArrayList<InstituteCourse> mCourses;
+    private Context mContext;
     private static boolean mIsAppliedResponse = false; // required  not to update  view  till response doesn't come
 
     public CourseListAdapter(Context activity, ArrayList<InstituteCourse> courses) {
         this.mCourses = courses;
-        mContext = activity;
+        this.mContext = activity;
     }
 
 
@@ -140,6 +141,8 @@ public class CourseListAdapter extends RecyclerView.Adapter {
     }*/
 
     public void updateAdapter() {
+        Log.e("CI-CLA", "updateAdapter for level :: " + mCourses.get(0).level);
+
         this.mIsAppliedResponse = false;
         this.notifyDataSetChanged();
     }

@@ -103,17 +103,18 @@ public class InstituteDetailFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_institute_detail, container, false);
 
-        Animation animation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.simple_grow);
-
-        //  FAB margin needed for animation
-        this.fabMargin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
-
-        this.mFloatingMenu = (FloatingActionMenu) rootView.findViewById(R.id.fab_menu);
-
-        this.mFloatingMenu.startAnimation(animation);
 
         if (this.mInstituteType == Constants.CDRecommendedInstituteType.SHORTLISTED)
         {
+            Animation animation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.simple_grow);
+
+            //  FAB margin needed for animation
+            this.fabMargin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
+
+            this.mFloatingMenu = (FloatingActionMenu) rootView.findViewById(R.id.fab_menu);
+
+            this.mFloatingMenu.startAnimation(animation);
+
             this.mFloatingMenu.setVisibility(View.VISIBLE);
 
             FloatingActionButton fabRemove = (FloatingActionButton) rootView.findViewById(R.id.remove_button);
@@ -229,14 +230,14 @@ public class InstituteDetailFragment extends BaseFragment {
 
     @Override
     public void show() {
-        Log.e("InstituteDetailFragment", "Show");
-        mFloatingMenu.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3)).start();
+        if (this.mFloatingMenu != null)
+            this.mFloatingMenu.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3)).start();
     }
 
     @Override
     public void hide() {
-        Log.e("InstituteDetailFragment", "Hide");
-        mFloatingMenu.animate().translationY(mFloatingMenu.getHeight() + fabMargin).setInterpolator(new AccelerateInterpolator(3)).start();
+        if (this.mFloatingMenu != null)
+            this.mFloatingMenu.animate().translationY(this.mFloatingMenu.getHeight() + this.fabMargin).setInterpolator(new AccelerateInterpolator(3)).start();
     }
 
     public void updateCourses(String response ) { new LoadCoursesAsyncTask().execute(response);  }

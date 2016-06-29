@@ -20,23 +20,21 @@
         android:text="Loading Courses..."
         android:textStyle="bold" />
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/course_tab_layout"
-        android:layout_width="match_parent"
-        android:layout_height="30sp"
-        android:background="@color/primaryColor"
-        android:scrollbars="none"
-        android:visibility="gone"
-        app:layout_scrollFlags="scroll|enterAlways"
-        app:tabIndicatorHeight="2dp"
-        app:tabMode="scrollable"
-        app:tabPaddingBottom="5dp"
-        app:tabPaddingTop="5dp"
-        app:tabTextAppearance="@style/AppTheme.TabTextAppearence" />
-
-    <android.support.v4.view.ViewPager
+    <com.collegedekho.app.display.CustomViewPager
         android:id="@+id/pager_courses"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+        <android.support.v4.view.PagerTabStrip
+            android:id="@+id/pager_courses_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:textColor="#fff"
+            android:background="@color/primary_color"
+            android:scrollbars="none"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:tabMode="scrollable"
+            />
+    </com.collegedekho.app.display.CustomViewPager>
 
 </LinearLayout>

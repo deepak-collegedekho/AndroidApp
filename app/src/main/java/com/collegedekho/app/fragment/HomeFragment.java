@@ -80,7 +80,6 @@ public class HomeFragment extends BaseFragment
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
        
-
         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
 
             rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.VISIBLE);
@@ -250,90 +249,90 @@ public class HomeFragment extends BaseFragment
         }
     }
 
-            public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
-                this.mExamDetailList=userExamsList;
-                View rootView=getView();
-                if(rootView==null){
-                    return;
-                }
-                if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
-                    rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.VISIBLE);
-                    rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.VISIBLE);
-                    this.mExamTabPager.setVisibility(View.VISIBLE);
-                    this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
-                    this.mExamTabPager.setAdapter(this.mDetailsAdapter);
-                    rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
-                    rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
-                    rootView.findViewById(R.id.pager_strip).setVisibility(View.VISIBLE);
+    public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
+        this.mExamDetailList=userExamsList;
+        View rootView=getView();
+        if(rootView==null){
+            return;
+        }
+        if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
+            rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.VISIBLE);
+            this.mExamTabPager.setVisibility(View.VISIBLE);
+            this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
+            this.mExamTabPager.setAdapter(this.mDetailsAdapter);
+            rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
+            rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
+            rootView.findViewById(R.id.pager_strip).setVisibility(View.VISIBLE);
 
-                }else{
+        }else{
 
-                    if(this.mListener != null)
-                    {
-                        this.mExamDetail = new ExamDetail();
-                        this.mExamDetail.setId("0");
-                        this.mListener.onExamTabSelected(this.mExamDetail);
-                    }
-
-                    rootView.findViewById(R.id.pager_strip).setVisibility(View.GONE);
-                    rootView.findViewById(R.id.prep_buddies).setVisibility(View.GONE);
-                    rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.GONE);
-                    rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.GONE);
-                    rootView.findViewById(R.id.backup_colleges_layout_RL).setVisibility(View.GONE);
-                }
-
-            }
-            public void updateUserName(){
-                if(MainActivity.mProfile != null){
-                    String name = MainActivity.mProfile.getName();
-                    if(name!=null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()))
-                    {
-                        mProfileName.setText("");
-                        mProfileName.setVisibility(View.GONE);
-                    }else {
-                        mProfileName.setText(name);
-                        mProfileName.setVisibility(View.VISIBLE);
-                    }
-
-                    String image = MainActivity.mProfile.getImage();
-                    if (image != null && ! image.isEmpty())
-                        mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-
-                }
-
+            if(this.mListener != null)
+            {
+                this.mExamDetail = new ExamDetail();
+                this.mExamDetail.setId("0");
+                this.mListener.onExamTabSelected(this.mExamDetail);
             }
 
+            rootView.findViewById(R.id.pager_strip).setVisibility(View.GONE);
+            rootView.findViewById(R.id.prep_buddies).setVisibility(View.GONE);
+            rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.GONE);
+            rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.GONE);
+            rootView.findViewById(R.id.backup_colleges_layout_RL).setVisibility(View.GONE);
+        }
 
-            @Override
-            public void onAttach(Context context) {
-                super.onAttach(context);
-                try{
-                    if (context instanceof MainActivity)
-                        this.mListener = (OnTabSelectListener) context;
-                }
-                catch (ClassCastException e){
-                    throw  new ClassCastException(context.toString()
-                            +"must implement OnTabSelectListener");
-                }
+    }
+    public void updateUserName(){
+        if(MainActivity.mProfile != null){
+            String name = MainActivity.mProfile.getName();
+            if(name!=null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()))
+            {
+                mProfileName.setText("");
+                mProfileName.setVisibility(View.GONE);
+            }else {
+                mProfileName.setText(name);
+                mProfileName.setVisibility(View.VISIBLE);
             }
 
-            @Override
-            public void onDetach() {
-                super.onDetach();
-                this.mListener = null;
-            }
+            String image = MainActivity.mProfile.getImage();
+            if (image != null && ! image.isEmpty())
+                mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
 
-            @Override
-            public void show() {
+        }
 
-            }
+    }
 
-            @Override
-            public void hide() {
 
-            }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            if (context instanceof MainActivity)
+                this.mListener = (OnTabSelectListener) context;
+        }
+        catch (ClassCastException e){
+            throw  new ClassCastException(context.toString()
+                    +"must implement OnTabSelectListener");
+        }
+    }
 
-            @Override
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.mListener = null;
+    }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
     public void onClick(View view) {
         super.onClick(view);
 

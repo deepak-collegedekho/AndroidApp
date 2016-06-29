@@ -752,9 +752,5 @@
         android:textAlignment="center"
         android:textSize="@dimen/m16sp"
         android:textColor="@color/black"
-        android:shadowColor="#000"
-        android:shadowDx="0"
-        android:shadowDy="0"
-        android:shadowRadius="10"
         />
 </android.support.v7.widget.CardView>

@@ -2,7 +2,9 @@ package com.collegedekho.app.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import com.collegedekho.app.entities.InstituteCourse;
 import com.collegedekho.app.fragment.CourseFragment;
@@ -36,9 +38,9 @@ public class CoursePagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-
-            courseFragment[position] = CourseFragment.newInstance(mCourse.get(position));
-             return courseFragment[position];
+        Log.e("CI-CPA", "getItem :: position is : " + position);
+        courseFragment[position] = CourseFragment.newInstance(mCourse.get(position));
+        return courseFragment[position];
     }
 
     @Override
@@ -53,9 +55,13 @@ public class CoursePagerAdapter extends FragmentStatePagerAdapter {
 
     public void updateAdapter(int tabPosition)
     {
-            if(courseFragment[tabPosition] != null)
-            {
-                courseFragment[tabPosition].updateAdapter();
-            }
+        Log.e("CI-CPA", "Step 1 :: updateAdapter :: position is : " + tabPosition);
+
+        if(courseFragment[tabPosition] != null)
+        {
+            Log.e("CI-CPA", "Step 2 :: updateAdapter :: position is : " + tabPosition);
+
+            courseFragment[tabPosition].updateAdapter();
+        }
     }
 }

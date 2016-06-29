@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ public class CourseFragment extends BaseFragment {
     }
 
     public static CourseFragment newInstance(ArrayList<InstituteCourse> courses) {
+        Log.e("CI-CF", "newInstance: course's level is : " + courses.get(0).level);
         CourseFragment fragment = new CourseFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(ARG_PARAM1, courses);
@@ -58,6 +60,7 @@ public class CourseFragment extends BaseFragment {
     }
 
     public void updateAdapter() {
+        Log.e("CI-CF", "updateAdapter for level :: " + courses.get(0).level);
         this.mAdapter.updateAdapter();
 
     }
