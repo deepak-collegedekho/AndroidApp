@@ -230,7 +230,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             style="@style/AppTheme.OrangeButton"
             android:textSize="18sp"
             android:visibility="visible"
-            android:text="@string/take_me_to_recommended"/>
+            android:text="@string/go_to_recommended"/>
 
         <Button
             android:id="@+id/user_decision_to_dash_board"
@@ -238,7 +238,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             android:textSize="18sp"
             android:visibility="visible"
             android:layout_marginTop="@dimen/m20dp"
-            android:text="@string/take_to_me_dash_board"/>
+            android:text="@string/go_to_me_dash_board"/>
 
         <Button
             android:id="@+id/user_decision_to_profile"
@@ -246,7 +246,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             android:textSize="18sp"
             android:visibility="visible"
             android:layout_marginTop="@dimen/m20dp"
-            android:text="@string/take_to_me_profile"/>
+            android:text="@string/go_to_me_profile"/>
 
     </LinearLayout>
 

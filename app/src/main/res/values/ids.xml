@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="peek_view" type="id" />
+    <item name="app_logo_icon_layout" type="id" />
 </resources>

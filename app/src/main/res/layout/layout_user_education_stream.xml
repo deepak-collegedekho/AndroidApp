@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="1">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight=".2"
+        android:gravity="center"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_education_stream_item"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_education_stream_item"
+        android:layout_width="0dp"
+        android:layout_weight=".8"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:ellipsize="marquee"
+        android:background="@drawable/bg_exam_stream_item"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/m40dp"
+        android:maxLines="3"
+        android:textSize="17sp"
+        android:padding="@dimen/m6dp"/>
+
+
+</LinearLayout>
+
+
+

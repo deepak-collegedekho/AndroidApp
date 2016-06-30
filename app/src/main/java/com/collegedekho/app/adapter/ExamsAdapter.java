@@ -60,11 +60,16 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
     @Override
     public void onBindViewHolder(final ExamHolderView holder, final int position) {
 
-        final Exam exam = mExamList.get(position);
+        Exam exam = mExamList.get(position);
         if(exam == null)
             return;
 
         holder.mExamName.setText(exam.getExam_name());
+
+        // exam position is taged to get this position while clicked
+        holder.mExamName.setTag(position);
+        holder.mYearSpinner.setTag(position);
+
         ArrayList<ExamDetail> examDetail = exam.getExam_details();
         if(examDetail == null)
             return;
@@ -116,6 +121,19 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
         holder.mYearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                int  itemPosition = -1;
+                try{
+                    itemPosition = Integer.parseInt(parent.getTag().toString()
+                    );
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+                if(itemPosition == -1){
+                    return;
+                }
+                Exam exam = mExamList.get(itemPosition);
                 ArrayList<ExamDetail> examDetailList = exam.getExam_details();
                 if(examDetailList != null) {
 
@@ -142,33 +160,26 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-               /* try {
-                    lastExamPosition = holder.mYearSpinner.getSelectedItemPosition();
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
-                    ExamDetail examDetailObj ;
-                    if(exam.getExam_details().size() <= lastPosition)
-                        examDetailObj = exam.getExam_details().get(lastExamPosition);
-                    else
-                        examDetailObj = exam.getExam_details().get(0);
-
-                    if (holder.mExamName.isSelected() && examDetailObj != null){
-
-                        examDetailObj.setSelected(true);
-                        exam.setSelected(true);
-
-                        if(examDetailObj.isResult_out())
-                            displayAlert(examDetailObj, holder, exam);
-
-                    }
-                }catch (Exception e){
-
-                }*/
             }
+
         });
+
         holder.mExamName.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                int  itemPosition = -1;
+                try{
+                    itemPosition = Integer.parseInt(v.getTag().toString());
+                }
+                catch(NumberFormatException e){
+                    e.printStackTrace();
+                }
+                if(itemPosition == -1){
+                    return;
+                }
+                Exam exam = mExamList.get(itemPosition);
 
                 if (v.isSelected()) {
 

@@ -1142,6 +1142,11 @@ public class MainActivity extends AppCompatActivity
                 this.networkUtils.setToken(MainActivity.user.getToken());
                 // user id register
                 setUserIdWithAllEvents();
+                if(mProfile == null) {
+                    mProfile = new Profile();
+                    mProfile.setName(user.getName());
+                    mProfile.setName(user.getPhone_no());
+                }
 
                 this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT,Constants.BASE_URL+"profile/", null);
                 // this code for backward compatibility because in first release user stream and level
@@ -3235,6 +3240,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_REQUEST_FOR_DEGREES:
             case Constants.TAG_UPDATE_PROFILE_OBJECT:
             case Constants.TAG_UPDATE_PROFILE_EXAMS:
+            case Constants.TAG_REQUEST_FOR_EXAMS:
             case "":
                 return null;
             default:
@@ -4358,7 +4364,13 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
                 MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
                 MainActivity.user.profileData = tempUser.profileData;
+                if(mProfile == null) {
+                    mProfile = new Profile();
+                    mProfile.setName(user.getName());
+                    mProfile.setName(user.getPhone_no());
+                }
             }
+
             setUserIdWithAllEvents();
             String u = JSON.std.asString(this.user);
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).apply();
@@ -5051,15 +5063,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSelectedCurrentEducation(HashMap<String, String> params) {
-        // for profile screen
+        //  save user's current and preferred level on the server
         this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL + "profile/", params, Request.Method.POST);
 
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(UserPreparingFragment.class.getSimpleName() );
-        if(fragment == null) {
-            fragment = UserPreparingFragment.newInstance();
-        }
-        this.mDisplayFragment(fragment, true,UserPreparingFragment.class.getSimpleName());
-
+        // request for yearly exam based on preferred level
+        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, Constants.BASE_URL +"stream-yearly-exams/?level="+mProfile.getPreferred_level(),null, Request.Method.GET);
     }
 
     @Override
@@ -5092,12 +5100,14 @@ public class MainActivity extends AppCompatActivity
 
             }
         }
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(UserDecisionFragment.class.getSimpleName() );
+     /*   Fragment fragment = getSupportFragmentManager().findFragmentByTag(UserDecisionFragment.class.getSimpleName() );
         if(fragment == null) {
             fragment = UserDecisionFragment.newInstance();
         }
         this.mDisplayFragment(fragment, true,UserDecisionFragment.class.getSimpleName());
-
+*/
+        if(currentFragment instanceof  UserEducationFragment)
+            ((UserEducationFragment)currentFragment).onExamSubmittedSuccessfully();
     }
 
     @Override
@@ -5163,8 +5173,8 @@ public class MainActivity extends AppCompatActivity
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
 
-            if(currentFragment instanceof UserExamFragment)
-                ((UserExamFragment)currentFragment).updateUserExams((ArrayList<Exam>) mExamList);
+            if(currentFragment instanceof UserEducationFragment)
+                ((UserEducationFragment)currentFragment).updateUserExams((ArrayList<Exam>) mExamList);
         } catch (IOException e) {
             e.printStackTrace();
         }

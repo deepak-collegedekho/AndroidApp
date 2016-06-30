@@ -14844,15 +14844,7 @@ public class ProfileMacro {
             "                },\n" +
             "                {\n" +
             "                    \"id\": 5,\n" +
-            "                    \"name\": \"Hospitality \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 5,\n" +
-            "                    \"name\": \" Aviation \"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 5,\n" +
-            "                    \"name\": \" Tourism\"\n" +
+            "                    \"name\": \"Hospitality / Aviation / Tourism \"\n" +
             "                },\n" +
             "                {\n" +
             "                    \"id\": 6,\n" +
@@ -14876,7 +14868,7 @@ public class ProfileMacro {
             "                },\n" +
             "                {\n" +
             "                    \"id\": 13,\n" +
-            "                    \"name\": \"Law / Politics /Humanities\"\n" +
+            "                    \"name\": \"Law / Politics / Humanities\"\n" +
             "                },\n" +
             "                {\n" +
             "                    \"id\": 14,\n" +
@@ -14884,7 +14876,7 @@ public class ProfileMacro {
             "                },\n" +
             "                {\n" +
             "                    \"id\": 15,\n" +
-            "                    \"name\": \"Professional /Vocational Courses\"\n" +
+            "                    \"name\": \"Professional / Vocational Courses\"\n" +
             "                },\n" +
             "                {\n" +
             "                    \"id\": 18,\n" +
@@ -14892,7 +14884,7 @@ public class ProfileMacro {
             "                },\n" +
             "                {\n" +
             "                    \"id\": 32,\n" +
-            "                    \"name\": \"Animation /Multimedia\"\n" +
+            "                    \"name\": \"Animation / Multimedia\"\n" +
             "                },\n" +
             "                {\n" +
             "                    \"id\": 16,\n" +
@@ -15308,6 +15300,7 @@ public class ProfileMacro {
     // sub level Ids
     public static int CURRENT_EDUCATION_SCHOOL  = 8;
     public static int CURRENT_EDUCATION_COLLEGE = 1;
+    public static int CURRENT_EDUCATION_PG = 5;
 
     // set preferred level
     public static int LEVEL_UNDER_GRADUATE = 1;
