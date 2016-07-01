@@ -43,7 +43,7 @@ public class ExamDetailAdapter extends FragmentStatePagerAdapter {
         ExamDetail examDetailObj =  mExamDetailList.get(position);
         if(examDetailObj != null){
             String title = examDetailObj.getExam_short_name().trim();
-            if(examDetailObj.getYear().trim() != null){
+            if(examDetailObj.getYear() != null && examDetailObj.getYear().trim() != ""){
                 title = title + "  " + examDetailObj.getYear().trim();
             }
             return title;

@@ -8,85 +8,234 @@
     android:gravity="center"
     android:layout_height="match_parent">
 
+    <!--<LinearLayout-->
+        <!--android:id="@+id/home_widget_first_layout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight=".5"-->
+        <!--android:gravity="center"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_marginBottom="10dp"-->
+        <!--android:layout_marginTop="15dp"-->
+        <!--android:weightSum="1">-->
+
+        <!--<LinearLayout-->
+            <!--android:id="@+id/home_widget_first"-->
+            <!--android:orientation="vertical"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight=".5"-->
+            <!--android:tag="1"-->
+            <!--android:layout_marginLeft="40dp"-->
+            <!--android:background="@drawable/rounded_box_blue"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:weightSum="1">-->
+
+            <!--<ImageView-->
+                <!--android:id="@+id/home_widget_image_first"-->
+                <!--android:layout_width="40dp"-->
+                <!--android:layout_height="0dp"-->
+                <!--android:layout_weight=".6"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:importantForAccessibility="no"-->
+                <!--app:srcCompat="@drawable/ic_institute"/>-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/home_widget_textview_first"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="0dp"-->
+                <!--android:layout_weight=".4"-->
+                <!--android:text="Recommended"-->
+                <!--android:gravity="center"-->
+                <!--android:textSize="16sp"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:padding="@dimen/m5dp"/>-->
+
+        <!--</LinearLayout>-->
+
+
+
+        <!--<LinearLayout-->
+            <!--android:id="@+id/home_widget_second"-->
+            <!--android:orientation="vertical"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight=".5"-->
+            <!--android:tag="2"-->
+            <!--android:layout_marginRight="40dp"-->
+            <!--android:layout_marginLeft="15dp"-->
+            <!--android:background="@drawable/rounded_box_blue"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:weightSum="1">-->
+
+            <!--<ImageView-->
+                <!--android:id="@+id/home_widget_image_second"-->
+                <!--android:layout_width="40dp"-->
+                <!--android:layout_height="0dp"-->
+                <!--android:layout_weight=".6"-->
+                <!--android:importantForAccessibility="no"-->
+                <!--android:layout_gravity="center"-->
+                <!--app:srcCompat="@drawable/ic_news"/>-->
+            <!--<TextView-->
+                <!--android:id="@+id/home_widget_textview_second"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="0dp"-->
+                <!--android:layout_weight=".4"-->
+                <!--android:text="Shortlist"-->
+                <!--android:gravity="center"-->
+                <!--android:textSize="16sp"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:padding="@dimen/m5dp"/>-->
+
+        <!--</LinearLayout>-->
+    <!--</LinearLayout>-->
+
+
+
+
     <LinearLayout
         android:id="@+id/home_widget_first_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".5"
-        android:gravity="center"
         android:orientation="horizontal"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="15dp"
         android:weightSum="1">
 
-        <LinearLayout
+
+        <!--<LinearLayout-->
+        <!--android:id="@+id/home_widget_third"-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_weight=".5"-->
+        <!--android:tag="3"-->
+        <!--android:layout_marginLeft="40dp"-->
+        <!--android:background="@drawable/rounded_box_blue"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:weightSum="1">-->
+
+        <!--<ImageView-->
+        <!--android:id="@+id/home_widget_image_third"-->
+        <!--android:layout_width="40dp"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight=".6"-->
+        <!--android:importantForAccessibility="no"-->
+        <!--android:layout_gravity="center"-->
+        <!--app:srcCompat="@drawable/ic_article"/>-->
+        <!--<TextView-->
+        <!--android:id="@+id/home_widget_textview_third"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight=".4"-->
+        <!--android:text="Trending"-->
+        <!--android:gravity="center"-->
+        <!--android:textSize="16sp"-->
+        <!--android:textColor="@color/white"-->
+        <!--android:padding="@dimen/m5dp"/>-->
+
+        <!--</LinearLayout>-->
+
+        <RelativeLayout android:layout_gravity="center_vertical"
             android:id="@+id/home_widget_first"
-            android:orientation="vertical"
             android:layout_width="0dp"
-            android:layout_weight=".5"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_box_blue"
             android:tag="1"
             android:layout_marginLeft="40dp"
-            android:background="@drawable/rounded_box_blue"
-            android:layout_height="wrap_content"
-            android:weightSum="1">
+            android:layout_weight=".5" >
 
-            <ImageView
-                android:id="@+id/home_widget_image_first"
+
+            <TextView android:id="@+id/recommended_count"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight=".6"
-                android:layout_gravity="center"
-                android:importantForAccessibility="no"
-                app:srcCompat="@drawable/ic_institute"/>
-
-            <TextView
-                android:id="@+id/home_widget_textview_first"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight=".4"
-                android:text="Institutes"
-                android:gravity="center"
-                android:textSize="16sp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="--"
+                android:textSize="14sp"
                 android:textColor="@color/white"
-                android:padding="@dimen/m5dp"/>
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"/>
 
-        </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
 
+                <ImageView
+                    android:id="@+id/home_widget_image_first"
+                    android:layout_width="40dp"
+                    android:layout_height="0dp"
+                    android:layout_weight=".6"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    app:srcCompat="@drawable/ic_institute"/>
+                <TextView
+                    android:id="@+id/home_widget_textview_first"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight=".4"
+                    android:text="Recommended"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:padding="@dimen/m5dp"/>
+            </LinearLayout>
+        </RelativeLayout>
 
-
-        <LinearLayout
+        <RelativeLayout android:layout_gravity="center_vertical"
             android:id="@+id/home_widget_second"
-            android:orientation="vertical"
             android:layout_width="0dp"
-            android:layout_weight=".5"
-            android:tag="2"
-            android:layout_marginRight="40dp"
-            android:layout_marginLeft="15dp"
-            android:background="@drawable/rounded_box_blue"
             android:layout_height="wrap_content"
-            android:weightSum="1">
+            android:background="@drawable/rounded_box_blue"
+            android:tag="2"
+            android:layout_weight=".5"
+            android:layout_marginRight="40dp"
+            android:layout_marginLeft="15dp" >
 
-            <ImageView
-                android:id="@+id/home_widget_image_second"
+
+            <TextView android:id="@+id/shortlist_count"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight=".6"
-                android:importantForAccessibility="no"
-                android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_news"/>
-            <TextView
-                android:id="@+id/home_widget_textview_second"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight=".4"
-                android:text="News"
-                android:gravity="center"
-                android:textSize="16sp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="--"
+                android:textSize="14sp"
                 android:textColor="@color/white"
-                android:padding="@dimen/m5dp"/>
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"/>
 
-        </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
+
+                <ImageView
+                    android:id="@+id/home_widget_image_second"
+                    android:layout_width="40dp"
+                    android:layout_height="0dp"
+                    android:layout_weight=".6"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    app:srcCompat="@drawable/ic_news"/>
+                <TextView
+                    android:id="@+id/home_widget_textview_second"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight=".4"
+                    android:text="Shortlist"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:padding="@dimen/m5dp"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+
     </LinearLayout>
+
+
+
+
+
 
     <LinearLayout
         android:id="@+id/home_widget_second_layout"
@@ -98,70 +247,134 @@
         android:weightSum="1">
 
 
-        <LinearLayout
+        <!--<LinearLayout-->
+            <!--android:id="@+id/home_widget_third"-->
+            <!--android:orientation="vertical"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight=".5"-->
+            <!--android:tag="3"-->
+            <!--android:layout_marginLeft="40dp"-->
+            <!--android:background="@drawable/rounded_box_blue"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:weightSum="1">-->
+
+            <!--<ImageView-->
+                <!--android:id="@+id/home_widget_image_third"-->
+                <!--android:layout_width="40dp"-->
+                <!--android:layout_height="0dp"-->
+                <!--android:layout_weight=".6"-->
+                <!--android:importantForAccessibility="no"-->
+                <!--android:layout_gravity="center"-->
+                <!--app:srcCompat="@drawable/ic_article"/>-->
+            <!--<TextView-->
+                <!--android:id="@+id/home_widget_textview_third"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="0dp"-->
+                <!--android:layout_weight=".4"-->
+                <!--android:text="Trending"-->
+                <!--android:gravity="center"-->
+                <!--android:textSize="16sp"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:padding="@dimen/m5dp"/>-->
+
+        <!--</LinearLayout>-->
+
+        <RelativeLayout android:layout_gravity="center_vertical"
             android:id="@+id/home_widget_third"
-            android:orientation="vertical"
             android:layout_width="0dp"
-            android:layout_weight=".5"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_box_blue"
             android:tag="3"
             android:layout_marginLeft="40dp"
-            android:background="@drawable/rounded_box_blue"
-            android:layout_height="wrap_content"
-            android:weightSum="1">
+            android:layout_weight=".5" >
 
-            <ImageView
-                android:id="@+id/home_widget_image_third"
+
+            <TextView android:id="@+id/trending_count"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight=".6"
-                android:importantForAccessibility="no"
-                android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_article"/>
-            <TextView
-                android:id="@+id/home_widget_textview_third"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight=".4"
-                android:text="Article"
-                android:gravity="center"
-                android:textSize="16sp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="--"
+                android:textSize="14sp"
                 android:textColor="@color/white"
-                android:padding="@dimen/m5dp"/>
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"/>
 
-        </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
 
-        <LinearLayout
+                <ImageView
+                    android:id="@+id/home_widget_image_third"
+                    android:layout_width="40dp"
+                    android:layout_height="0dp"
+                    android:layout_weight=".6"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    app:srcCompat="@drawable/ic_article"/>
+                <TextView
+                    android:id="@+id/home_widget_textview_third"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight=".4"
+                    android:text="Trending"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:padding="@dimen/m5dp"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout android:layout_gravity="center_vertical"
             android:id="@+id/home_widget_fourth"
-            android:orientation="vertical"
             android:layout_width="0dp"
-            android:layout_weight=".5"
-            android:tag="4"
-            android:layout_marginRight="40dp"
-            android:layout_marginLeft="15dp"
-            android:background="@drawable/rounded_box_blue"
             android:layout_height="wrap_content"
-            android:weightSum="1">
+            android:background="@drawable/rounded_box_blue"
+            android:tag="4"
+            android:layout_weight=".5"
+            android:layout_marginRight="40dp"
+            android:layout_marginLeft="15dp" >
 
-            <ImageView
-                android:id="@+id/home_widget_image_fourth"
+
+            <TextView android:id="@+id/explore_count"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight=".6"
-                android:layout_gravity="center"
-                android:importantForAccessibility="no"
-                app:srcCompat="@drawable/ic_qna"/>
-            <TextView
-                android:id="@+id/home_widget_textview_fourth"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight=".4"
-                android:text="Qna"
-                android:gravity="center"
-                android:textSize="16sp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="--"
+                android:textSize="14sp"
                 android:textColor="@color/white"
-                android:padding="@dimen/m5dp"/>
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"/>
 
-        </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
+
+                <ImageView
+                    android:id="@+id/home_widget_image_fourth"
+                    android:layout_width="40dp"
+                    android:layout_height="0dp"
+                    android:layout_weight=".6"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    app:srcCompat="@drawable/ic_qna"/>
+                <TextView
+                    android:id="@+id/home_widget_textview_fourth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight=".4"
+                    android:text="Explore"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:padding="@dimen/m5dp"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+
     </LinearLayout>
 
 

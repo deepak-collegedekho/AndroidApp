@@ -59,6 +59,7 @@ public class Constants
     public static final String TAG_LOAD_STEP_BY_STEP = "load_step_by_step";
     public static final String TAG_UPDATE_STREAM = "update_stream";
     public static final String WIDGET_INSTITUTES = "institutes";
+    public static final String WIDGET_TRENDING_INSTITUTES = "trending_institutes";
     public static final String PNS_INSTITUTES = "pns_institutes";
     public static final String TAG_INSTITUTE_DETAILS = "institute_details";
     public static final String PNS_NEWS = "pns_news";

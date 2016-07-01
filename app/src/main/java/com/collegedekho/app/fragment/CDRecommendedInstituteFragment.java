@@ -171,7 +171,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             this.mEmptyTextView.setVisibility(View.GONE);
         }
 
-        this.mAdapter = new SimpleCardStackAdapter(getActivity(), this.getContext(), this, CARD_CATEGORY);
+        if(this.mAdapter == null){
+            this.mAdapter = new SimpleCardStackAdapter(getActivity(), this.getContext(), this, CARD_CATEGORY);
+        }
         this.mAddCardInAdapter(this.mInstitutes);
         this.mCardContainer.setAdapter(this.mAdapter);
 
@@ -195,12 +197,11 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         rootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
         rootView.findViewById(R.id.recommended_tute_frame).setOnClickListener(this);
 
-        currentTab = rootView.findViewById(R.id.tab_recommended);
-        currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
-//        ObjectAnimator anim = ObjectAnimator.ofFloat(currentTab,"scaleY",1.2f);
+//        currentTab = rootView.findViewById(R.id.tab_recommended);
+//        currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
+////        ObjectAnimator anim = ObjectAnimator.ofFloat(currentTab,"scaleY",1.2f);
 //        anim.setDuration(3000); // duration 3 seconds
 //        anim.start();
-
 
         return rootView;
     }
@@ -275,6 +276,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         if (getView() != null)
             getView().setLayerType(View.LAYER_TYPE_NONE, null);
         loading = false;
+        if(currentTab != null){
+            currentTab.animate().translationYBy(0f).scaleX(1.0f).scaleY(1.0f).setDuration(0).start();
+        }
+
     }
 
     @Override
@@ -282,6 +287,19 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         super.onResume();
         if (getView() != null)
             getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+        if(currentTab == null || currentTab.getId() == R.id.tab_recommended){
+            currentTab = getView().findViewById(R.id.tab_recommended);
+            currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(0).start();
+            mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_blue_border_box));
+        } else if (currentTab.getId() == R.id.tab_buzzlist){
+            currentTab = getView().findViewById(R.id.tab_buzzlist);
+            currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(0).start();
+            mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_orange_border_box));
+        } else if (currentTab.getId() == R.id.tab_wishlist){
+            currentTab = getView().findViewById(R.id.tab_wishlist);
+            currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(0).start();
+        }
 
         this.mMainActivity = (MainActivity) this.getActivity();
         if (this.mMainActivity != null)

@@ -22,6 +22,7 @@ import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.listener.OnSwipeTouchListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
 
@@ -41,10 +42,16 @@ public class TabFragment extends  BaseFragment{
     private ArrayList<ExamDetail> mExamDetailList;
     private ExamDetailAdapter mDetailsAdapter;
     private ExamDetail mExamDetail;
+    private ExamSummary mExamSummary;
     private ViewPager mExamTabPager  = null;
     private boolean isFistTime = false;
     private boolean IS_TUTE_COMPLETED = true;
     private View mExamsTabLayout;
+
+    TextView recommended_countTV;
+    TextView trending_countTV;
+    TextView shortlist_countTV;
+    TextView explore_countTV;
 
     public static TabFragment newInstance(int tabPosoition,ArrayList<ExamDetail> examList) {
         TabFragment fragment = new TabFragment();
@@ -75,11 +82,17 @@ public class TabFragment extends  BaseFragment{
 
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
 
+        if(recommended_countTV == null && trending_countTV == null && shortlist_countTV == null && explore_countTV== null){
+            recommended_countTV       = (TextView)rootView.findViewById(R.id.recommended_count);
+            trending_countTV   = (TextView)rootView.findViewById(R.id.trending_count);
+            shortlist_countTV    = (TextView)rootView.findViewById(R.id.shortlist_count);
+            explore_countTV          = (TextView)rootView.findViewById(R.id.explore_count);
+        }
+
         this.mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
         mExamsTabLayout=rootView.findViewById(R.id.exams_tab_layout);
         //this.mExamTabPager.setPageTransformer(true, new ZoomPageTransformer());
         TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
-        TextView mStreamName = (TextView) rootView.findViewById(R.id.user_stream);
         CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
 
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
@@ -105,15 +118,6 @@ public class TabFragment extends  BaseFragment{
                     if (image != null && !image.isEmpty())
                         mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
                 }
-            }
-
-            String streamName = MainActivity.mProfile.getCurrent_stream_name();
-            if(streamName != null && !streamName.isEmpty()){
-                mStreamName.setVisibility(View.VISIBLE);
-                mStreamName.setText(streamName);
-            }
-            else{
-                mStreamName.setVisibility(View.GONE);
             }
         }
 
@@ -196,6 +200,12 @@ public class TabFragment extends  BaseFragment{
                 mExamsTabLayout.setVisibility(View.GONE);
             }
         }
+        if(this.mExamDetailList != null && !this.mExamDetailList.isEmpty()) {
+            if (this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
+                this.mExamDetail = this.mExamDetailList.get(mExamTabPager.getCurrentItem());
+                this.mListener.onExamTabSelected(mExamDetail);
+            }
+        }
 /*
         if (mExamDetailList.size() >= EXAM_TAB_POSITION)
             mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);*/
@@ -208,6 +218,8 @@ public class TabFragment extends  BaseFragment{
             bottomMenu.setVisibility(View.VISIBLE);
         }
 
+        updateCollegeCount(selectedTabPosition);
+
     }
 
     @Override
@@ -215,14 +227,16 @@ public class TabFragment extends  BaseFragment{
         super.onPause();
         final MainActivity mainActivity = (MainActivity)getActivity();
         if(mainActivity.currentBottomItem != null){
-            mainActivity.currentBottomItem.animate().translationYBy(10f).setDuration(0).start();
-            mainActivity.currentBottomItem = null;
+            mainActivity.mUpdateTabMenuItem(-2,0);
+//            mainActivity.currentBottomItem.animate().translationYBy(10f).setDuration(0).start();
+//            mainActivity.currentBottomItem = null;
 
         }
         View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
         bottomMenu.animate().translationY(bottomMenu.getHeight());
         bottomMenu.setVisibility(View.GONE);
 
+        updateCollegeCount(selectedTabPosition);
     }
 
     @Override
@@ -272,6 +286,7 @@ public class TabFragment extends  BaseFragment{
         if(this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() >position) {
             this.mExamDetail = this.mExamDetailList.get(position);
             this.mListener.onExamTabSelected(mExamDetail);
+            updateCollegeCount(selectedTabPosition);
         }
     }
 
@@ -313,27 +328,44 @@ public class TabFragment extends  BaseFragment{
 
             LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 1.0f);
+                    LinearLayout.LayoutParams.MATCH_PARENT, 0, .5f);
             ll.setLayoutParams(lp);
 
             //this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.GONE);
 
-            firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
-            secondSubMenuIV.setImageResource(R.drawable.ic_syllabus);
-            thirdSubMenuIV.setImageResource(R.drawable.ic_challenges);
-            fourthSubMenuIV.setImageResource(R.drawable.ic_prep_path);
+            firstSubMenuIV.setImageResource(R.drawable.ic_institute);
+            secondSubMenuIV.setImageResource(R.drawable.ic_shortlist);
+            thirdSubMenuIV.setImageResource(R.drawable.ic_trending);
+            fourthSubMenuIV.setImageResource(R.drawable.ic_search_college_widget);
 
-            firstSubMenuTV.setText("Test Calendar");
-            firstSubMenuTV.setContentDescription("Test preparation calendar");
-            secondSubMenuTV.setText("Syllabus");
-            secondSubMenuTV.setContentDescription("Syllabus for exam");
+            firstSubMenuTV.setText("Recommended");
+            firstSubMenuTV.setContentDescription("Select to Explore recommended Institutes");
+            secondSubMenuTV.setText("Shortlist");
+            secondSubMenuTV.setContentDescription("Select to Explore shortlisted Institutes");
+            thirdSubMenuTV.setText("Trending");
+            thirdSubMenuTV.setContentDescription("Select to Explore popular Institutes");
+            fourthSubMenuTV.setText("Explore");
+            fourthSubMenuTV.setContentDescription("Select to Explore all Institutes");
 
-            thirdSubMenuTV.setText("Challenges");
-            fourthSubMenuTV.setText("Prep Path");
+            ll.getChildAt(1).setVisibility(View.VISIBLE);
 
             this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
 
         }else   if(this.selectedTabPosition == 2){
+            IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+            if(view != null ){
+                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+                if(!IS_TUTE_COMPLETED) {
+                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
+                    bottomMenu.animate().translationY(bottomMenu.getHeight());
+                    bottomMenu.setVisibility(View.GONE);
+                } else {
+                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+                    bottomMenu.animate().translationY(0);
+                    bottomMenu.setVisibility(View.VISIBLE);
+                }
+            }
+
             if(view != null ){
                 view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
 
@@ -342,31 +374,144 @@ public class TabFragment extends  BaseFragment{
                 bottomMenu.setVisibility(View.VISIBLE);
             }
 
+
             LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 0, .5f);
+                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 1.0f);
             ll.setLayoutParams(lp);
 
             //this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.GONE);
 
-            firstSubMenuIV.setImageResource(R.drawable.ic_institute);
-            secondSubMenuIV.setImageResource(R.drawable.ic_news);
-            thirdSubMenuIV.setImageResource(R.drawable.ic_article);
-            fourthSubMenuIV.setImageResource(R.drawable.ic_qna);
+            firstSubMenuIV.setImageResource(R.drawable.ic_chat_bubble_widget);
+            secondSubMenuIV.setImageResource(R.drawable.ic_qna);
 
-            firstSubMenuTV.setText("Institutes");
-            firstSubMenuTV.setContentDescription("Select to Explore all Institutes");
-            secondSubMenuTV.setText("News");
-            secondSubMenuTV.setContentDescription("Select to Explore News");
-            thirdSubMenuTV.setText("Article");
-            thirdSubMenuTV.setContentDescription("Select to Explore Articles");
-            fourthSubMenuTV.setText("Qna");
-            fourthSubMenuTV.setContentDescription("Select to Explore Qna");
+            firstSubMenuTV.setText("Future Buddies");
+            firstSubMenuTV.setContentDescription("Your Future mates");
+            secondSubMenuTV.setText("Q & A");
+            secondSubMenuTV.setContentDescription("FAQ's");
+
+            ll.getChildAt(1).setVisibility(View.VISIBLE);
 
             this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
+
         }else   if(this.selectedTabPosition == 3){
+            IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+            if(view != null ){
+                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+                if(!IS_TUTE_COMPLETED) {
+                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
+                    bottomMenu.animate().translationY(bottomMenu.getHeight());
+                    bottomMenu.setVisibility(View.GONE);
+                } else {
+                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+                    bottomMenu.animate().translationY(0);
+                    bottomMenu.setVisibility(View.VISIBLE);
+                }
+            }
+
+            LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 1.0f);
+            ll.setLayoutParams(lp);
+
+            //this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.GONE);
+
+            firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
+            secondSubMenuIV.setImageResource(R.drawable.ic_syllabus);
+
+            firstSubMenuTV.setText("Test Calendar");
+            firstSubMenuTV.setContentDescription("Test preparation calendar");
+            secondSubMenuTV.setText("Syllabus");
+            secondSubMenuTV.setContentDescription("Syllabus for exam");
+            thirdSubMenuTV.setText("Important Dates");
+            thirdSubMenuTV.setContentDescription("Important Dates");
+
+            ll.getChildAt(1).setVisibility(View.VISIBLE);
+
+            this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
 
         }else   if(this.selectedTabPosition == 4){
+            IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+            if(view != null ){
+                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+                if(!IS_TUTE_COMPLETED) {
+                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
+                    bottomMenu.animate().translationY(bottomMenu.getHeight());
+                    bottomMenu.setVisibility(View.GONE);
+                } else {
+                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+                    bottomMenu.animate().translationY(0);
+                    bottomMenu.setVisibility(View.VISIBLE);
+                }
+            }
+
+            LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 1.0f);
+            ll.setLayoutParams(lp);
+
+            //this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.GONE);
+
+            firstSubMenuIV.setImageResource(R.drawable.ic_news);
+            secondSubMenuIV.setImageResource(R.drawable.ic_article);
+
+            firstSubMenuTV.setText("News");
+            firstSubMenuTV.setContentDescription("News");
+            secondSubMenuTV.setText("Articles");
+            secondSubMenuTV.setContentDescription("Articles");
+
+            ll.getChildAt(1).setVisibility(View.VISIBLE);
+
+            this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
+        }
+
+
+
+        updateCollegeCount(selectedTabPosition);
+    }
+
+    private void updateCollegeCount(int selectedTabPosition) {
+        final View view = getView();
+        if(view ==   null)
+            return;
+
+
+        recommended_countTV       = (TextView)view.findViewById(R.id.recommended_count);
+        trending_countTV   = (TextView)view.findViewById(R.id.trending_count);
+        shortlist_countTV    = (TextView)view.findViewById(R.id.shortlist_count);
+        explore_countTV          = (TextView)view.findViewById(R.id.explore_count);
+
+        if(selectedTabPosition == 1 && mListener != null ){
+            recommended_countTV.setVisibility(View.VISIBLE);
+            trending_countTV.setVisibility(View.VISIBLE);
+            shortlist_countTV.setVisibility(View.VISIBLE);
+            explore_countTV.setVisibility(View.VISIBLE);
+
+            int recommended = (this.mExamSummary != null) ? this.mExamSummary.getRecommended_count() : 0;
+            int shortlist = (this.mExamSummary != null) ? this.mExamSummary.getShortlist_count() : 0;
+            int trending = (this.mExamSummary != null) ? this.mExamSummary.getBuzzlist_count() : 0;
+            int explore = (this.mExamSummary != null) ? this.mExamSummary.getBackup_count() : 0;
+
+            mListener.onExamTabSelected(this.mExamDetail);
+
+            Utils.SetCounterAnimation(recommended_countTV, recommended, "" , "", Constants.ANIM_SHORT_DURATION);
+            recommended_countTV.setContentDescription(String.valueOf(recommended));
+
+            Utils.SetCounterAnimation(shortlist_countTV, shortlist, "" , "", Constants.ANIM_SHORT_DURATION);
+            shortlist_countTV.setContentDescription(String.valueOf(shortlist));
+
+            Utils.SetCounterAnimation(trending_countTV, trending, "" , "", Constants.ANIM_SHORT_DURATION);
+            trending_countTV.setContentDescription(String.valueOf(trending));
+
+            Utils.SetCounterAnimation(explore_countTV, explore, "" , "", Constants.ANIM_SHORT_DURATION);
+            explore_countTV.setContentDescription(String.valueOf(explore));
+
+//            important_dateTV.setText(""+this.mExamSummary.getNext_important_date());
+        } else {
+            recommended_countTV.setVisibility(View.GONE);
+            trending_countTV.setVisibility(View.GONE);
+            shortlist_countTV.setVisibility(View.GONE);
+            explore_countTV.setVisibility(View.GONE);
         }
     }
 
@@ -397,34 +542,53 @@ public class TabFragment extends  BaseFragment{
     private void mSubMenuItemClickListener(){
         if(selectedTabPosition == 1){
 
-            if(selectedSubMenuPosition == 2) {
-                if (this.mExamDetail != null) {
-                    this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS , Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/syllabus/", null);
-                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  mExamDetail.getId()).commit();
-
-                }
-            } else if(selectedSubMenuPosition == 1) {
+            if(selectedSubMenuPosition == 1) {
+                if(this.mExamDetail != null)
+                    this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/", this.mExamDetail.getExam_tag());
+                else
+                    this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
+            } else if(selectedSubMenuPosition == 2) {
+                this.mHomeWidgetSelected(Constants.WIDGET_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
+            } else if(selectedSubMenuPosition == 3) {
+                if(this.mExamDetail != null)
+                    this.mHomeWidgetSelected(Constants.WIDGET_TRENDING_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2", this.mExamDetail.getExam_tag());
+                else
+                    this.mHomeWidgetSelected(Constants.WIDGET_TRENDING_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2",null);
+            } else if(selectedSubMenuPosition == 4) {
+                if(this.mExamDetail != null)
+                    this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mExamDetail.getExam_tag());//this.mExamDetail.getExam_tag());
+                else
+                    this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/",null);
+            }
+        } else if(selectedTabPosition == 2){
+            if(selectedSubMenuPosition == 1){
+                this.mHomeWidgetSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL + "personalize/forums", null);
+            }else if(selectedSubMenuPosition == 2){
+                this.mHomeWidgetSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna", null);
+            }
+        } else if (selectedTabPosition == 3){
+            if(selectedSubMenuPosition == 1){
                 if (this.mExamDetail != null) {
                     this.mHomeWidgetSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/calendar/", null);
                     getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, mExamDetail.getId()).apply();
                 }
-            }else
-                Toast.makeText(getActivity().getApplicationContext(), "Coming soon..", Toast.LENGTH_LONG).show();
+            } else if(selectedSubMenuPosition == 2) {
+                if (this.mExamDetail != null) {
+                    this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS , Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/syllabus/", null);
+                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  mExamDetail.getId()).commit();
+                }
+            }
+        } else if (selectedTabPosition == 4){
+            if(selectedSubMenuPosition == 1){
+                this.mHomeWidgetSelected(Constants.WIDGET_NEWS, Constants.BASE_URL+"personalize/news", null);
+            }else  if(selectedSubMenuPosition == 2){
+                this.mHomeWidgetSelected(Constants.WIDGET_ARTICES, Constants.BASE_URL+"personalize/articles", null);
+            }
         }
-        else if(selectedTabPosition == 2){
-             if(selectedSubMenuPosition == 1){
-                 if(this.mExamDetail != null)
-                 this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes/",this.mExamDetail.getExam_tag());
-                 else
-                 this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL+"personalize/institutes/", null);
-             }else  if(selectedSubMenuPosition == 2){
-                 this.mHomeWidgetSelected(Constants.WIDGET_NEWS, Constants.BASE_URL+"personalize/news", null);
-             }else  if(selectedSubMenuPosition == 3){
-                 this.mHomeWidgetSelected(Constants.WIDGET_ARTICES, Constants.BASE_URL+"personalize/articles", null);
-             }else  if(selectedSubMenuPosition == 4){
-                 this.mHomeWidgetSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna", null);
-             }
-        }
+    }
+
+    public int getSelectedTab(){
+        return selectedTabPosition;
     }
 
     public void updateTabFragment(int tabPosition){
@@ -434,7 +598,7 @@ public class TabFragment extends  BaseFragment{
 
     public void updateExamSummary(ExamSummary examSummary) {
         View view = getView();
-
+        this.mExamSummary = examSummary;
         if(view == null || examSummary == null)
             return;
 

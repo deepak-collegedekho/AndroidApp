@@ -11,6 +11,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,18 +36,30 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
     private OnUserPostAnonymousLoginListener mListener;
     private EditText mPhoneNumberET;
     private EditText mOtpET;
+    private static String PARAM1  = "param1";
+    private String phone_no;
 
 
-    public static PostAnonymousLoginFragment newInstance()
+    public static PostAnonymousLoginFragment newInstance(String phone_no)
     {
         PostAnonymousLoginFragment fragment = new PostAnonymousLoginFragment();
         Bundle args = new Bundle();
+        args.putString(PARAM1, phone_no);
         fragment.setArguments(args);
         return  fragment;
     }
 
     public PostAnonymousLoginFragment(){
         // required empty constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if(args != null){
+            this.phone_no = args.getString(PARAM1);
+        }
     }
 
     @Nullable
@@ -66,11 +79,17 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
         }
 
 
-
         mPhoneNumberET = (EditText) rootView.findViewById(R.id.login_phone_edit_text);
         mOtpET = (EditText) rootView.findViewById(R.id.login_otp_edit_text);
         mPhoneNumberET.addTextChangedListener(mobileNumberWatcher);
         mOtpET.addTextChangedListener(otpWatcher);
+
+        if(phone_no != null && phone_no != ""){
+            mPhoneNumberET.setText(phone_no);
+            if(phone_no.length() >= 10 && rootView != null){
+                rootView.findViewById(R.id.login_phone_submit_button).setVisibility(View.VISIBLE);
+            }
+        }
 
         mPhoneNumberET.setOnKeyListener(new View.OnKeyListener(){
             @Override

@@ -8,44 +8,45 @@
     android:paddingRight="@dimen/m20dp"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
+    android:visibility="gone"
     >
     <TextView
-        android:id="@+id/prep_buddies"
+        android:id="@+id/college_list"
         style="@style/AppTheme.Bottom_Button"
         android:layout_width="0dp"
         android:layout_weight=".25"
         android:tag="1"
-        android:text="PREP \nBUDDY"
+        android:text="COLLEGE"
         android:layout_marginTop="10dp"
         android:animateLayoutChanges="true"
         />
     <TextView
-        android:id="@+id/resources_buddies"
+        android:id="@+id/connect"
         style="@style/AppTheme.Bottom_Button"
         android:layout_width="0dp"
         android:layout_weight=".25"
         android:tag="2"
-        android:text="RESOURCE \nBUDDY"
+        android:text="CONNECT"
         android:layout_marginTop="10dp"
         android:animateLayoutChanges="true"
         />
     <TextView
-        android:id="@+id/future_buddies"
+        android:id="@+id/prepare"
         style="@style/AppTheme.Bottom_Button"
         android:layout_width="0dp"
         android:layout_weight=".25"
         android:tag="3"
-        android:text="FUTURE \nBUDDY"
+        android:text="PREPARE"
         android:layout_marginTop="10dp"
         android:animateLayoutChanges="true"
         />
     <TextView
-        android:id="@+id/my_alerts"
+        android:id="@+id/read"
         style="@style/AppTheme.Bottom_Button"
         android:layout_width="0dp"
         android:layout_weight=".25"
         android:tag="4"
-        android:text="MY \n ALERTS "
+        android:text="READ"
         android:layout_marginTop="10dp"
         android:animateLayoutChanges="true"
         />

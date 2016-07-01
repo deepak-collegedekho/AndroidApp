@@ -1,17 +1,18 @@
+/*
 package com.collegedekho.app.listener;
 
 import android.support.v7.widget.SearchView;
 
 import com.collegedekho.app.adapter.ExamStreamAdapter;
-import com.collegedekho.app.adapter.ExamsAdapter;
-import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
 
 import java.util.ArrayList;
 
+*/
 /**
  * Created by root on 21/6/16.
- */
+ *//*
+
 public class StreamOnQueryListener implements SearchView.OnQueryTextListener {
 
     ArrayList<ProfileSpinnerItem>  mStreamList;
@@ -59,3 +60,4 @@ public class StreamOnQueryListener implements SearchView.OnQueryTextListener {
         return false;
     }
 }
+*/

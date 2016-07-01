@@ -54,6 +54,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -323,10 +325,12 @@ public class MainActivity extends AppCompatActivity
     static String resource_uri = "";
     private Menu menu;
     private String mYear;
-    private TextView prepBuddies;
-    private TextView resourceBuddies;
-    private TextView futureBuddies;
-    private TextView myAlerts;
+
+    private View bottomButtonContainer;
+    private TextView collegeList;
+    private TextView connect;
+    private TextView prepare;
+    private TextView read;
 
     private List<MyAlertDate> myAlertsList;
     private boolean isFromNotification;
@@ -353,6 +357,7 @@ public class MainActivity extends AppCompatActivity
     private FrameLayout mContainerFrameLayout;
     private Toolbar mToolbar;
     public View currentBottomItem;
+    private int currentBottomId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -430,14 +435,15 @@ public class MainActivity extends AppCompatActivity
 
         this.mSetupGTM();
 
-        prepBuddies       = (TextView)findViewById(R.id.prep_buddies);
-        resourceBuddies   = (TextView)findViewById(R.id.resources_buddies);
-        futureBuddies     = (TextView)findViewById(R.id.future_buddies);
-        myAlerts          = (TextView)findViewById(R.id.my_alerts);
-        prepBuddies.setOnClickListener(mClickListener);
-        resourceBuddies.setOnClickListener(mClickListener);
-        futureBuddies.setOnClickListener(mClickListener);
-        myAlerts.setOnClickListener(mClickListener);
+        bottomButtonContainer = findViewById(R.id.bottom_button_container);
+        collegeList       = (TextView)findViewById(R.id.college_list);
+        connect           = (TextView)findViewById(R.id.connect);
+        prepare           = (TextView)findViewById(R.id.prepare);
+        read              = (TextView)findViewById(R.id.read);
+        collegeList.setOnClickListener(mClickListener);
+        connect.setOnClickListener(mClickListener);
+        prepare.setOnClickListener(mClickListener);
+        read.setOnClickListener(mClickListener);
 
         this.mSetUpAPPToolBar();
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
@@ -459,7 +465,6 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run() {
                  if(IN_FOREGROUND && IS_HOME_LOADED){
-
                     if(!IS_NETWORK_TASK_RUNNING &&  currentFragment != null &&
                             !(currentFragment instanceof ProfileFragment)) {
                         Intent gcmIntent = new Intent(MainActivity.this, GCMDialogActivity.class);
@@ -663,7 +668,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(mToolbar);
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        mToolbar.setNavigationIcon(R.drawable.ic_navigation_icon);
+        mToolbar.setNavigationIcon(R.drawable.ic_cd_colored);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1086,7 +1091,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setSearchAvailable(Menu menu) {
         if (currentFragment != null) {
-            if (currentFragment instanceof HomeFragment) {
+            if (currentFragment instanceof HomeFragment || (currentFragment instanceof TabFragment && ((TabFragment) currentFragment).getSelectedTab() == 1)) {
                 menu.setGroupVisible(R.id.search_menu_group, true);
                 if (searchView != null) {
                     searchView.setQueryHint("Search Institutes");
@@ -1142,6 +1147,11 @@ public class MainActivity extends AppCompatActivity
                 this.networkUtils.setToken(MainActivity.user.getToken());
                 // user id register
                 setUserIdWithAllEvents();
+                if(mProfile == null) {
+                    mProfile = new Profile();
+                    mProfile.setName(user.getName());
+                    mProfile.setName(user.getPhone_no());
+                }
 
                 this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT,Constants.BASE_URL+"profile/", null);
                 // this code for backward compatibility because in first release user stream and level
@@ -1988,7 +1998,7 @@ public class MainActivity extends AppCompatActivity
 
     // TODO :: EDIT THIS POST ANONYMOUS LOGIN FRAGMENT
     private void mDisplayPostAnonymousLoginFragment() {
-        PostAnonymousLoginFragment fragment = PostAnonymousLoginFragment.newInstance();
+        PostAnonymousLoginFragment fragment = PostAnonymousLoginFragment.newInstance(mProfile.getPhone_no());
         currentFragment = fragment;
         try {
 
@@ -2112,6 +2122,7 @@ public class MainActivity extends AppCompatActivity
             invalidateOptionsMenu();
     }
     private boolean isUpdateStreams;
+
     @Override
     public void onDataLoaded(String tag, String response) {
         String extraTag = null;
@@ -2195,6 +2206,11 @@ public class MainActivity extends AppCompatActivity
                 this.mCurrentTitle = "Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 this.mDisplayInstituteList(response, true, true);
+                break;
+            case Constants.WIDGET_TRENDING_INSTITUTES:
+                this.mCurrentTitle = "Trending Institutes";
+                Constants.IS_RECOMENDED_COLLEGE = false;
+                this.mDisplayInstituteList(response, false, true);
                 break;
             case Constants.TAKE_ME_TO_RECOMMENDED:
                 mClearBackStack();
@@ -3174,6 +3190,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_UPDATE_USER_PROFILE:
                 return "Updating Profile...";
             case Constants.WIDGET_INSTITUTES:
+            case Constants.WIDGET_TRENDING_INSTITUTES:
             case Constants.WIDGET_SHORTLIST_INSTITUTES:
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
                 return "Loading Institutes...";
@@ -3235,6 +3252,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_REQUEST_FOR_DEGREES:
             case Constants.TAG_UPDATE_PROFILE_OBJECT:
             case Constants.TAG_UPDATE_PROFILE_EXAMS:
+            case Constants.TAG_REQUEST_FOR_EXAMS:
             case "":
                 return null;
             default:
@@ -3586,6 +3604,9 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
+
+
+
 
     /**
      * This method returns
@@ -4269,7 +4290,7 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         if(currentBottomItem != null){
-            currentBottomItem.animate().translationYBy(10f).setDuration(300).start();
+            translateAnimation(null,currentBottomItem);
         }
 
         int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
@@ -4358,7 +4379,13 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
                 MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
                 MainActivity.user.profileData = tempUser.profileData;
+                if(mProfile == null) {
+                    mProfile = new Profile();
+                    mProfile.setName(user.getName());
+                    mProfile.setName(user.getPhone_no());
+                }
             }
+
             setUserIdWithAllEvents();
             String u = JSON.std.asString(this.user);
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).apply();
@@ -4895,9 +4922,9 @@ public class MainActivity extends AppCompatActivity
         if (mUserExamsList == null)
             mUserExamsList = new ArrayList<>();
         if (this.mUserExamsList.size() <= 0)
-            prepBuddies.setVisibility(View.GONE);
+            prepare.setVisibility(View.GONE);
         else
-            prepBuddies.setVisibility(View.VISIBLE);
+            prepare.setVisibility(View.VISIBLE);
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
         if (fragment == null)
@@ -4915,6 +4942,7 @@ public class MainActivity extends AppCompatActivity
 
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_HOME_LOADED), true).apply();
     }
+
 
     @Override
     public void onExamTabSelected(ExamDetail examDetailObj) {
@@ -4937,7 +4965,8 @@ public class MainActivity extends AppCompatActivity
 
     public void onHomeItemSelected(String requestType, String url, String tag) {
         if (requestType.equalsIgnoreCase(Constants.WIDGET_INSTITUTES)
-                || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES)){
+                || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES)
+                || requestType.equalsIgnoreCase(Constants.WIDGET_TRENDING_INSTITUTES)){
             //Suggesting System that its a good time to do GC
             System.gc();
 
@@ -4946,6 +4975,8 @@ public class MainActivity extends AppCompatActivity
             {
                 params.put("tag_uris[" + (params.size()) + "]",tag);
                 this.mExamTag = tag;
+            } else {
+                params = this.getAllExamTags();
             }
             this.mMakeNetworkCall(requestType, url, params);
             return;
@@ -4965,6 +4996,16 @@ public class MainActivity extends AppCompatActivity
             params.put("tag_uris[" + (0) + "]", tag);
 
         this.mMakeNetworkCall(requestType, url, params);
+    }
+
+    private Map<String,String> getAllExamTags(){
+        Map<String,String> params = new HashMap<>();
+        List<ExamDetail> list = user.getUser_exams();
+        for(ExamDetail ed : list){
+            params.put("tag_uris[" + (params.size()) + "]",ed.getExam_tag());
+            Log.e("EXAM TAG", ed.getExam_tag());
+        }
+        return params;
     }
 
     @Override
@@ -5051,15 +5092,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSelectedCurrentEducation(HashMap<String, String> params) {
-        // for profile screen
+        //  save user's current and preferred level on the server
         this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL + "profile/", params, Request.Method.POST);
 
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(UserPreparingFragment.class.getSimpleName() );
-        if(fragment == null) {
-            fragment = UserPreparingFragment.newInstance();
-        }
-        this.mDisplayFragment(fragment, true,UserPreparingFragment.class.getSimpleName());
-
+        // request for yearly exam based on preferred level
+        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, Constants.BASE_URL +"stream-yearly-exams/?level="+mProfile.getPreferred_level(),null, Request.Method.GET);
     }
 
     @Override
@@ -5092,12 +5129,14 @@ public class MainActivity extends AppCompatActivity
 
             }
         }
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(UserDecisionFragment.class.getSimpleName() );
+     /*   Fragment fragment = getSupportFragmentManager().findFragmentByTag(UserDecisionFragment.class.getSimpleName() );
         if(fragment == null) {
             fragment = UserDecisionFragment.newInstance();
         }
         this.mDisplayFragment(fragment, true,UserDecisionFragment.class.getSimpleName());
-
+*/
+        if(currentFragment instanceof  UserEducationFragment)
+            ((UserEducationFragment)currentFragment).onExamSubmittedSuccessfully();
     }
 
     @Override
@@ -5163,8 +5202,8 @@ public class MainActivity extends AppCompatActivity
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
 
-            if(currentFragment instanceof UserExamFragment)
-                ((UserExamFragment)currentFragment).updateUserExams((ArrayList<Exam>) mExamList);
+            if(currentFragment instanceof UserEducationFragment)
+                ((UserEducationFragment)currentFragment).updateUserExams((ArrayList<Exam>) mExamList);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -5867,7 +5906,7 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
-    View.OnClickListener mClickListener = new View.OnClickListener() {
+    public View.OnClickListener mClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             int postion = -1;
@@ -5876,56 +5915,99 @@ public class MainActivity extends AppCompatActivity
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (postion == 3) {
-                MainActivity.this.onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL + "personalize/forums", null);
-                if(currentBottomItem != null){
-                    currentBottomItem.animate().translationYBy(10f).setDuration(100).start();
-                }
-                currentBottomItem=null;
-                return;
-            }
-            if (postion == 4) {
-                MainActivity.this.mMakeNetworkCall(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", null);
-                if(currentBottomItem != null){
-                    currentBottomItem.animate().translationYBy(10f).setDuration(0).start();
-                }
-                currentBottomItem=null;
-                return;
-            }
 
-            mUpdateTabMenuItem(postion,100);
+//            if(postion == 1){
+//                mDisplayFragment(CollegeListFragment.newInstance(new ArrayList<>(mUserExamsList)), true, CollegeListFragment.class.toString());
+//            }
+//            if (postion == 3) {
+//                MainActivity.this.onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL + "personalize/forums", null);
+//                if(currentBottomItem != null){
+//                    currentBottomItem.animate().translationYBy(10f).setDuration(100).start();
+//                }
+//                currentBottomItem=null;
+//                return;
+//            }
+//            if (postion == 4) {
+//                MainActivity.this.mMakeNetworkCall(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", null);
+//                if(currentBottomItem != null){
+//                    currentBottomItem.animate().translationYBy(10f).setDuration(0).start();
+//                }
+//                currentBottomItem=null;
+//                return;
+//            }
+            mUpdateTabMenuItem(postion, 0);
             onTabMenuSelected(postion);
         }
     };
 
     public void mUpdateTabMenuItem(int tabPosition, int duration) {
-        prepBuddies.setSelected(false);
-        resourceBuddies.setSelected(false);
-        futureBuddies.setSelected(false);
-        myAlerts.setSelected(false);
+        collegeList.setSelected(false);
+        connect.setSelected(false);
+        prepare.setSelected(false);
+        read.setSelected(false);
+
+        bottomButtonContainer.setVisibility(View.VISIBLE);
+
+        View viewToMoveUp = null;
+        View viewToMoveDown = null;
 
         if (tabPosition == 1) {
-            prepBuddies.setSelected(true);
-            if(currentBottomItem != prepBuddies ){
-                prepBuddies.animate().translationYBy(-10f).setDuration(duration).start();
+            collegeList.setSelected(true);
+            if(currentBottomItem != collegeList){
+                viewToMoveUp = collegeList;
             }
-            if(currentBottomItem != null && currentBottomItem != prepBuddies){
-                currentBottomItem.animate().translationYBy(10f).setDuration(duration).start();
+            if(currentBottomItem != null && currentBottomItem != collegeList){
+                viewToMoveDown = currentBottomItem;
             }
-            currentBottomItem = prepBuddies;
+            currentBottomItem = collegeList;
         }else if (tabPosition == 2) {
-            resourceBuddies.setSelected(true);
-            if(currentBottomItem != resourceBuddies) {
-                resourceBuddies.animate().translationYBy(-10f).setDuration(duration).start();
+            connect.setSelected(true);
+            if(currentBottomItem != connect) {
+                viewToMoveUp = connect;
             }
-            if(currentBottomItem != null && currentBottomItem != resourceBuddies){
-                currentBottomItem.animate().translationYBy(10f).setDuration(duration).start();
+            if(currentBottomItem != null && currentBottomItem != connect){
+                viewToMoveDown = currentBottomItem;
             }
-            currentBottomItem = resourceBuddies;
+            currentBottomItem = connect;
+        }else if (tabPosition == 3) {
+            prepare.setSelected(true);
+            if(currentBottomItem != prepare) {
+                viewToMoveUp = prepare;
+            }
+            if(currentBottomItem != null && currentBottomItem != prepare){
+                viewToMoveDown = currentBottomItem;
+            }
+            currentBottomItem = prepare;
+        }else if (tabPosition == 4) {
+            read.setSelected(true);
+            if(currentBottomItem != read) {
+                viewToMoveUp = read;
+            }
+            if(currentBottomItem != null && currentBottomItem != read){
+                viewToMoveDown = currentBottomItem;
+            }
+            currentBottomItem = read;
+        }else if(tabPosition == -2){
+            viewToMoveDown = currentBottomItem;
+            currentBottomItem = null;
         }else {
-            currentBottomItem=null;
+            bottomButtonContainer.setVisibility(View.GONE);
+            currentBottomItem = null;
         }
+        translateAnimation(viewToMoveUp,viewToMoveDown);
+    }
 
+
+    private void translateAnimation(View viewToMoveUp, View viewToMoveDown) {
+        Animation translateUp= AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_up);
+        Animation translateDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_down);
+
+        if(viewToMoveUp != null){
+            viewToMoveUp.startAnimation(translateUp);
+        }
+        if(viewToMoveDown != null){
+            viewToMoveDown.startAnimation(translateDown);
+        }
     }
 
     private void onTabMenuSelected(int tabPosition) {
@@ -5935,9 +6017,9 @@ public class MainActivity extends AppCompatActivity
         if (mUserExamsList == null) mUserExamsList = new ArrayList<>();
 
         if (this.mUserExamsList.size() <= 0)
-            prepBuddies.setVisibility(View.GONE);
+            prepare.setVisibility(View.GONE);
         else
-            prepBuddies.setVisibility(View.VISIBLE);
+            prepare.setVisibility(View.VISIBLE);
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
         if (fragment == null)
@@ -6163,7 +6245,7 @@ public class MainActivity extends AppCompatActivity
         } else if (currentFragment != null && currentFragment instanceof ArticleFragment) {
 
             this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, Constants.BASE_URL + "articles/search=" + searchString + "/", null);
-        } else if (currentFragment != null && currentFragment instanceof HomeFragment) {
+        } else if ((currentFragment != null && currentFragment instanceof HomeFragment) || (currentFragment != null && currentFragment instanceof TabFragment)) {
 
             this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/search=" + searchString + "/", null);
         }

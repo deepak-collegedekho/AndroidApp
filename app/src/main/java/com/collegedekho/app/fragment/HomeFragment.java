@@ -23,20 +23,20 @@ import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
 
+import org.apache.tools.ant.Main;
+
 import java.util.ArrayList;
 
 /**
  * Created by sureshsaini on 27/11/15.
  */
-public class HomeFragment extends BaseFragment
-        {
+public class HomeFragment extends BaseFragment {
 
     private final String TAG = "profile Frgament";
     private static String PARAM1 = "param1";
     private ArrayList<ExamDetail> mExamDetailList;
     private ExamDetailAdapter mDetailsAdapter;
     private TextView mProfileName;
-    private TextView mStreamName;
     private CircularImageView mProfileImage;
     private OnTabSelectListener mListener;
     private ExamDetail mExamDetail; // detail is needs in tabs to get id of exams
@@ -74,7 +74,6 @@ public class HomeFragment extends BaseFragment
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PROFILE_SCREEN_TUTE), false);
 
         mProfileName  = (TextView)rootView.findViewById(R.id.user_name);
-        mStreamName   = (TextView)rootView.findViewById(R.id.user_profile_stream);
         mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
         mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
@@ -82,8 +81,7 @@ public class HomeFragment extends BaseFragment
        
         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
 
-            rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.VISIBLE);
+//            rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.VISIBLE);
             this.mExamTabPager.setVisibility(View.VISIBLE);
             this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
             this.mExamTabPager.setAdapter(this.mDetailsAdapter);
@@ -108,6 +106,7 @@ public class HomeFragment extends BaseFragment
             rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
             rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
             rootView.findViewById(R.id.pager_strip).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.prepare_layout_RL).setVisibility(View.VISIBLE);
 
         }else{
 
@@ -119,10 +118,7 @@ public class HomeFragment extends BaseFragment
             }
 
             rootView.findViewById(R.id.pager_strip).setVisibility(View.GONE);
-            rootView.findViewById(R.id.prep_buddies).setVisibility(View.GONE);
-            rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.GONE);
-            rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.GONE);
-            rootView.findViewById(R.id.backup_colleges_layout_RL).setVisibility(View.GONE);
+            rootView.findViewById(R.id.prepare_layout_RL).setVisibility(View.GONE);
         }
 
         rootView.findViewById(R.id.profile_guide_image).setOnClickListener(new View.OnClickListener() {
@@ -145,20 +141,19 @@ public class HomeFragment extends BaseFragment
                 }else {
                     v.setVisibility(View.GONE);
                     IS_TUTE_COMPLETED = true;
-                    View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-                    bottomMenu.animate().translationY(0);
-                    bottomMenu.setVisibility(View.VISIBLE);
+//                    View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+//                    bottomMenu.animate().translationY(0);
+//                    bottomMenu.setVisibility(View.VISIBLE);
                     getActivity().invalidateOptionsMenu();
                     getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PROFILE_SCREEN_TUTE), true).apply();
                 }
             }
         });
 
-        rootView.findViewById(R.id.backup_colleges_layout_RL).setOnClickListener(this);
-        rootView.findViewById(R.id.wishList_colleges_layout_RL).setOnClickListener(this);
-        rootView.findViewById(R.id.recommended_colleges_layout_RL).setOnClickListener(this);
-        rootView.findViewById(R.id.important_date_layout_RL).setOnClickListener(this);
-        rootView.findViewById(R.id.profile_syllabus_statusLL).setOnClickListener(this);
+        rootView.findViewById(R.id.college_list_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
+        rootView.findViewById(R.id.connect_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
+        rootView.findViewById(R.id.prepare_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
+        rootView.findViewById(R.id.updates_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
         rootView.findViewById(R.id.profile_image).setOnClickListener(this);
 
         ((ViewPager.LayoutParams) ((PagerTabStrip) rootView.findViewById(R.id.exam_pager_header)).getLayoutParams()).isDecor = true;
@@ -170,9 +165,9 @@ public class HomeFragment extends BaseFragment
     public void onPause() {
         super.onPause();
         Constants.READY_TO_CLOSE = true;
-        View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-        bottomMenu.animate().translationY(bottomMenu.getHeight());
-        bottomMenu.setVisibility(View.GONE);
+//        View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+//        bottomMenu.animate().translationY(bottomMenu.getHeight());
+//        bottomMenu.setVisibility(View.GONE);
     }
 
     @Override
@@ -200,8 +195,8 @@ public class HomeFragment extends BaseFragment
 
                 view.findViewById(R.id.profile_guide_image).setVisibility(View.VISIBLE);
             }else {
-                bottomMenu.animate().translationY(0);
-                bottomMenu.setVisibility(View.VISIBLE);
+//                bottomMenu.animate().translationY(0);
+//                bottomMenu.setVisibility(View.VISIBLE);
 
                 view.findViewById(R.id.profile_guide_image).setVisibility(View.GONE);
             }
@@ -225,19 +220,43 @@ public class HomeFragment extends BaseFragment
             if (image != null && ! image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
 
-            String streamName = MainActivity.mProfile.getCurrent_stream_name();
-            if(streamName != null && !streamName.isEmpty()){
-                mStreamName.setVisibility(View.VISIBLE);
-                mStreamName.setText(streamName);
+            // ************************Removed from fragment
+//            String streamName = MainActivity.mProfile.getCurrent_stream_name();
+
+        }else if(MainActivity.user != null){
+
+            String name = MainActivity.user.getName();
+            if(name!=null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()))
+            {
+                mProfileName.setText("");
+                mProfileName.setVisibility(View.GONE);
+            }else {
+                mProfileName.setText(name);
+                mProfileName.setVisibility(View.VISIBLE);
             }
-            else{
-                mStreamName.setVisibility(View.GONE);
-            }
+
+            String image = MainActivity.user.getImage();
+            if (image != null && ! image.isEmpty())
+                mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+
+//            String streamName = MainActivity.user.getStream_name();
+//>>>>>>> Stashed changes
+//            if(streamName != null && !streamName.isEmpty()){
+//                mStreamName.setVisibility(View.VISIBLE);
+//                mStreamName.setText(streamName);
+//            }
+//            else{
+//                mStreamName.setVisibility(View.GONE);
+//            }
+//<<<<<<< Updated upstream
+//=======
+//
+//>>>>>>> Stashed changes
         }
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
-            mainActivity.mUpdateTabMenuItem(-1,100);
+            mainActivity.mUpdateTabMenuItem(-1,0);
         }
 
 
@@ -249,23 +268,53 @@ public class HomeFragment extends BaseFragment
         }
     }
 
-    public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
-        this.mExamDetailList=userExamsList;
-        View rootView=getView();
-        if(rootView==null){
-            return;
-        }
-        if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
-            rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.VISIBLE);
-            this.mExamTabPager.setVisibility(View.VISIBLE);
-            this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
-            this.mExamTabPager.setAdapter(this.mDetailsAdapter);
-            rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
-            rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
-            rootView.findViewById(R.id.pager_strip).setVisibility(View.VISIBLE);
+//<<<<<<< Updated upstream
+//    public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
+//        this.mExamDetailList=userExamsList;
+//        View rootView=getView();
+//        if(rootView==null){
+//            return;
+//        }
+//        if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
+//            rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.VISIBLE);
+//            rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.VISIBLE);
+//            this.mExamTabPager.setVisibility(View.VISIBLE);
+//            this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
+//            this.mExamTabPager.setAdapter(this.mDetailsAdapter);
+//            rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
+//            rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
+//            rootView.findViewById(R.id.pager_strip).setVisibility(View.VISIBLE);
+//
+//        }else{
+//=======
+            public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
+                this.mExamDetailList=userExamsList;
+                View rootView=getView();
+                if(rootView==null){
+                    return;
+                }
+                if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
+                    this.mExamTabPager.setVisibility(View.VISIBLE);
+                    this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
+                    this.mExamTabPager.setAdapter(this.mDetailsAdapter);
+                    rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
+                    rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
+                    rootView.findViewById(R.id.pager_strip).setVisibility(View.VISIBLE);
+                    rootView.findViewById(R.id.prepare_layout_RL).setVisibility(View.VISIBLE);
 
-        }else{
+                }else{
+
+                    if(this.mListener != null)
+                    {
+                        this.mExamDetail = new ExamDetail();
+                        this.mExamDetail.setId("0");
+                        this.mListener.onExamTabSelected(this.mExamDetail);
+                    }
+
+                    rootView.findViewById(R.id.pager_strip).setVisibility(View.GONE);
+                    rootView.findViewById(R.id.prepare_layout_RL).setVisibility(View.GONE);
+                }
+//>>>>>>> Stashed changes
 
             if(this.mListener != null)
             {
@@ -273,15 +322,10 @@ public class HomeFragment extends BaseFragment
                 this.mExamDetail.setId("0");
                 this.mListener.onExamTabSelected(this.mExamDetail);
             }
-
             rootView.findViewById(R.id.pager_strip).setVisibility(View.GONE);
-            rootView.findViewById(R.id.prep_buddies).setVisibility(View.GONE);
-            rootView.findViewById(R.id.profile_syllabus_statusLL).setVisibility(View.GONE);
-            rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.GONE);
             rootView.findViewById(R.id.backup_colleges_layout_RL).setVisibility(View.GONE);
         }
 
-    }
     public void updateUserName(){
         if(MainActivity.mProfile != null){
             String name = MainActivity.mProfile.getName();
@@ -338,30 +382,6 @@ public class HomeFragment extends BaseFragment
 
         switch (view.getId())
         {
-            case R.id.profile_syllabus_statusLL:
-                if(this.mExamDetail != null)
-                    this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/"+ this.mExamDetail.getId()+"/syllabus/",null);
-                this.getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  mExamDetail.getId()).commit();
-                break;
-            case R.id.backup_colleges_layout_RL:
-               if(this.mExamDetail != null)
-                   this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mExamDetail.getExam_tag());
-               else
-                   this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/",null);
-               break;
-            case R.id.wishList_colleges_layout_RL:
-                this.mHomeWidgetSelected(Constants.WIDGET_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
-                break;
-            case R.id.recommended_colleges_layout_RL:
-                if(this.mExamDetail != null)
-                    this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/", this.mExamDetail.getExam_tag());
-                else
-                    this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
-                break;
-            case R.id.important_date_layout_RL:
-                if(this.mExamDetail != null)
-                    this.mHomeWidgetSelected(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", null);
-                break;
             case R.id.profile_image:
                 ((MainActivity) getActivity()).displayProfileFrragment();
                 break;
@@ -411,22 +431,20 @@ public class HomeFragment extends BaseFragment
         if(view == null || this.mExamSummary == null)
             return;
 
-        TextView backup_countTV = (TextView)view.findViewById(R.id.backup_colleges_count);
-        TextView wishList_countTV =  (TextView)view.findViewById(R.id.wishList_colleges_count);
-        TextView recommended_countTV =  (TextView)view.findViewById(R.id.recommended_colleges_count);
-        TextView important_dateTV =  (TextView)view.findViewById(R.id.important_dates_count);
-        TextView covered_syllabus =  (TextView)view.findViewById(R.id.covered_syllabus);
+//        TextView backup_countTV = (TextView)view.findViewById(R.id.backup_colleges_count);
+//        TextView wishList_countTV =  (TextView)view.findViewById(R.id.wishList_colleges_count);
+//        TextView recommended_countTV =  (TextView)view.findViewById(R.id.recommended_colleges_count);
+//        TextView important_dateTV =  (TextView)view.findViewById(R.id.important_dates_count);
+//        TextView covered_syllabus =  (TextView)view.findViewById(R.id.covered_syllabus);
         CircularProgressBar profileCompleted =  (CircularProgressBar) view.findViewById(R.id.profile_image_circular_progressbar);
 
-        Utils.SetCounterAnimation(covered_syllabus, this.mExamSummary.getSyllabus_covered(), "" , "%", Constants.ANIM_SHORT_DURATION);
-        covered_syllabus.setContentDescription(String.valueOf(this.mExamSummary.getSyllabus_covered())+ "percent syllabus completed");
-        Utils.SetCounterAnimation(recommended_countTV, this.mExamSummary.getRecommended_count(), "" , "", Constants.ANIM_SHORT_DURATION);
-        recommended_countTV.setContentDescription(String.valueOf(this.mExamSummary.getRecommended_count())+" colleges recommended by college dekho");
-        Utils.SetCounterAnimation(wishList_countTV, this.mExamSummary.getShortlist_count(), "" , "", Constants.ANIM_SHORT_DURATION);
-        wishList_countTV.setContentDescription(String.valueOf(this.mExamSummary.getShortlist_count())+ "colleges in your wishlist");
-        Utils.SetCounterAnimation(backup_countTV, this.mExamSummary.getBackup_count(), "" , "", Constants.ANIM_SHORT_DURATION);
-        backup_countTV.setContentDescription(String.valueOf("You are eligible for "+this.mExamSummary.getBackup_count())+ " colleges");
-        important_dateTV.setText(""+this.mExamSummary.getNext_important_date());
+//        Utils.SetCounterAnimation(recommended_countTV, this.mExamSummary.getRecommended_count(), "" , "", Constants.ANIM_SHORT_DURATION);
+//        recommended_countTV.setContentDescription(String.valueOf(this.mExamSummary.getRecommended_count())+" colleges recommended by college dekho");
+//        Utils.SetCounterAnimation(wishList_countTV, this.mExamSummary.getShortlist_count(), "" , "", Constants.ANIM_SHORT_DURATION);
+//        wishList_countTV.setContentDescription(String.valueOf(this.mExamSummary.getShortlist_count())+ "colleges in your wishlist");
+//        Utils.SetCounterAnimation(backup_countTV, this.mExamSummary.getBackup_count(), "" , "", Constants.ANIM_SHORT_DURATION);
+//        backup_countTV.setContentDescription(String.valueOf("You are eligible for "+this.mExamSummary.getBackup_count())+ " colleges");
+//        important_dateTV.setText(""+this.mExamSummary.getNext_important_date());
 
         //TODO:: showing progress as a profile circle
         //if(this.mExamSummary.getSyllabus_covered() ==0)

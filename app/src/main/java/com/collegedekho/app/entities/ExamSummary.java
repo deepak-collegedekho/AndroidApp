@@ -15,6 +15,7 @@ public class ExamSummary implements Parcelable {
     private int backup_count;
     private int shortlist_count;
     private int  recommended_count;
+    private int buzzlist_count;
     private String  next_important_date;
 
     public String getPreference_uri() {
@@ -38,6 +39,7 @@ public class ExamSummary implements Parcelable {
         backup_count = in.readInt();
         shortlist_count = in.readInt();
         recommended_count = in.readInt();
+        buzzlist_count = in.readInt();
         next_important_date = in.readString();
         preference_uri=in.readString();
     }
@@ -66,8 +68,17 @@ public class ExamSummary implements Parcelable {
         dest.writeInt(backup_count);
         dest.writeInt(shortlist_count);
         dest.writeInt(recommended_count);
+        dest.writeInt(buzzlist_count);
         dest.writeString(next_important_date);
         dest.writeString(preference_uri);
+    }
+
+    public int getBuzzlist_count() {
+        return buzzlist_count;
+    }
+
+    public void setBuzzlist_count(int buzzlist_count) {
+        this.buzzlist_count = buzzlist_count;
     }
 
     public String getYearly_exam_id() {

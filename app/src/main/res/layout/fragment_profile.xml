@@ -608,26 +608,26 @@
                     style="@style/AppTheme.profileInfoTLayout">
 
                     <TextView
-                        style="@style/AppTheme.profileTextViewTitle"
+                        style="@style/AppTheme.profileTextViewExpendedTitle"
                         android:layout_weight=".44"
                         android:text="Specialization"/>
 
                     <TextView
                         android:id="@+id/profile_preferences_specialization"
                         android:layout_weight=".56"
-                        style="@style/AppTheme.profileInfoTextView"/>
+                        style="@style/AppTheme.profileInfoExpendedTextView"/>
 
                 </LinearLayout>
                 <LinearLayout
                     style="@style/AppTheme.profileInfoTLayout">
 
                     <TextView
-                        style="@style/AppTheme.profileTextViewTitle"
+                        style="@style/AppTheme.profileTextViewExpendedTitle"
                         android:text="Stream"/>
 
                     <TextView
                         android:id="@+id/profile_preferences_stream"
-                        style="@style/AppTheme.profileInfoTextView"/>
+                        style="@style/AppTheme.profileInfoExpendedTextView"/>
 
                 </LinearLayout>
 
@@ -635,36 +635,36 @@
                     style="@style/AppTheme.profileInfoTLayout">
 
                     <TextView
-                        style="@style/AppTheme.profileTextViewTitle"
+                        style="@style/AppTheme.profileTextViewExpendedTitle"
                         android:text="Year"/>
 
                     <TextView
                         android:id="@+id/profile_preferences_year"
-                        style="@style/AppTheme.profileInfoTextView"/>
+                        style="@style/AppTheme.profileInfoExpendedTextView"/>
 
                 </LinearLayout>
                 <LinearLayout
                     style="@style/AppTheme.profileInfoTLayout">
 
                     <TextView
-                        style="@style/AppTheme.profileTextViewTitle"
+                        style="@style/AppTheme.profileTextViewExpendedTitle"
                         android:text="Mode"/>
 
                     <TextView
                         android:id="@+id/profile_preferences_mode"
-                        style="@style/AppTheme.profileInfoTextView"/>
+                        style="@style/AppTheme.profileInfoExpendedTextView"/>
 
                 </LinearLayout>
                 <LinearLayout
                     style="@style/AppTheme.profileInfoTLayout">
 
                     <TextView
-                        style="@style/AppTheme.profileTextViewTitle"
+                        style="@style/AppTheme.profileTextViewExpendedTitle"
                         android:text="Fee Range"/>
 
                     <TextView
                         android:id="@+id/profile_preferences_fee_range"
-                        style="@style/AppTheme.profileInfoTextView"/>
+                        style="@style/AppTheme.profileInfoExpendedTextView"/>
 
                 </LinearLayout>
                 <LinearLayout
@@ -672,12 +672,12 @@
                     style="@style/AppTheme.profileInfoTLayout">
 
                     <TextView
-                        style="@style/AppTheme.profileTextViewTitle"
+                        style="@style/AppTheme.profileTextViewExpendedTitle"
                         android:text="Loan Amount"/>
 
                     <TextView
                         android:id="@+id/profile_preferences_loan_amount"
-                        style="@style/AppTheme.profileInfoTextView"/>
+                        style="@style/AppTheme.profileInfoExpendedTextView"/>
 
                 </LinearLayout>
 

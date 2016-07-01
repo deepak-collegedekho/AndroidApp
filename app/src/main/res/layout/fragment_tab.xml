@@ -20,121 +20,99 @@
         android:id="@+id/exam_swipe_listener_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/white"
-        android:layout_weight=".33">
-
-        <include layout="@layout/layout_profile_image"
-            android:id="@+id/include_image_layout"
-            android:layout_width="150dp"
-            android:layout_height="150dp"/>
+        android:layout_weight=".38"
+        android:background="@color/white">
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/m10dp"
-            android:gravity="center"
-            android:layout_toRightOf="@id/include_image_layout">
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
 
+            <include layout="@layout/layout_profile_image"
+                android:id="@+id/include_image_layout"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"/>
 
             <TextView
                 android:id="@+id/user_name"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sashi Negi"
-                android:gravity="left|center"
-                android:textStyle="bold"
-                android:padding="8dp"
-                android:textSize="18sp"/>
-
-            <TextView
-                android:id="@+id/user_stream"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textStyle="normal"
+                android:paddingTop="18dp"
+                android:paddingBottom="18dp"
+                android:textSize="28sp"
                 android:text=""
-                android:gravity="left|center"
-                android:layout_below="@id/user_name"
-                android:textStyle="bold"
-                android:paddingBottom="5dp"
-                android:paddingRight="5dp"
-                android:paddingLeft="8dp"
-                android:visibility="gone"
-                android:textSize="18sp"/>
-
-            <LinearLayout
-                android:id="@+id/test_takenLL"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/user_stream"
-                android:paddingLeft="8dp"
-                android:gravity="center"
-                android:visibility="gone"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/dark_blue"
-                    android:text="0"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="17sp"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="5dp"
-                    android:gravity="left"
-                    android:textColor="@color/light_blue"
-                    android:text="TEST \nTAKEN"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/profile_progressLL"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/test_takenLL"
-                android:paddingLeft="8dp"
-                android:gravity="center"
-                android:visibility="gone"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/dark_blue"
-                    android:text="0"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="17sp"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="5dp"
-                    android:gravity="left"
-                    android:textColor="@color/light_blue"
-                    android:text="PERFORMANCE \nREPORT"/>
-            </LinearLayout>
+                android:layout_below="@id/include_image_layout"/>
         </RelativeLayout>
     </RelativeLayout>
+
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/exam_swipe_listener_layout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:background="@color/white"-->
+        <!--android:layout_weight=".33">-->
+
+        <!--<include layout="@layout/layout_profile_image"-->
+            <!--android:id="@+id/include_image_layout"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_width="150dp"-->
+            <!--android:layout_height="150dp"/>-->
+
+        <!--<RelativeLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:gravity="center"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_below="@id/include_image_layout">-->
+
+
+            <!--<TextView-->
+                <!--android:id="@+id/user_name"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:gravity="center_horizontal"-->
+                <!--android:textStyle="bold"-->
+                <!--android:paddingTop="10dp"-->
+                <!--android:paddingBottom="10dp"-->
+                <!--android:textSize="18sp"/>-->
+
+            <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                <!--&lt;!&ndash;android:id="@+id/user_stream"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:text=""&ndash;&gt;-->
+                <!--&lt;!&ndash;android:gravity="left|center"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_below="@id/user_name"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:textStyle="bold"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:paddingBottom="5dp"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:paddingRight="5dp"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:paddingLeft="8dp"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:visibility="gone"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:textSize="18sp"/>&ndash;&gt;-->
+
+        <!--</RelativeLayout>-->
+    <!--</RelativeLayout>-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".62"
+        android:layout_weight=".58"
         android:orientation="vertical"
         android:weightSum="1">
 
         <include layout="@layout/layout_home_widget"
             android:layout_height="0dp"
-            android:layout_weight=".75"
+            android:layout_weight=".80"
             android:layout_width="match_parent"
             android:id="@+id/include_layout_home_widget"/>
 
         <include layout="@layout/layout_bottom_button"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".25"
+            android:layout_weight=".20"
             android:visibility="gone"
             android:layout_marginBottom="15dp"/>
 
