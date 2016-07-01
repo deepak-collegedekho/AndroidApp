@@ -41,7 +41,6 @@ public class HomeFragment extends BaseFragment {
     private OnTabSelectListener mListener;
     private ExamDetail mExamDetail; // detail is needs in tabs to get id of exams
     private ExamSummary mExamSummary;  // exam summary gives info about the colleges of user
-    private ViewPager mExamTabPager  = null;
     private boolean IS_TUTE_COMPLETED = true;
     private int i = 0;
 
@@ -74,52 +73,9 @@ public class HomeFragment extends BaseFragment {
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PROFILE_SCREEN_TUTE), false);
 
         mProfileName  = (TextView)rootView.findViewById(R.id.user_name);
-        mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
         mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
-       
-        if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
-
-//            rootView.findViewById(R.id.important_date_layout_RL).setVisibility(View.VISIBLE);
-            this.mExamTabPager.setVisibility(View.VISIBLE);
-            this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
-            this.mExamTabPager.setAdapter(this.mDetailsAdapter);
-
-            mExamTabPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                    Log.e("","");
-                }
-
-                @Override
-                public void onPageSelected(int position) {
-                    EXAM_TAB_POSITION =position;
-                    mExamTabSelected(position);
-                }
-                @Override
-                public void onPageScrollStateChanged(int state) {
-                    Log.e("","");
-                }
-            });
-
-            rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
-            rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
-            rootView.findViewById(R.id.pager_strip).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.prepare_layout_RL).setVisibility(View.VISIBLE);
-
-        }else{
-
-            if(this.mListener != null)
-            {
-                this.mExamDetail = new ExamDetail();
-                this.mExamDetail.setId("0");
-                this.mListener.onExamTabSelected(this.mExamDetail);
-            }
-
-            rootView.findViewById(R.id.pager_strip).setVisibility(View.GONE);
-            rootView.findViewById(R.id.prepare_layout_RL).setVisibility(View.GONE);
-        }
 
         rootView.findViewById(R.id.profile_guide_image).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,8 +112,6 @@ public class HomeFragment extends BaseFragment {
         rootView.findViewById(R.id.updates_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
         rootView.findViewById(R.id.profile_image).setOnClickListener(this);
 
-        ((ViewPager.LayoutParams) ((PagerTabStrip) rootView.findViewById(R.id.exam_pager_header)).getLayoutParams()).isDecor = true;
-
         return rootView;
     }
 
@@ -181,20 +135,20 @@ public class HomeFragment extends BaseFragment {
         super.onResume();
         try {
             getActivity().invalidateOptionsMenu();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
-        View view =  getView();
-        if(view != null ){
-            IS_TUTE_COMPLETED= getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PROFILE_SCREEN_TUTE), false);
+        View view = getView();
+        if (view != null) {
+            IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PROFILE_SCREEN_TUTE), false);
             View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-            if(!IS_TUTE_COMPLETED) {
+            if (!IS_TUTE_COMPLETED) {
 
                 bottomMenu.animate().translationY(bottomMenu.getHeight());
                 bottomMenu.setVisibility(View.GONE);
 
                 view.findViewById(R.id.profile_guide_image).setVisibility(View.VISIBLE);
-            }else {
+            } else {
 //                bottomMenu.animate().translationY(0);
 //                bottomMenu.setVisibility(View.VISIBLE);
 
@@ -204,39 +158,36 @@ public class HomeFragment extends BaseFragment {
 
         Constants.READY_TO_CLOSE = false;
 
-        if(MainActivity.mProfile != null)
-        {
+        if (MainActivity.mProfile != null) {
             String name = MainActivity.mProfile.getName();
-            if(name!=null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()))
-            {
+            if (name != null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
                 mProfileName.setText("");
                 mProfileName.setVisibility(View.GONE);
-            }else {
-                String userName = name.substring(0, 1).toUpperCase()+name.substring(1);
+            } else {
+                String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
                 mProfileName.setText(userName);
                 mProfileName.setVisibility(View.VISIBLE);
             }
             String image = MainActivity.mProfile.getImage();
-            if (image != null && ! image.isEmpty())
+            if (image != null && !image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
 
             // ************************Removed from fragment
 //            String streamName = MainActivity.mProfile.getCurrent_stream_name();
 
-        }else if(MainActivity.user != null){
+        } else if (MainActivity.user != null) {
 
             String name = MainActivity.user.getName();
-            if(name!=null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()))
-            {
+            if (name != null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
                 mProfileName.setText("");
                 mProfileName.setVisibility(View.GONE);
-            }else {
+            } else {
                 mProfileName.setText(name);
                 mProfileName.setVisibility(View.VISIBLE);
             }
 
             String image = MainActivity.user.getImage();
-            if (image != null && ! image.isEmpty())
+            if (image != null && !image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
 
 //            String streamName = MainActivity.user.getStream_name();
@@ -256,17 +207,17 @@ public class HomeFragment extends BaseFragment {
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
-            mainActivity.mUpdateTabMenuItem(-1,0);
-        }
-
-
-        updateExamSummaryHandler.postDelayed(updateExamSummaryRunnable,300);
-        if(((MainActivity)getActivity()).isReloadProfile && this.mListener!=null){
-            ((MainActivity)getActivity()).isReloadProfile=false;
-            this.mExamDetailList=MainActivity.user.getUser_exams();
-          updateUserProfile(this.mExamDetailList);
+            mainActivity.mUpdateTabMenuItem(-1, 0);
         }
     }
+
+//        updateExamSummaryHandler.postDelayed(updateExamSummaryRunnable,300);
+//        if(((MainActivity)getActivity()).isReloadProfile && this.mListener!=null){
+//            ((MainActivity)getActivity()).isReloadProfile=false;
+//            this.mExamDetailList=MainActivity.user.getUser_exams();
+//          updateUserProfile(this.mExamDetailList);
+//        }
+//    }
 
 //<<<<<<< Updated upstream
 //    public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
@@ -293,37 +244,8 @@ public class HomeFragment extends BaseFragment {
                 if(rootView==null){
                     return;
                 }
-                if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
-                    this.mExamTabPager.setVisibility(View.VISIBLE);
-                    this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
-                    this.mExamTabPager.setAdapter(this.mDetailsAdapter);
-                    rootView.findViewById(R.id.check_gesture).setOnTouchListener(onSwipeTouchListener);
-                    rootView.findViewById(R.id.include_layout_profile_widget).setOnTouchListener(onSwipeTouchListener);
-                    rootView.findViewById(R.id.pager_strip).setVisibility(View.VISIBLE);
-                    rootView.findViewById(R.id.prepare_layout_RL).setVisibility(View.VISIBLE);
-
-                }else{
-
-                    if(this.mListener != null)
-                    {
-                        this.mExamDetail = new ExamDetail();
-                        this.mExamDetail.setId("0");
-                        this.mListener.onExamTabSelected(this.mExamDetail);
-                    }
-
-                    rootView.findViewById(R.id.pager_strip).setVisibility(View.GONE);
-                    rootView.findViewById(R.id.prepare_layout_RL).setVisibility(View.GONE);
-                }
 //>>>>>>> Stashed changes
 
-            if(this.mListener != null)
-            {
-                this.mExamDetail = new ExamDetail();
-                this.mExamDetail.setId("0");
-                this.mListener.onExamTabSelected(this.mExamDetail);
-            }
-            rootView.findViewById(R.id.pager_strip).setVisibility(View.GONE);
-            rootView.findViewById(R.id.backup_colleges_layout_RL).setVisibility(View.GONE);
         }
 
     public void updateUserName(){
@@ -390,37 +312,6 @@ public class HomeFragment extends BaseFragment {
         }
     }
 
-    private void mHomeWidgetSelected(String requestType, String url, String examTag)
-    {
-        if(this.mListener != null)
-            this.mListener.onHomeItemSelected(requestType, url, examTag);
-        Utils.UnregisterReceiver(this.getActivity());
-    }
-
-
-            private void mExamTabSelected(int position) {
-                if (this.mListener != null) {
-                    if (this.mExamDetailList != null && this.mExamDetailList.size() > position) {
-                        this.mExamDetail = this.mExamDetailList.get(position);
-                        this.mListener.onExamTabSelected(this.mExamDetail);
-                    } else if (MainActivity.user.getIs_preparing().equals("0")) {
-                        this.mListener.onExamTabSelected(this.mExamDetail);
-                    }
-                }
-            }
-
-            /**
-             * This method is used to request to server to update syllabus
-             * when Syllabus chapters  are successfully updated or changed and
-             *  come back to home screen .
-             */
-            public void updateSyllabus() {
-                if(mExamTabPager != null) {
-                    int position = mExamTabPager.getCurrentItem();
-                    mExamTabSelected(position);
-                }
-            }
-
 
     @Override
     public void updateExamSummary(ExamSummary examSummary) {
@@ -430,21 +321,7 @@ public class HomeFragment extends BaseFragment {
 
         if(view == null || this.mExamSummary == null)
             return;
-
-//        TextView backup_countTV = (TextView)view.findViewById(R.id.backup_colleges_count);
-//        TextView wishList_countTV =  (TextView)view.findViewById(R.id.wishList_colleges_count);
-//        TextView recommended_countTV =  (TextView)view.findViewById(R.id.recommended_colleges_count);
-//        TextView important_dateTV =  (TextView)view.findViewById(R.id.important_dates_count);
-//        TextView covered_syllabus =  (TextView)view.findViewById(R.id.covered_syllabus);
         CircularProgressBar profileCompleted =  (CircularProgressBar) view.findViewById(R.id.profile_image_circular_progressbar);
-
-//        Utils.SetCounterAnimation(recommended_countTV, this.mExamSummary.getRecommended_count(), "" , "", Constants.ANIM_SHORT_DURATION);
-//        recommended_countTV.setContentDescription(String.valueOf(this.mExamSummary.getRecommended_count())+" colleges recommended by college dekho");
-//        Utils.SetCounterAnimation(wishList_countTV, this.mExamSummary.getShortlist_count(), "" , "", Constants.ANIM_SHORT_DURATION);
-//        wishList_countTV.setContentDescription(String.valueOf(this.mExamSummary.getShortlist_count())+ "colleges in your wishlist");
-//        Utils.SetCounterAnimation(backup_countTV, this.mExamSummary.getBackup_count(), "" , "", Constants.ANIM_SHORT_DURATION);
-//        backup_countTV.setContentDescription(String.valueOf("You are eligible for "+this.mExamSummary.getBackup_count())+ " colleges");
-//        important_dateTV.setText(""+this.mExamSummary.getNext_important_date());
 
         //TODO:: showing progress as a profile circle
         //if(this.mExamSummary.getSyllabus_covered() ==0)
@@ -452,24 +329,6 @@ public class HomeFragment extends BaseFragment {
         //else
          //profileCompleted.setProgress(this.mExamSummary.getSyllabus_covered());
     }
-
-    OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {
-        @Override
-        public void onSwipeLeft() {
-            int currentPosition = mExamTabPager.getCurrentItem();
-            if (mExamDetailList.size()-1 >= currentPosition)
-                mExamTabPager.setCurrentItem(currentPosition + 1);
-        }
-
-        @Override
-        public void onSwipeRight() {
-            super.onSwipeRight();
-
-            int currentPosition = mExamTabPager.getCurrentItem();
-            if (currentPosition > 0)
-                mExamTabPager.setCurrentItem(currentPosition - 1);
-        }
-    };
 
     /**
      * This interface must be implemented by activities that contain this
@@ -485,14 +344,5 @@ public class HomeFragment extends BaseFragment {
         void onExamTabSelected(ExamDetail tabPosition);
         void onHomeItemSelected(String requestType, String url, String examTag);
     }
-
-    Handler updateExamSummaryHandler=new Handler();
-    Runnable updateExamSummaryRunnable = new Runnable() {
-        @Override
-        public void run() {
-            int currentPosition = mExamTabPager.getCurrentItem();
-            mExamTabSelected(currentPosition);
-        }
-    };
 
 }

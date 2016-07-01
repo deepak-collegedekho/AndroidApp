@@ -82,12 +82,10 @@ public class TabFragment extends  BaseFragment{
 
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
 
-        if(recommended_countTV == null && trending_countTV == null && shortlist_countTV == null && explore_countTV== null){
-            recommended_countTV       = (TextView)rootView.findViewById(R.id.recommended_count);
-            trending_countTV   = (TextView)rootView.findViewById(R.id.trending_count);
-            shortlist_countTV    = (TextView)rootView.findViewById(R.id.shortlist_count);
-            explore_countTV          = (TextView)rootView.findViewById(R.id.explore_count);
-        }
+        recommended_countTV       = (TextView)rootView.findViewById(R.id.recommended_count);
+        trending_countTV   = (TextView)rootView.findViewById(R.id.trending_count);
+        shortlist_countTV    = (TextView)rootView.findViewById(R.id.shortlist_count);
+        explore_countTV          = (TextView)rootView.findViewById(R.id.explore_count);
 
         this.mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
         mExamsTabLayout=rootView.findViewById(R.id.exams_tab_layout);
@@ -138,6 +136,7 @@ public class TabFragment extends  BaseFragment{
                 public void onPageSelected(int position) {
                     TabFragment.this.EXAM_TAB_POSITION = position;
                     TabFragment.this.mExamTabSelected(position);
+                    TabFragment.this.updateCollegeCount(selectedTabPosition);
                 }
 
                 @Override
@@ -155,7 +154,16 @@ public class TabFragment extends  BaseFragment{
                 this.mExamTabSelected(currentPosition);
             }
             this.mExamTabPager.setCurrentItem(this.EXAM_TAB_POSITION);
+        }else{
+
+            if(this.mListener != null)
+            {
+                this.mExamDetail = new ExamDetail();
+                this.mExamDetail.setId("0");
+                this.mListener.onExamTabSelected(this.mExamDetail);
+            }
         }
+
         rootView.findViewById(R.id.home_widget_first).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_second).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_third).setOnClickListener(this);
@@ -177,8 +185,6 @@ public class TabFragment extends  BaseFragment{
                 return true;
             }
         });
-
-
         return rootView;
     }
 
@@ -197,6 +203,7 @@ public class TabFragment extends  BaseFragment{
                 if (selectedTabPosition < mExamDetailList.size())
                     mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
             }else {
+                mainActivity.mUpdateTabMenuItem(this.selectedTabPosition,0);
                 mExamsTabLayout.setVisibility(View.GONE);
             }
         }
@@ -204,6 +211,14 @@ public class TabFragment extends  BaseFragment{
             if (this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
                 this.mExamDetail = this.mExamDetailList.get(mExamTabPager.getCurrentItem());
                 this.mListener.onExamTabSelected(mExamDetail);
+            }
+        }else{
+
+            if(this.mListener != null)
+            {
+                this.mExamDetail = new ExamDetail();
+                this.mExamDetail.setId("0");
+                this.mListener.onExamTabSelected(this.mExamDetail);
             }
         }
 /*
@@ -219,7 +234,6 @@ public class TabFragment extends  BaseFragment{
         }
 
         updateCollegeCount(selectedTabPosition);
-
     }
 
     @Override
@@ -236,7 +250,6 @@ public class TabFragment extends  BaseFragment{
         bottomMenu.animate().translationY(bottomMenu.getHeight());
         bottomMenu.setVisibility(View.GONE);
 
-        updateCollegeCount(selectedTabPosition);
     }
 
     @Override
@@ -286,7 +299,7 @@ public class TabFragment extends  BaseFragment{
         if(this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() >position) {
             this.mExamDetail = this.mExamDetailList.get(position);
             this.mListener.onExamTabSelected(mExamDetail);
-            updateCollegeCount(selectedTabPosition);
+//            updateCollegeCount(selectedTabPosition);
         }
     }
 
@@ -471,15 +484,6 @@ public class TabFragment extends  BaseFragment{
     }
 
     private void updateCollegeCount(int selectedTabPosition) {
-        final View view = getView();
-        if(view ==   null)
-            return;
-
-
-        recommended_countTV       = (TextView)view.findViewById(R.id.recommended_count);
-        trending_countTV   = (TextView)view.findViewById(R.id.trending_count);
-        shortlist_countTV    = (TextView)view.findViewById(R.id.shortlist_count);
-        explore_countTV          = (TextView)view.findViewById(R.id.explore_count);
 
         if(selectedTabPosition == 1 && mListener != null ){
             recommended_countTV.setVisibility(View.VISIBLE);
@@ -603,12 +607,18 @@ public class TabFragment extends  BaseFragment{
             return;
 
          CircularProgressBar profileCompleted =  (CircularProgressBar) view.findViewById(R.id.profile_image_circular_progressbar);
-
+//        updateCollegeCount(selectedTabPosition);
         //TODO:: showing progress as a profile circle
         //if(examSummary.getSyllabus_covered() ==0)
             profileCompleted.setProgress(100);
         //else
            // profileCompleted.setProgress(examSummary.getSyllabus_covered());
+    }
+
+    public void updateCollegeCountFromVolley(boolean update){
+        if(update) {
+            updateCollegeCount(selectedTabPosition);
+        }
     }
 
     public void updateExamsList(ArrayList<ExamDetail>examsList){

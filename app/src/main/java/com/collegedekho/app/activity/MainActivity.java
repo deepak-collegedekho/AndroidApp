@@ -307,6 +307,7 @@ public class MainActivity extends AppCompatActivity
     private Date mTimeScreenClicked = new Date();
     public boolean isReloadProfile = false;
     public boolean isBackPressEnabled = true;
+    public boolean fromTabFragment = false;
     private String mGTMContainerId = "www.collegedekho.com";
     public static Connecto connecto = null;
 
@@ -2598,13 +2599,13 @@ public class MainActivity extends AppCompatActivity
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNDECIDED, true);
                 }
                 break;
-            case Constants.SUBMITTED_CHAPTER_STATUS:
-                if (tags.length>1) {
-                    DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(tags[1]));
-                    if(currentFragment instanceof  HomeFragment)
-                        ((HomeFragment)currentFragment).updateSyllabus();
-                }
-                break;
+//            case Constants.SUBMITTED_CHAPTER_STATUS:
+//                if (tags.length>1) {
+//                    DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(tags[1]));
+//                    if(currentFragment instanceof  HomeFragment)
+//                        ((HomeFragment)currentFragment).updateSyllabus();
+//                }
+//                break;
         }
         try {
             if(hideProgressDialog)
@@ -2707,7 +2708,14 @@ public class MainActivity extends AppCompatActivity
                 }
                 this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
             }
+            if(update){
+
+            }
             this.currentFragment.updateExamSummary(examSummary);
+            if(update){
+                if(currentFragment instanceof  TabFragment)
+                    ((TabFragment) currentFragment).updateCollegeCountFromVolley(update);
+            }
             if (MainActivity.type != null && !MainActivity.type.matches("") && MainActivity.resource_uri != null && !MainActivity.resource_uri.matches("")) {
                 mHandleNotifications(true);
             }
@@ -4880,10 +4888,10 @@ public class MainActivity extends AppCompatActivity
         mUserExamsList = MainActivity.user.getUser_exams();
         if (mUserExamsList == null)
             mUserExamsList = new ArrayList<>();
-        if (this.mUserExamsList.size() <= 0)
-            prepare.setVisibility(View.GONE);
-        else
-            prepare.setVisibility(View.VISIBLE);
+//        if (this.mUserExamsList.size() <= 0)
+//            prepare.setVisibility(View.GONE);
+//        else
+//            prepare.setVisibility(View.VISIBLE);
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
         if (fragment == null)
@@ -4934,9 +4942,10 @@ public class MainActivity extends AppCompatActivity
             {
                 params.put("tag_uris[" + (params.size()) + "]",tag);
                 this.mExamTag = tag;
-            } else {
-                params = this.getAllExamTags();
             }
+//            else {
+//                params = this.getAllExamTags();
+//            }
             this.mMakeNetworkCall(requestType, url, params);
             return;
         } else if (requestType.equals(Constants.WIDGET_TEST_CALENDAR)) {
@@ -4957,17 +4966,17 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(requestType, url, params);
     }
 
-    private Map<String,String> getAllExamTags(){
-        Map<String,String> params = new HashMap<>();
-        List<ExamDetail> list = user.getUser_exams();
-        if(list !=  null && !list.isEmpty()) {
-            for (ExamDetail ed : list) {
-                params.put("tag_uris[" + (params.size()) + "]", ed.getExam_tag());
-                Log.e("EXAM TAG", ed.getExam_tag());
-            }
-        }
-        return params;
-    }
+//    private Map<String,String> getAllExamTags(){
+//        Map<String,String> params = new HashMap<>();
+//        List<ExamDetail> list = user.getUser_exams();
+//        if(list !=  null && !list.isEmpty()) {
+//            for (ExamDetail ed : list) {
+//                params.put("tag_uris[" + (params.size()) + "]", ed.getExam_tag());
+//                Log.e("EXAM TAG", ed.getExam_tag());
+//            }
+//        }
+//        return params;
+//    }
 
     @Override
     public void onPsychometricTest() {
@@ -5989,12 +5998,21 @@ public class MainActivity extends AppCompatActivity
 
         if (mUserExamsList == null) mUserExamsList = new ArrayList<>();
 
-        if (this.mUserExamsList.size() <= 0)
-            prepare.setVisibility(View.GONE);
-        else
-            prepare.setVisibility(View.VISIBLE);
+        if(tabPosition == 3 && (mUserExamsList == null || mUserExamsList.size() < 1)){
+//            mDisplayCurrentEducationFragment(true);
+            fromTabFragment = true;
+            onRequestForUserExamsUpdate();
+            bottomButtonContainer.setVisibility(View.GONE);
+            return;
+        }
+
+//        if (this.mUserExamsList.size() <= 0)
+//            prepare.setVisibility(View.GONE);
+//        else
+//            prepare.setVisibility(View.VISIBLE);
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
+
         if (fragment == null)
             this.mDisplayFragment(TabFragment.newInstance(tabPosition, new ArrayList<>(mUserExamsList)), true, TabFragment.class.getSimpleName());
         else {

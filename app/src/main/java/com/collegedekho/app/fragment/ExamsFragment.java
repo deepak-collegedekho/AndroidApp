@@ -157,6 +157,12 @@ public class ExamsFragment extends BaseFragment {
     }
 
     @Override
+    public void onDestroy(){
+        super.onDestroy();
+        mainActivity.fromTabFragment=false;
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         this.mListener = null;
@@ -171,7 +177,11 @@ public class ExamsFragment extends BaseFragment {
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
             if(isEditMode){
-                mainActivity.isBackPressEnabled=false;
+                if(mainActivity.fromTabFragment){
+                    mainActivity.isBackPressEnabled=true;
+                }else {
+                    mainActivity.isBackPressEnabled = false;
+                }
                 if(mExamList != null && !mExamList.isEmpty()) {
                     for (Exam exam:mExamList) {
                         if(exam == null)continue;
