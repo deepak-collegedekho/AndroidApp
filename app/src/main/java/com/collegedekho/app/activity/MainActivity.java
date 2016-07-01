@@ -838,11 +838,6 @@ public class MainActivity extends AppCompatActivity
                         // get user profile info
                         String image = "https://graph.facebook.com/" + json.optString("id") + "/picture?type=large";
 
-                        if (MainActivity.user == null)
-                            MainActivity.user = new User();
-
-                       MainActivity.user.setImage(image);
-
                         HashMap hashMap = new HashMap<>();
                         hashMap.put(getResourceString(R.string.USER_FIRST_NAME), json.getString("first_name"));
                         hashMap.put(getResourceString(R.string.USER_LAST_NAME), json.getString("last_name"));
@@ -1151,6 +1146,7 @@ public class MainActivity extends AppCompatActivity
                     mProfile = new Profile();
                     mProfile.setName(user.getName());
                     mProfile.setName(user.getPhone_no());
+                    mProfile.setImage(user.getImage());
                 }
 
                 this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT,Constants.BASE_URL+"profile/", null);
@@ -2450,18 +2446,6 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_UPDATE_INSTITUTES:
                 this.mUpdateInstituteList(response);
                 break;
-            case Constants.TAG_USER_REGISTRATION:
-                if (tags.length > 1) {
-                    parentIndex = tags[1];
-                }
-                this.onUserRegisteredResponse(response, parentIndex);
-                break;
-            case Constants.TAG_USER_LOGIN:
-                if (tags.length > 1) {
-                    parentIndex = tags[1];
-                }
-                this.onUserSignInResponse(response, parentIndex);
-                break;
             case Constants.WIDGET_SYLLABUS:
                 this.mDisplayExamSyllabusFragment(response);
                 break;
@@ -2891,7 +2875,6 @@ public class MainActivity extends AppCompatActivity
             //save the preferences locally
             if (tempUser != null) {
                 MainActivity.user.setToken(tempUser.getToken());
-                MainActivity.user.setImage(tempUser.getImage());
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
                 MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
                 MainActivity.user.profileData = tempUser.profileData;
@@ -2929,7 +2912,6 @@ public class MainActivity extends AppCompatActivity
                     MainActivity.user.setStream_name(streamName);
                 MainActivity.user.setPsychometric_given(user.getPsychometric_given());
                 MainActivity.user.setToken(tempUser.getToken());
-                MainActivity.user.setImage(tempUser.getImage());
                 MainActivity.user.setUser_education(user.getUser_education());
                 MainActivity.user.setCollegedekho_recommended_streams(user.getCollegedekho_recommended_streams());
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
@@ -3169,10 +3151,6 @@ public class MainActivity extends AppCompatActivity
         switch (tag) {
             case Constants.TAG_WISH_LIST_APPLIED_COURSE:
                 return "Applying For institute";
-            case Constants.TAG_USER_REGISTRATION:
-                return "Creating User Please Wait";
-            case Constants.TAG_USER_LOGIN:
-                return "Signing User Please Wait.....";
             case Constants.TAG_LOAD_STREAM:
             case Constants.TAG_UPDATE_STREAM:
             case Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM:
@@ -4375,15 +4353,15 @@ public class MainActivity extends AppCompatActivity
 
             this.mMakeNetworkCall(Constants.TAG_GET_USER_PROFILE,Constants.BASE_URL+"profile/", null);
             if (tempUser != null){
-                MainActivity.user.setImage(tempUser.getImage());
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
                 MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
                 MainActivity.user.profileData = tempUser.profileData;
-                if(mProfile == null) {
-                    mProfile = new Profile();
-                    mProfile.setName(user.getName());
-                    mProfile.setName(user.getPhone_no());
-                }
+            }
+            if(mProfile == null) {
+                mProfile = new Profile();
+                mProfile.setName(user.getName());
+                mProfile.setName(user.getPhone_no());
+                mProfile.setImage(user.getImage());
             }
 
             setUserIdWithAllEvents();
@@ -4437,10 +4415,6 @@ public class MainActivity extends AppCompatActivity
         params.put(MainActivity.getResourceString(R.string.USER_DEVICE_ID), deviceId);
         params.put(MainActivity.getResourceString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_TRUECALLER);
 
-        //TODO :: delete this after image_new handle at server side
-        if(MainActivity.user != null && trueProfile.avatarUrl != null){
-            MainActivity.user.setImage(trueProfile.avatarUrl);
-        }
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
         onUserCommonLogin(params,Constants.TAG_TRUE_SDK_LOGIN);
     }
@@ -4497,7 +4471,6 @@ public class MainActivity extends AppCompatActivity
             MainActivity.user.setStream_name(tempUser.getStream_name());
             MainActivity.user.setLevel_name(tempUser.getLevel_name());
             MainActivity.user.setToken(tempUser.getToken());
-            MainActivity.user.setImage(tempUser.getImage());
             MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
             MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
             MainActivity.user.profileData = tempUser.profileData;
@@ -4511,33 +4484,6 @@ public class MainActivity extends AppCompatActivity
         }
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
         showMyFbMessage(msg);
-    }
-
-    /***
-     * This method is called when user sign in successfully
-     * @param response response json send  by server
-     * @param msg MyFb comment message
-     */
-    public void onUserSignInResponse(String response, String msg) {
-
-        User tempUser = user;
-        try {
-            user = JSON.std.beanFrom(User.class, response);
-            this.networkUtils.setToken(user.getToken());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //save the preferences locally
-        user.setImage(tempUser.getImage());
-        String u = null;
-        try {
-            u = JSON.std.asString(user);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-        showMyFbMessage(msg);
-
     }
 
     private void mOnUserExamsSelected(String response) {
@@ -5083,21 +5029,27 @@ public class MainActivity extends AppCompatActivity
     public void onIknowWhatIWant() {
         this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
 
+        //Events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), "I_KNOW_WHAT_I_WANT");
-
-        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
     @Override
-    public void onSelectedCurrentEducation(HashMap<String, String> params) {
-        //  save user's current and preferred level on the server
-        this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL + "profile/", params, Request.Method.POST);
-
+    public void onSkipAfterSelectLevel() {
+        this.mDisplayFragment(NotPreparingFragment.newInstance(), true, NotPreparingFragment.class.toString());
+    }
+    @Override
+    public void onRequestForUserExams() {
         // request for yearly exam based on preferred level
         this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, Constants.BASE_URL +"stream-yearly-exams/?level="+mProfile.getPreferred_level(),null, Request.Method.GET);
     }
+
+    @Override
+    public void onRequestToUpdateUserProfile(HashMap<String, String> params) {
+        //  save user's current and preferred level on the server
+        this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL + "profile/", params, Request.Method.POST);
+   }
 
     @Override
     public void onSelectedIsPreparing(HashMap<String, String> params) {

@@ -255,29 +255,6 @@ public class NetworkUtils {
                                 }
                             }
                         }
-                        else  if(tags[0].equalsIgnoreCase(Constants.TAG_USER_REGISTRATION))
-                        {
-                            if(json != null) {
-                                try {
-                                    JSONObject jsonObj = new JSONObject(json);
-                                    String code = jsonObj.getString("Code");
-                                    if(Integer.parseInt(code) == ErrorCode.LOGIN_EMAIL_ALREADY_EXISTS) {
-                                        ((MainActivity) mContext).hideProgressDialog();
-                                        Toast.makeText(mContext, MainActivity.getResourceString(R.string.EMAIL_PASSOWRD_ALREADY_EXISTS), Toast.LENGTH_LONG).show();
-                                        return;
-                                    }
-                                    else if(Integer.parseInt(code) == ErrorCode.LOGIN_PASSWORD_INCORRECT)
-                                    {
-                                        ((MainActivity)mContext).hideProgressDialog();
-                                        Toast.makeText(mContext, MainActivity.getResourceString(R.string.EMAIL_PASSOWRD_NOT_EXISTS),Toast.LENGTH_LONG).show();
-                                        return;
-                                    }
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
                         else if(tags[0].equalsIgnoreCase(Constants.TAG_APPLIED_COURSE))
                         {
                             saveToSharedPref(params);

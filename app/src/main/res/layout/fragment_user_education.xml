@@ -14,7 +14,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/m3dp"
+        android:layout_marginTop="@dimen/m1dp"
         android:layout_marginLeft="@dimen/m10dp"
         app:srcCompat="@drawable/ic_navigation_icon"/>
 
@@ -23,9 +23,10 @@
         android:layout_height="wrap_content"
         style="@style/AppTheme.profileTextView"
         android:text="PROFILE"
-        android:paddingBottom="@dimen/m7dp"
-        android:paddingTop="@dimen/m7dp"
-        android:textSize="16sp"
+        android:paddingBottom="@dimen/m5dp"
+        android:paddingTop="@dimen/m5dp"
+        android:textSize="15sp"
+        android:textStyle="bold"
         android:background="@color/primary_color"
         android:paddingLeft="@dimen/m20dp"
         android:textColor="@color/white"
@@ -54,7 +55,7 @@
             <LinearLayout
                 android:id="@+id/user_education_name_layout"
                 style="@style/AppTheme.profileInfoTLayout"
-                android:layout_marginTop="@dimen/m20dp">
+                android:layout_marginTop="@dimen/m15dp">
 
                 <TextView
                     style="@style/AppTheme.profileTextViewTitle"
@@ -72,15 +73,16 @@
                 android:id="@+id/user_education_edit_name_til"
                 android:layout_width="match_parent"
                 android:visibility="gone"
-                android:layout_marginTop="@dimen/m5dp"
+                android:layout_marginTop="@dimen/m2dp"
                 android:layout_height="wrap_content">
 
                 <EditText
                     android:id="@+id/user_education_name_edit_text"
                     style="@style/AppTheme.EditText"
-                    android:layout_height="@dimen/m35dp"
+                    android:layout_height="@dimen/m38dp"
                     android:hint="Name"
                     android:maxLines="1"
+                    android:textSize="@dimen/m15sp"
                     android:digits=" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
                     android:inputType="textCapWords"
                     android:maxLength="35" />
@@ -112,10 +114,11 @@
                 <EditText
                     android:id="@+id/user_education_phone_edit_text"
                     style="@style/AppTheme.EditText"
-                    android:layout_height="@dimen/m35dp"
+                    android:layout_height="@dimen/m38dp"
                     android:hint="Phone"
                     android:maxLines="1"
                     android:inputType="phone"
+                    android:textSize="@dimen/m15sp"
                     android:maxLength="10" />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
@@ -352,8 +355,9 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/m45dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:layout_marginRight="@dimen/m20dp"
+        android:layout_marginLeft="@dimen/m20dp"
         android:layout_marginBottom="@dimen/m10dp"
         android:padding="@dimen/m8dp"
         android:orientation="vertical">
@@ -383,12 +387,12 @@
         android:padding="@dimen/m15dp"
         app:srcCompat="@drawable/ic_arrow_forward_vector"
         android:background="@color/primary_orange"
-        android:visibility="gone"
+        android:visibility="visible"
         android:textSize="17sp"
         android:textColor="@color/white"/>
 
     <RelativeLayout
-        android:id="@+id/search_exam_container"
+        android:id="@+id/user_exam_search_container"
         android:layout_below="@id/user_education_top_layout"
         android:layout_width="match_parent"
         android:paddingLeft="@dimen/m15dp"
@@ -396,7 +400,7 @@
         android:visibility="gone"
         android:layout_height="wrap_content">
 
-        <TextView android:id="@+id/search_exam_hint"
+        <TextView android:id="@+id/user_exam_search_hint"
             android:clickable="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -406,21 +410,35 @@
             />
 
         <android.support.v7.widget.SearchView
-            android:id="@+id/auto_search_exam"
+            android:id="@+id/user_exam_search_view"
             android:gravity="center|left"
             android:layout_width="match_parent"
+            app:queryHint="Search Exam"
             android:layout_height="40dp"
             android:tag="1" />
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/user_education_stream_recycler_view"
+        android:id="@+id/user_education_recycler_view"
         android:paddingLeft="@dimen/m2dp"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:layout_below="@id/search_exam_container"
+        android:layout_below="@id/user_exam_search_container"
         android:layout_above="@id/user_education_skip_button"
         android:layout_width="match_parent"/>
+
+    <TextView
+        android:id="@id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_below="@id/user_exam_search_container"
+        android:layout_above="@id/user_education_skip_button"
+        android:textSize="@dimen/m16dp"
+        android:text="Mo Exams Found "
+        android:textStyle="italic"/>
+
 
 
 </RelativeLayout>

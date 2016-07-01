@@ -437,10 +437,10 @@
     <string name="article_image_description">Image for current Article</string>
     <string name="institute_logo_description">Logo for wishlist college</string>
 
-    <!-- TRUE CALLER Debug key--><!--
-    <string name="partnerKey">baLWqkLO85xFIlFrAi5phqW1zSfCceMb</string>-->
-    <!-- TRUE CALLER Release key-->
-    <string name="partnerKey">ZjojDtbi99nS9J3pW8dwMfFYkrHxYeRM</string>
+    <!-- TRUE CALLER Debug key-->
+    <string name="partnerKey">baLWqkLO85xFIlFrAi5phqW1zSfCceMb</string>
+     TRUE CALLER Release key<!--
+    <string name="partnerKey">ZjojDtbi99nS9J3pW8dwMfFYkrHxYeRM</string>-->
 
     <!--   new and Article image transaction-->
     <string name="news_image_transaction">NewsImageTransaction</string>

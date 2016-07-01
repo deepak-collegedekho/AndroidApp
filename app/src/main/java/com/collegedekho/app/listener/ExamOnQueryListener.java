@@ -15,16 +15,12 @@ public class ExamOnQueryListener implements SearchView.OnQueryTextListener {
     ArrayList<Exam>  mExamList;
     ExamsAdapter mExamAdapter;
 
-    public ExamOnQueryListener(){
-
-    }
-
     public ExamOnQueryListener(ArrayList<Exam>  mExamList, ExamsAdapter mExamAdapter){
         this.mExamList = mExamList;
         this.mExamAdapter = mExamAdapter;
     }
 
-    public void setmExamList(ArrayList<Exam> mExamList) {
+    public void setExamList(ArrayList<Exam> mExamList) {
         this.mExamList = mExamList;
     }
 
@@ -43,11 +39,7 @@ public class ExamOnQueryListener implements SearchView.OnQueryTextListener {
                     searchResults.add(exam);
                 }
             }
-//            if(searchResults.size() != 0){
             mExamAdapter.updateExamList(searchResults);
-//            } else {
-//
-//            }
         } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (Exception e) {

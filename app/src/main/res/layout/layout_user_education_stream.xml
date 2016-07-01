@@ -27,12 +27,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
         android:ellipsize="marquee"
-        android:background="@drawable/bg_exam_stream_item"
         android:gravity="center_vertical"
         android:minHeight="@dimen/m40dp"
         android:maxLines="3"
-        android:textSize="17sp"
-        android:padding="@dimen/m6dp"/>
+        android:textSize="17sp"/>
 
 
 </LinearLayout>

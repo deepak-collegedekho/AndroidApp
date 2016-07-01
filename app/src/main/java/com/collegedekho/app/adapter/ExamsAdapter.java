@@ -34,19 +34,15 @@ import java.util.ArrayList;
 public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderView> {
 
     private Context mContext;
-    private ArrayList<Exam> mExamList;
-    private int lastExamPosition=-1;
+    private ArrayList<Exam> mExamList = new ArrayList<>();
     private int lastPosition=-1;
     private int textColorId;
-    //private int selectedPosition=-1;
-    private ArrayAdapter yearAdapter;
 
 
     public ExamsAdapter(Context context, ArrayList<Exam> examList){
         this.mContext = context;
-        this.mExamList = examList;
+        this.mExamList.addAll(examList);
         textColorId = this.mContext.getResources().getColor(R.color.text_light_grey);
-        yearAdapter = new ArrayAdapter(mContext, R.layout.spinner_drop_down_item, new String[]{});
     }
 
     @Override
@@ -227,7 +223,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
     }
 
     public void updateExamList(ArrayList<Exam> newExamList){
-       //TODO:: first part was only for testing
+       //TODO:: commented code for testing to ask marks for those exams which results is already out.
        /* int count1 = newExamList.size();
         for (int i = 0; i < count1; i++) {
             Exam examObj = newExamList.get(i);
@@ -239,7 +235,9 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
             }
         }*/
 
-        int count = mExamList.size();
+        //TODO:: this commented code for filter based on stream.
+
+       /* int count = mExamList.size();
         for (int i = 0; i < count; i++) {
             Exam examObj = mExamList.get(i);
             if(!examObj.isSelected())
@@ -276,7 +274,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                 }
             }
 
-        }
+        }*/
         this.mExamList.clear();
         this.mExamList.addAll(newExamList);
         notifyDataSetChanged();

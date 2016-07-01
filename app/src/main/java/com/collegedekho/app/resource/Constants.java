@@ -33,7 +33,6 @@ public class Constants
     public static final String TAG_SKIP_LOGIN = "skip_login";
     public static final String TAG_PHONE_NUMBER_LOGIN = "phone_number_login";
     public static final String TAG_USER_LOGIN = "user_login";
-    public static final String TAG_USER_REGISTRATION = "user_registration";
     public static final String TAG_EDUCATION_DETAILS_SUBMIT = "user_education_submit";
     public static final String TAG_EDIT_EDUCATION_DETAILS_SUBMIT = "edited_user_education_submit";
     public static final String TAG_NOT_PREPARING_EDUCATION_DETAILS_SUBMIT = "user_not_preparing_education_submit";

@@ -291,7 +291,7 @@ public class UserExamFragment extends BaseFragment implements SearchView.OnQuery
 
     public void updateUserExams(ArrayList<Exam> examList){
         this.mExamList = examList;
-        cExamListener.setmExamList(examList);
+        cExamListener.setExamList(examList);
         if(mExamAdapter == null)
             return;
         mExamAdapter.updateExamList(examList);

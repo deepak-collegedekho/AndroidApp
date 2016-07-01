@@ -1,9 +1,7 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +9,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
-import com.collegedekho.app.fragment.UserExamFragment;
 
 import java.util.ArrayList;
 
@@ -31,7 +27,6 @@ public class ExamStreamAdapter extends RecyclerView.Adapter<ExamStreamAdapter.Vi
         this.mStreamList = streamList;
     }
 
-
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rootView = LayoutInflater.from(mContext).inflate(R.layout.layout_user_education_stream, parent, false);
@@ -42,7 +37,6 @@ public class ExamStreamAdapter extends RecyclerView.Adapter<ExamStreamAdapter.Vi
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         ProfileSpinnerItem streamObj = mStreamList.get(position);
-
         holder.rootView.setTag(position);
 
         if(streamObj != null){
@@ -58,6 +52,12 @@ public class ExamStreamAdapter extends RecyclerView.Adapter<ExamStreamAdapter.Vi
             @Override
             public void onClick(View v) {
 
+                int count = mStreamList.size();
+                for (int i = 0; i < count; i++) {
+                    ProfileSpinnerItem objItem = mStreamList.get(i);
+                    objItem.setSelected(false);
+                }
+
                 int  itemPosition = -1;
                 try{
                     itemPosition = Integer.parseInt(v.getTag().toString());
@@ -67,11 +67,6 @@ public class ExamStreamAdapter extends RecyclerView.Adapter<ExamStreamAdapter.Vi
                 }
                 if(itemPosition == -1){
                     return;
-                }
-                int count = mStreamList.size();
-                for (int i = 0; i < count; i++) {
-                    ProfileSpinnerItem objItem = mStreamList.get(i);
-                    objItem.setSelected(false);
                 }
                 ProfileSpinnerItem selectedItem = mStreamList.get(itemPosition);
                 selectedItem.setSelected(true);
@@ -88,7 +83,7 @@ public class ExamStreamAdapter extends RecyclerView.Adapter<ExamStreamAdapter.Vi
 
     }
 
-    public void updateSTreamList(ArrayList<ProfileSpinnerItem> streamList){
+    public void updateStreamList(ArrayList<ProfileSpinnerItem> streamList){
         this.mStreamList = streamList;
         notifyDataSetChanged();
     }

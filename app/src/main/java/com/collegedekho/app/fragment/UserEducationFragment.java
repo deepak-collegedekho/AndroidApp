@@ -10,6 +10,7 @@ import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -23,8 +24,11 @@ import com.collegedekho.app.entities.ProfileSpinnerItem;
 import com.collegedekho.app.listener.ExamOnQueryListener;
 import com.collegedekho.app.listener.ExamSearchCloseListener;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
+import com.collegedekho.app.utils.Utils;
+import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
 import com.fasterxml.jackson.jr.ob.JSON;
 
@@ -57,7 +61,7 @@ public class UserEducationFragment extends BaseFragment {
     private ExamsAdapter mExamAdapter;
     private SearchView mExamSearchView;
     private ArrayList<Exam> mExamList = new ArrayList<>();
-    private ExamOnQueryListener cExamListener;
+    private ExamOnQueryListener cExamQueryListener;
     private boolean  isStreamSelected;
 
     public UserEducationFragment() {
@@ -88,6 +92,15 @@ public class UserEducationFragment extends BaseFragment {
 
 
         if(MainActivity.mProfile != null){
+           CircularImageView mProfileImage = (CircularImageView) view.findViewById(R.id.profile_image);
+
+            mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
+            mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
+
+            String image = MainActivity.mProfile.getImage();
+            if (image != null && !image.isEmpty())
+                mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+
             String userName = MainActivity.user.getName();
             if(userName != null && !userName.isEmpty()
                     && !userName.equalsIgnoreCase(getString(R.string.ANONYMOUS_USER))) {
@@ -110,7 +123,13 @@ public class UserEducationFragment extends BaseFragment {
             }
         }
 
-        mStreamRecyclerView = (RecyclerView)view.findViewById(R.id.user_education_stream_recycler_view);
+        mStreamRecyclerView = (RecyclerView)view.findViewById(R.id.user_education_recycler_view);
+        mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        mStreamRecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
+
+
+        mExamSearchView = (SearchView) mRootView.findViewById(R.id.user_exam_search_view);
+
         view.findViewById(R.id.user_education_radio_button_school).setOnClickListener(this);
         view.findViewById(R.id.user_education_radio_button_college).setOnClickListener(this);
         view.findViewById(R.id.user_education_radio_button_pg).setOnClickListener(this);
@@ -122,6 +141,8 @@ public class UserEducationFragment extends BaseFragment {
         view.findViewById(R.id.go_to_recommended).setOnClickListener(this);
         view.findViewById(R.id.go_to_dash_board).setOnClickListener(this);
         view.findViewById(R.id.go_to_profile).setOnClickListener(this);
+        mExamSearchView.setOnSearchClickListener(this);
+        //view.findViewById(R.id.user_exam_search_hint).setOnClickListener(this);
 
     }
 
@@ -166,14 +187,14 @@ public class UserEducationFragment extends BaseFragment {
         switch(view.getId())
         {
             case R.id.user_education_skip_button:
-                mIKnowWhatIWhat();
+                mUserEducationSkip();
                 break;
             case R.id.user_education_radio_button_school:
             case R.id.user_education_radio_button_college:
             case R.id.user_education_radio_button_pg:
                 if(mRootView.findViewById(R.id.user_education_radio_group).getVisibility() == View.VISIBLE) {
                     mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
-                    mRootView.findViewById(R.id.user_education_skip_button).setTranslationX(-500);
+                    //mRootView.findViewById(R.id.user_education_skip_button).setTranslationX(-500);
                 }
                 break;
             case R.id.user_education_level_edit_btn:
@@ -197,131 +218,120 @@ public class UserEducationFragment extends BaseFragment {
             case R.id.go_to_profile:
                 mTakeMeToProfile();
                 break;
+           case R.id.user_exam_search_view:
+            //case R.id.user_exam_search_hint:
+                if(!mExamSearchView.isActivated()){
+                    getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.GONE);
+                } else {
+                   getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.VISIBLE);
+                }
+                break;
 
             default:
                 break;
         }
     }
 
-    private void mIKnowWhatIWhat() {
+    private void mUserEducationSkip() {
         if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
-        if(this.mListener !=  null)
+        if(this.mListener ==  null)
+            return;
+        View radioGroupEducation = mRootView.findViewById(R.id.user_education_radio_group);
+        if(radioGroupEducation.getVisibility() == View.VISIBLE) {
             this.mListener.onIknowWhatIWant();
+         }
+        else if( !isStreamSelected && mStreamRecyclerView.getVisibility() == View.VISIBLE){
+            this.mListener.onSkipAfterSelectLevel();
+       }
     }
 
     private void mSelectedNextButton() {
         if(this.mListener ==  null)
             return;
 
+        // check internet connection
         if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
-        View radioGroupEducation = mRootView.findViewById(R.id.user_education_radio_group);
 
-        if(radioGroupEducation.getVisibility() == View.VISIBLE){
+        // check which layout is visible to do action
+        View radioGroupEducation = mRootView.findViewById(R.id.user_education_radio_group);
+        if(radioGroupEducation.getVisibility() == View.VISIBLE) {
             isStreamSelected = false;
-            int selectedRadioButton = ((RadioGroup)radioGroupEducation).getCheckedRadioButtonId();
+            int selectedRadioButton = ((RadioGroup) radioGroupEducation).getCheckedRadioButtonId();
 
             // setting default  current education level school
             int currentLevelID = ProfileMacro.CURRENT_EDUCATION_SCHOOL;
             try {
                 currentLevelID = Integer.parseInt(mRootView.findViewById(selectedRadioButton).getTag().toString());
-            }catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
 
             // setting default preferred level college
             int preferredLevelId = ProfileMacro.LEVEL_UNDER_GRADUATE;
 
-            if(currentLevelID == ProfileMacro.CURRENT_EDUCATION_COLLEGE)
+            if (currentLevelID == ProfileMacro.CURRENT_EDUCATION_COLLEGE)
                 preferredLevelId = ProfileMacro.LEVEL_POST_GRADUATE;
-            else if(currentLevelID == ProfileMacro.CURRENT_EDUCATION_PG)
+            else if (currentLevelID == ProfileMacro.CURRENT_EDUCATION_PG)
                 preferredLevelId = ProfileMacro.LEVEL_PHD;
 
-
-           /* String userName ="";
-            if(MainActivity.mProfile != null){
-                userName = MainActivity.mProfile.getName();
-            }
-            if(mRootView.findViewById(R.id.user_education_edit_name_til).getVisibility() == View.VISIBLE){
-                userName = ((EditText) mRootView.findViewById(R.id.user_education_name_edit_text)).getText().toString();
-                if (!Utils.isValidName(userName)) {
-                    mListener.displayMessage(R.string.NAME_INVALID);
-                    return;
-                }
-
-            }
-            String  userPhoneNumber ="";
-            if(MainActivity.mProfile != null){
-                userPhoneNumber = MainActivity.mProfile.getPhone_no();
-            }
-            if(mRootView.findViewById(R.id.user_education_edit_phone_til).getVisibility() == View.VISIBLE){
-                userPhoneNumber = ((EditText) mRootView.findViewById(R.id.user_education_phone_edit_text)).getText().toString();
-                if (userPhoneNumber != null && !userPhoneNumber.trim().isEmpty()
-                    && userPhoneNumber.length() <= 9 || !Utils.isValidPhone(userPhoneNumber)) {
-                    mListener.displayMessage(R.string.PHONE_INVALID);
-                    //Utils.DisplayToast(getContext(), "Please enter a valid phone number.");
-                    return;
-                }
-            }
-*/
-            HashMap<String, String> params = new HashMap<>();
-            params.put("current_sublevel_id",""+currentLevelID);
-            params.put("preferred_level",""+preferredLevelId);
-            //params.put("name",userName);
-            //params.put("phone_no",userPhoneNumber);
-
-
-            if(MainActivity.mProfile != null){
+            // set user' current  and preferred level locally
+            if (MainActivity.mProfile != null) {
                 MainActivity.mProfile.setCurrent_sublevel_id(currentLevelID);
                 MainActivity.mProfile.setPreferred_level(preferredLevelId);
-                //MainActivity.mProfile.setName(userName);
-                //MainActivity.mProfile.setPhone_no(userPhoneNumber);
             }
 
-           // save user profile data on server
-            this.mListener.onSelectedCurrentEducation(params);
+
+            HashMap<String, String> params = new HashMap<>();
+            params.put("current_sublevel_id", "" + currentLevelID);
+            params.put("preferred_level", "" + preferredLevelId);
+
+            // check user's name and phone Number
+            getUserNameAndPhone(params);
+
+            // save user profile data on server
+            this.mListener.onRequestToUpdateUserProfile(params);
+            this.mListener.onRequestForUserExams();
 
             //  show next layout to select current stream
             ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
             //mRootView.findViewById(R.id.profile_education_next_button).setVisibility(View.GONE);
-           // mRootView.findViewById(R.id.user_education_skip_button).setTranslationX(750);
+            // mRootView.findViewById(R.id.user_education_skip_button).setTranslationX(750);
             radioGroupEducation.setVisibility(View.GONE);
             mStreamRecyclerView.setVisibility(View.VISIBLE);
 
             // set current level education
             mRootView.findViewById(R.id.user_education_education_layout).setVisibility(View.VISIBLE);
-            TextView  currentLevelTxtView = (TextView)mRootView.findViewById(R.id.user_education_level);
+            TextView currentLevelTxtView = (TextView) mRootView.findViewById(R.id.user_education_level);
             currentLevelTxtView.setVisibility(View.VISIBLE);
             int currentEducationId = MainActivity.mProfile.getCurrent_sublevel_id();
-            if(currentEducationId == ProfileMacro.CURRENT_EDUCATION_SCHOOL){
+            if (currentEducationId == ProfileMacro.CURRENT_EDUCATION_SCHOOL) {
                 currentLevelTxtView.setText(" School");
-            }else if(currentEducationId == ProfileMacro.CURRENT_EDUCATION_COLLEGE){
+            } else if (currentEducationId == ProfileMacro.CURRENT_EDUCATION_COLLEGE) {
                 currentLevelTxtView.setText(" College");
-            }else{
+            } else {
                 currentLevelTxtView.setText(" PG College");
             }
 
             // show streams for current level
-            mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-            mStreamRecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
-
             try {
                 mStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class,
                         ProfileMacro.getStreamJson(currentLevelID));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(mStreamAdapter == null)
+            if (mStreamAdapter == null) {
                 mStreamAdapter = new ExamStreamAdapter(getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
-
-            mStreamRecyclerView.setAdapter(mStreamAdapter);
-            mStreamAdapter.updateSTreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
-
+                mStreamRecyclerView.setAdapter(mStreamAdapter);
+            } else {
+                mStreamRecyclerView.setAdapter(mStreamAdapter);
+                mStreamAdapter.updateStreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
+            }
 
         }else if( !isStreamSelected && mStreamRecyclerView.getVisibility() == View.VISIBLE){
 
@@ -348,42 +358,46 @@ public class UserEducationFragment extends BaseFragment {
             currentStreamTxtView.setVisibility(View.VISIBLE);
             currentStreamTxtView.setText(currentStreamName);
 
-            HashMap<String, String> params = new HashMap<>();
-            params.put("current_stream_id",""+currentStreamId);
-
+            // set user'current stream locally
             if(MainActivity.mProfile != null){
                 MainActivity.mProfile.setCurrent_stream_id(currentStreamId);
                 MainActivity.mProfile.setCurrent_stream_name(currentStreamName);
             }
 
-            // save use's current stream id on server
-            this.mListener.onSelectedCurrentEducation(params);
+            // save user's current stream id on server
+            HashMap<String, String> params = new HashMap<>();
+            params.put("current_stream_id",""+currentStreamId);
+
+            // check user's name and phone Number
+            getUserNameAndPhone(params);
+
+            this.mListener.onRequestToUpdateUserProfile(params);
 
 
             ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.which_exams_are_you_preparing));
            // mRootView.findViewById(R.id.profile_education_next_button).setVisibility(View.GONE);
             mRootView.findViewById(R.id.user_education_education_layout).setVisibility(View.VISIBLE);
-            mRootView.findViewById(R.id.search_exam_container).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.VISIBLE);
 
-            mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-            mStreamRecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
             if(mExamAdapter == null)
                 mExamAdapter = new ExamsAdapter(getActivity(),  mExamList);
             mStreamRecyclerView.setAdapter(mExamAdapter);
 
-            mExamSearchView = (SearchView) mRootView.findViewById(R.id.auto_search_exam);
-            cExamListener = new ExamOnQueryListener(mExamList,mExamAdapter);
-            this.mExamSearchView.setOnQueryTextListener(cExamListener);
-            mExamSearchView.setOnSearchClickListener(this);
-            mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(mRootView.findViewById(R.id.search_exam_hint)));
+            cExamQueryListener = new ExamOnQueryListener(mExamList,mExamAdapter);
+            this.mExamSearchView.setOnQueryTextListener(cExamQueryListener);
+
+            mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(mRootView.findViewById(R.id.user_exam_search_hint)));
 
             if(mExamList != null && mExamList.size() >0){
-                //mRootView.findViewById(R.id.user_exam_recycler_view_text).setVisibility(View.GONE);
-                //mRootView.findViewById(R.id.user_exam_recycler_view).setVisibility(View.VISIBLE);
+                mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
+                mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.VISIBLE);
+            }else{
+                mRootView.findViewById(R.id.empty).setVisibility(View.VISIBLE);
+                mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
             }
 
         }else{
-            onExamsSelected();
+            onUserExamsSelected();
         }
     }
 
@@ -392,7 +406,7 @@ public class UserEducationFragment extends BaseFragment {
         mRootView.findViewById(R.id.user_education_education_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_stream_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.GONE);
-        mRootView.findViewById(R.id.search_exam_container).setVisibility(View.GONE);
+        mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
         mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
@@ -408,7 +422,7 @@ public class UserEducationFragment extends BaseFragment {
         isStreamSelected = false;
         mRootView.findViewById(R.id.user_education_stream_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.GONE);
-        mRootView.findViewById(R.id.search_exam_container).setVisibility(View.GONE);
+        mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
         mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
@@ -417,11 +431,11 @@ public class UserEducationFragment extends BaseFragment {
         ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
         mStreamRecyclerView.setVisibility(View.VISIBLE);
 
-        if(mStreamAdapter == null) {
+        //if(mStreamAdapter == null)
             mStreamAdapter = new ExamStreamAdapter(getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
-        }
+
         mStreamRecyclerView.setAdapter(mStreamAdapter);
-        mStreamAdapter.updateSTreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
+        //mStreamAdapter.updateStreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
     }
 
     private void mEditUserExams(){
@@ -438,7 +452,7 @@ public class UserEducationFragment extends BaseFragment {
 
     public void onExamSubmittedSuccessfully() {
         mStreamRecyclerView.setVisibility(View.GONE);
-        mRootView.findViewById(R.id.search_exam_container).setVisibility(View.GONE);
+        mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_heading).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.GONE);
@@ -462,19 +476,54 @@ public class UserEducationFragment extends BaseFragment {
                 }
                 if(count < userExamList.size())
                     examsNameBuffer.append(".....");
-
             }
-
             TextView  userExamSTxtView = (TextView)mRootView.findViewById(R.id.user_education_exams);
             userExamSTxtView.setText(examsNameBuffer.toString());
+        }
+    }
 
+    private void getUserNameAndPhone(HashMap<String, String> profileParams){
+
+        View nameView = mRootView.findViewById(R.id.user_education_edit_name_til);
+        if(nameView.getVisibility() == View.VISIBLE){
+            String userName = ((EditText) mRootView.findViewById(R.id.user_education_name_edit_text)).getText().toString();
+            if(userName != null && !userName.isEmpty()) {
+                if (!Utils.isValidName(userName)) {
+                    mListener.displayMessage(R.string.NAME_INVALID);
+                    return;
+                }
+                profileParams.put("name",userName);
+
+                // hide name EditText
+                ((TextView) mRootView.findViewById(R.id.user_education_name)).setText(userName);
+                mRootView.findViewById(R.id.user_education_name_layout).setVisibility(View.VISIBLE);
+                nameView.setVisibility(View.GONE);
+                if(MainActivity.mProfile != null)
+                    MainActivity.mProfile.setName(" :"+userName);
+            }
         }
 
+        View phoneView = mRootView.findViewById(R.id.user_education_edit_phone_til);
+        if(phoneView.getVisibility() == View.VISIBLE){
+            String userPhoneNumber = ((EditText) mRootView.findViewById(R.id.user_education_phone_edit_text)).getText().toString();
+            if (userPhoneNumber != null && !userPhoneNumber.trim().isEmpty()) {
+                if (userPhoneNumber.length() <= 9 || !Utils.isValidPhone(userPhoneNumber)) {
+                    mListener.displayMessage(R.string.PHONE_INVALID);
+                    return;
+                }
+                profileParams.put("phone_no",userPhoneNumber);
+                ((TextView) mRootView.findViewById(R.id.user_education_phone)).setText(userPhoneNumber);
+                mRootView.findViewById(R.id.user_education_phone_layout).setVisibility(View.VISIBLE);
+                phoneView.setVisibility(View.GONE);
+                if(MainActivity.mProfile != null)
+                    MainActivity.mProfile.setPhone_no(" :"+userPhoneNumber);
+            }
+        }
     }
 
 
 
-    private void onExamsSelected() {
+    private void onUserExamsSelected() {
 
         if(this.mListener == null)
             return;
@@ -513,6 +562,13 @@ public class UserEducationFragment extends BaseFragment {
             mListener.displayMessage(R.string.SELECT_ONE_EXAM);
             return;
         }
+
+        // check user's name and phone Number
+        HashMap<String, String> userParams = new HashMap<>();
+        getUserNameAndPhone(userParams);
+        if(userParams.size() >= 1)
+            mListener.onRequestToUpdateUserProfile(userParams);
+
         this.mListener.onUserExamSelected(parentJsonObject);
 
 
@@ -555,9 +611,11 @@ public class UserEducationFragment extends BaseFragment {
      */
     public interface OnUserEducationInteractionListener {
         void onIknowWhatIWant();
+        void onSkipAfterSelectLevel();
         void onUserExamSelected(JSONObject examJson);
         void displayMessage(int messageId);
-        void onSelectedCurrentEducation(HashMap<String, String> params);
+        void onRequestToUpdateUserProfile(HashMap<String, String> params);
+        void onRequestForUserExams();
         void OnTakeMeToRecommended();
         void OnTakeMeToDashBoard();
         void OnTakeMeToProfile();
