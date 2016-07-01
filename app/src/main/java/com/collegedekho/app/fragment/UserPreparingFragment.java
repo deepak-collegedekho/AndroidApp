@@ -42,8 +42,8 @@ public class UserPreparingFragment extends  BaseFragment {
 
         if(MainActivity.mProfile != null){
             TextView  currentLevelTxtView = (TextView)rootView.findViewById(R.id.user_preparing_education_level);
-            int currentEducationId = MainActivity.mProfile.getCurrent_sublevel_id();
-            if(currentEducationId == ProfileMacro.CURRENT_EDUCATION_SCHOOL){
+            int currentEducationId = MainActivity.mProfile.getCurrent_level_id();
+            if(currentEducationId == ProfileMacro.LEVEL_TWELFTH){
                 currentLevelTxtView.setText(":  School");
             }else{
                 currentLevelTxtView.setText(":  College");

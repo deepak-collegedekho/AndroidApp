@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -51,13 +52,6 @@ public class ExamStreamAdapter extends RecyclerView.Adapter<ExamStreamAdapter.Vi
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                int count = mStreamList.size();
-                for (int i = 0; i < count; i++) {
-                    ProfileSpinnerItem objItem = mStreamList.get(i);
-                    objItem.setSelected(false);
-                }
-
                 int  itemPosition = -1;
                 try{
                     itemPosition = Integer.parseInt(v.getTag().toString());
@@ -68,6 +62,11 @@ public class ExamStreamAdapter extends RecyclerView.Adapter<ExamStreamAdapter.Vi
                 if(itemPosition == -1){
                     return;
                 }
+                int count = mStreamList.size();
+                for (int i = 0; i < count; i++) {
+                    ProfileSpinnerItem objItem = mStreamList.get(i);
+                    objItem.setSelected(false);
+                }
                 ProfileSpinnerItem selectedItem = mStreamList.get(itemPosition);
                 selectedItem.setSelected(true);
 
@@ -75,7 +74,11 @@ public class ExamStreamAdapter extends RecyclerView.Adapter<ExamStreamAdapter.Vi
 
             }
         });
+
+
     }
+
+
 
     @Override
     public int getItemCount() {

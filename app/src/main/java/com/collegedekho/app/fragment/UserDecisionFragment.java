@@ -3,8 +3,6 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,27 +10,10 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.adapter.ExamsAdapter;
-import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
-import com.collegedekho.app.entities.ProfileExam;
-import com.collegedekho.app.entities.ProfileSpinnerItem;
-import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
-import com.collegedekho.app.utils.Utils;
-import com.collegedekho.app.widget.GridSpacingItemDecoration;
-import com.collegedekho.app.widget.spinner.MaterialSpinner;
-import com.fasterxml.jackson.jr.ob.JSON;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 
 public class UserDecisionFragment extends BaseFragment {
@@ -56,8 +37,8 @@ public class UserDecisionFragment extends BaseFragment {
 
         if(MainActivity.mProfile != null) {
             TextView currentLevelTxtView = (TextView) rootView.findViewById(R.id.user_decision_education_level);
-            int currentEducationId = MainActivity.mProfile.getCurrent_sublevel_id();
-            if (currentEducationId == ProfileMacro.CURRENT_EDUCATION_SCHOOL) {
+            int currentEducationId = MainActivity.mProfile.getCurrent_level_id();
+            if (currentEducationId == ProfileMacro.LEVEL_TWELFTH) {
                 currentLevelTxtView.setText(":  School");
             } else {
                 currentLevelTxtView.setText(":  College");

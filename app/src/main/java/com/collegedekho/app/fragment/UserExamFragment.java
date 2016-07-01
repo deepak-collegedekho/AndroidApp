@@ -23,15 +23,12 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
-import com.fasterxml.jackson.jr.ob.JSON;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class UserExamFragment extends BaseFragment implements SearchView.OnQueryTextListener{
@@ -66,8 +63,8 @@ public class UserExamFragment extends BaseFragment implements SearchView.OnQuery
 
         if(MainActivity.mProfile != null){
             TextView  currentLevelTxtView = (TextView)rootView.findViewById(R.id.user_exam_education_level);
-            int currentEducationId = MainActivity.mProfile.getCurrent_sublevel_id();
-            if(currentEducationId == ProfileMacro.CURRENT_EDUCATION_SCHOOL){
+            int currentEducationId = MainActivity.mProfile.getCurrent_level_id();
+            if(currentEducationId == ProfileMacro.LEVEL_TWELFTH){
                 currentLevelTxtView.setText(":  School");
             }else{
                 currentLevelTxtView.setText(":  College");

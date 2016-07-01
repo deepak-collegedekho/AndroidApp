@@ -475,5 +475,6 @@
     <string name="go_to_me_profile">Personalize the App Further</string>
 
     <string name="please_select_your_stream">Please Select Your Stream</string>
+    <string name="please_select_your_level">Please Select Your Level</string>
 
 </resources>

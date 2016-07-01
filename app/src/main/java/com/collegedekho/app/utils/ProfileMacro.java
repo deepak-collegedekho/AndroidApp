@@ -14986,9 +14986,7 @@ public class ProfileMacro {
     }
 
     public static String getStreamJson(int id) {
-        if (id == 7)
-            return STREAMS_10TH;
-        else if (id == 8 || id == 9)
+        if (id == LEVEL_TWELFTH)
             return SCHOLL_STREAMS;
         else
             return UG_STREAMS;
@@ -15298,9 +15296,15 @@ public class ProfileMacro {
     public static int MODE_OTHER = 0;
 
     // sub level Ids
-    public static int CURRENT_EDUCATION_SCHOOL  = 8;
-    public static int CURRENT_EDUCATION_COLLEGE = 1;
-    public static int CURRENT_EDUCATION_PG = 5;
+    public static int CURRENT_SUB_LEVEL_SCHOOL_10TH = 7;
+    public static int CURRENT_SUB_LEVEL_SCHOOL_11TH = 9;
+    public static int CURRENT_SUB_LEVEL_SCHOOL_12TH = 8;
+    public static int CURRENT_SUB_LEVEL_COLLEGE_1 = 1;
+    public static int CURRENT_SUB_LEVEL_COLLEGE_2 = 2;
+    public static int CURRENT_SUB_LEVEL_COLLEGE_3 = 3;
+    public static int CURRENT_SUB_LEVEL_COLLEGE_4 = 4;
+    public static int CURRENT_SUB_LEVEL_PG_1 = 5;
+    public static int CURRENT_SUB_LEVEL_PG_2 = 6;
 
     // set preferred level
     public static int LEVEL_UNDER_GRADUATE = 1;

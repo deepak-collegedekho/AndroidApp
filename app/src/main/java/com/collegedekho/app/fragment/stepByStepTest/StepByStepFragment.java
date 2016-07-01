@@ -83,7 +83,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
         this.mQuestionSetCount = questionSetCount;
     }
 
-    public void updateQuestionSet(ArrayList<StepByStepQuestion> stepByStepQuestion, int questionSetCount)
+    public void updateQuestionSet(ArrayList<StepByStepQuestion> stepByStepQuestion)
     {
         this.mNextButton.setEnabled(true);
 
@@ -278,7 +278,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                 e.printStackTrace();
             }
 
-            this.mListener.onSBSTestFinish(Constants.TAG_SUBMIT_SBS_EXAM, Constants.BASE_URL + "step-by-step/answers/", StepByStepFragment.mAnswersMap);
+            this.mListener.onSBSTestFinish(Constants.BASE_URL + "step-by-step/answers/", StepByStepFragment.mAnswersMap);
         }
 
     }
@@ -369,7 +369,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
     public interface OnStepByStepFragmentListener {
         // TODO: Update argument type and name
         void onFetchQuestions(String tag, String url);
-        void onSBSTestFinish(String tag, String url, JSONObject answerObject);
+        void onSBSTestFinish(String url, JSONObject answerObject);
     }
 
     public void setAnswer(String key, Object value)

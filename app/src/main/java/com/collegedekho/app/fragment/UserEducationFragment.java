@@ -264,8 +264,12 @@ public class UserEducationFragment extends BaseFragment {
             isStreamSelected = false;
             int selectedRadioButton = ((RadioGroup) radioGroupEducation).getCheckedRadioButtonId();
 
+            if(selectedRadioButton <= 1){
+                mListener.displayMessage(R.string.please_select_your_level);
+                return;
+            }
             // setting default  current education level school
-            int currentLevelID = ProfileMacro.CURRENT_EDUCATION_SCHOOL;
+            int currentLevelID = ProfileMacro.LEVEL_TWELFTH;
             try {
                 currentLevelID = Integer.parseInt(mRootView.findViewById(selectedRadioButton).getTag().toString());
             } catch (NumberFormatException e) {
@@ -274,21 +278,26 @@ public class UserEducationFragment extends BaseFragment {
 
             // setting default preferred level college
             int preferredLevelId = ProfileMacro.LEVEL_UNDER_GRADUATE;
+            int currentSubLevelId = ProfileMacro.CURRENT_SUB_LEVEL_SCHOOL_12TH;
 
-            if (currentLevelID == ProfileMacro.CURRENT_EDUCATION_COLLEGE)
+            if (currentLevelID == ProfileMacro.LEVEL_UNDER_GRADUATE) {
                 preferredLevelId = ProfileMacro.LEVEL_POST_GRADUATE;
-            else if (currentLevelID == ProfileMacro.CURRENT_EDUCATION_PG)
+                currentSubLevelId = ProfileMacro.CURRENT_SUB_LEVEL_COLLEGE_1;
+            } else if (currentLevelID == ProfileMacro.LEVEL_POST_GRADUATE) {
                 preferredLevelId = ProfileMacro.LEVEL_PHD;
-
+                 currentSubLevelId = ProfileMacro.CURRENT_SUB_LEVEL_PG_1;
+            }
             // set user' current  and preferred level locally
             if (MainActivity.mProfile != null) {
-                MainActivity.mProfile.setCurrent_sublevel_id(currentLevelID);
+                MainActivity.mProfile.setCurrent_sublevel_id(currentSubLevelId);
+                MainActivity.mProfile.setCurrent_level_id(currentLevelID);
                 MainActivity.mProfile.setPreferred_level(preferredLevelId);
             }
 
 
             HashMap<String, String> params = new HashMap<>();
-            params.put("current_sublevel_id", "" + currentLevelID);
+            params.put("current_level_id", "" + currentLevelID);
+            params.put("current_sublevel_id", "" + currentSubLevelId);
             params.put("preferred_level", "" + preferredLevelId);
 
             // check user's name and phone Number
@@ -309,10 +318,10 @@ public class UserEducationFragment extends BaseFragment {
             mRootView.findViewById(R.id.user_education_education_layout).setVisibility(View.VISIBLE);
             TextView currentLevelTxtView = (TextView) mRootView.findViewById(R.id.user_education_level);
             currentLevelTxtView.setVisibility(View.VISIBLE);
-            int currentEducationId = MainActivity.mProfile.getCurrent_sublevel_id();
-            if (currentEducationId == ProfileMacro.CURRENT_EDUCATION_SCHOOL) {
+            int currentEducationId = MainActivity.mProfile.getCurrent_level_id();
+            if (currentEducationId == ProfileMacro.LEVEL_TWELFTH) {
                 currentLevelTxtView.setText(" School");
-            } else if (currentEducationId == ProfileMacro.CURRENT_EDUCATION_COLLEGE) {
+            } else if (currentEducationId == ProfileMacro.LEVEL_UNDER_GRADUATE) {
                 currentLevelTxtView.setText(" College");
             } else {
                 currentLevelTxtView.setText(" PG College");

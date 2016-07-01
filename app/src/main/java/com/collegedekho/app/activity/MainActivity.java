@@ -2492,11 +2492,12 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case Constants.TAG_LOAD_STEP_BY_STEP:
-                if (tags.length > 1) {
+                /*if (tags.length > 1) {
                     parentIndex = tags[1];
                     childIndex = tags[2];
                     this.mDisplayStepByStepQuestion(response, parentIndex, childIndex);
-                }
+                }*/
+                this.mDisplayStepByStepQuestion(response);//, parentIndex, childIndex);
                 break;
             case Constants.TAG_SUBMIT_SBS_EXAM:
                 this.mStepByStepDone(response);
@@ -2734,10 +2735,21 @@ public class MainActivity extends AppCompatActivity
      *
      * @param response
      */
-    private void mDisplayStepByStepQuestion(String response, String currentLevel, String questionSetCount) {
+    private void mDisplayStepByStepQuestion(String response){//, String currentLevel, String questionSetCount) {
         try {
             //set current level
-            StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.valueOf(currentLevel));
+
+            int currentLevel = mProfile.getCurrent_level_id();
+            if(currentLevel != 0) {
+                if (currentLevel == ProfileMacro.LEVEL_TWELFTH) {
+                    StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.IN_SCHOOL);
+                } else if (currentLevel == ProfileMacro.LEVEL_UNDER_GRADUATE) {
+                    StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE);
+                } else {
+                    StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE);
+                }
+            }
+            //StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.valueOf(currentLevel));
 
             response = response.substring(13, response.length() - 1);
 
@@ -2750,7 +2762,7 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayFragment(stepByStepFragment, true, StepByStepFragment.class.getSimpleName());
             } else {
                 if (fragment instanceof StepByStepFragment)
-                    ((StepByStepFragment) fragment).updateQuestionSet(stepByStepQuestions, Integer.parseInt(questionSetCount));
+                    ((StepByStepFragment) fragment).updateQuestionSet(stepByStepQuestions);
 
                 this.mDisplayFragment(fragment, false, StepByStepFragment.class.getSimpleName());
             }
@@ -2769,12 +2781,13 @@ public class MainActivity extends AppCompatActivity
         try {
             StepByStepResult sbsResult = JSON.std.beanFrom(StepByStepResult.class, response);
 
-            //sbsResult
+            mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL +"profile/", null);
+
+
+            //TODO:: delete it after preferences
             MainActivity.user.setStream_name(sbsResult.getStream_name());
             MainActivity.user.setStream(String.valueOf(sbsResult.getStream_id()));
-
-            String u = null;
-            u = JSON.std.asString(MainActivity.user);
+            String u = JSON.std.asString(MainActivity.user);
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
 
             int count = 0;
@@ -4947,9 +4960,11 @@ public class MainActivity extends AppCompatActivity
     private Map<String,String> getAllExamTags(){
         Map<String,String> params = new HashMap<>();
         List<ExamDetail> list = user.getUser_exams();
-        for(ExamDetail ed : list){
-            params.put("tag_uris[" + (params.size()) + "]",ed.getExam_tag());
-            Log.e("EXAM TAG", ed.getExam_tag());
+        if(list !=  null && !list.isEmpty()) {
+            for (ExamDetail ed : list) {
+                params.put("tag_uris[" + (params.size()) + "]", ed.getExam_tag());
+                Log.e("EXAM TAG", ed.getExam_tag());
+            }
         }
         return params;
     }
@@ -4992,36 +5007,42 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onStepByStep() {
-        new AlertDialog.Builder(this)
-                .setTitle("Currently Studying at?")
-                .setSingleChoiceItems(StepByStepQuestion.CurrentLevels.getValues(), -1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0:
-                                StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.IN_SCHOOL);
-                                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP + "#" + StepByStepQuestion.CurrentLevels.IN_SCHOOL + "#" + "1", Constants.BASE_URL + "step-by-step/ug-ques-one/", null);
-                                break;
-                            case 1:
-                                StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE);
-                                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP + "#" + StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE + "#" + "1", Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
-                                break;
-                            case 2:
-                                StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE);
-                                MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP + "#" + StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE + "#" + "1", Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
-                                break;
-                            default:
-                                break;
-                        }
-                        dialog.dismiss();
-                    }
-                })
-                .show();
 
+        int preferredLevel = mProfile.getPreferred_level();
+        if(preferredLevel == ProfileMacro.LEVEL_UNDER_GRADUATE ) {
+            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/ug-ques-one/", null);
+        }else if(preferredLevel == ProfileMacro.LEVEL_POST_GRADUATE) {
+            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
+        }else {
+            new AlertDialog.Builder(this)
+                    .setTitle("Currently Studying at?")
+                    .setSingleChoiceItems(StepByStepQuestion.CurrentLevels.getValues(), -1, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case 0:
+                                    StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.IN_SCHOOL);
+                                    MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/ug-ques-one/", null);
+                                    break;
+                                case 1:
+                                    StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE);
+                                    MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
+                                    break;
+                                case 2:
+                                    StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE);
+                                    MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP , Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        }
+        //Events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), StepByStepFragment.class.getSimpleName());
-
-        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
@@ -5205,8 +5226,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSBSTestFinish(String tag, String url, JSONObject answerObject) {
-        this.mMakeJsonObjectNetworkCall(tag, url, answerObject, Request.Method.POST);
+    public void onSBSTestFinish(String url, JSONObject answerObject) {
+        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_SBS_EXAM, url, answerObject, Request.Method.POST);
     }
 
     @Override
@@ -6012,7 +6033,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRequestForUserExamsUpdate() {
-        this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/", null);
+        if(mProfile != null &&  mProfile.getPreferred_level() ==  0){
+                this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL +"stream-yearly-exams/?stream_id="+mProfile.getPreferred_stream_id(),null, Request.Method.GET);
+        }else {
+            this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/", null);
+        }
     }
 
 

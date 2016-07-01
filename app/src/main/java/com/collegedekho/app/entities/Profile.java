@@ -27,7 +27,9 @@ public class Profile implements Parcelable{
     private String social_category_name =   "";
     private int social_category = 0;
     private String current_sublevel_name =  "";
-    private int current_sublevel_id = -1;
+    private int current_sublevel_id = 0;
+    private String current_level_name =  "";
+    private int current_level_id = 0;
     private String current_mode_name ="";
     private int current_mode = -1;
     private String current_stream_name ="";
@@ -53,7 +55,7 @@ public class Profile implements Parcelable{
     private ArrayList<String> preferred_degrees_short_names;
     private ArrayList<Integer> preferred_degrees_ids;
     private String preferred_level_name  ="";
-    private int preferred_level = -1 ;
+    private int preferred_level = 0 ;
     private ArrayList<String> preferred_states_names;
     private ArrayList<Integer> preferred_states_ids;
     private ArrayList<String> preferred_cities_names;
@@ -91,6 +93,8 @@ public class Profile implements Parcelable{
         social_category = in.readInt();
         current_sublevel_name = in.readString();
         current_sublevel_id = in.readInt();
+        current_level_name = in.readString();
+        current_level_id = in.readInt();
         current_mode_name = in.readString();
         current_mode = in.readInt();
         current_stream_name = in.readString();
@@ -169,6 +173,8 @@ public class Profile implements Parcelable{
         dest.writeInt(social_category);
         dest.writeString(current_sublevel_name);
         dest.writeInt(current_sublevel_id);
+        dest.writeString(current_level_name);
+        dest.writeInt(current_level_id);
         dest.writeString(current_mode_name);
         dest.writeInt(current_mode);
         dest.writeString(current_stream_name);
@@ -351,6 +357,22 @@ public class Profile implements Parcelable{
 
     public void setCurrent_sublevel_id(int current_sublevel_id) {
         this.current_sublevel_id = current_sublevel_id;
+    }
+
+    public String getCurrent_level_name() {
+        return current_level_name;
+    }
+
+    public void setCurrent_level_name(String current_level_name) {
+        this.current_level_name = current_level_name;
+    }
+
+    public int getCurrent_level_id() {
+        return current_level_id;
+    }
+
+    public void setCurrent_level_id(int current_level_id) {
+        this.current_level_id = current_level_id;
     }
 
     public String getCurrent_mode_name() {
