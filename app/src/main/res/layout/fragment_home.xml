@@ -18,7 +18,7 @@
             android:id="@+id/check_gesture"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".38">
+            android:layout_weight=".43">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -37,10 +37,12 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:textStyle="normal"
-                    android:paddingTop="18dp"
+                    android:paddingTop="5dp"
+                    android:text="Samaksh Dubey"
                     android:paddingBottom="18dp"
-                    android:textSize="28sp"
-                    android:layout_below="@id/include_image_layout"/>
+                    android:textSize="22sp"
+                    android:layout_below="@id/include_image_layout"
+                    />
             </RelativeLayout>
 
         </RelativeLayout>

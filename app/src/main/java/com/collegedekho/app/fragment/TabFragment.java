@@ -181,6 +181,7 @@ public class TabFragment extends  BaseFragment{
                 bottomMenu.animate().translationY(0);
                 bottomMenu.setVisibility(View.VISIBLE);
 
+                updateCollegeCount(selectedTabPosition);
 
                 return true;
             }
@@ -299,7 +300,9 @@ public class TabFragment extends  BaseFragment{
         if(this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() >position) {
             this.mExamDetail = this.mExamDetailList.get(position);
             this.mListener.onExamTabSelected(mExamDetail);
-//            updateCollegeCount(selectedTabPosition);
+            updateCollegeCount(selectedTabPosition);
+        }else{
+            updateCollegeCount(selectedTabPosition);
         }
     }
 
@@ -477,9 +480,6 @@ public class TabFragment extends  BaseFragment{
 
             this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
         }
-
-
-
         updateCollegeCount(selectedTabPosition);
     }
 
@@ -617,6 +617,7 @@ public class TabFragment extends  BaseFragment{
 
     public void updateCollegeCountFromVolley(boolean update){
         if(update) {
+            mExamSummary.getBackup_count();
             updateCollegeCount(selectedTabPosition);
         }
     }
