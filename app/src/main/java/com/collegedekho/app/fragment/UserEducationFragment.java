@@ -1,5 +1,6 @@
 package com.collegedekho.app.fragment;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -63,6 +66,7 @@ public class UserEducationFragment extends BaseFragment {
     private ArrayList<Exam> mExamList = new ArrayList<>();
     private ExamOnQueryListener cExamQueryListener;
     private boolean  isStreamSelected;
+    private Animation animation;
 
     public UserEducationFragment() {
         // Required empty public constructor
@@ -79,17 +83,16 @@ public class UserEducationFragment extends BaseFragment {
         return fragment;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-       return  mRootView = inflater.inflate(R.layout.fragment_user_education, container, false);
-
+        animation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.slide_from_top);
+        animation.setDuration(Constants.ANIM_SHORTEST_DURATION);
+        return  mRootView = inflater.inflate(R.layout.fragment_user_education, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
 
         if(MainActivity.mProfile != null){
            CircularImageView mProfileImage = (CircularImageView) view.findViewById(R.id.profile_image);
@@ -173,7 +176,6 @@ public class UserEducationFragment extends BaseFragment {
 
     @Override
     public void show() {
-
     }
 
     @Override
@@ -193,8 +195,30 @@ public class UserEducationFragment extends BaseFragment {
             case R.id.user_education_radio_button_college:
             case R.id.user_education_radio_button_pg:
                 if(mRootView.findViewById(R.id.user_education_radio_group).getVisibility() == View.VISIBLE) {
-                    mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
-                    //mRootView.findViewById(R.id.user_education_skip_button).setTranslationX(-500);
+                    if (mRootView.findViewById(R.id.user_education_next_button).getAlpha() == 1)
+                        break;
+
+                    Runnable animEnd = new Runnable() {
+                        @Override
+                        public void run() {
+                            mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
+                        }
+                    };
+
+                    mRootView.findViewById(R.id.user_education_next_button).setX(4000);
+
+                    mRootView.findViewById(R.id.user_education_next_button).animate()
+                            .x(mRootView.getWidth() - mRootView.findViewById(R.id.user_education_next_button).getWidth() - mRootView.findViewById(R.id.user_education_next_button).getPaddingRight())
+                            .alpha(1)
+                            .withEndAction(animEnd)
+                            .setDuration(Constants.ANIM_AVERAGE_DURATION);
+
+                    mRootView.findViewById(R.id.user_education_skip_button).animate()
+                            .setStartDelay(Constants.ANIM_SHORTEST_DURATION)
+                            .x(mRootView.getX() + mRootView.getPaddingLeft())
+                            .scaleXBy(-0.5f)
+                            .scaleYBy(-0.5f)
+                            .setDuration(Constants.ANIM_SHORT_DURATION);
                 }
                 break;
             case R.id.user_education_level_edit_btn:
@@ -316,7 +340,10 @@ public class UserEducationFragment extends BaseFragment {
 
             // set current level education
             mRootView.findViewById(R.id.user_education_education_layout).setVisibility(View.VISIBLE);
-            TextView currentLevelTxtView = (TextView) mRootView.findViewById(R.id.user_education_level);
+            mRootView.findViewById(R.id.user_education_education_layout).startAnimation(animation);
+
+            TextView  currentLevelTxtView = (TextView) mRootView.findViewById(R.id.user_education_level);
+
             currentLevelTxtView.setVisibility(View.VISIBLE);
             int currentEducationId = MainActivity.mProfile.getCurrent_level_id();
             if (currentEducationId == ProfileMacro.LEVEL_TWELFTH) {
@@ -341,10 +368,9 @@ public class UserEducationFragment extends BaseFragment {
                 mStreamRecyclerView.setAdapter(mStreamAdapter);
                 mStreamAdapter.updateStreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
             }
-
         }else if( !isStreamSelected && mStreamRecyclerView.getVisibility() == View.VISIBLE){
 
-            int currentStreamId  =0;
+            int currentStreamId  = 0;
             String currentStreamName ="";
             int count = mStreamList.size();
             for (int i = 0; i < count; i++) {
@@ -363,6 +389,8 @@ public class UserEducationFragment extends BaseFragment {
 
             // show stream Layout
             mRootView.findViewById(R.id.user_education_stream_layout).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.user_education_stream_layout).startAnimation(animation);
+
             TextView  currentStreamTxtView = (TextView)mRootView.findViewById(R.id.user_education_stream);
             currentStreamTxtView.setVisibility(View.VISIBLE);
             currentStreamTxtView.setText(currentStreamName);
@@ -468,6 +496,8 @@ public class UserEducationFragment extends BaseFragment {
         mRootView.findViewById(R.id.user_education_heading_devider).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.VISIBLE);
+
+        mRootView.findViewById(R.id.user_education_exams_layout).startAnimation(animation);
 
         if(MainActivity.user != null) {
             ArrayList<ExamDetail>  userExamList = MainActivity.user.getUser_exams();

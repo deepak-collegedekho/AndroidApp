@@ -1145,14 +1145,13 @@
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/profile_image_update_btn"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:layout_gravity="bottom|left"
                 app:srcCompat="@drawable/ic_edit_image"
                 android:visibility="visible"
                 app:backgroundTint="@color/chat_time_gray"
                 android:scaleType="center"
-                android:stateListAnimator="@animator/fab_elevation_selector"
                 />
 
             <!--<ImageView-->

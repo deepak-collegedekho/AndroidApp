@@ -5101,9 +5101,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     private void mOnUserExamsSubmitted(String responseJson) {
-
         if (responseJson != null && !responseJson.isEmpty()) {
             try {
                 onUpdateUserExams(responseJson);
@@ -5335,7 +5333,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClickBuzzList() {
-        Map<String , String> params = this.mGetTheFilters();
+        Map<String, String> params = this.mGetTheFilters();
 
         if(this.mExamTag != null && !this.mExamTag.isEmpty())
             params.put("tag_uris[" + (params.size()) + "]", this.mExamTag);
@@ -5387,7 +5385,7 @@ public class MainActivity extends AppCompatActivity
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(instituteCourse.getId()));
         eventValue.put(getResourceString(R.string.APPLY_COURSE), instituteCourse.getName());
-        if(mInstitute != null)
+        if (mInstitute != null)
             eventValue.put(getResourceString(R.string.APPLY_INSTITUTE), mInstitute.getResource_uri());
         eventValue.put(getResourceString(R.string.APPLY_COURSE_ID), String.valueOf(instituteCourse.getId()));
 
@@ -5697,6 +5695,7 @@ public class MainActivity extends AppCompatActivity
                 if (responseObject.optBoolean("verified")) {
                     displayMessage(R.string.otp_verified);
                     MainActivity.user.setIs_otp_verified(1);
+                    MainActivity.mProfile.setIs_verified(1);
                     String u = JSON.std.asString(MainActivity.user);
                     this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
 

@@ -17,11 +17,11 @@ repositories {
 }
 
 android {
-    signingConfigs {
+    /*signingConfigs {
          debug {
              storeFile file('/home/sureshsaini/Android/harsh_debug_keystore/debug.keystore')
          }
-    }
+    }*/
     compileSdkVersion 24
     buildToolsVersion '24.0.0'
     defaultConfig

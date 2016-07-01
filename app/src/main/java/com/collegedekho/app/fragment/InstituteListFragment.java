@@ -72,14 +72,9 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private ArrayAdapter<String> tokenAdapter;
     private RecyclerView recyclerView;
     private View instituteView;
-    private Toolbar toolbar;
-    private int toolbarHeight;
     private FrameLayout fab;
     private ImageButton fabBtn;
     private int fabMargin;
-    private AppBarLayout toolbarContainer;
-    private ViewGroup mainContainer;
-    private boolean fadeToolbar = false;
 
     public InstituteListFragment() {
         // Required empty public constructor

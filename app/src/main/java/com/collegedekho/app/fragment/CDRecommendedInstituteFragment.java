@@ -119,23 +119,23 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             rootView.findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
             rootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
         }
-         listType = Constants.WISH_LIST_TYPE;
+
+        listType = Constants.WISH_LIST_TYPE;
         this.mCardContainer = (CardContainer) rootView.findViewById(R.id.fragment_recommended_institute_cards_container);
         this.mCardContainer.setListener(this);
 
-
-        this.mPageTitleTV       = (TextView)rootView.findViewById(R.id.recommended_page_title);
-        this.mEmptyTextView     = (TextView)rootView.findViewById(android.R.id.empty);
-        this.mLikeImageView     =(ImageView) rootView.findViewById(R.id.like_textview);
-        this.mDislikeImageView  =(ImageView) rootView.findViewById(R.id.dislike_textview);
-        this.mUndecidedImageView=(ImageView) rootView.findViewById(R.id.decide_later_textview);
-        this.mUndecidedCountText =(TextView)rootView.findViewById(R.id.badge_counter);
-        this.mBuzzListCountText =(TextView)rootView.findViewById(R.id.cd_reco_buzzlist_count);
-        this.mRecommendedCountText =(TextView)rootView.findViewById(R.id.cd_reco_recommended_count);
-        this.mWishListCountText =(TextView)rootView.findViewById(R.id.cd_reco_wishlist_count);
-        this.questionLayout     =rootView.findViewById(R.id.ask_user_layout);
-        this.wishListRecyclerView = (RecyclerView) rootView.findViewById(R.id.cd_reco_wish_list_institute_grid);
-        this.progressBarLL = (LinearLayout)rootView.findViewById(R.id.progressBarLL);
+        this.mPageTitleTV           = (TextView)rootView.findViewById(R.id.recommended_page_title);
+        this.mEmptyTextView         = (TextView)rootView.findViewById(android.R.id.empty);
+        this.mLikeImageView         = (ImageView) rootView.findViewById(R.id.like_textview);
+        this.mDislikeImageView      = (ImageView) rootView.findViewById(R.id.dislike_textview);
+        this.mUndecidedImageView    = (ImageView) rootView.findViewById(R.id.decide_later_textview);
+        this.mUndecidedCountText    = (TextView)rootView.findViewById(R.id.badge_counter);
+        this.mBuzzListCountText     = (TextView)rootView.findViewById(R.id.cd_reco_buzzlist_count);
+        this.mRecommendedCountText  = (TextView)rootView.findViewById(R.id.cd_reco_recommended_count);
+        this.mWishListCountText     = (TextView)rootView.findViewById(R.id.cd_reco_wishlist_count);
+        this.questionLayout         = rootView.findViewById(R.id.ask_user_layout);
+        this.wishListRecyclerView   = (RecyclerView) rootView.findViewById(R.id.cd_reco_wish_list_institute_grid);
+        this.progressBarLL          = (LinearLayout)rootView.findViewById(R.id.progressBarLL);
 
         layoutManager = new GridLayoutManager(getActivity(), 3);
         this.wishListRecyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 0, false));
@@ -143,10 +143,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.wishListRecyclerView.setHasFixedSize(true);
         this.wishListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         this.wishListRecyclerView.addOnScrollListener(scrollListener);
-
-        /*this.mLikeImageView.setImageBitmap(BitMapHolder.SHORTLISTED_BITMAP);
-        this.mDislikeImageView.setImageBitmap(BitMapHolder.UNSHORTLISTED_BITMAP);
-        this.mUndecidedImageView.setImageBitmap(BitMapHolder.UNDECIDED_BITMAP);*/
 
         this.mUndecidedCountText.setText(""+this.mUndecidedCount);
         this.mRecommendedCountText.setText(""+this.mRecomendedCount);
@@ -160,7 +156,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             this.mCardContainer.setVisibility(View.VISIBLE);
             this.wishListRecyclerView.setVisibility(View.GONE);
         }
-
 
         if (this.mInstitutes == null || this.mInstitutes.size() <= 0) {
             this.mEmptyTextView.setVisibility(View.VISIBLE);
@@ -186,7 +181,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         getMinimizeAnimation();
 
         setupPeekAndPopStandard();
-
 
         rootView.findViewById(R.id.badge_counter_layout).setOnClickListener(this);
         rootView.findViewById(R.id.request_for_undecided_ok).setOnClickListener(this);
@@ -236,8 +230,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             wishListRecyclerView.setVisibility(View.GONE);
             progressBarLL.setVisibility(View.GONE);
         }
-
-
     }
 
     @Override
@@ -316,7 +308,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             else
                 this.mInstitutes.set(institute.getPosition(), institute);
 
-
             //update the list
             this.mWishlistInstituteListAdapter.notifyDataSetChanged();
 
@@ -334,8 +325,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        ObjectAnimator anim;
-        ObjectAnimator anim1;
         switch (v.getId()){
             case R.id.badge_counter_layout:
                 if(mUndecidedCount <= 0){
@@ -362,18 +351,13 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                     mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_orange_border_box));
                 }
                 if (CARD_CATEGORY != Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()) {
-                   /* if(cardState!=null && !cardState.toString().equals("MINIMIZED")
-                            && mAdapter.getCardCategory() != Constants.CDRecommendedInstituteType.UNDECIDED.ordinal()) {
-                        mCardContainer.startAnimation(cardMinimizeAnimation);
-                    }*/
                     CARD_CATEGORY = Constants.CDRecommendedInstituteType.BUZZLIST.ordinal();
                     showWishListUI(false);
                     mEmptyTextView.setText("Loading for buzzList institutes...");
                     mEmptyTextView.setVisibility(View.VISIBLE);
                     mListener.onClickBuzzList();
                 }
-
-                currentTab =v;
+                currentTab = v;
                 break;
             case R.id.tab_recommended:
                 if(v.getId() != currentTab.getId()){

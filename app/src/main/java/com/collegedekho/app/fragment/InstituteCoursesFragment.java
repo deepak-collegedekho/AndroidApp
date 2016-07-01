@@ -110,7 +110,6 @@ public class InstituteCoursesFragment extends BaseFragment {
 
         (rootView.findViewById(R.id.course_tab_title)).setVisibility(View.GONE);
 
-
         this.mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

@@ -389,6 +389,7 @@
         app:srcCompat="@drawable/ic_arrow_forward_vector"
         android:background="@color/primary_orange"
         android:visibility="visible"
+        android:alpha="0"
         android:textSize="17sp"
         android:textColor="@color/white"/>
 
