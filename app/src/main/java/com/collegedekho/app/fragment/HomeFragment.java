@@ -160,12 +160,12 @@ public class HomeFragment extends BaseFragment {
 
         if (MainActivity.mProfile != null) {
             String name = MainActivity.mProfile.getName();
-            if (name != null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
+            if (name == null || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
                 mProfileName.setText("");
                 mProfileName.setVisibility(View.GONE);
             } else {
-                String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
-                mProfileName.setText(userName);
+               // String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
+                mProfileName.setText(name);
                 mProfileName.setVisibility(View.VISIBLE);
             }
             String image = MainActivity.mProfile.getImage();

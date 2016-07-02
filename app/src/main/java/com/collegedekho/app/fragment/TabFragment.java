@@ -168,6 +168,7 @@ public class TabFragment extends  BaseFragment{
         rootView.findViewById(R.id.home_widget_second).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_third).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_fourth).setOnClickListener(this);
+        rootView.findViewById(R.id.profile_image).setOnClickListener(this);
 
         rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -286,14 +287,17 @@ public class TabFragment extends  BaseFragment{
     @Override
     public void onClick(View view) {
         super.onClick(view);
-        try{
-        this.selectedSubMenuPosition = Integer.parseInt((String)view.getTag());
-        }catch (Exception e){
-            e.printStackTrace();
+        if(view.getId() == R.id.profile_image) {
+            ((MainActivity) getActivity()).displayProfileFrragment();
+        }else {
+            try {
+                this.selectedSubMenuPosition = Integer.parseInt((String) view.getTag());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            this.mSubMenuItemClickListener();
+            this.mUpdateSubMenuItem();
         }
-
-        this.mSubMenuItemClickListener();
-        this.mUpdateSubMenuItem();
     }
 
     private void mExamTabSelected(int position) {

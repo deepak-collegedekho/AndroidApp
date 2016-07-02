@@ -15079,11 +15079,11 @@ public class ProfileMacro {
 
     public static String getEducationModeName(int id) {
         if(id == MODE_FULL_TIME)
-            return "Full Type";
-        else  if(id == MODE_PART_TYPE)
-            return "Part Type";
+            return "Full Time";
+        else  if(id == MODE_PART_TIME)
+            return "Part Time";
         else  if(id == MODE_EXECUTIVE)
-            return "Executive Type";
+            return "Executive";
         else  if(id == MODE_DISTANCE)
             return "Distance-Learning";
         else  if(id == MODE_ONLINE)
@@ -15228,6 +15228,34 @@ public class ProfileMacro {
         return preferredAddmisionYearList;
     }
 
+    public static int getSubLevel(int which, int level){
+
+        if(level == ProfileMacro.LEVEL_TWELFTH){
+            if(which == 0)
+                return ProfileMacro.CURRENT_SUB_LEVEL_SCHOOL_10TH;
+            else if(which == 1)
+                return ProfileMacro.CURRENT_SUB_LEVEL_SCHOOL_11TH;
+            else
+                return ProfileMacro.CURRENT_SUB_LEVEL_SCHOOL_12TH;
+        }else  if(level == ProfileMacro.LEVEL_UNDER_GRADUATE){
+            if(which == 0)
+                return ProfileMacro.CURRENT_SUB_LEVEL_COLLEGE_1;
+            else if(which == 1)
+                return ProfileMacro.CURRENT_SUB_LEVEL_COLLEGE_2;
+            else if(which == 2)
+                return ProfileMacro.CURRENT_SUB_LEVEL_COLLEGE_3;
+            else
+                return ProfileMacro.CURRENT_SUB_LEVEL_COLLEGE_4;
+        }
+        else {
+            if (which == 0)
+                return ProfileMacro.CURRENT_SUB_LEVEL_PG_1;
+            else
+                return ProfileMacro.CURRENT_SUB_LEVEL_PG_2;
+        }
+
+    }
+
 
 
    // language macros
@@ -15289,7 +15317,7 @@ public class ProfileMacro {
 
     // required loan Amount
     public static int MODE_FULL_TIME = 1;
-    public static int MODE_PART_TYPE = 2;
+    public static int MODE_PART_TIME = 2;
     public static int MODE_EXECUTIVE = 5;
     public static int MODE_DISTANCE = 4;
     public static int MODE_ONLINE = 6;
@@ -15340,6 +15368,11 @@ public class ProfileMacro {
     public static int GENDER_NOT_PROVIDED = 0;
     public static int GENDER_MALE = 1;
     public static int GENDER_FEMALE = 2;
+
+    // Sub Level String Arrays
+    public static CharSequence[] SUB_LEVEL_SCHOOL = {"In 10th", "In 11th", "In 12th"};
+    public static CharSequence[] SUB_LEVEL_COLLEGE = {"College 1st Year", "College 2nd Year", "College 3rd Year", "College 4th Year"};
+    public static CharSequence[] SUB_LEVEL_PG = {"PG 1st year", "PG 2nd year"};
 
     private static ArrayList<ProfileSpinnerItem> motherTongueList ;
     private static ArrayList<ProfileSpinnerItem> socialCategoryList;

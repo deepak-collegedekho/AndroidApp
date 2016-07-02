@@ -96,7 +96,7 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
     }
 
@@ -173,9 +173,19 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
-        this.mAnswered = true;
+        StepByStepChoice sbsChoice =  mChoiceHashMap.get(position);
+        if(sbsChoice == null )
+            return;
+        //this.mAnswered = true;
 
-        this.mAnswers.put(position, this.mChoiceListAdapter.getItem(position).getId());
+        if(sbsChoice.isSelected()){
+            sbsChoice.setSelected(false);
+            if (mAnswers.containsKey(position))
+                mAnswers.remove(position);
+        }else{
+            sbsChoice.setSelected(true);
+            this.mAnswers.put(position, sbsChoice.getId());
+        }
         this.mChoiceListAdapter.notifyDataSetChanged();
     }
 
@@ -216,17 +226,22 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
             if (convertView == null)
                 convertView = inflater.inflate(R.layout.item_qtype_multiple, null);
 
-            //TextView choiceText = (TextView) convertView.findViewById(R.id.multiple_choice_text);
-            //choiceText.setText(mChoiceList.get(position));
-
+            convertView.setTag(position);
             sbsChoice = mChoiceList.get(position);
 
             //set name
-            final TextView choiceText = (TextView) convertView.findViewById(R.id.multiple_choice_text);
+            TextView choiceText = (TextView) convertView.findViewById(R.id.multiple_choice_text);
             choiceText.setText(sbsChoice.getName());
 
-            final CheckBox choice = (CheckBox) convertView.findViewById(R.id.multiple_choice_checkbox);
-            choice.setTag(position);
+            CheckBox choice = (CheckBox) convertView.findViewById(R.id.multiple_choice_checkbox);
+            if(sbsChoice.isSelected())
+                choice.setChecked(true);
+            else
+                choice.setChecked(false);
+
+
+
+           /* choice.setTag(position);
             //choice.setText(sbsChoice.getName());
             choice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -255,7 +270,7 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
                 public void onClick(View v) {
                     choice.performClick();
                 }
-            });
+            });*/
 
             //set image_new
             ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
@@ -271,12 +286,12 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
             else
                 optionImage.setVisibility(View.GONE);
 
-            optionImage.setOnClickListener(new View.OnClickListener() {
+          /* optionImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     choice.performClick();
                 }
-            });
+            });*/
 
             return convertView;
         }

@@ -268,6 +268,8 @@ public final class WishlistCardAdapter {
             } else {
                 examsTv.setVisibility(View.GONE);
             }
+        }else{
+             examsTv.setText("Exam: Not Available");
         }
 
         if (this.mInstitute.getApplication_end_date() != null && !this.mInstitute.getApplication_end_date().trim().isEmpty()) {

@@ -9,8 +9,7 @@
         android:id="@+id/profile_view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/m50dp"
-        android:layout_below="@id/include_edit_image_layout">
+        android:layout_marginBottom="@dimen/m50dp">
 
         <android.support.v4.view.PagerTabStrip
             android:id="@+id/profile_pager_header"

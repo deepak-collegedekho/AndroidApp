@@ -30,6 +30,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
+import com.collegedekho.app.listener.ProfileFragmentListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.ProfileMacro;
@@ -56,7 +57,7 @@ import java.util.List;
 /**
  * Created by sureshsaini on 17/5/16.
  */
-public class ProfileFragment extends BaseFragment {
+public class ProfileFragment extends BaseFragment implements ProfileFragmentListener {
 
     private static String TAG ="Profile Fragment";
     private static String PARAM1  = "param1";
@@ -117,8 +118,7 @@ public class ProfileFragment extends BaseFragment {
 
         mProfileName = (TextView)mRootView.findViewById(R.id.profile_user_name);
         mRootView.findViewById(R.id.profile_login_button).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_image_update_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.include_edit_image_layout).setOnClickListener(this);
+        mRootView.findViewById(R.id.user_profile_image_update).setOnClickListener(this);
         mRootView.findViewById(R.id.profile_info_edit_btn).setOnClickListener(this);
         mRootView.findViewById(R.id.profile_education_edit_btn).setOnClickListener(this);
         mRootView.findViewById(R.id.profile_preferred_edit_btn).setOnClickListener(this);
@@ -228,7 +228,7 @@ public class ProfileFragment extends BaseFragment {
         // set user's Passing Year
         int currentPassingYear = mProfile.getCurrent_passing_year();
         if(currentPassingYear >= 2000) {
-            ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(currentPassingYear);
+            ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(""+currentPassingYear);
             currentEducationStatus +=18;
         } else {
             ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText("NA");
@@ -348,7 +348,7 @@ public class ProfileFragment extends BaseFragment {
 
         int preferredYear = mProfile.getPreferred_year_of_admission();
         if(preferredYear >= 2000 ){
-            ((TextView) view.findViewById(R.id.profile_preferences_year)).setText(preferredYear);
+            ((TextView) view.findViewById(R.id.profile_preferences_year)).setText(""+preferredYear);
             preferredInfoStatus += 13;
         }else
             ((TextView)view.findViewById(R.id.profile_preferences_year)).setText("NA");
@@ -509,8 +509,7 @@ public class ProfileFragment extends BaseFragment {
             case R.id.profile_login_button:
                 mListener.onPostAnonymousLogin();
                 break;
-            case R.id.profile_image_update_btn:
-            case R.id.include_edit_image_layout:
+            case R.id.user_profile_image_update:
                 mRequestForImageCapture();
                 break;
             case R.id.profile_expand_info_btn:
@@ -1806,6 +1805,7 @@ public class ProfileFragment extends BaseFragment {
         getActivity().startActivityForResult(chooserIntent, Constants.REQUEST_PICK_IMAGE);
     }
 
+    @Override
     public void requestForCropProfileImage(Intent data) {
 
         if (data != null) {
@@ -1880,7 +1880,7 @@ public class ProfileFragment extends BaseFragment {
         }
     }
 
-
+    @Override
     public void uploadUserProfileImage() {
 
         if(MainActivity.user == null)
@@ -1937,13 +1937,9 @@ public class ProfileFragment extends BaseFragment {
     public void updateUserName(){
         if(MainActivity.mProfile != null){
             String name = MainActivity.mProfile.getName();
-            if(name!=null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()))
-            {
-                mProfileName.setText("");
-                mProfileName.setVisibility(View.GONE);
-            }else {
-                mProfileName.setText(name);
-                mProfileName.setVisibility(View.VISIBLE);
+            if(name != null && !name.isEmpty()
+                    &&  !name.equalsIgnoreCase(getResources().getString(R.string.ANONYMOUS_USER))){
+                ((TextView)mRootView.findViewById(R.id.profile_edit_name)).setText(name);
             }
 
             String image = MainActivity.mProfile.getImage();

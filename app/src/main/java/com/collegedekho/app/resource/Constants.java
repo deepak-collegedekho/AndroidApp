@@ -41,6 +41,7 @@ public class Constants
     public static final String TAG_LOAD_EXAMS_LIST = "load_exams_list";
 
     public static final String TAG_USER_EXAMS_SUBMISSION = "user_exam_submission";
+    public static final String TAG_USER_EXAMS_DELETE = "user_exam_delete";
     public static final String TAG_LOAD_USER_PREFERENCES = "load_user_preferences";
     public static final String TAKE_ME_TO_RECOMMENDED = "take_me_to_recommended";
     public static final String TAG_LOAD_USER_PREFERENCES_N_BACK = "load_user_preferences_n_back";

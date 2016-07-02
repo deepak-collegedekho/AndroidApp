@@ -93,7 +93,7 @@ public class UserExamFragment extends BaseFragment implements SearchView.OnQuery
         examRecyclerView.setAdapter(mExamAdapter);
 
         mExamSearchView = (SearchView) rootView.findViewById(R.id.auto_search_exam);
-        cExamListener = new ExamOnQueryListener(mExamList,mExamAdapter);
+        cExamListener = new ExamOnQueryListener(mExamList,this);
         this.mExamSearchView.setOnQueryTextListener(cExamListener);
         mExamSearchView.setOnSearchClickListener(this);
         mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(rootView.findViewById(R.id.search_exam_hint)));
@@ -132,6 +132,24 @@ public class UserExamFragment extends BaseFragment implements SearchView.OnQuery
         rootView.findViewById(R.id.user_exam_preparing_edit_btn).setOnClickListener(this);
 
         return rootView;
+    }
+
+    /**
+     *
+     * @param searchResults
+     */
+    public void updateExamList(ArrayList<Exam> searchResults) {
+        if(searchResults != null && searchResults.size() >0){
+            getView().findViewById(R.id.empty).setVisibility(View.GONE);
+            getView().findViewById(R.id.user_education_recycler_view).setVisibility(View.VISIBLE);
+        }else{
+            getView().findViewById(R.id.empty).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
+        }
+
+        if(mExamAdapter != null){
+            mExamAdapter.updateExamList(searchResults);
+        }
     }
 
     @Override

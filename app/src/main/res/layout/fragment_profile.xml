@@ -30,7 +30,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="100dp"/>
+            android:layout_height="90dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,13 +45,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:paddingTop="@dimen/m15dp"
+                android:paddingTop="@dimen/m20dp"
                 android:layout_weight="10">
 
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_weight="2.2"
-                    android:layout_height="@dimen/m45dp"
+                    android:layout_height="@dimen/m40dp"
                     android:layout_gravity="top"
                     app:srcCompat="@drawable/ic_profile_info"/>
 
@@ -303,7 +303,7 @@
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_weight="2.2"
-                    android:layout_height="@dimen/m50dp"
+                    android:layout_height="@dimen/m40dp"
                     android:layout_gravity="top"
                     app:srcCompat="@drawable/ic_profile_education"/>
 
@@ -315,7 +315,7 @@
                     <TextView
                         android:id="@+id/profile_education_til"
                         style="@style/AppTheme.profileTextView"
-                        android:text="EDUCATION"
+                        android:text="CURRENT EDUCATION"
                         android:paddingBottom="@dimen/m1dp"
                         android:textColor="@color/white"
                         android:textStyle="bold"
@@ -563,7 +563,7 @@
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_weight="2.2"
-                    android:layout_height="@dimen/m50dp"
+                    android:layout_height="@dimen/m40dp"
                     android:layout_gravity="top"
                     app:srcCompat="@drawable/ic_profile_preferences"/>
 
@@ -878,13 +878,13 @@
                         android:layout_below="@id/profile_exams_til"
                         style="@style/AppTheme.profileInfoTLayout">
 
-                        <TextView
+                      <!--  <TextView
                             style="@style/AppTheme.profileTextViewTitle"
                             android:text="Exams"/>
 
                         <TextView
                             style="@style/AppTheme.profileTextViewColon"/>
-
+-->
                         <TextView
                             android:id="@+id/profile_exams_name"
                             style="@style/AppTheme.profileInfoTextView"/>
@@ -933,7 +933,7 @@
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_weight="2.2"
-                    android:layout_height="@dimen/m50dp"
+                    android:layout_height="@dimen/m40dp"
                     android:layout_gravity="top"
                     app:srcCompat="@drawable/ic_profile_other"/>
 
@@ -1129,20 +1129,34 @@
             android:weightSum="1"
             android:orientation="horizontal">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_weight=".4"
                 android:layout_height="match_parent"
-                android:gravity="center|right"
-                android:orientation="vertical">
+                android:layout_marginRight="@dimen/m5dp"
+                android:gravity="center|right">
 
                 <include
-                    android:id="@+id/include_edit_image_layout"
+                    android:id="@id/user_profile_image_update"
                     layout="@layout/layout_profile_image"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp" />
+                    android:layout_alignParentRight="true"
+                    android:layout_width="110dp"
+                    android:layout_marginRight="@dimen/m6dp"
+                    android:layout_height="110dp" />
 
-            </LinearLayout>
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@id/user_profile_image_update"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="@dimen/m4dp"
+                    app:srcCompat="@drawable/ic_edit_image"
+                    app:backgroundTint="@color/chat_time_gray"
+                    android:scaleType="center"
+                    />
+
+            </RelativeLayout>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -1182,52 +1196,7 @@
 
         </LinearLayout>
 
-
-
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_marginTop="@dimen/m25dp"
-            android:gravity="center"
-            android:weightSum="1"
-            android:orientation="horizontal">
-
-        <View
-            android:layout_width="0dp"
-            android:layout_weight=".31"
-            android:layout_height="match_parent"
-            android:gravity="center|right"
-            android:orientation="vertical"/>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight=".69"
-            android:layout_height="match_parent"
-            android:gravity="bottom"
-            android:orientation="vertical">
-
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/profile_image_update_btn"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="bottom|left"
-                app:srcCompat="@drawable/ic_edit_image"
-                android:visibility="visible"
-                app:backgroundTint="@color/chat_time_gray"
-                android:scaleType="center"
-                />
-
-            <!--<ImageView-->
-                <!--android:id="@+id/profile_image_update_btn"-->
-                <!--android:layout_width="38dp"-->
-                <!--android:layout_height="38dp"-->
-                <!--android:tint="@color/light_blue"-->
-                <!--android:padding="@dimen/m6dp"-->
-                <!--app:srcCompat="@drawable/ic_edit_image"/>-->
-            </LinearLayout>
-       </LinearLayout>
          </FrameLayout>
 </ScrollView>

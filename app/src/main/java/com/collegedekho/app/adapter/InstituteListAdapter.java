@@ -24,6 +24,7 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 public class InstituteListAdapter extends RecyclerView.Adapter {
@@ -60,7 +61,14 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Institute institute = this.mInstitutes.get(position);
         InstituteHolder instituteHolder = (InstituteHolder) holder;
-        instituteHolder.instiName.setText(institute.getName());
+        try {
+            String name= new String(institute.getName().getBytes("ISO-8859-1"),"UTF-8");
+            instituteHolder.instiName.setText(name);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            instituteHolder.instiName.setText(institute.getName());
+        }
+
         instituteHolder.instiCourses.setText(institute.getCourse_count() + " Courses");
         String text = "";
         if (institute.getCity_name() != null)

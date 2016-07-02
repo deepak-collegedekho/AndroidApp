@@ -25,6 +25,7 @@ public class StepByStepChoice implements Parcelable {
     private String image;
     private String uri;
     private String label;
+    private boolean isSelected;
 
     public StepByStepChoice() {
     }
@@ -47,6 +48,14 @@ public class StepByStepChoice implements Parcelable {
         dest.writeString(name);
         dest.writeString(image);
         dest.writeString(uri);
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     public int getId() {

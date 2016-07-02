@@ -299,6 +299,10 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
         return this.mExamList.size();
     }
 
+    public ArrayList<Exam> getExamsList() {
+        return this.mExamList;
+    }
+
     class ExamHolderView extends RecyclerView.ViewHolder{
 
         LinearLayout examCard;

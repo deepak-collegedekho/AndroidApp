@@ -20,9 +20,11 @@
             android:layout_height="0dp"
             android:layout_weight=".43">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
                 android:layout_centerInParent="true">
 
                 <include layout="@layout/layout_profile_image"
@@ -35,15 +37,14 @@
                     android:id="@+id/user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
                     android:textStyle="normal"
                     android:paddingTop="5dp"
-                    android:text="Samaksh Dubey"
-                    android:paddingBottom="18dp"
+                    android:text="Anonymous User"
+                    android:layout_marginBottom="18dp"
                     android:textSize="22sp"
-                    android:layout_below="@id/include_image_layout"
                     />
-            </RelativeLayout>
+            </LinearLayout>
 
         </RelativeLayout>
 

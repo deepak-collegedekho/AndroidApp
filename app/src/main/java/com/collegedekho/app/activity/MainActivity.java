@@ -152,6 +152,7 @@ import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.listener.OnArticleSelectListener;
 import com.collegedekho.app.listener.OnNewsSelectListener;
+import com.collegedekho.app.listener.ProfileFragmentListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.utils.AnalyticsUtils;
@@ -1567,7 +1568,7 @@ public class MainActivity extends AppCompatActivity
             ProfileFragment.mProfile= profile;
             MainActivity.mProfile = profile;
 
-            if(currentFragment instanceof ProfileFragment)
+            if(currentFragment instanceof ProfileFragment) {
                 if (TAG[0].equalsIgnoreCase(Constants.TAG_UPDATE_USER_PROFILE)) {
                     Utils.DisplayToast(getApplicationContext(), "Profile Updated");
                     try {
@@ -1576,11 +1577,14 @@ public class MainActivity extends AppCompatActivity
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else if(TAG[0].equalsIgnoreCase(Constants.TAG_UPDATE_PROFILE_EXAMS)) {
+                } else if (TAG[0].equalsIgnoreCase(Constants.TAG_UPDATE_PROFILE_EXAMS)) {
                     ((ProfileFragment) currentFragment).profileUpdatedSuccessfully(3);
-                }else{
+                } else {
                     ((ProfileFragment) currentFragment).updateUserName();
                 }
+            }else if(currentFragment instanceof  UserEducationFragment){
+                ((UserEducationFragment) currentFragment).profileImageUploadedSuccesfully();
+            }
             else if(currentFragment instanceof  HomeFragment){
                 ((HomeFragment)currentFragment).updateUserName();
             }
@@ -2070,13 +2074,15 @@ public class MainActivity extends AppCompatActivity
         // Check which request we're responding to
         if(requestCode == Constants.REQUEST_PICK_IMAGE && resultCode == RESULT_OK ) {
 
-            if (currentFragment instanceof ProfileFragment)
-                ((ProfileFragment) currentFragment).requestForCropProfileImage(data);
+            if (currentFragment instanceof ProfileFragment
+                    ||  currentFragment instanceof UserEducationFragment )
+                ((ProfileFragmentListener) currentFragment).requestForCropProfileImage(data);
 
         }else  if(requestCode == Constants.REQUEST_CROP_IMAGE && resultCode == RESULT_OK){
 
-            if (currentFragment instanceof ProfileFragment)
-                ((ProfileFragment) currentFragment).uploadUserProfileImage();
+            if (currentFragment instanceof ProfileFragment
+                    ||  currentFragment instanceof UserEducationFragment )
+                ((ProfileFragmentListener) currentFragment).uploadUserProfileImage();
 
         }else if (requestCode == PsychometricAnalysisActivity.GET_PSYCHOMETRIC_RESULTS) {
             // Make sure the request was successful
@@ -5047,10 +5053,7 @@ public class MainActivity extends AppCompatActivity
         mUserExamsList = MainActivity.user.getUser_exams();
         if (mUserExamsList == null)
             mUserExamsList = new ArrayList<>();
-//        if (this.mUserExamsList.size() <= 0)
-//            prepare.setVisibility(View.GONE);
-//        else
-//            prepare.setVisibility(View.VISIBLE);
+        mClearBackStack();
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
         if (fragment == null)
@@ -5065,7 +5068,7 @@ public class MainActivity extends AppCompatActivity
             //Events
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
         }
-
+        IS_HOME_LOADED = true;
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_HOME_LOADED), true).apply();
 
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
@@ -5186,7 +5189,8 @@ public class MainActivity extends AppCompatActivity
         }else {
             new AlertDialog.Builder(this)
                     .setTitle("Currently Studying at?")
-                    .setSingleChoiceItems(StepByStepQuestion.CurrentLevels.getValues(), -1, new DialogInterface.OnClickListener() {
+                    .setSingleChoiceItems(StepByStepQuestion.CurrentLevels.getValues(), -1,
+                            new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which) {
@@ -5283,6 +5287,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onUserExamSelected(JSONObject examJson) {
         this.mMakeJsonObjectNetworkCall(Constants.TAG_USER_EXAMS_SUBMISSION, Constants.BASE_URL + "yearly-exams/", examJson, Request.Method.POST);
+    }
+    @Override
+    public void onRemoveUserExams(JSONObject examJson) {
+        this.mMakeJsonObjectNetworkCall(Constants.TAG_USER_EXAMS_DELETE, Constants.BASE_URL + "yearly-exams/", examJson, Request.Method.POST);
     }
 
     @Override

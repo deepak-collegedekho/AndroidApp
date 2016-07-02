@@ -200,7 +200,10 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
             if (mListener != null) {
                 mListener.onOtpReceived(mPhoneNumberET.getText().toString(), otp);
             }
+        }else{
+            mOtpET.setError("Invalid OTP");
         }
+
 
     }
 
@@ -229,7 +232,9 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
         }
         @Override
         public void afterTextChanged(Editable s) {
-           if(s.length() >= 10 && getView() != null){
+           if(s.length() >= 10 && getView() != null
+                   &&  getView().findViewById(R.id.login_otp_layout).getVisibility() == View.GONE){
+
                getView().findViewById(R.id.login_phone_submit_button).setVisibility(View.VISIBLE);
            }
         }

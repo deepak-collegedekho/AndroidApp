@@ -41,7 +41,7 @@
         android:weightSum="1">
 
         <include
-            android:id="@+id/include_edit_image_layout"
+            android:id="@id/user_profile_image_update"
             layout="@layout/layout_profile_image_small"
             android:layout_width="90dp"
             android:layout_margin="@dimen/m4dp"
@@ -265,7 +265,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        android:text="@string/your_current_stream"
+        android:text="@string/currently_studying_yet"
         android:paddingTop="@dimen/m5dp"
         android:paddingBottom="@dimen/m8dp"
         android:paddingLeft="@dimen/m15dp"
@@ -358,6 +358,26 @@
 
 
 
+
+    <ImageButton
+        android:id="@+id/user_education_next_button"
+        style="@style/Widget.AppCompat.ImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/m45dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/m20dp"
+        android:layout_marginTop="@dimen/m5dp"
+        android:layout_marginBottom="@dimen/m10dp"
+        android:padding="@dimen/m15dp"
+        app:srcCompat="@drawable/ic_arrow_forward_vector"
+        android:background="@color/primary_orange"
+        android:visibility="visible"
+        android:alpha="0"
+        android:textSize="17sp"
+        android:textColor="@color/white"/>
+
+
     <LinearLayout
         android:id="@+id/user_education_skip_button"
         android:layout_width="wrap_content"
@@ -381,24 +401,6 @@
             android:textSize="18sp" />
 
     </LinearLayout>
-
-    <ImageButton
-        android:id="@+id/user_education_next_button"
-        style="@style/Widget.AppCompat.ImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/m45dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/m20dp"
-        android:layout_marginTop="@dimen/m5dp"
-        android:layout_marginBottom="@dimen/m10dp"
-        android:padding="@dimen/m15dp"
-        app:srcCompat="@drawable/ic_arrow_forward_vector"
-        android:background="@color/primary_orange"
-        android:visibility="visible"
-        android:alpha="0"
-        android:textSize="17sp"
-        android:textColor="@color/white"/>
 
     <RelativeLayout
         android:id="@+id/user_exam_search_container"
@@ -445,7 +447,7 @@
         android:layout_below="@id/user_exam_search_container"
         android:layout_above="@id/user_education_skip_button"
         android:textSize="@dimen/m16dp"
-        android:text="Mo Exams Found "
+        android:text="@string/no_exam_found"
         android:textStyle="italic"/>
 
 

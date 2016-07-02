@@ -1,6 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerTabStrip;
@@ -140,10 +141,15 @@ public class InstituteCoursesFragment extends BaseFragment {
 
     public void updateData(int courseCount) {
         this.mCourseCount = courseCount;
-        View rootView = getView();
+       final  View rootView = getView();
         if (rootView != null) {
             if (courseCount > 0) {
-                init(rootView);
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        init(rootView);
+                    }
+                });
             } else if (courseCount < 1) {
                 (rootView.findViewById(R.id.course_tab_title)).setVisibility(View.VISIBLE);
                 ((TextView) rootView.findViewById(R.id.course_tab_title)).setText("Courses info not available");

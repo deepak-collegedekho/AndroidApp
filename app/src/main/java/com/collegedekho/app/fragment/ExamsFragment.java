@@ -4,7 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,9 +15,13 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.adapter.ExamStreamAdapter;
 import com.collegedekho.app.adapter.ExamsAdapter;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
+import com.collegedekho.app.entities.ProfileSpinnerItem;
+import com.collegedekho.app.listener.ExamOnQueryListener;
+import com.collegedekho.app.listener.ExamSearchCloseListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
 import com.fasterxml.jackson.jr.ob.JSON;
@@ -34,13 +40,17 @@ public class ExamsFragment extends BaseFragment {
     private final String TAG = "ExamsFragment";
     private static String PARAM1 = "param1";
     private static String PARAM2 = "param2";
-
-    private ArrayList<Exam> mExamList ;
+;
     private OnExamsSelectListener mListener;
     private boolean IS_TUTE_COMPLETED = true;
     private TextView mExamSubmitButton;
     private boolean isEditMode=false;
     private boolean isPreSelected=false;
+
+    private ExamsAdapter mExamAdapter;
+    private SearchView mExamSearchView;
+    private ExamOnQueryListener cExamQueryListener;
+    private ArrayList<Exam> mExamList = new ArrayList<>();
     public ExamsFragment() {
         // required empty Constructor
     }
@@ -72,49 +82,26 @@ public class ExamsFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_user_exams, container, false);
         this.mExamSubmitButton = (TextView) rootView.findViewById(R.id.exams_submit_button);
 
-        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.EXAMS_SCREEN_TUTE), false);
+       RecyclerView mStreamRecyclerView = (RecyclerView)rootView.findViewById(R.id.exams_recycle_view);
+        mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        mStreamRecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
 
-        //((TextView)rootView.findViewById(R.id.points_test_view)).setText("YOU HAVE EARNED FOR SHARING YOUR DETAIL");
-        final RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.exams_recycle_view);
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),6,GridLayoutManager.VERTICAL,false);
-        layoutManager.setSpanSizeLookup( new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-               return position % 5 == 0 ? 3: 2;
-            }
-        });
 
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
-        rootView.findViewById(R.id.exams_submit_button).setOnClickListener(this);
+        mExamSearchView = (SearchView) rootView.findViewById(R.id.user_exam_search_view);
 
-        /*layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
-        layoutManager.setSpanCount(new GridLayoutManager.SpanSizeLookup(){
-            @Override
-            public int getSpanSize(int position) {
-                return position % 2 == 0 ? 2 : 1;
-            }
-        });
+        mExamAdapter = new ExamsAdapter(getActivity(),  mExamList);
+        mStreamRecyclerView.setAdapter(mExamAdapter);
 
-        Animation pulse = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse);
-        rootView.findViewById(R.id.exams_submit_button).startAnimation(pulse);
-        Animation fadeIn = new AlphaAnimation(0, 1);
-        fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
-        fadeIn.setDuration(1000);
+        cExamQueryListener = new ExamOnQueryListener(mExamList,this);
+        this.mExamSearchView.setOnQueryTextListener(cExamQueryListener);
 
-        Animation fadeOut = new AlphaAnimation(1, 0);
-        fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
-        fadeOut.setStartOffset(1000);
-        fadeOut.setDuration(1000);
+        mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(rootView.findViewById(R.id.user_exam_search_hint)));
 
-        AnimationSet animation = new AnimationSet(false); //change to false
-        animation.addAnimation(fadeIn);
-        animation.addAnimation(fadeOut);
-        rootView.findViewById(R.id.exams_submit_button).setAnimation(animation);*/
+        mExamSearchView.setOnSearchClickListener(this);
+        mExamSubmitButton.setOnClickListener(this);
+        // IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.EXAMS_SCREEN_TUTE), false);
 
-        final ExamsAdapter mAdapter = new ExamsAdapter(getActivity(), mExamList);
-
-        rootView.findViewById(R.id.exam_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
+        /*rootView.findViewById(R.id.exam_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -130,15 +117,15 @@ public class ExamsFragment extends BaseFragment {
 
                 return false;
             }
-        });
+        });*/
 
-        if (IS_TUTE_COMPLETED)
+       /* if (IS_TUTE_COMPLETED)
         {
             recyclerView.setAdapter(mAdapter);
             mAdapter.notifyDataSetChanged();
             mExamSubmitButton.animate().translationY(0).setDuration(Constants.ANIM_LONG_DURATION);
             mExamSubmitButton.setVisibility(View.VISIBLE);
-        }
+        }*/
 
         return rootView;
     }
@@ -176,7 +163,7 @@ public class ExamsFragment extends BaseFragment {
 
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
-            if(isEditMode){
+           /* if(isEditMode){
                 if(mainActivity.fromTabFragment){
                     mainActivity.isBackPressEnabled=true;
                 }else {
@@ -211,17 +198,24 @@ public class ExamsFragment extends BaseFragment {
                 }catch (Exception e){
 
                 }
-            }
+
+            }*/
         }
-        View view =  getView();
+        /*View view =  getView();
         if(view != null ){
             if(!IS_TUTE_COMPLETED) {
                 view.findViewById(R.id.exam_tour_guide_image).setVisibility(View.VISIBLE);
             }else {
                 view.findViewById(R.id.exam_tour_guide_image).setVisibility(View.GONE);
             }
-        }
+        }*/
 
+    }
+    public void updateExamList(ArrayList<Exam> searchResults) {
+
+        if(mExamAdapter != null){
+            mExamAdapter.updateExamList(searchResults);
+        }
     }
 
     @Override
@@ -242,6 +236,13 @@ public class ExamsFragment extends BaseFragment {
             case R.id.exams_submit_button:
                 onExamsSelected();
                 break;
+            case R.id.user_exam_search_view:
+                if(!mExamSearchView.isActivated()){
+                    getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.GONE);
+                } else {
+                    getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.VISIBLE);
+                }
+                break;
             default:
                 break;
         }
@@ -254,8 +255,9 @@ public class ExamsFragment extends BaseFragment {
         boolean isExamSelected = false;
         JSONObject parentJsonObject=new JSONObject();
         JSONArray parentArray=new JSONArray();
-        if(mExamList != null && !mExamList.isEmpty()) {
-            for (Exam exam:mExamList) {
+        ArrayList<Exam> adapterExamList = mExamAdapter.getExamsList();
+        if(adapterExamList != null && !adapterExamList.isEmpty()) {
+            for (Exam exam:adapterExamList) {
                 if(exam == null || !exam.isSelected())continue;
 
                 ArrayList<ExamDetail> detailList = exam.getExam_details();
