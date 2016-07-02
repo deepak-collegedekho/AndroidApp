@@ -124,7 +124,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="UPDATE"
+                    android:text="READ"
                     android:importantForAccessibility="no"
                     android:textSize="16sp"
                     android:layout_marginBottom="@dimen/m4dp"
@@ -136,7 +136,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_height="wrap_content"
                     android:importantForAccessibility="no"
-                    app:srcCompat="@drawable/ic_updates"/>
+                    app:srcCompat="@drawable/ic_read"/>
             </RelativeLayout>
 
 

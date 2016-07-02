@@ -35,6 +35,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.display.swipableList.model.CardModel;
 import com.collegedekho.app.entities.Facility;
 import com.collegedekho.app.entities.Institute;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.FadeInImageView;
@@ -61,12 +62,18 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         this.mListener = listener;
         this.mContext = context;
         this.mData = new Vector<>();
-        backgroundBorder = mContext.getResources().getDrawable(R.drawable.bg_rounded_blue_border_box);
+        if(cardCategory == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()){
+            backgroundBorder = mContext.getResources().getDrawable(R.drawable.bg_rounded_blue_border_box);
+        } else if(cardCategory == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()){
+            backgroundBorder = mContext.getResources().getDrawable(R.drawable.bg_rounded_orange_border_box);
+        }
+
        // this.cardCategory =cardCategory;
     }
 
     public void addAll(ArrayList<CardModel> item) {
         mData.addAll(item);
+
         notifyDataSetChanged();
     }
 

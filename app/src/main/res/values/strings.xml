@@ -4,6 +4,13 @@
 
     <string name="loginFacebookButton">FACEBOOK LOGIN</string>
 
+    <string-array name="navigation_drawer_items_array">
+        <item>College List</item>
+        <item>Connect</item>
+        <item>Prepare</item>
+        <item>Read</item>
+    </string-array>
+
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>

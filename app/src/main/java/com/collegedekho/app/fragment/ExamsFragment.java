@@ -211,7 +211,6 @@ public class ExamsFragment extends BaseFragment {
                 }catch (Exception e){
 
                 }
-
             }
         }
         View view =  getView();

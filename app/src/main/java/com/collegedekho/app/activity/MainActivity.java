@@ -37,6 +37,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -62,6 +64,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -73,6 +76,7 @@ import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
 import com.appsflyer.DebugLogQueue;
 import com.collegedekho.app.R;
+import com.collegedekho.app.adapter.DrawerItemCustomAdapter;
 import com.collegedekho.app.database.DataBaseHelper;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Chapters;
@@ -187,6 +191,7 @@ import com.truecaller.android.sdk.TrueProfile;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -314,7 +319,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
-    //private NavigationDrawerFragment mNavigationDrawerFragment;
+//    private NavigationDrawerFragment mNavigationDrawerFragment;
     /*
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
@@ -359,6 +364,12 @@ public class MainActivity extends AppCompatActivity
     private Toolbar mToolbar;
     public View currentBottomItem;
     private int currentBottomId;
+    public boolean isTabFragmentAdded;
+
+    DrawerLayout mDrawerLayout;
+    ListView mDrawerList;
+    String[] drawerContent;
+    android.support.v7.app.ActionBarDrawerToggle mDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -458,7 +469,19 @@ public class MainActivity extends AppCompatActivity
             Utils.appLaunched(this);
         }
 
+        drawerContent = getResources().getStringArray(R.array.navigation_drawer_items_array);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.main_activity_container);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this, R.layout.list_view_item_row, drawerContent);
+        mDrawerList.setAdapter(adapter);
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        setupDrawerToggle();
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        this.mDrawerToggle.syncState();
+
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
 
         searchProgress = (ProgressBar) findViewById(R.id.resource_progress_bar);
         Log.e(TAG, " onCreate  exit time"+ System.currentTimeMillis());
@@ -478,6 +501,91 @@ public class MainActivity extends AppCompatActivity
             }
         };
         gcmDialogHandler.postDelayed(gcmDialogRunnable,20000);
+
+    }
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            int count = getSupportFragmentManager().getBackStackEntryCount();
+//            if(position != 2) {
+//                for (int i = 0; i < count - 1; i++) {
+//                    getSupportFragmentManager().popBackStack();
+//                }
+//            } else {
+                for (int i = 0; i < count; i++) {
+                    getSupportFragmentManager().popBackStack();
+                }
+//            }
+            mUpdateTabMenuItem(position+1,0);
+            selectItem(position+1);
+            if (currentFragment instanceof TabFragment) {
+                ((TabFragment) currentFragment).updateTabFragment(position+1);
+            }
+
+            MainActivity.this.mDrawerLayout.closeDrawer(Gravity.LEFT);
+//            mUpdateDrawerItem(position);
+
+        }
+    }
+
+    private void selectItem(int tabPosition) {
+
+        //TODO::  remove this when future buddies tab are present
+
+        if (mUserExamsList == null) mUserExamsList = new ArrayList<>();
+
+        if(tabPosition == 3 && (mUserExamsList == null || mUserExamsList.size() < 1)){
+//            mDisplayCurrentEducationFragment(true);
+            fromTabFragment = true;
+            onRequestForUserExamsUpdate();
+            bottomButtonContainer.setVisibility(View.GONE);
+            return;
+        }
+
+//        if (this.mUserExamsList.size() <= 0)
+//            prepare.setVisibility(View.GONE);
+//        else
+//            prepare.setVisibility(View.VISIBLE);
+
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
+
+        if (fragment == null)
+            this.mDisplayFragment(TabFragment.newInstance(tabPosition, new ArrayList<>(mUserExamsList)), true, TabFragment.class.getSimpleName());
+        else {
+            if (currentFragment instanceof TabFragment) {
+                ((TabFragment) currentFragment).updateTabFragment(tabPosition);
+            } else{
+                this.mDisplayFragment(fragment, true, TabFragment.class.getSimpleName());
+            }
+
+        }
+    }
+
+
+    @Override
+    public void setTitle(CharSequence title) {
+//        mTitle = title;
+//        getSupportActionBar().setTitle(mTitle);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    void setupToolbar(){
+//        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
+    void setupDrawerToggle(){
+        mDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(this,mDrawerLayout,mToolbar,R.string.app_name, R.string.app_name);
+        //This is necessary to change the icon of the Drawer Toggle upon state change.
+        mDrawerToggle.syncState();
     }
 
 
@@ -667,10 +775,14 @@ public class MainActivity extends AppCompatActivity
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        mToolbar.setLogo(R.drawable.ic_cd_colored);
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        mToolbar.setNavigationIcon(R.drawable.ic_cd_colored);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        View logoView = getToolbarLogoIcon(mToolbar);
+//        mToolbar.setNavigationIcon(R.drawable.ic_cd_colored);
+//        mToolbar.setNavigationOnClickListener(
+
+        logoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (currentFragment instanceof SyllabusSubjectsListFragment)
@@ -690,6 +802,25 @@ public class MainActivity extends AppCompatActivity
         mToolbar.setNavigationContentDescription("Select to go to home screen");
         //DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         //drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    public View getToolbarLogoIcon(Toolbar toolbar){
+        //check if contentDescription previously was set
+        boolean hadContentDescription = android.text.TextUtils.isEmpty(toolbar.getLogoDescription());
+        String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
+        toolbar.setLogoDescription(contentDescription);
+        ArrayList<View> potentialViews = new ArrayList<View>();
+        //find the view based on it's content description, set programatically or with android:contentDescription
+        toolbar.findViewsWithText(potentialViews,contentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
+        //Nav icon is always instantiated at this point because calling setLogoDescription ensures its existence
+        View logoIcon = null;
+        if(potentialViews.size() > 0){
+            logoIcon = potentialViews.get(0);
+        }
+        //Clear content description if not previously present
+        if(hadContentDescription)
+            toolbar.setLogoDescription(null);
+        return logoIcon;
     }
 
     private void logUser() {
@@ -1131,6 +1262,10 @@ public class MainActivity extends AppCompatActivity
             mDisplayProfileFragment();
             return true;
         }
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -2081,6 +2216,15 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
             }
             fragmentTransaction.replace(R.id.container, fragment, tag);
+// TODO
+//            if(currentFragment instanceof ExamsFragment && ){
+//
+//            }
+
+//            if(getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName()) != null && currentFragment instanceof ExamsFragment)
+//                addToBackstack = false;
+//            if(getSupportFragmentManager().findFragmentByTag(ExamsFragment.class.toString()) != null && currentFragment instanceof TabFragment)
+//                addToBackstack = false;
 
             if (addToBackstack)
                 fragmentTransaction.addToBackStack(fragment.toString());
@@ -2214,7 +2358,7 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayInstituteList(response, true, true);
                 break;
             case Constants.WIDGET_TRENDING_INSTITUTES:
-                this.mCurrentTitle = "Trending Institutes";
+                this.mCurrentTitle = "Sponsored Colleges";
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 this.mDisplayInstituteList(response, false, true);
                 break;
@@ -2248,10 +2392,11 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.SHORTLISTED, false);
                 break;
             case Constants.CARD_BUZZLIST_INSTITUTES:
-                this.mCurrentTitle = "Buzzlist Institutes";
+                this.mCurrentTitle = "Sponsored Colleges";
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.BUZZLIST, true);
+
                 } else {
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.BUZZLIST, false);
                 }
@@ -3438,6 +3583,7 @@ public class MainActivity extends AppCompatActivity
 
         mClearBackStack();
         this.mLoadHomeScreen(null);
+
     }
 
     @Override
@@ -4301,6 +4447,12 @@ public class MainActivity extends AppCompatActivity
         if (!isBackPressEnabled) {
             return;
         }
+
+        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(Gravity.LEFT); //CLOSE Nav Drawer!
+            return;
+        }
+
         if(currentBottomItem != null){
             translateAnimation(null,currentBottomItem);
         }
@@ -4318,7 +4470,6 @@ public class MainActivity extends AppCompatActivity
                 boolean canGoBack = ((WebViewFragment) currentFragment).canGoBack();
               if(canGoBack)
                 return;
-
             }
         }
 
@@ -4916,6 +5067,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_HOME_LOADED), true).apply();
+
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 
 
@@ -5931,6 +6084,17 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
+    public void mUpdateDrawerItem(int position) {
+        for (int i = 0; i < mDrawerList.getChildCount(); i++) {
+            ((TextView) mDrawerList.getChildAt(i).findViewById(R.id.textViewName)).setTextColor(Color.BLACK);
+            mDrawerList.getChildAt(i).findViewById(R.id.drawer_item_container).setBackgroundResource(R.color.white);
+        }
+        if (position >= 0) {
+            ((TextView) mDrawerList.getChildAt(position).findViewById(R.id.textViewName)).setTextColor(Color.WHITE);
+            mDrawerList.getChildAt(position).findViewById(R.id.drawer_item_container).setBackgroundResource(R.color.primary_color);
+        }
+    }
+
     public void mUpdateTabMenuItem(int tabPosition, int duration) {
         collegeList.setSelected(false);
         connect.setSelected(false);
@@ -5986,10 +6150,11 @@ public class MainActivity extends AppCompatActivity
             currentBottomItem = null;
         }
         translateAnimation(viewToMoveUp,viewToMoveDown);
+        mUpdateDrawerItem(tabPosition-1);
     }
 
 
-    private void translateAnimation(View viewToMoveUp, View viewToMoveDown) {
+    public void translateAnimation(View viewToMoveUp, View viewToMoveDown) {
         Animation translateUp= AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_up);
         Animation translateDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_down);
 
@@ -6025,10 +6190,12 @@ public class MainActivity extends AppCompatActivity
         if (fragment == null)
             this.mDisplayFragment(TabFragment.newInstance(tabPosition, new ArrayList<>(mUserExamsList)), true, TabFragment.class.getSimpleName());
         else {
-            if (currentFragment instanceof TabFragment)
+            if (currentFragment instanceof TabFragment) {
                 ((TabFragment) currentFragment).updateTabFragment(tabPosition);
+            } else{
+                this.mDisplayFragment(fragment, false, TabFragment.class.getSimpleName());
+            }
 
-            this.mDisplayFragment(fragment, false, TabFragment.class.getSimpleName());
         }
     }
 

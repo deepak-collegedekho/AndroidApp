@@ -211,6 +211,11 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         mAdapter.addAll(modelArrayList);
     }
 
+    public void setDrawableBorder(){
+        if(mAdapter != null)
+            mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_orange_border_box));
+    }
+
     private void setupPeekAndPopStandard(){
         peekAndPop = new PeekAndPop.Builder(this.getActivity())
                 .blurBackground(true)
@@ -280,22 +285,24 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         if (getView() != null)
             getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-        if(currentTab == null || currentTab.getId() == R.id.tab_recommended){
+        if(CARD_CATEGORY ==Constants.CDRecommendedInstituteType.UNBAISED.ordinal()){
             currentTab = getView().findViewById(R.id.tab_recommended);
-            currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(0).start();
+//            currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(0).start();
             mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_blue_border_box));
-        } else if (currentTab.getId() == R.id.tab_buzzlist){
+        } else if (CARD_CATEGORY ==Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()){
             currentTab = getView().findViewById(R.id.tab_buzzlist);
-            currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(0).start();
+//            currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(0).start();
             mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_orange_border_box));
-        } else if (currentTab.getId() == R.id.tab_wishlist){
+        } else if (CARD_CATEGORY ==Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()){
             currentTab = getView().findViewById(R.id.tab_wishlist);
-            currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(0).start();
+//            currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(0).start();
         }
 
         this.mMainActivity = (MainActivity) this.getActivity();
         if (this.mMainActivity != null)
             this.mMainActivity.currentFragment = this;
+
+        mMainActivity.translateAnimation(currentTab,null);
 
         Institute institute = this.mMainActivity.getCurrentInstitute();
 
@@ -346,14 +353,15 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 break;
             case R.id.tab_buzzlist:
                 if(v.getId() != currentTab.getId()) {
-                    v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
-                    currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
+                    mMainActivity.translateAnimation(v,currentTab);
+//                    v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
+//                    currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
                     mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_orange_border_box));
                 }
                 if (CARD_CATEGORY != Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()) {
                     CARD_CATEGORY = Constants.CDRecommendedInstituteType.BUZZLIST.ordinal();
                     showWishListUI(false);
-                    mEmptyTextView.setText("Loading for buzzList institutes...");
+                    mEmptyTextView.setText("Loading for sponsored institutes...");
                     mEmptyTextView.setVisibility(View.VISIBLE);
                     mListener.onClickBuzzList();
                 }
@@ -361,8 +369,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 break;
             case R.id.tab_recommended:
                 if(v.getId() != currentTab.getId()){
-                    v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
-                    currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
+                    mMainActivity.translateAnimation(v,currentTab);
+//                    v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
+//                    currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
                     mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_blue_border_box));
                 }
 
@@ -383,8 +392,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 break;
             case R.id.tab_wishlist:
                 if(v.getId() != currentTab.getId()) {
-                    v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
-                    currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
+                    mMainActivity.translateAnimation(v,currentTab);
+//                    v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
+//                    currentTab.animate().translationYBy(10f).scaleX(1.0f).scaleY(1.0f).setDuration(1000).start();
                 }
 
                 if (CARD_CATEGORY != Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
@@ -784,13 +794,13 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mUndecidedCountText.setClickable(true);
         this.mBuzzListCount = this.mInstitutes.size();
         this.mBuzzListCountText.setText(""+mBuzzListCount);
-        mTitle = "Trending Colleges";
+        mTitle = "Sponsored Colleges";
         this.mPageTitleTV.setText(mTitle);
         //this.mCardContainer.setListener(null);
         // boolean canAnimate = mAdapter.getCardCategory() != Constants.CDRecommendedInstituteType.BUZZLIST.ordinal();
         //this.mAdapter.setCardCategory(Constants.CDRecommendedInstituteType.BUZZLIST.ordinal());
         if (this.mInstitutes.size() == 0) {
-            this.mEmptyTextView.setText("No more buzzlist institutes...");
+            this.mEmptyTextView.setText("No more sponsored institutes...");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             questionLayout.setVisibility(View.INVISIBLE);
             this.mCardContainer.setVisibility(View.GONE);

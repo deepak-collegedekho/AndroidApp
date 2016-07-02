@@ -358,7 +358,7 @@ public class TabFragment extends  BaseFragment{
             firstSubMenuTV.setContentDescription("Select to Explore recommended Institutes");
             secondSubMenuTV.setText("Shortlist");
             secondSubMenuTV.setContentDescription("Select to Explore shortlisted Institutes");
-            thirdSubMenuTV.setText("Trending");
+            thirdSubMenuTV.setText("Sponsored Colleges");
             thirdSubMenuTV.setContentDescription("Select to Explore popular Institutes");
             fourthSubMenuTV.setText("Explore");
             fourthSubMenuTV.setContentDescription("Select to Explore all Institutes");
@@ -393,7 +393,7 @@ public class TabFragment extends  BaseFragment{
 
             LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 1.0f);
+                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 0.5f);
             ll.setLayoutParams(lp);
 
             //this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.GONE);
@@ -409,6 +409,7 @@ public class TabFragment extends  BaseFragment{
             ll.getChildAt(1).setVisibility(View.VISIBLE);
 
             this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
+            view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
 
         }else   if(this.selectedTabPosition == 3){
             IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
@@ -427,7 +428,7 @@ public class TabFragment extends  BaseFragment{
 
             LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 1.0f);
+                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 0.5f);
             ll.setLayoutParams(lp);
 
             //this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.GONE);
@@ -445,6 +446,7 @@ public class TabFragment extends  BaseFragment{
             ll.getChildAt(1).setVisibility(View.VISIBLE);
 
             this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
+            view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
 
         }else   if(this.selectedTabPosition == 4){
             IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
@@ -463,7 +465,7 @@ public class TabFragment extends  BaseFragment{
 
             LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 1.0f);
+                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 0.5f);
             ll.setLayoutParams(lp);
 
             //this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.GONE);
@@ -479,6 +481,7 @@ public class TabFragment extends  BaseFragment{
             ll.getChildAt(1).setVisibility(View.VISIBLE);
 
             this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
+            view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
         }
         updateCollegeCount(selectedTabPosition);
     }
@@ -555,9 +558,9 @@ public class TabFragment extends  BaseFragment{
                 this.mHomeWidgetSelected(Constants.WIDGET_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
             } else if(selectedSubMenuPosition == 3) {
                 if(this.mExamDetail != null)
-                    this.mHomeWidgetSelected(Constants.WIDGET_TRENDING_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2", this.mExamDetail.getExam_tag());
+                    this.mHomeWidgetSelected(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2", this.mExamDetail.getExam_tag());
                 else
-                    this.mHomeWidgetSelected(Constants.WIDGET_TRENDING_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2",null);
+                    this.mHomeWidgetSelected(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2",null);
             } else if(selectedSubMenuPosition == 4) {
                 if(this.mExamDetail != null)
                     this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mExamDetail.getExam_tag());//this.mExamDetail.getExam_tag());
