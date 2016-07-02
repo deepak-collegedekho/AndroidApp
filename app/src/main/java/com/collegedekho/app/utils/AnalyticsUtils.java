@@ -57,8 +57,8 @@ public class AnalyticsUtils {
 
     public static void SendAppEvent(String eventCategory, String eventName, Map<String, Object> eventParams, Context context)
     {
-        if (MainActivity.user != null)
-            eventParams.put(context.getString(R.string.KEY_USER), MainActivity.user.getId());
+        if (MainActivity.mProfile != null && MainActivity.mProfile.getId() != null)
+            eventParams.put(context.getString(R.string.KEY_USER), MainActivity.mProfile.getId());
 
         Properties properties = new Properties();
         String[] labels = new String[eventParams.size()];

@@ -77,5 +77,4 @@ public class ApplyIntentService extends IntentService {
         String URL = Constants.BASE_URL + "lms/";
         MainActivity.networkUtils.networkData(Constants.TAG_APPLIED_COURSE, URL, map, Request.Method.POST);
     }
-
 }

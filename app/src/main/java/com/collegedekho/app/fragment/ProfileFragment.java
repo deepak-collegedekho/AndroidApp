@@ -114,7 +114,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             mMinusDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_minus_inline);
         }
 
-
+        mRootView.findViewById(R.id.user_profile_image_update).findViewById(R.id.profile_image_edit_button).setVisibility(View.GONE);
 
         mProfileName = (TextView)mRootView.findViewById(R.id.profile_user_name);
         mRootView.findViewById(R.id.profile_login_button).setOnClickListener(this);

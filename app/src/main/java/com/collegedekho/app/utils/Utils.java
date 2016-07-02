@@ -452,6 +452,22 @@ public class Utils {
         }
     }
 
+    public static int getTimeInMilliSec(Calendar calendar){
+        int milliSecs = 0;
+        if(calendar !=null){
+            try {
+                Calendar cal = Calendar.getInstance();
+                long diff = cal.getTimeInMillis() - calendar.getTimeInMillis();
+                milliSecs = (int) diff % (1000);
+                /*int seconds = (int) (diff / 1000) % 60;
+                int minutes = (int) ((diff / (1000 * 60)) % 60);*/
+            }catch (Exception e){
+
+            }
+        }
+        return milliSecs;
+    }
+
     public static String getTimeFromString(String duration) {
         // TODO Auto-generated method stub
         String time = "";

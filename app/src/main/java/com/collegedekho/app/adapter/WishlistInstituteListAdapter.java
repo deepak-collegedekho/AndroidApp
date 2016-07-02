@@ -24,15 +24,21 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.display.peekandpop.BlurBuilder;
 import com.collegedekho.app.display.peekandpop.PeekAndPop;
 import com.collegedekho.app.entities.Institute;
+import com.collegedekho.app.fragment.UserEducationFragment;
 import com.collegedekho.app.fragment.WishlistFragment;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.AnalyticsUtils;
+import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.FadeInImageView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 
 import static com.collegedekho.app.activity.MainActivity.getResourceString;
 
@@ -50,6 +56,11 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
     private WishlistCardAdapter mPeekViewAdapter;
     private WishlistFragment.WishlistInstituteInteractionListener mListener;
     private TextView mCalloutButton;
+    private String mEventCategory = "";
+    private String mEventAction = "";
+    private Calendar calendar;
+    private static HashMap<String, Object> mEventValue;
+
 
     public WishlistInstituteListAdapter(Activity context, ArrayList<Institute> institutes, int type, PeekAndPop peekAndPop) {
         this.mInstitutes = institutes;
@@ -62,6 +73,8 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
         this.mPeekView = this.mPeekAndPop.getPeekView();
         this.mCalloutButton = (TextView) this.mPeekView.findViewById(R.id.wishlist_institute_btn_callout);
 
+        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_INSTITUTES);
+        this.mEventValue = new HashMap<String, Object>();
 
         this.mSetupPeekAndPopStandard();
     }
@@ -71,16 +84,55 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
         this.mPeekAndPop.setOnGeneralActionListener(new PeekAndPop.OnGeneralActionListener() {
             @Override
             public void onPeek(View view, int position) {
+                WishlistInstituteListAdapter.this.calendar = Calendar.getInstance();
+
                 WishlistInstituteListAdapter.this.mShowInstituteCardOnLongPress(position);
+
+                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST);
+                WishlistInstituteListAdapter.mEventValue.put("action_what", "institute_peek");
+                WishlistInstituteListAdapter.mEventValue.put("institute_name", WishlistInstituteListAdapter.this.mInstitutes.get(position).getName());
+                WishlistInstituteListAdapter.mEventValue.put("institute_id", WishlistInstituteListAdapter.this.mInstitutes.get(position).getId());
+
+                //Events
+                AnalyticsUtils.SendAppEvent(WishlistInstituteListAdapter.this.mEventCategory, WishlistInstituteListAdapter.this.mEventAction, WishlistInstituteListAdapter.this.mEventValue, WishlistInstituteListAdapter.this.mContext);
+
+                WishlistInstituteListAdapter.this.mResetEventVariables();
             }
 
             @Override
             public void onPop(View view, int position) {
+
+                int timeUsedInMS;
+
+                timeUsedInMS = Utils.getTimeInMilliSec(WishlistInstituteListAdapter.this.calendar);
+
+                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST);
+
+                WishlistInstituteListAdapter.mEventValue.put("action_what", "institute_pop");
+                WishlistInstituteListAdapter.mEventValue.put("action_duration", String.valueOf(timeUsedInMS));
+                WishlistInstituteListAdapter.mEventValue.put("institute_name", WishlistInstituteListAdapter.this.mInstitutes.get(position).getName());
+                WishlistInstituteListAdapter.mEventValue.put("institute_id", WishlistInstituteListAdapter.this.mInstitutes.get(position).getId());
+
+                //Events
+                AnalyticsUtils.SendAppEvent(WishlistInstituteListAdapter.this.mEventCategory, WishlistInstituteListAdapter.this.mEventAction, WishlistInstituteListAdapter.this.mEventValue, WishlistInstituteListAdapter.this.mContext);
+
+                WishlistInstituteListAdapter.this.mResetEventVariables();
             }
 
             @Override
             public void onClickPeek(View view, int position) {
                 WishlistInstituteListAdapter.this.mShowInstituteCardOnClick(position);
+
+                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST);
+
+                WishlistInstituteListAdapter.mEventValue.put("action_what", "institute_peek_click");
+                WishlistInstituteListAdapter.mEventValue.put("institute_name", WishlistInstituteListAdapter.this.mInstitutes.get(position).getName());
+                WishlistInstituteListAdapter.mEventValue.put("institute_id", WishlistInstituteListAdapter.this.mInstitutes.get(position).getId());
+
+                //Events
+                AnalyticsUtils.SendAppEvent(WishlistInstituteListAdapter.this.mEventCategory, WishlistInstituteListAdapter.this.mEventAction, WishlistInstituteListAdapter.this.mEventValue, WishlistInstituteListAdapter.this.mContext);
+
+                WishlistInstituteListAdapter.this.mResetEventVariables();
             }
 
             @Override
@@ -107,38 +159,72 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
             @Override
             public void onLongHold(View view, int position) {
                 vibratorService.vibrate(Constants.HOLD_REMOVE_VIBRATION_DURATION);
+                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST);
+
+                WishlistInstituteListAdapter.mEventValue.put("institute_name", WishlistInstituteListAdapter.this.mInstitutes.get(position).getName());
+                WishlistInstituteListAdapter.mEventValue.put("institute_id", WishlistInstituteListAdapter.this.mInstitutes.get(position).getId());
+                WishlistInstituteListAdapter.mEventValue.put("action_what", "long_hold");
+
                 if (view.getId() == R.id.wishlist_institute_see_all_layout) {
+                    WishlistInstituteListAdapter.mEventValue.put("action_on", "institute_peek_facilities");
                     WishlistInstituteListAdapter.this.mPeekViewAdapter.ToggleFacilitiesLayout();
                 }
                 else if (view.getId() == R.id.wishlist_btn_details)
                 {
+                    WishlistInstituteListAdapter.mEventValue.put("action_on", "institute_peek_info");
                     WishlistInstituteListAdapter.this.mPeekViewAdapter.ToggleWishlistInstituteDetails();
                 }
                 else if (view.getId() == R.id.wishlist_header_view)
                 {
+                    WishlistInstituteListAdapter.mEventValue.put("action_on", "institute_peek_institute_details");
                     //show institute
                     WishlistInstituteListAdapter.this.mListener.OnWishlistInstituteSelected(WishlistInstituteListAdapter.this.mInstitutes.get(position), true);
                 }
+
+                //Events
+                AnalyticsUtils.SendAppEvent(WishlistInstituteListAdapter.this.mEventCategory, WishlistInstituteListAdapter.this.mEventAction, WishlistInstituteListAdapter.this.mEventValue, WishlistInstituteListAdapter.this.mContext);
+
+                WishlistInstituteListAdapter.this.mResetEventVariables();
             }
         });
 
         this.mPeekAndPop.setOnHoldAndReleaseListener(new PeekAndPop.OnHoldAndReleaseListener() {
             @Override
             public void onHold(View view, int position) {
-                if (view.getId() == R.id.wishlist_institute_btn_call_now)
-                    WishlistInstituteListAdapter.this.mCalloutButton.setText(getResourceString(R.string.ACTION_CALL_COLLEGE));
-                else if (view.getId() == R.id.wishlist_institute_btn_apply_now)
-                    WishlistInstituteListAdapter.this.mCalloutButton.setText(getResourceString(R.string.ACTION_APPLY_COLLEGE));
-                else if (view.getId() == R.id.wishlist_institute_btn_remove_shortlist)
-                    WishlistInstituteListAdapter.this.mCalloutButton.setText(getResourceString(R.string.ACTION_REMOVE_COLLEGE));
-
                 vibratorService.vibrate(Constants.HOLD_ENTER_VIBRATION_DURATION);
+
+                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST);
+
+                WishlistInstituteListAdapter.mEventValue.put("institute_name", WishlistInstituteListAdapter.this.mInstitutes.get(position).getName());
+                WishlistInstituteListAdapter.mEventValue.put("institute_id", WishlistInstituteListAdapter.this.mInstitutes.get(position).getId());
+                WishlistInstituteListAdapter.mEventValue.put("action_what", "hold_release_held");
+
+                if (view.getId() == R.id.wishlist_institute_btn_call_now)
+                {
+                    WishlistInstituteListAdapter.this.mCalloutButton.setText(getResourceString(R.string.ACTION_CALL_COLLEGE));
+                    WishlistInstituteListAdapter.mEventValue.put("action_on", "institute_peek_call");
+                }
+                else if (view.getId() == R.id.wishlist_institute_btn_apply_now)
+                {
+                    WishlistInstituteListAdapter.this.mCalloutButton.setText(getResourceString(R.string.ACTION_APPLY_COLLEGE));
+                    WishlistInstituteListAdapter.mEventValue.put("action_on", "institute_peek_apply");
+                }
+                else if (view.getId() == R.id.wishlist_institute_btn_remove_shortlist)
+                {
+                    WishlistInstituteListAdapter.this.mCalloutButton.setText(getResourceString(R.string.ACTION_REMOVE_COLLEGE));
+                    WishlistInstituteListAdapter.mEventValue.put("action_on", "institute_peek_shortlist");
+                }
 
                 WishlistInstituteListAdapter.this.mCalloutButton.animate()
                         .setDuration(100)
                         .alpha(1f)
                         .setInterpolator(new LinearInterpolator())
                         .y(((WishlistInstituteListAdapter.this.mPeekView.getHeight() >> 1) >> 1));
+
+                //Events
+                AnalyticsUtils.SendAppEvent(WishlistInstituteListAdapter.this.mEventCategory, WishlistInstituteListAdapter.this.mEventAction, WishlistInstituteListAdapter.this.mEventValue, WishlistInstituteListAdapter.this.mContext);
+
+                WishlistInstituteListAdapter.this.mResetEventVariables();
             }
 
             @Override
@@ -152,6 +238,12 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
 
             @Override
             public void onRelease(View view, int position) {
+                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST);
+
+                WishlistInstituteListAdapter.mEventValue.put("institute_name", WishlistInstituteListAdapter.this.mInstitutes.get(position).getName());
+                WishlistInstituteListAdapter.mEventValue.put("institute_id", WishlistInstituteListAdapter.this.mInstitutes.get(position).getId());
+                WishlistInstituteListAdapter.mEventValue.put("action_what", "hold_release_released");
+
                 WishlistInstituteListAdapter.this.mCalloutButton.animate()
                         .setDuration(100)
                         .alpha(0f)
@@ -168,17 +260,25 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
                     Uri number = Uri.parse("tel:" + institute.getL3_number());
                     Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
                     WishlistInstituteListAdapter.this.mContext.startActivity(callIntent);
+                    WishlistInstituteListAdapter.mEventValue.put("action_on", "institute_peek_call");
                 }
                 else if (view.getId() == R.id.wishlist_institute_btn_apply_now) {
                     WishlistInstituteListAdapter.this.mListener.OnWishlistInstituteApplied(institute, position);
+                    WishlistInstituteListAdapter.mEventValue.put("action_on", "institute_peek_apply");
                 }
                 else if (view.getId() == R.id.wishlist_institute_btn_remove_shortlist) {
                     message = "Removing " + institute.getShort_name() +  " from Wishlist";
                     WishlistInstituteListAdapter.this.mListener.OnWishlistInstituteRemoved(institute, position);
+                    WishlistInstituteListAdapter.mEventValue.put("action_on", "institute_peek_shortlist");
                 }
 
                 if (message != "")
                     Snackbar.make(WishlistInstituteListAdapter.this.mContext.findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show();
+
+                //Events
+                AnalyticsUtils.SendAppEvent(WishlistInstituteListAdapter.this.mEventCategory, WishlistInstituteListAdapter.this.mEventAction, WishlistInstituteListAdapter.this.mEventValue, WishlistInstituteListAdapter.this.mContext);
+
+                WishlistInstituteListAdapter.this.mResetEventVariables();
             }
         });
     }
@@ -279,5 +379,11 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
     public void mShowInstituteCardOnClick(int position)
     {
         this.mListener.OnWishlistInstituteSelected(WishlistInstituteListAdapter.this.mInstitutes.get(position), false);
+    }
+
+    private void mResetEventVariables()
+    {
+        this.mEventAction = "";
+        WishlistInstituteListAdapter.mEventValue.clear();
     }
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 public class Profile implements Parcelable{
 
+    private String id =   "";
     private String name =   "";
     private String phone_no =   "";
     private String email =  "";
@@ -75,6 +76,7 @@ public class Profile implements Parcelable{
     }
 
     protected Profile(Parcel in) {
+        id = in.readString();
         name = in.readString();
         phone_no = in.readString();
         email = in.readString();
@@ -155,6 +157,7 @@ public class Profile implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(name);
         dest.writeString(phone_no);
         dest.writeString(email);
@@ -685,5 +688,13 @@ public class Profile implements Parcelable{
 
     public void setYearly_exams(ArrayList<ProfileExam> yearly_exams) {
         this.yearly_exams = yearly_exams;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

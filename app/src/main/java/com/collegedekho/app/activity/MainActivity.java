@@ -826,9 +826,9 @@ public class MainActivity extends AppCompatActivity
 
     private void logUser() {
         if (MainActivity.user != null) {
-            Crashlytics.setUserIdentifier(MainActivity.user.getId());
-            Crashlytics.setUserEmail(MainActivity.user.getEmail());
-            Crashlytics.setUserName(MainActivity.user.getName());
+            Crashlytics.setUserIdentifier(MainActivity.mProfile.getId());
+            Crashlytics.setUserEmail(MainActivity.mProfile.getEmail());
+            Crashlytics.setUserName(MainActivity.mProfile.getName());
         }
     }
 
@@ -1279,6 +1279,7 @@ public class MainActivity extends AppCompatActivity
                 this.networkUtils.setToken(MainActivity.user.getToken());
                 // user id register
                 setUserIdWithAllEvents();
+
                 if(mProfile == null) {
                     mProfile = new Profile();
                     mProfile.setName(user.getName());
@@ -1306,7 +1307,6 @@ public class MainActivity extends AppCompatActivity
             this.IS_USER_CREATED = sp.getBoolean(getResourceString(R.string.USER_CREATED), false);
             this.IS_HOME_LOADED = sp.getBoolean(getResourceString(R.string.USER_HOME_LOADED), false);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -1316,20 +1316,20 @@ public class MainActivity extends AppCompatActivity
      */
     private void setUserIdWithAllEvents(){
         // register user id with apps flyer
-        AppsFlyerLib.getInstance().setCustomerUserId(MainActivity.user.getId());
+        AppsFlyerLib.getInstance().setCustomerUserId(MainActivity.mProfile.getId());
         //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.SESSION_STARTED_DATE_TIME), new Date().toString());
-        eventValue.put(getResourceString(R.string.USER_ID), MainActivity.user.getId());
+        eventValue.put(getResourceString(R.string.USER_ID), MainActivity.mProfile.getId());
         eventValue.put(getResourceString(R.string.USER_EMAIL), user.getEmail());
         eventValue.put(getResourceString(R.string.USER_PHONE), user.getPhone_no());
 
         MainActivity.AppsflyerTrackerEvent(this,getResourceString(R.string.SESSION_STARTED),eventValue);
         // register user id with GA tracker
-        this.tracker.setClientId(MainActivity.user.getId());
+        this.tracker.setClientId(MainActivity.mProfile.getId());
         // register user id with connecto
         // TODO:: add user phone number in connecto
-        this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(getResourceString(R.string.USER_NAME), MainActivity.user.getName()));
+        this.connecto.identify(MainActivity.mProfile.getId(), new Traits().putValue(getResourceString(R.string.USER_NAME), MainActivity.user.getName()));
         this.connecto.track(getResourceString(R.string.SESSION_STARTED),  new Properties().putValue(getResourceString(R.string.SESSION_STARTED_DATE_TIME), new Date().toString()));
 
     }
@@ -1586,7 +1586,7 @@ public class MainActivity extends AppCompatActivity
                 ((UserEducationFragment) currentFragment).profileImageUploadedSuccesfully();
             }
             else if(currentFragment instanceof  HomeFragment){
-                ((HomeFragment)currentFragment).updateUserName();
+                ((HomeFragment)currentFragment).updateUserInfo();
             }
 
         } catch (IOException e) {
@@ -3700,7 +3700,7 @@ public class MainActivity extends AppCompatActivity
         this.mInstitute = institute;
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
         if(institute.getGroups_exists()==1) {
-            String cafUrl = Constants.CAF_URL + "?institute_id=" + institute.getId() + "&&user_id=" + MainActivity.user.getId();
+            String cafUrl = Constants.CAF_URL + "?institute_id=" + institute.getId() + "&&user_id=" + MainActivity.mProfile.getId();
             onDisplayWebFragment(cafUrl);
         }else {
             requestForApplyInstitute(Constants.TAG_WISH_LIST_APPLIED_COURSE + "#" + position,new HashMap<String, String>(),Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE);
@@ -5481,7 +5481,7 @@ public class MainActivity extends AppCompatActivity
         {
             eventValue.put(MainActivity.getResourceString(R.string.APPLY_INSTITUTE), Constants.CDInstituteType.PARTNER.toString());
 
-            String cafUrl = Constants.CAF_URL + "?institute_id=" + institute.getId() + "&&user_id=" + MainActivity.user.getId();
+            String cafUrl = Constants.CAF_URL + "?institute_id=" + institute.getId() + "&&user_id=" + MainActivity.mProfile.getId();
             onDisplayWebFragment(cafUrl);
 
             HashMap<String, String> params = new HashMap<>();
@@ -5543,7 +5543,7 @@ public class MainActivity extends AppCompatActivity
             return;
 
         if (mInstitute != null  && mInstitute.getGroups_exists()==1 ) {
-            String cafUrl = Constants.CAF_URL + "?institute_id=" + mInstitute.getId() + "&&user_id=" + MainActivity.user.getId();
+            String cafUrl = Constants.CAF_URL + "?institute_id=" + mInstitute.getId() + "&&user_id=" + MainActivity.mProfile.getId();
             onDisplayWebFragment(cafUrl);
             return;
         }
@@ -5724,7 +5724,7 @@ public class MainActivity extends AppCompatActivity
         this.mInstitute = institute;
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
         if(institute.getGroups_exists()==1) {
-            String cafUrl = Constants.CAF_URL + "?institute_id=" + institute.getId() + "&&user_id=" + MainActivity.user.getId();
+            String cafUrl = Constants.CAF_URL + "?institute_id=" + institute.getId() + "&&user_id=" + MainActivity.mProfile.getId();
             onDisplayWebFragment(cafUrl);
         }else {
             requestForApplyInstitute(Constants.TAG_WISH_LIST_APPLIED_COURSE + "#" + "-1", new HashMap<String, String>(),Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE);

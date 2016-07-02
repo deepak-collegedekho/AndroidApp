@@ -3,55 +3,67 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/app_background"
-    android:weightSum="1">
-
-    <include layout="@layout/layout_exam_tabs"
-        android:id="@+id/exams_tab_layout"
-        android:layout_height="0dp"
-        android:layout_weight=".05"
-        android:layout_width="match_parent"/>
-
-    <RelativeLayout
-        android:id="@+id/exam_swipe_listener_layout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".38"
-        android:background="@color/white">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/app_background"
+        android:weightSum="1">
 
+        <include layout="@layout/layout_exam_tabs"
+            android:id="@+id/exams_tab_layout"
+            android:layout_height="0dp"
+            android:layout_weight=".05"
+            android:layout_width="match_parent"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_centerInParent="true">
+        <RelativeLayout
+            android:id="@+id/exam_swipe_listener_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".38"
+            android:background="@color/white">
 
-            <include layout="@layout/layout_profile_image"
-                android:id="@+id/include_image_layout"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_centerHorizontal="true"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                >
 
-            <TextView
-                android:id="@+id/user_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textStyle="normal"
-                android:paddingTop="5dp"
-                android:layout_marginBottom="@dimen/m10dp"
-                android:text="Anonymous User"
-                android:textSize="22sp"
-                />
-        </LinearLayout>
-    </RelativeLayout>
+                <include layout="@layout/layout_profile_image"
+                    android:id="@+id/include_image_layout"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="18dp"
+                    />
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="normal"
+                    android:text="Name : "
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:layout_toRightOf="@id/include_image_layout"
+                    android:layout_marginTop="50dp"
+                    android:layout_alignTop="@id/include_image_layout"
+                    />
+                <TextView
+                    android:id="@+id/user_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textStyle="normal"
+                    android:text="Phone : "
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:textSize="16sp"
+                    android:layout_toRightOf="@id/include_image_layout"
+                    android:layout_below="@id/user_name"
+                    android:textColor="@color/black"
+                    />
+            </RelativeLayout>
+        </RelativeLayout>
 
-    <!--<RelativeLayout-->
+        <!--<RelativeLayout-->
         <!--android:id="@+id/exam_swipe_listener_layout"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="0dp"-->
@@ -59,73 +71,74 @@
         <!--android:layout_weight=".33">-->
 
         <!--<include layout="@layout/layout_profile_image"-->
-            <!--android:id="@+id/include_image_layout"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:layout_width="150dp"-->
-            <!--android:layout_height="150dp"/>-->
+        <!--android:id="@+id/include_image_layout"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_width="150dp"-->
+        <!--android:layout_height="150dp"/>-->
 
         <!--<RelativeLayout-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:gravity="center"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:layout_below="@id/include_image_layout">-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:gravity="center"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_below="@id/include_image_layout">-->
 
 
-            <!--<TextView-->
-                <!--android:id="@+id/user_name"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:gravity="center_horizontal"-->
-                <!--android:textStyle="bold"-->
-                <!--android:paddingTop="10dp"-->
-                <!--android:paddingBottom="10dp"-->
-                <!--android:textSize="18sp"/>-->
+        <!--<TextView-->
+        <!--android:id="@+id/user_name"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="center_horizontal"-->
+        <!--android:textStyle="bold"-->
+        <!--android:paddingTop="10dp"-->
+        <!--android:paddingBottom="10dp"-->
+        <!--android:textSize="18sp"/>-->
 
-            <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-                <!--&lt;!&ndash;android:id="@+id/user_stream"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:text=""&ndash;&gt;-->
-                <!--&lt;!&ndash;android:gravity="left|center"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_below="@id/user_name"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:textStyle="bold"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:paddingBottom="5dp"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:paddingRight="5dp"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:paddingLeft="8dp"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:visibility="gone"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:textSize="18sp"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+        <!--&lt;!&ndash;android:id="@+id/user_stream"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:text=""&ndash;&gt;-->
+        <!--&lt;!&ndash;android:gravity="left|center"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_below="@id/user_name"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:textStyle="bold"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:paddingBottom="5dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:paddingRight="5dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:paddingLeft="8dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:visibility="gone"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:textSize="18sp"/>&ndash;&gt;-->
 
         <!--</RelativeLayout>-->
-    <!--</RelativeLayout>-->
+        <!--</RelativeLayout>-->
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".58"
-        android:orientation="vertical"
-        android:weightSum="1">
-
-        <include layout="@layout/layout_home_widget"
-            android:layout_height="0dp"
-            android:layout_weight=".80"
-            android:layout_width="match_parent"
-            android:id="@+id/include_layout_home_widget"/>
-
-        <include layout="@layout/layout_bottom_button"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".20"
-            android:visibility="gone"
-            android:layout_marginBottom="15dp"/>
+            android:layout_weight=".58"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <include layout="@layout/layout_home_widget"
+                android:layout_height="0dp"
+                android:layout_weight=".80"
+                android:layout_width="match_parent"
+                android:id="@+id/include_layout_home_widget"/>
+
+            <include layout="@layout/layout_bottom_button"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".20"
+                android:visibility="gone"
+                android:layout_marginBottom="15dp"/>
+
+        </LinearLayout>
+
 
     </LinearLayout>
-
-
-</LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <ImageView
             android:id="@+id/prep_buddy_tour_guide_image"

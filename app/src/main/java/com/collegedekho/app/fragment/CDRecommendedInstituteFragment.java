@@ -191,12 +191,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         rootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
         rootView.findViewById(R.id.recommended_tute_frame).setOnClickListener(this);
 
-//        currentTab = rootView.findViewById(R.id.tab_recommended);
-//        currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
-////        ObjectAnimator anim = ObjectAnimator.ofFloat(currentTab,"scaleY",1.2f);
-//        anim.setDuration(3000); // duration 3 seconds
-//        anim.start();
-
         return rootView;
     }
 

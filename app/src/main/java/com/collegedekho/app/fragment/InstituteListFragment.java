@@ -377,7 +377,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             if(v != null &&filterAllowed) {
                     v.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
                     v.findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
-
             }
         }
         if(filterAllowed) {
@@ -386,7 +385,6 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             }
             this.mSetFilterList();
         }
-
     }
 
     public void updateLikeButtons(int position) {

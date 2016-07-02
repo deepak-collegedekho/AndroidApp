@@ -35,11 +35,13 @@ import com.collegedekho.app.adapter.ExamsAdapter;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
+import com.collegedekho.app.entities.StepByStepQuestion;
 import com.collegedekho.app.listener.ExamOnQueryListener;
 import com.collegedekho.app.listener.ExamSearchCloseListener;
 import com.collegedekho.app.listener.ProfileFragmentListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
@@ -62,8 +64,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -91,6 +95,9 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
     private File uploadTempImageFile;
     private Uri mImageCaptureUri;
     private int userSubLevelID = 0;
+    private String mEventCategory = "";
+    private String mEventAction = "";
+    private static HashMap<String, Object> mEventValue;
 
     public UserEducationFragment() {
         // Required empty public constructor
@@ -104,6 +111,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
      */
     public static UserEducationFragment newInstance() {
         UserEducationFragment fragment = new UserEducationFragment();
+        UserEducationFragment.mEventValue = new HashMap<String, Object>();
         return fragment;
     }
 
@@ -111,7 +119,17 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         animation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.slide_from_top);
         animation.setDuration(Constants.ANIM_SHORTEST_DURATION);
-        return  mRootView = inflater.inflate(R.layout.fragment_user_education, container, false);
+
+        mRootView = inflater.inflate(R.layout.fragment_user_education, container, false);
+
+        View nextView = mRootView.findViewById(R.id.user_education_next_button);
+
+        if (nextView.getAlpha() != 1)
+        {
+            nextView.setX(10000);
+        }
+
+        return mRootView;
     }
 
     @Override
@@ -226,8 +244,6 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
         view.findViewById(R.id.go_to_dash_board).setOnClickListener(this);
         view.findViewById(R.id.go_to_profile).setOnClickListener(this);
         mExamSearchView.setOnSearchClickListener(this);
-        //view.findViewById(R.id.user_exam_search_hint).setOnClickListener(this);
-
     }
 
     @Override
@@ -250,6 +266,9 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
     @Override
     public void onResume() {
         super.onResume();
+
+        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
+
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null)
             mainActivity.currentFragment = this;
@@ -284,37 +303,89 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                 mAskForUserSubLevel(ProfileMacro.SUB_LEVEL_PG,  ProfileMacro.LEVEL_POST_GRADUATE);
                 break;
             case R.id.user_education_level_edit_btn:
+                this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_PROFILE_EDIT);
+                UserEducationFragment.mEventValue.put("editing_what", "current_education_edit");
                 mEditCurrentEducationLevel();
                 break;
             case R.id.user_education_stream_edit_btn:
+                this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_PROFILE_EDIT);
+                UserEducationFragment.mEventValue.put("editing_what", "current_stream_edit");
                 mEditCurrentStream();
                 break;
             case R.id.user_education_exams_edit_btn:
+                this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_PROFILE_EDIT);
+                UserEducationFragment.mEventValue.put("editing_what", "exams_edit");
                 mEditUserExams();
                 break;
             case R.id.user_education_next_button:
                 mSelectedNextButton();
                 break;
             case R.id.go_to_recommended:
+                this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
+                UserEducationFragment.mEventValue.put("action_what", "go_to_recommended");
                 mTakeMeToRecommended();
                 break;
             case R.id.go_to_dash_board:
+                this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
+                UserEducationFragment.mEventValue.put("action_what", "go_to_dash_board");
                 mTakeMeToDashBoard();
                 break;
             case R.id.go_to_profile:
+                this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
+                UserEducationFragment.mEventValue.put("action_what", "go_to_profile");
                 mTakeMeToProfile();
                 break;
            case R.id.user_exam_search_view:
-            //case R.id.user_exam_search_hint:
                 if(!mExamSearchView.isActivated()){
                     getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.GONE);
                 } else {
-                   getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.VISIBLE);
+                    this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SEARCH);
+                    UserEducationFragment.mEventValue.put("searching_what", "exams");
+
+                    getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.VISIBLE);
                 }
                 break;
 
             default:
                 break;
+        }
+
+        if (!this.mEventAction.isEmpty() && this.mEventAction != "")
+        {
+            //Events
+            AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
+            this.mResetEventVariables();
+        }
+    }
+
+    private void mAnimateFooterButtons()
+    {
+        if(mRootView.findViewById(R.id.user_education_radio_group).getVisibility() == View.VISIBLE) {
+
+            View nextView = mRootView.findViewById(R.id.user_education_next_button);
+
+            if (nextView.getAlpha() != 1)
+            {
+                Runnable animEnd = new Runnable() {
+                    @Override
+                    public void run() {
+                        mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
+                    }
+                };
+
+                nextView.animate()
+                        .x(mRootView.getWidth() - nextView.getWidth() - nextView.getPaddingRight())
+                        .alpha(1)
+                        .withEndAction(animEnd)
+                        .setDuration(Constants.ANIM_AVERAGE_DURATION);
+
+                mRootView.findViewById(R.id.user_education_skip_button).animate()
+                        .setStartDelay(Constants.ANIM_SHORTEST_DURATION)
+                        .x(mRootView.getX() + mRootView.getPaddingLeft())
+                        .scaleXBy(-0.5f)
+                        .scaleYBy(-0.5f)
+                        .setDuration(Constants.ANIM_SHORT_DURATION);
+            }
         }
     }
 
@@ -333,37 +404,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                         }).show();
 
         // Now show Next Button
-        mShowNextButton();
-    }
-
-    private void mShowNextButton() {
-       if(mRootView.findViewById(R.id.user_education_radio_group).getVisibility() == View.VISIBLE) {
-            View nextView = mRootView.findViewById(R.id.user_education_next_button);
-            if (nextView.getAlpha() == 1)
-                return;
-
-            Runnable animEnd = new Runnable() {
-                @Override
-                public void run() {
-                    mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
-                }
-            };
-
-            nextView.setX(4000);
-
-            nextView.animate()
-                    .x(mRootView.getWidth() - nextView.getWidth() - nextView.getPaddingRight())
-                    .alpha(1)
-                    .withEndAction(animEnd)
-                    .setDuration(Constants.ANIM_AVERAGE_DURATION);
-
-            mRootView.findViewById(R.id.user_education_skip_button).animate()
-                    .setStartDelay(Constants.ANIM_SHORTEST_DURATION)
-                    .x(mRootView.getX() + mRootView.getPaddingLeft())
-                    .scaleXBy(-0.5f)
-                    .scaleYBy(-0.5f)
-                    .setDuration(Constants.ANIM_SHORT_DURATION);
-        }
+        this.mAnimateFooterButtons();
     }
 
     private void mUserEducationSkip() {
@@ -371,6 +412,10 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
+
+        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
+
+
         if(this.mListener ==  null)
             return;
 
@@ -387,14 +432,31 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                 mListener.onRemoveUserExams(parentJsonObject);
             }
         }
-
         View radioGroupEducation = mRootView.findViewById(R.id.user_education_radio_group);
         if(radioGroupEducation.getVisibility() == View.VISIBLE) {
+            this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
+
+            UserEducationFragment.mEventValue.put("action_what", "skip");
+            UserEducationFragment.mEventValue.put("action_where", "current_education");
+
             this.mListener.onIknowWhatIWant();
-         }
+        }
         else if( !isStreamSelected && mStreamRecyclerView.getVisibility() == View.VISIBLE){
+            this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
+
+            UserEducationFragment.mEventValue.put("action_what", "skip");
+            UserEducationFragment.mEventValue.put("action_where", "current_stream");
+
             this.mListener.onSkipAfterSelectLevel();
-       }
+        }
+
+        if (!this.mEventAction.isEmpty() && this.mEventAction != "")
+        {
+            //Events
+            AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
+
+            this.mResetEventVariables();
+        }
     }
 
     private void mSelectedNextButton() {
@@ -454,6 +516,24 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
             // save user profile data on server
             this.mListener.onRequestToUpdateUserProfile(params);
             this.mListener.onRequestForUserExams();
+
+            this.mEventAction = MainActivity.getResourceString(R.string.ACTION_CURRENT_LEVEL_SELECTED);
+
+            if (MainActivity.mProfile.getName() != "")
+                UserEducationFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_NAME), MainActivity.mProfile.getName());
+            if (MainActivity.mProfile.getPhone_no() != "")
+                UserEducationFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_PHONE), MainActivity.mProfile.getPhone_no());
+
+            UserEducationFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_CURRENT_LEVEL_ID), currentLevelID);
+            UserEducationFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_CURRENT_SUBLEVEL), userSubLevelID);
+            UserEducationFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_PREFERRED_LEVEL_ID), preferredLevelId);
+
+            this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
+
+            //Events
+            AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
+
+            this.mResetEventVariables();
 
             //  show next layout to select current stream
             ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
@@ -558,6 +638,21 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                 mRootView.findViewById(R.id.empty).setVisibility(View.VISIBLE);
                 mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
             }
+
+            this.mEventAction = MainActivity.getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED);
+
+            if (MainActivity.mProfile.getName() != "")
+                UserEducationFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_NAME), MainActivity.mProfile.getName());
+            if (MainActivity.mProfile.getPhone_no() != "")
+                UserEducationFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_PHONE), MainActivity.mProfile.getPhone_no());
+
+            UserEducationFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_CURRENT_STREAM_ID), String.valueOf(currentStreamId));
+
+            this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
+            //Events
+            AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
+
+            this.mResetEventVariables();
 
         }else{
             onUserExamsSelected();
@@ -761,6 +856,28 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
 
         this.mListener.onUserExamSelected(parentJsonObject);
 
+        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
+
+        this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_EXAM_SELECTED);
+
+        for (int n = 0; n < parentArray.length(); n++) {
+            try
+            {
+                JSONObject examDetail = (JSONObject) parentArray.get(n);
+                UserEducationFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_EXAM_SELECTED), examDetail.get(MainActivity.getResourceString(R.string.EXAM_ID)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.SCORE)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.STATUS)));
+
+                //Events
+                AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
+
+                UserEducationFragment.mEventValue.clear();
+            }
+            catch(Exception e)
+            {
+
+            }
+        }
+
+        this.mResetEventVariables();
     }
 
 
@@ -967,6 +1084,12 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
         if(mListener == null)
             return;
         mListener.OnTakeMeToProfile();
+    }
+
+    private void mResetEventVariables()
+    {
+        this.mEventAction = "";
+        UserEducationFragment.mEventValue.clear();
     }
 
 

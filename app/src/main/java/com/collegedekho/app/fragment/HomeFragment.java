@@ -3,6 +3,7 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -43,6 +44,7 @@ public class HomeFragment extends BaseFragment {
     private ExamSummary mExamSummary;  // exam summary gives info about the colleges of user
     private boolean IS_TUTE_COMPLETED = true;
     private int i = 0;
+    private TextView mProfileNumber;
 
     public static HomeFragment newInstance(ArrayList<ExamDetail> examList) {
         HomeFragment fragment = new HomeFragment();
@@ -70,9 +72,11 @@ public class HomeFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PROFILE_SCREEN_TUTE), false);
 
         mProfileName  = (TextView)rootView.findViewById(R.id.user_name);
+        mProfileNumber  = (TextView)rootView.findViewById(R.id.user_phone);
         mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
@@ -97,9 +101,6 @@ public class HomeFragment extends BaseFragment {
                 }else {
                     v.setVisibility(View.GONE);
                     IS_TUTE_COMPLETED = true;
-//                    View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-//                    bottomMenu.animate().translationY(0);
-//                    bottomMenu.setVisibility(View.VISIBLE);
                     getActivity().invalidateOptionsMenu();
                     getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PROFILE_SCREEN_TUTE), true).apply();
                 }
@@ -149,9 +150,6 @@ public class HomeFragment extends BaseFragment {
 
                 view.findViewById(R.id.profile_guide_image).setVisibility(View.VISIBLE);
             } else {
-//                bottomMenu.animate().translationY(0);
-//                bottomMenu.setVisibility(View.VISIBLE);
-
                 view.findViewById(R.id.profile_guide_image).setVisibility(View.GONE);
             }
         }
@@ -160,49 +158,55 @@ public class HomeFragment extends BaseFragment {
 
         if (MainActivity.mProfile != null) {
             String name = MainActivity.mProfile.getName();
-            if (name == null || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
-                mProfileName.setText("");
-                mProfileName.setVisibility(View.GONE);
+            String phone = MainActivity.mProfile.getPhone_no();
+
+            if (name == null || name.isEmpty() || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
+                mProfileName.setText("Name : Anonymous User");
+                mProfileName.setVisibility(View.VISIBLE);
             } else {
-               // String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
-                mProfileName.setText(name);
+                String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
+                mProfileName.setText("Name : "+userName);
                 mProfileName.setVisibility(View.VISIBLE);
             }
+
+            if (phone == null || phone.isEmpty() || phone == "null") {
+                mProfileNumber.setText("Phone : Not Set");
+                mProfileNumber.setVisibility(View.VISIBLE);
+            } else {
+                mProfileNumber.setText("Phone : " + phone);
+                mProfileNumber.setVisibility(View.VISIBLE);
+            }
+
             String image = MainActivity.mProfile.getImage();
             if (image != null && !image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
 
-            // ************************Removed from fragment
-//            String streamName = MainActivity.mProfile.getCurrent_stream_name();
-
         } else if (MainActivity.user != null) {
 
             String name = MainActivity.user.getName();
-            if (name != null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
-                mProfileName.setText("");
-                mProfileName.setVisibility(View.GONE);
-            } else {
-                mProfileName.setText(name);
+            String phone = MainActivity.user.getPhone_no();
+
+            if (name == null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
+                mProfileName.setText("Name : Anonymous User");
                 mProfileName.setVisibility(View.VISIBLE);
+            } else {
+                String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
+                mProfileName.setText("Name : "+userName);
+                mProfileName.setVisibility(View.VISIBLE);
+            }
+
+            if (phone == null || phone.isEmpty() || phone == "null") {
+                mProfileNumber.setText("Phone : Not Set");
+                mProfileNumber.setVisibility(View.VISIBLE);
+            } else {
+                mProfileNumber.setText("Phone : " + phone);
+                mProfileNumber.setVisibility(View.VISIBLE);
             }
 
             String image = MainActivity.user.getImage();
             if (image != null && !image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
 
-//            String streamName = MainActivity.user.getStream_name();
-//>>>>>>> Stashed changes
-//            if(streamName != null && !streamName.isEmpty()){
-//                mStreamName.setVisibility(View.VISIBLE);
-//                mStreamName.setText(streamName);
-//            }
-//            else{
-//                mStreamName.setVisibility(View.GONE);
-//            }
-//<<<<<<< Updated upstream
-//=======
-//
-//>>>>>>> Stashed changes
         }
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
@@ -219,7 +223,7 @@ public class HomeFragment extends BaseFragment {
 //        }
 //    }
 
-//<<<<<<< Updated upstream
+    //<<<<<<< Updated upstream
 //    public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
 //        this.mExamDetailList=userExamsList;
 //        View rootView=getView();
@@ -238,36 +242,44 @@ public class HomeFragment extends BaseFragment {
 //
 //        }else{
 //=======
-            public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
-                this.mExamDetailList=userExamsList;
-                View rootView=getView();
-                if(rootView==null){
-                    return;
-                }
+    public void updateUserProfile(ArrayList<ExamDetail> userExamsList){
+        this.mExamDetailList=userExamsList;
+        View rootView=getView();
+        if(rootView==null){
+            return;
+        }
 //>>>>>>> Stashed changes
-
-        }
-
-    public void updateUserName(){
-        if(MainActivity.mProfile != null){
-            String name = MainActivity.mProfile.getName();
-            if(name!=null && name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase()))
-            {
-                mProfileName.setText("");
-                mProfileName.setVisibility(View.GONE);
-            }else {
-                mProfileName.setText(name);
-                mProfileName.setVisibility(View.VISIBLE);
-            }
-
-            String image = MainActivity.mProfile.getImage();
-            if (image != null && ! image.isEmpty())
-                mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-
-        }
 
     }
 
+    public void updateUserInfo(){
+        if(MainActivity.mProfile != null){
+            String name = MainActivity.user.getName();
+            String phone = MainActivity.user.getPhone_no();
+
+            if (name == null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
+                mProfileName.setText("Name : Anonymous User");
+                mProfileName.setVisibility(View.VISIBLE);
+            } else {
+                String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
+                mProfileName.setText("Name : "+userName);
+                mProfileName.setVisibility(View.VISIBLE);
+            }
+
+            if (phone == null || phone.isEmpty() || phone == "null") {
+                mProfileNumber.setText("Phone : Not Set");
+                mProfileNumber.setVisibility(View.VISIBLE);
+            } else {
+                mProfileNumber.setText("Phone : " + phone);
+                mProfileNumber.setVisibility(View.VISIBLE);
+            }
+
+            String image = MainActivity.user.getImage();
+
+            if (image != null && !image.isEmpty())
+                mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+        }
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -325,9 +337,9 @@ public class HomeFragment extends BaseFragment {
 
         //TODO:: showing progress as a profile circle
         //if(this.mExamSummary.getSyllabus_covered() ==0)
-         profileCompleted.setProgress(100);
+        profileCompleted.setProgress(100);
         //else
-         //profileCompleted.setProgress(this.mExamSummary.getSyllabus_covered());
+        //profileCompleted.setProgress(this.mExamSummary.getSyllabus_covered());
     }
 
     /**

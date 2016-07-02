@@ -714,11 +714,15 @@ public class PeekAndPop {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 peekShown = false;
                 startTimer(view);
-            } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
 
                 if (!peekShown)
                     onGeneralActionListener.onClickPeek(view, position);
 
+                cancelPendingTimer(view);
+            }
+            else if(event.getAction() == MotionEvent.ACTION_CANCEL)
+            {
                 cancelPendingTimer(view);
             }
 

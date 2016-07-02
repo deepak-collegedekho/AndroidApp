@@ -91,21 +91,33 @@ public class TabFragment extends  BaseFragment{
         mExamsTabLayout=rootView.findViewById(R.id.exams_tab_layout);
         //this.mExamTabPager.setPageTransformer(true, new ZoomPageTransformer());
         TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
+        TextView mProfileNumber = (TextView) rootView.findViewById(R.id.user_phone);
         CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
 
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
         if(MainActivity.mProfile != null) {
 
-            String name = MainActivity.mProfile.getName();
-            if(name.contains("Anonymous User"))
-            {
-                mProfileName.setText("");
-                mProfileName.setVisibility(View.GONE);
-            }else {
-                mProfileName.setText(name);
+            String name = MainActivity.user.getName();
+            String phone = MainActivity.user.getPhone_no();
+
+            if (name == null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
+                mProfileName.setText("Name : Anonymous User");
+                mProfileName.setVisibility(View.VISIBLE);
+            } else {
+                String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
+                mProfileName.setText("Name : "+userName);
                 mProfileName.setVisibility(View.VISIBLE);
             }
+
+            if (phone == null || phone.isEmpty() || phone == "null") {
+                mProfileNumber.setText("Phone : Not Set");
+                mProfileNumber.setVisibility(View.VISIBLE);
+            } else {
+                mProfileNumber.setText("Phone : " + phone);
+                mProfileNumber.setVisibility(View.VISIBLE);
+            }
+
             String image = MainActivity.mProfile.getImage();
             if (image != null && ! image.isEmpty()) {
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
@@ -124,7 +136,6 @@ public class TabFragment extends  BaseFragment{
             this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
             this.mExamTabPager.setAdapter(this.mDetailsAdapter);
             ((ViewPager.LayoutParams) ((PagerTabStrip) rootView.findViewById(R.id.exam_pager_header)).getLayoutParams()).isDecor = true;
-
 
             this.mExamTabPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
