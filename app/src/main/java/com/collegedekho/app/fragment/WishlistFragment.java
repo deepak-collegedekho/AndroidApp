@@ -111,6 +111,16 @@ public class WishlistFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_wishlist, container, false);
 
+        this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
+        if(!IS_TUTE_COMPLETED) {
+            rootView.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.VISIBLE);
+        }
+        else {
+            rootView.findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
+            rootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
+        }
+
         ((TextView) rootView.findViewById(R.id.textview_page_title)).setText(mTitle);
         progressBarLL = (LinearLayout)rootView.findViewById(R.id.progressBarLL);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.wishlist_institute_grid);
@@ -128,12 +138,30 @@ public class WishlistFragment extends BaseFragment {
 
         if(mInstitutes == null || mInstitutes.size() <= 0){
             mEmptyTextView.setVisibility(View.VISIBLE);
-            mEmptyTextView.setText("You Don't have any WishList College Please Shortlist college in Recommended...");
+            mEmptyTextView.setText("You don't have any Shortlisted college. Please Shortlist colleges in Recommended !");
         }else{
             mEmptyTextView.setVisibility(View.GONE);
         }
+        rootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
+        rootView.findViewById(R.id.recommended_tute_frame).setOnClickListener(this);
 
         return rootView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()){
+            case R.id.recommended_tute_image:
+            case R.id.recommended_tute_frame:
+                v.setVisibility(View.GONE);
+                if(getView() != null){
+                    getView().findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
+                    getView().findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
+                }
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean("Wishlist tute", true).apply();
+                break;
+        }
     }
 
     private void setupPeekAndPopStandard(){

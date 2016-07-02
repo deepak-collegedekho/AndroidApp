@@ -42,7 +42,6 @@ public class HomeFragment extends BaseFragment {
     private OnTabSelectListener mListener;
     private ExamDetail mExamDetail; // detail is needs in tabs to get id of exams
     private ExamSummary mExamSummary;  // exam summary gives info about the colleges of user
-    private boolean IS_TUTE_COMPLETED = true;
     private int i = 0;
     private TextView mProfileNumber;
 
@@ -73,39 +72,11 @@ public class HomeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PROFILE_SCREEN_TUTE), false);
-
         mProfileName  = (TextView)rootView.findViewById(R.id.user_name);
         mProfileNumber  = (TextView)rootView.findViewById(R.id.user_phone);
         mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
-
-        rootView.findViewById(R.id.profile_guide_image).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(i ==0){
-                    i++;
-                    rootView.findViewById(R.id.profile_guide_image).setBackgroundResource(R.drawable.ic_profile_tute2);
-                }else if(i ==1) {
-                    i++;
-                    rootView.findViewById(R.id.profile_guide_image).setBackgroundResource(R.drawable.ic_profile_tute3);
-                }
-                else if(i ==2) {
-                    i++;
-                    v.setBackgroundResource(R.drawable.ic_profile_tute4);
-                }
-                else if(i ==3) {
-                    i++;
-                    v.setBackgroundResource(R.drawable.ic_profile_tute5);
-                }else {
-                    v.setVisibility(View.GONE);
-                    IS_TUTE_COMPLETED = true;
-                    getActivity().invalidateOptionsMenu();
-                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PROFILE_SCREEN_TUTE), true).apply();
-                }
-            }
-        });
 
         rootView.findViewById(R.id.college_list_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
         rootView.findViewById(R.id.connect_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
@@ -139,20 +110,22 @@ public class HomeFragment extends BaseFragment {
         } catch (Exception e) {
 
         }
-        View view = getView();
-        if (view != null) {
-            IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PROFILE_SCREEN_TUTE), false);
-            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-            if (!IS_TUTE_COMPLETED) {
-
-                bottomMenu.animate().translationY(bottomMenu.getHeight());
-                bottomMenu.setVisibility(View.GONE);
-
-                view.findViewById(R.id.profile_guide_image).setVisibility(View.VISIBLE);
-            } else {
-                view.findViewById(R.id.profile_guide_image).setVisibility(View.GONE);
-            }
-        }
+//        View view = getView();
+//        if (view != null) {
+//            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+//            if (!IS_TUTE_COMPLETED) {
+//
+//                bottomMenu.animate().translationY(bottomMenu.getHeight());
+//                bottomMenu.setVisibility(View.GONE);
+//
+//                view.findViewById(R.id.profile_guide_image).setVisibility(View.VISIBLE);
+//            } else {
+////                bottomMenu.animate().translationY(0);
+////                bottomMenu.setVisibility(View.VISIBLE);
+//
+//                view.findViewById(R.id.profile_guide_image).setVisibility(View.GONE);
+//            }
+//        }
 
         Constants.READY_TO_CLOSE = false;
 

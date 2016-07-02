@@ -82,21 +82,4 @@
         <!--/>-->
     </LinearLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:visibility="visible"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/profile_guide_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:clickable="true"
-            android:visibility="gone"
-            android:contentDescription="@string/profile_tute_description"
-            android:background="@drawable/ic_profile_tute1" />
-
-    </FrameLayout>
-
 </RelativeLayout>

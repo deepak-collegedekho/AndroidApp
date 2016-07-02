@@ -32,4 +32,23 @@
         />
     <include layout="@layout/layout_progressbar"/>
 
+    <FrameLayout
+        android:id="@+id/recommended_tute_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:visibility="gone"
+        >
+
+        <ImageView
+            android:id="@+id/recommended_tute_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:contentDescription="@string/profile_tute_description"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_wishlist_tute"
+            />
+    </FrameLayout>
+
 </RelativeLayout>

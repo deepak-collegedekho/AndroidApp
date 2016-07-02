@@ -470,16 +470,16 @@ public class MainActivity extends AppCompatActivity
             Utils.appLaunched(this);
         }
 
-        drawerContent = getResources().getStringArray(R.array.navigation_drawer_items_array);
+//        drawerContent = getResources().getStringArray(R.array.navigation_drawer_items_array);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_activity_container);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this, R.layout.list_view_item_row, drawerContent);
-        mDrawerList.setAdapter(adapter);
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        setupDrawerToggle();
+//        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+//        DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this, R.layout.list_view_item_row, drawerContent);
+//        mDrawerList.setAdapter(adapter);
+//        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+//        mDrawerLayout.setDrawerListener(mDrawerToggle);
+//        setupDrawerToggle();
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        this.mDrawerToggle.syncState();
+//        this.mDrawerToggle.syncState();
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
@@ -574,20 +574,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
+//        mDrawerToggle.syncState();
     }
 
-    void setupToolbar(){
-//        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-    }
+//    void setupToolbar(){
+////        toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(mToolbar);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//    }
 
-    void setupDrawerToggle(){
-        mDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(this,mDrawerLayout,mToolbar,R.string.app_name, R.string.app_name);
-        //This is necessary to change the icon of the Drawer Toggle upon state change.
-        mDrawerToggle.syncState();
-    }
+//    void setupDrawerToggle(){
+//        mDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(this,mDrawerLayout,mToolbar,R.string.app_name, R.string.app_name);
+//        //This is necessary to change the icon of the Drawer Toggle upon state change.
+//        mDrawerToggle.syncState();
+//    }
 
 
     /**
@@ -780,6 +780,7 @@ public class MainActivity extends AppCompatActivity
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         View logoView = getToolbarLogoIcon(mToolbar);
+        logoView.setPadding(0,0,0,0);
 //        mToolbar.setNavigationIcon(R.drawable.ic_cd_colored);
 //        mToolbar.setNavigationOnClickListener(
 
@@ -5071,7 +5072,7 @@ public class MainActivity extends AppCompatActivity
         IS_HOME_LOADED = true;
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_HOME_LOADED), true).apply();
 
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+//        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 
 
@@ -6093,14 +6094,14 @@ public class MainActivity extends AppCompatActivity
     };
 
     public void mUpdateDrawerItem(int position) {
-        for (int i = 0; i < mDrawerList.getChildCount(); i++) {
-            ((TextView) mDrawerList.getChildAt(i).findViewById(R.id.textViewName)).setTextColor(Color.BLACK);
-            mDrawerList.getChildAt(i).findViewById(R.id.drawer_item_container).setBackgroundResource(R.color.white);
-        }
-        if (position >= 0) {
-            ((TextView) mDrawerList.getChildAt(position).findViewById(R.id.textViewName)).setTextColor(Color.WHITE);
-            mDrawerList.getChildAt(position).findViewById(R.id.drawer_item_container).setBackgroundResource(R.color.primary_color);
-        }
+//        for (int i = 0; i < mDrawerList.getChildCount(); i++) {
+//            ((TextView) mDrawerList.getChildAt(i).findViewById(R.id.textViewName)).setTextColor(Color.BLACK);
+//            mDrawerList.getChildAt(i).findViewById(R.id.drawer_item_container).setBackgroundResource(R.color.white);
+//        }
+//        if (position >= 0) {
+//            ((TextView) mDrawerList.getChildAt(position).findViewById(R.id.textViewName)).setTextColor(Color.WHITE);
+//            mDrawerList.getChildAt(position).findViewById(R.id.drawer_item_container).setBackgroundResource(R.color.primary_color);
+//        }
     }
 
     public void mUpdateTabMenuItem(int tabPosition, int duration) {

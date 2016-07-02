@@ -46,6 +46,7 @@ public class TabFragment extends  BaseFragment{
     private ViewPager mExamTabPager  = null;
     private boolean isFistTime = false;
     private boolean IS_TUTE_COMPLETED = true;
+    private int i = 0 ;
     private View mExamsTabLayout;
 
     TextView recommended_countTV;
@@ -86,6 +87,44 @@ public class TabFragment extends  BaseFragment{
         trending_countTV   = (TextView)rootView.findViewById(R.id.trending_count);
         shortlist_countTV    = (TextView)rootView.findViewById(R.id.shortlist_count);
         explore_countTV          = (TextView)rootView.findViewById(R.id.explore_count);
+
+        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+
+        rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!IS_TUTE_COMPLETED){
+                    if(i ==0){
+                        i++;
+                        v.setBackgroundResource(R.drawable.ic_profile_tute2);
+                    } else if(i ==1) {
+                        i++;
+                        v.setBackgroundResource(R.drawable.ic_profile_tute3);
+                    } else if(i ==2) {
+                        i++;
+                        v.setBackgroundResource(R.drawable.ic_profile_tute4);
+                    } else {
+                        v.setVisibility(View.GONE);
+                        IS_TUTE_COMPLETED = true;
+//                    View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+//                    bottomMenu.animate().translationY(0);
+//                    bottomMenu.setVisibility(View.VISIBLE);
+                        getActivity().invalidateOptionsMenu();
+                        getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
+                        View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+                        bottomMenu.animate().translationY(0);
+                        bottomMenu.setVisibility(View.VISIBLE);
+                        updateCollegeCount(selectedTabPosition);
+                    }
+                } else {
+                    v.setVisibility(View.GONE);
+                    View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+                    bottomMenu.animate().translationY(0);
+                    bottomMenu.setVisibility(View.VISIBLE);
+                    updateCollegeCount(selectedTabPosition);
+                }
+            }
+        });
 
         this.mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
         mExamsTabLayout=rootView.findViewById(R.id.exams_tab_layout);
@@ -181,23 +220,23 @@ public class TabFragment extends  BaseFragment{
         rootView.findViewById(R.id.home_widget_fourth).setOnClickListener(this);
         rootView.findViewById(R.id.profile_image).setOnClickListener(this);
 
-        rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                v.setVisibility(View.GONE);
-                IS_TUTE_COMPLETED = true;
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
-
-                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-                bottomMenu.animate().translationY(0);
-                bottomMenu.setVisibility(View.VISIBLE);
-
-                updateCollegeCount(selectedTabPosition);
-
-                return true;
-            }
-        });
+//        rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//
+//                v.setVisibility(View.GONE);
+//                IS_TUTE_COMPLETED = true;
+//                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
+//
+//                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+//                bottomMenu.animate().translationY(0);
+//                bottomMenu.setVisibility(View.VISIBLE);
+//
+//                updateCollegeCount(selectedTabPosition);
+//
+//                return true;
+//            }
+//        });
         return rootView;
     }
 
@@ -341,6 +380,8 @@ public class TabFragment extends  BaseFragment{
         ImageView secondSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_second);
         ImageView thirdSubMenuIV      = (ImageView)view.findViewById(R.id.home_widget_image_third);
         ImageView fourthSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_fourth);
+
+
 
         if(this.selectedTabPosition == 1){
             IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
