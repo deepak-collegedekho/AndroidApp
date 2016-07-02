@@ -622,9 +622,13 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
             mRootView.findViewById(R.id.user_education_education_layout).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.VISIBLE);
 
-            if(mExamAdapter == null)
-                mExamAdapter = new ExamsAdapter(getActivity(),  mExamList);
-            mStreamRecyclerView.setAdapter(mExamAdapter);
+            if(mExamAdapter == null) {
+                mExamAdapter = new ExamsAdapter(getActivity(), mExamList);
+                mStreamRecyclerView.setAdapter(mExamAdapter);
+            }else{
+                mStreamRecyclerView.setAdapter(mExamAdapter);
+                mExamAdapter.updateExamList(mExamList);
+            }
 
             cExamQueryListener = new ExamOnQueryListener(mExamList,this);
             this.mExamSearchView.setOnQueryTextListener(cExamQueryListener);
@@ -684,6 +688,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
         mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
         mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
+        mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_radio_group).setVisibility(View.VISIBLE);
@@ -700,6 +705,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
         mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
         mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
+        mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_heading_devider).setVisibility(View.VISIBLE);
