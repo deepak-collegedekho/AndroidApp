@@ -96,6 +96,9 @@
                                 android:text="Phone"/>
 
                             <TextView
+                                style="@style/AppTheme.profileTextViewColon"/>
+
+                            <TextView
                                 android:id="@+id/profile_info_phone"
                                 style="@style/AppTheme.profileInfoTextView"/>
 
@@ -107,6 +110,9 @@
                             <TextView
                                 style="@style/AppTheme.profileTextViewTitle"
                                 android:text="Email"/>
+
+                            <TextView
+                                style="@style/AppTheme.profileTextViewColon"/>
 
                             <TextView
                                 android:id="@+id/profile_info_email"
@@ -134,6 +140,9 @@
                         android:text="City"/>
 
                     <TextView
+                        style="@style/AppTheme.profileTextViewColon"/>
+
+                    <TextView
                         android:id="@+id/profile_info_city"
                         style="@style/AppTheme.profileInfoExpendedTextView"/>
 
@@ -144,6 +153,9 @@
                     <TextView
                         style="@style/AppTheme.profileTextViewExpendedTitle"
                         android:text="State"/>
+
+                    <TextView
+                        style="@style/AppTheme.profileTextViewColon"/>
 
                     <TextView
                         android:id="@+id/profile_info_state"
@@ -158,6 +170,9 @@
                         android:text="Mother Tongue"/>
 
                     <TextView
+                        style="@style/AppTheme.profileTextViewColon"/>
+
+                    <TextView
                         android:id="@+id/profile_info_mother_tongue"
                         style="@style/AppTheme.profileInfoExpendedTextView"/>
 
@@ -168,6 +183,9 @@
                     <TextView
                         style="@style/AppTheme.profileTextViewExpendedTitle"
                         android:text="Category"/>
+
+                    <TextView
+                        style="@style/AppTheme.profileTextViewColon"/>
 
                     <TextView
                         android:id="@+id/profile_info_category"
@@ -331,6 +349,9 @@
                                 android:text="Degree"/>
 
                             <TextView
+                                style="@style/AppTheme.profileTextViewColon"/>
+
+                            <TextView
                                 android:id="@+id/profile_education_degree"
                                 style="@style/AppTheme.profileInfoTextView"/>
 
@@ -341,6 +362,9 @@
                             <TextView
                                 style="@style/AppTheme.profileTextViewTitle"
                                 android:text="Passing Year"/>
+
+                            <TextView
+                                style="@style/AppTheme.profileTextViewColon"/>
 
                             <TextView
                                 android:id="@+id/profile_education_year"
@@ -368,6 +392,9 @@
                         android:text="Specialization"/>
 
                     <TextView
+                        style="@style/AppTheme.profileTextViewColon"/>
+
+                    <TextView
                         android:id="@+id/profile_education_specialization"
                         style="@style/AppTheme.profileInfoExpendedTextView"
                         android:layout_weight=".56"/>
@@ -381,6 +408,9 @@
                         android:text="Stream"/>
 
                     <TextView
+                        style="@style/AppTheme.profileTextViewColon"/>
+
+                    <TextView
                         android:id="@+id/profile_education_stream"
                         style="@style/AppTheme.profileInfoTextView"/>
 
@@ -391,6 +421,9 @@
                     <TextView
                         style="@style/AppTheme.profileTextViewExpendedTitle"
                         android:text="Score"/>
+
+                    <TextView
+                        style="@style/AppTheme.profileTextViewColon"/>
 
                     <TextView
                         android:id="@+id/profile_education_score"
@@ -576,6 +609,9 @@
                                 android:text="Degrees"/>
 
                             <TextView
+                                style="@style/AppTheme.profileTextViewColon"/>
+
+                            <TextView
                                 android:id="@+id/profile_preferences_degree"
                                 style="@style/AppTheme.profileInfoTextView"/>
 
@@ -586,6 +622,9 @@
                             <TextView
                                 style="@style/AppTheme.profileTextViewTitle"
                                 android:text="Cities"/>
+
+                            <TextView
+                                style="@style/AppTheme.profileTextViewColon"/>
 
                             <TextView
                                 android:id="@+id/profile_preferences_location"
@@ -613,6 +652,9 @@
                         android:text="Specialization"/>
 
                     <TextView
+                        style="@style/AppTheme.profileTextViewColon"/>
+
+                    <TextView
                         android:id="@+id/profile_preferences_specialization"
                         android:layout_weight=".56"
                         style="@style/AppTheme.profileInfoExpendedTextView"/>
@@ -624,6 +666,9 @@
                     <TextView
                         style="@style/AppTheme.profileTextViewExpendedTitle"
                         android:text="Stream"/>
+
+                    <TextView
+                        style="@style/AppTheme.profileTextViewColon"/>
 
                     <TextView
                         android:id="@+id/profile_preferences_stream"
@@ -639,6 +684,9 @@
                         android:text="Year"/>
 
                     <TextView
+                        style="@style/AppTheme.profileTextViewColon"/>
+
+                    <TextView
                         android:id="@+id/profile_preferences_year"
                         style="@style/AppTheme.profileInfoExpendedTextView"/>
 
@@ -651,6 +699,9 @@
                         android:text="Mode"/>
 
                     <TextView
+                        style="@style/AppTheme.profileTextViewColon"/>
+
+                    <TextView
                         android:id="@+id/profile_preferences_mode"
                         style="@style/AppTheme.profileInfoExpendedTextView"/>
 
@@ -661,6 +712,9 @@
                     <TextView
                         style="@style/AppTheme.profileTextViewExpendedTitle"
                         android:text="Fee Range"/>
+
+                    <TextView
+                        style="@style/AppTheme.profileTextViewColon"/>
 
                     <TextView
                         android:id="@+id/profile_preferences_fee_range"
@@ -829,6 +883,9 @@
                             android:text="Exams"/>
 
                         <TextView
+                            style="@style/AppTheme.profileTextViewColon"/>
+
+                        <TextView
                             android:id="@+id/profile_exams_name"
                             style="@style/AppTheme.profileInfoTextView"/>
 
@@ -920,6 +977,9 @@
                                 android:text="Father"/>
 
                             <TextView
+                                style="@style/AppTheme.profileTextViewColon"/>
+
+                            <TextView
                                 android:id="@+id/profile_father_name"
                                 style="@style/AppTheme.profileInfoTextView"/>
 
@@ -930,6 +990,9 @@
                             <TextView
                                 style="@style/AppTheme.profileTextViewTitle"
                                 android:text="Mother"/>
+
+                            <TextView
+                                style="@style/AppTheme.profileTextViewColon"/>
 
                             <TextView
                                 android:id="@+id/profile_mother_name"
@@ -948,15 +1011,18 @@
                 android:visibility="gone"
                 android:orientation="horizontal">
 
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:layout_weight=".44"
-                        android:text="Coaching Institute"/>
+                <TextView
+                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                    android:layout_weight=".44"
+                    android:text="Coaching Institute"/>
 
-                    <TextView
-                        android:id="@+id/profile_coaching_institute_name"
-                        android:layout_weight=".56"
-                        style="@style/AppTheme.profileInfoExpendedTextView"/>
+                <TextView
+                    style="@style/AppTheme.profileTextViewColon"/>
+
+                <TextView
+                    android:id="@+id/profile_coaching_institute_name"
+                    android:layout_weight=".56"
+                    style="@style/AppTheme.profileInfoExpendedTextView"/>
 
             </LinearLayout>
             <LinearLayout
@@ -1145,8 +1211,8 @@
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/profile_image_update_btn"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_gravity="bottom|left"
                 app:srcCompat="@drawable/ic_edit_image"
                 android:visibility="visible"

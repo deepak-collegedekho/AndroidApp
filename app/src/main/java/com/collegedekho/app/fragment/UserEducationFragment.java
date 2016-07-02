@@ -195,7 +195,8 @@ public class UserEducationFragment extends BaseFragment {
             case R.id.user_education_radio_button_college:
             case R.id.user_education_radio_button_pg:
                 if(mRootView.findViewById(R.id.user_education_radio_group).getVisibility() == View.VISIBLE) {
-                    if (mRootView.findViewById(R.id.user_education_next_button).getAlpha() == 1)
+                    View nextView = mRootView.findViewById(R.id.user_education_next_button);
+                    if (nextView.getAlpha() == 1)
                         break;
 
                     Runnable animEnd = new Runnable() {
@@ -205,10 +206,10 @@ public class UserEducationFragment extends BaseFragment {
                         }
                     };
 
-                    mRootView.findViewById(R.id.user_education_next_button).setX(4000);
+                    nextView.setX(4000);
 
-                    mRootView.findViewById(R.id.user_education_next_button).animate()
-                            .x(mRootView.getWidth() - mRootView.findViewById(R.id.user_education_next_button).getWidth() - mRootView.findViewById(R.id.user_education_next_button).getPaddingRight())
+                    nextView.animate()
+                            .x(mRootView.getWidth() - nextView.getWidth() - nextView.getPaddingRight())
                             .alpha(1)
                             .withEndAction(animEnd)
                             .setDuration(Constants.ANIM_AVERAGE_DURATION);
@@ -468,11 +469,13 @@ public class UserEducationFragment extends BaseFragment {
         ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
         mStreamRecyclerView.setVisibility(View.VISIBLE);
 
-        //if(mStreamAdapter == null)
+        if(mStreamAdapter == null) {
             mStreamAdapter = new ExamStreamAdapter(getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
-
-        mStreamRecyclerView.setAdapter(mStreamAdapter);
-        //mStreamAdapter.updateStreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
+            mStreamRecyclerView.setAdapter(mStreamAdapter);
+        }else {
+            mStreamRecyclerView.setAdapter(mStreamAdapter);
+            mStreamAdapter.updateStreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
+        }
     }
 
     private void mEditUserExams(){
@@ -538,7 +541,7 @@ public class UserEducationFragment extends BaseFragment {
                 mRootView.findViewById(R.id.user_education_name_layout).setVisibility(View.VISIBLE);
                 nameView.setVisibility(View.GONE);
                 if(MainActivity.mProfile != null)
-                    MainActivity.mProfile.setName(" :"+userName);
+                    MainActivity.mProfile.setName(userName);
             }
         }
 
@@ -555,11 +558,10 @@ public class UserEducationFragment extends BaseFragment {
                 mRootView.findViewById(R.id.user_education_phone_layout).setVisibility(View.VISIBLE);
                 phoneView.setVisibility(View.GONE);
                 if(MainActivity.mProfile != null)
-                    MainActivity.mProfile.setPhone_no(" :"+userPhoneNumber);
+                    MainActivity.mProfile.setPhone_no(userPhoneNumber);
             }
         }
     }
-
 
 
     private void onUserExamsSelected() {
@@ -617,6 +619,10 @@ public class UserEducationFragment extends BaseFragment {
         this.mExamList.clear();
         mExamList.addAll(examList);
       }
+
+    public void hideNavigationIcon(){
+        mRootView.findViewById(R.id.navigation_cd_icon).setVisibility(View.GONE);
+    }
 
 
     private void mTakeMeToRecommended(){

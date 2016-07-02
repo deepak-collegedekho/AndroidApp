@@ -1293,8 +1293,7 @@ public class MainActivity extends AppCompatActivity
             Log.e("MA: DL URL ", MainActivity.this.mDeepLinkingURI);
             this.isFromDeepLinking = true;
             this.mHandleDeepLinking(this.mDeepLinkingURI);
-        }else if ((MainActivity.user.getExams_set() == 1)
-                || (MainActivity.user.getIs_preparing().equals("0")) && IS_HOME_LOADED){
+        }else if ((MainActivity.user.getExams_set() == 1) || IS_HOME_LOADED){
             if (IS_HOME_LOADED) {
                 mLoadHomeScreen(null);
             }
@@ -2089,8 +2088,8 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.commit();
 
             if (this.currentFragment instanceof HomeFragment) {
-                if (findViewById(R.id.app_bar_layout).getVisibility() != View.VISIBLE)
-                    findViewById(R.id.app_bar_layout).setVisibility(View.VISIBLE);
+
+                mShowAppBarLayout();
 
                 View bottomMenu = findViewById(R.id.bottom_tab_layout);
                 bottomMenu.animate().translationY(0);
@@ -2119,6 +2118,16 @@ public class MainActivity extends AppCompatActivity
             invalidateOptionsMenu();
     }
     private boolean isUpdateStreams;
+
+    private void mShowAppBarLayout(){
+        //  show appBarLayout and toolBar
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.main_container).getLayoutParams();
+        params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+        findViewById(R.id.main_container).setLayoutParams(params);
+
+        if (findViewById(R.id.app_bar_layout).getVisibility() != View.VISIBLE)
+            findViewById(R.id.app_bar_layout).setVisibility(View.VISIBLE);
+    }
 
     @Override
     public void onDataLoaded(String tag, String response) {
@@ -2213,6 +2222,9 @@ public class MainActivity extends AppCompatActivity
                 mClearBackStack();
                 isFromNotification = true;
                 this.mCurrentTitle = "Recommended Institutes";
+                if(currentFragment instanceof UserEducationFragment)
+                    ((UserEducationFragment)currentFragment).hideNavigationIcon();
+                mShowAppBarLayout();
                 Constants.IS_RECOMENDED_COLLEGE = true;
                 if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED, true);
@@ -3424,6 +3436,7 @@ public class MainActivity extends AppCompatActivity
 
         this.requestForUserProfileUpdate(params, -1);
 
+        mClearBackStack();
         this.mLoadHomeScreen(null);
     }
 
@@ -4877,14 +4890,9 @@ public class MainActivity extends AppCompatActivity
             try {
                 onUpdateUserExams(responseJson);
             } catch (IOException e) {
-
             }
         }
 
-        //  show appBarLayout and toolBar
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.main_container).getLayoutParams();
-        params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
-        findViewById(R.id.main_container).setLayoutParams(params);
         mUserExamsList = MainActivity.user.getUser_exams();
         if (mUserExamsList == null)
             mUserExamsList = new ArrayList<>();
@@ -5151,6 +5159,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void OnTakeMeToRecommended() {
 
+
         this.mMakeNetworkCall(Constants.TAKE_ME_TO_RECOMMENDED, Constants.BASE_URL + "personalize/institutes/",null);
 
     }
@@ -5168,8 +5177,9 @@ public class MainActivity extends AppCompatActivity
         this.mClearBackStack();
         showProfileScreen(MainActivity.mProfile, false);
         getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_HOME_LOADED), true).apply();
-
-
+        if(currentFragment instanceof UserEducationFragment)
+            ((UserEducationFragment)currentFragment).hideNavigationIcon();
+        mShowAppBarLayout();
         isFromNotification = true;
 
     }

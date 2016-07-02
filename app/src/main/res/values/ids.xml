@@ -4,5 +4,6 @@
     <item name="app_logo_icon_layout" type="id" />
     <item name="profile_image" type="id" />
     <item name="user_profile_progress" type="id" />
+    <item name="navigation_cd_icon" type="id" />
     <item name="empty" type="id" />
 </resources>

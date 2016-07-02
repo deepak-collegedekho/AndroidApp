@@ -341,27 +341,36 @@
     <style name="AppTheme.profileTextViewTitle" parent="AppTheme.profileTextView">
         <item name="android:textColor">@color/white</item>
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">.28</item>
+        <item name="android:layout_weight">.27</item>
         <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="AppTheme.profileTextViewExpendedTitle" parent="AppTheme.profileTextView">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">.22</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:paddingLeft">5dp</item>
-        <item name="android:paddingRight">1dp</item>
     </style>
 
     <style name="AppTheme.profileInfoTextView" parent="AppTheme.profileTextView">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">.72</item>
     </style>
+
+    <style name="AppTheme.profileTextViewExpendedTitle" parent="AppTheme.profileTextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">.22</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">1dp</item>
+    </style>
+
     <style name="AppTheme.profileInfoExpendedTextView" parent="AppTheme.profileTextView">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">.78</item>
+        <item name="android:layout_weight">.77</item>
     </style>
+
+    <style name="AppTheme.profileTextViewColon" >
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">.01</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/m16sp</item>
+        <item name="android:text">:</item>
+    </style>
+
 
 
     <style name="AppTheme.profileInfoTLayout" parent="AppTheme.LinearLayout.Horizontal">

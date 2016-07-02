@@ -438,9 +438,9 @@
     <string name="institute_logo_description">Logo for wishlist college</string>
 
     <!-- TRUE CALLER Debug key-->
-    <string name="partnerKey">baLWqkLO85xFIlFrAi5phqW1zSfCceMb</string>
-     TRUE CALLER Release key<!--
-    <string name="partnerKey">ZjojDtbi99nS9J3pW8dwMfFYkrHxYeRM</string>-->
+   <!-- <string name="partnerKey">baLWqkLO85xFIlFrAi5phqW1zSfCceMb</string>-->
+   <!--  TRUE CALLER Release key-->
+    <string name="partnerKey">ZjojDtbi99nS9J3pW8dwMfFYkrHxYeRM</string>
 
     <!--   new and Article image transaction-->
     <string name="news_image_transaction">NewsImageTransaction</string>
@@ -467,7 +467,7 @@
     <string name="currently_in_school">Currently In School</string>
     <string name="currently_in_graduation">In College/ Graduated College</string>
     <string name="currently_in_pg">In Post Graduate College</string>
-    <string name="currently_studying_yet">Currently Studding Yet?</string>
+    <string name="currently_studying_yet">Currently Studying Yet?</string>
     <string name="your_current_stream">Your Current Stream?</string>
     <string name="which_exams_are_you_preparing">Which exams are you preparing for?</string>
     <string name="go_to_recommended">Go to Recommended Colleges</string>
@@ -475,6 +475,6 @@
     <string name="go_to_me_profile">Personalize the App Further</string>
 
     <string name="please_select_your_stream">Please Select Your Stream</string>
-    <string name="please_select_your_level">Please Select Your Level</string>
+    <string name="please_select_your_level">Please Select Your Education</string>
 
 </resources>

@@ -157,51 +157,51 @@ public class ProfileFragment extends BaseFragment {
         int infoProgressStatus = 0;
         String email = mProfile.getEmail();
         if (email != null && !email.isEmpty() && !email.contains("@anonymouscollegedekho.com")) {
-            ((TextView) mRootView.findViewById(R.id.profile_info_email)).setText(": " + email);
+            ((TextView) mRootView.findViewById(R.id.profile_info_email)).setText(email);
             infoProgressStatus += 18;
         } else {
              email = Utils.getDeviceEmail(getActivity());
-            ((TextView) mRootView.findViewById(R.id.profile_info_email)).setText(": "+email);
+            ((TextView) mRootView.findViewById(R.id.profile_info_email)).setText(email);
         }
 
         String phone = mProfile.getPhone_no();
         if (phone != null && !phone.isEmpty()) {
-            ((TextView) mRootView.findViewById(R.id.profile_info_phone)).setText(": +91-" + phone);
+            ((TextView) mRootView.findViewById(R.id.profile_info_phone)).setText("+91-" + phone);
             infoProgressStatus += 18;
         } else {
-            ((TextView) mRootView.findViewById(R.id.profile_info_phone)).setText(": NA");
+            ((TextView) mRootView.findViewById(R.id.profile_info_phone)).setText("NA");
         }
 
         String city = mProfile.getCity_name();
         if (city != null && !city.isEmpty()) {
-            ((TextView) mRootView.findViewById(R.id.profile_info_city)).setText(": " + city);
+            ((TextView) mRootView.findViewById(R.id.profile_info_city)).setText(city);
             infoProgressStatus += 16;
         } else {
-            ((TextView) mRootView.findViewById(R.id.profile_info_city)).setText(": NA");
+            ((TextView) mRootView.findViewById(R.id.profile_info_city)).setText("NA");
         }
 
         String state = mProfile.getState_name();
         if (state != null && !state.isEmpty()) {
-            ((TextView) mRootView.findViewById(R.id.profile_info_state)).setText(": " + state);
+            ((TextView) mRootView.findViewById(R.id.profile_info_state)).setText(state);
             infoProgressStatus += 16;
         } else {
-            ((TextView) mRootView.findViewById(R.id.profile_info_state)).setText(": NA");
+            ((TextView) mRootView.findViewById(R.id.profile_info_state)).setText("NA");
         }
 
         String motherTongue = mProfile.getMother_tongue_name();
         if (motherTongue != null && !motherTongue.isEmpty()) {
-            ((TextView) mRootView.findViewById(R.id.profile_info_mother_tongue)).setText(": " + motherTongue);
+            ((TextView) mRootView.findViewById(R.id.profile_info_mother_tongue)).setText(motherTongue);
             infoProgressStatus += 16;
         } else {
-            ((TextView) mRootView.findViewById(R.id.profile_info_mother_tongue)).setText(": NA");
+            ((TextView) mRootView.findViewById(R.id.profile_info_mother_tongue)).setText("NA");
         }
 
         String category = mProfile.getSocial_category_name();
         if (category != null && !category.isEmpty()) {
-            ((TextView) mRootView.findViewById(R.id.profile_info_category)).setText(": " + category);
+            ((TextView) mRootView.findViewById(R.id.profile_info_category)).setText(category);
             infoProgressStatus += 16;
         } else {
-            ((TextView) mRootView.findViewById(R.id.profile_info_category)).setText(": NA");
+            ((TextView) mRootView.findViewById(R.id.profile_info_category)).setText("NA");
         }
         // set basic info progress
         setProfileProgressStatus((ProgressBar) mRootView.findViewById(R.id.profile_info_progress), infoProgressStatus);
@@ -213,33 +213,33 @@ public class ProfileFragment extends BaseFragment {
         int userCurrentStreamId = mProfile.getCurrent_stream_id();
         if (userCurrentStreamId == 16 || userCurrentStreamId == 33 || userCurrentStreamId == 34 ||
                 userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37) {
-            ((TextView) mRootView.findViewById(R.id.profile_education_degree)).setText(": School");
+            ((TextView) mRootView.findViewById(R.id.profile_education_degree)).setText("School");
             currentEducationStatus += 18;
         } else {
             String currentDegreeName = mProfile.getCurrent_degree_name();
             if (currentDegreeName != null && !currentDegreeName.isEmpty()) {
-                ((TextView) mRootView.findViewById(R.id.profile_education_degree)).setText(": " + currentDegreeName);
+                ((TextView) mRootView.findViewById(R.id.profile_education_degree)).setText(currentDegreeName);
                 currentEducationStatus += 18;
             } else {
-                ((TextView) mRootView.findViewById(R.id.profile_education_degree)).setText(": NA");
+                ((TextView) mRootView.findViewById(R.id.profile_education_degree)).setText("NA");
             }
         }
 
         // set user's Passing Year
         int currentPassingYear = mProfile.getCurrent_passing_year();
         if(currentPassingYear >= 2000) {
-            ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(": " + currentPassingYear);
+            ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(currentPassingYear);
             currentEducationStatus +=18;
         } else {
-            ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(": NA");
+            ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText("NA");
         }
         // set User Stream Name in Current Education
         String currentStream = mProfile.getCurrent_stream_name();
         if (currentStream != null && !currentStream.isEmpty()){
-            ((TextView)mRootView.findViewById(R.id.profile_education_stream)).setText(": "+currentStream);
+            ((TextView)mRootView.findViewById(R.id.profile_education_stream)).setText(currentStream);
             currentEducationStatus +=17;
         }else{
-            ((TextView)mRootView.findViewById(R.id.profile_education_stream)).setText(": NA");
+            ((TextView)mRootView.findViewById(R.id.profile_education_stream)).setText("NA");
         }
 
         // hide specialization if user current
@@ -254,10 +254,10 @@ public class ProfileFragment extends BaseFragment {
 
             String currentSpecialization = mProfile.getCurrent_specialization_name();
             if (currentSpecialization != null && !currentSpecialization.isEmpty()){
-                ((TextView)mRootView.findViewById(R.id.profile_education_specialization)).setText(": "+currentSpecialization);
+                ((TextView)mRootView.findViewById(R.id.profile_education_specialization)).setText(currentSpecialization);
                 currentEducationStatus +=17;
             }else{
-                ((TextView)mRootView.findViewById(R.id.profile_education_specialization)).setText(": NA");
+                ((TextView)mRootView.findViewById(R.id.profile_education_specialization)).setText("NA");
             }
         }
 
@@ -265,17 +265,17 @@ public class ProfileFragment extends BaseFragment {
         int currentScore = mProfile.getCurrent_score();
         int scoreType = mProfile.getCurrent_score_type();
         if (scoreType <  0){
-            ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(": "+currentScore);
+            ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(currentScore);
             currentEducationStatus +=16;
         }else{
-            ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(": "+currentScore +" "+  ProfileMacro.getCurrentScoreTypeName(scoreType));
+            ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(currentScore +" "+  ProfileMacro.getCurrentScoreTypeName(scoreType));
         }
 
         // set user's education mode
         int currentMode = mProfile.getCurrent_mode();
         {
             currentEducationStatus +=14;
-            ((TextView) mRootView.findViewById(R.id.profile_education_mode)).setText(": " + ProfileMacro.getEducationModeName(currentMode));
+            ((TextView) mRootView.findViewById(R.id.profile_education_mode)).setText(ProfileMacro.getEducationModeName(currentMode));
         }
 
         setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_education_progress), currentEducationStatus);
@@ -290,27 +290,27 @@ public class ProfileFragment extends BaseFragment {
         int otherInfoStatus =0;
         String fatherName = mProfile.getFathers_name();
         if (fatherName != null && !fatherName.isEmpty()){
-            ((TextView)mRootView.findViewById(R.id.profile_father_name)).setText(": "+fatherName);
+            ((TextView)mRootView.findViewById(R.id.profile_father_name)).setText(fatherName);
             otherInfoStatus += 34;
         }else{
-            ((TextView)mRootView.findViewById(R.id.profile_father_name)).setText(": NA");
+            ((TextView)mRootView.findViewById(R.id.profile_father_name)).setText("NA");
         }
 
 
         String motherName = mProfile.getMothers_name();
         if (motherName != null && !motherName.isEmpty()){
-            ((TextView)mRootView.findViewById(R.id.profile_mother_name)).setText(": "+motherName);
+            ((TextView)mRootView.findViewById(R.id.profile_mother_name)).setText(motherName);
             otherInfoStatus += 33;
         }else{
-            ((TextView)mRootView.findViewById(R.id.profile_mother_name)).setText(": NA");
+            ((TextView)mRootView.findViewById(R.id.profile_mother_name)).setText("NA");
         }
 
         String coachingName = mProfile.getCoaching_institute();
         if (coachingName != null && !coachingName.isEmpty()){
-            ((TextView)mRootView.findViewById(R.id.profile_coaching_institute_name)).setText(" : "+coachingName);
+            ((TextView)mRootView.findViewById(R.id.profile_coaching_institute_name)).setText(coachingName);
             otherInfoStatus += 33;
         }else{
-            ((TextView)mRootView.findViewById(R.id.profile_coaching_institute_name)).setText(": NA");
+            ((TextView)mRootView.findViewById(R.id.profile_coaching_institute_name)).setText("NA");
         }
         setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_other_progress), otherInfoStatus);
 
@@ -330,47 +330,47 @@ public class ProfileFragment extends BaseFragment {
 
         String preferredStream = mProfile.getPreferred_stream_short_name();
         if (preferredStream != null && !preferredStream.isEmpty()){
-            ((TextView)view.findViewById(R.id.profile_preferences_stream)).setText(": "+preferredStream);
+            ((TextView)view.findViewById(R.id.profile_preferences_stream)).setText(preferredStream);
             preferredInfoStatus += 15;
 
         }else{
-            ((TextView)view.findViewById(R.id.profile_preferences_stream)).setText(":  NA");
+            ((TextView)view.findViewById(R.id.profile_preferences_stream)).setText("NA");
         }
 
         String preferredSpecialization = mProfile.getPreferred_specialization_name();
         if (preferredSpecialization != null && !preferredSpecialization.isEmpty()){
-            ((TextView)view.findViewById(R.id.profile_preferences_specialization)).setText(": "+preferredSpecialization);
+            ((TextView)view.findViewById(R.id.profile_preferences_specialization)).setText(preferredSpecialization);
             preferredInfoStatus += 12;
         }else{
-            ((TextView)view.findViewById(R.id.profile_preferences_specialization)).setText(":  NA");
+            ((TextView)view.findViewById(R.id.profile_preferences_specialization)).setText("NA");
 
         }
 
         int preferredYear = mProfile.getPreferred_year_of_admission();
         if(preferredYear >= 2000 ){
-            ((TextView) view.findViewById(R.id.profile_preferences_year)).setText(": " + preferredYear);
+            ((TextView) view.findViewById(R.id.profile_preferences_year)).setText(preferredYear);
             preferredInfoStatus += 13;
         }else
-            ((TextView)view.findViewById(R.id.profile_preferences_year)).setText(": NA");
+            ((TextView)view.findViewById(R.id.profile_preferences_year)).setText("NA");
 
 
         int preferredMode = mProfile.getPreferred_mode();
-        ((TextView)view.findViewById(R.id.profile_preferences_mode)).setText(": "+ProfileMacro.getEducationModeName(preferredMode));
+        ((TextView)view.findViewById(R.id.profile_preferences_mode)).setText(ProfileMacro.getEducationModeName(preferredMode));
         preferredInfoStatus += 10;
 
         int feeRange = mProfile.getPreferred_fee_range_max();
         if(feeRange >= 1) {
-            ((TextView) view.findViewById(R.id.profile_preferences_fee_range)).setText(": " + ProfileMacro.getFeeRangeName(feeRange));
+            ((TextView) view.findViewById(R.id.profile_preferences_fee_range)).setText(ProfileMacro.getFeeRangeName(feeRange));
             preferredInfoStatus += 13;
         }else
-            ((TextView)view.findViewById(R.id.profile_preferences_fee_range)).setText(": NA");
+            ((TextView)view.findViewById(R.id.profile_preferences_fee_range)).setText("NA");
 
         int loanRequired = mProfile.getPreferred_loan_required();
         if(loanRequired >= 1) {
             preferredInfoStatus += 12;
             int loanAmount = mProfile.getPreferred_loan_amount_needed();
             view.findViewById(R.id.profile_preferences_loan_required_layout).setVisibility(View.VISIBLE);
-            ((TextView) view.findViewById(R.id.profile_preferences_loan_amount)).setText(": " + ProfileMacro.getLoanRequiredAmount(loanAmount));
+            ((TextView) view.findViewById(R.id.profile_preferences_loan_amount)).setText(ProfileMacro.getLoanRequiredAmount(loanAmount));
         }else {
             view.findViewById(R.id.profile_preferences_loan_required_layout).setVisibility(View.GONE);
         }
@@ -393,14 +393,14 @@ public class ProfileFragment extends BaseFragment {
                 degreesNameBuffer.append(", ").append(degreeNameList.get(i));
             }
             if(!isShowAllInfo && degreeNameList.size() > count) {
-                ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(": "+degreesNameBuffer.toString()+"....");
+                ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(degreesNameBuffer.toString()+"....");
 
             }else{
-                ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(": "+degreesNameBuffer.toString());
+                ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(degreesNameBuffer.toString());
             }
             preferredInfoStatus += 12;
         }else{
-            ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(": NA");
+            ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText("NA");
         }
         // set City names
         ArrayList<String> cityNameList = mProfile.getPreferred_cities_names();
@@ -418,13 +418,13 @@ public class ProfileFragment extends BaseFragment {
                 cityNameBuffer.append(", ").append(cityNameList.get(i));
             }
             if(!isShowAllInfo && cityNameList.size() > count) {
-                ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(": "+cityNameBuffer.toString()+"....");
+                ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(cityNameBuffer.toString()+"....");
             }else{
-                ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(": "+cityNameBuffer.toString());
+                ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(cityNameBuffer.toString());
             }
             preferredInfoStatus += 12;
         }else{
-            ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(": NA");
+            ((TextView)view.findViewById(R.id.profile_preferences_location)).setText("NA");
 
         }
         setProfileProgressStatus((ProgressBar)view.findViewById(R.id.profile_preferences_progress), preferredInfoStatus);
@@ -457,12 +457,12 @@ public class ProfileFragment extends BaseFragment {
             }
             if(!showAll && examsList.size() > count) {
 
-                ((TextView) mRootView.findViewById(R.id.profile_exams_name)).setText(": "+examsNameBuffer.toString() + "....");
+                ((TextView) mRootView.findViewById(R.id.profile_exams_name)).setText(examsNameBuffer.toString() + "....");
                 mRootView.findViewById(R.id.profile_exams_name).setSelected(false);
 
             }else{
                 mRootView.findViewById(R.id.profile_exams_name).setSelected(true);
-                ((TextView)mRootView.findViewById(R.id.profile_exams_name)).setText(": "+examsNameBuffer.toString());
+                ((TextView)mRootView.findViewById(R.id.profile_exams_name)).setText(examsNameBuffer.toString());
             }
         }
     }
