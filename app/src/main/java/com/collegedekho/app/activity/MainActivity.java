@@ -76,7 +76,6 @@ import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
 import com.appsflyer.DebugLogQueue;
 import com.collegedekho.app.R;
-import com.collegedekho.app.adapter.DrawerItemCustomAdapter;
 import com.collegedekho.app.database.DataBaseHelper;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Chapters;
@@ -192,7 +191,6 @@ import com.truecaller.android.sdk.TrueProfile;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -333,11 +331,11 @@ public class MainActivity extends AppCompatActivity
     private Menu menu;
     private String mYear;
 
-    private View bottomButtonContainer;
-    private TextView collegeList;
-    private TextView connect;
-    private TextView prepare;
-    private TextView read;
+    private View mHomeTabContainer;
+    private TextView mCollegeTab;
+    private TextView mConnectTab;
+    private TextView mPrepareTab;
+    private TextView mReadTab;
 
     private List<MyAlertDate> myAlertsList;
     private boolean isFromNotification;
@@ -366,11 +364,6 @@ public class MainActivity extends AppCompatActivity
     public View currentBottomItem;
     private int currentBottomId;
     public boolean isTabFragmentAdded;
-
-    DrawerLayout mDrawerLayout;
-    ListView mDrawerList;
-    String[] drawerContent;
-    android.support.v7.app.ActionBarDrawerToggle mDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -448,15 +441,15 @@ public class MainActivity extends AppCompatActivity
 
         this.mSetupGTM();
 
-        bottomButtonContainer = findViewById(R.id.bottom_button_container);
-        collegeList       = (TextView)findViewById(R.id.college_list);
-        connect           = (TextView)findViewById(R.id.connect);
-        prepare           = (TextView)findViewById(R.id.prepare);
-        read              = (TextView)findViewById(R.id.read);
-        collegeList.setOnClickListener(mClickListener);
-        connect.setOnClickListener(mClickListener);
-        prepare.setOnClickListener(mClickListener);
-        read.setOnClickListener(mClickListener);
+        mHomeTabContainer = findViewById(R.id.bottom_button_container);
+        mCollegeTab = (TextView)findViewById(R.id.college_list);
+        mConnectTab = (TextView)findViewById(R.id.connect);
+        mPrepareTab = (TextView)findViewById(R.id.prepare);
+        mReadTab    = (TextView)findViewById(R.id.read);
+        mCollegeTab.setOnClickListener(mClickListener);
+        mConnectTab.setOnClickListener(mClickListener);
+        mPrepareTab.setOnClickListener(mClickListener);
+        mReadTab.setOnClickListener(mClickListener);
 
         this.mSetUpAPPToolBar();
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
@@ -465,71 +458,14 @@ public class MainActivity extends AppCompatActivity
         logUser();
         setupOtpRequest(true);
         int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
-        this.IS_HOME_LOADED = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getBoolean(getResourceString(R.string.USER_HOME_LOADED), false);
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED && IS_HOME_LOADED) {
             Utils.appLaunched(this);
         }
 
-//        drawerContent = getResources().getStringArray(R.array.navigation_drawer_items_array);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.main_activity_container);
-//        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-//        DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this, R.layout.list_view_item_row, drawerContent);
-//        mDrawerList.setAdapter(adapter);
-//        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-//        mDrawerLayout.setDrawerListener(mDrawerToggle);
-//        setupDrawerToggle();
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-//        this.mDrawerToggle.syncState();
-
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
-
         searchProgress = (ProgressBar) findViewById(R.id.resource_progress_bar);
-        Log.e(TAG, " onCreate  exit time"+ System.currentTimeMillis());
-        gcmDialogRunnable = new Runnable() {
-            @Override
-            public void run() {
-                 if(IN_FOREGROUND && IS_HOME_LOADED){
-                    if(!IS_NETWORK_TASK_RUNNING &&  currentFragment != null &&
-                            !(currentFragment instanceof ProfileFragment)) {
-                        Intent gcmIntent = new Intent(MainActivity.this, GCMDialogActivity.class);
-                        MainActivity.this.startActivityForResult(gcmIntent,Constants.GCM_RESULT_DATA_KEY);
-                    }else {
-                        gcmDialogHandler.removeCallbacks(gcmDialogRunnable);
-                        gcmDialogHandler.postDelayed(gcmDialogRunnable,3000);
-                    }
-                }
-            }
-        };
-        gcmDialogHandler.postDelayed(gcmDialogRunnable,20000);
-
     }
 
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            int count = getSupportFragmentManager().getBackStackEntryCount();
-//            if(position != 2) {
-//                for (int i = 0; i < count - 1; i++) {
-//                    getSupportFragmentManager().popBackStack();
-//                }
-//            } else {
-                for (int i = 0; i < count; i++) {
-                    getSupportFragmentManager().popBackStack();
-                }
-//            }
-            mUpdateTabMenuItem(position+1,0);
-            selectItem(position+1);
-            if (currentFragment instanceof TabFragment) {
-                ((TabFragment) currentFragment).updateTabFragment(position+1);
-            }
-
-            MainActivity.this.mDrawerLayout.closeDrawer(Gravity.LEFT);
-//            mUpdateDrawerItem(position);
-
-        }
-    }
 
     private void selectItem(int tabPosition) {
 
@@ -541,14 +477,14 @@ public class MainActivity extends AppCompatActivity
 //            mDisplayCurrentEducationFragment(true);
             fromTabFragment = true;
             onRequestForUserExamsUpdate();
-            bottomButtonContainer.setVisibility(View.GONE);
+            mHomeTabContainer.setVisibility(View.GONE);
             return;
         }
 
 //        if (this.mUserExamsList.size() <= 0)
-//            prepare.setVisibility(View.GONE);
+//            mPrepareTab.setVisibility(View.GONE);
 //        else
-//            prepare.setVisibility(View.VISIBLE);
+//            mPrepareTab.setVisibility(View.VISIBLE);
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
 
@@ -765,7 +701,6 @@ public class MainActivity extends AppCompatActivity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                //loadInItData();
                 if (currentFragment instanceof SplashFragment)
                     ((SplashFragment) currentFragment).isInternetAvailable();
             }
@@ -776,15 +711,10 @@ public class MainActivity extends AppCompatActivity
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        mToolbar.setLogo(R.drawable.ic_cd_colored);
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        View logoView = getToolbarLogoIcon(mToolbar);
-        logoView.setPadding(0,0,0,0);
-//        mToolbar.setNavigationIcon(R.drawable.ic_cd_colored);
-//        mToolbar.setNavigationOnClickListener(
-
-        logoView.setOnClickListener(new View.OnClickListener() {
+        mToolbar.setNavigationIcon(R.drawable.ic_cd_colored);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 if (currentFragment instanceof SyllabusSubjectsListFragment)
@@ -1264,9 +1194,7 @@ public class MainActivity extends AppCompatActivity
             mDisplayProfileFragment();
             return true;
         }
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -1278,15 +1206,16 @@ public class MainActivity extends AppCompatActivity
             if (sp.contains(getResourceString(R.string.KEY_USER))) {
                 MainActivity.user = JSON.std.beanFrom(User.class, sp.getString(getResourceString(R.string.KEY_USER), null));
                 this.networkUtils.setToken(MainActivity.user.getToken());
-                // user id register
-                setUserIdWithAllEvents();
 
                 if(mProfile == null) {
-                    mProfile = new Profile();
-                    mProfile.setName(user.getName());
-                    mProfile.setName(user.getPhone_no());
-                    mProfile.setImage(user.getImage());
+                        mProfile = new Profile();
+                        mProfile.setName(user.getName());
+                        mProfile.setName(user.getPhone_no());
+                        mProfile.setImage(user.getImage());
+                        mProfile.setExams_set(user.getExams_set());
                 }
+                // user id register
+                setUserIdWithAllEvents();
 
                 this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT,Constants.BASE_URL+"profile/", null);
                 // this code for backward compatibility because in first release user stream and level
@@ -1304,12 +1233,43 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
             }
-
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
             this.IS_USER_CREATED = sp.getBoolean(getResourceString(R.string.USER_CREATED), false);
             this.IS_HOME_LOADED = sp.getBoolean(getResourceString(R.string.USER_HOME_LOADED), false);
-        } catch (Exception e) {
+
         }
     }
+
+
+    public void loadInItData() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED)
+        {
+            // start curser loader
+            getSupportLoaderManager().initLoader(0, null, this);
+
+            // register GCM dialog to ask user'profile data
+            mRegisterGcmDialog();
+
+            if (IS_USER_CREATED) {
+                // if user is anonymous  then logout from facebook
+                if (mProfile != null && (mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER))
+                    disconnectFromFacebook();
+
+                this.mLoadUserStatusScreen();
+            } else {
+                disconnectFromFacebook();
+                MainActivity.this.mDisplayLoginFragment();
+            }
+        } else {
+            getUserPermissions();
+        }
+    }
+
 
     /**
      * This methos is used to register userId with Apps Flyer
@@ -1335,30 +1295,27 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void loadInItData() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_CONTACTS)
-                == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this,
-                Manifest.permission.RECEIVE_SMS)
-                == PackageManager.PERMISSION_GRANTED) {
-            getSupportLoaderManager().initLoader(0, null, this);
-            if (IS_USER_CREATED) {
-                // if user is anonymous  then logout from facebook
-                if (user.is_anony())
-                    disconnectFromFacebook();
+    private void mRegisterGcmDialog(){
+        gcmDialogRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if(IN_FOREGROUND && IS_HOME_LOADED){
 
-                this.mLoadUserStatusScreen();
-
-            } else {
-                disconnectFromFacebook();
-                MainActivity.this.mDisplayLoginFragment();
+                    if(!IS_NETWORK_TASK_RUNNING &&  currentFragment != null &&
+                            !(currentFragment instanceof ProfileFragment)) {
+                        Intent gcmIntent = new Intent(MainActivity.this, GCMDialogActivity.class);
+                        MainActivity.this.startActivityForResult(gcmIntent,Constants.GCM_RESULT_DATA_KEY);
+                    }else {
+                        gcmDialogHandler.removeCallbacks(gcmDialogRunnable);
+                        gcmDialogHandler.postDelayed(gcmDialogRunnable,3000);
+                    }
+                }else{
+                    gcmDialogHandler.removeCallbacks(gcmDialogRunnable);
+                    gcmDialogHandler.postDelayed(gcmDialogRunnable,90000);
+                }
             }
-
-        } else {
-            getUserPermissions();
-        }
+        };
+        gcmDialogHandler.postDelayed(gcmDialogRunnable,90000);
     }
 
     /**
@@ -1430,10 +1387,11 @@ public class MainActivity extends AppCompatActivity
             Log.e("MA: DL URL ", MainActivity.this.mDeepLinkingURI);
             this.isFromDeepLinking = true;
             this.mHandleDeepLinking(this.mDeepLinkingURI);
-        }else if ((MainActivity.user.getExams_set() == 1) || IS_HOME_LOADED){
-            if (IS_HOME_LOADED) {
+        }else if ((MainActivity.mProfile.getExams_set() == ProfileMacro.EXAMS_SELECTED)
+                || IS_HOME_LOADED){
+            //if (IS_HOME_LOADED) {
                 mLoadHomeScreen(null);
-            }
+            //}
             this.mMakeNetworkCall(Constants.TAG_LAUNCH_USER_HOME, Constants.BASE_URL + "preferences/", null);
         }else {
             mDisplayCurrentEducationFragment();
@@ -2223,19 +2181,8 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
             }
             fragmentTransaction.replace(R.id.container, fragment, tag);
-// TODO
-//            if(currentFragment instanceof ExamsFragment && ){
-//
-//            }
-
-//            if(getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName()) != null && currentFragment instanceof ExamsFragment)
-//                addToBackstack = false;
-//            if(getSupportFragmentManager().findFragmentByTag(ExamsFragment.class.toString()) != null && currentFragment instanceof TabFragment)
-//                addToBackstack = false;
-
             if (addToBackstack)
                 fragmentTransaction.addToBackStack(fragment.toString());
-
             fragmentTransaction.commit();
 
             if (this.currentFragment instanceof HomeFragment) {
@@ -2278,6 +2225,9 @@ public class MainActivity extends AppCompatActivity
 
         if (findViewById(R.id.app_bar_layout).getVisibility() != View.VISIBLE)
             findViewById(R.id.app_bar_layout).setVisibility(View.VISIBLE);
+
+        /*if(mToolbar.getVisibility() != View.VISIBLE)
+            mToolbar.setVisibility(View.VISIBLE);*/
     }
 
     @Override
@@ -2294,6 +2244,15 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_TRUE_SDK_LOGIN:
             case Constants.TAG_FACEBOOK_LOGIN:
                 this.mUpdateUserPreferences(response);
+                break;
+            case Constants.TAG_PHONE_NUMBER_LOGIN:
+                this.onOTPVerifiedResponse(response);
+                break;
+            case Constants.TAG_USER_PHONE_ADDED:
+                onMobileNumberSubmitted();
+                break;
+            case Constants.TAG_VERIFY_USER_PHONE:
+                this.onOTPVerified(response);
                 break;
             case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
                 this.mOnUserEducationResponse(response);
@@ -2334,10 +2293,10 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_LAUNCH_USER_HOME:
                 this.onUpdateUserPreferences(response);
-                if (!IS_HOME_LOADED) {
+               /* if (!IS_HOME_LOADED) {
                     this.mClearBackStack();
                     mLoadHomeScreen(null);
-                }
+                }*/
                 break;
             case Constants.TAG_LOAD_USER_PREFERENCES:
                 this.onUpdateUserPreferences(response);
@@ -2703,15 +2662,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_UPDATE_VIDEO_TITLE:
                 this.onUpdateTitleResponse(response);
-                break;
-            case Constants.TAG_USER_PHONE_ADDED:
-                onMobileNumberSubmitted();
-                break;
-            case Constants.TAG_VERIFY_USER_PHONE:
-                this.onOTPVerified(response);
-                break;
-            case Constants.TAG_PHONE_NUMBER_LOGIN:
-                this.onOTPVerifiedResponse(response);
                 break;
             case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
                 this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.SHORTLISTED);
@@ -4455,11 +4405,6 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(Gravity.LEFT); //CLOSE Nav Drawer!
-            return;
-        }
-
         if(currentBottomItem != null){
             translateAnimation(null,currentBottomItem);
         }
@@ -4554,16 +4499,25 @@ public class MainActivity extends AppCompatActivity
                 mProfile.setName(user.getName());
                 mProfile.setName(user.getPhone_no());
                 mProfile.setImage(user.getImage());
+                mProfile.setExams_set(user.getExams_set());
             }
 
             setUserIdWithAllEvents();
             String u = JSON.std.asString(this.user);
+            if(!IS_USER_CREATED){
+                //Events
+                Map<String, Object> eventValue = new HashMap<>();
+                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
+                eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
+            }
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).apply();
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
+            IS_USER_CREATED = true;
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.IS_HOME_LOADED = false;
+       // this.IS_HOME_LOADED = false;
         this.mLoadUserStatusScreen();
     }
 
@@ -5062,17 +5016,10 @@ public class MainActivity extends AppCompatActivity
         else {
             this.mDisplayFragment(fragment, false, HomeFragment.class.getSimpleName());
         }
-        if(!IS_USER_CREATED){
-            Map<String, Object> eventValue = new HashMap<>();
-            eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
 
-            //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
-        }
         IS_HOME_LOADED = true;
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_HOME_LOADED), true).apply();
 
-//        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 
 
@@ -5838,7 +5785,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onOTPVerifiedResponse(String response) {
-        if(currentFragment instanceof LoginFragment || currentFragment instanceof PostAnonymousLoginFragment){
+        if(currentFragment instanceof LoginFragment ||
+                currentFragment instanceof PostAnonymousLoginFragment){
             try {
                 Map<String, Object> responseMap = JSON.std.mapFrom(response);
                 if(responseMap.containsKey("verified")){
@@ -6093,73 +6041,61 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
-    public void mUpdateDrawerItem(int position) {
-//        for (int i = 0; i < mDrawerList.getChildCount(); i++) {
-//            ((TextView) mDrawerList.getChildAt(i).findViewById(R.id.textViewName)).setTextColor(Color.BLACK);
-//            mDrawerList.getChildAt(i).findViewById(R.id.drawer_item_container).setBackgroundResource(R.color.white);
-//        }
-//        if (position >= 0) {
-//            ((TextView) mDrawerList.getChildAt(position).findViewById(R.id.textViewName)).setTextColor(Color.WHITE);
-//            mDrawerList.getChildAt(position).findViewById(R.id.drawer_item_container).setBackgroundResource(R.color.primary_color);
-//        }
-    }
-
     public void mUpdateTabMenuItem(int tabPosition, int duration) {
-        collegeList.setSelected(false);
-        connect.setSelected(false);
-        prepare.setSelected(false);
-        read.setSelected(false);
+        mCollegeTab.setSelected(false);
+        mConnectTab.setSelected(false);
+        mPrepareTab.setSelected(false);
+        mReadTab.setSelected(false);
 
-        bottomButtonContainer.setVisibility(View.VISIBLE);
+        mHomeTabContainer.setVisibility(View.VISIBLE);
 
         View viewToMoveUp = null;
         View viewToMoveDown = null;
 
         if (tabPosition == 1) {
-            collegeList.setSelected(true);
-            if(currentBottomItem != collegeList){
-                viewToMoveUp = collegeList;
+            mCollegeTab.setSelected(true);
+            if(currentBottomItem != mCollegeTab){
+                viewToMoveUp = mCollegeTab;
             }
-            if(currentBottomItem != null && currentBottomItem != collegeList){
+            if(currentBottomItem != null && currentBottomItem != mCollegeTab){
                 viewToMoveDown = currentBottomItem;
             }
-            currentBottomItem = collegeList;
+            currentBottomItem = mCollegeTab;
         }else if (tabPosition == 2) {
-            connect.setSelected(true);
-            if(currentBottomItem != connect) {
-                viewToMoveUp = connect;
+            mConnectTab.setSelected(true);
+            if(currentBottomItem != mConnectTab) {
+                viewToMoveUp = mConnectTab;
             }
-            if(currentBottomItem != null && currentBottomItem != connect){
+            if(currentBottomItem != null && currentBottomItem != mConnectTab){
                 viewToMoveDown = currentBottomItem;
             }
-            currentBottomItem = connect;
+            currentBottomItem = mConnectTab;
         }else if (tabPosition == 3) {
-            prepare.setSelected(true);
-            if(currentBottomItem != prepare) {
-                viewToMoveUp = prepare;
+            mPrepareTab.setSelected(true);
+            if(currentBottomItem != mPrepareTab) {
+                viewToMoveUp = mPrepareTab;
             }
-            if(currentBottomItem != null && currentBottomItem != prepare){
+            if(currentBottomItem != null && currentBottomItem != mPrepareTab){
                 viewToMoveDown = currentBottomItem;
             }
-            currentBottomItem = prepare;
+            currentBottomItem = mPrepareTab;
         }else if (tabPosition == 4) {
-            read.setSelected(true);
-            if(currentBottomItem != read) {
-                viewToMoveUp = read;
+            mReadTab.setSelected(true);
+            if(currentBottomItem != mReadTab) {
+                viewToMoveUp = mReadTab;
             }
-            if(currentBottomItem != null && currentBottomItem != read){
+            if(currentBottomItem != null && currentBottomItem != mReadTab){
                 viewToMoveDown = currentBottomItem;
             }
-            currentBottomItem = read;
+            currentBottomItem = mReadTab;
         }else if(tabPosition == -2){
             viewToMoveDown = currentBottomItem;
             currentBottomItem = null;
         }else {
-            bottomButtonContainer.setVisibility(View.GONE);
+            mHomeTabContainer.setVisibility(View.GONE);
             currentBottomItem = null;
         }
         translateAnimation(viewToMoveUp,viewToMoveDown);
-        mUpdateDrawerItem(tabPosition-1);
     }
 
 
@@ -6185,14 +6121,14 @@ public class MainActivity extends AppCompatActivity
 //            mDisplayCurrentEducationFragment(true);
             fromTabFragment = true;
             onRequestForUserExamsUpdate();
-            bottomButtonContainer.setVisibility(View.GONE);
+            mHomeTabContainer.setVisibility(View.GONE);
             return;
         }
 
 //        if (this.mUserExamsList.size() <= 0)
-//            prepare.setVisibility(View.GONE);
+//            mPrepareTab.setVisibility(View.GONE);
 //        else
-//            prepare.setVisibility(View.VISIBLE);
+//            mPrepareTab.setVisibility(View.VISIBLE);
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
 

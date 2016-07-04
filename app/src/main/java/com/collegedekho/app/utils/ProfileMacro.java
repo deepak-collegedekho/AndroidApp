@@ -15362,6 +15362,7 @@ public class ProfileMacro {
     // verified
 
     public static int NUMBER_VERIFIED = 1;
+    public static int EXAMS_SELECTED = 1;
     public static int ANONYMOUS_USER = 1;
 
     // gender

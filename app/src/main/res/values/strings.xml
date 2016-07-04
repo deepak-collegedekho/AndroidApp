@@ -4,12 +4,6 @@
 
     <string name="loginFacebookButton">FACEBOOK LOGIN</string>
 
-    <string-array name="navigation_drawer_items_array">
-        <item>College List</item>
-        <item>Connect</item>
-        <item>Prepare</item>
-        <item>Read</item>
-    </string-array>
 
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
@@ -453,10 +447,10 @@
     <string name="article_image_description">Image for current Article</string>
     <string name="institute_logo_description">Logo for wishlist college</string>
 
-    <!-- TRUE CALLER Debug key--><!--
-    <string name="partnerKey">baLWqkLO85xFIlFrAi5phqW1zSfCceMb</string>-->
-   <!--  TRUE CALLER Release key-->
-    <string name="partnerKey">ZjojDtbi99nS9J3pW8dwMfFYkrHxYeRM</string>
+    <!-- TRUE CALLER Debug key-->
+    <string name="partnerKey">baLWqkLO85xFIlFrAi5phqW1zSfCceMb</string>
+     TRUE CALLER Release key<!--
+    <string name="partnerKey">ZjojDtbi99nS9J3pW8dwMfFYkrHxYeRM</string>-->
 
     <!--   new and Article image transaction-->
     <string name="news_image_transaction">NewsImageTransaction</string>

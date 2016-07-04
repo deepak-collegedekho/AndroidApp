@@ -10,17 +10,22 @@ import java.util.ArrayList;
  */
 public class Profile implements Parcelable{
 
-    private String id =   "";
     private String name =   "";
     private String phone_no =   "";
     private String email =  "";
-    private String image =  "";
-    private String state_name = "";
     private int gender = 0;
-    private int state_id = -1;
+    private String id =   "";
+    private int progress =0;
+    private String app_version = "";
+    private int exams_set =0 ;
     private int is_verified = 0;
+    private String token ="";
+    private int psychometric_given =0;
     private int is_preparing = 0;
     private int is_anony = 0;
+    private String image =  "";
+    private String state_name = "";
+    private int state_id = -1;
     private String city_name =  "";
     private int city_id = -1;
     private String mother_tongue_name = "";
@@ -76,17 +81,22 @@ public class Profile implements Parcelable{
     }
 
     protected Profile(Parcel in) {
-        id = in.readString();
         name = in.readString();
         phone_no = in.readString();
         email = in.readString();
-        image = in.readString();
-        state_name = in.readString();
         gender = in.readInt();
-        state_id = in.readInt();
+        id = in.readString();
+        progress = in.readInt();
+        app_version = in.readString();
+        exams_set = in.readInt();
         is_verified = in.readInt();
+        token = in.readString();
+        psychometric_given = in.readInt();
         is_preparing = in.readInt();
         is_anony = in.readInt();
+        image = in.readString();
+        state_name = in.readString();
+        state_id = in.readInt();
         city_name = in.readString();
         city_id = in.readInt();
         mother_tongue_name = in.readString();
@@ -129,45 +139,33 @@ public class Profile implements Parcelable{
         preferred_loan_required = in.readInt();
         preferred_loan_amount_needed_name = in.readString();
         preferred_loan_amount_needed = in.readInt();
-        fathers_name = in.readString();
-        mothers_name = in.readString();
-        coaching_institute = in.readString();
         yearly_exams = in.createTypedArrayList(ProfileExam.CREATOR);
         if(yearly_exams == null)
             yearly_exams = new ArrayList<>();
         in.readTypedList(yearly_exams, ProfileExam.CREATOR);
-    }
-
-    public static final Creator<Profile> CREATOR = new Creator<Profile>() {
-        @Override
-        public Profile createFromParcel(Parcel in) {
-            return new Profile(in);
-        }
-
-        @Override
-        public Profile[] newArray(int size) {
-            return new Profile[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
+        fathers_name = in.readString();
+        mothers_name = in.readString();
+        coaching_institute = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
         dest.writeString(name);
         dest.writeString(phone_no);
         dest.writeString(email);
-        dest.writeString(image);
-        dest.writeString(state_name);
         dest.writeInt(gender);
-        dest.writeInt(state_id);
+        dest.writeString(id);
+        dest.writeInt(progress);
+        dest.writeString(app_version);
+        dest.writeInt(exams_set);
         dest.writeInt(is_verified);
+        dest.writeString(token);
+        dest.writeInt(psychometric_given);
         dest.writeInt(is_preparing);
         dest.writeInt(is_anony);
+        dest.writeString(image);
+        dest.writeString(state_name);
+        dest.writeInt(state_id);
         dest.writeString(city_name);
         dest.writeInt(city_id);
         dest.writeString(mother_tongue_name);
@@ -210,12 +208,28 @@ public class Profile implements Parcelable{
         dest.writeInt(preferred_loan_required);
         dest.writeString(preferred_loan_amount_needed_name);
         dest.writeInt(preferred_loan_amount_needed);
+        dest.writeTypedList(yearly_exams);
         dest.writeString(fathers_name);
         dest.writeString(mothers_name);
         dest.writeString(coaching_institute);
-        dest.writeTypedList(yearly_exams);
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Profile> CREATOR = new Creator<Profile>() {
+        @Override
+        public Profile createFromParcel(Parcel in) {
+            return new Profile(in);
+        }
+
+        @Override
+        public Profile[] newArray(int size) {
+            return new Profile[size];
+        }
+    };
 
     public String getName() {
         return name;
@@ -241,22 +255,6 @@ public class Profile implements Parcelable{
         this.email = email;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getState_name() {
-        return state_name;
-    }
-
-    public void setState_name(String state_name) {
-        this.state_name = state_name;
-    }
-
     public int getGender() {
         return gender;
     }
@@ -265,14 +263,37 @@ public class Profile implements Parcelable{
         this.gender = gender;
     }
 
-    public int getState_id() {
-        return state_id;
+    public String getId() {
+        return id;
     }
 
-    public void setState_id(int state_id) {
-        this.state_id = state_id;
+    public void setId(String id) {
+        this.id = id;
     }
 
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
+    public String getApp_version() {
+        return app_version;
+    }
+
+    public void setApp_version(String app_version) {
+        this.app_version = app_version;
+    }
+
+    public int getExams_set() {
+        return exams_set;
+    }
+
+    public void setExams_set(int exams_set) {
+        this.exams_set = exams_set;
+    }
 
     public int getIs_verified() {
         return is_verified;
@@ -280,6 +301,22 @@ public class Profile implements Parcelable{
 
     public void setIs_verified(int is_verified) {
         this.is_verified = is_verified;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public int getPsychometric_given() {
+        return psychometric_given;
+    }
+
+    public void setPsychometric_given(int psychometric_given) {
+        this.psychometric_given = psychometric_given;
     }
 
     public int getIs_preparing() {
@@ -296,6 +333,30 @@ public class Profile implements Parcelable{
 
     public void setIs_anony(int is_anony) {
         this.is_anony = is_anony;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getState_name() {
+        return state_name;
+    }
+
+    public void setState_name(String state_name) {
+        this.state_name = state_name;
+    }
+
+    public int getState_id() {
+        return state_id;
+    }
+
+    public void setState_id(int state_id) {
+        this.state_id = state_id;
     }
 
     public String getCity_name() {
@@ -554,22 +615,6 @@ public class Profile implements Parcelable{
         this.preferred_degrees_names = preferred_degrees_names;
     }
 
-    public ArrayList<String> getPreferred_cities_names() {
-        return preferred_cities_names;
-    }
-
-    public void setPreferred_cities_names(ArrayList<String> preferred_cities_names) {
-        this.preferred_cities_names = preferred_cities_names;
-    }
-
-    public ArrayList<Integer> getPreferred_cities_ids() {
-        return preferred_cities_ids;
-    }
-
-    public void setPreferred_cities_ids(ArrayList<Integer> preferred_cities_ids) {
-        this.preferred_cities_ids = preferred_cities_ids;
-    }
-
     public ArrayList<String> getPreferred_degrees_short_names() {
         return preferred_degrees_short_names;
     }
@@ -584,6 +629,14 @@ public class Profile implements Parcelable{
 
     public void setPreferred_degrees_ids(ArrayList<Integer> preferred_degrees_ids) {
         this.preferred_degrees_ids = preferred_degrees_ids;
+    }
+
+    public String getPreferred_level_name() {
+        return preferred_level_name;
+    }
+
+    public void setPreferred_level_name(String preferred_level_name) {
+        this.preferred_level_name = preferred_level_name;
     }
 
     public int getPreferred_level() {
@@ -608,6 +661,22 @@ public class Profile implements Parcelable{
 
     public void setPreferred_states_ids(ArrayList<Integer> preferred_states_ids) {
         this.preferred_states_ids = preferred_states_ids;
+    }
+
+    public ArrayList<String> getPreferred_cities_names() {
+        return preferred_cities_names;
+    }
+
+    public void setPreferred_cities_names(ArrayList<String> preferred_cities_names) {
+        this.preferred_cities_names = preferred_cities_names;
+    }
+
+    public ArrayList<Integer> getPreferred_cities_ids() {
+        return preferred_cities_ids;
+    }
+
+    public void setPreferred_cities_ids(ArrayList<Integer> preferred_cities_ids) {
+        this.preferred_cities_ids = preferred_cities_ids;
     }
 
     public int getPreferred_fee_range_max() {
@@ -650,6 +719,14 @@ public class Profile implements Parcelable{
         this.preferred_loan_amount_needed = preferred_loan_amount_needed;
     }
 
+    public ArrayList<ProfileExam> getYearly_exams() {
+        return yearly_exams;
+    }
+
+    public void setYearly_exams(ArrayList<ProfileExam> yearly_exams) {
+        this.yearly_exams = yearly_exams;
+    }
+
     public String getFathers_name() {
         return fathers_name;
     }
@@ -672,29 +749,5 @@ public class Profile implements Parcelable{
 
     public void setCoaching_institute(String coaching_institute) {
         this.coaching_institute = coaching_institute;
-    }
-
-    public String getPreferred_level_name() {
-        return preferred_level_name;
-    }
-
-    public void setPreferred_level_name(String preferred_level_name) {
-        this.preferred_level_name = preferred_level_name;
-    }
-
-    public ArrayList<ProfileExam> getYearly_exams() {
-        return yearly_exams;
-    }
-
-    public void setYearly_exams(ArrayList<ProfileExam> yearly_exams) {
-        this.yearly_exams = yearly_exams;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

@@ -290,6 +290,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
         {
             case R.id.user_profile_image_update:
                 mRequestForImageCapture();
+                break;
             case R.id.user_education_skip_button:
                 mUserEducationSkip();
                 break;
