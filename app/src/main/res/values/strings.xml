@@ -68,6 +68,8 @@
     <string name="ALREADY_UP_VOTED">You have already up-voted it</string>
     <string name="ENTER_YOUR_MESSAGE">Please enter your message</string>
     <string name="ENTER_YOUR_ANSWER">Please enter your answer</string>
+    <string name="QNA_TITLE_ERROR_SHORT_TITLE">Please elaborate your title!</string>
+    <string name="QNA_TITLE_ERROR_SPECIAL_CHARACTER">No special character please!</string>
     <!--TAGS-->
     <string name="PREFS">sharedprefs</string>
     <string name="KEY_USER">user_id</string>

@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    >
 
 
     <LinearLayout
@@ -61,25 +61,11 @@
 
         </RelativeLayout>
 
-        <!--<include layout="@layout/layout_profile_wishlist"-->
-        <!--android:id="@+id/include_layout_profile_widget"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight=".45"-->
-        <!--android:layout_width="match_parent"/>-->
-
         <include layout="@layout/layout_home_options"
             android:id="@+id/include_layout_profile_widget"
             android:layout_height="0dp"
             android:layout_weight=".55"
             android:layout_width="match_parent"/>
-
-        <!--<include layout="@layout/layout_bottom_button"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight=".18"-->
-        <!--android:visibility="gone"-->
-        <!--android:layout_marginBottom="10dp"-->
-        <!--/>-->
     </LinearLayout>
 
 </RelativeLayout>

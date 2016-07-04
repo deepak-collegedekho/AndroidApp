@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +21,8 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class QnAQuestionsListFragment extends BaseFragment {
     public static final String TITLE = "QnA";
@@ -33,6 +36,8 @@ public class QnAQuestionsListFragment extends BaseFragment {
     private QnAQuestionsListAdapter mAdapter;
     private int mViewType = Constants.VIEW_INTO_LIST;
     private OnQnAQuestionSelectedListener mListener;
+    private EditText mQuestionTitle;
+    private EditText mQuestionDesc;
 
     public static QnAQuestionsListFragment newInstance(ArrayList<QnAQuestions> qnaQuestions, String next)
     {
@@ -67,6 +72,8 @@ public class QnAQuestionsListFragment extends BaseFragment {
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
         this.mAskButton = (TextView) rootView.findViewById(R.id.question_ask_button);
         this.progressBarLL = (LinearLayout) rootView.findViewById(R.id.progressBarLL);
+        this.mQuestionTitle = (EditText)rootView.findViewById(R.id.institute_qna_question_title);
+        this.mQuestionDesc = (EditText)rootView.findViewById(R.id.institute_qna_question_desc);
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.institute_questions_list);
         if(this.mViewType == Constants.VIEW_INTO_GRID)
@@ -87,11 +94,11 @@ public class QnAQuestionsListFragment extends BaseFragment {
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setText("Couldn't find related questions for you. Like and Shortlist college");
             recyclerView.setVisibility(View.GONE);
-            this.mToggleAskButtonVisiblity(View.GONE);
+            this.mToggleAskButtonVisiblity(View.GONE, View.VISIBLE);
         }else {
             this.mEmptyTextView.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-            this.mToggleAskButtonVisiblity(View.VISIBLE);
+            this.mToggleAskButtonVisiblity(View.VISIBLE, View.VISIBLE);
             this.mAskButton.setEnabled(true);
         }
 
@@ -122,6 +129,8 @@ public class QnAQuestionsListFragment extends BaseFragment {
         super.onDetach();
         listener = null;
         mListener = null;
+        //just a caution for showing toolbar in case mToggleAskButtonVisiblity is not called
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         System.gc();
     }
 
@@ -186,13 +195,13 @@ public class QnAQuestionsListFragment extends BaseFragment {
 
                             }
                         });
-                        this.mToggleAskButtonVisiblity(View.GONE);
+                        this.mToggleAskButtonVisiblity(View.GONE, View.GONE);
                     }
                 }
                 break;
             case R.id.question_ask_cross:
                 if(rootView != null)  {
-                    this.mToggleAskButtonVisiblity(View.VISIBLE);
+                    this.mToggleAskButtonVisiblity(View.VISIBLE, View.VISIBLE);
                     (rootView.findViewById(R.id.qna_ask_layout)).setVisibility(View.GONE);
                     rootView.findViewById(R.id.dummy_view).setVisibility(View.GONE);
                 }
@@ -220,29 +229,66 @@ public class QnAQuestionsListFragment extends BaseFragment {
         loading=false;
     }
 
-    private void mToggleAskButtonVisiblity(int visibility)
+    private void mToggleAskButtonVisiblity(int askQuesButtonVisibility, int toolbarVisibility)
     {
-        if (visibility == View.GONE)
-            this.mAskButton.animate().translationY(this.mAskButton.getHeight());
-        else if (visibility == View.VISIBLE)
-            this.mAskButton.animate().translationY(0);
+        //Putting whole thing in try/catch for I am not putting MainActivity null check and
+        // hide and show methods are showing NPE warning
+        try {
+            if (askQuesButtonVisibility == View.GONE) {
+                this.mAskButton.animate().translationY(this.mAskButton.getHeight());
+                this.mQuestionTitle.requestFocus();
+            }
+            else if (askQuesButtonVisibility == View.VISIBLE)
+                this.mAskButton.animate().translationY(0);
 
-        this.mAskButton.setVisibility(visibility);
+            if (toolbarVisibility == View.GONE)
+                ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+            else if (toolbarVisibility == View.VISIBLE)
+                ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+
+            this.mAskButton.setVisibility(askQuesButtonVisibility);
+        }
+        catch(Exception e)
+        {
+
+        }
     }
 
     public QnAQuestions validateData(View rootView)
     {
-        EditText check = (EditText)rootView.findViewById(R.id.institute_qna_question_title);
-        String title =  check.getText().toString();
+
+        String title =  this.mQuestionTitle.getText().toString();
         if (title == null || title.trim().length() <= 0) {
             mListener.displayMessage(R.string.QUESTION_TITLE_EMPTY);
-             return null;
+            return null;
+        }
+        else
+        {
+            String[] words=title.split("\\s+");
+
+            if (words.length == 1){
+                QnAQuestionsListFragment.this.mQuestionTitle.setError(MainActivity.getResourceString(R.string.QNA_TITLE_ERROR_SHORT_TITLE));
+                QnAQuestionsListFragment.this.mQuestionTitle.setText(words[0]);
+                QnAQuestionsListFragment.this.mQuestionTitle.requestFocus();
+                return null;
+            }
+            else{
+                Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+                Matcher m = p.matcher(title);
+                boolean b = m.find();
+
+                if (b) {
+                    QnAQuestionsListFragment.this.mQuestionTitle.setError(MainActivity.getResourceString(R.string.QNA_TITLE_ERROR_SPECIAL_CHARACTER));
+                    QnAQuestionsListFragment.this.mQuestionTitle.requestFocus();
+                    return null;
+                }
+            }
         }
 
-        EditText check1 = (EditText)rootView.findViewById(R.id.institute_qna_question_desc);
-        String desc =  check1.getText().toString();
+        String desc =  this.mQuestionDesc.getText().toString();
         if (desc == null || desc.trim().length() <= 0) {
-            mListener.displayMessage(R.string.QUESTION_TEXT_EMPTY);
+            QnAQuestionsListFragment.this.mQuestionTitle.setError(MainActivity.getResourceString(R.string.QUESTION_TEXT_EMPTY));
+            QnAQuestionsListFragment.this.mQuestionDesc.requestFocus();
             return null;
         }
 
@@ -253,7 +299,6 @@ public class QnAQuestionsListFragment extends BaseFragment {
         return q;
     }
 
-
     public void onAskExpertSubmitButtonPressed()
     {
         View view = getView();
@@ -261,8 +306,8 @@ public class QnAQuestionsListFragment extends BaseFragment {
             QnAQuestions q = validateData(view);
             if (q != null && mListener != null)
             {
-                ((EditText)view.findViewById(R.id.institute_qna_question_title)).setText("");
-                ((EditText)view.findViewById(R.id.institute_qna_question_desc)).setText("");
+                this.mQuestionTitle.setText("");
+                this.mQuestionDesc.setText("");
                 view.findViewById(R.id.institute_qna_button_ask_submit).setEnabled(false);
                 this.mListener.onQuestionAsked(q);
             }
@@ -286,10 +331,8 @@ public class QnAQuestionsListFragment extends BaseFragment {
                ((RecyclerView) view.findViewById(R.id.institute_questions_list)).scrollToPosition(0);
                 view.findViewById(R.id.qna_ask_layout).setVisibility(View.GONE);
                 view.findViewById(R.id.dummy_view).setVisibility(View.GONE);
-                this.mToggleAskButtonVisiblity(View.VISIBLE);
+                this.mToggleAskButtonVisiblity(View.VISIBLE, View.VISIBLE);
             }
-
-
     }
 
     public interface OnQnAQuestionSelectedListener extends BaseListener{
@@ -300,5 +343,4 @@ public class QnAQuestionsListFragment extends BaseFragment {
         void onQnAQuestionVote(int position, int voteType);
         void displayMessage(int messageId);
     }
-
 }

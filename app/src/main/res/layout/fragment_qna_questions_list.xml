@@ -1,81 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/questions_page_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Questions"
-        android:textSize="14sp"
-        android:background="@color/primary_color_dark"
-        android:padding="10dp"
-        android:textColor="@color/white"
-        />
-    <View
-        style="@style/AppTheme.Divider1"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        />
-    <include layout="@layout/layout_empty" />
-
-    <include layout="@layout/layout_grid_list"/>
-
-    <RelativeLayout
+    >
+    <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center"
-        >
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/questions_page_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Questions"
+            android:textSize="14sp"
+            android:background="@color/primary_color_dark"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            />
+        <View
+            style="@style/AppTheme.Divider1"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            />
+        <include layout="@layout/layout_empty" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/institute_questions_list"
+        <include layout="@layout/layout_grid_list"/>
+
+        <RelativeLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="5dp"
-            android:layout_marginBottom="35dp"/>
+            android:layout_gravity="center"
+            android:gravity="center"
+            >
 
-<ImageView android:id="@+id/dummy_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:visibility="gone"
-    />
-            <include layout="@layout/layout_qna_ask_question"
-                android:id="@+id/qna_ask_layout"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/institute_questions_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:layout_marginBottom="35dp"/>
+
+            <ImageView android:id="@+id/dummy_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:visibility="gone"
-                android:layout_marginLeft="@dimen/m25dp"
-                android:layout_marginRight="@dimen/m25dp"
-                android:layout_centerInParent="true"/>
+                />
+            <TextView
+                style="@style/AppTheme.OrangeButton"
+                android:background="@color/primary_orange"
+                android:id="@+id/question_ask_button"
+                android:layout_width="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/m9dp"
+                android:paddingTop="@dimen/m9dp"
+                android:textSize="21sp"
+                android:foregroundGravity="center"
+                android:text="Ask a Question"
+                android:visibility="gone"
+                />
 
+            <include layout="@layout/layout_progressbar"
+                android:layout_above="@id/question_ask_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-        <TextView
-            style="@style/AppTheme.OrangeButton"
-            android:background="@color/primary_orange"
-            android:id="@+id/question_ask_button"
-            android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/m9dp"
-            android:paddingTop="@dimen/m9dp"
-            android:textSize="21sp"
-            android:foregroundGravity="center"
-            android:text="Ask a Question"
-            android:visibility="gone"
-            />
-
-        <include layout="@layout/layout_progressbar"
-            android:layout_above="@id/question_ask_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </RelativeLayout>
-
-
-
-</LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+    <include layout="@layout/layout_qna_ask_question"
+        android:id="@+id/qna_ask_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:visibility="gone"
+        android:layout_marginLeft="@dimen/m25dp"
+        android:layout_marginRight="@dimen/m25dp"
+        />
+</FrameLayout>

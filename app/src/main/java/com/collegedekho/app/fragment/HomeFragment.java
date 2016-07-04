@@ -1,15 +1,16 @@
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.PagerTabStrip;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.AppCompatButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -17,7 +18,6 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamDetailAdapter;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ExamSummary;
-import com.collegedekho.app.listener.OnSwipeTouchListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
@@ -91,9 +91,6 @@ public class HomeFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         Constants.READY_TO_CLOSE = true;
-//        View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-//        bottomMenu.animate().translationY(bottomMenu.getHeight());
-//        bottomMenu.setVisibility(View.GONE);
     }
 
     @Override
@@ -110,22 +107,6 @@ public class HomeFragment extends BaseFragment {
         } catch (Exception e) {
 
         }
-//        View view = getView();
-//        if (view != null) {
-//            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-//            if (!IS_TUTE_COMPLETED) {
-//
-//                bottomMenu.animate().translationY(bottomMenu.getHeight());
-//                bottomMenu.setVisibility(View.GONE);
-//
-//                view.findViewById(R.id.profile_guide_image).setVisibility(View.VISIBLE);
-//            } else {
-////                bottomMenu.animate().translationY(0);
-////                bottomMenu.setVisibility(View.VISIBLE);
-//
-//                view.findViewById(R.id.profile_guide_image).setVisibility(View.GONE);
-//            }
-//        }
 
         Constants.READY_TO_CLOSE = false;
 
@@ -179,8 +160,8 @@ public class HomeFragment extends BaseFragment {
             String image = MainActivity.user.getImage();
             if (image != null && !image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-
         }
+
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
@@ -297,7 +278,6 @@ public class HomeFragment extends BaseFragment {
         }
     }
 
-
     @Override
     public void updateExamSummary(ExamSummary examSummary) {
         this.mExamSummary = examSummary;
@@ -309,10 +289,7 @@ public class HomeFragment extends BaseFragment {
         CircularProgressBar profileCompleted =  (CircularProgressBar) view.findViewById(R.id.profile_image_circular_progressbar);
 
         //TODO:: showing progress as a profile circle
-        //if(this.mExamSummary.getSyllabus_covered() ==0)
         profileCompleted.setProgress(100);
-        //else
-        //profileCompleted.setProgress(this.mExamSummary.getSyllabus_covered());
     }
 
     /**

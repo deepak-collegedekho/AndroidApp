@@ -124,10 +124,8 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
 
         View nextView = mRootView.findViewById(R.id.user_education_next_button);
 
-        if (nextView.getAlpha() != 1)
-        {
+        if (nextView.getAlpha() != 1 && !isResumed())
             nextView.setX(10000);
-        }
 
         return mRootView;
     }
@@ -572,8 +570,6 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                 mStreamAdapter.updateStreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
             }
         }else if( !isStreamSelected && mStreamRecyclerView.getVisibility() == View.VISIBLE){
-
-
             HashMap<String, String> params = new HashMap<>();
             // check user's name and phone Number
             if(!getUserNameAndPhone(params)){

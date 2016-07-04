@@ -103,29 +103,6 @@ public class UserExamFragment extends BaseFragment implements SearchView.OnQuery
             rootView.findViewById(R.id.user_exam_recycler_view).setVisibility(View.VISIBLE);
         }
 
-      /*  RecyclerView streamRecyclerView = (RecyclerView)rootView.findViewById(R.id.user_exam_stream_recycler_view);
-        streamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        streamRecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
-
-
-        int currentSubLevelId = MainActivity.mProfile.getPreferred_level();
-        List<ProfileSpinnerItem> mStreamList = null;
-        try {
-            mStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class,
-                    ProfileMacro.getStreamJson(currentSubLevelId));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ExamStreamAdapter mStreamAdapter = new ExamStreamAdapter(getActivity(), (ArrayList<ProfileSpinnerItem>)mStreamList,mExamSearchView);
-        streamRecyclerView.setAdapter(mStreamAdapter);
-
-        mStreamSearchView = (SearchView) rootView.findViewById(R.id.auto_search_stream);
-        //cStreamListener = new StreamOnQueryListener((ArrayList<ProfileSpinnerItem>) mStreamList,mStreamAdapter);
-        //this.mStreamSearchView.setOnQueryTextListener(cStreamListener);
-        mStreamSearchView.setOnSearchClickListener(this);
-        mStreamSearchView.setOnCloseListener(new StreamSearchCloseListener(rootView.findViewById(R.id.search_stream_hint)));
-        mStreamAdapter.setmStreamSearchView(mStreamSearchView);*/
-
         rootView.findViewById(R.id.user_exam_submit_button).setOnClickListener(this);
 
         rootView.findViewById(R.id.user_exam_education_edit_btn).setOnClickListener(this);
@@ -167,11 +144,8 @@ public class UserExamFragment extends BaseFragment implements SearchView.OnQuery
                     searchResults.add(exam);
                 }
             }
-//            if(searchResults.size() != 0){
+
             mExamAdapter.updateExamList(searchResults);
-//            } else {
-//
-//            }
         } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (Exception e) {

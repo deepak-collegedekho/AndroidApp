@@ -37,11 +37,10 @@
             android:layout_height="23dp"
             app:srcCompat="@drawable/ic_edit"
             android:visibility="visible"
-            app:backgroundTint="@color/chat_time_gray"
-            app:fab_shadow="true"
             android:scaleType="center"
             android:layout_gravity="center"
             android:layout_marginTop="60dp"
+            android:elevation="0dp"
             />
 
 
