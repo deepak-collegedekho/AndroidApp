@@ -149,7 +149,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:text="--"
-                android:textSize="14sp"
+                android:textSize="10sp"
                 android:textColor="@color/white"
                 android:layout_marginRight="10dp"
                 android:layout_alignParentRight="true"/>
@@ -162,20 +162,20 @@
 
                 <ImageView
                     android:id="@+id/home_widget_image_first"
-                    android:layout_width="40dp"
-                    android:layout_height="0dp"
-                    android:layout_weight=".6"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center"
+                    android:scaleType="fitCenter"
                     android:importantForAccessibility="no"
-                    app:srcCompat="@drawable/ic_institute"/>
+                    app:srcCompat="@drawable/ic_institute"
+                    />
                 <TextView
                     android:id="@+id/home_widget_textview_first"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight=".4"
-                    android:text="Recommended"
+                    android:layout_height="wrap_content"
+                    android:text="@string/TAG_TAB_RECOMMENDED_COLLEGS"
                     android:gravity="center"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textColor="@color/white"
                     android:padding="@dimen/m5dp"/>
             </LinearLayout>
@@ -197,7 +197,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:text="--"
-                android:textSize="14sp"
+                android:textSize="10sp"
                 android:textColor="@color/white"
                 android:layout_marginRight="10dp"
                 android:layout_alignParentRight="true"/>
@@ -210,20 +210,19 @@
 
                 <ImageView
                     android:id="@+id/home_widget_image_second"
-                    android:layout_width="40dp"
-                    android:layout_height="0dp"
-                    android:layout_weight=".6"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center"
+                    android:scaleType="fitCenter"
                     android:importantForAccessibility="no"
                     app:srcCompat="@drawable/ic_news"/>
                 <TextView
                     android:id="@+id/home_widget_textview_second"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight=".4"
-                    android:text="Shortlist"
+                    android:layout_height="wrap_content"
+                    android:text="@string/TAG_TAB_SHORTLISTED_COLLEGS"
                     android:gravity="center"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textColor="@color/white"
                     android:padding="@dimen/m5dp"/>
             </LinearLayout>
@@ -295,7 +294,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:text="--"
-                android:textSize="14sp"
+                android:textSize="10sp"
                 android:textColor="@color/white"
                 android:layout_marginRight="10dp"
                 android:layout_alignParentRight="true"/>
@@ -308,10 +307,10 @@
 
                 <ImageView
                     android:id="@+id/home_widget_image_third"
-                    android:layout_width="40dp"
-                    android:layout_height="0dp"
-                    android:layout_weight=".7"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center"
+                    android:scaleType="fitCenter"
                     android:importantForAccessibility="no"
                     app:srcCompat="@drawable/ic_article"/>
                 <TextView
@@ -319,9 +318,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight=".3"
-                    android:text="Trending Colleges"
+                    android:text="@string/TAG_TAB_FEATURED_COLLEGS"
                     android:gravity="center"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textColor="@color/white"
                     android:padding="@dimen/m5dp"/>
             </LinearLayout>
@@ -343,7 +342,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:text="--"
-                android:textSize="14sp"
+                android:textSize="10sp"
                 android:textColor="@color/white"
                 android:layout_marginRight="10dp"
                 android:layout_alignParentRight="true"/>
@@ -356,20 +355,19 @@
 
                 <ImageView
                     android:id="@+id/home_widget_image_fourth"
-                    android:layout_width="40dp"
-                    android:layout_height="0dp"
-                    android:layout_weight=".6"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center"
                     android:importantForAccessibility="no"
+                    android:scaleType="fitCenter"
                     app:srcCompat="@drawable/ic_qna"/>
                 <TextView
                     android:id="@+id/home_widget_textview_fourth"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight=".4"
-                    android:text="Explore"
+                    android:layout_height="wrap_content"
+                    android:text="@string/TAG_TAB_EXPLORE_COLLEGS"
                     android:gravity="center"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textColor="@color/white"
                     android:padding="@dimen/m5dp"/>
             </LinearLayout>

@@ -1556,12 +1556,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             Utils.DisplayToast(getContext(), "Please Select your Education mode.");
             return;
         }
-
-        int feeRangeMax = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_mode)).getSelectedSpinnerItemId();
-        if (preferredMode < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your Fee Range.");
-            return;
-        }
         int preferredYear= ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_Admission_year)).getSelectedSpinnerItemId();
         if (preferredYear < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Preferred Year.");
@@ -1580,6 +1574,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         int userPreferredSpecializationId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_specialization)).getSelectedSpinnerItemId();
         if (userPreferredSpecializationId < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Specialization.");
+            return;
+        }
+        int feeRangeMax = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_mode)).getSelectedSpinnerItemId();
+        if (preferredMode < 0) {
+            Utils.DisplayToast(getContext(), "Please Select your Fee Range.");
             return;
         }
 

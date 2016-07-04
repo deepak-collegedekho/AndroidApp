@@ -99,6 +99,18 @@
     <string name="TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM">submit_edit_psychometric_exam</string>
     <string name="TAG_SUBMIT_SBS_EXAM">submit_sbs_exam</string>
 
+    <!--HOME Fragment-->
+    <string name="TAG_HOME_COLLEGE_LIST">Colleges</string>
+    <string name="TAG_HOME_ASK_AND_CHAT">Ask n Chat</string>
+    <string name="TAG_HOME_NEWS_AND_UPDATES">News n Updates</string>
+    <string name="TAG_HOME_PREPARE">Prepare</string>
+
+    <!--TAB Fragment-->
+    <string name="TAG_TAB_RECOMMENDED_COLLEGS">Recommended\nColleges</string>
+    <string name="TAG_TAB_SHORTLISTED_COLLEGS">Shortlisted\nColleges</string>
+    <string name="TAG_TAB_FEATURED_COLLEGS">Featured\nColleges</string>
+    <string name="TAG_TAB_EXPLORE_COLLEGS">Explore\nColleges</string>
+
     <string name="TAG_LOAD_STREAM">load_stream</string>
     <string name="TAG_PSYCHOMETRIC_QUESTIONS">load_psychometric_questions</string>
     <string name="TAG_PSYCHOMETRIC_RESPONSE">load_psychometric_response</string>
@@ -488,5 +500,4 @@
     <string name="please_select_your_stream">Please Select Your Stream</string>
     <string name="please_select_your_level">Please Select Your Education</string>
     <string name="please_select_sub_level_year">And you are currently in!</string>
-
 </resources>

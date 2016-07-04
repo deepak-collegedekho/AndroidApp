@@ -410,13 +410,13 @@ public class TabFragment extends  BaseFragment{
             thirdSubMenuIV.setImageResource(R.drawable.ic_trending);
             fourthSubMenuIV.setImageResource(R.drawable.ic_search_college_widget);
 
-            firstSubMenuTV.setText("Recommended");
+            firstSubMenuTV.setText(MainActivity.getResourceString(R.string.TAG_TAB_RECOMMENDED_COLLEGS));
             firstSubMenuTV.setContentDescription("Select to Explore recommended Institutes");
-            secondSubMenuTV.setText("Shortlist");
+            secondSubMenuTV.setText(MainActivity.getResourceString(R.string.TAG_TAB_SHORTLISTED_COLLEGS));
             secondSubMenuTV.setContentDescription("Select to Explore shortlisted Institutes");
-            thirdSubMenuTV.setText("Sponsored Colleges");
+            thirdSubMenuTV.setText(MainActivity.getResourceString(R.string.TAG_TAB_FEATURED_COLLEGS));
             thirdSubMenuTV.setContentDescription("Select to Explore popular Institutes");
-            fourthSubMenuTV.setText("Explore");
+            fourthSubMenuTV.setText(MainActivity.getResourceString(R.string.TAG_TAB_EXPLORE_COLLEGS));
             fourthSubMenuTV.setContentDescription("Select to Explore all Institutes");
 
             ll.getChildAt(1).setVisibility(View.VISIBLE);

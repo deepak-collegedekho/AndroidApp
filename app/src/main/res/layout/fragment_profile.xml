@@ -750,11 +750,6 @@
                     style="@style/ProfileSpinner"/>
 
                 <com.collegedekho.app.widget.spinner.MaterialSpinner
-                    android:id="@+id/profile_edit_preferred_feee_range"
-                    android:hint="Fee Range"
-                    style="@style/ProfileSpinner"/>
-
-                <com.collegedekho.app.widget.spinner.MaterialSpinner
                     android:id="@+id/profile_edit_preferred_Admission_year"
                     android:hint="Preferred Year"
                     style="@style/ProfileSpinner"/>
@@ -792,6 +787,11 @@
                     style="@style/ProfileSpinner"
                     android:hint="City"
                     android:tag="3"/>
+
+                <com.collegedekho.app.widget.spinner.MaterialSpinner
+                    android:id="@+id/profile_edit_preferred_feee_range"
+                    android:hint="Fee Range"
+                    style="@style/ProfileSpinner"/>
 
                 <Button
                     android:id="@+id/profile_preferred_save_btn"
