@@ -15360,10 +15360,13 @@ public class ProfileMacro {
     public static String PREFERRED_EDUCATION = "preferred_education";
 
     // verified
-
     public static int NUMBER_VERIFIED = 1;
     public static int EXAMS_SELECTED = 1;
     public static int ANONYMOUS_USER = 1;
+
+    // exam type
+    public static int STREAM_EXAM = 1;
+    public static int OTHER_EXAM = 0;
 
     // gender
     public static int GENDER_NOT_PROVIDED = 0;

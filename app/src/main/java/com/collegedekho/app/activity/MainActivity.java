@@ -5185,7 +5185,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRequestForUserExams() {
         // request for yearly exam based on preferred level
-        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, Constants.BASE_URL +"stream-yearly-exams/?level="+mProfile.getPreferred_level(),null, Request.Method.GET);
+        StringBuffer  examUrl = new StringBuffer(Constants.BASE_URL);
+           examUrl.append("stream-yearly-exams/?preferred_level="+mProfile.getPreferred_level());
+
+        int userPreferredStreamId = mProfile.getPreferred_stream_id();
+        if(userPreferredStreamId > 0){
+            examUrl.append("&preferred_stream="+userPreferredStreamId);
+        }else{
+            examUrl.append("&current_stream="+mProfile.getCurrent_stream_id());
+        }
+
+        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, examUrl.toString(), null, Request.Method.GET);
     }
 
     @Override
@@ -5261,7 +5271,7 @@ public class MainActivity extends AppCompatActivity
         }
 //        if(streamBuffer.length() <= 0)
 //            return;
-        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, Constants.BASE_URL +"stream-yearly-exams/?level="+mProfile.getPreferred_level()+streamBuffer.toString(),null, Request.Method.GET);
+      //  this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, Constants.BASE_URL +"stream-yearly-exams/?level="+mProfile.getPreferred_level()+streamBuffer.toString(),null, Request.Method.GET);
     }
 
 
@@ -5302,7 +5312,7 @@ public class MainActivity extends AppCompatActivity
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
 
             if(currentFragment instanceof UserEducationFragment)
-                ((UserEducationFragment)currentFragment).updateUserExams((ArrayList<Exam>) mExamList);
+                ((UserEducationFragment)currentFragment).updateExamsList((ArrayList<Exam>) mExamList);
         } catch (IOException e) {
             e.printStackTrace();
         }

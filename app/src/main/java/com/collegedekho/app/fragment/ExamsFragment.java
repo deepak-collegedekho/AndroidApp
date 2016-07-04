@@ -3,28 +3,23 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.adapter.ExamStreamAdapter;
 import com.collegedekho.app.adapter.ExamsAdapter;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
-import com.collegedekho.app.entities.ProfileSpinnerItem;
+import com.collegedekho.app.listener.ExamFragmentListener;
 import com.collegedekho.app.listener.ExamOnQueryListener;
 import com.collegedekho.app.listener.ExamSearchCloseListener;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
-import com.fasterxml.jackson.jr.ob.JSON;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +30,7 @@ import java.util.ArrayList;
 /**
  * Created by sureshsaini on 30/11/15.
  */
-public class ExamsFragment extends BaseFragment {
+public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
 
     private final String TAG = "ExamsFragment";
     private static String PARAM1 = "param1";
@@ -211,10 +206,10 @@ public class ExamsFragment extends BaseFragment {
         }*/
 
     }
-    public void updateExamList(ArrayList<Exam> searchResults) {
-
+    @Override
+    public void updateQueryExamList(ArrayList<Exam> searchResults) {
         if(mExamAdapter != null){
-            mExamAdapter.updateExamList(searchResults);
+            mExamAdapter.updateExamsList(searchResults);
         }
     }
 

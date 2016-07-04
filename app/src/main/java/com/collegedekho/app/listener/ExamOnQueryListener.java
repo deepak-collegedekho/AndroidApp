@@ -14,11 +14,11 @@ import java.util.ArrayList;
 public class ExamOnQueryListener implements SearchView.OnQueryTextListener {
 
     ArrayList<Exam>  mExamList;
-    BaseFragment mContext;
+    ExamFragmentListener mExamFragmentListener;
 
-    public ExamOnQueryListener(ArrayList<Exam>  mExamList, BaseFragment context){
+    public ExamOnQueryListener(ArrayList<Exam>  mExamList, ExamFragmentListener context){
         this.mExamList = mExamList;
-        this.mContext = context;
+        this.mExamFragmentListener = context;
     }
 
     public void setExamList(ArrayList<Exam> mExamList) {
@@ -40,7 +40,7 @@ public class ExamOnQueryListener implements SearchView.OnQueryTextListener {
                     searchResults.add(exam);
                 }
             }
-            mContext.updateExamList(searchResults);
+            mExamFragmentListener.updateQueryExamList(searchResults);
         } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (Exception e) {

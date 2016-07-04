@@ -122,9 +122,6 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
 
     }
 
-    public void updateExamList(ArrayList<Exam> searchResults) {
-    }
-
 
     public interface BaseListener{
         void onEndReached(String next, int type);

@@ -37,6 +37,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
     private ArrayList<Exam> mExamList = new ArrayList<>();
     private int lastPosition=-1;
     private int textColorId;
+    private boolean mShowAllExams ;
 
 
     public ExamsAdapter(Context context, ArrayList<Exam> examList){
@@ -49,7 +50,6 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
     public ExamHolderView onCreateViewHolder(ViewGroup parent, int viewType) {
       //  LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
         View convertView = LayoutInflater.from(mContext).inflate(R.layout.layout_exam_drop_down, parent, false);
-
         return new ExamHolderView(convertView);
     }
 
@@ -114,6 +114,27 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
             holder.mYearSpinner.setEnabled(true);
             holder.mExamName.setTextColor(textColorId);
         }
+        // show exam layout
+        if(mShowAllExams) {
+            if (position == 0) {
+                if (exam.getExam_type() == ProfileMacro.OTHER_EXAM) {
+                    holder.mExamTypeHeader.setText("Other Exams");
+                    holder.mExamTypeHeader.setVisibility(View.VISIBLE);
+                } else {
+                    holder.mExamTypeHeader.setVisibility(View.GONE);
+                }
+            } else if (exam.getExam_type() == ProfileMacro.OTHER_EXAM) {
+                if (mExamList.get(position - 1).getExam_type() == ProfileMacro.STREAM_EXAM) {
+                    holder.mExamTypeHeader.setText("Other Exams");
+                    holder.mExamTypeHeader.setVisibility(View.VISIBLE);
+                } else {
+                    holder.mExamTypeHeader.setVisibility(View.GONE);
+                }
+            } else {
+                holder.mExamTypeHeader.setVisibility(View.GONE);
+            }
+        }
+
         holder.mYearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -222,7 +243,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
         super.onViewAttachedToWindow(holder);
     }
 
-    public void updateExamList(ArrayList<Exam> newExamList){
+    public void updateExamsList(ArrayList<Exam> newExamList){
        //TODO:: commented code for testing to ask marks for those exams which results is already out.
        /* int count1 = newExamList.size();
         for (int i = 0; i < count1; i++) {
@@ -308,12 +329,14 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
         LinearLayout examCard;
         TextView mExamName;
         ExamYearSpinner mYearSpinner;
+        TextView mExamTypeHeader;
+
         public ExamHolderView(View itemView) {
             super(itemView);
             examCard = (LinearLayout) itemView.findViewById(R.id.exam_card);
             mExamName = (TextView)itemView.findViewById(R.id.exam_name);
             mYearSpinner = (ExamYearSpinner)itemView.findViewById(R.id.exam_year_spinner);
-
+            mExamTypeHeader = (TextView) itemView.findViewById(R.id.user_exam_heading);
         }
 
     }
@@ -387,5 +410,14 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
             }
         });
         alertDialog.show();
+    }
+
+    /**
+     *  This method is used to show header for other exams
+     * @param mShowAllExams
+     */
+
+    public void setShowAllExams(boolean mShowAllExams) {
+        this.mShowAllExams = mShowAllExams;
     }
 }

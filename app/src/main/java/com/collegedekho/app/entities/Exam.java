@@ -10,10 +10,13 @@ import java.util.ArrayList;
  */
 public class Exam implements Parcelable{
 
+    // sever attributes
     private String exam_name;
     private String exam_short_name;
-
+    private int exam_type =0;
     private ArrayList<ExamDetail> exam_details;
+
+    // local attributes
     private boolean isSelected;
     private boolean isPreparing;
 
@@ -24,8 +27,18 @@ public class Exam implements Parcelable{
     protected Exam(Parcel in) {
         exam_name = in.readString();
         exam_details=new ArrayList<>();
+        exam_type = in.readInt();
         exam_details = in.createTypedArrayList(ExamDetail.CREATOR);
         isSelected = in.readByte() != 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(exam_name);
+        dest.writeString(exam_short_name);
+        dest.writeInt(exam_type);
+        dest.writeTypedList(exam_details);
+        dest.writeByte((byte) (isSelected ? 1 : 0));
     }
 
     public static final Creator<Exam> CREATOR = new Creator<Exam>() {
@@ -43,22 +56,6 @@ public class Exam implements Parcelable{
     @Override
     public int describeContents() {
         return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(exam_name);
-        dest.writeString(exam_short_name);
-        dest.writeTypedList(exam_details);
-        dest.writeByte((byte) (isSelected ? 1 : 0));
-    }
-
-    public ArrayList<ExamDetail> getExam_details() {
-        return exam_details;
-    }
-
-    public void setExam_details(ArrayList<ExamDetail> exam_details) {
-        this.exam_details = exam_details;
     }
 
     public boolean isSelected() {
@@ -92,4 +89,22 @@ public class Exam implements Parcelable{
     public void setExam_name(String exam_name) {
         this.exam_name = exam_name;
     }
+
+    public int getExam_type() {
+        return exam_type;
+    }
+
+    public void setExam_type(int exam_type) {
+        this.exam_type = exam_type;
+    }
+
+    public ArrayList<ExamDetail> getExam_details() {
+        return exam_details;
+    }
+
+    public void setExam_details(ArrayList<ExamDetail> exam_details) {
+        this.exam_details = exam_details;
+    }
+
+
 }

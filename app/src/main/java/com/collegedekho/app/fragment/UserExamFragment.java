@@ -17,6 +17,7 @@ import com.collegedekho.app.adapter.ExamsAdapter;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
+import com.collegedekho.app.listener.ExamFragmentListener;
 import com.collegedekho.app.listener.ExamOnQueryListener;
 import com.collegedekho.app.listener.ExamSearchCloseListener;
 import com.collegedekho.app.resource.Constants;
@@ -31,7 +32,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 
-public class UserExamFragment extends BaseFragment implements SearchView.OnQueryTextListener{
+public class UserExamFragment extends BaseFragment implements SearchView.OnQueryTextListener, ExamFragmentListener{
 
     private final String TAG = "User Exam Fragment";
 
@@ -115,7 +116,8 @@ public class UserExamFragment extends BaseFragment implements SearchView.OnQuery
      *
      * @param searchResults
      */
-    public void updateExamList(ArrayList<Exam> searchResults) {
+    @Override
+    public void updateQueryExamList(ArrayList<Exam> searchResults) {
         if(searchResults != null && searchResults.size() >0){
             getView().findViewById(R.id.empty).setVisibility(View.GONE);
             getView().findViewById(R.id.user_education_recycler_view).setVisibility(View.VISIBLE);
@@ -125,7 +127,7 @@ public class UserExamFragment extends BaseFragment implements SearchView.OnQuery
         }
 
         if(mExamAdapter != null){
-            mExamAdapter.updateExamList(searchResults);
+            mExamAdapter.updateExamsList(searchResults);
         }
     }
 
@@ -144,8 +146,11 @@ public class UserExamFragment extends BaseFragment implements SearchView.OnQuery
                     searchResults.add(exam);
                 }
             }
-
-            mExamAdapter.updateExamList(searchResults);
+//            if(searchResults.size() != 0){
+            mExamAdapter.updateExamsList(searchResults);
+//            } else {
+//
+//            }
         } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -283,7 +288,7 @@ public class UserExamFragment extends BaseFragment implements SearchView.OnQuery
         cExamListener.setExamList(examList);
         if(mExamAdapter == null)
             return;
-        mExamAdapter.updateExamList(examList);
+        mExamAdapter.updateExamsList(examList);
         if(examList != null && examList.size() >0
                 &&getView() != null){
 

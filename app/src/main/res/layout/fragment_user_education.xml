@@ -358,50 +358,6 @@
 
 
 
-
-    <ImageButton
-        android:id="@+id/user_education_next_button"
-        style="@style/Widget.AppCompat.ImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/m45dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/m20dp"
-        android:layout_marginTop="@dimen/m5dp"
-        android:layout_marginBottom="@dimen/m10dp"
-        android:padding="@dimen/m15dp"
-        app:srcCompat="@drawable/ic_arrow_forward_vector"
-        android:background="@color/primary_orange"
-        android:visibility="visible"
-        android:alpha="0"
-        android:textSize="17sp"
-        android:textColor="@color/white"/>
-
-
-    <LinearLayout
-        android:id="@+id/user_education_skip_button"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/m45dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/m20dp"
-        android:layout_marginLeft="@dimen/m20dp"
-        android:layout_marginBottom="@dimen/m10dp"
-        android:padding="@dimen/m8dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/TAG_SKIP"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:textColor="@color/skip_btn_color"
-            android:background="@drawable/border_bottom"
-            android:textSize="18sp" />
-
-    </LinearLayout>
-
     <RelativeLayout
         android:id="@+id/user_exam_search_container"
         android:layout_below="@id/user_education_top_layout"
@@ -429,13 +385,68 @@
             android:tag="1" />
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/user_education_next_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/m55dp"
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="@dimen/m20dp"
+        android:paddingRight="@dimen/m20dp"
+        android:paddingTop="@dimen/m6dp"
+        android:paddingBottom="@dimen/m8dp">
+
+        <LinearLayout
+            android:id="@+id/user_education_skip_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="@dimen/m8dp"
+            android:layout_gravity="left"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/TAG_SKIP"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textColor="@color/skip_btn_color"
+                android:background="@drawable/border_bottom"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/user_education_show_all_exams"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="All Exams"
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            android:textSize="18sp"/>
+
+        <ImageButton
+            android:id="@+id/user_education_next_button"
+            style="@style/Widget.AppCompat.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="@dimen/m15dp"
+            android:layout_alignParentRight="true"
+            app:srcCompat="@drawable/ic_arrow_forward_vector"
+            android:background="@color/primary_orange"
+            android:visibility="visible"
+            android:alpha="0"/>
+
+    </RelativeLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/user_education_recycler_view"
-        android:paddingLeft="@dimen/m2dp"
+        android:paddingLeft="@dimen/m4dp"
+        android:paddingRight="@dimen/m4dp"
         android:layout_height="match_parent"
         android:visibility="gone"
         android:layout_below="@id/user_exam_search_container"
-        android:layout_above="@id/user_education_skip_button"
+        android:layout_above="@id/user_education_next_button_layout"
         android:layout_width="match_parent"/>
 
     <TextView
@@ -445,7 +456,7 @@
         android:gravity="center"
         android:visibility="gone"
         android:layout_below="@id/user_exam_search_container"
-        android:layout_above="@id/user_education_skip_button"
+        android:layout_above="@id/user_education_next_button_layout"
         android:textSize="@dimen/m16dp"
         android:text="@string/no_exam_found"
         android:textStyle="italic"/>
