@@ -94,6 +94,7 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
 
         mExamSearchView.setOnSearchClickListener(this);
         mExamSubmitButton.setOnClickListener(this);
+        rootView.findViewById(R.id.user_exam_search_container).setOnClickListener(this);
         // IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.EXAMS_SCREEN_TUTE), false);
 
         /*rootView.findViewById(R.id.exam_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
@@ -232,11 +233,14 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
                 onExamsSelected();
                 break;
             case R.id.user_exam_search_view:
-                if(!mExamSearchView.isActivated()){
+            case R.id.user_exam_search_container:
+                mExamSearchView.onActionViewExpanded();
+                getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.GONE);
+               /* if(!mExamSearchView.isActivated()){
                     getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.GONE);
                 } else {
                     getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.VISIBLE);
-                }
+                }*/
                 break;
             default:
                 break;

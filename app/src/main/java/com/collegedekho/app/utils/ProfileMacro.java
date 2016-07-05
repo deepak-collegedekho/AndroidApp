@@ -15204,7 +15204,7 @@ public class ProfileMacro {
         if(currentPassingYearList.size() == 4)
             return currentPassingYearList;
 
-        for (int i = 2013; i < 2017; i++) {
+        for (int i = 2013; i < 2018; i++) {
             ProfileSpinnerItem item = new  ProfileSpinnerItem();
             item.setId(i);
             item.setName(getYearName(i));

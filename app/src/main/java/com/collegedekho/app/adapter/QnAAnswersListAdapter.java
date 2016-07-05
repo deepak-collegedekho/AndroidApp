@@ -3,6 +3,8 @@ package com.collegedekho.app.adapter;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.fragment.QnAQuestionDetailFragment;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.resource.DetectHtml;
 import com.collegedekho.app.utils.NetworkUtils;
 
 import java.text.ParseException;
@@ -68,7 +71,18 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
             Log.e(TAG, "Date format unknown: " + qnaAnswer.getAdded_on());
         }
 
-        qnaAnswerHolder.answerText.setText(qnaAnswer.getAnswer_text());
+         String answerText = qnaAnswer.getAnswer_text();
+        if(DetectHtml.isHtml(answerText)){
+            Spanned result;
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                result = Html.fromHtml(answerText,Html.FROM_HTML_MODE_LEGACY);
+            } else {
+                result = Html.fromHtml(answerText);
+            }
+            answerText = result.toString();
+        }
+        qnaAnswerHolder.answerText.setText(answerText);
         qnaAnswerHolder.answerVotes.setText(String.valueOf(qnaAnswer.getUpvotes() - qnaAnswer.getDownvotes()));
         if (qnaAnswer.getUser() != MainActivity.user.getUsername())
         {

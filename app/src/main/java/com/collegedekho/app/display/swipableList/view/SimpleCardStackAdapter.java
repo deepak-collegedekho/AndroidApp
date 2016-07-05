@@ -219,7 +219,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             int markerHeight = 0;
             float deviceDensity = getContext().getResources().getDimension(R.dimen.m50dp);
             try {
-                averageSal = Double.parseDouble(institute.getAvg_salary());
+                averageSal = institute.getAvg_salary();
                 avgSalary.setText(Utils.rupeeFormatter(averageSal));
             } catch (NumberFormatException ne) {
 
@@ -228,7 +228,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             }
 
             try {
-                maxSal = Double.parseDouble(institute.getMax_salary());
+                maxSal = institute.getMax_salary();
                 maxSalary.setText(Utils.rupeeFormatter(maxSal));
             } catch (NumberFormatException ne) {
 
@@ -237,7 +237,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             }
 
             try {
-                minSal = Double.parseDouble(institute.getMin_salary());
+                minSal = institute.getMin_salary();
                 minSalary.setText(Utils.rupeeFormatter(minSal));
             } catch (NumberFormatException ne) {
 

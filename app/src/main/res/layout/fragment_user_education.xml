@@ -265,7 +265,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        android:text="@string/currently_studying_yet"
+        android:text="@string/currently_studying_at"
         android:paddingTop="@dimen/m5dp"
         android:paddingBottom="@dimen/m8dp"
         android:paddingLeft="@dimen/m15dp"
@@ -416,14 +416,18 @@
 
         </LinearLayout>
 
-        <CheckBox
+        <TextView
             android:id="@+id/user_education_show_all_exams"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="All Exams"
+            android:text="Show More.."
             android:visibility="gone"
+            android:background="@color/primary_orange"
+            android:padding="@dimen/m4dp"
+            android:textColor="@color/white"
+            android:gravity="center"
             android:layout_centerInParent="true"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
 
         <ImageButton
             android:id="@+id/user_education_next_button"

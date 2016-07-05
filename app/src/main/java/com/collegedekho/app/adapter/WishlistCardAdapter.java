@@ -151,7 +151,7 @@ public final class WishlistCardAdapter {
             int markerHeight = 0;
             float deviceDensity = getContext().getResources().getDimension(R.dimen.m58dp);
             try {
-                averageSal = Double.parseDouble(this.mInstitute.getAvg_salary());
+                averageSal = this.mInstitute.getAvg_salary();
                 avgSalary.setText(Utils.rupeeFormatter(averageSal));
             } catch (NumberFormatException ne) {
 
@@ -160,7 +160,7 @@ public final class WishlistCardAdapter {
             }
 
             try {
-                maxSal = Double.parseDouble(this.mInstitute.getMax_salary());
+                maxSal = this.mInstitute.getMax_salary();
                 maxSalary.setText(Utils.rupeeFormatter(maxSal));
             } catch (NumberFormatException ne) {
 
@@ -169,7 +169,7 @@ public final class WishlistCardAdapter {
             }
 
             try {
-                minSal = Double.parseDouble(this.mInstitute.getMin_salary());
+                minSal = this.mInstitute.getMin_salary();
                 minSalary.setText(Utils.rupeeFormatter(minSal));
             } catch (NumberFormatException ne) {
 
