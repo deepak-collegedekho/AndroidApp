@@ -103,6 +103,9 @@ public class TabFragment extends  BaseFragment{
                     } else if(i ==2) {
                         i++;
                         v.setBackgroundResource(R.drawable.ic_profile_tute4);
+                    } else if(i ==3) {
+                        i++;
+                        v.setBackgroundResource(R.drawable.ic_profile_tute5);
                     } else {
                         v.setVisibility(View.GONE);
                         IS_TUTE_COMPLETED = true;
@@ -255,6 +258,14 @@ public class TabFragment extends  BaseFragment{
         return rootView;
     }
 
+    public void updateExamsList(ArrayList<ExamDetail> examsList){
+        if(mExamDetailList == null)
+            return;
+        this.mExamDetailList=examsList;
+        this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
+        mExamTabPager.setAdapter(this.mDetailsAdapter);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -266,7 +277,9 @@ public class TabFragment extends  BaseFragment{
                 this.mExamDetailList = MainActivity.user.getUser_exams();
                 this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
                 mExamTabPager.setAdapter(this.mDetailsAdapter);
+                mExamTabPager.invalidate();
                 mainActivity.mUpdateTabMenuItem(this.selectedTabPosition,0);
+                updateCollegeCount(selectedTabPosition);
                 if (selectedTabPosition < mExamDetailList.size())
                     mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
             }else {
@@ -700,11 +713,6 @@ public class TabFragment extends  BaseFragment{
         }
     }
 
-    public void updateExamsList(ArrayList<ExamDetail>examsList){
-        this.mExamDetailList=examsList;
-        this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
-        mExamTabPager.setAdapter(this.mDetailsAdapter);
-    }
     OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {
         @Override
         public void onSwipeLeft() {

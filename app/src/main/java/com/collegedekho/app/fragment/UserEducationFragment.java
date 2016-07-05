@@ -590,7 +590,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
             params.put("current_level_id", "" + currentLevelID);
             params.put("current_sublevel_id", "" + mUserSubLevelID);
             params.put("preferred_level", "" + preferredLevelId);
-            params.put("current_score", "" + preferredLevelId);
+            params.put("current_score", "" + mUserCurrentMarks);
 
             // check user's name and phone Number
             if(!getUserNameAndPhone(params)){
