@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class WishlistFragment extends BaseFragment {
 
-    public static final String TITLE = "Wishlist Institutes";
+    public static final String TITLE = "Shortlist Institutes";
     private static final String ARG_INSTITUTE = "wishlist_institute";
     private static final String ARG_FILTER_ALLOWED = "filter_allowed";
     private static final String TAG = "Wishlist Institute Fragment";

@@ -1135,8 +1135,8 @@ public class MainActivity extends AppCompatActivity
             menu.getItem(0).setVisible(true);
         }
         setSearchAvailable(menu);
-       // if (!getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), false)) {
-          if(currentFragment instanceof  HomeFragment){
+//        if (!getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), false)) {
+        if(currentFragment instanceof  HomeFragment){
             menu.setGroupVisible(R.id.main_menu_group, true);
             menu.setGroupVisible(R.id.search_menu_group, true);
         }
@@ -1146,7 +1146,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setSearchAvailable(Menu menu) {
         if (currentFragment != null) {
-            if (currentFragment instanceof HomeFragment ||  (currentFragment instanceof TabFragment)) {
+            if (currentFragment instanceof HomeFragment || (currentFragment instanceof TabFragment )) {
                 menu.setGroupVisible(R.id.search_menu_group, true);
                 if (searchView != null) {
                     searchView.setQueryHint("Search Institutes");
@@ -2309,7 +2309,7 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayStreams(response, true);
                 break;
             case Constants.WIDGET_SHORTLIST_INSTITUTES:
-                this.mCurrentTitle = "Wishlist Institutes";
+                this.mCurrentTitle = "Shortlist Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 //this.mDisplayInstituteList(response, false, true, Constants.SHORTLIST_TYPE);
                 this.mDisplayWishlistInstituteList(response, false, true, Constants.WISH_LIST_TYPE);
@@ -2320,7 +2320,7 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayInstituteList(response, true, true);
                 break;
             case Constants.WIDGET_TRENDING_INSTITUTES:
-                this.mCurrentTitle = "Sponsored Colleges";
+                this.mCurrentTitle = "Featured Colleges";
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 this.mDisplayInstituteList(response, false, true);
                 break;
@@ -2354,7 +2354,7 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.SHORTLISTED, false);
                 break;
             case Constants.CARD_BUZZLIST_INSTITUTES:
-                this.mCurrentTitle = "Sponsored Colleges";
+                this.mCurrentTitle = "Featured Colleges";
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.BUZZLIST, true);

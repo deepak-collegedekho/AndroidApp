@@ -371,7 +371,7 @@
     <string name="OTP_VERIFICATION">otp_verification</string>
     <string name="ACTION_OTP_VERIFIED">action_otp_verified</string>
     <string name="ACTION_USER_PROFILE_CREATED">action_user_profile_created</string>
-    <string name="ACTION_REMOVE_COLLEGE">Remove College from your Wishlist</string>
+    <string name="ACTION_REMOVE_COLLEGE">Remove College from your Shortlist</string>
     <string name="ACTION_CALL_COLLEGE">Call to College for information</string>
     <string name="ACTION_APPLY_COLLEGE">Apply to get the admission</string>
     <string name="ACTION_USER_ACTION">action_user_action</string>

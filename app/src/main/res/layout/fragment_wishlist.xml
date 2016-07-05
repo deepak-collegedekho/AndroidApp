@@ -11,7 +11,7 @@
         android:id="@+id/textview_page_title"
         style="@style/AppTheme.TextView.page_title"
         android:paddingRight="55dp"
-        android:text="Wishlist"
+        android:text="Shortlist"
         />
 
     <include layout="@layout/layout_secondary_header"

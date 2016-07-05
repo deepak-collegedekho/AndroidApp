@@ -355,7 +355,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 if (CARD_CATEGORY != Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()) {
                     CARD_CATEGORY = Constants.CDRecommendedInstituteType.BUZZLIST.ordinal();
                     showWishListUI(false);
-                    mEmptyTextView.setText("Loading for sponsored institutes...");
+                    mEmptyTextView.setText("Loading for featured institutes...");
                     mEmptyTextView.setVisibility(View.VISIBLE);
                     mListener.onClickBuzzList();
                 }
@@ -788,13 +788,13 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mUndecidedCountText.setClickable(true);
         this.mBuzzListCount = this.mInstitutes.size();
         this.mBuzzListCountText.setText(""+mBuzzListCount);
-        mTitle = "Sponsored Colleges";
+        mTitle = "Featured Colleges";
         this.mPageTitleTV.setText(mTitle);
         //this.mCardContainer.setListener(null);
         // boolean canAnimate = mAdapter.getCardCategory() != Constants.CDRecommendedInstituteType.BUZZLIST.ordinal();
         //this.mAdapter.setCardCategory(Constants.CDRecommendedInstituteType.BUZZLIST.ordinal());
         if (this.mInstitutes.size() == 0) {
-            this.mEmptyTextView.setText("No more sponsored institutes...");
+            this.mEmptyTextView.setText("No more featured institutes...");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             questionLayout.setVisibility(View.INVISIBLE);
             this.mCardContainer.setVisibility(View.GONE);
