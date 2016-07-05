@@ -1413,57 +1413,50 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
      */
     private void mRequestForUpdateInfo(){
         String userName = ((EditText) mRootView.findViewById(R.id.profile_edit_name)).getText().toString();
-        /*if (userName == null || userName.trim().isEmpty()) {
-            //mListener.displayMessage(R.string.NAME_EMPTY);
-           /Utils.DisplayToast(getContext(), "Please enter your name.");
-            return;
-        } else if (!Utils.isValidName(userName)) {
-            mListener.displayMessage(R.string.NAME_INVALID);
-            Utils.DisplayToast(getContext(), "Please enter a valid name.");
-            return;
-        }*/
+        if (userName == null ){
+            userName = mProfile.getName();
+        }
         String userPhoneNumber = mProfile.getPhone_no();
         if(mProfile.getIs_verified() != 1) {
             userPhoneNumber = ((EditText) mRootView.findViewById(R.id.profile_edit_phone)).getText().toString();
-            /*if (userPhoneNumber == null || userPhoneNumber.trim().isEmpty()) {
-               // mListener.displayMessage(R.string.PHONE_EMPTY);
-                Utils.DisplayToast(getContext(), "Please enter your phone number.");
-                return;
-            } else if (userPhoneNumber.length() <= 9 || !Utils.isValidPhone(userPhoneNumber)) {
-                //mListener.displayMessage(R.string.PHONE_INVALID);
-                Utils.DisplayToast(getContext(), "Please enter a valid phone number.");
-                return;
-            }*/
+            if (userName == null ){
+                userPhoneNumber = "";
+            }
+            if(userName.length() > 0) {
+                if (userPhoneNumber.length() <= 9 || !Utils.isValidPhone(userPhoneNumber)) {
+                    Utils.DisplayToast(getContext(), "Please enter a valid phone number.");
+                    return;
+                }
+            }
         }
+        String userStateIdValue = "";
         int userStateId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_state)).getSelectedSpinnerItemId();
-       /* if (userStateId < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your state.");
-            return;
-        }*/
+        if (userStateId > 0) {
+            userStateIdValue = userStateIdValue+userStateId ;
+        }
+        String userCityIdValue = "";
         int userCityId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_city)).getSelectedSpinnerItemId();
-        /*if (userCityId < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your City.");
-            return;
-        }*/
+        if (userCityId > 0) {
+            userCityIdValue = userCityIdValue +userCityId;
+        }
+        String userSocialCategoryIdValue ="";
         int userSocialCategoryId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_category)).getSelectedSpinnerItemId();
-       /* if (userSocialCategoryId < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your Social Category.");
-            return;
-        }*/
-
+        if (userSocialCategoryId > 0) {
+           userSocialCategoryIdValue = userSocialCategoryIdValue+userSocialCategoryId;
+        }
+        String userMotherTongueIdValue = "";
         int userMotherTongueId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_mother_tongue)).getSelectedSpinnerItemId();
-       /* if (userMotherTongueId < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your Mother Tongue.");
-            return;
-        }*/
+       if (userMotherTongueId > 0) {
+           userMotherTongueIdValue = userMotherTongueIdValue+userMotherTongueId;
+        }
 
         HashMap<String, String> params = new HashMap<>();
         params.put("name", userName);
         params.put("phone_no", userPhoneNumber);
-        params.put("state_id", "" + userStateId);
-        params.put("city_id", "" + userCityId);
-        params.put("social_category", ""+userSocialCategoryId);
-        params.put("mother_tongue",""+ userMotherTongueId);
+        params.put("state_id", userStateIdValue);
+        params.put("city_id", userCityIdValue);
+        params.put("social_category", userSocialCategoryIdValue);
+        params.put("mother_tongue",userMotherTongueIdValue);
         mListener.requestForUserProfileUpdate(params,0);
     }
     /**
@@ -1474,61 +1467,65 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     private void mRequestForUpdateCurrentEducation(){
 
+        String currentSubLevelIdValue ="";
         int userCurrentSubLevelId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_sub_level)).getSelectedSpinnerItemId();
-       /* if (userCurrentSubLevelId < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your Sub Level.");
-            return;
-        }*/
+        if (userCurrentSubLevelId > 0) {
+           currentSubLevelIdValue  +=  userCurrentSubLevelId;
+        }
+         String currentStreamIdValue ="";
         int userCurrentStreamId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_stream)).getSelectedSpinnerItemId();
-       /* if (userCurrentStreamId < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your Stream.");
-            return;
-        }*/
+        if (userCurrentStreamId > 0) {
+            currentStreamIdValue += userCurrentStreamId;
+        }
+        String currentSpecilizationIdValue ="";
         int userCurrentSpecializationId = mProfile.getCurrent_specialization_id();
         if(!(userCurrentStreamId == 16 || userCurrentStreamId == 7 || userCurrentStreamId == 33 ||userCurrentStreamId == 34 ||
                 userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37)){
              userCurrentSpecializationId= ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_specialization)).getSelectedSpinnerItemId();
-            /*if (userCurrentSpecializationId < 0) {
-                Utils.DisplayToast(getContext(), "Please Select your Specialization.");
-                return;
-            }*/
+            if (userCurrentSpecializationId > 0) {
+                currentSpecilizationIdValue +=userCurrentSpecializationId ;
+            }
         }
-        int userCurrentDegreeId = mProfile.getCurrent_degree_id();
+        String currentDegreeIdValue ="";
+        int currentDegreeId = mProfile.getCurrent_degree_id();
         if(!(userCurrentStreamId == 16 || userCurrentStreamId == 7 || userCurrentStreamId == 33 ||userCurrentStreamId == 34 ||
                 userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37)){
-               userCurrentDegreeId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_degree)).getSelectedSpinnerItemId();
-           /* if (userCurrentDegreeId < 0) {
-                Utils.DisplayToast(getContext(), "Please Select your Degree.");
-                return;
-            }*/
+            currentDegreeId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_degree)).getSelectedSpinnerItemId();
+            if (currentDegreeId > 0) {
+                currentDegreeIdValue += currentDegreeId;
+            }
         }
-        String userCurrentScore = ((EditText) mRootView.findViewById(R.id.profile_edit_current_score)).getText().toString();
+        String currentScore = ((EditText) mRootView.findViewById(R.id.profile_edit_current_score)).getText().toString();
+        if(currentScore == null)
+            currentScore ="";
 
-        int userCurrentScoreId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_score_type)).getSelectedSpinnerItemId();
-
-
+        String currentScoreIdValue ="";
+        int currentScoreId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_score_type)).getSelectedSpinnerItemId();
+        if(currentScoreId > 0){
+            currentScoreIdValue += currentScoreId;
+        }
+        String currentModeIdValue ="";
         int currentModeId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_mode)).getSelectedSpinnerItemId();
-        /*if (currentModeId < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your Education mode.");
-            return;
-        }*/
-        int passingYear = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_passing_year)).getSelectedSpinnerItemId();
-/*
-        if (passingYear < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your Passing Year.");
-            return;
+        if (currentModeId > 0) {
+            currentModeIdValue += currentModeId;
         }
-*/
+        String currentPassingYear ="";
+        int passingYear = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_passing_year)).getSelectedSpinnerItemId();
+
+        if (passingYear > 0) {
+            currentPassingYear = currentPassingYear+ passingYear;
+        }
+
 
         HashMap<String, String> params = new HashMap<>();
-        params.put("current_sublevel_id", ""+userCurrentSubLevelId);
-        params.put("current_mode", ""+currentModeId);
-        params.put("current_stream_id", ""+userCurrentStreamId);
-        params.put("current_degree_id", ""+userCurrentDegreeId);
-        params.put("current_specialization_id", ""+userCurrentSpecializationId);
-        params.put("current_score", userCurrentScore);
-        params.put("current_score_type", ""+userCurrentScoreId);
-        params.put("current_passing_year", ""+passingYear);
+        params.put("current_sublevel_id",currentSubLevelIdValue);
+        params.put("current_mode", currentModeIdValue);
+        params.put("current_stream_id", currentStreamIdValue);
+        params.put("current_degree_id", currentDegreeIdValue);
+        params.put("current_specialization_id", currentSpecilizationIdValue);
+        params.put("current_score", currentScore);
+        params.put("current_score_type", currentScoreIdValue);
+        params.put("current_passing_year", currentPassingYear);
         mListener.requestForUserProfileUpdate(params, 1);
     }
 
@@ -1540,36 +1537,36 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     private void mRequestForUpdatePreferredEducation(){
 
+        String  preferredModeValue ="";
         int preferredMode = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_mode)).getSelectedSpinnerItemId();
-       /* if (preferredMode < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your Education mode.");
-            return;
-        }*/
+        if (preferredMode > 0) {
+            preferredModeValue += preferredMode;
+        }
+        String preferredYearValue = "";
         int preferredYear= ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_Admission_year)).getSelectedSpinnerItemId();
-        /*if (preferredYear < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your Preferred Year.");
-            return;
-        }*/
-        int userPreferredSubLevelId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_level)).getSelectedSpinnerItemId();
-       /* if (userPreferredSubLevelId < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your Sub Level.");
-            return;
-        }*/
-        int userPreferredStreamId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_stream)).getSelectedSpinnerItemId();
-        /*if (userPreferredStreamId < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your Stream.");
-            return;
-        }*/
-        int userPreferredSpecializationId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_specialization)).getSelectedSpinnerItemId();
-        /*if (userPreferredSpecializationId < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your Specialization.");
-            return;
-        }*/
+        if (preferredYear > 0) {
+            preferredYearValue +=  preferredYear;
+        }
+        String preferredSubLevelValue ="";
+        int preferredSubLevelId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_level)).getSelectedSpinnerItemId();
+       if (preferredSubLevelId  > 0) {
+           preferredSubLevelValue += preferredSubLevelId;
+        }
+        String preferredStreamIdValue ="";
+        int preferredStreamId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_stream)).getSelectedSpinnerItemId();
+        if (preferredStreamId > 0) {
+            preferredStreamIdValue += preferredStreamId;
+        }
+        String preferredSpecializationIdvalue ="";
+        int preferredSpecializationId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_specialization)).getSelectedSpinnerItemId();
+        if (preferredSpecializationId  >0) {
+            preferredSpecializationIdvalue +=preferredSpecializationId ;
+        }
+        String feeRangeMaxValue ="";
         int feeRangeMax = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_mode)).getSelectedSpinnerItemId();
-      /*  if (preferredMode < 0) {
-            Utils.DisplayToast(getContext(), "Please Select your Fee Range.");
-            return;
-        }*/
+       if (feeRangeMax > 0) {
+           feeRangeMaxValue += feeRangeMax ;
+        }
 
        /* int loanRequiredButtonId = ((SegmentedGroup) mRootView.findViewById(R.id.profile_loan_required_group)).getCheckedRadioButtonId();
         RadioButton loanRequiredButton = (RadioButton) mRootView.findViewById(loanRequiredButtonId);
@@ -1640,12 +1637,12 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         cityIds.append("]");
 
         HashMap<String, String> params = new HashMap<>();
-        params.put("preferred_year_of_admission", ""+preferredYear);
-        params.put("preferred_mode", ""+preferredMode);
-        params.put("preferred_fee_range_max",""+feeRangeMax);
-        params.put("preferred_level", ""+ userPreferredSubLevelId);
-        params.put("preferred_stream_id", "" + userPreferredStreamId);
-        params.put("preferred_specialization_id", ""+userPreferredSpecializationId);
+        params.put("preferred_year_of_admission", preferredYearValue);
+        params.put("preferred_mode", preferredModeValue);
+        params.put("preferred_fee_range_max",feeRangeMaxValue);
+        params.put("preferred_level", preferredSubLevelValue);
+        params.put("preferred_stream_id", preferredStreamIdValue);
+        params.put("preferred_specialization_id", preferredSpecializationIdvalue);
         params.put("preferred_degrees_ids", "" + degreeIds.toString());
         params.put("preferred_states_ids", "" + stateIds.toString());
         params.put("preferred_cities_ids", "" + cityIds.toString());
@@ -1658,20 +1655,20 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
      * This method is used to request to update user other info like
      * father name , mother name and coaching institute
      */
-    private void mRequestForUpdateOtherInfo(){
+    private void mRequestForUpdateOtherInfo() {
         String fatherName = ((EditText) mRootView.findViewById(R.id.profile_edit_father_name)).getText().toString();
-        /*if (fatherName == null || fatherName.isEmpty()) {
-            Utils.DisplayToast(getContext(), "Father name should not be empty");
-            return;
-        }*/
+        if (fatherName == null)
+        {
+            fatherName = mProfile.getFathers_name();
+        }
         String motherName = ((EditText) mRootView.findViewById(R.id.profile_edit_mother_name)).getText().toString();
-        /*if (motherName == null || motherName.isEmpty()) {
-            Utils.DisplayToast(getContext(), "Mother name should not be empty");
-            return;
-        }*/
+        if (motherName == null)
+        {
+            motherName = mProfile.getMothers_name();
+        }
         String coachingInstitute = ((EditText) mRootView.findViewById(R.id.profile_edit_coaching_institute)).getText().toString();
         if (coachingInstitute == null) {
-            coachingInstitute = "";
+            coachingInstitute = mProfile.getCoaching_institute();
         }
         HashMap<String, String> params = new HashMap<>();
         params.put("fathers_name", fatherName);
