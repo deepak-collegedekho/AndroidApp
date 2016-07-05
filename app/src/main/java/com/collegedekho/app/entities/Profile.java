@@ -76,6 +76,11 @@ public class Profile implements Parcelable{
     private String fathers_name  ="";
     private String mothers_name  ="";
     private String coaching_institute  ="";
+    private int basic_progress = 0;
+    private int current_education_progress = 0;
+    private int preference_progress = 0;
+    private int exams_progress = 0;
+    private int others_progress = 0;
 
     public Profile(){
         // required empty contructor
@@ -148,6 +153,11 @@ public class Profile implements Parcelable{
         fathers_name = in.readString();
         mothers_name = in.readString();
         coaching_institute = in.readString();
+        basic_progress = in.readInt();
+        current_education_progress = in.readInt();
+        preference_progress = in.readInt();
+        exams_progress = in.readInt();
+        others_progress = in.readInt();
     }
 
     @Override
@@ -215,6 +225,11 @@ public class Profile implements Parcelable{
         dest.writeString(fathers_name);
         dest.writeString(mothers_name);
         dest.writeString(coaching_institute);
+        dest.writeInt(basic_progress);
+        dest.writeInt(current_education_progress);
+        dest.writeInt(preference_progress);
+        dest.writeInt(exams_progress);
+        dest.writeInt(others_progress);
     }
 
     @Override
@@ -760,5 +775,45 @@ public class Profile implements Parcelable{
 
     public void setCoaching_institute(String coaching_institute) {
         this.coaching_institute = coaching_institute;
+    }
+
+    public int getBasic_progress() {
+        return basic_progress;
+    }
+
+    public void setBasic_progress(int basic_progress) {
+        this.basic_progress = basic_progress;
+    }
+
+    public int getCurrent_education_progress() {
+        return current_education_progress;
+    }
+
+    public void setCurrent_education_progress(int current_education_progress) {
+        this.current_education_progress = current_education_progress;
+    }
+
+    public int getPreference_progress() {
+        return preference_progress;
+    }
+
+    public void setPreference_progress(int preference_progress) {
+        this.preference_progress = preference_progress;
+    }
+
+    public int getExams_progress() {
+        return exams_progress;
+    }
+
+    public void setExams_progress(int exams_progress) {
+        this.exams_progress = exams_progress;
+    }
+
+    public int getOthers_progress() {
+        return others_progress;
+    }
+
+    public void setOthers_progress(int others_progress) {
+        this.others_progress = others_progress;
     }
 }

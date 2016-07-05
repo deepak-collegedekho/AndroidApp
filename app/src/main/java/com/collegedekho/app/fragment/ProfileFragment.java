@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
+import com.collegedekho.app.widget.CircularProgressBar;
 import com.collegedekho.app.widget.spinner.MaterialSpinner;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.gson.JsonObject;
@@ -74,6 +76,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     private static List<ProfileSpinnerItem> mPreferredStatesList;
     private static List<ProfileSpinnerItem> mPreferredCitiesList;
     private static List<ProfileSpinnerItem> mPreferredDegreesList;
+    private RelativeLayout mUserImageLayout;
 
     public static ProfileFragment getInstance(Profile profile){
         ProfileFragment fragment = new ProfileFragment();
@@ -111,7 +114,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             mMinusDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_minus_inline);
         }
 
-        mRootView.findViewById(R.id.user_profile_image_update).findViewById(R.id.profile_image_edit_button).setVisibility(View.GONE);
+        mUserImageLayout = (RelativeLayout) mRootView.findViewById(R.id.user_profile_image_update);
+
+        mUserImageLayout.findViewById(R.id.profile_image_edit_button).setVisibility(View.GONE);
 
         mProfileName = (TextView)mRootView.findViewById(R.id.profile_user_name);
         mRootView.findViewById(R.id.profile_login_button).setOnClickListener(this);
@@ -144,6 +149,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     public void updateUserProfile() {
         if (mProfile == null)
             return;
+
+        setProfileProgressStatus((CircularProgressBar) mUserImageLayout.findViewById(R.id.user_profile_progress), mProfile.getProgress());
 
         String name = mProfile.getName();
         if (name != null && !name.isEmpty()) {
@@ -194,7 +201,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             ((TextView) mRootView.findViewById(R.id.profile_info_category)).setText("NA");
         }
         // set basic info progress
-        setProfileProgressStatus((ProgressBar) mRootView.findViewById(R.id.profile_info_progress), 50);
+        setProfileProgressStatus((ProgressBar) mRootView.findViewById(R.id.profile_info_progress), mProfile.getBasic_progress());
 
         //  set degree name school if user is currently in school and does not have any degree
         //  else set user's current holding degree name in current education
@@ -260,7 +267,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             ((TextView) mRootView.findViewById(R.id.profile_education_mode)).setText(ProfileMacro.getEducationModeName(currentMode));
         }
 
-        setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_education_progress), 50);
+        setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_education_progress), mProfile.getCurrent_education_progress());
 
         // set user preferred info
         setPreferredEducationInfo(false);
@@ -290,7 +297,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }else{
             ((TextView)mRootView.findViewById(R.id.profile_coaching_institute_name)).setText("NA");
         }
-        setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_other_progress), 50);
+        setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_other_progress), mProfile.getOthers_progress());
 
     }
 
@@ -353,8 +360,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             view.findViewById(R.id.profile_preferences_loan_required_layout).setVisibility(View.GONE);
         }
 
-
-
         // set degree names
         ArrayList<String> degreeNameList = mProfile.getPreferred_degrees_names();
         if(degreeNameList != null && !degreeNameList.isEmpty() ){
@@ -405,7 +410,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             ((TextView)view.findViewById(R.id.profile_preferences_location)).setText("NA");
 
         }
-        setProfileProgressStatus((ProgressBar)view.findViewById(R.id.profile_preferences_progress), preferredInfoStatus);
+        setProfileProgressStatus((ProgressBar)view.findViewById(R.id.profile_preferences_progress), mProfile.getPreference_progress());
     }
     /**
      * This method is used to set user exams info
@@ -1744,12 +1749,18 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
 
 
-    public void setProfileProgressStatus(ProgressBar  progressbar, int progress)
+    public void setProfileProgressStatus(View progressbar, int progress)
     {
-        progressbar.setProgress(0);
-        progressbar.setMax(100);
-        progressbar.setProgress(50);
-
+        if (progressbar instanceof ProgressBar)
+        {
+            ((ProgressBar)progressbar).setMax(100);
+            ((ProgressBar) progressbar).setProgress(0);
+            ((ProgressBar)progressbar).setProgress(progress);
+        }
+        else if (progressbar instanceof CircularProgressBar)
+        {
+            ((CircularProgressBar) progressbar).setProgressWithAnimation(progress, 1000);
+        }
     }
 
 
