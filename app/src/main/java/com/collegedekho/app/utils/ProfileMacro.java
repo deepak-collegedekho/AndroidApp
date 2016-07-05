@@ -15107,15 +15107,15 @@ public class ProfileMacro {
         return "After 2018";
     }
 
-    public static String getFeeRangeName(int id) {
-        if(id == 1)
-            return "0-1 lac";
-        else if(id == 2)
-            return "1-2 lacs";
-        else if(id == 3)
-            return "2-3 lacs";
-        else if(id == 4)
-            return "3-4 lacs";
+    public static String getFeeRangeName(int maxFee) {
+        if(maxFee <= 100000)
+            return "less than 1 lac";
+        else if(maxFee > 100000 && maxFee <= 200000)
+            return "1 to 2 lacs";
+        else if(maxFee > 200000 && maxFee <= 300000)
+            return "2 to 3 lacs";
+        else if(maxFee > 300000 && maxFee <= 400000)
+            return "3 to 4 lacs";
         return "Above 4 lacs";
     }
 
@@ -15168,7 +15168,7 @@ public class ProfileMacro {
         for (int i = 1; i < 6; i++) {
             ProfileSpinnerItem item = new  ProfileSpinnerItem();
             item.setId(i);
-            item.setName(getFeeRangeName(i));
+            item.setName(getFeeRangeName(i*100000));
             feesRangeList.add(item);
         }
         return feesRangeList;

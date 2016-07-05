@@ -135,7 +135,10 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                 boolean isAnswered;
                 StepByStepFragment inContextFragment;
 
+                inContextFragment = StepByStepFragment.this.mQuestionAdapter.getFragment(StepByStepFragment.this.mViewPager.getCurrentItem());
+
                 if (StepByStepFragment.this.mIsFinished) {
+                    inContextFragment.updateAndSetAnswer();
                     StepByStepFragment.this.mFinishTest();
                     return;
                 }
@@ -146,7 +149,6 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                 //check the number of iteration for the questionlist
                 //if it is 1 or 2. ic_call_vector for next set of questions
                 //if it is 3. prepare the post data, send it back and be done with this.
-                inContextFragment = StepByStepFragment.this.mQuestionAdapter.getFragment(StepByStepFragment.this.mViewPager.getCurrentItem());
 
                 isRequired = inContextFragment.isRequired();
 

@@ -268,7 +268,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             mMainActivity.currentFragment = this;
 
         if (mInstitutes.size() == 0) {
-            this.mEmptyTextView.setText("Opps! Unable to find colleges for your preferences, please change your filters in ‘*Resource Buddy*’!");
+            this.mEmptyTextView.setText("Opps! Unable to find colleges for your search.");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.instituteView.setVisibility(View.GONE);
             View v = getView();
@@ -323,7 +323,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
         if (mInstitutes.size() == 0) {
             instituteView.setVisibility(View.GONE);
-            this.mEmptyTextView.setText("Opps! Unable to find colleges for your preferences, please change your filters in ‘*Resource Buddy*’!");
+            this.mEmptyTextView.setText("Opps! Unable to find colleges for your search.");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             View v = getView();
             if(v != null) {

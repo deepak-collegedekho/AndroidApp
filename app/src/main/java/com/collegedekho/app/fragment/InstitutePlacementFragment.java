@@ -72,16 +72,18 @@ public class InstitutePlacementFragment extends BaseFragment {
             rootView.findViewById(R.id.subhead_placement).setVisibility(View.GONE);
         }
 
-        if (mPlacement.highestSalary != null && mPlacement.highestSalary > 0)
-            ((TextView) rootView.findViewById(R.id.text_highest_package)).setText(""+mPlacement.highestSalary);
-        else {
+        if (mPlacement.highestSalary != null && mPlacement.highestSalary > 0) {
+            double salary = mPlacement.highestSalary / 100000;
+            ((TextView) rootView.findViewById(R.id.text_highest_package)).setText("" + salary+" Lac");
+        }else {
             rootView.findViewById(R.id.text_highest_package).setVisibility(View.GONE);
             rootView.findViewById(R.id.subhead_highest_package).setVisibility(View.GONE);
         }
 
-        if (mPlacement.averageSalary != null && mPlacement.averageSalary > 0)
-            ((TextView) rootView.findViewById(R.id.text_average_package)).setText(""+mPlacement.averageSalary);
-        else {
+        if (mPlacement.averageSalary != null && mPlacement.averageSalary > 0) {
+            double avgSalary = mPlacement.averageSalary / 100000;
+            ((TextView) rootView.findViewById(R.id.text_average_package)).setText("" + avgSalary + " Lac");
+        } else {
             rootView.findViewById(R.id.text_average_package).setVisibility(View.GONE);
             rootView.findViewById(R.id.subhead_average_package).setVisibility(View.GONE);
         }
