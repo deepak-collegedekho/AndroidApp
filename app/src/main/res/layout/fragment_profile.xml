@@ -1150,7 +1150,7 @@
                     android:layout_height="32dp"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginBottom="@dimen/m4dp"
+                    android:layout_marginBottom="@dimen/m5dp"
                     app:srcCompat="@drawable/ic_edit_image"
                     app:backgroundTint="@color/chat_time_gray"
                     android:scaleType="center"

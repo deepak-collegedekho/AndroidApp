@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -22,8 +21,6 @@ import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -289,7 +286,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                             mExamAdapter.setShowAllExams(true);
                             mExamAdapter.updateExamsList(mStreamExamList);
                             view.setSelected(true);
-                            ((TextView)view).setText("Show Less...");
+                            ((TextView)view).setText(getString(R.string.show_less));
                         }else{
                             if(mExamAdapter != null){
                                 // add all stream Exam on the top
@@ -304,7 +301,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                                 mExamAdapter.updateExamsList(mStreamExamList);
                             }
                             view.setSelected(false);
-                            ((TextView)view).setText("Show More...");
+                            ((TextView)view).setText(getString(R.string.show_more));
                         }
                         if(mStreamExamList != null && mStreamExamList.size() >0){
                             mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
@@ -796,7 +793,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                 mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
                 TextView emptyText = (TextView) mRootView.findViewById(R.id.empty) ;
                 emptyText.setVisibility(View.VISIBLE);
-                emptyText.setText(getString(R.string.loading_exmas));
+                emptyText.setText(getString(R.string.loading_exams));
                 mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
             }
 

@@ -486,7 +486,7 @@
     <string name="user_apply_course_email">user_apply_course_email</string>
     <string name="user_apply_course_phone">user_apply_course_phone</string>
 
-      <!--  user education strings   -->
+      <!--  profile building education strings   -->
     <string name="currently_in_school">Currently In School</string>
     <string name="currently_in_graduation">In College/ Graduated College</string>
     <string name="currently_in_pg">In Post Graduate College</string>
@@ -494,11 +494,13 @@
     <string name="your_current_stream">Your Current Stream?</string>
     <string name="which_exams_are_you_preparing">Which exams are you preparing for?</string>
     <string name="no_exam_found">No Exam Found with Your Preferences</string>
-    <string name="loading_exmas">Loading Exams....</string>
+    <string name="loading_exams">Loading Exams....</string>
     <string name="go_to_recommended">Go to Recommended Colleges</string>
     <string name="go_to_me_dash_board">Go to My DashBoard</string>
     <string name="go_to_me_profile">Personalize the App Further</string>
     <string name="please_select_your_stream">Please Select Your Stream</string>
     <string name="please_select_your_level">Please Select Your Education</string>
     <string name="please_select_sub_level_year">And you are currently in!</string>
+    <string name="show_more">Show More...</string>
+    <string name="show_less">Show Less...</string>
 </resources>

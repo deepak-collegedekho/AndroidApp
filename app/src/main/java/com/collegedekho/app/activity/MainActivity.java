@@ -1125,7 +1125,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if ( currentFragment instanceof ProfileFragment || currentFragment instanceof ExamsFragment
+        if ( currentFragment instanceof  UserEducationFragment || currentFragment instanceof ProfileFragment || currentFragment instanceof ExamsFragment
                 || currentFragment instanceof StreamFragment || currentFragment instanceof PsychometricStreamFragment
                 || currentFragment instanceof  OTPVerificationFragment ||currentFragment instanceof WebViewFragment
                 || currentFragment instanceof PsychometricTestParentFragment) {
@@ -1135,23 +1135,18 @@ public class MainActivity extends AppCompatActivity
             menu.getItem(0).setVisible(true);
         }
         setSearchAvailable(menu);
-        if (!getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), false)) {
-            menu.setGroupVisible(R.id.main_menu_group, false);
-            menu.setGroupVisible(R.id.search_menu_group, false);
+       // if (!getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), false)) {
+          if(currentFragment instanceof  HomeFragment){
+            menu.setGroupVisible(R.id.main_menu_group, true);
+            menu.setGroupVisible(R.id.search_menu_group, true);
         }
-
         return super.onPrepareOptionsMenu(menu);
     }
 
-    public void showOverflowMenu(boolean showMenu){
-//        if(menu == null)
-//            return;
-//        menu.setGroupVisible(R.id.main_menu_group, showMenu);
-    }
 
     private void setSearchAvailable(Menu menu) {
         if (currentFragment != null) {
-            if (currentFragment instanceof HomeFragment || (currentFragment instanceof TabFragment && ((TabFragment) currentFragment).getSelectedTab() == 1)) {
+            if (currentFragment instanceof HomeFragment ||  (currentFragment instanceof TabFragment)) {
                 menu.setGroupVisible(R.id.search_menu_group, true);
                 if (searchView != null) {
                     searchView.setQueryHint("Search Institutes");
