@@ -231,6 +231,27 @@ public class TabFragment extends  BaseFragment{
 //                return true;
 //            }
 //        });
+
+        if (MainActivity.mProfile.getPsychometric_given() == 1)
+            rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.GONE);
+
+        rootView.findViewById(R.id.btn_tab_psychometric_test).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onTabPsychometricTest();
+            }
+        });
+
+        if (MainActivity.mProfile.getStep_by_step_given() == 1)
+            rootView.findViewById(R.id.btn_tab_step_by_step).setVisibility(View.GONE);
+
+        rootView.findViewById(R.id.btn_tab_step_by_step).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onTabStepByStep();
+            }
+        });
+
         return rootView;
     }
 
@@ -333,14 +354,18 @@ public class TabFragment extends  BaseFragment{
         super.onClick(view);
         if(view.getId() == R.id.profile_image) {
             ((MainActivity) getActivity()).displayProfileFrragment();
-        }else {
+        }
+        if (view.getId() == R.id.btn_tab_psychometric_test)
+            mListener.onTabPsychometricTest();
+        if (view.getId() == R.id.btn_tab_step_by_step)
+            mListener.onTabStepByStep();
+        else {
             try {
                 this.selectedSubMenuPosition = Integer.parseInt((String) view.getTag());
             } catch (Exception e) {
                 e.printStackTrace();
             }
             this.mSubMenuItemClickListener();
-//            this.mUpdateSubMenuItem();
         }
     }
 
@@ -713,6 +738,8 @@ public class TabFragment extends  BaseFragment{
 
         void onExamTabSelected(ExamDetail tabPosition);
         void onHomeItemSelected(String requestType, String url,String examTag);
+        void onTabStepByStep();
+        void onTabPsychometricTest();
     }
 
 }

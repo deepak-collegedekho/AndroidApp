@@ -75,8 +75,29 @@ public class HomeFragment extends BaseFragment {
         mProfileName  = (TextView)rootView.findViewById(R.id.user_name);
         mProfileNumber  = (TextView)rootView.findViewById(R.id.user_phone);
         mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
+
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
+
+        if (MainActivity.mProfile.getPsychometric_given() == 1)
+            rootView.findViewById(R.id.btn_home_psychometric_test).setVisibility(View.GONE);
+
+        rootView.findViewById(R.id.btn_home_psychometric_test).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onHomePsychometricTest();
+            }
+        });
+
+        if (MainActivity.mProfile.getStep_by_step_given() == 1)
+            rootView.findViewById(R.id.btn_home_step_by_step).setVisibility(View.GONE);
+
+        rootView.findViewById(R.id.btn_home_step_by_step).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onHomeStepByStep();
+            }
+        });
 
         rootView.findViewById(R.id.college_list_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
         rootView.findViewById(R.id.connect_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
@@ -273,6 +294,12 @@ public class HomeFragment extends BaseFragment {
             case R.id.profile_image:
                 ((MainActivity) getActivity()).displayProfileFrragment();
                 break;
+            case R.id.btn_home_psychometric_test:
+                mListener.onHomePsychometricTest();
+                break;
+            case R.id.btn_home_step_by_step:
+                mListener.onHomeStepByStep();
+                break;
             default:
                 break;
         }
@@ -305,6 +332,8 @@ public class HomeFragment extends BaseFragment {
     public interface OnTabSelectListener {
         void onExamTabSelected(ExamDetail tabPosition);
         void onHomeItemSelected(String requestType, String url, String examTag);
+        void onHomeStepByStep();
+        void onHomePsychometricTest();
     }
 
 }

@@ -21,6 +21,7 @@ public class Profile implements Parcelable{
     private int is_verified = 0;
     private String token ="";
     private int psychometric_given =0;
+    private int step_by_step_given =0;
     private int is_preparing = 0;
     private int is_anony = 0;
     private String image =  "";
@@ -92,6 +93,7 @@ public class Profile implements Parcelable{
         is_verified = in.readInt();
         token = in.readString();
         psychometric_given = in.readInt();
+        step_by_step_given = in.readInt();
         is_preparing = in.readInt();
         is_anony = in.readInt();
         image = in.readString();
@@ -161,6 +163,7 @@ public class Profile implements Parcelable{
         dest.writeInt(is_verified);
         dest.writeString(token);
         dest.writeInt(psychometric_given);
+        dest.writeInt(step_by_step_given);
         dest.writeInt(is_preparing);
         dest.writeInt(is_anony);
         dest.writeString(image);
@@ -317,6 +320,14 @@ public class Profile implements Parcelable{
 
     public void setPsychometric_given(int psychometric_given) {
         this.psychometric_given = psychometric_given;
+    }
+
+    public int getStep_by_step_given() {
+        return step_by_step_given;
+    }
+
+    public void setStep_by_step_given(int step_by_step_given) {
+        this.step_by_step_given = step_by_step_given;
     }
 
     public int getIs_preparing() {

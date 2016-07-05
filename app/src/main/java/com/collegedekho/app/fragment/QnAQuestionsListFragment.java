@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -237,6 +238,10 @@ public class QnAQuestionsListFragment extends BaseFragment {
             if (askQuesButtonVisibility == View.GONE) {
                 this.mAskButton.animate().translationY(this.mAskButton.getHeight());
                 this.mQuestionTitle.requestFocus();
+
+                //showing soft keyboard on ask button click
+                InputMethodManager inputMethodManager=(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             }
             else if (askQuesButtonVisibility == View.VISIBLE)
                 this.mAskButton.animate().translationY(0);

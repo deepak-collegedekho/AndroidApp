@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -33,7 +34,7 @@
                     android:id="@+id/include_image_layout"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="10dp"
                     />
                 <TextView
                     android:id="@+id/user_name"
@@ -60,6 +61,69 @@
                     android:layout_below="@id/user_name"
                     android:textColor="@color/black"
                     />
+
+                <LinearLayout
+                    android:id="@+id/btn_tab_psychometric_test"
+                    android:layout_width="@dimen/m105dp"
+                    android:layout_height="@dimen/m50dp"
+                    android:background="@drawable/bg_button_orange"
+                    android:padding="@dimen/m2dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="140dp"
+                    android:layout_marginBottom="@dimen/m4dp"
+                    >
+
+                    <ImageView
+                        android:layout_width="@dimen/m20dp"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_psychometric"
+                        android:layout_marginRight="@dimen/m2dp"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:text="Psychometric Test"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/m12sp"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/btn_tab_step_by_step"
+                    android:layout_width="@dimen/m100dp"
+                    android:layout_height="@dimen/m50dp"
+                    android:background="@drawable/bg_button_orange"
+                    android:padding="@dimen/m2dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/m20dp"
+                    android:layout_marginBottom="@dimen/m4dp"
+                    >
+                    <ImageView
+                        android:layout_width="@dimen/m20dp"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/step_by_step"
+                        android:layout_marginRight="@dimen/m2dp"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:text="Step-By-Step College Search"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/m12sp"
+                        />
+                </LinearLayout>
             </RelativeLayout>
         </RelativeLayout>
 

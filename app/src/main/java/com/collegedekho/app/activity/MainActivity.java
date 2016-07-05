@@ -2921,6 +2921,7 @@ public class MainActivity extends AppCompatActivity
             getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), true).apply();
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).apply();
 
+            MainActivity.mProfile.setStep_by_step_given(1);
             //move to profile
             this.mClearBackStack();
             this.mLoadHomeScreen(null);
@@ -3547,6 +3548,7 @@ public class MainActivity extends AppCompatActivity
 //                    @Override
 //                    public void onClick(DialogInterface dialog, int which) {
         MainActivity.this.mOnCourseLevelSelected(/*which*/0, stream, streamName);
+        MainActivity.mProfile.setPsychometric_given(1);
 //                        dialog.dismiss();
 //                    }
 //                })
@@ -3562,6 +3564,7 @@ public class MainActivity extends AppCompatActivity
 //                    @Override
 //                    public void onClick(DialogInterface dialog, int which) {
         MainActivity.this.mOnCourseLevelSelected(/*which*/0, stream, streamName, true);
+        MainActivity.mProfile.setPsychometric_given(1);
 //                        dialog.dismiss();
 //                    }
 //                })
@@ -5073,6 +5076,26 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(requestType, url, params);
     }
 
+    @Override
+    public void onTabStepByStep() {
+        this.startStepByStep();
+    }
+
+    @Override
+    public void onTabPsychometricTest() {
+        this.startPsychometricTest();
+    }
+
+    @Override
+    public void onHomeStepByStep() {
+        this.startStepByStep();
+    }
+
+    @Override
+    public void onHomePsychometricTest() {
+        this.startPsychometricTest();
+    }
+
 //    private Map<String,String> getAllExamTags(){
 //        Map<String,String> params = new HashMap<>();
 //        List<ExamDetail> list = user.getUser_exams();
@@ -5087,6 +5110,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPsychometricTest() {
+        this.startPsychometricTest();
+    }
+
+    private void startPsychometricTest()
+    {
         this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_QUESTIONS, Constants.BASE_URL + "psychometric/", null);
 
         Map<String, Object> eventValue = new HashMap<>();
@@ -5096,9 +5124,7 @@ public class MainActivity extends AppCompatActivity
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
-
     private void onPsychometricTestResponse(String response) {
-
         try {
             Map<String, Object> map = JSON.std.mapFrom(response);
             String val = JSON.std.asString(map.get("questions"));
@@ -5110,7 +5136,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onEditPsychometricTestResponse(String response) {
-
         try {
             Map<String, Object> map = JSON.std.mapFrom(response);
             String val = JSON.std.asString(map.get("questions"));
@@ -5123,7 +5148,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onStepByStep() {
+        this.startStepByStep();
+    }
 
+    private void startStepByStep()
+    {
         int preferredLevel = mProfile.getPreferred_level();
         if(preferredLevel == ProfileMacro.LEVEL_UNDER_GRADUATE ) {
             MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/ug-ques-one/", null);
@@ -5134,27 +5163,27 @@ public class MainActivity extends AppCompatActivity
                     .setTitle("Currently Studying at?")
                     .setSingleChoiceItems(StepByStepQuestion.CurrentLevels.getValues(), -1,
                             new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case 0:
-                                    StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.IN_SCHOOL);
-                                    MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/ug-ques-one/", null);
-                                    break;
-                                case 1:
-                                    StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE);
-                                    MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
-                                    break;
-                                case 2:
-                                    StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE);
-                                    MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP , Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
-                                    break;
-                                default:
-                                    break;
-                            }
-                            dialog.dismiss();
-                        }
-                    })
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switch (which) {
+                                        case 0:
+                                            StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.IN_SCHOOL);
+                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/ug-ques-one/", null);
+                                            break;
+                                        case 1:
+                                            StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE);
+                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
+                                            break;
+                                        case 2:
+                                            StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE);
+                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP , Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    dialog.dismiss();
+                                }
+                            })
                     .show();
         }
         //Events

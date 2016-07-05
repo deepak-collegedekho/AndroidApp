@@ -58,8 +58,9 @@
     <dimen name="m85dp">85dp</dimen>
     <dimen name="m90dp">90dp</dimen>
     <dimen name="m95dp">95dp</dimen>
-    <dimen name="m110dp">110dp</dimen>
     <dimen name="m100dp">100dp</dimen>
+    <dimen name="m105dp">105dp</dimen>
+    <dimen name="m110dp">110dp</dimen>
     <dimen name="m115dp">115dp</dimen>
     <dimen name="m120dp">120dp</dimen>
     <dimen name="m130dp">130dp</dimen>
