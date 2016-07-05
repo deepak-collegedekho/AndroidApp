@@ -4641,6 +4641,15 @@ public class MainActivity extends AppCompatActivity
             DataBaseHelper.getInstance(this).deleteAllExamSummary();
             onUpdateUserExams(response);
             onBackPressed();
+            /*new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(currentFragment instanceof TabFragment) {
+                        ((TabFragment) currentFragment).updateExamsList((ArrayList<ExamDetail>) mUserExamsList);
+                    }
+                }
+            }, 300);*/
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -4709,9 +4718,6 @@ public class MainActivity extends AppCompatActivity
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
         Map<String, Object> eventValue = new HashMap<String, Object>();
 
-        if(currentFragment instanceof TabFragment) {
-            ((TabFragment) currentFragment).updateExamsList((ArrayList<ExamDetail>) mUserExamsList);
-        }
 
         for (int n = 0; n < this.mUserExamsList.size(); n++) {
             ExamDetail examDetail = this.mUserExamsList.get(n);

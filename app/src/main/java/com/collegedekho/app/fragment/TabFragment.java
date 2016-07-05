@@ -6,13 +6,11 @@ import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -44,7 +42,7 @@ public class TabFragment extends  BaseFragment{
     private ExamDetail mExamDetail;
     private ExamSummary mExamSummary;
     private ViewPager mExamTabPager  = null;
-    private PagerTabStrip pagerHeader = null;
+    private PagerTabStrip mPagerHeader = null;
     private boolean isFistTime = false;
     private boolean IS_TUTE_COMPLETED = true;
     private int i = 0 ;
@@ -53,7 +51,7 @@ public class TabFragment extends  BaseFragment{
     TextView recommended_countTV;
     TextView trending_countTV;
     TextView shortlist_countTV;
-    TextView explore_countTV;
+    TextView mExplore_countTV;
 
     public static TabFragment newInstance(int tabPosoition,ArrayList<ExamDetail> examList) {
         TabFragment fragment = new TabFragment();
@@ -84,13 +82,18 @@ public class TabFragment extends  BaseFragment{
 
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
 
-        recommended_countTV       = (TextView)rootView.findViewById(R.id.recommended_count);
-        trending_countTV   = (TextView)rootView.findViewById(R.id.trending_count);
-        shortlist_countTV    = (TextView)rootView.findViewById(R.id.shortlist_count);
-        explore_countTV          = (TextView)rootView.findViewById(R.id.explore_count);
+        recommended_countTV =  (TextView)rootView.findViewById(R.id.recommended_count);
+        trending_countTV    = (TextView)rootView.findViewById(R.id.trending_count);
+        shortlist_countTV   = (TextView)rootView.findViewById(R.id.shortlist_count);
+        mExplore_countTV = (TextView)rootView.findViewById(R.id.explore_count);
+        mPagerHeader    = (PagerTabStrip) rootView.findViewById(R.id.exam_pager_header);
+        mExamTabPager       = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
+        mExamsTabLayout     =rootView.findViewById(R.id.exams_tab_layout);
+        TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
+        TextView mProfileNumber = (TextView) rootView.findViewById(R.id.user_phone);
+        CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
 
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
-
         rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,9 +113,6 @@ public class TabFragment extends  BaseFragment{
                     } else {
                         v.setVisibility(View.GONE);
                         IS_TUTE_COMPLETED = true;
-//                    View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-//                    bottomMenu.animate().translationY(0);
-//                    bottomMenu.setVisibility(View.VISIBLE);
                         getActivity().invalidateOptionsMenu();
                         getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
                         View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
@@ -130,12 +130,6 @@ public class TabFragment extends  BaseFragment{
             }
         });
 
-        this.mExamTabPager = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
-        mExamsTabLayout=rootView.findViewById(R.id.exams_tab_layout);
-        //this.mExamTabPager.setPageTransformer(true, new ZoomPageTransformer());
-        TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
-        TextView mProfileNumber = (TextView) rootView.findViewById(R.id.user_phone);
-        CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
 
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
@@ -167,12 +161,16 @@ public class TabFragment extends  BaseFragment{
                 mProfileImage.setVisibility(View.VISIBLE);
             }
         }
+        if(mExamDetailList == null || mExamDetailList.isEmpty()){
+            if(MainActivity.user != null)
+                mExamDetailList = MainActivity.user.getUser_exams();
+        }
 
         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
             this.mExamTabPager.setVisibility(View.VISIBLE);
             this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
             this.mExamTabPager.setAdapter(this.mDetailsAdapter);
-            ((ViewPager.LayoutParams) pagerHeader.getLayoutParams()).isDecor = true;
+            ((ViewPager.LayoutParams) mPagerHeader.getLayoutParams()).isDecor = true;
 
             this.mExamTabPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
@@ -218,24 +216,6 @@ public class TabFragment extends  BaseFragment{
         rootView.findViewById(R.id.home_widget_fourth).setOnClickListener(this);
         rootView.findViewById(R.id.profile_image).setOnClickListener(this);
 
-//        rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//
-//                v.setVisibility(View.GONE);
-//                IS_TUTE_COMPLETED = true;
-//                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
-//
-//                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-//                bottomMenu.animate().translationY(0);
-//                bottomMenu.setVisibility(View.VISIBLE);
-//
-//                updateCollegeCount(selectedTabPosition);
-//
-//                return true;
-//            }
-//        });
-
         if (MainActivity.mProfile.getPsychometric_given() == 1)
             rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.GONE);
 
@@ -256,8 +236,6 @@ public class TabFragment extends  BaseFragment{
             }
         });
 
-        pagerHeader = (PagerTabStrip) rootView.findViewById(R.id.exam_pager_header);
-
         return rootView;
     }
 
@@ -266,11 +244,9 @@ public class TabFragment extends  BaseFragment{
             return;
         this.mExamDetailList=examsList;
         this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
-        pagerHeader.setVisibility(View.VISIBLE);
-        mExamTabPager.setAdapter(this.mDetailsAdapter);
-        ((ViewPager.LayoutParams) pagerHeader.getLayoutParams()).isDecor = true;
-        updateCollegeCount(selectedTabPosition);
+         mExamTabPager.setAdapter(this.mDetailsAdapter);
     }
+
 
     @Override
     public void onResume() {
@@ -286,8 +262,8 @@ public class TabFragment extends  BaseFragment{
                 mExamTabPager.invalidate();
                 mainActivity.mUpdateTabMenuItem(this.selectedTabPosition,0);
                 updateCollegeCount(selectedTabPosition);
-                if(pagerHeader != null)
-                    ((ViewPager.LayoutParams) pagerHeader.getLayoutParams()).isDecor = true;
+                if(mPagerHeader != null)
+                    ((ViewPager.LayoutParams) mPagerHeader.getLayoutParams()).isDecor = true;
                 if (selectedTabPosition < mExamDetailList.size())
                     mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
             }else {
@@ -588,7 +564,7 @@ public class TabFragment extends  BaseFragment{
             recommended_countTV.setVisibility(View.VISIBLE);
             trending_countTV.setVisibility(View.VISIBLE);
             shortlist_countTV.setVisibility(View.VISIBLE);
-            explore_countTV.setVisibility(View.VISIBLE);
+            mExplore_countTV.setVisibility(View.VISIBLE);
 
             int recommended = (this.mExamSummary != null) ? this.mExamSummary.getRecommended_count() : 0;
             int shortlist = (this.mExamSummary != null) ? this.mExamSummary.getShortlist_count() : 0;
@@ -606,15 +582,15 @@ public class TabFragment extends  BaseFragment{
             Utils.SetCounterAnimation(trending_countTV, trending, "" , "", Constants.ANIM_SHORT_DURATION);
             trending_countTV.setContentDescription(String.valueOf(trending));
 
-            Utils.SetCounterAnimation(explore_countTV, explore, "" , "", Constants.ANIM_SHORT_DURATION);
-            explore_countTV.setContentDescription(String.valueOf(explore));
+            Utils.SetCounterAnimation(mExplore_countTV, explore, "" , "", Constants.ANIM_SHORT_DURATION);
+            mExplore_countTV.setContentDescription(String.valueOf(explore));
 
 //            important_dateTV.setText(""+this.mExamSummary.getNext_important_date());
         } else {
             recommended_countTV.setVisibility(View.GONE);
             trending_countTV.setVisibility(View.GONE);
             shortlist_countTV.setVisibility(View.GONE);
-            explore_countTV.setVisibility(View.GONE);
+            mExplore_countTV.setVisibility(View.GONE);
         }
     }
 

@@ -501,7 +501,7 @@
     <string name="please_select_your_stream">Please Select Your Stream</string>
     <string name="please_select_your_level">Please Select Your Education</string>
     <string name="please_select_sub_level_year">And you are currently in!</string>
-    <string name="please_enter_your_current_marks">Enter Your Current marks</string>
+    <string name="please_enter_your_current_marks">How much did you score in your last year\'s exam</string>
     <string name="please_enter_your_marks">"Please enter your marks"</string>
     <string name="show_more">Show More...</string>
     <string name="show_less">Show Less...</string>
