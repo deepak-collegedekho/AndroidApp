@@ -88,15 +88,17 @@ public class WishlistFragment extends BaseFragment {
 
     public void RemoveInstitute(int position)
     {
-        if(mInstitutes == null || mInstitutes.size() <= 0){
-            mEmptyTextView.setVisibility(View.VISIBLE);
-            mEmptyTextView.setText("You don't have any Shortlisted college. Please Shortlist colleges in Recommended !");
-        }else{
-            mEmptyTextView.setVisibility(View.GONE);
-        }
+
         this.mInstitutes.remove(position);
         this.mWishlistInstituteListAdapter.notifyItemRemoved(position);
         this.mWishlistInstituteListAdapter.notifyDataSetChanged();
+
+        if(mInstitutes == null || mInstitutes.size() <= 0){
+            mEmptyTextView.setVisibility(View.VISIBLE);
+            mEmptyTextView.setText("You don't have any Shortlisted college. Please Shortlist colleges Listing !");
+        }else{
+            mEmptyTextView.setVisibility(View.GONE);
+        }
     }
 
     public void UpdateAppliedStatus(int position)
@@ -138,7 +140,7 @@ public class WishlistFragment extends BaseFragment {
 
         if(mInstitutes == null || mInstitutes.size() <= 0){
             mEmptyTextView.setVisibility(View.VISIBLE);
-            mEmptyTextView.setText("You don't have any Shortlisted college. Please Shortlist colleges in Recommended !");
+            mEmptyTextView.setText("You don't have any Shortlisted college. Please Shortlist colleges from Listing !");
         }else{
             mEmptyTextView.setVisibility(View.GONE);
         }

@@ -14795,18 +14795,8 @@ public class ProfileMacro {
             "    }\n" +
             "]";
 
-    public static String STREAMS_10TH = " [\n" +
-            "                {\n" +
-            "                    \"id\": 37,\n" +
-            "                    \"name\": \"All Subjects\"\n" +
-            "                }\n" +
-            "            ]";
 
-    public static String SCHOLL_STREAMS = "[\n" +
-            "                {\n" +
-            "                    \"id\": 16,\n" +
-            "                    \"name\": \"Others\"\n" +
-            "                },\n" +
+    public static String SCHOOL_STREAMS = "[\n" +
             "                {\n" +
             "                    \"id\": 33,\n" +
             "                    \"name\": \"Maths\"\n" +
@@ -14822,6 +14812,14 @@ public class ProfileMacro {
             "                {\n" +
             "                    \"id\": 36,\n" +
             "                    \"name\": \"Arts\"\n" +
+            "                },\n" +
+            "                {\n" +
+            "                    \"id\": 37,\n" +
+            "                    \"name\": \"All Subjects\"\n" +
+            "                },\n" +
+            "                {\n" +
+            "                    \"id\": 16,\n" +
+            "                    \"name\": \"Others\"\n" +
             "                }\n" +
             "            ]";
 
@@ -14987,10 +14985,17 @@ public class ProfileMacro {
 
     public static String getStreamJson(int id) {
         if (id == LEVEL_TWELFTH)
-            return SCHOLL_STREAMS;
+            return SCHOOL_STREAMS;
         else
             return UG_STREAMS;
+    }
 
+    public static String getStreamJsonForSubLevel(int id){
+        if(id == 7 || id == 8 || id ==9){
+           return  getStreamJson(7);
+        }else{
+            return getStreamJson(1);
+        }
     }
 
 
@@ -15201,9 +15206,10 @@ public class ProfileMacro {
         if(currentPassingYearList == null)
             currentPassingYearList = new ArrayList<>();
 
-        if(currentPassingYearList.size() == 4)
+        if(currentPassingYearList.size() == 5)
             return currentPassingYearList;
 
+        // if you will increase count then size of year list will be also increase.
         for (int i = 2013; i < 2018; i++) {
             ProfileSpinnerItem item = new  ProfileSpinnerItem();
             item.setId(i);

@@ -555,7 +555,7 @@ public class MaterialSpinner extends TextView {
       return WindowManager.LayoutParams.WRAP_CONTENT;
     }
     if (popupWindowMaxHeight > 0 && listViewHeight > popupWindowMaxHeight) {
-      return 440;
+      return (int)getResources().getDimension(R.dimen.m300dp);
     }else if (popupWindowHeight != WindowManager.LayoutParams.MATCH_PARENT
             && popupWindowHeight != WindowManager.LayoutParams.WRAP_CONTENT
         && popupWindowHeight <= listViewHeight) {

@@ -72,6 +72,7 @@
     <dimen name="m220dp">220dp</dimen>
     <dimen name="m280dp">280dp</dimen>
     <dimen name="m300dp">300dp</dimen>
+    <dimen name="m400dp">400dp</dimen>
 
     //font sizes
     <dimen name="m8sp">8sp</dimen>

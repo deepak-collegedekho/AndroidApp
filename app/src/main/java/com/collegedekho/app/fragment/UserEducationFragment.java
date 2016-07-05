@@ -18,12 +18,17 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.InputFilter;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -95,6 +100,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
     private File uploadTempImageFile;
     private Uri mImageCaptureUri;
     private int mUserSubLevelID = 0;
+    private int mUserCurrentMarks = 0;
     private int mLastSelectedCurrentLevelID = 0; // if last selected current level  and stream are same then present exam list be used
     private String mEventCategory = "";
     private String mEventAction = "";
@@ -204,9 +210,9 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                 mStreamRecyclerView.setVisibility(View.VISIBLE);
 
                 // show current level education layout
-                View  educationlayout = mRootView.findViewById(R.id.user_education_education_layout);
-                educationlayout.setVisibility(View.VISIBLE);
-                educationlayout.startAnimation(animationFromTop);
+                View  educationLayout = mRootView.findViewById(R.id.user_education_education_layout);
+                educationLayout.setVisibility(View.VISIBLE);
+                educationLayout.startAnimation(animationFromTop);
 
                 // set current level education
                 TextView  currentLevelTxtView = (TextView) mRootView.findViewById(R.id.user_education_level);
@@ -236,43 +242,6 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                 }
             }
         }
-
-      /*  ((CheckBox)view.findViewById(R.id.user_education_show_all_exams)).setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        if(compoundButton.isChecked()){
-
-                            // add all stream Exam on the top
-                            mStreamExamList.clear();
-                            mStreamExamList.addAll(mAllExamList);
-                            mExamAdapter.setShowAllExams(true);
-                            mExamAdapter.updateExamsList(mStreamExamList);
-                        }else{
-                            if(mExamAdapter != null){
-                                // add all stream Exam on the top
-                                mStreamExamList.clear();
-                                int examCount = mAllExamList.size();
-                                for (int i = 0; i < examCount; i++) {
-                                    Exam exam = mAllExamList.get(i);
-                                    if(exam == null || exam.getExam_type() == ProfileMacro.OTHER_EXAM)continue;
-                                    mStreamExamList.add(exam);
-                                }
-                                mExamAdapter.setShowAllExams(false);
-                                mExamAdapter.updateExamsList(mStreamExamList);
-                            }
-                        }
-                        if(mStreamExamList != null && mStreamExamList.size() >0){
-                            mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
-                            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.VISIBLE);
-                        }else{
-                            TextView emptyText = (TextView) mRootView.findViewById(R.id.empty) ;
-                            emptyText.setVisibility(View.VISIBLE);
-                            emptyText.setText(getString(R.string.no_exam_found));
-                            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
-                        }
-                    }
-                });*/
 
         view.findViewById(R.id.user_education_show_all_exams).setOnClickListener(
                 new View.OnClickListener() {
@@ -383,13 +352,13 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                 mSelectedNextButton();
                 break;
             case R.id.user_education_radio_button_school:
-                mAskForUserSubLevel(view, ProfileMacro.SUB_LEVEL_SCHOOL, ProfileMacro.LEVEL_TWELFTH);
+                mAskForUserSubLevel(ProfileMacro.SUB_LEVEL_SCHOOL, ProfileMacro.LEVEL_TWELFTH);
                 break;
             case R.id.user_education_radio_button_college:
-                mAskForUserSubLevel(view, ProfileMacro.SUB_LEVEL_COLLEGE,  ProfileMacro.LEVEL_UNDER_GRADUATE);
+                mAskForUserSubLevel(ProfileMacro.SUB_LEVEL_COLLEGE,  ProfileMacro.LEVEL_UNDER_GRADUATE);
                 break;
             case R.id.user_education_radio_button_pg:
-                mAskForUserSubLevel(view, ProfileMacro.SUB_LEVEL_PG,  ProfileMacro.LEVEL_POST_GRADUATE);
+                mAskForUserSubLevel(ProfileMacro.SUB_LEVEL_PG,  ProfileMacro.LEVEL_POST_GRADUATE);
                 break;
             case R.id.user_education_level_edit_btn:
                 this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_PROFILE_EDIT);
@@ -421,17 +390,6 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                 UserEducationFragment.mEventValue.put("action_what", "go_to_profile");
                 mTakeMeToProfile();
                 break;
-          /* case R.id.user_exam_search_view:
-                boolean isSearchActivated = mExamSearchView.isActivated();
-                if(!isSearchActivated){
-                    getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.GONE);
-                } else {
-                    this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SEARCH);
-                    UserEducationFragment.mEventValue.put("searching_what", "exams");
-                    getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.VISIBLE);
-                }
-                break;*/
-
             case R.id.user_exam_search_view:
             case R.id.user_exam_search_container:
                 mExamSearchView.onActionViewExpanded();
@@ -451,11 +409,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
     }
 
 
-    private void mAskForUserSubLevel(View view, CharSequence subLevel[], final int userLevel) {
-       /* if(((RadioButton)view).isChecked()){
-            Utils.DisplayToast(getContext(), "Already Selected");
-            return;
-        }*/
+    private void mAskForUserSubLevel(CharSequence subLevel[], final int userLevel) {
 
         new AlertDialog.Builder(getActivity())
                 .setTitle(getString(R.string.please_select_sub_level_year))
@@ -470,14 +424,65 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                                 mAnimateFooterButtons();
                                 // dismiss dialog
                                 dialog.dismiss();
+                                mShowDialogForMarks();
                             }
                         }).show();
 
     }
 
+    private void mShowDialogForMarks() {
+
+        final EditText input = new EditText(getActivity());
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setSingleLine();
+        input.setHint("Your Marks");
+        input.setLayoutParams(lp);
+        InputFilter[] FilterArray = new InputFilter[1];
+        FilterArray[0] = new InputFilter.LengthFilter(4);
+        input.setFilters(FilterArray);
+
+       AlertDialog marksDialog = new AlertDialog.Builder(getActivity())
+                .setTitle(getString(R.string.please_enter_your_current_marks))
+                .setCancelable(false)
+                .setView(input)
+                .setPositiveButton("Done", null)
+               .create();
+
+        marksDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(final DialogInterface dialog) {
+
+                Button b = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                b.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        String marks = input.getText().toString();
+                        if(marks == null || marks.isEmpty()){
+                            Utils.DisplayToast(getContext(),getString(R.string.please_enter_your_marks));
+                            return;
+                        }
+                        try {
+                            mUserCurrentMarks =Integer.parseInt(marks);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        dialog.dismiss();
+
+                    }
+                });
+            }
+        });
+        marksDialog.show();
+
+    }
+
     private void mAnimateFooterButtons()
     {
-        // if(mRootView.findViewById(R.id.user_education_radio_group).getVisibility() == View.VISIBLE) {
         View nextView = mRootView.findViewById(R.id.user_education_next_button);
         if (nextView.getAlpha() != 1)
         {
@@ -494,14 +499,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                     .withEndAction(animEnd)
                     .setDuration(Constants.ANIM_AVERAGE_DURATION);
 
-              /*  mRootView.findViewById(R.id.user_education_skip_button).animate()
-                        .setStartDelay(Constants.ANIM_SHORTEST_DURATION)
-                        .x(mRootView.getX() + mRootView.getPaddingLeft())
-                        .scaleXBy(-0.5f)
-                        .scaleYBy(-0.5f)
-                        .setDuration(Constants.ANIM_SHORT_DURATION);*/
-        }
-        //}
+                  }
     }
 
     private void mUserEducationSkip() {
@@ -529,29 +527,16 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                 mListener.onRemoveUserExams(parentJsonObject);
             }
         }
-        View radioGroupEducation = mRootView.findViewById(R.id.user_education_radio_group);
-        if(radioGroupEducation.getVisibility() == View.VISIBLE) {
-            this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
+        this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
+        UserEducationFragment.mEventValue.put("action_what", "skip");
+        UserEducationFragment.mEventValue.put("action_where", "current_stream");
 
-            UserEducationFragment.mEventValue.put("action_what", "skip");
-            UserEducationFragment.mEventValue.put("action_where", "current_education");
-
-            this.mListener.onIknowWhatIWant();
-        }
-        else if( !isStreamSelected && mStreamRecyclerView.getVisibility() == View.VISIBLE){
-            this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
-
-            UserEducationFragment.mEventValue.put("action_what", "skip");
-            UserEducationFragment.mEventValue.put("action_where", "current_stream");
-
-            this.mListener.onSkipAfterSelectLevel();
-        }
+        this.mListener.onSkipSelectedInProfileBuilding();
 
         if (!this.mEventAction.isEmpty() && this.mEventAction != "")
         {
             //Events
             AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
-
             this.mResetEventVariables();
         }
     }
@@ -605,6 +590,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
             params.put("current_level_id", "" + currentLevelID);
             params.put("current_sublevel_id", "" + mUserSubLevelID);
             params.put("preferred_level", "" + preferredLevelId);
+            params.put("current_score", "" + preferredLevelId);
 
             // check user's name and phone Number
             if(!getUserNameAndPhone(params)){
@@ -878,6 +864,19 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
         }else {
             mStreamRecyclerView.setAdapter(mStreamAdapter);
             mStreamAdapter.updateStreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
+        }
+
+        try{
+            mStreamExamList.clear();
+            int examCount = mAllExamList.size();
+            for (int i = 0; i < examCount; i++) {
+                Exam exam = mAllExamList.get(i);
+                if(exam == null || exam.getExam_type() == ProfileMacro.OTHER_EXAM)continue;
+                mStreamExamList.add(exam);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+
         }
     }
 
@@ -1351,13 +1350,13 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnUserEducationInteractionListener {
-        void onIknowWhatIWant();
-        void onSkipAfterSelectLevel();
+        void onSkipSelectedInProfileBuilding();
         void onUserExamSelected(JSONObject examJson);
         void onRemoveUserExams(JSONObject examJson);
         void displayMessage(int messageId);
         void onRequestToUpdateUserProfile(HashMap<String, String> params);
         void onRequestForUserExams();
+        void  onRequestForLevelStreams(int levelId, int levelType);
         void OnTakeMeToRecommended();
         void OnTakeMeToDashBoard();
         void OnTakeMeToProfile();

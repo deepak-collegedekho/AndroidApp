@@ -151,11 +151,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
 
         // update current basic info
-        int infoProgressStatus = 0;
         String email = mProfile.getEmail();
         if (email != null && !email.isEmpty() && !email.contains("@anonymouscollegedekho.com")) {
             ((TextView) mRootView.findViewById(R.id.profile_info_email)).setText(email);
-            infoProgressStatus += 18;
         } else {
              email = Utils.getDeviceEmail(getActivity());
             ((TextView) mRootView.findViewById(R.id.profile_info_email)).setText(email);
@@ -164,7 +162,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         String phone = mProfile.getPhone_no();
         if (phone != null && !phone.isEmpty()) {
             ((TextView) mRootView.findViewById(R.id.profile_info_phone)).setText("+91-" + phone);
-            infoProgressStatus += 18;
         } else {
             ((TextView) mRootView.findViewById(R.id.profile_info_phone)).setText("NA");
         }
@@ -172,7 +169,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         String city = mProfile.getCity_name();
         if (city != null && !city.isEmpty()) {
             ((TextView) mRootView.findViewById(R.id.profile_info_city)).setText(city);
-            infoProgressStatus += 16;
         } else {
             ((TextView) mRootView.findViewById(R.id.profile_info_city)).setText("NA");
         }
@@ -180,7 +176,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         String state = mProfile.getState_name();
         if (state != null && !state.isEmpty()) {
             ((TextView) mRootView.findViewById(R.id.profile_info_state)).setText(state);
-            infoProgressStatus += 16;
         } else {
             ((TextView) mRootView.findViewById(R.id.profile_info_state)).setText("NA");
         }
@@ -188,7 +183,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         String motherTongue = mProfile.getMother_tongue_name();
         if (motherTongue != null && !motherTongue.isEmpty()) {
             ((TextView) mRootView.findViewById(R.id.profile_info_mother_tongue)).setText(motherTongue);
-            infoProgressStatus += 16;
         } else {
             ((TextView) mRootView.findViewById(R.id.profile_info_mother_tongue)).setText("NA");
         }
@@ -196,14 +190,12 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         String category = mProfile.getSocial_category_name();
         if (category != null && !category.isEmpty()) {
             ((TextView) mRootView.findViewById(R.id.profile_info_category)).setText(category);
-            infoProgressStatus += 16;
         } else {
             ((TextView) mRootView.findViewById(R.id.profile_info_category)).setText("NA");
         }
         // set basic info progress
-        setProfileProgressStatus((ProgressBar) mRootView.findViewById(R.id.profile_info_progress), infoProgressStatus);
+        setProfileProgressStatus((ProgressBar) mRootView.findViewById(R.id.profile_info_progress), 50);
 
-        int currentEducationStatus = 0;
         //  set degree name school if user is currently in school and does not have any degree
         //  else set user's current holding degree name in current education
 
@@ -211,12 +203,10 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         if (userCurrentStreamId == 16 || userCurrentStreamId == 33 || userCurrentStreamId == 34 ||
                 userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37) {
             ((TextView) mRootView.findViewById(R.id.profile_education_degree)).setText("School");
-            currentEducationStatus += 18;
         } else {
             String currentDegreeName = mProfile.getCurrent_degree_name();
             if (currentDegreeName != null && !currentDegreeName.isEmpty()) {
                 ((TextView) mRootView.findViewById(R.id.profile_education_degree)).setText(currentDegreeName);
-                currentEducationStatus += 18;
             } else {
                 ((TextView) mRootView.findViewById(R.id.profile_education_degree)).setText("NA");
             }
@@ -226,7 +216,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         int currentPassingYear = mProfile.getCurrent_passing_year();
         if(currentPassingYear >= 2000) {
             ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(""+currentPassingYear);
-            currentEducationStatus +=18;
         } else {
             ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText("NA");
         }
@@ -234,7 +223,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         String currentStream = mProfile.getCurrent_stream_name();
         if (currentStream != null && !currentStream.isEmpty()){
             ((TextView)mRootView.findViewById(R.id.profile_education_stream)).setText(currentStream);
-            currentEducationStatus +=17;
         }else{
             ((TextView)mRootView.findViewById(R.id.profile_education_stream)).setText("NA");
         }
@@ -252,7 +240,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             String currentSpecialization = mProfile.getCurrent_specialization_name();
             if (currentSpecialization != null && !currentSpecialization.isEmpty()){
                 ((TextView)mRootView.findViewById(R.id.profile_education_specialization)).setText(currentSpecialization);
-                currentEducationStatus +=17;
             }else{
                 ((TextView)mRootView.findViewById(R.id.profile_education_specialization)).setText("NA");
             }
@@ -263,7 +250,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         int scoreType = mProfile.getCurrent_score_type();
         if (scoreType <=  0){
             ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(""+currentScore);
-            currentEducationStatus +=16;
         }else{
             ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(currentScore +" "+  ProfileMacro.getCurrentScoreTypeName(scoreType));
         }
@@ -271,11 +257,10 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         // set user's education mode
         int currentMode = mProfile.getCurrent_mode();
         {
-            currentEducationStatus +=14;
             ((TextView) mRootView.findViewById(R.id.profile_education_mode)).setText(ProfileMacro.getEducationModeName(currentMode));
         }
 
-        setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_education_progress), currentEducationStatus);
+        setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_education_progress), 50);
 
         // set user preferred info
         setPreferredEducationInfo(false);
@@ -284,11 +269,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         mExpandUserExamsLayout(false);
 
         //  set User Others Info
-        int otherInfoStatus =0;
         String fatherName = mProfile.getFathers_name();
         if (fatherName != null && !fatherName.isEmpty()){
             ((TextView)mRootView.findViewById(R.id.profile_father_name)).setText(fatherName);
-            otherInfoStatus += 34;
         }else{
             ((TextView)mRootView.findViewById(R.id.profile_father_name)).setText("NA");
         }
@@ -297,7 +280,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         String motherName = mProfile.getMothers_name();
         if (motherName != null && !motherName.isEmpty()){
             ((TextView)mRootView.findViewById(R.id.profile_mother_name)).setText(motherName);
-            otherInfoStatus += 33;
         }else{
             ((TextView)mRootView.findViewById(R.id.profile_mother_name)).setText("NA");
         }
@@ -305,11 +287,10 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         String coachingName = mProfile.getCoaching_institute();
         if (coachingName != null && !coachingName.isEmpty()){
             ((TextView)mRootView.findViewById(R.id.profile_coaching_institute_name)).setText(coachingName);
-            otherInfoStatus += 33;
         }else{
             ((TextView)mRootView.findViewById(R.id.profile_coaching_institute_name)).setText("NA");
         }
-        setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_other_progress), otherInfoStatus);
+        setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_other_progress), 50);
 
     }
 
@@ -838,7 +819,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                         // request for degrees
                         mRequestForCurrentSubLevelDegreesList(userSubLevelId);
 
-                        currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJson(pObj.getId()));
+                      currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJsonForSubLevel(pObj.getId()));
                         int streamCount = currentStreamList.size();
                         for(int j =0 ; j < streamCount; j++){
                             ProfileSpinnerItem pStreamObj = currentStreamList.get(j);
@@ -885,7 +866,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
                     try {
                         int selectedId = view.getSelectedSpinnerItemId();
-                        List<ProfileSpinnerItem> currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJson(selectedId));
+                        List<ProfileSpinnerItem> currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJsonForSubLevel(selectedId));
                         currentStreamSpinner.setItems(currentStreamList, true);
                         if(currentStreamList.size() > 1)
                             currentStreamSpinner.setText("Select your Stream");
@@ -976,7 +957,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             educationModeSpinner.setItems(educationModeList, false);
         }else{
             educationModeSpinner.setItems(educationModeList, true);
-            educationModeSpinner.setText("Select Category");
+            educationModeSpinner.setText("Select Education Mode");
         }
 
 
@@ -1427,19 +1408,19 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
      */
     private void mRequestForUpdateInfo(){
         String userName = ((EditText) mRootView.findViewById(R.id.profile_edit_name)).getText().toString();
-        if (userName == null || userName.trim().isEmpty()) {
+        /*if (userName == null || userName.trim().isEmpty()) {
             //mListener.displayMessage(R.string.NAME_EMPTY);
-            Utils.DisplayToast(getContext(), "Please enter your name.");
+           /Utils.DisplayToast(getContext(), "Please enter your name.");
             return;
         } else if (!Utils.isValidName(userName)) {
             mListener.displayMessage(R.string.NAME_INVALID);
             Utils.DisplayToast(getContext(), "Please enter a valid name.");
             return;
-        }
+        }*/
         String userPhoneNumber = mProfile.getPhone_no();
         if(mProfile.getIs_verified() != 1) {
             userPhoneNumber = ((EditText) mRootView.findViewById(R.id.profile_edit_phone)).getText().toString();
-            if (userPhoneNumber == null || userPhoneNumber.trim().isEmpty()) {
+            /*if (userPhoneNumber == null || userPhoneNumber.trim().isEmpty()) {
                // mListener.displayMessage(R.string.PHONE_EMPTY);
                 Utils.DisplayToast(getContext(), "Please enter your phone number.");
                 return;
@@ -1447,29 +1428,29 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 //mListener.displayMessage(R.string.PHONE_INVALID);
                 Utils.DisplayToast(getContext(), "Please enter a valid phone number.");
                 return;
-            }
+            }*/
         }
         int userStateId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_state)).getSelectedSpinnerItemId();
-        if (userStateId < 0) {
+       /* if (userStateId < 0) {
             Utils.DisplayToast(getContext(), "Please Select your state.");
             return;
-        }
+        }*/
         int userCityId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_city)).getSelectedSpinnerItemId();
-        if (userCityId < 0) {
+        /*if (userCityId < 0) {
             Utils.DisplayToast(getContext(), "Please Select your City.");
             return;
-        }
+        }*/
         int userSocialCategoryId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_category)).getSelectedSpinnerItemId();
-        if (userSocialCategoryId < 0) {
+       /* if (userSocialCategoryId < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Social Category.");
             return;
-        }
+        }*/
 
         int userMotherTongueId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_mother_tongue)).getSelectedSpinnerItemId();
-        if (userMotherTongueId < 0) {
+       /* if (userMotherTongueId < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Mother Tongue.");
             return;
-        }
+        }*/
 
         HashMap<String, String> params = new HashMap<>();
         params.put("name", userName);
@@ -1489,36 +1470,32 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     private void mRequestForUpdateCurrentEducation(){
 
         int userCurrentSubLevelId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_sub_level)).getSelectedSpinnerItemId();
-        if (userCurrentSubLevelId < 0) {
+       /* if (userCurrentSubLevelId < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Sub Level.");
             return;
-        }
+        }*/
         int userCurrentStreamId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_stream)).getSelectedSpinnerItemId();
-        if (userCurrentStreamId < 0) {
+       /* if (userCurrentStreamId < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Stream.");
             return;
-        }
+        }*/
         int userCurrentSpecializationId = mProfile.getCurrent_specialization_id();
         if(!(userCurrentStreamId == 16 || userCurrentStreamId == 7 || userCurrentStreamId == 33 ||userCurrentStreamId == 34 ||
                 userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37)){
-            /*userCurrentSpecializationId = mProfile.getCurrent_specialization_id();
-        }else {*/
-            userCurrentSpecializationId= ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_specialization)).getSelectedSpinnerItemId();
-            if (userCurrentSpecializationId < 0) {
+             userCurrentSpecializationId= ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_specialization)).getSelectedSpinnerItemId();
+            /*if (userCurrentSpecializationId < 0) {
                 Utils.DisplayToast(getContext(), "Please Select your Specialization.");
                 return;
-            }
+            }*/
         }
         int userCurrentDegreeId = mProfile.getCurrent_degree_id();
         if(!(userCurrentStreamId == 16 || userCurrentStreamId == 7 || userCurrentStreamId == 33 ||userCurrentStreamId == 34 ||
                 userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37)){
-          /*  userCurrentDegreeId = mProfile.getCurrent_degree_id();
-        }else {*/
-             userCurrentDegreeId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_degree)).getSelectedSpinnerItemId();
-            if (userCurrentDegreeId < 0) {
+               userCurrentDegreeId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_degree)).getSelectedSpinnerItemId();
+           /* if (userCurrentDegreeId < 0) {
                 Utils.DisplayToast(getContext(), "Please Select your Degree.");
                 return;
-            }
+            }*/
         }
         String userCurrentScore = ((EditText) mRootView.findViewById(R.id.profile_edit_current_score)).getText().toString();
 
@@ -1526,15 +1503,17 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
 
         int currentModeId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_mode)).getSelectedSpinnerItemId();
-        if (currentModeId < 0) {
+        /*if (currentModeId < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Education mode.");
             return;
-        }
+        }*/
         int passingYear = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_passing_year)).getSelectedSpinnerItemId();
+/*
         if (passingYear < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Passing Year.");
             return;
         }
+*/
 
         HashMap<String, String> params = new HashMap<>();
         params.put("current_sublevel_id", ""+userCurrentSubLevelId);
@@ -1557,35 +1536,35 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     private void mRequestForUpdatePreferredEducation(){
 
         int preferredMode = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_mode)).getSelectedSpinnerItemId();
-        if (preferredMode < 0) {
+       /* if (preferredMode < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Education mode.");
             return;
-        }
+        }*/
         int preferredYear= ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_Admission_year)).getSelectedSpinnerItemId();
-        if (preferredYear < 0) {
+        /*if (preferredYear < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Preferred Year.");
             return;
-        }
+        }*/
         int userPreferredSubLevelId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_level)).getSelectedSpinnerItemId();
-        if (userPreferredSubLevelId < 0) {
+       /* if (userPreferredSubLevelId < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Sub Level.");
             return;
-        }
+        }*/
         int userPreferredStreamId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_stream)).getSelectedSpinnerItemId();
-        if (userPreferredStreamId < 0) {
+        /*if (userPreferredStreamId < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Stream.");
             return;
-        }
+        }*/
         int userPreferredSpecializationId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_specialization)).getSelectedSpinnerItemId();
-        if (userPreferredSpecializationId < 0) {
+        /*if (userPreferredSpecializationId < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Specialization.");
             return;
-        }
+        }*/
         int feeRangeMax = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_mode)).getSelectedSpinnerItemId();
-        if (preferredMode < 0) {
+      /*  if (preferredMode < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Fee Range.");
             return;
-        }
+        }*/
 
        /* int loanRequiredButtonId = ((SegmentedGroup) mRootView.findViewById(R.id.profile_loan_required_group)).getCheckedRadioButtonId();
         RadioButton loanRequiredButton = (RadioButton) mRootView.findViewById(loanRequiredButtonId);
@@ -1676,15 +1655,15 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
      */
     private void mRequestForUpdateOtherInfo(){
         String fatherName = ((EditText) mRootView.findViewById(R.id.profile_edit_father_name)).getText().toString();
-        if (fatherName == null || fatherName.isEmpty()) {
+        /*if (fatherName == null || fatherName.isEmpty()) {
             Utils.DisplayToast(getContext(), "Father name should not be empty");
             return;
-        }
+        }*/
         String motherName = ((EditText) mRootView.findViewById(R.id.profile_edit_mother_name)).getText().toString();
-        if (motherName == null || motherName.isEmpty()) {
+        /*if (motherName == null || motherName.isEmpty()) {
             Utils.DisplayToast(getContext(), "Mother name should not be empty");
             return;
-        }
+        }*/
         String coachingInstitute = ((EditText) mRootView.findViewById(R.id.profile_edit_coaching_institute)).getText().toString();
         if (coachingInstitute == null) {
             coachingInstitute = "";

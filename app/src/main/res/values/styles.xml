@@ -375,6 +375,7 @@
         <item name="android:layout_weight">.22</item>
         <item name="android:paddingLeft">5dp</item>
         <item name="android:paddingRight">1dp</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="AppTheme.profileInfoExpendedTextView" parent="AppTheme.profileTextView">
