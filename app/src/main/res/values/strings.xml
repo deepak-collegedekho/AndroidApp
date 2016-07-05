@@ -490,7 +490,7 @@
     <string name="currently_in_school">Currently In School</string>
     <string name="currently_in_graduation">In College/ Graduated College</string>
     <string name="currently_in_pg">In Post Graduate College</string>
-    <string name="currently_studying_yet">Currently Studying Yet?</string>
+    <string name="currently_studying_at">Currently Studying At?</string>
     <string name="your_current_stream">Your Current Stream?</string>
     <string name="which_exams_are_you_preparing">Which exams are you preparing for?</string>
     <string name="no_exam_found">No Exam Found with Your Preferences</string>

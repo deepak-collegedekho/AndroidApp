@@ -27,7 +27,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -241,7 +240,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
             }
         }
 
-        ((CheckBox)view.findViewById(R.id.user_education_show_all_exams)).setOnCheckedChangeListener(
+      /*  ((CheckBox)view.findViewById(R.id.user_education_show_all_exams)).setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -275,9 +274,47 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
                             emptyText.setText(getString(R.string.no_exam_found));
                             mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
                         }
+                    }
+                });*/
 
+        view.findViewById(R.id.user_education_show_all_exams).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(!view.isSelected()){
 
-
+                            // add all stream Exam on the top
+                            mStreamExamList.clear();
+                            mStreamExamList.addAll(mAllExamList);
+                            mExamAdapter.setShowAllExams(true);
+                            mExamAdapter.updateExamsList(mStreamExamList);
+                            view.setSelected(true);
+                            ((TextView)view).setText("Show Less...");
+                        }else{
+                            if(mExamAdapter != null){
+                                // add all stream Exam on the top
+                                mStreamExamList.clear();
+                                int examCount = mAllExamList.size();
+                                for (int i = 0; i < examCount; i++) {
+                                    Exam exam = mAllExamList.get(i);
+                                    if(exam == null || exam.getExam_type() == ProfileMacro.OTHER_EXAM)continue;
+                                    mStreamExamList.add(exam);
+                                }
+                                mExamAdapter.setShowAllExams(false);
+                                mExamAdapter.updateExamsList(mStreamExamList);
+                            }
+                            view.setSelected(false);
+                            ((TextView)view).setText("Show More...");
+                        }
+                        if(mStreamExamList != null && mStreamExamList.size() >0){
+                            mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
+                            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.VISIBLE);
+                        }else{
+                            TextView emptyText = (TextView) mRootView.findViewById(R.id.empty) ;
+                            emptyText.setVisibility(View.VISIBLE);
+                            emptyText.setText(getString(R.string.no_exam_found));
+                            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
+                        }
                     }
                 });
 
@@ -722,14 +759,19 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
             // change heading for user exams selection
             ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.which_exams_are_you_preparing));
             mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.VISIBLE);
-            final CheckBox showALL = (CheckBox)mRootView.findViewById(R.id.user_education_show_all_exams);
+            /*final CheckBox showALL = (CheckBox)mRootView.findViewById(R.id.user_education_show_all_exams);
             showALL.setVisibility(View.VISIBLE);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     showALL.setChecked(false);
                 }
-            },200);
+            },200);*/
+            TextView textView = (TextView)mRootView.findViewById(R.id.user_education_show_all_exams);
+            textView.setSelected(false);
+            textView.setVisibility(View.VISIBLE);
+            textView.setText("Show More...");
+
 
             if(mExamAdapter == null) {
                 mExamAdapter = new ExamsAdapter(getActivity(), mStreamExamList);
@@ -812,7 +854,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
         mRootView.findViewById(R.id.user_education_radio_group).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_heading_devider).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_heading).setVisibility(View.VISIBLE);
-        ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.currently_studying_yet));
+        ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.currently_studying_at));
 
         mStreamRecyclerView.setVisibility(View.GONE);
     }

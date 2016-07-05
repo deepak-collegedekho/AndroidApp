@@ -135,7 +135,7 @@ public class HomeFragment extends BaseFragment {
             if (image != null && !image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
 
-        } else if (MainActivity.user != null) {
+        } /*else if (MainActivity.user != null) {
 
             String name = MainActivity.user.getName();
             String phone = MainActivity.user.getPhone_no();
@@ -160,7 +160,7 @@ public class HomeFragment extends BaseFragment {
             String image = MainActivity.user.getImage();
             if (image != null && !image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-        }
+        }*/
 
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
@@ -208,8 +208,8 @@ public class HomeFragment extends BaseFragment {
 
     public void updateUserInfo(){
         if(MainActivity.mProfile != null){
-            String name = MainActivity.user.getName();
-            String phone = MainActivity.user.getPhone_no();
+            String name = MainActivity.mProfile.getName();
+            String phone = MainActivity.mProfile.getPhone_no();
 
             if (name == null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
                 mProfileName.setText("Name : Anonymous User");
@@ -228,7 +228,7 @@ public class HomeFragment extends BaseFragment {
                 mProfileNumber.setVisibility(View.VISIBLE);
             }
 
-            String image = MainActivity.user.getImage();
+            String image = MainActivity.mProfile.getImage();
 
             if (image != null && !image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());

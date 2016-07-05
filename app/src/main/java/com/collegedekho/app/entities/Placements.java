@@ -21,8 +21,8 @@ public class Placements implements Parcelable {
         }
     };
     public String about;
-    public String highestSalary;
-    public String averageSalary;
+    public Double highestSalary;
+    public Double averageSalary;
     public String placementPercentage;
     public ArrayList<String> companyLogos;
 
@@ -32,8 +32,8 @@ public class Placements implements Parcelable {
 
     public Placements(Parcel source) {
         about = source.readString();
-        highestSalary = source.readString();
-        averageSalary = source.readString();
+        highestSalary = source.readDouble();
+        averageSalary = source.readDouble();
         placementPercentage = source.readString();
         companyLogos = new ArrayList<>();
         source.readStringList(companyLogos);
@@ -47,8 +47,8 @@ public class Placements implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(about);
-        dest.writeString(highestSalary);
-        dest.writeString(averageSalary);
+        dest.writeDouble(highestSalary);
+        dest.writeDouble(averageSalary);
         dest.writeString(placementPercentage);
         dest.writeStringList(companyLogos);
     }

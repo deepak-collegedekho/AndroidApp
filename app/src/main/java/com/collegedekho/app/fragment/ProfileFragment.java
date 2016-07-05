@@ -98,17 +98,14 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
-
         if(mProfile.getIs_verified() == ProfileMacro.NUMBER_VERIFIED)
             mRootView.findViewById(R.id.profile_login_button).setVisibility(View.GONE);
         else
            mRootView.findViewById(R.id.profile_login_button).setVisibility(View.VISIBLE);
 
-
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             mPlusDrawable = VectorDrawableCompat.create(getActivity().getResources(), R.drawable.ic_add_inline_vector23dp, null);
             mMinusDrawable = VectorDrawableCompat.create(getActivity().getResources(), R.drawable.ic_minus_inline, null);
-
         }else {
             mPlusDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_add_inline_vector23dp);
             mMinusDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_minus_inline);
@@ -152,8 +149,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         if (name != null && !name.isEmpty()) {
             mProfileName.setText(name);
         }
-        // update current basic info
 
+        // update current basic info
         int infoProgressStatus = 0;
         String email = mProfile.getEmail();
         if (email != null && !email.isEmpty() && !email.contains("@anonymouscollegedekho.com")) {
@@ -264,8 +261,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         // set user's current score which he/she achieved in last degree or in school
         int currentScore = mProfile.getCurrent_score();
         int scoreType = mProfile.getCurrent_score_type();
-        if (scoreType <  0){
-            ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(currentScore);
+        if (scoreType <=  0){
+            ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(""+currentScore);
             currentEducationStatus +=16;
         }else{
             ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(currentScore +" "+  ProfileMacro.getCurrentScoreTypeName(scoreType));
@@ -459,10 +456,18 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
                 ((TextView) mRootView.findViewById(R.id.profile_exams_name)).setText(examsNameBuffer.toString() + "....");
                 mRootView.findViewById(R.id.profile_exams_name).setSelected(false);
+                ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mPlusDrawable);
+                mRootView.findViewById(R.id.profile_expand_exams_btn).setVisibility(View.VISIBLE);
 
             }else{
                 mRootView.findViewById(R.id.profile_exams_name).setSelected(true);
                 ((TextView)mRootView.findViewById(R.id.profile_exams_name)).setText(examsNameBuffer.toString());
+                ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mMinusDrawable);
+                if( examsList.size() <= 4) {
+                    mRootView.findViewById(R.id.profile_expand_exams_btn).setVisibility(View.GONE);
+                }else {
+                    mRootView.findViewById(R.id.profile_expand_exams_btn).setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -547,10 +552,10 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
             case R.id.profile_expand_exams_btn:
                  if(mRootView.findViewById(R.id.profile_exams_name).isSelected() == true) {
-                     ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mPlusDrawable);
-                     mExpandUserExamsLayout(false);
+                    // ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mPlusDrawable);
+                        mExpandUserExamsLayout(false);
                     }else{
-                     ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mMinusDrawable);
+                    // ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mMinusDrawable);
                         mExpandUserExamsLayout(true);
                     }
                 break;
@@ -1952,24 +1957,32 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         updateUserProfile();
         if(viewPosition == 0){
             mRootView.findViewById(R.id.profile_info_layout).setVisibility(View.VISIBLE);
+            ((ImageView)mRootView.findViewById(R.id.profile_expand_info_btn)).setImageDrawable(mPlusDrawable);
             mRootView.findViewById(R.id.profile_expand_info_btn).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.profile_info_edit_layout).setVisibility(View.GONE);
-            onClick(mRootView.findViewById(R.id.profile_expand_info_btn));
+            mRootView.findViewById(R.id.profile_expanded_info_layout).setVisibility(View.GONE);
+           // onClick(mRootView.findViewById(R.id.profile_expand_info_btn));
         }else if(viewPosition == 1){
             mRootView.findViewById(R.id.profile_education_layout).setVisibility(View.VISIBLE);
+            ((ImageView)mRootView.findViewById(R.id.profile_expand_education_btn)).setImageDrawable(mPlusDrawable);
             mRootView.findViewById(R.id.profile_expand_education_btn).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.profile_education_edit_layout).setVisibility(View.GONE);
-            onClick(mRootView.findViewById(R.id.profile_expand_education_btn));
+            mRootView.findViewById(R.id.profile_expanded_education_layout).setVisibility(View.GONE);
+          //  onClick(mRootView.findViewById(R.id.profile_expand_education_btn));
         }else if(viewPosition == 2){
             mRootView.findViewById(R.id.profile_preferred_layout).setVisibility(View.VISIBLE);
+            ((ImageView)mRootView.findViewById(R.id.profile_expand_preferred_btn)).setImageDrawable(mPlusDrawable);
             mRootView.findViewById(R.id.profile_expand_preferred_btn).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.profile_preferred_edit_layout).setVisibility(View.GONE);
-            onClick(mRootView.findViewById(R.id.profile_expand_preferred_btn));
+            mRootView.findViewById(R.id.profile_expanded_preferred_layout).setVisibility(View.GONE);
+          //  onClick(mRootView.findViewById(R.id.profile_expand_preferred_btn));
         }else if(viewPosition == 4){
             mRootView.findViewById(R.id.profile_other_info_layout).setVisibility(View.VISIBLE);
-            mRootView.findViewById(R.id.profile_expand_other_info_btn).setVisibility(View.VISIBLE);
+            ((ImageView)mRootView.findViewById(R.id.profile_expand_other_info_btn)).setImageDrawable(mPlusDrawable);
+           mRootView.findViewById(R.id.profile_expand_other_info_btn).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.profile_other_info_edit_layout).setVisibility(View.GONE);
-            onClick(mRootView.findViewById(R.id.profile_expand_other_info_btn));
+            mRootView.findViewById(R.id.profile_expanded_other_info_layout).setVisibility(View.GONE);
+           // onClick(mRootView.findViewById(R.id.profile_expand_other_info_btn));
         }
     }
 

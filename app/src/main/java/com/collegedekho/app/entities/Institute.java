@@ -48,10 +48,10 @@ public class Institute implements Parcelable {
     private String awards_snap;
     private String infra_snap;
     private String placement_percentage;
-    private String avg_salary;
+    private double avg_salary;
     private String near_by_joints_snap;
     private String placement;
-    private String max_salary;
+    private double max_salary;
     private ArrayList<Facility> facilities;
     private int current_user_vote_type = -1;
     private String current_user_shortlist_url;
@@ -67,7 +67,7 @@ public class Institute implements Parcelable {
     private int shortlist_count;
     private double min_fees;
     private double max_fees;
-    private String min_salary;
+    private double min_salary;
     private String fees;
     private String l3_number;
     private String application_end_date;
@@ -104,10 +104,10 @@ public class Institute implements Parcelable {
         awards_snap = source.readString();
         infra_snap = source.readString();
         placement_percentage = source.readString();
-        avg_salary = source.readString();
+        avg_salary = source.readDouble();
         near_by_joints_snap = source.readString();
         placement = source.readString();
-        max_salary = source.readString();
+        max_salary = source.readDouble();
         facilities = new ArrayList<>();
         source.readTypedList(facilities, Facility.CREATOR);
         current_user_vote_type = source.readInt();
@@ -125,7 +125,7 @@ public class Institute implements Parcelable {
         source.readMap(images, Map.class.getClassLoader());
         min_fees = source.readDouble();
         max_fees = source.readDouble();
-        min_salary = source.readString();
+        min_salary = source.readDouble();
         shortlist_count = source.readInt();
         exams = new ArrayList<>();
         source.readStringList(exams);
@@ -163,11 +163,11 @@ public class Institute implements Parcelable {
         this.placement = placement;
     }
 
-    public String getMax_salary() {
+    public Double getMax_salary() {
         return max_salary;
     }
 
-    public void setMax_salary(String max_salary) {
+    public void setMax_salary(Double max_salary) {
         this.max_salary = max_salary;
     }
 
@@ -195,11 +195,11 @@ public class Institute implements Parcelable {
         this.placement_percentage = placement_percentage;
     }
 
-    public String getAvg_salary() {
+    public Double getAvg_salary() {
         return avg_salary;
     }
 
-    public void setAvg_salary(String avg_salary) {
+    public void setAvg_salary(Double avg_salary) {
         this.avg_salary = avg_salary;
     }
 
@@ -264,10 +264,10 @@ public class Institute implements Parcelable {
         dest.writeString(awards_snap);
         dest.writeString(infra_snap);
         dest.writeString(placement_percentage);
-        dest.writeString(avg_salary);
+        dest.writeDouble(avg_salary);
         dest.writeString(near_by_joints_snap);
         dest.writeString(placement);
-        dest.writeString(max_salary);
+        dest.writeDouble(max_salary);
         dest.writeTypedList(facilities);
         dest.writeInt(current_user_vote_type);
         dest.writeString(current_user_shortlist_url);
@@ -280,7 +280,7 @@ public class Institute implements Parcelable {
         dest.writeInt(partner_status);
         dest.writeDouble(min_fees);
         dest.writeDouble(max_fees);
-        dest.writeString(min_salary);
+        dest.writeDouble(min_salary);
         dest.writeStringList(exams);
         dest.writeStringList(user_exams);
         dest.writeInt(shortlist_count);
@@ -572,11 +572,11 @@ public class Institute implements Parcelable {
         this.max_fees = max_fees;
     }
 
-    public String getMin_salary() {
+    public Double getMin_salary() {
         return min_salary;
     }
 
-    public void setMin_salary(String min_salary) {
+    public void setMin_salary(Double min_salary) {
         this.min_salary = min_salary;
     }
 

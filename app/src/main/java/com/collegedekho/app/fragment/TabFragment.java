@@ -137,8 +137,8 @@ public class TabFragment extends  BaseFragment{
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
         if(MainActivity.mProfile != null) {
 
-            String name = MainActivity.user.getName();
-            String phone = MainActivity.user.getPhone_no();
+            String name = MainActivity.mProfile.getName();
+            String phone = MainActivity.mProfile.getPhone_no();
 
             if (name == null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
                 mProfileName.setText("Name : Anonymous User");
@@ -161,12 +161,6 @@ public class TabFragment extends  BaseFragment{
             if (image != null && ! image.isEmpty()) {
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
                 mProfileImage.setVisibility(View.VISIBLE);
-            }else{
-                if(MainActivity.user != null) {
-                    image = MainActivity.user.getImage();
-                    if (image != null && !image.isEmpty())
-                        mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-                }
             }
         }
 
