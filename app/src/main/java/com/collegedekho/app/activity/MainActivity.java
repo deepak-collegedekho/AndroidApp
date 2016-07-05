@@ -488,9 +488,10 @@ public class MainActivity extends AppCompatActivity
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
 
-        if (fragment == null)
+        if (fragment == null) {
             this.mDisplayFragment(TabFragment.newInstance(tabPosition, new ArrayList<>(mUserExamsList)), true, TabFragment.class.getSimpleName());
-        else {
+//            this.mDisplayFragment(TabFragment.newInstance(tabPosition, new ArrayList<>(mUserExamsList)), true, TabFragment.class.getSimpleName());
+        } else {
             if (currentFragment instanceof TabFragment) {
                 ((TabFragment) currentFragment).updateTabFragment(tabPosition);
             } else{
@@ -5019,7 +5020,6 @@ public class MainActivity extends AppCompatActivity
 
         IS_HOME_LOADED = true;
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_HOME_LOADED), true).apply();
-
     }
 
 

@@ -346,7 +346,7 @@ public class TabFragment extends  BaseFragment{
                 e.printStackTrace();
             }
             this.mSubMenuItemClickListener();
-            this.mUpdateSubMenuItem();
+//            this.mUpdateSubMenuItem();
         }
     }
 
