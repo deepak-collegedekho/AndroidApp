@@ -44,6 +44,7 @@ public class TabFragment extends  BaseFragment{
     private ExamDetail mExamDetail;
     private ExamSummary mExamSummary;
     private ViewPager mExamTabPager  = null;
+    private PagerTabStrip pagerHeader = null;
     private boolean isFistTime = false;
     private boolean IS_TUTE_COMPLETED = true;
     private int i = 0 ;
@@ -171,7 +172,7 @@ public class TabFragment extends  BaseFragment{
             this.mExamTabPager.setVisibility(View.VISIBLE);
             this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
             this.mExamTabPager.setAdapter(this.mDetailsAdapter);
-            ((ViewPager.LayoutParams) ((PagerTabStrip) rootView.findViewById(R.id.exam_pager_header)).getLayoutParams()).isDecor = true;
+            ((ViewPager.LayoutParams) pagerHeader.getLayoutParams()).isDecor = true;
 
             this.mExamTabPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
@@ -255,6 +256,8 @@ public class TabFragment extends  BaseFragment{
             }
         });
 
+        pagerHeader = (PagerTabStrip) rootView.findViewById(R.id.exam_pager_header);
+
         return rootView;
     }
 
@@ -263,7 +266,10 @@ public class TabFragment extends  BaseFragment{
             return;
         this.mExamDetailList=examsList;
         this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
+        pagerHeader.setVisibility(View.VISIBLE);
         mExamTabPager.setAdapter(this.mDetailsAdapter);
+        ((ViewPager.LayoutParams) pagerHeader.getLayoutParams()).isDecor = true;
+        updateCollegeCount(selectedTabPosition);
     }
 
     @Override
@@ -280,6 +286,8 @@ public class TabFragment extends  BaseFragment{
                 mExamTabPager.invalidate();
                 mainActivity.mUpdateTabMenuItem(this.selectedTabPosition,0);
                 updateCollegeCount(selectedTabPosition);
+                if(pagerHeader != null)
+                    ((ViewPager.LayoutParams) pagerHeader.getLayoutParams()).isDecor = true;
                 if (selectedTabPosition < mExamDetailList.size())
                     mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
             }else {
