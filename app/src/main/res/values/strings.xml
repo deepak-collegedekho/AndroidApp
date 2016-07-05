@@ -102,7 +102,7 @@
     <!--HOME Fragment-->
     <string name="TAG_HOME_COLLEGE_LIST">Colleges</string>
     <string name="TAG_HOME_ASK_AND_CHAT">Ask &amp; Chat</string>
-    <string name="TAG_HOME_NEWS_AND_UPDATES">News &amp; Updates</string>
+    <string name="TAG_HOME_NEWS_AND_UPDATES">News</string>
     <string name="TAG_HOME_PREPARE">Prepare</string>
 
     <!--TAB Fragment-->
