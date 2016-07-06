@@ -215,6 +215,7 @@ public class TabFragment extends  BaseFragment{
         rootView.findViewById(R.id.home_widget_third).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_fourth).setOnClickListener(this);
         rootView.findViewById(R.id.profile_image).setOnClickListener(this);
+        rootView.findViewById(R.id.include_image_layout).findViewById(R.id.profile_image_edit_button).setOnClickListener(this);
 
         if (MainActivity.mProfile.getPsychometric_given() == 1)
             rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.GONE);
@@ -349,7 +350,7 @@ public class TabFragment extends  BaseFragment{
     @Override
     public void onClick(View view) {
         super.onClick(view);
-        if(view.getId() == R.id.profile_image) {
+        if(view.getId() == R.id.profile_image || view.getId() == R.id.profile_image_edit_button) {
             ((MainActivity) getActivity()).displayProfileFrragment();
         }
         if (view.getId() == R.id.btn_tab_psychometric_test)

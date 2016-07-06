@@ -104,6 +104,7 @@ public class HomeFragment extends BaseFragment {
         rootView.findViewById(R.id.prepare_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
         rootView.findViewById(R.id.updates_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
         rootView.findViewById(R.id.profile_image).setOnClickListener(this);
+        rootView.findViewById(R.id.include_image_layout).findViewById(R.id.profile_image_edit_button).setOnClickListener(this);
 
         return rootView;
     }
@@ -292,6 +293,7 @@ public class HomeFragment extends BaseFragment {
         switch (view.getId())
         {
             case R.id.profile_image:
+            case R.id.profile_image_edit_button:
                 ((MainActivity) getActivity()).displayProfileFrragment();
                 break;
             case R.id.btn_home_psychometric_test:

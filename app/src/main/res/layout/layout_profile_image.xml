@@ -43,6 +43,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="60dp"
             android:elevation="0dp"
+            android:duplicateParentState="true"
             />
     </FrameLayout>
 
