@@ -140,7 +140,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         if (nextView.getAlpha() != 1 && !isResumed())
             nextView.setX(10000);
         }*/
-        mRootView.findViewById(R.id.layout_container).setOnClickListener(this);
         return mRootView;
     }
 

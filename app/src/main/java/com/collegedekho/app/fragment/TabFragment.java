@@ -97,6 +97,11 @@ public class TabFragment extends  BaseFragment{
         CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
 
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+//        if(IS_TUTE_COMPLETED){
+//            getActivity().invalidateOptionsMenu();
+//        } else {
+//            getActivity().invalidateOptionsMenu();
+//        }
 
         rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,18 +116,16 @@ public class TabFragment extends  BaseFragment{
                     } else if(i ==2) {
                         i++;
                         v.setBackgroundResource(R.drawable.ic_profile_tute4);
-                    } else if(i ==3) {
-                        i++;
-                        v.setBackgroundResource(R.drawable.ic_profile_tute5);
                     } else {
                         v.setVisibility(View.GONE);
                         IS_TUTE_COMPLETED = true;
-                        getActivity().invalidateOptionsMenu();
+//                        getActivity().invalidateOptionsMenu();
                         getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
                         View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                         bottomMenu.animate().translationY(0);
                         bottomMenu.setVisibility(View.VISIBLE);
                         updateCollegeCount(selectedTabPosition);
+                        TabFragment.this.getActivity().invalidateOptionsMenu();
                     }
                 } else {
                     v.setVisibility(View.GONE);
@@ -235,8 +238,8 @@ public class TabFragment extends  BaseFragment{
             }
         });
 
-        if (MainActivity.mProfile.getStep_by_step_given() == 1)
-            rootView.findViewById(R.id.btn_tab_step_by_step).setVisibility(View.GONE);
+//        if (MainActivity.mProfile.getStep_by_step_given() == 1)
+//            rootView.findViewById(R.id.btn_tab_step_by_step).setVisibility(View.GONE);
 
         rootView.findViewById(R.id.btn_tab_step_by_step).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -366,9 +369,6 @@ public class TabFragment extends  BaseFragment{
             } else if(i ==2) {
                 i++;
                 v.setBackgroundResource(R.drawable.ic_profile_tute4);
-            } else if(i ==3) {
-                i++;
-                v.setBackgroundResource(R.drawable.ic_profile_tute5);
             } else {
                 v.setVisibility(View.GONE);
                 IS_TUTE_COMPLETED = true;

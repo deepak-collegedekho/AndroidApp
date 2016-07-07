@@ -28,6 +28,7 @@ public class HomeFragment extends BaseFragment {
     private final String TAG = "profile Frgament";
     private OnTabSelectListener mListener;
     private View mRootView;
+    private boolean IS_TUTE_COMPLETED = true;
 
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -51,9 +52,18 @@ public class HomeFragment extends BaseFragment {
         if (MainActivity.mProfile.getPsychometric_given() == 1)
             mRootView.findViewById(R.id.btn_home_psychometric_test).setVisibility(View.GONE);
 
-        if (MainActivity.mProfile.getStep_by_step_given() == 1)
-            mRootView.findViewById(R.id.btn_home_step_by_step).setVisibility(View.GONE);
+//        if (MainActivity.mProfile.getStep_by_step_given() == 1)
+//            mRootView.findViewById(R.id.btn_home_step_by_step).setVisibility(View.GONE);
 
+        this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Home Tute", false);
+        if(!IS_TUTE_COMPLETED) {
+            mRootView.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.VISIBLE);
+        }
+        else {
+            mRootView.findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
+        }
 
         mRootView.findViewById(R.id.college_list_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
         mRootView.findViewById(R.id.connect_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
@@ -63,6 +73,8 @@ public class HomeFragment extends BaseFragment {
         mRootView.findViewById(R.id.btn_home_psychometric_test).setOnClickListener(this);
         mRootView.findViewById(R.id.btn_home_step_by_step).setOnClickListener(this);
         mRootView.findViewById(R.id.profile_image).setOnClickListener(this);
+        mRootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
+        mRootView.findViewById(R.id.recommended_tute_frame).setOnClickListener(this);
 
         return mRootView;
     }
@@ -171,6 +183,16 @@ public class HomeFragment extends BaseFragment {
 
         switch (view.getId())
         {
+            case R.id.recommended_tute_image:
+            case R.id.recommended_tute_frame:
+                view.setVisibility(View.GONE);
+                if(getView() != null){
+                    getView().findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
+                    getView().findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
+                }
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean("Home Tute", true).apply();
+                getActivity().invalidateOptionsMenu();
+                break;
             case R.id.profile_image:
             case R.id.profile_image_edit_button:
                 if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {

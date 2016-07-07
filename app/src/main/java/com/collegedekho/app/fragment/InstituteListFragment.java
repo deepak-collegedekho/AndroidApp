@@ -75,7 +75,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private FrameLayout fab;
     private ImageButton fabBtn;
     private int fabMargin;
-
+    int filtersApplied = 0;
     public InstituteListFragment() {
         // Required empty public constructor
     }
@@ -409,7 +409,14 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
     public void updateFilterButton(int filterCount)
     {
-        if(!filterAllowed) return;// do not need on my shortlist page
+        if(!filterAllowed) {
+            return;
+        }// do not need on my shortlist page
+
+//        if(filterCount < 1){
+//            filters.setVisibility(View.GONE);
+//            return;
+//        }
 
         View v = getView();
         if (v != null) {
@@ -422,7 +429,11 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                 getView().findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
                 ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter_vector), this.getActivity().getResources().getColor(R.color.primary_orange)));
             }
-       }
+            if(filtersApplied == 0){
+                v.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
+                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter_vector), this.getActivity().getResources().getColor(R.color.white)));
+            }
+        }
     }
 
     private void updateFilterTokenConfirmation(Object token) {
@@ -437,22 +448,25 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                     }
             }
         }
-
         if(listener != null)
             listener.onFilterApplied();
     }
 
     private void mSetFilterList()
     {
+        filtersApplied = 0;
         ArrayList<Folder> folderList = ((MainActivity) getActivity()).getFilterList();
         if(folderList != null && !folderList.isEmpty()) {
             for (Folder f : folderList) {
                 if (f.getLabel().equalsIgnoreCase("stream") || f.getLabel().equalsIgnoreCase("level"))
                     continue;
 
-                for (Facet ft : f.getFacets())
-                    if (ft.isSelected() == 1)
+                for (Facet ft : f.getFacets()) {
+                    if (ft.isSelected() == 1) {
                         mCompletionView.addObject(ft.getLabel());
+                        filtersApplied++;
+                    }
+                }
             }
         }
     }
