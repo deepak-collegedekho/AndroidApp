@@ -136,7 +136,7 @@ public class UserEducationFragment extends BaseFragment implements ProfileFragme
         if (nextView.getAlpha() != 1 && !isResumed())
             nextView.setX(10000);
         }*/
-
+        mRootView.findViewById(R.id.layout_container).setOnClickListener(this);
         return mRootView;
     }
 

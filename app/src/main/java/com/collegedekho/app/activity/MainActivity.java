@@ -4641,15 +4641,9 @@ public class MainActivity extends AppCompatActivity
             DataBaseHelper.getInstance(this).deleteAllExamSummary();
             onUpdateUserExams(response);
             onBackPressed();
-            /*new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(currentFragment instanceof TabFragment) {
-                        ((TabFragment) currentFragment).updateExamsList((ArrayList<ExamDetail>) mUserExamsList);
-                    }
-                }
-            }, 300);*/
-
+            if(currentFragment instanceof  TabFragment){
+                ((TabFragment) currentFragment).updateExamsList(user.getUser_exams());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

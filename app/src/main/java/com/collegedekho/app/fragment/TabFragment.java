@@ -94,6 +94,7 @@ public class TabFragment extends  BaseFragment{
         CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
 
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+
         rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -244,7 +245,7 @@ public class TabFragment extends  BaseFragment{
             return;
         this.mExamDetailList=examsList;
         this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
-         mExamTabPager.setAdapter(this.mDetailsAdapter);
+        mExamTabPager.setAdapter(this.mDetailsAdapter);
     }
 
 

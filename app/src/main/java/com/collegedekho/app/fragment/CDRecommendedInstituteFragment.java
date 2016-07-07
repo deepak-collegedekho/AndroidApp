@@ -44,6 +44,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     private SimpleCardStackAdapter mAdapter;
     private OnCDRecommendedInstituteListener mListener;
     private boolean IS_TUTE_COMPLETED = true;
+    private boolean IS_WISHLIST_TUTE_COMPLETED = true;
     private CardContainer mCardContainer;
     private TextView mPageTitleTV;
     private TextView mEmptyTextView;
@@ -190,6 +191,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         rootView.findViewById(R.id.tab_wishlist).setOnClickListener(this);
         rootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
         rootView.findViewById(R.id.recommended_tute_frame).setOnClickListener(this);
+        rootView.findViewById(R.id.wishlist_tute_image).setOnClickListener(this);
+        rootView.findViewById(R.id.wishlist_tute_frame).setOnClickListener(this);
 
         return rootView;
     }
@@ -327,6 +330,15 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()){
+            case R.id.wishlist_tute_image:
+            case R.id.wishlist_tute_frame:
+                v.setVisibility(View.GONE);
+                if(getView() != null){
+                    getView().findViewById(R.id.wishlist_tute_image).setVisibility(View.GONE);
+                    getView().findViewById(R.id.wishlist_tute_frame).setVisibility(View.GONE);
+                }
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean("Wishlist tute", true).apply();
+                break;
             case R.id.badge_counter_layout:
                 if(mUndecidedCount <= 0){
                     Utils.DisplayToast(getActivity(), "You don't have any undecided Institute.");
@@ -385,6 +397,19 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 currentTab =v;
                 break;
             case R.id.tab_wishlist:
+                this.IS_WISHLIST_TUTE_COMPLETED= getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
+                View view = getView();
+                if(view != null){
+                    if(!IS_WISHLIST_TUTE_COMPLETED) {
+                        getView().findViewById(R.id.wishlist_tute_image).setVisibility(View.VISIBLE);
+                        getView().findViewById(R.id.wishlist_tute_frame).setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        getView().findViewById(R.id.wishlist_tute_image).setVisibility(View.GONE);
+                        getView().findViewById(R.id.wishlist_tute_frame).setVisibility(View.GONE);
+                    }
+                }
+
                 if(v.getId() != currentTab.getId()) {
                     mMainActivity.translateAnimation(v,currentTab);
 //                    v.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(1000).start();
