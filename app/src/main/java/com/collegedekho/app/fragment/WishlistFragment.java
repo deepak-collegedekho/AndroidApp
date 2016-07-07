@@ -117,6 +117,7 @@ public class WishlistFragment extends BaseFragment {
         if(!IS_TUTE_COMPLETED) {
             rootView.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.VISIBLE);
+            getActivity().invalidateOptionsMenu();
         }
         else {
             rootView.findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
@@ -162,6 +163,7 @@ public class WishlistFragment extends BaseFragment {
                     getView().findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
                 }
                 getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean("Wishlist tute", true).apply();
+                getActivity().invalidateOptionsMenu();
                 break;
         }
     }

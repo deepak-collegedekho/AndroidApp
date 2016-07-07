@@ -1151,13 +1151,51 @@ public class MainActivity extends AppCompatActivity
         }
         setSearchAvailable(menu);
 //        if (!getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), false)) {
+        if(currentFragment instanceof TabFragment){
+            boolean tute_complete = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+            if(!tute_complete){
+                menu.setGroupVisible(R.id.search_menu_group, false);
+                menu.setGroupVisible(R.id.main_menu_group, false);
+            }
+        }
+
+        if(currentFragment instanceof WishlistFragment){
+            boolean tute_complete = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
+            if(!tute_complete){
+                menu.setGroupVisible(R.id.search_menu_group, false);
+                menu.setGroupVisible(R.id.main_menu_group, false);
+            }
+        }
+
+        if(currentFragment instanceof CDRecommendedInstituteFragment){
+            int tab = ((CDRecommendedInstituteFragment) currentFragment).currentTabId;
+            if(tab == 1){
+                boolean tute_complete = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), false);
+                if(!tute_complete){
+                    menu.setGroupVisible(R.id.search_menu_group, false);
+                    menu.setGroupVisible(R.id.main_menu_group, false);
+                }
+            } else if (tab == 2){
+                boolean tute_complete = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
+                if(!tute_complete){
+                    menu.setGroupVisible(R.id.search_menu_group, false);
+                    menu.setGroupVisible(R.id.main_menu_group, false);
+                }
+            }
+        }
+
         if(currentFragment instanceof  HomeFragment){
-            menu.setGroupVisible(R.id.main_menu_group, true);
-            menu.setGroupVisible(R.id.search_menu_group, true);
+            boolean tute_complete = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Home Tute", false);
+            if(!tute_complete){
+                menu.setGroupVisible(R.id.search_menu_group, false);
+                menu.setGroupVisible(R.id.main_menu_group, false);
+            }else {
+                menu.setGroupVisible(R.id.main_menu_group, true);
+                menu.setGroupVisible(R.id.search_menu_group, true);
+            }
         }
         return super.onPrepareOptionsMenu(menu);
     }
-
 
     private void setSearchAvailable(Menu menu) {
         if (currentFragment != null) {
@@ -2380,6 +2418,13 @@ public class MainActivity extends AppCompatActivity
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 this.mDisplayInstituteList(response, true, true);
                 break;
+            case Constants.WIDGET_INSTITUTES_SBS:
+                this.mCurrentTitle = "Institutes";
+                Constants.IS_RECOMENDED_COLLEGE = false;
+                mClearBackStack();
+                this.mDisplayInstituteList(response, true, true);
+                break;
+
             case Constants.WIDGET_TRENDING_INSTITUTES:
                 this.mCurrentTitle = "Featured Colleges";
                 Constants.IS_RECOMENDED_COLLEGE = false;
@@ -2981,8 +3026,9 @@ public class MainActivity extends AppCompatActivity
 
             MainActivity.mProfile.setStep_by_step_given(1);
             //move to profile
-            this.mClearBackStack();
-            this.mLoadHomeScreen(null);
+//            this.mClearBackStack();
+            this.onHomeItemSelected(Constants.WIDGET_INSTITUTES_SBS, Constants.BASE_URL + "personalize/institutes/",null);
+//            this.mLoadHomeScreen(null);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -3358,6 +3404,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_UPDATE_USER_PROFILE:
                 return "Updating Profile...";
             case Constants.WIDGET_INSTITUTES:
+            case Constants.WIDGET_INSTITUTES_SBS:
             case Constants.WIDGET_TRENDING_INSTITUTES:
             case Constants.WIDGET_SHORTLIST_INSTITUTES:
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
@@ -5117,7 +5164,8 @@ public class MainActivity extends AppCompatActivity
     public void onHomeItemSelected(String requestType, String url, String tag) {
         if (requestType.equalsIgnoreCase(Constants.WIDGET_INSTITUTES)
                 || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES)
-                || requestType.equalsIgnoreCase(Constants.WIDGET_TRENDING_INSTITUTES)){
+                || requestType.equalsIgnoreCase(Constants.WIDGET_TRENDING_INSTITUTES)
+                || requestType.equalsIgnoreCase(Constants.WIDGET_INSTITUTES_SBS)){
             //Suggesting System that its a good time to do GC
             System.gc();
 

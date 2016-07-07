@@ -39,6 +39,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     private static final String ARG_UNDECIDED_INSTITUTE_COUNT = "undecided_institute_count";
     private static final String ARG_WISHLIST_INSTITUTE_COUNT = "wishlist_institute_count";
     private static final String ARG_BUZZLIST_INSTITUTE_COUNT = "buzzlist_institute_count";
+
+    public static final int TAB_RECOMMENDED= 1;
+    public static final int TAB_WISHLIST= 2;
+
     private ArrayList<Institute> mInstitutes;
     private String mTitle;
     private SimpleCardStackAdapter mAdapter;
@@ -68,6 +72,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     private int mWishListCount;
     private int mBuzzListCount;
     private View currentTab;
+    public int currentTabId;
     private MainActivity mMainActivity;
 
 
@@ -286,16 +291,17 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
         if(CARD_CATEGORY ==Constants.CDRecommendedInstituteType.UNBAISED.ordinal()){
             currentTab = getView().findViewById(R.id.tab_recommended);
-//            currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(0).start();
+            currentTabId=1;
             mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_blue_border_box));
         } else if (CARD_CATEGORY ==Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()){
             currentTab = getView().findViewById(R.id.tab_buzzlist);
-//            currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(0).start();
+            currentTabId=1;
             mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_orange_border_box));
         } else if (CARD_CATEGORY ==Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()){
             currentTab = getView().findViewById(R.id.tab_wishlist);
-//            currentTab.animate().translationYBy(-10f).scaleX(1.1f).scaleY(1.1f).setDuration(0).start();
+            currentTabId=2;
         }
+        getActivity().invalidateOptionsMenu();
 
         this.mMainActivity = (MainActivity) this.getActivity();
         if (this.mMainActivity != null)
@@ -341,6 +347,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                     getView().findViewById(R.id.wishlist_tute_frame).setVisibility(View.GONE);
                 }
                 getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean("Wishlist tute", true).apply();
+                getActivity().invalidateOptionsMenu();
                 break;
             case R.id.badge_counter_layout:
                 if(mUndecidedCount <= 0){
@@ -359,6 +366,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                     getView().findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
                 }
                 getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), true).apply();
+                getActivity().invalidateOptionsMenu();
                 break;
             case R.id.tab_buzzlist:
                 if(v.getId() != currentTab.getId()) {
@@ -374,6 +382,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                     mEmptyTextView.setVisibility(View.VISIBLE);
                     mListener.onClickBuzzList();
                 }
+                currentTabId=1;
                 currentTab = v;
                 break;
             case R.id.tab_recommended:
@@ -396,16 +405,18 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                     mEmptyTextView.setVisibility(View.VISIBLE);
                     mListener.onClickRecommendedList();
                 }
-
+                currentTabId=1;
                 currentTab =v;
                 break;
             case R.id.tab_wishlist:
                 this.IS_WISHLIST_TUTE_COMPLETED= getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
                 View view = getView();
+                currentTabId = 2;
                 if(view != null){
                     if(!IS_WISHLIST_TUTE_COMPLETED) {
                         getView().findViewById(R.id.wishlist_tute_image).setVisibility(View.VISIBLE);
                         getView().findViewById(R.id.wishlist_tute_frame).setVisibility(View.VISIBLE);
+                        getActivity().invalidateOptionsMenu();
                     }
                     else {
                         getView().findViewById(R.id.wishlist_tute_image).setVisibility(View.GONE);

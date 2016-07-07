@@ -11,9 +11,13 @@
         style="@style/AppTheme.TextView.page_title"
         android:paddingRight="55dp"
         android:text="Engineering colleges in India"
+        android:layout_alignParentTop="true"
         />
 
-    <include layout="@layout/layout_empty"/>
+    <include layout="@layout/layout_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textview_page_title"/>
 
     <include layout="@layout/layout_grid_list"
         android:id="@+id/viewType"
