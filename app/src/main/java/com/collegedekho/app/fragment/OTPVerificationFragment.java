@@ -20,9 +20,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.Constants;
+
+import java.util.HashMap;
 
 /**
  * Created by Bashir on 24/2/16.
@@ -77,6 +80,15 @@ public class OTPVerificationFragment extends BaseFragment {
         edtOTP.addTextChangedListener(otpWatcher);
         cbTerms = (CheckBox) view.findViewById(R.id.cb_terms);
         edtMobileNumber.requestFocus();
+
+        if (MainActivity.mProfile != null) {
+            String phone = MainActivity.mProfile.getPhone_no();
+            if (phone != null && !phone.isEmpty()) {
+            edtMobileNumber.setText(MainActivity.mProfile.getPhone_no());
+            ((TextView) view.findViewById(R.id.title_msg)).setText(R.string.Please_verify_your_number);
+            ((TextView) view.findViewById(R.id.btn_submit_mobile)).setText(R.string.send_otp);
+            }
+        }
 
         view.findViewById(R.id.otp_verify_skip_button).setOnClickListener(this);
 
@@ -136,6 +148,12 @@ public class OTPVerificationFragment extends BaseFragment {
                     if (number != null && !number.trim().equals("") && number.trim().length() == 10 && TextUtils.isDigitsOnly(number)) {
                         if (cbTerms.isChecked()) {
                             mListener.onSubmitPhoneNumber(number);
+                            if(MainActivity.mProfile != null){
+                                MainActivity.mProfile.setPhone_no(number);
+                                HashMap<String, String> params = new HashMap<>();
+                                params.put(getString(R.string.USER_PHONE), number);
+                                mListener.requestForProfile(params, Request.Method.POST);
+                            }
                         } else {
                             mListener.displayMessage(R.string.ACCEPT_TERMS_AND_CONDITIONS);
                         }
@@ -240,6 +258,7 @@ public class OTPVerificationFragment extends BaseFragment {
     public interface OTPVerificationListener {
         void onSubmitPhoneNumber(String mobileNumber);
         void onSubmitOTP(String mobileNumber, String otp);
+        void requestForProfile(HashMap<String, String> params, int method);
         void onResendOTP(String mobileNumber);
         void displayMessage(int messageId);
     }

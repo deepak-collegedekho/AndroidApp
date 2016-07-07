@@ -805,7 +805,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
         // hide current degree and specialization isf user has current level is school
         if(userStreamId == 16 || userStreamId == 33|| userStreamId == 34 || userStreamId == 35
-                || userStreamId == 36 || userStreamId == 37){
+                || userStreamId == 36 || userStreamId == 37 || userStreamId == 38 || userStreamId == 39){
             currentSpecializationSpinner.setVisibility(View.GONE);
             currentDegreeSpinner.setVisibility(View.GONE);
         }else{
@@ -906,7 +906,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     return;
                 int streamId = view.getSelectedSpinnerItemId();
                 if(streamId == 16 || streamId == 33|| streamId == 34 || streamId == 35
-                        || streamId == 36 || streamId == 37){
+                        || streamId == 36 || streamId == 37 || streamId == 38 || streamId == 39){
                     currentSpecializationSpinner.setVisibility(View.GONE);
                     currentDegreeSpinner.setVisibility(View.GONE);
                 }else{
@@ -1424,14 +1424,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         String userPhoneNumber = mProfile.getPhone_no();
         if(mProfile.getIs_verified() != 1) {
             userPhoneNumber = ((EditText) mRootView.findViewById(R.id.profile_edit_phone)).getText().toString();
-            if (userName == null ){
-                userPhoneNumber = "";
-            }
-            if(userName.length() > 0) {
-                if (userPhoneNumber.length() <= 9 || !Utils.isValidPhone(userPhoneNumber)) {
-                    Utils.DisplayToast(getContext(), "Please enter a valid phone number.");
-                    return;
-                }
+            if (userPhoneNumber != null && userPhoneNumber.length() > 0){
+                  if (userPhoneNumber.length() <= 9 || !Utils.isValidPhone(userPhoneNumber)) {
+                        Utils.DisplayToast(getContext(), "Please enter a valid phone number.");
+                        return;
+                    }
             }
         }
         String userStateIdValue = "";
@@ -1485,7 +1482,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         String currentSpecilizationIdValue ="";
         int userCurrentSpecializationId = mProfile.getCurrent_specialization_id();
         if(!(userCurrentStreamId == 16 || userCurrentStreamId == 7 || userCurrentStreamId == 33 ||userCurrentStreamId == 34 ||
-                userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37)){
+                userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37) || userCurrentStreamId == 38 || userCurrentStreamId == 39){
              userCurrentSpecializationId= ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_specialization)).getSelectedSpinnerItemId();
             if (userCurrentSpecializationId > 0) {
                 currentSpecilizationIdValue +=userCurrentSpecializationId ;
@@ -1494,7 +1491,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         String currentDegreeIdValue ="";
         int currentDegreeId = mProfile.getCurrent_degree_id();
         if(!(userCurrentStreamId == 16 || userCurrentStreamId == 7 || userCurrentStreamId == 33 ||userCurrentStreamId == 34 ||
-                userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37)){
+                userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37 || userCurrentStreamId == 38 || userCurrentStreamId == 39) ){
             currentDegreeId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_degree)).getSelectedSpinnerItemId();
             if (currentDegreeId > 0) {
                 currentDegreeIdValue += currentDegreeId;

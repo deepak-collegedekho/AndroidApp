@@ -1226,6 +1226,13 @@ public class MainActivity extends AppCompatActivity
                         mProfile.setPhone_no(user.getPhone_no());
                         mProfile.setImage(user.getImage());
                         mProfile.setExams_set(user.getExams_set());
+                    try {
+                        mProfile.setCurrent_level_id((Integer.parseInt(user.getLevel())));
+                        mProfile.setCurrent_sublevel_id(Integer.parseInt(user.getSublevel()));
+                        mProfile.setCurrent_stream_id(Integer.parseInt(user.getStream()));
+                    }catch(Exception e){
+
+                    }
                 }
 
                 this.requestForProfile(null, Request.Method.GET);
@@ -1509,7 +1516,8 @@ public class MainActivity extends AppCompatActivity
             // exist in database then sever will allow it to change as user's email id
             if (mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER) {
                 String email = Utils.getDeviceEmail(getApplicationContext());
-                params.put(getString(R.string.USER_EMAIL), email);
+                if(email != null || !email.isEmpty())
+                    params.put(getString(R.string.USER_EMAIL), email);
             }
             // if user phone number is not available and it is saved in me profile
             // then fetch it  and save it on user's profile
@@ -2288,6 +2296,14 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_PHONE_NUMBER_LOGIN:
                 this.onOTPVerifiedResponse(response);
+                break;
+            case Constants.TEMPORARY_TAG_PROFILE_BUILD:
+                try {
+                    MainActivity.mProfile = JSON.std.beanFrom(Profile.class,response);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                mLoadUserStatusScreen();
                 break;
             case Constants.TAG_USER_PHONE_ADDED:
                 onMobileNumberSubmitted();
@@ -4547,6 +4563,13 @@ public class MainActivity extends AppCompatActivity
                 mProfile.setPhone_no(user.getPhone_no());
                 mProfile.setImage(user.getImage());
                 mProfile.setExams_set(user.getExams_set());
+                try {
+                    mProfile.setCurrent_level_id((Integer.parseInt(user.getLevel())));
+                    mProfile.setCurrent_sublevel_id(Integer.parseInt(user.getSublevel()));
+                    mProfile.setCurrent_stream_id(Integer.parseInt(user.getStream()));
+                }catch(Exception e){
+
+                }
             }
 
             setUserIdWithAllEvents();
@@ -5650,7 +5673,7 @@ public class MainActivity extends AppCompatActivity
                     if(mProfile.getPhone_no() == null ||  mProfile.getPhone_no().length() < 10)
                         profileParams.put(getResourceString(R.string.USER_PHONE), phone);
 
-                      requestForUserProfileUpdate(profileParams, -1);
+                      requestForProfile(profileParams, Request.Method.POST);
 
                     // remove top card from CD reco and shortlist after  successfully  applying for the institute
                     if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteFragment) {
@@ -5832,7 +5855,54 @@ public class MainActivity extends AppCompatActivity
                         ((PostAnonymousLoginFragment) currentFragment).onInvalidOtp();
                     }
                 }else{
-                    mUpdateUserPreferences(response);
+                   // mUpdateUserPreferences(response);
+
+                    // TODO :: delete this code flow when new common logi api is ready
+
+                    try {
+                        User tempUser = MainActivity.user;
+                        MainActivity.user = JSON.std.beanFrom(User.class, response);
+                        this.networkUtils.setToken(user.getToken());
+
+                        if (tempUser != null){
+                            MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
+                            MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
+                            MainActivity.user.profileData = tempUser.profileData;
+                        }
+                        if(mProfile == null) {
+                            mProfile = new Profile();
+                            mProfile.setName(user.getName());
+                            mProfile.setEmail(user.getEmail());
+                            mProfile.setPhone_no(user.getPhone_no());
+                            mProfile.setImage(user.getImage());
+                            mProfile.setExams_set(user.getExams_set());
+                            try {
+                                mProfile.setCurrent_level_id((Integer.parseInt(user.getLevel())));
+                                mProfile.setCurrent_sublevel_id(Integer.parseInt(user.getSublevel()));
+                                mProfile.setCurrent_stream_id(Integer.parseInt(user.getStream()));
+                            }catch(Exception e){
+
+                            }
+                        }
+
+                        setUserIdWithAllEvents();
+                        String u = JSON.std.asString(this.user);
+                        if(!IS_USER_CREATED){
+                            //Events
+                            Map<String, Object> eventValue = new HashMap<>();
+                            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
+                            eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
+                        }
+                        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).apply();
+                        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
+                        IS_USER_CREATED = true;
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    mMakeNetworkCall(Constants.TEMPORARY_TAG_PROFILE_BUILD,Constants.BASE_URL+"profile/", null,  Request.Method.POST);
+
                     HashMap<String, Object> eventValue = new HashMap<>();
                     eventValue.put(Constants.TAG_USER_LOGIN, Constants.TAG_PHONE_NUMBER_LOGIN);
                     AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
@@ -5885,7 +5955,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mDisplayOtpVerificationFragment() {
-        if (MainActivity.mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED && setupOtpRequest(true)) {
+        if (MainActivity.mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED){//&& setupOtpRequest(true)) {
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(OTPVerificationFragment.class.getSimpleName());
             if (fragment == null)
                 mDisplayFragment(OTPVerificationFragment.newInstance(), true, OTPVerificationFragment.class.getSimpleName());

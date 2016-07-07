@@ -438,7 +438,9 @@
     <string name="verify_your_phone">Verify Your Phone</string>
     <string name="otp_title">Help us understand you better</string>
     <string name="enter_mobile_number">Enter Your Mobile Number</string>
+    <string name="Please_verify_your_number">Please Verify Your Mobile Number</string>
     <string name="otp_sent_message">OTP has been sent to your mobile number</string>
+    <string name="send_otp">Send OTP</string>
     <string name="resend_otp"> Resend OTP</string>
     <string name="submit">SUBMIT</string>
     <string name="verify_number">VERIFY YOUR MOBILE NUMBER</string>

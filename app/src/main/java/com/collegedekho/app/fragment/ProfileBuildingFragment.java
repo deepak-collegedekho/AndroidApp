@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import android.widget.EditText;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -184,18 +186,113 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         mStreamRecyclerView = (RecyclerView)view.findViewById(R.id.user_education_recycler_view);
         mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mStreamRecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
-
         mExamSearchView = (SearchView) view.findViewById(R.id.user_exam_search_view);
 
+        /// load profile completion Ui Screen
+        mLoadUserProfileCompletedUI();
+
+        view.findViewById(R.id.user_education_show_all_exams).setOnClickListener(this);
+        view.findViewById(R.id.user_education_radio_button_school).setOnClickListener(this);
+        view.findViewById(R.id.user_education_radio_button_college).setOnClickListener(this);
+        view.findViewById(R.id.user_education_radio_button_pg).setOnClickListener(this);
+        view.findViewById(R.id.user_education_next_button).setOnClickListener(this);
+        view.findViewById(R.id.user_education_level_edit_btn).setOnClickListener(this);
+        view.findViewById(R.id.user_education_stream_edit_btn).setOnClickListener(this);
+        view.findViewById(R.id.user_education_exams_edit_btn).setOnClickListener(this);
+        view.findViewById(R.id.user_education_skip_button).setOnClickListener(this);
+        view.findViewById(R.id.user_profile_image_update).setOnClickListener(this);
+        view.findViewById(R.id.go_to_recommended).setOnClickListener(this);
+        view.findViewById(R.id.go_to_dash_board).setOnClickListener(this);
+        view.findViewById(R.id.go_to_profile).setOnClickListener(this);
+        view.findViewById(R.id.user_exam_search_container).setOnClickListener(this);
+        view.findViewById(R.id.user_education_no_exam_skip_button).setOnClickListener(this);
+        mExamSearchView.setOnSearchClickListener(this);
+    }
+
+    private void mLoadUserProfileCompletedUI(){
+
+    if(MainActivity.mProfile == null)
+        return;
+        Profile profile = MainActivity.mProfile;
         // if current education selected  then show next layout
-        if(MainActivity.mProfile != null){
-            if(MainActivity.mProfile.getCurrent_level_id() >= 1
-                    && MainActivity.mProfile.getCurrent_sublevel_id() >= 1) {
+        if(profile.getCurrent_level_id() >= 1 && profile.getCurrent_sublevel_id() >= 1) {
 
-                CircularProgressBar profileCompleted =  (CircularProgressBar) mRootView.findViewById(R.id.user_profile_progress);
-                profileCompleted.setProgress(0);
-                profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
+            // set user profile completion progress
+            CircularProgressBar profileCompleted =  (CircularProgressBar) mRootView.findViewById(R.id.user_profile_progress);
+            profileCompleted.setProgress(0);
+            profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
 
+            // show recyclerView For stream or exams list
+            mStreamRecyclerView.setVisibility(View.VISIBLE);
+
+            // hide education level radio button
+            mRootView.findViewById(R.id.user_education_radio_group).setVisibility(View.GONE);
+
+            // show current level education layout
+            View  educationLayout = mRootView.findViewById(R.id.user_education_education_layout);
+            educationLayout.setVisibility(View.VISIBLE);
+            educationLayout.startAnimation(animationFromTop);
+
+            // set current level education
+            TextView  currentLevelTxtView = (TextView) mRootView.findViewById(R.id.user_education_level);
+            currentLevelTxtView.setVisibility(View.VISIBLE);
+            int currentLevelId = MainActivity.mProfile.getCurrent_level_id();
+            if (currentLevelId == ProfileMacro.LEVEL_TWELFTH || currentLevelId == ProfileMacro.LEVEL_TENTH) {
+                currentLevelTxtView.setText(" School");
+            } else if (currentLevelId == ProfileMacro.LEVEL_UNDER_GRADUATE) {
+                currentLevelTxtView.setText(" College");
+            } else {
+                currentLevelTxtView.setText(" PG College");
+            }
+
+            if(profile.getCurrent_stream_id() >= 1){
+
+                isStreamSelected = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(mListener != null){
+                            mListener.onRequestForUserExams();
+                        }
+                    }
+                },300);
+                mRootView.findViewById(R.id.user_education_next_button).setAlpha(1);
+                // show user' current stream Layout
+                mRootView.findViewById(R.id.user_education_stream_layout).setVisibility(View.VISIBLE);
+                mRootView.findViewById(R.id.user_education_stream_layout).startAnimation(animationFromTop);
+
+                // set user's current stream
+                TextView  currentStreamTxtView = (TextView)mRootView.findViewById(R.id.user_education_stream);
+                currentStreamTxtView.setVisibility(View.VISIBLE);
+                currentStreamTxtView.setText(MainActivity.mProfile.getCurrent_stream_name());
+
+                // change heading for user exams selection
+                ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.which_exams_are_you_preparing));
+                mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.VISIBLE);
+
+                if(mExamAdapter == null) {
+                    mExamAdapter = new ExamsAdapter(getActivity(), mStreamExamList);
+                    mStreamRecyclerView.setAdapter(mExamAdapter);
+                }else{
+                    mStreamRecyclerView.setAdapter(mExamAdapter);
+                    mExamAdapter.updateExamsList(mStreamExamList);
+                }
+
+                cExamQueryListener = new ExamOnQueryListener(mStreamExamList,this,mRootView.findViewById(R.id.user_education_next_button_layout));
+                this.mExamSearchView.setOnQueryTextListener(cExamQueryListener);
+
+                mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(mRootView.findViewById(R.id.user_exam_search_hint),mRootView.findViewById(R.id.user_education_next_button_layout)));
+
+                mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.GONE);
+                mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
+                TextView emptyText = (TextView) mRootView.findViewById(R.id.empty) ;
+                emptyText.setVisibility(View.VISIBLE);
+                emptyText.setText(getString(R.string.loading_exams));
+                mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
+
+            }else {
+
+                // show next button with animation
                 final View nextView = mRootView.findViewById(R.id.user_education_next_button);
                 if (nextView.getAlpha() != 1) {
 
@@ -226,28 +323,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
                 }
 
-                mRootView.findViewById(R.id.user_education_radio_group).setVisibility(View.GONE);
 
                 //  set heading text according to  stream screen
                 ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
-                mStreamRecyclerView.setVisibility(View.VISIBLE);
-
-                // show current level education layout
-                View  educationLayout = mRootView.findViewById(R.id.user_education_education_layout);
-                educationLayout.setVisibility(View.VISIBLE);
-                educationLayout.startAnimation(animationFromTop);
-
-                // set current level education
-                TextView  currentLevelTxtView = (TextView) mRootView.findViewById(R.id.user_education_level);
-                currentLevelTxtView.setVisibility(View.VISIBLE);
-                int currentLevelId = MainActivity.mProfile.getCurrent_level_id();
-                if (currentLevelId == ProfileMacro.LEVEL_TWELFTH || currentLevelId == ProfileMacro.LEVEL_TENTH) {
-                    currentLevelTxtView.setText(" School");
-                } else if (currentLevelId == ProfileMacro.LEVEL_UNDER_GRADUATE) {
-                    currentLevelTxtView.setText(" College");
-                } else {
-                    currentLevelTxtView.setText(" PG College");
-                }
 
                 // show streams list to choose current stream based on current level
                 try {
@@ -266,62 +344,44 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             }
         }
 
-        view.findViewById(R.id.user_education_show_all_exams).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if(!view.isSelected()){
+    }
+    private void onShowAllExamsClecked(View view){
+        if(view == null )
+            return;
+        if(!view.isSelected()){
 
-                            // add all stream Exam on the top
-                            mStreamExamList.clear();
-                            mStreamExamList.addAll(mAllExamList);
-                            mExamAdapter.setShowAllExams(true);
-                            mExamAdapter.updateExamsList(mStreamExamList);
-                            view.setSelected(true);
-                            ((TextView)view).setText(getString(R.string.show_less));
-                        }else{
-                            if(mExamAdapter != null){
-                                // add all stream Exam on the top
-                                mStreamExamList.clear();
-                                int examCount = mAllExamList.size();
-                                for (int i = 0; i < examCount; i++) {
-                                    Exam exam = mAllExamList.get(i);
-                                    if(exam == null || exam.getExam_type() == ProfileMacro.OTHER_EXAM)continue;
-                                    mStreamExamList.add(exam);
-                                }
-                                mExamAdapter.setShowAllExams(false);
-                                mExamAdapter.updateExamsList(mStreamExamList);
-                            }
-                            view.setSelected(false);
-                            ((TextView)view).setText(getString(R.string.show_more));
-                        }
-                        if(mStreamExamList != null && mStreamExamList.size() >0){
-                            mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
-                            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.VISIBLE);
-                        }else{
-                            TextView emptyText = (TextView) mRootView.findViewById(R.id.empty) ;
-                            emptyText.setVisibility(View.VISIBLE);
-                            emptyText.setText(getString(R.string.no_exam_found));
-                            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
-                        }
-                    }
-                });
-
-        view.findViewById(R.id.user_education_radio_button_school).setOnClickListener(this);
-        view.findViewById(R.id.user_education_radio_button_college).setOnClickListener(this);
-        view.findViewById(R.id.user_education_radio_button_pg).setOnClickListener(this);
-        view.findViewById(R.id.user_education_next_button).setOnClickListener(this);
-        view.findViewById(R.id.user_education_level_edit_btn).setOnClickListener(this);
-        view.findViewById(R.id.user_education_stream_edit_btn).setOnClickListener(this);
-        view.findViewById(R.id.user_education_exams_edit_btn).setOnClickListener(this);
-        view.findViewById(R.id.user_education_skip_button).setOnClickListener(this);
-        view.findViewById(R.id.user_profile_image_update).setOnClickListener(this);
-        view.findViewById(R.id.go_to_recommended).setOnClickListener(this);
-        view.findViewById(R.id.go_to_dash_board).setOnClickListener(this);
-        view.findViewById(R.id.go_to_profile).setOnClickListener(this);
-        view.findViewById(R.id.user_exam_search_container).setOnClickListener(this);
-        view.findViewById(R.id.user_education_no_exam_skip_button).setOnClickListener(this);
-        mExamSearchView.setOnSearchClickListener(this);
+            // add all stream Exam on the top
+            mStreamExamList.clear();
+            mStreamExamList.addAll(mAllExamList);
+            mExamAdapter.setShowAllExams(true);
+            mExamAdapter.updateExamsList(mStreamExamList);
+            view.setSelected(true);
+            ((TextView)view).setText(getString(R.string.show_less));
+        }else{
+            if(mExamAdapter != null){
+                // add all stream Exam on the top
+                mStreamExamList.clear();
+                int examCount = mAllExamList.size();
+                for (int i = 0; i < examCount; i++) {
+                    Exam exam = mAllExamList.get(i);
+                    if(exam == null || exam.getExam_type() == ProfileMacro.OTHER_EXAM)continue;
+                    mStreamExamList.add(exam);
+                }
+                mExamAdapter.setShowAllExams(false);
+                mExamAdapter.updateExamsList(mStreamExamList);
+            }
+            view.setSelected(false);
+            ((TextView)view).setText(getString(R.string.show_more));
+        }
+        if(mStreamExamList != null && mStreamExamList.size() >0){
+            mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.VISIBLE);
+        }else{
+            TextView emptyText = (TextView) mRootView.findViewById(R.id.empty) ;
+            emptyText.setVisibility(View.VISIBLE);
+            emptyText.setText(getString(R.string.no_exam_found));
+            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -426,6 +486,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 mTakeMeToDashBoard();
                 this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SEARCH);
                 ProfileBuildingFragment.mEventValue.put("skip when there is no exam", "skip to go dashboard");
+                break;
+            case R.id.user_education_show_all_exams:
+                onShowAllExamsClecked(view);
                 break;
             default:
                 break;
@@ -584,7 +647,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
         // check which layout is visible to do action
         View radioGroupEducation = mRootView.findViewById(R.id.user_education_radio_group);
-        if(radioGroupEducation.getVisibility() == View.VISIBLE) {
+        if(!isStreamSelected && radioGroupEducation.getVisibility() == View.VISIBLE) {
             isStreamSelected = false;
             int selectedRadioButton = ((RadioGroup) radioGroupEducation).getCheckedRadioButtonId();
 
@@ -773,14 +836,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             // change heading for user exams selection
             ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.which_exams_are_you_preparing));
             mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.VISIBLE);
-            /*final CheckBox showALL = (CheckBox)mRootView.findViewById(R.id.user_education_show_all_exams);
-            showALL.setVisibility(View.VISIBLE);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    showALL.setChecked(false);
-                }
-            },200);*/
+
             TextView textView = (TextView)mRootView.findViewById(R.id.user_education_show_all_exams);
             textView.setSelected(false);
             textView.setVisibility(View.VISIBLE);
@@ -855,23 +911,46 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
 
     private void mEditCurrentEducationLevel(){
+        isStreamSelected = false;
+        mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
+        mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_education_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_stream_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
-        mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
-        mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_show_all_exams).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_no_exam_skip_button).setVisibility(View.GONE);
+        mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_radio_group).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_heading_devider).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_heading).setVisibility(View.VISIBLE);
         ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.currently_studying_at));
-
         mStreamRecyclerView.setVisibility(View.GONE);
+
+
+        int checkedRadioButtonID = ((RadioGroup)mRootView.findViewById(R.id.user_education_radio_group)).getCheckedRadioButtonId();
+        if( checkedRadioButtonID == -1 && MainActivity.mProfile != null){
+
+            int levelId = MainActivity.mProfile.getCurrent_level_id();
+            if(levelId == ProfileMacro.LEVEL_TENTH || levelId == ProfileMacro.LEVEL_TWELFTH){
+                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_school)).setChecked(true);
+                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_college)).setChecked(false);
+                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_pg)).setChecked(false);
+            }else if(levelId == ProfileMacro.LEVEL_UNDER_GRADUATE){
+                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_school)).setChecked(false);
+                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_college)).setChecked(true);
+                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_pg)).setChecked(false);
+            }
+            else if(levelId == ProfileMacro.LEVEL_POST_GRADUATE){
+                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_school)).setChecked(false);
+                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_college)).setChecked(false);
+                ((RadioButton)mRootView.findViewById(R.id.user_education_radio_button_pg)).setChecked(true);
+
+            }
+        }
     }
 
     private void mEditCurrentStream(){
@@ -890,6 +969,32 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         mRootView.findViewById(R.id.user_education_heading).setVisibility(View.VISIBLE);
         ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
         mStreamRecyclerView.setVisibility(View.VISIBLE);
+
+        if(mStreamList == null){
+
+            try {
+                mStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class,
+                        ProfileMacro.getStreamJson(MainActivity.mProfile.getCurrent_level_id()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // set selected true stream if user has same stream
+            if(MainActivity.mProfile != null){
+
+                int userStreamId = MainActivity.mProfile.getCurrent_stream_id();
+                if(mStreamList != null){
+                    int count = mStreamList.size();
+                    for (int i = 0; i <  count; i++) {
+                        ProfileSpinnerItem streamOj = mStreamList.get(i);
+                        if(streamOj == null )continue;
+                        if(streamOj.getId() == userStreamId)
+                            streamOj.setSelected(true);
+                    }
+                }
+
+            }
+        }
 
         if(mStreamAdapter == null) {
             mStreamAdapter = new ExamStreamAdapter(getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);

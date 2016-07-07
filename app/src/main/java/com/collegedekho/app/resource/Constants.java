@@ -167,6 +167,7 @@ public class Constants
     public static final String SEARCH_ARTICLES = "search_articles";
     public static final String SEARCH_NEWS = "search_news";
     public static final String SEARCH_QNA = "search_qna";
+    public static final String TEMPORARY_TAG_PROFILE_BUILD = "temporary_tag_profiule_build";
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;
