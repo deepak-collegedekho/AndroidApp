@@ -8,16 +8,21 @@ import android.view.View;
  */
 public class ExamSearchCloseListener implements SearchView.OnCloseListener{
 
-    View hint;
+    View mHintView;
+    View mNextView;
 
-    public ExamSearchCloseListener(View hint){
-        this.hint = hint;
+    public ExamSearchCloseListener(View hint, View nextView){
+        this.mHintView = hint;
+        this.mNextView = nextView;
     }
 
 
     @Override
     public boolean onClose() {
-        hint.setVisibility(View.VISIBLE);
+        if(mHintView != null)
+        mHintView.setVisibility(View.VISIBLE);
+        if(mNextView != null)
+        mNextView.setVisibility(View.VISIBLE);
         return false;
     }
 }

@@ -192,6 +192,10 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             if(MainActivity.mProfile.getCurrent_level_id() >= 1
                     && MainActivity.mProfile.getCurrent_sublevel_id() >= 1) {
 
+                CircularProgressBar profileCompleted =  (CircularProgressBar) mRootView.findViewById(R.id.user_profile_progress);
+                profileCompleted.setProgress(0);
+                profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
+
                 final View nextView = mRootView.findViewById(R.id.user_education_next_button);
                 if (nextView.getAlpha() != 1) {
 
@@ -413,11 +417,12 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             case R.id.user_exam_search_view:
             case R.id.user_exam_search_container:
                 mExamSearchView.onActionViewExpanded();
+              //  mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.GONE);
                 getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.GONE);
                 this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SEARCH);
                 ProfileBuildingFragment.mEventValue.put("searching_what", "exams");
+                break;
             case R.id.user_education_no_exam_skip_button:
-
                 mTakeMeToDashBoard();
                 this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SEARCH);
                 ProfileBuildingFragment.mEventValue.put("skip when there is no exam", "skip to go dashboard");
@@ -790,10 +795,10 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 mExamAdapter.updateExamsList(mStreamExamList);
             }
 
-            cExamQueryListener = new ExamOnQueryListener(mStreamExamList,this);
+            cExamQueryListener = new ExamOnQueryListener(mStreamExamList,this,mRootView.findViewById(R.id.user_education_next_button_layout));
             this.mExamSearchView.setOnQueryTextListener(cExamQueryListener);
 
-            mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(mRootView.findViewById(R.id.user_exam_search_hint)));
+            mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(mRootView.findViewById(R.id.user_exam_search_hint),mRootView.findViewById(R.id.user_education_next_button_layout)));
 
             if(mStreamExamList != null && mStreamExamList.size() >0){
                 mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
@@ -965,7 +970,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                     mListener.displayMessage(R.string.NAME_INVALID);
                     return false;
                 }
-                profileParams.put("name",userName);
+                profileParams.put(getString(R.string.USER_NAME),userName);
 
                 // hide name EditText
                 ((TextView) mRootView.findViewById(R.id.user_name)).setText(userName);
@@ -974,6 +979,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 if(MainActivity.mProfile != null)
                     MainActivity.mProfile.setName(userName);
             }
+        }else{
+            if(MainActivity.mProfile != null)
+            profileParams.put(getString(R.string.USER_NAME),MainActivity.mProfile.getName());
         }
 
         View phoneView = mRootView.findViewById(R.id.user_education_edit_phone_til);
@@ -984,7 +992,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                     mListener.displayMessage(R.string.PHONE_INVALID);
                     return false;
                 }
-                profileParams.put("phone_no",userPhoneNumber);
+                profileParams.put(getString(R.string.USER_PHONE),userPhoneNumber);
                 ((TextView) mRootView.findViewById(R.id.user_phone)).setText(userPhoneNumber);
                 mRootView.findViewById(R.id.user_education_phone_layout).setVisibility(View.VISIBLE);
                 phoneView.setVisibility(View.GONE);
@@ -1265,7 +1273,8 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             ((CircularImageView) mRootView.findViewById(R.id.profile_image)).setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
 
         CircularProgressBar profileCompleted =  (CircularProgressBar) mRootView.findViewById(R.id.user_profile_progress);
-        profileCompleted.setProgress(MainActivity.mProfile.getProgress());
+        profileCompleted.setProgress(0);
+        profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
 
     }
 

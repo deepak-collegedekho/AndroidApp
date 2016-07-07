@@ -1,6 +1,8 @@
 package com.collegedekho.app.listener;
 
+import android.os.Handler;
 import android.support.v7.widget.SearchView;
+import android.view.View;
 
 import com.collegedekho.app.adapter.ExamsAdapter;
 import com.collegedekho.app.entities.Exam;
@@ -13,12 +15,14 @@ import java.util.ArrayList;
  */
 public class ExamOnQueryListener implements SearchView.OnQueryTextListener {
 
-    ArrayList<Exam>  mExamList;
-    ExamFragmentListener mExamFragmentListener;
+    private ArrayList<Exam>  mExamList;
+    private ExamFragmentListener mExamFragmentListener;
+    private View mNextView;
 
-    public ExamOnQueryListener(ArrayList<Exam>  mExamList, ExamFragmentListener context){
+    public ExamOnQueryListener(ArrayList<Exam>  mExamList, ExamFragmentListener context, View nextView){
         this.mExamList = mExamList;
         this.mExamFragmentListener = context;
+        this.mNextView = nextView;
     }
 
     public void setExamList(ArrayList<Exam> mExamList) {
@@ -27,9 +31,11 @@ public class ExamOnQueryListener implements SearchView.OnQueryTextListener {
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+
         return false;
     }
 
+    private  int i=0;
     @Override
     public boolean onQueryTextChange(String newText) {
         try{
@@ -40,6 +46,7 @@ public class ExamOnQueryListener implements SearchView.OnQueryTextListener {
                     searchResults.add(exam);
                 }
             }
+
             mExamFragmentListener.updateQueryExamList(searchResults);
         } catch (NullPointerException e) {
             e.printStackTrace();

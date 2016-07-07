@@ -87,10 +87,10 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
         mExamAdapter = new ExamsAdapter(getActivity(),  mExamList);
         mStreamRecyclerView.setAdapter(mExamAdapter);
 
-        cExamQueryListener = new ExamOnQueryListener(mExamList,this);
+        cExamQueryListener = new ExamOnQueryListener(mExamList,this, null);
         this.mExamSearchView.setOnQueryTextListener(cExamQueryListener);
 
-        mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(rootView.findViewById(R.id.user_exam_search_hint)));
+        mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(rootView.findViewById(R.id.user_exam_search_hint), null));
 
         mExamSearchView.setOnSearchClickListener(this);
         mExamSubmitButton.setOnClickListener(this);

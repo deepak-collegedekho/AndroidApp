@@ -14814,6 +14814,14 @@ public class ProfileMacro {
             "                    \"name\": \"Arts\"\n" +
             "                },\n" +
             "                {\n" +
+            "                    \"id\": 38,\n" +
+            "                    \"name\": \"Commerce with Maths\"\n" +
+            "                },\n" +
+            "                {\n" +
+            "                    \"id\": 39,\n" +
+            "                    \"name\": \"Biology with Maths\"\n" +
+            "                },\n" +
+            "                {\n" +
             "                    \"id\": 37,\n" +
             "                    \"name\": \"All Subjects\"\n" +
             "                }\n" +
@@ -15128,7 +15136,8 @@ public class ProfileMacro {
         if(motherTongueList.size() == 24)
             return  motherTongueList;
 
-        for (int i = 1; i < 25; i++) {
+        for (int i = 1; i < 26; i++) {
+            if(i == 17) continue; // tp add other in last
             ProfileSpinnerItem item = new  ProfileSpinnerItem();
             item.setId(i);
             item.setName(getMotherTongueName(i));
