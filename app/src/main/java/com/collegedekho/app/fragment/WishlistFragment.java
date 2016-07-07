@@ -95,7 +95,7 @@ public class WishlistFragment extends BaseFragment {
 
         if(mInstitutes == null || mInstitutes.size() <= 0){
             mEmptyTextView.setVisibility(View.VISIBLE);
-            mEmptyTextView.setText("You don't have any Shortlisted college. Please Shortlist colleges Listing !");
+            mEmptyTextView.setText("You don't have any Shortlisted college. Please Shortlist from college Listing !");
         }else{
             mEmptyTextView.setVisibility(View.GONE);
         }

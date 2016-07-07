@@ -867,7 +867,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         mTitle = "Shortlisted Colleges";
         this.mPageTitleTV.setText(mTitle);
         if (this.mInstitutes.size() == 0) {
-            this.mEmptyTextView.setText("No more shortlisted institutes...");
+            this.mEmptyTextView.setText("You don't have any Shortlisted college. Please Shortlist from college Listing !");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.questionLayout.setVisibility(View.INVISIBLE);
 

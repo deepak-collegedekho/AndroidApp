@@ -77,7 +77,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
 
                 WishlistInstituteListAdapter.this.mShowInstituteCardOnLongPress(position);
 
-                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST);
+                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST_PEEK);
                 WishlistInstituteListAdapter.mEventValue.put("action_what", "institute_peek");
                 WishlistInstituteListAdapter.mEventValue.put("institute_name", WishlistInstituteListAdapter.this.mInstitutes.get(position).getName());
                 WishlistInstituteListAdapter.mEventValue.put("institute_id", WishlistInstituteListAdapter.this.mInstitutes.get(position).getId());
@@ -95,7 +95,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
 
                 timeUsedInMS = Utils.getTimeInMilliSec(WishlistInstituteListAdapter.this.calendar);
 
-                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST);
+                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST_POP);
 
                 WishlistInstituteListAdapter.mEventValue.put("action_what", "institute_pop");
                 WishlistInstituteListAdapter.mEventValue.put("action_duration", String.valueOf(timeUsedInMS));
@@ -112,7 +112,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
             public void onClickPeek(View view, int position) {
                 WishlistInstituteListAdapter.this.mShowInstituteCardOnClick(position);
 
-                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST);
+                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST_CLICK);
 
                 WishlistInstituteListAdapter.mEventValue.put("action_what", "institute_peek_click");
                 WishlistInstituteListAdapter.mEventValue.put("institute_name", WishlistInstituteListAdapter.this.mInstitutes.get(position).getName());
@@ -148,7 +148,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
             @Override
             public void onLongHold(View view, int position) {
                 vibratorService.vibrate(Constants.HOLD_REMOVE_VIBRATION_DURATION);
-                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST);
+                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST_LONG_HOLD);
 
                 WishlistInstituteListAdapter.mEventValue.put("institute_name", WishlistInstituteListAdapter.this.mInstitutes.get(position).getName());
                 WishlistInstituteListAdapter.mEventValue.put("institute_id", WishlistInstituteListAdapter.this.mInstitutes.get(position).getId());
@@ -182,7 +182,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
             public void onHold(View view, int position) {
                 vibratorService.vibrate(Constants.HOLD_ENTER_VIBRATION_DURATION);
 
-                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST);
+                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST_HOLD_AND_RELEASE);
 
                 WishlistInstituteListAdapter.mEventValue.put("institute_name", WishlistInstituteListAdapter.this.mInstitutes.get(position).getName());
                 WishlistInstituteListAdapter.mEventValue.put("institute_id", WishlistInstituteListAdapter.this.mInstitutes.get(position).getId());
@@ -227,7 +227,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
 
             @Override
             public void onRelease(View view, int position) {
-                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST);
+                WishlistInstituteListAdapter.this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SHORTLIST_HOLD_AND_RELEASE);
 
                 WishlistInstituteListAdapter.mEventValue.put("institute_name", WishlistInstituteListAdapter.this.mInstitutes.get(position).getName());
                 WishlistInstituteListAdapter.mEventValue.put("institute_id", WishlistInstituteListAdapter.this.mInstitutes.get(position).getId());
