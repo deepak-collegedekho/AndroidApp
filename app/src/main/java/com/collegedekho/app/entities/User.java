@@ -314,7 +314,7 @@ public class User
             }
             else
             {
-                if(this.primaryPhone==null) {
+                if(this.primaryPhone == null || this.primaryPhone.isEmpty()) {
                     String number=data.replaceAll(" ","");
                     if(number.length()>10){
                         number=number.substring(number.length()-10,number.length());

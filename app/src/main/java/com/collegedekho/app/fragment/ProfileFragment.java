@@ -153,7 +153,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         if (mProfile == null)
             return;
 
-        setProfileProgressStatus((CircularProgressBar) mUserImageLayout.findViewById(R.id.user_profile_progress), mProfile.getProgress());
+        setProfileProgressStatus(mUserImageLayout.findViewById(R.id.user_profile_progress), mProfile.getProgress());
 
         String name = mProfile.getName();
         if (name != null && !name.isEmpty()) {
@@ -415,7 +415,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             ((TextView)view.findViewById(R.id.profile_preferences_location)).setText("NA");
 
         }
-        setProfileProgressStatus((ProgressBar)view.findViewById(R.id.profile_preferences_progress), mProfile.getPreference_progress());
+        setProfileProgressStatus(view.findViewById(R.id.profile_preferences_progress), mProfile.getPreference_progress());
     }
     /**
      * This method is used to set user exams info

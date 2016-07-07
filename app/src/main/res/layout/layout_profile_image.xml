@@ -8,8 +8,8 @@
 
     <com.collegedekho.app.widget.CircularImageView
         android:id="@id/profile_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="95dp"
+        android:layout_height="95dp"
         app:srcCompat="@drawable/ic_profile_default"
         android:visibility="visible"
         android:layout_centerVertical="true"
@@ -21,9 +21,8 @@
 
         <com.collegedekho.app.widget.CircularProgressBar
             android:id="@id/user_profile_progress"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:layout_margin="5dp"
+            android:layout_width="105dp"
+            android:layout_height="105dp"
             app:background_progressbar_color="@color/light_blue"
             app:background_progressbar_width="4dp"
             android:layout_gravity="center"
@@ -32,7 +31,7 @@
             app:progressbar_width="3dp"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/profile_image_edit_button"
+            android:id="@id/profile_image_edit_button"
             android:layout_width="20dp"
             android:layout_height="20dp"
             app:srcCompat="@drawable/ic_edit"

@@ -21,10 +21,6 @@ public class Constants
     public static final int REQUEST_PICK_IMAGE = 2 ;
     public static final int REQUEST_CROP_IMAGE = 3 ;
 
-    public static final int[] headImages = {R.drawable.ic_question, 0, R.drawable.ic_cap};
-    public static final String[] headLabels = {"I am not sure where to start", "",
-            "College majors are my top priority"};
-    public static final String[] headSubLabels = {"College search step-by-step", "", "Find college with majors you want"};
     public static final String PREFS = "sharedprefs";
     public static final String KEY_USER = "user_id";
     public static final String ANONYMOUS_USER = "Anonymous user";
@@ -46,7 +42,6 @@ public class Constants
     public static final String TAKE_ME_TO_RECOMMENDED = "take_me_to_recommended";
     public static final String TAG_LOAD_USER_PREFERENCES_N_BACK = "load_user_preferences_n_back";
     public static final String TAG_LAUNCH_USER_HOME = "launch_user_home";
-    //public static final String TAG_UPDATE_USER_PROFILE_GCM = "update_user_profile_from_notification";
     public static final String TAG_SUBMIT_EDITED_EXAMS_LIST = "submit_edited_exams_list";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_EXAM = "submit_psychometric_exam";
     public static final String TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM = "submit_edit_psychometric_exam";
@@ -90,7 +85,6 @@ public class Constants
     public static final String CAF_URL = "https://m.collegedekho.com/caf-login-signup/";
     public static final String TAG_LOAD_COURSES = "load_courses";
     public static final String TAG_LOAD_PROFILE = "load_profile";
-    public static final String TAG_GET_USER_PROFILE = "get_user_profile";
     public static final String TAG_APPLIED_COURSE = "applied_course";
     public static final String TAG_WISH_LIST_APPLIED_COURSE = "wish_listLapplied_course";
     public static final String TAG_POST_QUESTION = "post_question";
@@ -230,7 +224,6 @@ public class Constants
     public static final String ACTION_QNA_ANSWER_SUBMITTED = "action_qna_answer_submitted";
     public static final String ACTION_MY_FB_COMMENT_SUBMITTED = "action_my_fb_comment_submitted";
     public static final String ACTION_INSTITUTE_DISLIKED = "action_institute_disliked";
-//    public static final String ACTION_WHEN_NOT_PREPARING = "action_when_not_preparing";
     public static final String TAG_USER_PHONE_ADDED = "user_phone_added";
     public static final String TAG_RESEND_OTP = "resend_otp";
     public static final String TAG_VERIFY_USER_PHONE = "action_user_login";
