@@ -6003,7 +6003,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mDisplayOtpVerificationFragment() {
-        if (MainActivity.mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED){//&& setupOtpRequest(true)) {
+        if (MainActivity.mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED && setupOtpRequest(true)) {
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(OTPVerificationFragment.class.getSimpleName());
             if (fragment == null)
                 mDisplayFragment(OTPVerificationFragment.newInstance(), true, OTPVerificationFragment.class.getSimpleName());

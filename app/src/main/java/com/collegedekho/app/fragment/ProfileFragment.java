@@ -1418,17 +1418,20 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
      */
     private void mRequestForUpdateInfo(){
         String userName = ((EditText) mRootView.findViewById(R.id.profile_edit_name)).getText().toString();
-        if (userName == null ){
+        if (userName == null || userName.isEmpty() && mProfile != null){
             userName = mProfile.getName();
         }
-        String userPhoneNumber = mProfile.getPhone_no();
-        if(mProfile.getIs_verified() != 1) {
-            userPhoneNumber = ((EditText) mRootView.findViewById(R.id.profile_edit_phone)).getText().toString();
-            if (userPhoneNumber != null && userPhoneNumber.length() > 0){
-                  if (userPhoneNumber.length() <= 9 || !Utils.isValidPhone(userPhoneNumber)) {
+        String userPhoneNumber ="";
+        if(mProfile != null) {
+            userPhoneNumber = mProfile.getPhone_no();
+            if (mProfile.getIs_verified() != 1) {
+                userPhoneNumber = ((EditText) mRootView.findViewById(R.id.profile_edit_phone)).getText().toString();
+                if (userPhoneNumber != null && userPhoneNumber.length() > 0) {
+                    if (userPhoneNumber.length() <= 9 || !Utils.isValidPhone(userPhoneNumber)) {
                         Utils.DisplayToast(getContext(), "Please enter a valid phone number.");
                         return;
                     }
+                }
             }
         }
         String userStateIdValue = "";
@@ -1440,6 +1443,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         int userCityId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_city)).getSelectedSpinnerItemId();
         if (userCityId > 0) {
             userCityIdValue = userCityIdValue +userCityId;
+        }else{
+            if(mProfile != null && mProfile.getCity_id() > 0)
+              userCityIdValue = ""+mProfile.getCity_id();
         }
         String userSocialCategoryIdValue ="";
         int userSocialCategoryId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_category)).getSelectedSpinnerItemId();
@@ -1476,15 +1482,33 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
          String currentStreamIdValue ="";
         int userCurrentStreamId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_stream)).getSelectedSpinnerItemId();
-        if (userCurrentStreamId > 0) {
+       /* if (userCurrentStreamId > 0) {
             currentStreamIdValue += userCurrentStreamId;
-        }
+        }else{
+            if(mProfile != null && mProfile.getCurrent_stream_id() > 0)
+            currentStreamIdValue = ""+mProfile.getCurrent_stream_id();
+        }*/
+       if (userCurrentStreamId < 0) {
+            Utils.DisplayToast(getContext(), "Please Select your Stream.");
+            return;
+        }else{
+           currentStreamIdValue += userCurrentStreamId;
+       }
         String currentSpecilizationIdValue ="";
         int userCurrentSpecializationId = mProfile.getCurrent_specialization_id();
         if(!(userCurrentStreamId == 16 || userCurrentStreamId == 7 || userCurrentStreamId == 33 ||userCurrentStreamId == 34 ||
                 userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37) || userCurrentStreamId == 38 || userCurrentStreamId == 39){
              userCurrentSpecializationId= ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_specialization)).getSelectedSpinnerItemId();
-            if (userCurrentSpecializationId > 0) {
+            /*if (userCurrentSpecializationId > 0) {
+                currentSpecilizationIdValue +=userCurrentSpecializationId ;
+            }else{
+                if(mProfile != null && mProfile.getCurrent_specialization_id() > 0)
+                    currentSpecilizationIdValue = ""+mProfile.getCurrent_specialization_id();
+            }*/
+            if (userCurrentSpecializationId < 0) {
+                Utils.DisplayToast(getContext(), "Please Select your Specialization.");
+                return;
+            }else{
                 currentSpecilizationIdValue +=userCurrentSpecializationId ;
             }
         }
@@ -1493,7 +1517,16 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         if(!(userCurrentStreamId == 16 || userCurrentStreamId == 7 || userCurrentStreamId == 33 ||userCurrentStreamId == 34 ||
                 userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37 || userCurrentStreamId == 38 || userCurrentStreamId == 39) ){
             currentDegreeId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_degree)).getSelectedSpinnerItemId();
-            if (currentDegreeId > 0) {
+           /* if (currentDegreeId > 0) {
+                currentDegreeIdValue += currentDegreeId;
+            }else{
+                if(mProfile != null && mProfile.getCurrent_degree_id() > 0)
+                    currentDegreeIdValue = ""+mProfile.getCurrent_degree_id();
+            }*/
+            if (currentDegreeId < 0) {
+                Utils.DisplayToast(getContext(), "Please Select your Degree.");
+                return;
+            }else{
                 currentDegreeIdValue += currentDegreeId;
             }
         }
@@ -1556,12 +1589,32 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
         String preferredStreamIdValue ="";
         int preferredStreamId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_stream)).getSelectedSpinnerItemId();
-        if (preferredStreamId > 0) {
+       /* if (preferredStreamId > 0) {
             preferredStreamIdValue += preferredStreamId;
+        }else{
+            if(mProfile != null && mProfile.getPreferred_stream_id() > 0)
+                preferredStreamIdValue = ""+mProfile.getPreferred_stream_id();
+        }*/
+         if (preferredStreamId < 0) {
+            Utils.DisplayToast(getContext(), "Please Select your Stream.");
+            return;
         }
+        else{
+             preferredStreamIdValue += preferredStreamId;
+         }
         String preferredSpecializationIdvalue ="";
         int preferredSpecializationId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_specialization)).getSelectedSpinnerItemId();
-        if (preferredSpecializationId  >0) {
+        /*if (preferredSpecializationId  >0) {
+            preferredSpecializationIdvalue +=preferredSpecializationId ;
+        }
+        else{
+            if(mProfile != null && mProfile.getPreferred_specialization_id() > 0)
+                preferredSpecializationIdvalue = ""+mProfile.getPreferred_specialization_id();
+        }*/
+        if (preferredSpecializationId < 0) {
+            Utils.DisplayToast(getContext(), "Please Select your Specialization.");
+            return;
+        }else{
             preferredSpecializationIdvalue +=preferredSpecializationId ;
         }
         String feeRangeMaxValue ="";
@@ -1659,17 +1712,15 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
      */
     private void mRequestForUpdateOtherInfo() {
         String fatherName = ((EditText) mRootView.findViewById(R.id.profile_edit_father_name)).getText().toString();
-        if (fatherName == null)
-        {
+        if (fatherName == null){
             fatherName = mProfile.getFathers_name();
         }
         String motherName = ((EditText) mRootView.findViewById(R.id.profile_edit_mother_name)).getText().toString();
-        if (motherName == null)
-        {
+        if (motherName == null){
             motherName = mProfile.getMothers_name();
         }
         String coachingInstitute = ((EditText) mRootView.findViewById(R.id.profile_edit_coaching_institute)).getText().toString();
-        if (coachingInstitute == null) {
+        if (coachingInstitute == null){
             coachingInstitute = mProfile.getCoaching_institute();
         }
         HashMap<String, String> params = new HashMap<>();

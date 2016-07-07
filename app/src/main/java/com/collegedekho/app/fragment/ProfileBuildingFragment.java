@@ -150,6 +150,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         super.onViewCreated(view, savedInstanceState);
 
         if(MainActivity.mProfile != null){
+
+            mUserSubLevelID = MainActivity.mProfile.getCurrent_sublevel_id();
+            mUserCurrentMarks = MainActivity.mProfile.getCurrent_score();
             CircularImageView mProfileImage = (CircularImageView) view.findViewById(R.id.profile_image);
 
             mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
