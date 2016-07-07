@@ -69,6 +69,9 @@ public final class WishlistCardAdapter {
 
         this.mResetViews();
         this.mInstantiateView();
+
+        //showing the info panel first
+        this.ToggleWishlistInstituteDetails();
     }
 
     private void mInstantiateView() {
@@ -97,7 +100,6 @@ public final class WishlistCardAdapter {
             this.mCardPeekView.findViewById(R.id.wishlist_institute_btn_call_now).setVisibility(View.GONE);
             this.mCardPeekView.findViewById(R.id.wishlist_institute_btn_apply_now).setVisibility(View.GONE);
         }
-
     }
 
     private void mParseAndPopulateCards() {

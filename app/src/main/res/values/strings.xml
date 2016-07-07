@@ -463,7 +463,7 @@
     <string name="profile_tute_description">Tutorial: select to vanish</string>
     <string name="news_image_description">Image for current news</string>
     <string name="article_image_description">Image for current Article</string>
-    <string name="institute_logo_description">Logo for wishlist college</string>
+    <string name="institute_logo_description">Logo for shortlist college</string>
 
     <!-- TRUE CALLER Debug key-->
     <!--<string name="partnerKey">baLWqkLO85xFIlFrAi5phqW1zSfCceMb</string>-->

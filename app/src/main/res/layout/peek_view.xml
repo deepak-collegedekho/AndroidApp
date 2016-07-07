@@ -293,7 +293,9 @@
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
                 android:layout_marginBottom="@dimen/m2dp"
-                android:paddingTop="10dp">
+                android:paddingTop="10dp"
+                android:background="@drawable/ic_alarm"
+                >
 
                 <TextView
                     android:id="@+id/wishlist_txt_month"
