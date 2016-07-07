@@ -301,7 +301,7 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
                     finishWithData(hashMap);
                 }
             } else {
-                if (userInput.length() > 3) {
+                if (userInput.length() >= 3) {
                     questionAnswered(question);
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put(getResourceString(R.string.USER_NAME), userInput);

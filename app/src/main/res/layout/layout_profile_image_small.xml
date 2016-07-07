@@ -20,12 +20,13 @@
         android:layout_height="match_parent">
 
         <com.collegedekho.app.widget.CircularProgressBar
-            android:id="@+id/profile_image_circular_progressbar"
+            android:id="@id/user_profile_progress"
             android:layout_width="90dp"
             android:layout_height="90dp"
             android:layout_margin="4dp"
-            app:background_progressbar_color="@android:color/transparent"
-            app:background_progressbar_width="0dp"
+
+            app:background_progressbar_color="@color/light_blue"
+            app:background_progressbar_width="4dp"
             android:layout_gravity="center"
             app:progress="100"
             app:progressbar_color="@color/primary_orange"

@@ -1,34 +1,23 @@
 package com.collegedekho.app.adapter;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Vibrator;
 import android.support.design.widget.Snackbar;
-import android.support.graphics.drawable.VectorDrawableCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.LinearInterpolator;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.display.peekandpop.BlurBuilder;
 import com.collegedekho.app.display.peekandpop.PeekAndPop;
 import com.collegedekho.app.entities.Institute;
-import com.collegedekho.app.fragment.UserEducationFragment;
 import com.collegedekho.app.fragment.WishlistFragment;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;

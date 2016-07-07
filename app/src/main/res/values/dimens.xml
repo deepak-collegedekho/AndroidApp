@@ -10,9 +10,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <dimen name="default_stroke_width">7dp</dimen>
-    <dimen name="default_background_stroke_width">3dp</dimen>
-
     <dimen name="m1dp">1dp</dimen>
     <dimen name="m2dp">2dp</dimen>
     <dimen name="m3dp">3dp</dimen>
@@ -69,6 +66,7 @@
     <dimen name="m160dp">160dp</dimen>
     <dimen name="m170dp">170dp</dimen>
     <dimen name="m180dp">180dp</dimen>
+    <dimen name="m200dp">200dp</dimen>
     <dimen name="m220dp">220dp</dimen>
     <dimen name="m280dp">280dp</dimen>
     <dimen name="m300dp">300dp</dimen>

@@ -1,5 +1,6 @@
 package com.collegedekho.app.fragment;
 
+import android.animation.ObjectAnimator;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,8 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -150,7 +153,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         if (mProfile == null)
             return;
 
-        setProfileProgressStatus((CircularProgressBar) mUserImageLayout.findViewById(R.id.user_profile_progress), mProfile.getProgress());
+        setProfileProgressStatus(mUserImageLayout.findViewById(R.id.user_profile_progress), mProfile.getProgress());
 
         String name = mProfile.getName();
         if (name != null && !name.isEmpty()) {
@@ -271,6 +274,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
         // set user preferred info
         setPreferredEducationInfo(false);
+
+        setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_exams_progress), mProfile.getExams_progress());
 
         //  set User Exams Names
         mExpandUserExamsLayout(false);
@@ -410,7 +415,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             ((TextView)view.findViewById(R.id.profile_preferences_location)).setText("NA");
 
         }
-        setProfileProgressStatus((ProgressBar)view.findViewById(R.id.profile_preferences_progress), mProfile.getPreference_progress());
+        setProfileProgressStatus(view.findViewById(R.id.profile_preferences_progress), mProfile.getPreference_progress());
     }
     /**
      * This method is used to set user exams info
@@ -1752,11 +1757,16 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         {
             ((ProgressBar)progressbar).setMax(100);
             ((ProgressBar) progressbar).setProgress(0);
-            ((ProgressBar)progressbar).setProgress(progress);
+
+            ObjectAnimator animation = ObjectAnimator.ofInt((ProgressBar) progressbar, "progress", progress);
+            animation.setDuration(1000);
+            animation.setInterpolator(new AnticipateOvershootInterpolator());
+            animation.start();
         }
         else if (progressbar instanceof CircularProgressBar)
         {
-            ((CircularProgressBar) progressbar).setProgressWithAnimation(progress, 1000);
+            ((CircularProgressBar) progressbar).setProgress(0);
+            ((CircularProgressBar) progressbar).setProgressWithAnimation(progress, 2000);
         }
     }
 

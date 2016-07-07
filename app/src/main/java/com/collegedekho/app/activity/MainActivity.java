@@ -27,6 +27,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -37,6 +38,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -62,7 +65,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -118,8 +120,7 @@ import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
 import com.collegedekho.app.fragment.InstituteVideosFragment;
 import com.collegedekho.app.fragment.PostAnonymousLoginFragment;
-import com.collegedekho.app.fragment.UserDecisionFragment;
-import com.collegedekho.app.fragment.UserPreparingFragment;
+import com.collegedekho.app.fragment.ProfileBuildingFragment;
 import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
@@ -139,8 +140,6 @@ import com.collegedekho.app.fragment.SyllabusUnitListFragment;
 import com.collegedekho.app.fragment.TabFragment;
 import com.collegedekho.app.fragment.UserAlertsFragment;
 import com.collegedekho.app.fragment.UserAlertsParentFragment;
-import com.collegedekho.app.fragment.UserEducationFragment;
-import com.collegedekho.app.fragment.UserExamFragment;
 import com.collegedekho.app.fragment.WebViewFragment;
 import com.collegedekho.app.fragment.WishlistFragment;
 import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
@@ -236,29 +235,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
 public class MainActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<Cursor>, ExamsFragment.OnExamsSelectListener,
-        HomeFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener, UserExamFragment.OnUserExamsSelectListener,
+        implements LoaderManager.LoaderCallbacks<Cursor>, NavigationView.OnNavigationItemSelectedListener,
+        HomeFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
         DataLoadListener, StreamFragment.OnStreamInteractionListener,PsychometricStreamFragment.OnStreamInteractionListener,
-        AdapterView.OnItemSelectedListener,UserPreparingFragment.OnIsPreparingListener,
+        AdapterView.OnItemSelectedListener, ExamsFragment.OnExamsSelectListener,
         InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener, OnNewsSelectListener,
-        ProfileFragment.UserProfileListener,
+        ProfileFragment.UserProfileListener, OnArticleSelectListener,
         InstituteQnAFragment.OnQuestionAskedListener, FilterFragment.OnFilterInteractionListener,
         InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         QnAQuestionDetailFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
-        MyFutureBuddiesFragment.OnMyFBInteractionListener, OnArticleSelectListener,
+        MyFutureBuddiesFragment.OnMyFBInteractionListener,  ProfileBuildingFragment.OnUserEducationInteractionListener,
         LoginFragment.OnUserLoginListener,PostAnonymousLoginFragment.OnUserPostAnonymousLoginListener,InstituteDetailFragment.OnInstituteDetailListener,
-        UserEducationFragment.OnUserEducationInteractionListener,
-        PsychometricTestParentFragment.OnPsychometricTestSubmitListener,UserDecisionFragment.OnUserDecisionListener,
+        PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
         UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteFragment.OnCDRecommendedInstituteListener,
         InstituteVideosFragment.OnTitleUpdateListener,OTPVerificationFragment.OTPVerificationListener, ITrueCallback, WishlistFragment.WishlistInstituteInteractionListener
 {
-    static {
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-    }
 
     static {
+
+        // to support vector drawable in prelollypop
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
+
         Constants.FilterCategoryMap.put(Constants.ID_FACILITIES, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
         Constants.FilterCategoryMap.put(Constants.ID_HOSTEL, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
 
@@ -512,19 +512,6 @@ public class MainActivity extends AppCompatActivity
 //        mDrawerToggle.syncState();
     }
 
-//    void setupToolbar(){
-////        toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(mToolbar);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
-//    }
-
-//    void setupDrawerToggle(){
-//        mDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(this,mDrawerLayout,mToolbar,R.string.app_name, R.string.app_name);
-//        //This is necessary to change the icon of the Drawer Toggle upon state change.
-//        mDrawerToggle.syncState();
-//    }
-
-
     /**
      * This method is used  with connecto sdk
      */
@@ -727,12 +714,42 @@ public class MainActivity extends AppCompatActivity
 
                 mClearBackStack();
                 invalidateOptionsMenu();
+                invalidateOptionsMenu();
             }
         });
 
         mToolbar.setNavigationContentDescription("Select to go to home screen");
-        //DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        //drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_activity_container);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        // TODO :: implement navigation drawer
+        /*ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);*/
+    }
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_colleges) {
+            // Handle the camera action
+        } else if (id == R.id.nav_connect) {
+
+        } else if (id == R.id.nav_read) {
+
+        } else if (id == R.id.nav_prepare) {
+
+        } else if (id == R.id.nav_share) {
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_activity_container);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     public View getToolbarLogoIcon(Toolbar toolbar){
@@ -1123,7 +1140,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if ( currentFragment instanceof  UserEducationFragment || currentFragment instanceof ProfileFragment || currentFragment instanceof ExamsFragment
+        if ( currentFragment instanceof ProfileBuildingFragment || currentFragment instanceof ProfileFragment || currentFragment instanceof ExamsFragment
                 || currentFragment instanceof StreamFragment || currentFragment instanceof PsychometricStreamFragment
                 || currentFragment instanceof  OTPVerificationFragment ||currentFragment instanceof WebViewFragment
                 || currentFragment instanceof PsychometricTestParentFragment) {
@@ -1185,10 +1202,9 @@ public class MainActivity extends AppCompatActivity
 
         int id = item.getItemId();
         if (id == R.id.action_profile) {
-            mDisplayProfileFragment();
+            requestForProfileFragment();
             return true;
         }
-
 
         return super.onOptionsItemSelected(item);
     }
@@ -1198,20 +1214,24 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences sp = this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE);
         try {
             if (sp.contains(getResourceString(R.string.KEY_USER))) {
+
+
                 MainActivity.user = JSON.std.beanFrom(User.class, sp.getString(getResourceString(R.string.KEY_USER), null));
                 this.networkUtils.setToken(MainActivity.user.getToken());
 
                 if(mProfile == null) {
                         mProfile = new Profile();
                         mProfile.setName(user.getName());
-                        mProfile.setName(user.getPhone_no());
+                        mProfile.setEmail(user.getEmail());
+                        mProfile.setPhone_no(user.getPhone_no());
                         mProfile.setImage(user.getImage());
                         mProfile.setExams_set(user.getExams_set());
                 }
+
+                this.requestForProfile(null, Request.Method.GET);
                 // user id register
                 setUserIdWithAllEvents();
 
-                this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT,Constants.BASE_URL+"profile/", null);
                 // this code for backward compatibility because in first release user stream and level
                 // were saved in uri form instead of IDs. it can be remove after some releases
                 if (MainActivity.user != null && MainActivity.user.getStream() != null && MainActivity.user.getLevel() != null) {
@@ -1392,61 +1412,61 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * This method used to show user profile fragment UI
-     */
-    private void mDisplayProfileFragment() {
-        //if(MainActivity.mProfile == null) {
-            this.mMakeNetworkCall(Constants.TAG_LOAD_PROFILE, Constants.BASE_URL + "profile/", null);
-        /*}else{
-            showProfileScreen(MainActivity.mProfile);
-        }*/
-    }
 
-    public void displayProfileFrragment(){
-        mDisplayProfileFragment();
-    }
-
-
-    private void mSetProfileUser(String response) {
-        try {
-            MainActivity.mProfile = JSON.std.beanFrom(Profile.class,response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void mLoadUserProfile(String response){
-        try {
-               MainActivity.mProfile = JSON.std.beanFrom(Profile.class,response);
-               showProfileScreen(MainActivity.mProfile, true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void showProfileScreen(Profile profile, boolean backStack){
-        if(profile == null)
-            return;
-           Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
-            if (fragment == null) {
-                mDisplayFragment(ProfileFragment.getInstance(profile), backStack, ProfileFragment.class.getSimpleName());
-            } else
-                mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
-    }
 
 
     @Override
     public void onProfileImageUploaded() {
-        mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL +"profile/", null);
+        this.requestForProfile(null, Request.Method.GET);
     }
 
 
     // TODO :: EDIT THIS TO MAKE POST ANONYOUS LOGIN
     @Override
-    public void onPostAnonymousLogin(){
+    public void onPostAnonymousLogin() {
         mDisplayPostAnonymousLoginFragment();
+    }
+
+    /**
+     * This method is used to Parse Profile response
+     * @param response
+     */
+    private void mParseProfileResponse(String response){
+        try {
+            MainActivity.mProfile = JSON.std.beanFrom(Profile.class,response);
+            mLoadProfileFragment(MainActivity.mProfile, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+     /**
+      * This method used to request to show user's profile screen  and update profile data ,
+      * if profile data is not available then send a request to load user's profile
+    */
+     @Override
+     public void requestForProfileFragment() {
+         if(MainActivity.mProfile == null)
+             this.mMakeNetworkCall(Constants.TAG_LOAD_PROFILE, Constants.BASE_URL + "profile/", null);
+         else{
+             mLoadProfileFragment(MainActivity.mProfile, true);
+             this.requestForProfile(null, Request.Method.GET);
+         }
+     }
+
+    /**
+     * This method is user to load profile fragment
+     * @param profile
+     * @param backStack
+     */
+    private void mLoadProfileFragment(Profile profile, boolean backStack){
+        if(profile == null)
+            return;
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
+        if (fragment == null) {
+            mDisplayFragment(ProfileFragment.getInstance(profile), backStack, ProfileFragment.class.getSimpleName());
+        } else
+            mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
     }
 
     /**
@@ -1454,25 +1474,51 @@ public class MainActivity extends AppCompatActivity
      *  his/her information about basic info , current education, preferred education details,
      *  interested exams details and other basic info
      * @param params
-     * @param viewPosition  send -1 if you want to update any info without showing updating
-     *                      profile dialog
+     * @param viewPosition
      */
-    @Override
+   @Override
     public void requestForUserProfileUpdate(HashMap<String, String> params, int viewPosition) {
-        if(params == null)
-            return;
-
-        if(viewPosition == -1){
-            mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL +"profile/", params, Request.Method.POST);
-            return;
-        }
-
-        if(mProfile != null && (mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER)) {
-                String email = Utils.getDeviceEmail(getApplicationContext());
-                params.put("email", email);
-        }
 
         this.mMakeNetworkCall(Constants.TAG_UPDATE_USER_PROFILE+"#"+viewPosition, Constants.BASE_URL +"profile/", params, Request.Method.POST);
+    }
+
+    /**
+     * This method is used to request for post and get user's profile data
+     * @param params
+     * @param method
+     */
+    @Override
+    public void requestForProfile(HashMap<String, String> params, int method){
+
+        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED)
+            return;
+
+        if(params != null && mProfile != null) {
+            // if user's name is not available or name is anonymous and user has saved his/her
+            // name in me profile then fetch name and save it on server
+            String name = mProfile.getName();
+            if(name == null || name.isEmpty()
+                    || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
+                    if (user != null && user.profileData != null
+                            && user.profileData[0]  != null && !user.profileData[0].isEmpty()){
+                        params.put(getString(R.string.USER_NAME), user.profileData[0]);
+                    }
+            }
+            // if user's email id is anonymous and device play store email id does not
+            // exist in database then sever will allow it to change as user's email id
+            if (mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER) {
+                String email = Utils.getDeviceEmail(getApplicationContext());
+                params.put(getString(R.string.USER_EMAIL), email);
+            }
+            // if user phone number is not available and it is saved in me profile
+            // then fetch it  and save it on user's profile
+            if (mProfile.getPhone_no() == null || mProfile.getPhone_no().length() < 10) {
+                if (user != null && user.getPrimaryPhone() != null && !user.getPrimaryPhone().isEmpty())
+                    params.put(getString(R.string.USER_PHONE), user.getPrimaryPhone());
+            }
+        }
+        mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL +"profile/", params, method);
     }
 
     /**
@@ -1535,8 +1581,8 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     ((ProfileFragment) currentFragment).updateUserName();
                 }
-            }else if(currentFragment instanceof  UserEducationFragment){
-                ((UserEducationFragment) currentFragment).profileImageUploadedSuccesfully();
+            }else if(currentFragment instanceof ProfileBuildingFragment){
+                ((ProfileBuildingFragment) currentFragment).profileImageUploadedSuccesfully();
             }
             else if(currentFragment instanceof  HomeFragment){
                 ((HomeFragment)currentFragment).updateUserInfo();
@@ -2028,13 +2074,13 @@ public class MainActivity extends AppCompatActivity
         if(requestCode == Constants.REQUEST_PICK_IMAGE && resultCode == RESULT_OK ) {
 
             if (currentFragment instanceof ProfileFragment
-                    ||  currentFragment instanceof UserEducationFragment )
+                    ||  currentFragment instanceof ProfileBuildingFragment)
                 ((ProfileFragmentListener) currentFragment).requestForCropProfileImage(data);
 
         }else  if(requestCode == Constants.REQUEST_CROP_IMAGE && resultCode == RESULT_OK){
 
             if (currentFragment instanceof ProfileFragment
-                    ||  currentFragment instanceof UserEducationFragment )
+                    ||  currentFragment instanceof ProfileBuildingFragment)
                 ((ProfileFragmentListener) currentFragment).uploadUserProfileImage();
 
         }else if (requestCode == PsychometricAnalysisActivity.GET_PSYCHOMETRIC_RESULTS) {
@@ -2074,14 +2120,15 @@ public class MainActivity extends AppCompatActivity
         {
             return;
         }else if(requestCode==Constants.GCM_RESULT_DATA_KEY && resultCode==RESULT_OK){
+            HashMap<String, String> params = null;
             try {
-                HashMap<String, String> params = (HashMap<String, String>) data.getSerializableExtra(Constants.DIALOG_DATA);
-                if(params!=null && !params.isEmpty()) {
-
-                    this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL +"profile/", params, Request.Method.POST);
-                   }
+                 params = (HashMap<String, String>) data.getSerializableExtra(Constants.DIALOG_DATA);
             }catch (Exception e){
                 e.printStackTrace();
+            }
+            // save GCM dialog data on profile
+            if(params!=null && !params.isEmpty()) {
+                requestForProfile(params,Request.Method.POST);
             }
         }
     }
@@ -2282,8 +2329,8 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_UPDATE_PROFILE_EXAMS:
                 profileSuccessfullyUpdated(tag,response);
                 break;
-            case Constants.TAG_GET_USER_PROFILE:
-                this.mSetProfileUser(response);
+            case Constants.TAG_LOAD_PROFILE:
+                this.mParseProfileResponse(response);
                 break;
             case Constants.TAG_LAUNCH_USER_HOME:
                 this.onUpdateUserPreferences(response);
@@ -2326,8 +2373,8 @@ public class MainActivity extends AppCompatActivity
                 mClearBackStack();
                 isFromNotification = true;
                 this.mCurrentTitle = "Recommended Institutes";
-                if(currentFragment instanceof UserEducationFragment)
-                    ((UserEducationFragment)currentFragment).hideNavigationIcon();
+                if(currentFragment instanceof ProfileBuildingFragment)
+                    ((ProfileBuildingFragment)currentFragment).hideNavigationIcon();
                 mShowAppBarLayout();
                 Constants.IS_RECOMENDED_COLLEGE = true;
                 if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
@@ -2425,9 +2472,6 @@ public class MainActivity extends AppCompatActivity
                 this.updateFilterList(response);
                 break;
 
-            case Constants.TAG_LOAD_PROFILE:
-                this.mLoadUserProfile(response);
-                break;
             case Constants.TAG_SHORTLIST_INSTITUTE:
                 if (tags.length == 2)
                     extraTag = tags[1];
@@ -2842,8 +2886,8 @@ public class MainActivity extends AppCompatActivity
      * specialization , degrees
      */
     private void mDisplayCurrentEducationFragment() {
-        Fragment fragment = UserEducationFragment.newInstance();
-        this.mDisplayFragment(fragment, false,UserEducationFragment.class.getSimpleName());
+        Fragment fragment = ProfileBuildingFragment.newInstance();
+        this.mDisplayFragment(fragment, false,ProfileBuildingFragment.class.getSimpleName());
     }
 
     /**
@@ -2897,8 +2941,8 @@ public class MainActivity extends AppCompatActivity
         try {
             StepByStepResult sbsResult = JSON.std.beanFrom(StepByStepResult.class, response);
 
-            mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL +"profile/", null);
 
+            this.requestForProfile(null, Request.Method.GET);
 
             //TODO:: delete it after preferences
             MainActivity.user.setStream_name(sbsResult.getStream_name());
@@ -4398,6 +4442,10 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_activity_container);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
         if (!isBackPressEnabled) {
             return;
         }
@@ -4485,7 +4533,8 @@ public class MainActivity extends AppCompatActivity
             MainActivity.user = JSON.std.beanFrom(User.class, jsonResponse);
             this.networkUtils.setToken(user.getToken());
 
-            this.mMakeNetworkCall(Constants.TAG_GET_USER_PROFILE,Constants.BASE_URL+"profile/", null);
+
+            this.requestForProfile(null, Request.Method.GET);
             if (tempUser != null){
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
                 MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
@@ -4494,7 +4543,8 @@ public class MainActivity extends AppCompatActivity
             if(mProfile == null) {
                 mProfile = new Profile();
                 mProfile.setName(user.getName());
-                mProfile.setName(user.getPhone_no());
+                mProfile.setEmail(user.getEmail());
+                mProfile.setPhone_no(user.getPhone_no());
                 mProfile.setImage(user.getImage());
                 mProfile.setExams_set(user.getExams_set());
             }
@@ -5013,11 +5063,10 @@ public class MainActivity extends AppCompatActivity
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
         if (fragment == null)
-            this.mDisplayFragment(HomeFragment.newInstance(new ArrayList<>(mUserExamsList)), false, HomeFragment.class.toString());
+            this.mDisplayFragment(HomeFragment.newInstance(), false, HomeFragment.class.toString());
         else {
             this.mDisplayFragment(fragment, false, HomeFragment.class.getSimpleName());
         }
-
         IS_HOME_LOADED = true;
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_HOME_LOADED), true).apply();
     }
@@ -5092,6 +5141,7 @@ public class MainActivity extends AppCompatActivity
     public void onHomeStepByStep() {
         this.startStepByStep();
     }
+
 
     @Override
     public void onHomePsychometricTest() {
@@ -5230,32 +5280,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @Override
-    public void onRequestToUpdateUserProfile(HashMap<String, String> params) {
-        //  save user's current and preferred level on the server
-        this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL + "profile/", params, Request.Method.POST);
-   }
-
-    @Override
-    public void onSelectedIsPreparing(HashMap<String, String> params) {
-
-        if(params.get(ProfileMacro.IS_PREPARING).equalsIgnoreCase("0")){
-
-            this.mDisplayFragment(NotPreparingFragment.newInstance(), true, NotPreparingFragment.class.toString());
-
-        }else{
-            this.mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL + "profile/", params, Request.Method.POST);
-
-            this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, Constants.BASE_URL +"stream-yearly-exams/?level="+mProfile.getPreferred_level(),null, Request.Method.GET);
-
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(UserExamFragment.class.getSimpleName() );
-            if(fragment == null) {
-                fragment = UserExamFragment.newInstance();
-            }
-            this.mDisplayFragment(fragment, true,UserExamFragment.class.getSimpleName());
-        }
-    }
-
     private void mOnUserExamsSubmitted(String responseJson) {
         if (responseJson != null && !responseJson.isEmpty()) {
             try {
@@ -5264,14 +5288,8 @@ public class MainActivity extends AppCompatActivity
 
             }
         }
-     /*   Fragment fragment = getSupportFragmentManager().findFragmentByTag(UserDecisionFragment.class.getSimpleName() );
-        if(fragment == null) {
-            fragment = UserDecisionFragment.newInstance();
-        }
-        this.mDisplayFragment(fragment, true,UserDecisionFragment.class.getSimpleName());
-*/
-        if(currentFragment instanceof  UserEducationFragment)
-            ((UserEducationFragment)currentFragment).onExamSubmittedSuccessfully();
+        if(currentFragment instanceof ProfileBuildingFragment)
+            ((ProfileBuildingFragment)currentFragment).onExamSubmittedSuccessfully();
     }
 
     @Override
@@ -5282,30 +5300,6 @@ public class MainActivity extends AppCompatActivity
     public void onRemoveUserExams(JSONObject examJson) {
         this.mMakeJsonObjectNetworkCall(Constants.TAG_USER_EXAMS_DELETE, Constants.BASE_URL + "yearly-exams/", examJson, Request.Method.POST);
     }
-
-    @Override
-    public void onRequestForExams(ArrayList<ProfileSpinnerItem> streamList) {
-        if(streamList == null)
-            return;
-
-        int count  = streamList.size();
-        StringBuffer streamBuffer = new StringBuffer();
-        for (int i = 0; i < count ; i++) {
-            ProfileSpinnerItem streamObj = streamList.get(i);
-            if(streamObj == null
-                    || !streamObj.isSelected())
-                continue;
-            //if(streamBuffer.length() <= 0)
-                streamBuffer.append("&stream_id=").append(streamObj.getId());
-            //else
-              //  streamBuffer.append(",").append(streamObj.getId());
-
-        }
-//        if(streamBuffer.length() <= 0)
-//            return;
-      //  this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, Constants.BASE_URL +"stream-yearly-exams/?level="+mProfile.getPreferred_level()+streamBuffer.toString(),null, Request.Method.GET);
-    }
-
 
     @Override
     public void OnTakeMeToRecommended() {
@@ -5326,10 +5320,10 @@ public class MainActivity extends AppCompatActivity
     public void OnTakeMeToProfile() {
         this.mMakeNetworkCall(Constants.TAG_LOAD_USER_PREFERENCES, Constants.BASE_URL + "preferences/", null);
         this.mClearBackStack();
-        showProfileScreen(MainActivity.mProfile, false);
+        mLoadProfileFragment(MainActivity.mProfile, false);
         getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_HOME_LOADED), true).apply();
-        if(currentFragment instanceof UserEducationFragment)
-            ((UserEducationFragment)currentFragment).hideNavigationIcon();
+        if(currentFragment instanceof ProfileBuildingFragment)
+            ((ProfileBuildingFragment)currentFragment).hideNavigationIcon();
         mShowAppBarLayout();
         isFromNotification = true;
 
@@ -5343,8 +5337,8 @@ public class MainActivity extends AppCompatActivity
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
 
-            if(currentFragment instanceof UserEducationFragment)
-                ((UserEducationFragment)currentFragment).updateExamsList((ArrayList<Exam>) mExamList);
+            if(currentFragment instanceof ProfileBuildingFragment)
+                ((ProfileBuildingFragment)currentFragment).updateExamsList((ArrayList<Exam>) mExamList);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -6159,7 +6153,7 @@ public class MainActivity extends AppCompatActivity
 
         if (mUserExamsList == null) mUserExamsList = new ArrayList<>();
 
-        if(tabPosition == 3 && (mUserExamsList == null || mUserExamsList.size() < 1)){
+        if(tabPosition == 3 && mUserExamsList.size() < 1){
 //            mDisplayCurrentEducationFragment(true);
             fromTabFragment = true;
             onRequestForUserExamsUpdate();

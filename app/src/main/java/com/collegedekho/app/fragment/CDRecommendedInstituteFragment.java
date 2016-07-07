@@ -262,6 +262,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         super.onDetach();
         this.mListener = null;
         listener = null;
+        if (getActivity() != null)
+            ((MainActivity) getActivity()).setCurrentInstitute(null);
     }
 
     @Override
@@ -322,7 +324,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     @Override
     public void onDestroy()
     {
-        this.mMainActivity.setCurrentInstitute(null);
+        if (getActivity() != null)
+            ((MainActivity) getActivity()).setCurrentInstitute(null);
         super.onDestroy();
     }
 

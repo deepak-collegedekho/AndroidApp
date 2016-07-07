@@ -68,7 +68,7 @@
                     android:textColor="@color/black" />
 
                 <TextView
-                    android:id="@+id/user_education_name"
+                    android:id="@id/user_name"
                     android:textColor="@color/black"
                     style="@style/AppTheme.profileInfoTextView"/>
 
@@ -107,7 +107,7 @@
                 android:textColor="@color/black" />
 
                 <TextView
-                    android:id="@+id/user_education_phone"
+                    android:id="@id/user_phone"
                     android:textColor="@color/black"
                     style="@style/AppTheme.profileInfoTextView"/>
 
@@ -398,6 +398,27 @@
 
         <LinearLayout
             android:id="@+id/user_education_skip_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="@dimen/m8dp"
+            android:layout_gravity="left"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/TAG_SKIP"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textColor="@color/skip_btn_color"
+                android:background="@drawable/border_bottom"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/user_education_no_exam_skip_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:padding="@dimen/m8dp"

@@ -14816,10 +14816,6 @@ public class ProfileMacro {
             "                {\n" +
             "                    \"id\": 37,\n" +
             "                    \"name\": \"All Subjects\"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"id\": 16,\n" +
-            "                    \"name\": \"Others\"\n" +
             "                }\n" +
             "            ]";
 

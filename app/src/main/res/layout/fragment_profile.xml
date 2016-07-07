@@ -906,7 +906,7 @@
                     android:layout_weight=".9"
                     android:layout_height="wrap_content"
                     android:layerType="software"
-                    android:progress="96"
+                    android:progress="100"
                     android:background="@drawable/bg_dotted_line"
                     android:progressTint="@color/light_blue"
                     style="?android:attr/progressBarStyleHorizontal" />

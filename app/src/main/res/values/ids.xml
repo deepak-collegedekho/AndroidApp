@@ -7,8 +7,11 @@
 
 
     <!--profile ids -->
+    <item name="user_name" type="id" />
+    <item name="user_phone" type="id" />
     <item name="profile_image" type="id" />
     <item name="user_profile_progress" type="id" />
+    <item name="profile_image_edit_button" type="id" />
     <item name="user_profile_image_update" type="id" />
 
 
