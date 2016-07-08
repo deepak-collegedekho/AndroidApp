@@ -21,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnticipateOvershootInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -29,6 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Profile;
@@ -47,6 +47,8 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
+
+import org.apache.tools.ant.Main;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -229,7 +231,12 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         if(currentPassingYear >= 2000) {
             ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(""+currentPassingYear);
         } else {
-            ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText("NA");
+            int passingYear = ProfileMacro.GetPassingYearBySubLevelID(MainActivity.mProfile.getCurrent_sublevel_id());
+            ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(String.valueOf(passingYear));
+            //TODO :: save it locally and send it to server when you have more than 5 unsynced keys
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("current_passing_year", String.valueOf(passingYear));
+            ((MainActivity) getActivity()).requestForProfile(hashMap, Request.Method.POST);
         }
         // set User Stream Name in Current Education
         String currentStream = mProfile.getCurrent_stream_name();
@@ -797,6 +804,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         final MaterialSpinner currentStreamSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_current_stream);
         final MaterialSpinner currentSpecializationSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_current_specialization);
         final MaterialSpinner currentDegreeSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_current_degree);
+        final MaterialSpinner currentPassingYearSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_current_passing_year);
 
         int userSubLevelId = mProfile.getCurrent_sublevel_id();
         int userStreamId = mProfile.getCurrent_stream_id();
@@ -887,6 +895,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                         // request for degrees
                         mRequestForCurrentSubLevelDegreesList(selectedId);
 
+                        // set passing year based on current sublevelID
+                        currentPassingYearSpinner.setSelectedIndex(ProfileMacro.ComputePassingYearIndexOnSelectedSubLevel(selectedId));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -946,7 +956,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             e.printStackTrace();
         }
 
-
        // set education mode
         int  currentEducationModeId = mProfile.getCurrent_mode();
         MaterialSpinner educationModeSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_current_mode);
@@ -967,7 +976,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             educationModeSpinner.setItems(educationModeList, true);
             educationModeSpinner.setText("Select Education Mode");
         }
-
 
         // set Current Score
 
@@ -1019,37 +1027,37 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 //            }
 //        }
 
-
         // set current passing year info about user
         int  currentPassingYear = mProfile.getCurrent_passing_year();
-        MaterialSpinner passingYearSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_current_passing_year);
         ArrayList<ProfileSpinnerItem> passingYearList = ProfileMacro.getCurrentPassingYearList();
         if(currentPassingYear >= 1) {
             int yearCount = passingYearList.size();
             for (int i = 0; i < yearCount; i++) {
                 ProfileSpinnerItem pObj = passingYearList.get(i);
                 if (pObj == null) continue;
-                if (currentPassingYear == pObj.getId()) {
+                if (String.valueOf(currentPassingYear).equals( pObj.getName())) {
                     passingYearList.remove(i);
                     passingYearList.add(0, pObj);
                     break;
                 }
             }
-            passingYearSpinner.setItems(passingYearList, false);
+            currentPassingYearSpinner.setItems(passingYearList, false);
         }else{
-            passingYearSpinner.setItems(passingYearList, true);
-            passingYearSpinner.setText("Passing Year");
+            currentPassingYearSpinner.setItems(passingYearList, true);
+
+            int passingYear = ProfileMacro.GetPassingYearBySubLevelID(MainActivity.mProfile.getCurrent_sublevel_id());
+            int passingYearID = ProfileMacro.GetPassingYearIndexByPassingYear(passingYear);
+
+            currentPassingYearSpinner.setSelectedIndex(passingYearID);
         }
-
-
     }
+
     /**
      *
      * This method is used to set user Preferred education details on
      * profile current education page and user can edit his/her Preferred education
      * info  on this page like degree, stream , specialization , city, state.
      */
-
     private void loadUserPreferredInfoEditLayout(){
         if(mRootView == null || mProfile == null)
             return;
@@ -1308,7 +1316,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
         // set preferred education mode
         int  preferredEducationModeId = mProfile.getPreferred_mode();
-        MaterialSpinner educationModeSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_preferred_mode);
+        MaterialSpinner educationModeSpinner = (MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_mode);
         ArrayList<ProfileSpinnerItem> educationModeList = ProfileMacro.getEducationModeList();
         if(preferredEducationModeId >= 1) {
             int educationModeCount = educationModeList.size();
@@ -1480,7 +1488,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
      */
 
     private void mRequestForUpdateCurrentEducation(){
-
         String currentSubLevelIdValue ="";
         int userCurrentSubLevelId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_sub_level)).getSelectedSpinnerItemId();
         if (userCurrentSubLevelId > 0) {
@@ -1550,13 +1557,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         if (currentModeId > 0) {
             currentModeIdValue += currentModeId;
         }
-        String currentPassingYear ="";
-        int passingYear = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_passing_year)).getSelectedSpinnerItemId();
 
-        if (passingYear > 0) {
-            currentPassingYear = currentPassingYear+ passingYear;
-        }
-
+        String currentPassingYear = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_passing_year)).getSelectedSpinnerItemName();
 
         HashMap<String, String> params = new HashMap<>();
         params.put("current_sublevel_id",currentSubLevelIdValue);

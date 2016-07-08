@@ -1468,9 +1468,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
-
-
     @Override
     public void onProfileImageUploaded() {
 
@@ -1500,7 +1497,7 @@ public class MainActivity extends AppCompatActivity
      /**
       * This method used to request to show user's profile screen  and update profile data ,
       * if profile data is not available then send a request to load user's profile
-    */
+      */
      @Override
      public void requestForProfileFragment() {
          if(MainActivity.mProfile == null)

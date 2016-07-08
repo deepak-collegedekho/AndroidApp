@@ -208,7 +208,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
                         .setDuration(100)
                         .alpha(1f)
                         .setInterpolator(new LinearInterpolator())
-                        .y(((WishlistInstituteListAdapter.this.mPeekView.getHeight() >> 1) >> 1));
+                        .y(WishlistInstituteListAdapter.this.mPeekView.getHeight() >> 1);
 
                 //Events
                 AnalyticsUtils.SendAppEvent(WishlistInstituteListAdapter.this.mEventCategory, WishlistInstituteListAdapter.this.mEventAction, WishlistInstituteListAdapter.this.mEventValue, WishlistInstituteListAdapter.this.mContext);

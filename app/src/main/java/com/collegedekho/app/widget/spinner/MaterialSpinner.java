@@ -429,6 +429,19 @@ public class MaterialSpinner extends TextView {
     popupWindow.setOutsideTouchable(false);
   }
 
+  public String getSelectedSpinnerItemName()
+  {
+    if(adapter == null || selectedIndex < 0)
+      return "";
+
+    if(selectedIndex <= adapter.getCount()){
+      ProfileSpinnerItem pObj = items.get(selectedIndex);
+      return  pObj.getName();
+    }
+
+    return "";
+  }
+
   public int getSelectedSpinnerItemId(){
     String  spinnerText = getText().toString();
     if(spinnerText == null || spinnerText.equalsIgnoreCase("Select state")

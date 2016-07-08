@@ -1,5 +1,6 @@
 package com.collegedekho.app.utils;
 
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
 
 import java.util.ArrayList;
@@ -15219,31 +15220,53 @@ public class ProfileMacro {
         if(currentPassingYearList == null)
             currentPassingYearList = new ArrayList<>();
 
-        if(currentPassingYearList.size() == 5)
+        if(currentPassingYearList.size() == 8)
             return currentPassingYearList;
 
+        int currentYear = Utils.GetCurrentYear();
+        int count = 0;
+
         // if you will increase count then size of year list will be also increase.
-        for (int i = 2013; i < 2018; i++) {
+        for (int i = currentYear - 2; i < currentYear + 6; i++) {
             ProfileSpinnerItem item = new  ProfileSpinnerItem();
-            item.setId(i);
-            item.setName(getYearName(i));
+
+            item.setId(count++);
+
+/*
+            if (i == currentYear - 2)
+                item.setName("Before " + String.valueOf(i+1));
+*/
+            //else
+            item.setName(String.valueOf(i));
+
             currentPassingYearList.add(item);
         }
+
         return currentPassingYearList;
     }
+
     public static ArrayList<ProfileSpinnerItem> getPreferredAdmissionYearList(){
         if(preferredAddmisionYearList == null)
             preferredAddmisionYearList = new ArrayList<>();
 
-        if(preferredAddmisionYearList.size() == 4)
+        if(preferredAddmisionYearList.size() == 5)
             return preferredAddmisionYearList;
 
-        for (int i = 2016; i < 2020; i++) {
+        int passingYear = GetPassingYearBySubLevelID(MainActivity.mProfile.getCurrent_sublevel_id());
+        int count = 0;
+
+        for (int i = passingYear; i < passingYear + 5; i++) {
             ProfileSpinnerItem item = new  ProfileSpinnerItem();
             item.setId(i);
-            item.setName(getYearName(i));
+
+            /*if (i == passingYear)
+                item.setName("After " + String.valueOf(i));
+            else*/
+            item.setName(String.valueOf(i));
+
             preferredAddmisionYearList.add(item);
         }
+
         return preferredAddmisionYearList;
     }
 
@@ -15275,9 +15298,95 @@ public class ProfileMacro {
 
     }
 
+    public static int ComputePassingYearIndexOnSelectedSubLevel(int selectedId) {
+        int passingYear;
 
+        passingYear = GetPassingYearBySubLevelID(selectedId);
 
-   // language macros
+        int passingYearIndex = GetPassingYearIndexByPassingYear(passingYear);
+
+        return passingYearIndex >= 0 ? passingYearIndex : 0;
+    }
+
+    public static int GetPassingYearBySubLevelID(int sublevel)
+    {
+        int delta = -1;
+        int passingMonth = -1;
+
+        switch (sublevel)
+        {
+            //UG
+            case 1:
+                delta = 4 - 1;
+                passingMonth = 6;
+                break;
+            case 2:
+                delta = 4 - 2;
+                passingMonth = 6;
+                break;
+            case 3:
+                delta = 4 - 3;
+                passingMonth = 6;
+                break;
+            case 4:
+                delta = 4 - 3;
+                passingMonth = 6;
+                break;
+            //PG
+            case 5:
+                delta = 2 - 1;
+                passingMonth = 6;
+                break;
+            case 6:
+                delta = 2 - 2;
+                passingMonth = 6;
+                break;
+            //school
+            case 7:
+                delta = 12 - 10;
+                passingMonth = 4;
+                break;
+            case 8:
+                delta = 12 - 12;
+                passingMonth = 4;
+                break;
+            case 9:
+                delta = 12 - 11;
+                passingMonth = 4;
+                break;
+            default:
+                break;
+        }
+
+        //you passout in 5th year if you are in UG
+        //you passout in 3th year if you are in PG
+        delta += 1;
+
+        int passingYear = Utils.GetCurrentYear() + delta;
+
+        //if you are between JAN (1) and APRIL (4) for school and Jan (1) and June (6) for UG and PG, then you are passing out this year only.
+        //Hence -1 on passingYear.
+        //Utils.GetCurrentMonth returns index values for months
+        //July me 6 return kar raha hai sala
+        passingMonth += 1;
+        if (Utils.GetCurrentMonth() >= 1 && Utils.GetCurrentMonth() <= passingMonth)
+            passingYear -= 1;
+
+        return passingYear;
+    }
+
+    public static int GetPassingYearIndexByPassingYear(int passingYear) {
+
+        for (ProfileSpinnerItem item : currentPassingYearList)
+        {
+            if (item.getName().equals(String.valueOf(passingYear)))
+                return item.getId();
+        }
+
+        return -1;
+    }
+
+    // language macros
     public static int MOTHER_TONGUE_ASSAMESE = 1;
     public static int MOTHER_TONGUE_BENGALI = 2;
     public static int MOTHER_TONGUE_BODO = 3;

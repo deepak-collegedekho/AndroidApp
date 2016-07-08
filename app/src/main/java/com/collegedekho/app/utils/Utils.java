@@ -209,12 +209,12 @@ public class Utils {
         }
         return null;
     }
+
     /**
      * Method is used to get device phone number
      * if it is enable in phone setting
      * @return
      */
-
     private String getDevicePhone(Context context){
         Pattern phonePattern = Patterns.PHONE;
         Account[] accounts = AccountManager.get(context).getAccounts();
@@ -225,6 +225,21 @@ public class Utils {
         }
         return null;
     }
+
+    public static int GetCurrentYear()
+    {
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+
+        return year;
+    }
+
+    public static int GetCurrentMonth()
+    {
+        int month = Calendar.getInstance().get(Calendar.MONTH);
+
+        return month;
+    }
+
 
     public static int getSubjectColor(int subjectId) {
         int[] subjectColors = {0xff003fff, 0xff0066ff, 0xffff5c33, 0xff00b300, 0xffcc0000, 0xffe5e600, 0xff001a4d, 0xff009933, 0xffcc5200, 0xffcc7a00, 0xff003300, 0xffcc0052, 0xff990033, 0xff000d33, 0xffffff00};

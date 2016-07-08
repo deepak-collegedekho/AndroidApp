@@ -100,8 +100,6 @@ public class User
         this.user_education = user_education;
     }
 
-
-
     public int getPsychometric_given() {
         return psychometric_given;
     }
