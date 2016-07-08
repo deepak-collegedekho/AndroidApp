@@ -49,8 +49,15 @@ public class HomeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        if (MainActivity.mProfile.getPsychometric_given() == 1)
+        String psychometricResults = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString("psychometric_report", null);
+
+        if (MainActivity.mProfile.getPsychometric_given() == 1 && psychometricResults != null) {
             mRootView.findViewById(R.id.btn_home_psychometric_test).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.btn_home_psychometric_report).setVisibility(View.VISIBLE);
+        } else {
+            mRootView.findViewById(R.id.btn_home_psychometric_test).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.btn_home_psychometric_report).setVisibility(View.GONE);
+        }
 
 //        if (MainActivity.mProfile.getStep_by_step_given() == 1)
 //            mRootView.findViewById(R.id.btn_home_step_by_step).setVisibility(View.GONE);
@@ -71,6 +78,7 @@ public class HomeFragment extends BaseFragment {
         mRootView.findViewById(R.id.updates_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
         mRootView.findViewById(R.id.profile_image_edit_button).setOnClickListener(this);
         mRootView.findViewById(R.id.btn_home_psychometric_test).setOnClickListener(this);
+        mRootView.findViewById(R.id.btn_home_psychometric_report).setOnClickListener(this);
         mRootView.findViewById(R.id.btn_home_step_by_step).setOnClickListener(this);
         mRootView.findViewById(R.id.profile_image).setOnClickListener(this);
         mRootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
@@ -205,6 +213,9 @@ public class HomeFragment extends BaseFragment {
             case R.id.btn_home_psychometric_test:
                 mListener.onHomePsychometricTest();
                 break;
+            case R.id.btn_home_psychometric_report:
+                mListener.onHomePsychometricReport();
+                break;
             case R.id.btn_home_step_by_step:
                 mListener.onHomeStepByStep();
                 break;
@@ -228,6 +239,7 @@ public class HomeFragment extends BaseFragment {
         void onHomeStepByStep();
         void requestForProfileFragment();
         void onHomePsychometricTest();
+        void onHomePsychometricReport();
     }
 
 }

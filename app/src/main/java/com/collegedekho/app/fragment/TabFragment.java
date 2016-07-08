@@ -47,8 +47,10 @@ public class TabFragment extends  BaseFragment{
     private ViewPager mExamTabPager  = null;
     private PagerTabStrip mPagerHeader = null;
     private boolean isFistTime = false;
-    private boolean IS_TUTE_COMPLETED = true;
+    private boolean IS_COLLEGE_TUTE_COMPLETED = true;
+    private boolean IS_PREPARE_TUTE_COMPLETED = true;
     private int i = 0 ;
+    private int examId;
     private View mExamsTabLayout;
 
     TextView mRecommendedCountTV;
@@ -96,29 +98,42 @@ public class TabFragment extends  BaseFragment{
         TextView mProfileNumber = (TextView) rootView.findViewById(R.id.user_phone);
         CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
 
-        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
-//        if(IS_TUTE_COMPLETED){
+        IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+        IS_PREPARE_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("prepare_tute", false);
+//        if(IS_COLLEGE_TUTE_COMPLETED){
 //            getActivity().invalidateOptionsMenu();
 //        } else {
 //            getActivity().invalidateOptionsMenu();
 //        }
 
+        rootView.findViewById(R.id.prepare_tour_guide_image).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                view.setVisibility(View.GONE);
+                IS_PREPARE_TUTE_COMPLETED = true;
+//                        getActivity().invalidateOptionsMenu();
+                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean("prepare_tute", true).apply();
+                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+                bottomMenu.animate().translationY(0);
+                bottomMenu.setVisibility(View.VISIBLE);
+                updateCollegeCount(selectedTabPosition);
+                TabFragment.this.getActivity().invalidateOptionsMenu();
+            }
+        });
+
         rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!IS_TUTE_COMPLETED){
+                if(!IS_COLLEGE_TUTE_COMPLETED){
                     if(i ==0){
                         i++;
                         v.setBackgroundResource(R.drawable.ic_profile_tute2);
                     } else if(i ==1) {
                         i++;
                         v.setBackgroundResource(R.drawable.ic_profile_tute3);
-                    } else if(i ==2) {
-                        i++;
-                        v.setBackgroundResource(R.drawable.ic_profile_tute4);
                     } else {
                         v.setVisibility(View.GONE);
-                        IS_TUTE_COMPLETED = true;
+                        IS_COLLEGE_TUTE_COMPLETED = true;
 //                        getActivity().invalidateOptionsMenu();
                         getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
                         View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
@@ -127,20 +142,21 @@ public class TabFragment extends  BaseFragment{
                         updateCollegeCount(selectedTabPosition);
                         TabFragment.this.getActivity().invalidateOptionsMenu();
                     }
-                } else {
-                    v.setVisibility(View.GONE);
-                    View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-                    bottomMenu.animate().translationY(0);
-                    bottomMenu.setVisibility(View.VISIBLE);
-                    updateCollegeCount(selectedTabPosition);
                 }
+//                else {
+//                    v.setVisibility(View.GONE);
+//                    View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+//                    bottomMenu.animate().translationY(0);
+//                    bottomMenu.setVisibility(View.VISIBLE);
+//                    updateCollegeCount(selectedTabPosition);
+//                }
             }
         });
 
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
 
-        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+        IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
         if(MainActivity.mProfile != null) {
 
             String name = MainActivity.mProfile.getName();
@@ -193,7 +209,7 @@ public class TabFragment extends  BaseFragment{
                 public void onPageSelected(int position) {
                     TabFragment.this.EXAM_TAB_POSITION = position;
                     TabFragment.this.mExamTabSelected(position);
-                    TabFragment.this.updateCollegeCount(selectedTabPosition);
+
                 }
 
                 @Override
@@ -217,10 +233,9 @@ public class TabFragment extends  BaseFragment{
             {
                 this.mExamDetail = new ExamDetail();
                 this.mExamDetail.setId("0");
-                this.mListener.onExamTabSelected(this.mExamDetail);
             }
         }
-        rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnClickListener(this);
+//        rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_first).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_second).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_third).setOnClickListener(this);
@@ -228,13 +243,27 @@ public class TabFragment extends  BaseFragment{
         rootView.findViewById(R.id.profile_image).setOnClickListener(this);
         rootView.findViewById(R.id.include_image_layout).findViewById(R.id.profile_image_edit_button).setOnClickListener(this);
 
-        if (MainActivity.mProfile.getPsychometric_given() == 1)
+        String psychometricResults = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString("psychometric_report", null);
+
+        if (MainActivity.mProfile.getPsychometric_given() == 1 && psychometricResults != null) {
             rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.GONE);
+            rootView.findViewById(R.id.btn_tab_psychometric_report).setVisibility(View.VISIBLE);
+        } else {
+            rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.btn_tab_psychometric_report).setVisibility(View.GONE);
+        }
 
         rootView.findViewById(R.id.btn_tab_psychometric_test).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mListener.onTabPsychometricTest();
+            }
+        });
+
+        rootView.findViewById(R.id.btn_tab_psychometric_report).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onTabPsychometricReport();
             }
         });
 
@@ -273,7 +302,6 @@ public class TabFragment extends  BaseFragment{
                 mExamTabPager.setAdapter(this.mDetailsAdapter);
                 mExamTabPager.invalidate();
                 mainActivity.mUpdateTabMenuItem(this.selectedTabPosition,0);
-                updateCollegeCount(selectedTabPosition);
                 if(mPagerHeader != null)
                     ((ViewPager.LayoutParams) mPagerHeader.getLayoutParams()).isDecor = true;
                 if (selectedTabPosition < mExamDetailList.size())
@@ -286,7 +314,6 @@ public class TabFragment extends  BaseFragment{
         if(this.mExamDetailList != null && !this.mExamDetailList.isEmpty()) {
             if (this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
                 this.mExamDetail = this.mExamDetailList.get(mExamTabPager.getCurrentItem());
-                this.mListener.onExamTabSelected(mExamDetail);
             }
         }else{
 
@@ -294,7 +321,6 @@ public class TabFragment extends  BaseFragment{
             {
                 this.mExamDetail = new ExamDetail();
                 this.mExamDetail.setId("0");
-                this.mListener.onExamTabSelected(this.mExamDetail);
             }
         }
 /*
@@ -302,14 +328,12 @@ public class TabFragment extends  BaseFragment{
             mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);*/
 
         this.mUpdateSubMenuItem();
-        if(IS_TUTE_COMPLETED)
-        {
-            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-            bottomMenu.animate().translationY(0);
-            bottomMenu.setVisibility(View.VISIBLE);
-        }
-
-        updateCollegeCount(selectedTabPosition);
+//        if(IS_COLLEGE_TUTE_COMPLETED)
+//        {
+//            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+//            bottomMenu.animate().translationY(0);
+//            bottomMenu.setVisibility(View.VISIBLE);
+//        }
     }
 
     @Override
@@ -358,35 +382,32 @@ public class TabFragment extends  BaseFragment{
 
     }
 
-    private void mIsTuteCompleted(View v){
-        if(!IS_TUTE_COMPLETED){
-            if(i ==0){
-                i++;
-                v.setBackgroundResource(R.drawable.ic_profile_tute2);
-            } else if(i ==1) {
-                i++;
-                v.setBackgroundResource(R.drawable.ic_profile_tute3);
-            } else if(i ==2) {
-                i++;
-                v.setBackgroundResource(R.drawable.ic_profile_tute4);
-            } else {
-                v.setVisibility(View.GONE);
-                IS_TUTE_COMPLETED = true;
-                getActivity().invalidateOptionsMenu();
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
-                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-                bottomMenu.animate().translationY(0);
-                bottomMenu.setVisibility(View.VISIBLE);
-                updateCollegeCount(selectedTabPosition);
-            }
-        } else {
-            v.setVisibility(View.GONE);
-            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-            bottomMenu.animate().translationY(0);
-            bottomMenu.setVisibility(View.VISIBLE);
-            updateCollegeCount(selectedTabPosition);
-        }
-    }
+//    private void mIsTuteCompleted(View v){
+//        if(!IS_COLLEGE_TUTE_COMPLETED){
+//            if(i ==0){
+//                i++;
+//                v.setBackgroundResource(R.drawable.ic_profile_tute2);
+//            } else if(i ==1) {
+//                i++;
+//                v.setBackgroundResource(R.drawable.ic_profile_tute3);
+//            } else {
+//                v.setVisibility(View.GONE);
+//                IS_COLLEGE_TUTE_COMPLETED = true;
+//                getActivity().invalidateOptionsMenu();
+//                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
+//                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+//                bottomMenu.animate().translationY(0);
+//                bottomMenu.setVisibility(View.VISIBLE);
+//                updateCollegeCount(selectedTabPosition);
+//            }
+//        } else {
+//            v.setVisibility(View.GONE);
+//            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+//            bottomMenu.animate().translationY(0);
+//            bottomMenu.setVisibility(View.VISIBLE);
+//            updateCollegeCount(selectedTabPosition);
+//        }
+//    }
 
     @Override
     public void onClick(View view) {
@@ -400,9 +421,9 @@ public class TabFragment extends  BaseFragment{
                 mListener.requestForProfileFragment();
 
         }
-        else if(view.getId() == R.id.prep_buddy_tour_guide_image){
-            mIsTuteCompleted(view);
-        }
+//        else if(view.getId() == R.id.prep_buddy_tour_guide_image){
+//            mIsTuteCompleted(view);
+//        }
 
         if (view.getId() == R.id.btn_tab_psychometric_test)
             mListener.onTabPsychometricTest();
@@ -421,9 +442,7 @@ public class TabFragment extends  BaseFragment{
     private void mExamTabSelected(int position) {
         if(this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() >position) {
             this.mExamDetail = this.mExamDetailList.get(position);
-            this.mListener.onExamTabSelected(mExamDetail);
-            updateCollegeCount(selectedTabPosition);
-        }else{
+            this.examId = Integer.parseInt(mExamDetail.getId());
             updateCollegeCount(selectedTabPosition);
         }
     }
@@ -449,13 +468,12 @@ public class TabFragment extends  BaseFragment{
         ImageView thirdSubMenuIV      = (ImageView)view.findViewById(R.id.home_widget_image_third);
         ImageView fourthSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_fourth);
 
-
-
         if(this.selectedTabPosition == 1){
-            IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+            IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
             if(view != null ){
                 View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-                if(!IS_TUTE_COMPLETED) {
+                if(!IS_COLLEGE_TUTE_COMPLETED) {
+                    getActivity().invalidateOptionsMenu();
                     view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
                     bottomMenu.animate().translationY(bottomMenu.getHeight());
                     bottomMenu.setVisibility(View.GONE);
@@ -491,24 +509,24 @@ public class TabFragment extends  BaseFragment{
 
             this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
 
-        }else   if(this.selectedTabPosition == 2){
-            IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
-            if(view != null ){
-                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-                if(!IS_TUTE_COMPLETED) {
-                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
-                    bottomMenu.animate().translationY(bottomMenu.getHeight());
-                    bottomMenu.setVisibility(View.GONE);
-                } else {
-                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
-                    bottomMenu.animate().translationY(0);
-                    bottomMenu.setVisibility(View.VISIBLE);
-                }
-            }
+        }else if(this.selectedTabPosition == 2){
+//            IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+//            if(view != null ){
+//                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+//                if(!IS_COLLEGE_TUTE_COMPLETED) {
+//                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
+//                    bottomMenu.animate().translationY(bottomMenu.getHeight());
+//                    bottomMenu.setVisibility(View.GONE);
+//                } else {
+//                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+//                    bottomMenu.animate().translationY(0);
+//                    bottomMenu.setVisibility(View.VISIBLE);
+//                }
+//            }
 
             if(view != null ){
                 view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
-
+                view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.GONE);
                 View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                 bottomMenu.animate().translationY(0);
                 bottomMenu.setVisibility(View.VISIBLE);
@@ -536,15 +554,16 @@ public class TabFragment extends  BaseFragment{
             view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
 
         }else   if(this.selectedTabPosition == 3){
-            IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+            IS_PREPARE_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("prepare_tute", false);
             if(view != null ){
                 View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-                if(!IS_TUTE_COMPLETED) {
-                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
+                if(!IS_PREPARE_TUTE_COMPLETED) {
+                    getActivity().invalidateOptionsMenu();
+                    view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.VISIBLE);
                     bottomMenu.animate().translationY(bottomMenu.getHeight());
                     bottomMenu.setVisibility(View.GONE);
                 } else {
-                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+                    view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.GONE);
                     bottomMenu.animate().translationY(0);
                     bottomMenu.setVisibility(View.VISIBLE);
                 }
@@ -573,18 +592,26 @@ public class TabFragment extends  BaseFragment{
             view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
 
         }else   if(this.selectedTabPosition == 4){
-            IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+//            IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+//            if(view != null ){
+//                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+//                if(!IS_COLLEGE_TUTE_COMPLETED) {
+//                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
+//                    bottomMenu.animate().translationY(bottomMenu.getHeight());
+//                    bottomMenu.setVisibility(View.GONE);
+//                } else {
+//                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+//                    bottomMenu.animate().translationY(0);
+//                    bottomMenu.setVisibility(View.VISIBLE);
+//                }
+//            }
+
             if(view != null ){
+                view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+                view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.GONE);
                 View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-                if(!IS_TUTE_COMPLETED) {
-                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
-                    bottomMenu.animate().translationY(bottomMenu.getHeight());
-                    bottomMenu.setVisibility(View.GONE);
-                } else {
-                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
-                    bottomMenu.animate().translationY(0);
-                    bottomMenu.setVisibility(View.VISIBLE);
-                }
+                bottomMenu.animate().translationY(0);
+                bottomMenu.setVisibility(View.VISIBLE);
             }
 
             LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
@@ -618,12 +645,12 @@ public class TabFragment extends  BaseFragment{
             mShortlistCountTV.setVisibility(View.VISIBLE);
             mExploreCountTV.setVisibility(View.VISIBLE);
 
+            mListener.onExamTabSelected(this.mExamDetail);
+
             int recommended = (this.mExamSummary != null) ? this.mExamSummary.getRecommended_count() : 0;
             int shortlist = (this.mExamSummary != null) ? this.mExamSummary.getShortlist_count() : 0;
             int trending = (this.mExamSummary != null) ? this.mExamSummary.getBuzzlist_count() : 0;
             int explore = (this.mExamSummary != null) ? this.mExamSummary.getBackup_count() : 0;
-
-            mListener.onExamTabSelected(this.mExamDetail);
 
             Utils.SetCounterAnimation(mRecommendedCountTV, recommended, "" , "", Constants.ANIM_SHORT_DURATION);
             mRecommendedCountTV.setContentDescription(String.valueOf(recommended));
@@ -722,6 +749,10 @@ public class TabFragment extends  BaseFragment{
         return selectedTabPosition;
     }
 
+    public void setSelectedTab(int selectedTabPosition){
+        this.selectedTabPosition = selectedTabPosition;
+    }
+
     public void updateTabFragment(int tabPosition){
         this.selectedTabPosition = tabPosition;
         mUpdateSubMenuItem();
@@ -742,9 +773,9 @@ public class TabFragment extends  BaseFragment{
     }
 
     public void updateCollegeCountFromVolley(boolean update){
-        if(update) {
-            mExamSummary.getBackup_count();
-            updateCollegeCount(selectedTabPosition);
+        int updateId = Integer.parseInt(mExamSummary.getYearly_exam_id());
+        if(examId == updateId && update){
+                updateCollegeCount(selectedTabPosition);
         }
     }
 
@@ -777,6 +808,9 @@ public class TabFragment extends  BaseFragment{
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
+    public int getSelectedTabPosition(){
+        return selectedTabPosition;
+    }
     public  interface OnHomeItemSelectListener {
 
         void onExamTabSelected(ExamDetail tabPosition);
@@ -784,6 +818,7 @@ public class TabFragment extends  BaseFragment{
         void requestForProfileFragment();
         void onTabStepByStep();
         void onTabPsychometricTest();
+        public void onTabPsychometricReport();
     }
 
 }

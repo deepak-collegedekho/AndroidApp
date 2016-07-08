@@ -712,9 +712,11 @@ public class MainActivity extends AppCompatActivity
                     return;
                 else if (currentFragment instanceof OTPVerificationFragment)
                     return;
+                else if(isFromNotification && (currentFragment instanceof ProfileFragment || currentFragment instanceof CDRecommendedInstituteFragment)){
+                    MainActivity.this.onBackPressed();
+                }
 
                 mClearBackStack();
-                invalidateOptionsMenu();
                 invalidateOptionsMenu();
             }
         });
@@ -1153,10 +1155,18 @@ public class MainActivity extends AppCompatActivity
         setSearchAvailable(menu);
 //        if (!getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), false)) {
         if(currentFragment instanceof TabFragment){
-            boolean tute_complete = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
-            if(!tute_complete){
-                menu.setGroupVisible(R.id.search_menu_group, false);
-                menu.setGroupVisible(R.id.main_menu_group, false);
+            if(((TabFragment) currentFragment).getSelectedTab() == 1){
+                boolean tute_complete = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+                if(!tute_complete){
+                    menu.setGroupVisible(R.id.search_menu_group, false);
+                    menu.setGroupVisible(R.id.main_menu_group, false);
+                }
+            } else if(((TabFragment) currentFragment).getSelectedTab() == 3){
+                boolean tute_complete = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("prepare_tute", false);
+                if(!tute_complete){
+                    menu.setGroupVisible(R.id.search_menu_group, false);
+                    menu.setGroupVisible(R.id.main_menu_group, false);
+                }
             }
         }
 
@@ -1511,8 +1521,16 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
         if (fragment == null) {
             mDisplayFragment(ProfileFragment.getInstance(profile), backStack, ProfileFragment.class.getSimpleName());
-        } else
+        } else{
+            try {
+                int count = getSupportFragmentManager().getBackStackEntryCount();
+                for (int i = 0; i < count-1; i++)
+                    getSupportFragmentManager().popBackStack();
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
             mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
+        }
     }
 
     /**
@@ -1596,6 +1614,16 @@ public class MainActivity extends AppCompatActivity
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
             this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_DEGREES + "#" + requestType, Constants.BASE_URL + "degrees/?level=" + levelId, null, Request.Method.GET);
         }
+    }
+
+    @Override
+    public void toRecommended() {
+        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/", null);
+    }
+
+    @Override
+    public void toDashboard(){
+        mClearBackStack();
     }
 
     /**
@@ -1714,6 +1742,7 @@ public class MainActivity extends AppCompatActivity
         try {
             Map<String, Object> map = JSON.std.mapFrom(response);
             String results = JSON.std.asString(map.get("results"));
+            getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString("psychometric_report", results).apply();
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
             this.mClearBackStack();
             this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams),addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
@@ -1892,8 +1921,6 @@ public class MainActivity extends AppCompatActivity
                     }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.BUZZLIST){
                         ((CDRecommendedInstituteFragment) currentFragment).updateBuzzList(this.mInstituteList, next);
                     }
-
-
                 }
             } else {
                 String val = this.extractResults(response);
@@ -2394,9 +2421,6 @@ public class MainActivity extends AppCompatActivity
                     mLoadHomeScreen(null);
                 }*/
                 break;
-            case Constants.TAG_LOAD_USER_PREFERENCES:
-                this.onUpdateUserPreferences(response);
-                break;
             case Constants.TAG_LOAD_USER_PREFERENCES_N_BACK:
                 isReloadProfile = true;
                 this.onUpdateUserPreferences(response);
@@ -2432,7 +2456,6 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayInstituteList(response, false, true);
                 break;
             case Constants.TAKE_ME_TO_RECOMMENDED:
-                mClearBackStack();
                 isFromNotification = true;
                 this.mCurrentTitle = "Recommended Institutes";
                 if(currentFragment instanceof ProfileBuildingFragment)
@@ -2445,6 +2468,16 @@ public class MainActivity extends AppCompatActivity
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED, false);
                 }
                 break;
+            case Constants.TAG_LOAD_USER_PREFERENCES:
+                mLoadProfileFragment(MainActivity.mProfile, false);
+                getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_HOME_LOADED), true).apply();
+                if(currentFragment instanceof ProfileBuildingFragment)
+                    ((ProfileBuildingFragment)currentFragment).hideNavigationIcon();
+                mShowAppBarLayout();
+                isFromNotification = true;
+                this.onUpdateUserPreferences(response);
+                break;
+
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
                 this.mCurrentTitle = "Recommended Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = true;
@@ -4767,6 +4800,7 @@ public class MainActivity extends AppCompatActivity
             onUpdateUserExams(response);
             onBackPressed();
             if(currentFragment instanceof  TabFragment){
+                ((TabFragment) currentFragment).setSelectedTab(3);
                 ((TabFragment) currentFragment).updateExamsList(user.getUser_exams());
             }
         } catch (IOException e) {
@@ -5214,6 +5248,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onTabPsychometricReport(){
+        try {
+            String results = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString("psychometric_report", null);
+            if(results != null) {
+                List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
+                mClearBackStack();
+                this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams), true), true, Constants.TAG_FRAGMENT_STREAMS);
+            }
+        } catch (Exception e){
+            Utils.DisplayToast(getApplicationContext(),"Cannot load psychometric results.");
+        }
+    }
+
+    @Override
     public void onHomeStepByStep() {
         this.startStepByStep();
     }
@@ -5222,6 +5270,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onHomePsychometricTest() {
         this.startPsychometricTest();
+    }
+
+    @Override
+    public void onHomePsychometricReport(){
+        try {
+            String results = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString("psychometric_report", null);
+            if(results != null) {
+                List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
+                mClearBackStack();
+                this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams), true), true, Constants.TAG_FRAGMENT_STREAMS);
+            }
+        } catch (Exception e){
+            Utils.DisplayToast(getApplicationContext(),"Cannot load psychometric results.");
+        }
     }
 
 //    private Map<String,String> getAllExamTags(){
@@ -5379,8 +5441,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnTakeMeToRecommended() {
-
-
+        mClearBackStack();
         this.mMakeNetworkCall(Constants.TAKE_ME_TO_RECOMMENDED, Constants.BASE_URL + "personalize/institutes/",null);
 
     }
@@ -5394,14 +5455,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnTakeMeToProfile() {
+        mClearBackStack();
         this.mMakeNetworkCall(Constants.TAG_LOAD_USER_PREFERENCES, Constants.BASE_URL + "preferences/", null);
-        this.mClearBackStack();
-        mLoadProfileFragment(MainActivity.mProfile, false);
-        getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_HOME_LOADED), true).apply();
-        if(currentFragment instanceof ProfileBuildingFragment)
-            ((ProfileBuildingFragment)currentFragment).hideNavigationIcon();
-        mShowAppBarLayout();
-        isFromNotification = true;
+
+//        this.mClearBackStack();
+//        mLoadProfileFragment(MainActivity.mProfile, false);
+//        getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_HOME_LOADED), true).apply();
+//        if(currentFragment instanceof ProfileBuildingFragment)
+//            ((ProfileBuildingFragment)currentFragment).hideNavigationIcon();
+//        mShowAppBarLayout();
+//        isFromNotification = true;
 
     }
 
@@ -5542,6 +5605,8 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(MainActivity.getResourceString(R.string.APPLY_INSTITUTE), Constants.CDInstituteType.PARTNER.toString());
 
             String cafUrl = Constants.CAF_URL + "?institute_id=" + institute.getId() + "&&user_id=" + MainActivity.mProfile.getId();
+
+            Utils.DisplayToast(getApplicationContext(),"College added to shortlist");
             onDisplayWebFragment(cafUrl);
 
             HashMap<String, String> params = new HashMap<>();

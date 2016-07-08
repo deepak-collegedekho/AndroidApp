@@ -14,7 +14,7 @@ public class ExamSummary implements Parcelable {
     private int syllabus_covered;
     private int backup_count;
     private int shortlist_count;
-    private int  recommended_count;
+    private int recommended_count;
     private int buzzlist_count;
     private String  next_important_date;
 

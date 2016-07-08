@@ -116,7 +116,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
                 Institute institute = ((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute();
                /* if (cardCategory == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()
                         || cardCategory == Constants.CDRecommendedInstituteType.UNDECIDED.ordinal()){*/
-                    mListener.OnAppliedInstitute(institute);
+                mListener.OnAppliedInstitute(institute);
                /* } else if (cardCategory == Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
                     mListener.onRemoveShortlisted(institute);
                 }*/

@@ -118,7 +118,7 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
     @Override
     public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
-        ChildViewHolder childViewHolder = new ChildViewHolder();
+        final ChildViewHolder childViewHolder = new ChildViewHolder();
 
         convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_syllabus_chapters, parent, false);
         childViewHolder.childChapterLabel = (TextView) convertView.findViewById(R.id.syllabus_chapters_name);
@@ -206,6 +206,13 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
         });
 
 
+
+        childViewHolder.childChapterLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                childViewHolder.childChapterCheckBox.setChecked((getGroup(groupPosition).getChapters().get(childPosition).getIs_done() == 1 ? false : true));
+            }
+        });
 
         return convertView;
     }

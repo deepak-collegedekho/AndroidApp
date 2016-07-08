@@ -138,6 +138,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         mRootView.findViewById(R.id.profile_education_save_btn).setOnClickListener(this);
         mRootView.findViewById(R.id.profile_preferred_save_btn).setOnClickListener(this);
         mRootView.findViewById(R.id.profile_other_info_save_btn).setOnClickListener(this);
+        mRootView.findViewById(R.id.profile_to_dashboard).setOnClickListener(this);
+        mRootView.findViewById(R.id.profile_to_recommended).setOnClickListener(this);
 
         return mRootView;
     }
@@ -502,6 +504,12 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()){
+            case R.id.profile_to_dashboard:
+                mListener.toDashboard();
+                break;
+            case R.id.profile_to_recommended:
+                mListener.toRecommended();
+                break;
             case R.id.profile_login_button:
                 mListener.onPostAnonymousLogin();
                 break;
@@ -2176,5 +2184,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         void onRequestForUserExamsUpdate();
         void requestForSpecialization(int streamId, String requestType);
         void requestForDegrees(int levelId, String requestType);
+        void toDashboard();
+        void toRecommended();
     }
 }
