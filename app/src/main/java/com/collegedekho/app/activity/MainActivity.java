@@ -2829,6 +2829,11 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_UNDECIDED_INSTITUTE:
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNDECIDED, true);
                 break;
+
+            case Constants.TAG_LOAD_BUZZLIST_INSTITUTE:
+                this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.BUZZLIST, true);
+                break;
+
             case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 if (tags.length == 3) {
@@ -5445,7 +5450,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnTakeMeToDashBoard() {
-        this.mMakeNetworkCall(Constants.TAG_LOAD_USER_PREFERENCES, Constants.BASE_URL + "preferences/", null);
+//        this.mMakeNetworkCall(Constants.TAG_LOAD_USER_PREFERENCES, Constants.BASE_URL + "preferences/", null);
         this.mClearBackStack();
         mLoadHomeScreen(null);
     }
@@ -5592,6 +5597,10 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_LOAD_UNDECIDED_INSTITUTE, url, null, Request.Method.GET);
     }
 
+    @Override
+    public void OnCDRecommendedLoadMoreBuzzlist(String url) {
+        this.mMakeNetworkCall(Constants.TAG_LOAD_BUZZLIST_INSTITUTE, url, null, Request.Method.GET);
+    }
     @Override
     public void OnAppliedInstitute(Institute institute, boolean islastcard) {
         this.mInstitute = institute;

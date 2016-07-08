@@ -132,6 +132,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         model.setOnCardDismissedListener(new CardModel.OnCardDismissedListener() {
             @Override
             public void onLike() {
+                Log.d("SAMAKSH","PARTNER STATUS :: "+((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute().getPartner_status());
                 if (position > 0)
                     SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
                 if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext()) {

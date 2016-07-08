@@ -487,6 +487,11 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     public void OnInstituteLiked(Institute institute, boolean isLastCard) {
         this.mRemoveInstituteFromList();
         if(isLastCard){
+            if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal() && this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null")){
+                this.mListener.OnCDRecommendedLoadMoreBuzzlist(this.mNextUrl);
+                return;
+            }
+
             if(!IS_UNDECIDED_INSTITUTES) {
                 if(mUndecidedCount >= 1) {
                     isLastCard = false;
@@ -520,6 +525,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     public void OnInstituteDislike(Institute institute, boolean isLastCard) {
         this.mRemoveInstituteFromList();
         if(isLastCard){
+            if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal() && this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null")){
+                this.mListener.OnCDRecommendedLoadMoreBuzzlist(this.mNextUrl);
+                return;
+            }
             if(!IS_UNDECIDED_INSTITUTES) {
                 if(mUndecidedCount >= 1) {
                     isLastCard = false;
@@ -553,6 +562,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mRemoveInstituteFromList();
         if(isLastCard){
             if(!IS_UNDECIDED_INSTITUTES) {
+                if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal() && this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null")){
+                    this.mListener.OnCDRecommendedLoadMoreBuzzlist(this.mNextUrl);
+                    return;
+                }
                 if(mUndecidedCount >= 1) {
                     isLastCard = false;
                     questionLayout.setVisibility(View.VISIBLE);
@@ -705,6 +718,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard, boolean isUndecided);
         void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard, boolean isUndecided);
         void OnCDRecommendedLoadUndecidedInstitutes(String url);
+        void OnCDRecommendedLoadMoreBuzzlist(String url);
         void OnAppliedInstitute(Institute institute, boolean flag);
         void onClickBuzzList();
         void onClickWishList();
