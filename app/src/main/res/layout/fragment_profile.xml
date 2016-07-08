@@ -50,14 +50,14 @@
 
                 <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="2.2"
+                    android:layout_weight="2"
                     android:layout_height="@dimen/m40dp"
                     android:layout_gravity="top"
                     app:srcCompat="@drawable/ic_profile_info"/>
 
                 <RelativeLayout
                     android:layout_width="0dp"
-                    android:layout_weight="7.8"
+                    android:layout_weight="8"
                     android:layout_height="wrap_content">
 
                     <TextView
@@ -119,6 +119,74 @@
                                 style="@style/AppTheme.profileInfoTextView"/>
 
                         </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/profile_expanded_info_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            android:orientation="vertical">
+                            <LinearLayout
+                                style="@style/AppTheme.profileInfoTLayout">
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                                    android:text="City"/>
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewColon"/>
+
+                                <TextView
+                                    android:id="@+id/profile_info_city"
+                                    style="@style/AppTheme.profileInfoExpendedTextView"/>
+
+                            </LinearLayout>
+                            <LinearLayout
+                                style="@style/AppTheme.profileInfoTLayout">
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                                    android:text="State"/>
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewColon"/>
+
+                                <TextView
+                                    android:id="@+id/profile_info_state"
+                                    style="@style/AppTheme.profileInfoExpendedTextView"/>
+
+                            </LinearLayout>
+                            <LinearLayout
+                                style="@style/AppTheme.profileInfoTLayout">
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                                    android:text="Mother Tongue"/>
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewColon"/>
+
+                                <TextView
+                                    android:id="@+id/profile_info_mother_tongue"
+                                    style="@style/AppTheme.profileInfoExpendedTextView"/>
+
+                            </LinearLayout>
+                            <LinearLayout
+                                style="@style/AppTheme.profileInfoTLayout">
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                                    android:text="Category"/>
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewColon"/>
+
+                                <TextView
+                                    android:id="@+id/profile_info_category"
+                                    style="@style/AppTheme.profileInfoExpendedTextView"/>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
 
                     </LinearLayout>
 
@@ -126,74 +194,7 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/profile_expanded_info_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:orientation="vertical">
-                <LinearLayout
-                    style="@style/AppTheme.profileInfoTLayout">
 
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:text="City"/>
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewColon"/>
-
-                    <TextView
-                        android:id="@+id/profile_info_city"
-                        style="@style/AppTheme.profileInfoExpendedTextView"/>
-
-                </LinearLayout>
-                <LinearLayout
-                    style="@style/AppTheme.profileInfoTLayout">
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:text="State"/>
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewColon"/>
-
-                    <TextView
-                        android:id="@+id/profile_info_state"
-                        style="@style/AppTheme.profileInfoExpendedTextView"/>
-
-                </LinearLayout>
-                <LinearLayout
-                    style="@style/AppTheme.profileInfoTLayout">
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:text="Mother Tongue"/>
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewColon"/>
-
-                    <TextView
-                        android:id="@+id/profile_info_mother_tongue"
-                        style="@style/AppTheme.profileInfoExpendedTextView"/>
-
-                </LinearLayout>
-                <LinearLayout
-                    style="@style/AppTheme.profileInfoTLayout">
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:text="Category"/>
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewColon"/>
-
-                    <TextView
-                        android:id="@+id/profile_info_category"
-                        style="@style/AppTheme.profileInfoExpendedTextView"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
             <LinearLayout
                 android:id="@+id/profile_info_edit_layout"
                 android:layout_width="match_parent"
@@ -303,14 +304,14 @@
 
                 <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="2.2"
+                    android:layout_weight="2"
                     android:layout_height="@dimen/m40dp"
                     android:layout_gravity="top"
                     app:srcCompat="@drawable/ic_profile_education"/>
 
                 <RelativeLayout
                     android:layout_width="0dp"
-                    android:layout_weight="7.8"
+                    android:layout_weight="8"
                     android:layout_height="wrap_content">
 
                     <TextView
@@ -372,78 +373,83 @@
                                 style="@style/AppTheme.profileInfoTextView"/>
 
                         </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/profile_expanded_education_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            android:orientation="vertical">
+                            <LinearLayout
+                                android:id="@+id/profile_education_specialization_layout"
+                                style="@style/AppTheme.profileInfoTLayout">
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                                    android:layout_weight=".44"
+                                    android:text="Specialization"/>
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewColon"/>
+
+                                <TextView
+                                    android:id="@+id/profile_education_specialization"
+                                    style="@style/AppTheme.profileInfoExpendedTextView"
+                                    android:layout_weight=".56"/>
+
+                            </LinearLayout>
+                            <LinearLayout
+                                style="@style/AppTheme.profileInfoTLayout">
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                                    android:text="Stream"/>
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewColon"/>
+
+                                <TextView
+                                    android:id="@+id/profile_education_stream"
+                                    style="@style/AppTheme.profileInfoTextView"/>
+
+                            </LinearLayout>
+                            <LinearLayout
+                                style="@style/AppTheme.profileInfoTLayout">
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                                    android:text="Score"/>
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewColon"/>
+
+                                <TextView
+                                    android:id="@+id/profile_education_score"
+                                    style="@style/AppTheme.profileInfoExpendedTextView"/>
+
+                            </LinearLayout>
+                            <LinearLayout
+                                style="@style/AppTheme.profileInfoTLayout">
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                                    android:text="Mode"/>
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewColon"/>
+
+                                <TextView
+                                    android:id="@+id/profile_education_mode"
+                                    style="@style/AppTheme.profileInfoExpendedTextView"/>
+
+                            </LinearLayout>
+                        </LinearLayout>
                     </LinearLayout>
 
                 </RelativeLayout>
 
             </LinearLayout>
-            <LinearLayout
-                android:id="@+id/profile_expanded_education_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:orientation="vertical">
-                <LinearLayout
-                    android:id="@+id/profile_education_specialization_layout"
-                    style="@style/AppTheme.profileInfoTLayout">
 
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:layout_weight=".44"
-                        android:text="Specialization"/>
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewColon"/>
-
-                    <TextView
-                        android:id="@+id/profile_education_specialization"
-                        style="@style/AppTheme.profileInfoExpendedTextView"
-                        android:layout_weight=".56"/>
-
-                </LinearLayout>
-                <LinearLayout
-                    style="@style/AppTheme.profileInfoTLayout">
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:text="Stream"/>
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewColon"/>
-
-                    <TextView
-                        android:id="@+id/profile_education_stream"
-                        style="@style/AppTheme.profileInfoTextView"/>
-
-                </LinearLayout>
-                <LinearLayout
-                    style="@style/AppTheme.profileInfoTLayout">
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:text="Score"/>
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewColon"/>
-
-                    <TextView
-                        android:id="@+id/profile_education_score"
-                        style="@style/AppTheme.profileInfoExpendedTextView"/>
-
-                </LinearLayout>
-                <LinearLayout
-                    style="@style/AppTheme.profileInfoTLayout">
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:text="Mode"/>
-
-                    <TextView
-                        android:id="@+id/profile_education_mode"
-                        style="@style/AppTheme.profileInfoExpendedTextView"/>
-
-                </LinearLayout>
-            </LinearLayout>
             <LinearLayout
                 android:id="@+id/profile_education_edit_layout"
                 android:layout_width="match_parent"
@@ -563,14 +569,14 @@
 
                 <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="2.2"
+                    android:layout_weight="2"
                     android:layout_height="@dimen/m40dp"
                     android:layout_gravity="top"
                     app:srcCompat="@drawable/ic_profile_preferences"/>
 
                 <RelativeLayout
                     android:layout_width="0dp"
-                    android:layout_weight="7.8"
+                    android:layout_weight="8"
                     android:layout_height="wrap_content">
 
                     <TextView
@@ -633,110 +639,112 @@
 
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:id="@+id/profile_expanded_preferred_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            android:orientation="vertical">
+                            <LinearLayout
+                                style="@style/AppTheme.profileInfoTLayout">
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                                    android:layout_weight=".44"
+                                    android:text="Specialization"/>
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewColon"/>
+
+                                <TextView
+                                    android:id="@+id/profile_preferences_specialization"
+                                    android:layout_weight=".56"
+                                    style="@style/AppTheme.profileInfoExpendedTextView"/>
+
+                            </LinearLayout>
+                            <LinearLayout
+                                style="@style/AppTheme.profileInfoTLayout">
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                                    android:text="Stream"/>
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewColon"/>
+
+                                <TextView
+                                    android:id="@+id/profile_preferences_stream"
+                                    style="@style/AppTheme.profileInfoExpendedTextView"/>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                style="@style/AppTheme.profileInfoTLayout">
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                                    android:text="Year"/>
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewColon"/>
+
+                                <TextView
+                                    android:id="@+id/profile_preferences_year"
+                                    style="@style/AppTheme.profileInfoExpendedTextView"/>
+
+                            </LinearLayout>
+                            <LinearLayout
+                                style="@style/AppTheme.profileInfoTLayout">
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                                    android:text="Mode"/>
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewColon"/>
+
+                                <TextView
+                                    android:id="@+id/profile_preferences_mode"
+                                    style="@style/AppTheme.profileInfoExpendedTextView"/>
+
+                            </LinearLayout>
+                            <LinearLayout
+                                style="@style/AppTheme.profileInfoTLayout">
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                                    android:text="Fee Range"/>
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewColon"/>
+
+                                <TextView
+                                    android:id="@+id/profile_preferences_fee_range"
+                                    style="@style/AppTheme.profileInfoExpendedTextView"/>
+
+                            </LinearLayout>
+                            <LinearLayout
+                                android:id="@+id/profile_preferences_loan_required_layout"
+                                style="@style/AppTheme.profileInfoTLayout">
+
+                                <TextView
+                                    style="@style/AppTheme.profileTextViewExpendedTitle"
+                                    android:text="Loan Amount"/>
+
+                                <TextView
+                                    android:id="@+id/profile_preferences_loan_amount"
+                                    style="@style/AppTheme.profileInfoExpendedTextView"/>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
                     </LinearLayout>
 
                 </RelativeLayout>
 
             </LinearLayout>
-            <LinearLayout
-                android:id="@+id/profile_expanded_preferred_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:orientation="vertical">
-                <LinearLayout
-                    style="@style/AppTheme.profileInfoTLayout">
 
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:layout_weight=".44"
-                        android:text="Specialization"/>
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewColon"/>
-
-                    <TextView
-                        android:id="@+id/profile_preferences_specialization"
-                        android:layout_weight=".56"
-                        style="@style/AppTheme.profileInfoExpendedTextView"/>
-
-                </LinearLayout>
-                <LinearLayout
-                    style="@style/AppTheme.profileInfoTLayout">
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:text="Stream"/>
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewColon"/>
-
-                    <TextView
-                        android:id="@+id/profile_preferences_stream"
-                        style="@style/AppTheme.profileInfoExpendedTextView"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    style="@style/AppTheme.profileInfoTLayout">
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:text="Year"/>
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewColon"/>
-
-                    <TextView
-                        android:id="@+id/profile_preferences_year"
-                        style="@style/AppTheme.profileInfoExpendedTextView"/>
-
-                </LinearLayout>
-                <LinearLayout
-                    style="@style/AppTheme.profileInfoTLayout">
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:text="Mode"/>
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewColon"/>
-
-                    <TextView
-                        android:id="@+id/profile_preferences_mode"
-                        style="@style/AppTheme.profileInfoExpendedTextView"/>
-
-                </LinearLayout>
-                <LinearLayout
-                    style="@style/AppTheme.profileInfoTLayout">
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:text="Fee Range"/>
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewColon"/>
-
-                    <TextView
-                        android:id="@+id/profile_preferences_fee_range"
-                        style="@style/AppTheme.profileInfoExpendedTextView"/>
-
-                </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/profile_preferences_loan_required_layout"
-                    style="@style/AppTheme.profileInfoTLayout">
-
-                    <TextView
-                        style="@style/AppTheme.profileTextViewExpendedTitle"
-                        android:text="Loan Amount"/>
-
-                    <TextView
-                        android:id="@+id/profile_preferences_loan_amount"
-                        style="@style/AppTheme.profileInfoExpendedTextView"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
             <LinearLayout
                 android:id="@+id/profile_preferred_edit_layout"
                 android:layout_width="match_parent"
@@ -842,14 +850,14 @@
 
                 <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="2.2"
+                    android:layout_weight="2"
                     android:layout_height="@dimen/m50dp"
                     android:layout_gravity="top"
                     app:srcCompat="@drawable/ic_profile_exams"/>
 
                 <RelativeLayout
                     android:layout_width="0dp"
-                    android:layout_weight="7.8"
+                    android:layout_weight="8"
                     android:layout_height="wrap_content">
 
                     <TextView
@@ -879,13 +887,7 @@
                         android:layout_below="@id/profile_exams_til"
                         style="@style/AppTheme.profileInfoTLayout">
 
-                      <!--  <TextView
-                            style="@style/AppTheme.profileTextViewTitle"
-                            android:text="Exams"/>
 
-                        <TextView
-                            style="@style/AppTheme.profileTextViewColon"/>
--->
                         <TextView
                             android:id="@+id/profile_exams_name"
                             style="@style/AppTheme.profileInfoTextView"/>
@@ -933,14 +935,14 @@
 
                 <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="2.2"
+                    android:layout_weight="2"
                     android:layout_height="@dimen/m40dp"
                     android:layout_gravity="top"
                     app:srcCompat="@drawable/ic_profile_other"/>
 
                 <RelativeLayout
                     android:layout_width="0dp"
-                    android:layout_weight="7.8"
+                    android:layout_weight="8"
                     android:layout_height="wrap_content">
 
                     <TextView
@@ -1000,32 +1002,33 @@
                                 style="@style/AppTheme.profileInfoTextView"/>
 
                         </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/profile_expanded_other_info_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/AppTheme.profileTextViewExpendedTitle"
+                                android:layout_weight=".35"
+                                android:text="Coaching Institute"/>
+
+                            <TextView
+                                style="@style/AppTheme.profileTextViewColon"/>
+
+                            <TextView
+                                android:id="@+id/profile_coaching_institute_name"
+                                android:layout_weight=".65"
+                                style="@style/AppTheme.profileInfoExpendedTextView"/>
+
+                        </LinearLayout>
                     </LinearLayout>
 
                 </RelativeLayout>
 
             </LinearLayout>
-            <LinearLayout
-                android:id="@+id/profile_expanded_other_info_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:orientation="horizontal">
 
-                <TextView
-                    style="@style/AppTheme.profileTextViewExpendedTitle"
-                    android:layout_weight=".44"
-                    android:text="Coaching Institute"/>
-
-                <TextView
-                    style="@style/AppTheme.profileTextViewColon"/>
-
-                <TextView
-                    android:id="@+id/profile_coaching_institute_name"
-                    android:layout_weight=".56"
-                    style="@style/AppTheme.profileInfoExpendedTextView"/>
-
-            </LinearLayout>
             <LinearLayout
                 android:id="@+id/profile_other_info_edit_layout"
                 android:layout_width="match_parent"

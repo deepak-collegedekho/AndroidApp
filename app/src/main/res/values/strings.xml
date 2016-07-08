@@ -431,7 +431,10 @@
     <string name="INSTITUTE_ID">institute_id_set</string>
     <string name="YOUTUBE_DEVELOPER_KEY">AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk</string>
 
-
+        <!--Login msg-->
+    <string name="personalize_your_app">Personalize your app </string>
+    <string name="perfect_set_of_recommended">\u2022 Perfect set of recommended colleges</string>
+    <string name="based_on_your_preferences">\u2022 Based on your preferences</string>
     <string name="otp_verification">OTP Verification</string>
     <string name="enter_6_digit_OTP">Enter 6 digit OTP</string>
     <string name="verify">VERIFY</string>
@@ -498,6 +501,7 @@
     <string name="your_current_stream">Your Current Stream?</string>
     <string name="which_exams_are_you_preparing">Which exams are you preparing for?</string>
     <string name="no_exam_found">No Exam Found with Your Preferences</string>
+    <string name="no_exam_found_in_search">No Exam Found</string>
     <string name="loading_exams">Loading Exams....</string>
     <string name="go_to_recommended">Go to Recommended Colleges</string>
     <string name="go_to_me_dash_board">Go to My DashBoard</string>

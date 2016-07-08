@@ -406,6 +406,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/user_education_skip_Text_View"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/TAG_SKIP"
@@ -413,7 +414,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/skip_btn_color"
                 android:background="@drawable/border_bottom"
-                android:textSize="18sp" />
+                android:textSize="17sp" />
 
         </LinearLayout>
 
@@ -434,7 +435,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/skip_btn_color"
                 android:background="@drawable/border_bottom"
-                android:textSize="18sp" />
+                android:textSize="17sp" />
 
         </LinearLayout>
 
@@ -444,12 +445,15 @@
             android:layout_height="match_parent"
             android:text="Show More.."
             android:visibility="gone"
-            android:background="@color/primary_orange"
-            android:padding="@dimen/m4dp"
+            android:background="@color/skip_btn_color"
+            android:paddingLeft="@dimen/m3dp"
+            android:paddingRight="@dimen/m3dp"
+            android:padding="@dimen/m3dp"
             android:textColor="@color/white"
             android:gravity="center"
             android:layout_centerInParent="true"
-            android:textSize="16sp"/>
+            android:layout_toRightOf="@id/user_education_skip_button"
+            android:textSize="15sp"/>
 
         <ImageButton
             android:id="@+id/user_education_next_button"

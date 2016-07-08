@@ -16,6 +16,8 @@ import com.collegedekho.app.adapter.StreamAdapter;
 import com.collegedekho.app.display.androidcharts.diagram.SpiderWebChart;
 import com.collegedekho.app.display.androidcharts.series.TitleValueEntity;
 import com.collegedekho.app.entities.Stream;
+import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +72,12 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
         GridView grid = (GridView) rootView.findViewById(R.id.stream_grid);
         grid.setAdapter(new StreamAdapter(getActivity(), new ArrayList(streams.subList(0,2))));
         grid.setOnItemClickListener(this);
+
+        boolean isHomeLoaded = getActivity().getSharedPreferences(Constants.PREFS,Context.MODE_PRIVATE)
+                .getBoolean(getString(R.string.USER_HOME_LOADED), false);
+        if(isHomeLoaded){
+            rootView.findViewById(R.id.user_education_top_layout).setVisibility(View.GONE);
+        }
         return rootView;
     }
 
@@ -114,6 +122,14 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+            ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+            return;
+        }
+        if(getView() != null){
+            getView().findViewById(R.id.user_education_top_layout).setVisibility(View.GONE);
+        }
+
         Stream streamObj =  streams.get(position);
         onStreamSelected(streamObj.getResourceUri(),streamObj.getName());
     }

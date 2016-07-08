@@ -254,9 +254,9 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
         boolean isExamSelected = false;
         JSONObject parentJsonObject=new JSONObject();
         JSONArray parentArray=new JSONArray();
-        ArrayList<Exam> adapterExamList = mExamAdapter.getExamsList();
-        if(adapterExamList != null && !adapterExamList.isEmpty()) {
-            for (Exam exam:adapterExamList) {
+        //ArrayList<Exam> adapterExamList = mExamAdapter.getExamsList();
+        if(mExamList != null && !mExamList.isEmpty()) {
+            for (Exam exam:mExamList) {
                 if(exam == null || !exam.isSelected())continue;
 
                 ArrayList<ExamDetail> detailList = exam.getExam_details();

@@ -75,6 +75,6 @@ public class ApplyIntentService extends IntentService {
         map.put(MainActivity.getResourceString(R.string.APPLY_YEAR), "" + year);
 
         String URL = Constants.BASE_URL + "lms/";
-        MainActivity.networkUtils.networkData(Constants.TAG_APPLIED_COURSE, URL, map, Request.Method.POST);
+        MainActivity.mNetworkUtils.networkData(Constants.TAG_APPLIED_COURSE, URL, map, Request.Method.POST);
     }
 }

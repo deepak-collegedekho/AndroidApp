@@ -41,7 +41,7 @@ public class SplashFragment extends BaseFragment {
 
 
     public void isInternetAvailable(){
-        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
         SharedPreferences sp = getActivity().getSharedPreferences(MainActivity.getResourceString(R.string.PREFS), Context.MODE_PRIVATE);
         boolean IS_USER_CREATED = sp.getBoolean(MainActivity.getResourceString(R.string.USER_CREATED), false);
         boolean IS_HOME_LOADED = sp.getBoolean(MainActivity.getResourceString(R.string.USER_HOME_LOADED), false);

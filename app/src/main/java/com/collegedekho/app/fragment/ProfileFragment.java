@@ -304,7 +304,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }else{
             ((TextView)mRootView.findViewById(R.id.profile_coaching_institute_name)).setText("NA");
         }
-        setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_other_progress), mProfile.getOthers_progress());
+        setProfileProgressStatus(mRootView.findViewById(R.id.profile_other_progress), mProfile.getOthers_progress());
 
     }
 
@@ -318,12 +318,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         if (mProfile == null || view == null)
             return;
 
-        int preferredInfoStatus = 0;
-
         String preferredStream = mProfile.getPreferred_stream_short_name();
         if (preferredStream != null && !preferredStream.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_preferences_stream)).setText(preferredStream);
-            preferredInfoStatus += 15;
 
         }else{
             ((TextView)view.findViewById(R.id.profile_preferences_stream)).setText("NA");
@@ -332,7 +329,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         String preferredSpecialization = mProfile.getPreferred_specialization_name();
         if (preferredSpecialization != null && !preferredSpecialization.isEmpty()){
             ((TextView)view.findViewById(R.id.profile_preferences_specialization)).setText(preferredSpecialization);
-            preferredInfoStatus += 12;
         }else{
             ((TextView)view.findViewById(R.id.profile_preferences_specialization)).setText("NA");
 
@@ -341,25 +337,21 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         int preferredYear = mProfile.getPreferred_year_of_admission();
         if(preferredYear >= 2000 ){
             ((TextView) view.findViewById(R.id.profile_preferences_year)).setText(""+preferredYear);
-            preferredInfoStatus += 13;
         }else
             ((TextView)view.findViewById(R.id.profile_preferences_year)).setText("NA");
 
 
         int preferredMode = mProfile.getPreferred_mode();
         ((TextView)view.findViewById(R.id.profile_preferences_mode)).setText(ProfileMacro.getEducationModeName(preferredMode));
-        preferredInfoStatus += 10;
 
         int feeRange = mProfile.getPreferred_fee_range_max();
         if(feeRange >= 1) {
             ((TextView) view.findViewById(R.id.profile_preferences_fee_range)).setText(ProfileMacro.getFeeRangeName(feeRange));
-            preferredInfoStatus += 13;
         }else
             ((TextView)view.findViewById(R.id.profile_preferences_fee_range)).setText("NA");
 
         int loanRequired = mProfile.getPreferred_loan_required();
         if(loanRequired >= 1) {
-            preferredInfoStatus += 12;
             int loanAmount = mProfile.getPreferred_loan_amount_needed();
             view.findViewById(R.id.profile_preferences_loan_required_layout).setVisibility(View.VISIBLE);
             ((TextView) view.findViewById(R.id.profile_preferences_loan_amount)).setText(ProfileMacro.getLoanRequiredAmount(loanAmount));
@@ -388,7 +380,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             }else{
                 ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(degreesNameBuffer.toString());
             }
-            preferredInfoStatus += 12;
         }else{
             ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText("NA");
         }
@@ -412,7 +403,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             }else{
                 ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(cityNameBuffer.toString());
             }
-            preferredInfoStatus += 12;
         }else{
             ((TextView)view.findViewById(R.id.profile_preferences_location)).setText("NA");
 
@@ -1634,7 +1624,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             preferredSpecializationIdvalue +=preferredSpecializationId ;
         }
         String feeRangeMaxValue ="";
-        int feeRangeMax = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_mode)).getSelectedSpinnerItemId();
+        int feeRangeMax = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_feee_range)).getSelectedSpinnerItemId();
        if (feeRangeMax > 0) {
            feeRangeMaxValue += feeRangeMax ;
         }
@@ -2000,7 +1990,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     }
 
     public void updateUserName(){
-        if(MainActivity.mProfile != null){
+        if(MainActivity.mProfile == null)
+            return;
             String name = MainActivity.mProfile.getName();
             if(name != null && !name.isEmpty()
                     &&  !name.equalsIgnoreCase(getResources().getString(R.string.ANONYMOUS_USER))){
@@ -2011,7 +2002,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             if (image != null && ! image.isEmpty())
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
 
-        }
     }
 
     public void profileUpdatedSuccessfully(int viewPosition){
@@ -2101,17 +2091,22 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
     }
 
-    private void mRequestForCurrentSubLevelDegreesList(int userLevelID){
+    private void mRequestForCurrentSubLevelDegreesList(int userSubLevelID){
         if(mListener == null)
             return;
         int levelId = -1;
-        if(userLevelID == 1|| userLevelID == 2 || userLevelID== 3 || userLevelID ==4){
-            levelId = 1;
-        }else if(userLevelID == 13){
-            levelId = 5;
+        if(userSubLevelID == ProfileMacro.CURRENT_SUB_LEVEL_COLLEGE_1|| userSubLevelID == ProfileMacro.CURRENT_SUB_LEVEL_COLLEGE_2
+                || userSubLevelID== ProfileMacro.CURRENT_SUB_LEVEL_COLLEGE_3 || userSubLevelID == ProfileMacro.CURRENT_SUB_LEVEL_COLLEGE_4){
+            levelId = ProfileMacro.LEVEL_UNDER_GRADUATE;
+        }else if(userSubLevelID == 13){
+            levelId = ProfileMacro.LEVEL_CERTIFICATION;
         }
-        else if(userLevelID == 14){
-            levelId = 3;
+        else if(userSubLevelID == 14){
+            levelId = ProfileMacro.LEVEL_DIPLOMA;
+        }
+        else if(userSubLevelID == ProfileMacro.CURRENT_SUB_LEVEL_PG_1 ||
+                userSubLevelID == ProfileMacro.CURRENT_SUB_LEVEL_PG_2){
+            levelId = ProfileMacro.LEVEL_POST_GRADUATE;
         }
         if(levelId != -1) {
             mListener.requestForDegrees(levelId, ProfileMacro.CURRENT_EDUCATION);

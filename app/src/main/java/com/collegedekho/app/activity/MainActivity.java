@@ -282,9 +282,9 @@ public class MainActivity extends AppCompatActivity
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
 
-    public static NetworkUtils networkUtils;
+    public static NetworkUtils mNetworkUtils;
     private ActionBarDrawerToggle mToggle;
-    public volatile BaseFragment currentFragment;
+    public static volatile BaseFragment currentFragment;
     private List<Institute> mInstituteList;
     private List<Chapters> chaptersList;
     private List<PsychometricTestQuestion> psychometricQuestionsList;
@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity
         Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
         layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
 
-        this.networkUtils = new NetworkUtils(this, this);
+        this.mNetworkUtils = new NetworkUtils(this, this);
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS)
@@ -456,7 +456,7 @@ public class MainActivity extends AppCompatActivity
         // TODO: Move this to where you establish a user session
         logUser();
         setupOtpRequest(true);
-        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED && IS_HOME_LOADED) {
             Utils.appLaunched(this);
         }
@@ -1129,7 +1129,7 @@ public class MainActivity extends AppCompatActivity
             searchView.setOnSearchClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+                    int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
                     if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
                         displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
                         searchView.onActionViewCollapsed();
@@ -1266,7 +1266,7 @@ public class MainActivity extends AppCompatActivity
 
 
                 MainActivity.user = JSON.std.beanFrom(User.class, sp.getString(getResourceString(R.string.KEY_USER), null));
-                this.networkUtils.setToken(MainActivity.user.getToken());
+                this.mNetworkUtils.setToken(MainActivity.user.getToken());
 
                 if(mProfile == null) {
                         mProfile = new Profile();
@@ -1398,7 +1398,7 @@ public class MainActivity extends AppCompatActivity
             User tempUser = MainActivity.user;
             MainActivity.user = JSON.std.beanFrom(User.class, json);
             MainActivity.user.setPref(this.userPref);
-            this.networkUtils.setToken(MainActivity.user.getToken());
+            this.mNetworkUtils.setToken(MainActivity.user.getToken());
 
             if (tempUser != null) {
                 MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
@@ -1473,6 +1473,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onProfileImageUploaded() {
+
         this.requestForProfile(null, Request.Method.GET);
     }
 
@@ -1554,7 +1555,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void requestForProfile(HashMap<String, String> params, int method){
 
-        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
         if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED)
             return;
 
@@ -1594,7 +1595,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void requestForSpecialization(int streamId, String requestType) {
-        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
             this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_SPECIALIZATION + "#" + requestType, Constants.BASE_URL + "specializations/?stream=" + streamId, null, Request.Method.GET);
         }else{
@@ -1610,7 +1611,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void requestForDegrees(int levelId, String requestType) {
-        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
             this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_DEGREES + "#" + requestType, Constants.BASE_URL + "degrees/?level=" + levelId, null, Request.Method.GET);
         }
@@ -4139,40 +4140,40 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params, int method) {
-        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(tag);
-            this.networkUtils.networkData(tag, url, params, method);
+            this.mNetworkUtils.networkData(tag, url, params, method);
         } else {
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
         }
     }
 
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params) {
-        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(tag);
-            this.networkUtils.networkData(tag, url, params);
+            this.mNetworkUtils.networkData(tag, url, params);
         } else {
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
         }
     }
 
     private void mMakePreferenceNetworkCall(String tag, String url, Map<String, String> params) {
-        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(tag);
-            this.networkUtils.putData(tag, url, params);
+            this.mNetworkUtils.putData(tag, url, params);
         } else {
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
         }
     }
 
     private void mMakeJsonObjectNetworkCall(String tag, String url, JSONObject params, int method) {
-        int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(tag);
-            this.networkUtils.networkDataWithObjectParam(tag, url, params, method);
+            this.mNetworkUtils.networkDataWithObjectParam(tag, url, params, method);
         } else {
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
         }
@@ -4632,7 +4633,7 @@ public class MainActivity extends AppCompatActivity
         User tempUser = MainActivity.user;
         try {
             MainActivity.user = JSON.std.beanFrom(User.class, jsonResponse);
-            this.networkUtils.setToken(user.getToken());
+            this.mNetworkUtils.setToken(user.getToken());
 
 
             this.requestForProfile(null, Request.Method.GET);
@@ -4776,7 +4777,7 @@ public class MainActivity extends AppCompatActivity
             MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
             MainActivity.user.profileData = tempUser.profileData;
         }
-        this.networkUtils.setToken(user.getToken());
+        this.mNetworkUtils.setToken(user.getToken());
         String u = null;
         try {
             u = JSON.std.asString(user);
@@ -5434,10 +5435,6 @@ public class MainActivity extends AppCompatActivity
     public void onUserExamSelected(JSONObject examJson) {
         this.mMakeJsonObjectNetworkCall(Constants.TAG_USER_EXAMS_SUBMISSION, Constants.BASE_URL + "yearly-exams/", examJson, Request.Method.POST);
     }
-    @Override
-    public void onRemoveUserExams(JSONObject examJson) {
-        this.mMakeJsonObjectNetworkCall(Constants.TAG_USER_EXAMS_DELETE, Constants.BASE_URL + "yearly-exams/", examJson, Request.Method.POST);
-    }
 
     @Override
     public void OnTakeMeToRecommended() {
@@ -5888,9 +5885,9 @@ public class MainActivity extends AppCompatActivity
         videosFragment = fragment;
         if (videoList != null && !videoList.isEmpty()) {
             this.videoList = videoList;
-            int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+            int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
             if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
-                networkUtils.simpleGetData(Constants.TAG_UPDATE_VIDEO_TITLE, url);
+                mNetworkUtils.simpleGetData(Constants.TAG_UPDATE_VIDEO_TITLE, url);
             } else {
                 displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             }
@@ -5980,7 +5977,7 @@ public class MainActivity extends AppCompatActivity
                     try {
                         User tempUser = MainActivity.user;
                         MainActivity.user = JSON.std.beanFrom(User.class, response);
-                        this.networkUtils.setToken(user.getToken());
+                        this.mNetworkUtils.setToken(user.getToken());
 
                         if (tempUser != null){
                             MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());

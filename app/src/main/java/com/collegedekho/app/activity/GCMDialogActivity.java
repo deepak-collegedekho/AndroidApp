@@ -573,7 +573,7 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
         if (hashMap != null) {
             intent.putExtra(Constants.DIALOG_DATA, hashMap);
             this.setResult(Activity.RESULT_OK, intent);
-            int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+            int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
             if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED ) {
                 displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             }else{

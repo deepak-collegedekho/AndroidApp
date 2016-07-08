@@ -96,9 +96,9 @@ public class ApplyService extends Service {
             params.put(MainActivity.getResourceString(R.string.APPLY_YEAR), "" + year);
 
             String URL = Constants.BASE_URL + "lms/";
-            if(MainActivity.networkUtils != null)
+            if(MainActivity.mNetworkUtils != null)
             {
-                MainActivity.networkUtils.networkData(Constants.TAG_APPLIED_COURSE, URL, params, Request.Method.POST);
+                MainActivity.mNetworkUtils.networkData(Constants.TAG_APPLIED_COURSE, URL, params, Request.Method.POST);
             }
             else {
                 sendRequest(params, URL, Request.Method.POST);

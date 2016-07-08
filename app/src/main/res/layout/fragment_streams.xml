@@ -11,6 +11,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin_small">
 
     <ImageView
+        android:id="@+id/user_education_top_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/m1dp"

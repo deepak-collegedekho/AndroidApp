@@ -124,7 +124,7 @@ public class MaterialSpinner extends TextView {
 
     Resources resources = getResources();
     int left, right, bottom, top;
-    left = right = bottom = top = resources.getDimensionPixelSize(R.dimen.m8dp);
+    left = right = bottom = top = resources.getDimensionPixelSize(R.dimen.m3dp);
     if (rtl) {
       right = resources.getDimensionPixelSize(R.dimen.m10dp);
     } else {

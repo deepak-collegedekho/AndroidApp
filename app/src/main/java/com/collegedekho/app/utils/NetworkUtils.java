@@ -110,7 +110,7 @@ public class NetworkUtils {
                         if (json != null) {
                             mListener.onError(tag, Constants.SERVER_FAULT, getResponseCode(response) , url, null, method);
                         } else {
-                            int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+                            int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
                             if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
                                 mListener.onError(tag, Constants.NO_CONNECTION_FAULT,getResponseCode(response) , url, null, method);
                             } else {
@@ -175,7 +175,7 @@ public class NetworkUtils {
                             if (json != null) {
                                 mListener.onError(tag, Constants.SERVER_FAULT,getResponseCode(response) , url, null, method);
                             } else {
-                                int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+                                int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
                                 if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
                                     mListener.onError(tag, Constants.NO_CONNECTION_FAULT,getResponseCode(response) , url, null, method);
                                 } else {
@@ -264,7 +264,7 @@ public class NetworkUtils {
                         if (json != null) {
                             mListener.onError(tag, Constants.SERVER_FAULT,getResponseCode(response), url, params, method);
                         } else {
-                            int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+                            int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
                             if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
                                 mListener.onError(tag, Constants.NO_CONNECTION_FAULT,getResponseCode(response) , url, params, method);
                             } else {
@@ -337,7 +337,7 @@ public class NetworkUtils {
                         }
                         json = trimMessage(json, "detail");
                         if (json != null) {
-                            int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+                            int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
                             if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
 
                                 mListener.onError(tag, Constants.NO_CONNECTION_FAULT, getResponseCode(response),url, null, method);
@@ -346,7 +346,7 @@ public class NetworkUtils {
                             }
                         }else
                         {
-                            int amIConnectedToInternet = MainActivity.networkUtils.getConnectivityStatus();
+                            int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
                             if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
 
                                 mListener.onError(tag, Constants.NO_CONNECTION_FAULT, getResponseCode(response),url, null, method);

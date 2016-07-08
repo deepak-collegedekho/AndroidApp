@@ -241,7 +241,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                                                            //Called each time when 1000 milliseconds (1 second) (the period parameter)
                                                            //update the comment list here after checking the internet connection
                                                            if (Constants.IS_CONNECTED_TO_INTERNET)
-                                                               mMainActivity.networkUtils.networkData(Constants.TAG_REFRESH_MY_FB + "#" + String.valueOf(mMyFutureBuddies.getIndex()) + "#" + String.valueOf(mMyFBCommentsSet.size()), mMyFutureBuddies.getResource_uri(), null, Request.Method.GET);
+                                                               mMainActivity.mNetworkUtils.networkData(Constants.TAG_REFRESH_MY_FB + "#" + String.valueOf(mMyFutureBuddies.getIndex()) + "#" + String.valueOf(mMyFBCommentsSet.size()), mMyFutureBuddies.getResource_uri(), null, Request.Method.GET);
                                                            //else
                                                            //Toast.makeText(mMainActivity, "Please connect to internet to receive messages..", Toast.LENGTH_SHORT).show();
                                                        }

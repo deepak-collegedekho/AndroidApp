@@ -42,7 +42,8 @@ public class ExamOnQueryListener implements SearchView.OnQueryTextListener {
 
             ArrayList<Exam> searchResults = new ArrayList<>();
             for(Exam exam : mExamList){
-                if((exam.getExam_name().toLowerCase()).contains((newText.toString().toLowerCase())) || (exam.getExam_short_name().toLowerCase()).contains((newText.toString().toLowerCase()))){
+                if((exam.getExam_name().toLowerCase()).contains((newText.toString().toLowerCase()))
+                        || (exam.getExam_short_name().toLowerCase()).contains((newText.toString().toLowerCase()))){
                     searchResults.add(exam);
                 }
             }

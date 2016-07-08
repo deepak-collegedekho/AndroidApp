@@ -14747,19 +14747,19 @@ public class ProfileMacro {
             "    },\n" +
             "    {\n" +
             "        \"id\": 1,\n" +
-            "        \"name\": \"College 1st Yr\"\n" +
+            "        \"name\": \"College 1st Year\"\n" +
             "    },\n" +
             "    {\n" +
             "        \"id\": 2,\n" +
-            "        \"name\": \"College 2nd Yr\"\n" +
+            "        \"name\": \"College 2nd Year\"\n" +
             "    },\n" +
             "    {\n" +
             "        \"id\": 3,\n" +
-            "        \"name\": \"College 3rd Yr\"\n" +
+            "        \"name\": \"College 3rd Year\"\n" +
             "    },\n" +
             "    {\n" +
             "        \"id\": 4,\n" +
-            "        \"name\": \"College 4th Yr\"\n" +
+            "        \"name\": \"College 4th Year\"\n" +
             "    },\n" +
             "    {\n" +
             "        \"id\": 13,\n" +
@@ -14768,6 +14768,14 @@ public class ProfileMacro {
             "    {\n" +
             "        \"id\": 14,\n" +
             "        \"name\": \"Diploma\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 5,\n" +
+            "        \"name\": \"PG 1st Year\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 6,\n" +
+            "        \"name\": \"PG 2nd Year\"\n" +
             "    }\n" +
             "]";
 
