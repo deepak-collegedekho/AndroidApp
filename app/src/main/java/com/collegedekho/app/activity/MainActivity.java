@@ -93,6 +93,7 @@ import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.News;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
 import com.collegedekho.app.entities.PsychometricTestQuestion;
 import com.collegedekho.app.entities.QnAAnswers;
@@ -1554,7 +1555,7 @@ public class MainActivity extends AppCompatActivity
             // exist in database then sever will allow it to change as user's email id
             if (mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER) {
                 String email = Utils.getDeviceEmail(getApplicationContext());
-                if(email != null || !email.isEmpty())
+                if(email != null && !email.isEmpty())
                     params.put(getString(R.string.USER_EMAIL), email);
             }
             // if user phone number is not available and it is saved in me profile
@@ -1968,7 +1969,7 @@ public class MainActivity extends AppCompatActivity
 
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
 
-            if (currentFragment instanceof WishlistFragment) {
+            if (fragment!= null && currentFragment instanceof WishlistFragment) {
                 ((WishlistFragment) fragment).clearList();
                 ((WishlistFragment) fragment).updateList(this.mInstituteList, next);
             }else {
@@ -2811,6 +2812,10 @@ public class MainActivity extends AppCompatActivity
                 {
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNDECIDED, true);
                 }
+                break;
+            case Constants.TAG_USER_EXAMS_DELETE:
+                MainActivity.user.setUser_exams(new ArrayList<ExamDetail>());
+                MainActivity.mProfile.setYearly_exams(new ArrayList<ProfileExam>());
                 break;
 //            case Constants.SUBMITTED_CHAPTER_STATUS:
 //                if (tags.length>1) {

@@ -485,7 +485,8 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 ProfileBuildingFragment.mEventValue.put("searching_what", "exams");
                 break;
             case R.id.user_education_no_exam_skip_button:
-                mTakeMeToDashBoard();
+                //mTakeMeToDashBoard();
+                onExamSubmittedSuccessfully();
                 this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SEARCH);
                 ProfileBuildingFragment.mEventValue.put("skip when there is no exam", "skip to go dashboard");
                 break;
@@ -605,7 +606,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         }
 
         this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
-
 
         if(this.mListener ==  null)
             return;
@@ -1023,14 +1023,32 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     private void mEditUserExams(){
         mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
-        mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.VISIBLE);
-        mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.VISIBLE);
-        mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
-        mRootView.findViewById(R.id.user_education_show_all_exams).setVisibility(View.VISIBLE);
-        mRootView.findViewById(R.id.user_education_heading_devider).setVisibility(View.VISIBLE);
-        mRootView.findViewById(R.id.user_education_heading).setVisibility(View.VISIBLE);
-        ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.which_exams_are_you_preparing));
-        mStreamRecyclerView.setVisibility(View.VISIBLE);
+
+        if (mStreamExamList != null && mStreamExamList.isEmpty())
+        {
+            mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.user_education_show_all_exams).setVisibility(View.GONE);
+            mStreamRecyclerView.setVisibility(View.GONE);
+            mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.user_education_no_exam_skip_button).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
+            TextView emptyText = (TextView) mRootView.findViewById(R.id.empty);
+            emptyText.setVisibility(View.VISIBLE);
+            emptyText.setText(getString(R.string.no_exam_found));
+        }
+        else
+        {
+            mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.user_education_show_all_exams).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.user_education_heading_devider).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.user_education_heading).setVisibility(View.VISIBLE);
+            ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.which_exams_are_you_preparing));
+            mStreamRecyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -1039,16 +1057,19 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_heading).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.GONE);
+        mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_heading_devider).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.VISIBLE);
 
         mRootView.findViewById(R.id.user_education_exams_layout).startAnimation(animationFromTop);
 
+        TextView  userExamSTxtView = (TextView) mRootView.findViewById(R.id.user_education_exams);
+
         if(MainActivity.user != null) {
             ArrayList<ExamDetail>  userExamList = MainActivity.user.getUser_exams();
             StringBuffer examsNameBuffer = new StringBuffer();
-            if(userExamList != null) {
+            if(userExamList != null && userExamList.size() >=1) {
                 int count = userExamList.size();
                 if(count >= 2)
                     count = 2;
@@ -1061,9 +1082,38 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 }
                 if(count < userExamList.size())
                     examsNameBuffer.append(".....");
+
+                userExamSTxtView.setText(examsNameBuffer.toString());
             }
-            TextView  userExamSTxtView = (TextView)mRootView.findViewById(R.id.user_education_exams);
-            userExamSTxtView.setText(examsNameBuffer.toString());
+            else
+            {
+                mClearUserExams();
+                userExamSTxtView.setText("Not Set");
+            }
+
+            if (mStreamExamList != null && mStreamExamList.isEmpty())
+            {
+                mClearUserExams();
+                userExamSTxtView.setText("Not Set");
+            }
+        }
+    }
+
+    private void mClearUserExams()
+    {
+        if(this.mListener ==  null)
+            return;
+
+        if(MainActivity.mProfile != null) {
+            int size = MainActivity.mProfile.getYearly_exams().size();
+            if(size >= 1) {
+                HashMap<String, String> userParams = new HashMap<>();
+                userParams.put("yearly_exams", "[]");
+                this.mListener.requestForProfile(userParams, Request.Method.POST);
+
+                MainActivity.user.setUser_exams(new ArrayList<ExamDetail>());
+                MainActivity.mProfile.setYearly_exams(new ArrayList<ProfileExam>());
+            }
         }
     }
 
@@ -1386,6 +1436,8 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     }
 
     public void updateExamsList(ArrayList<Exam> examList){
+        if (this.mStreamExamList != null)
+            this.mStreamExamList.clear();
         this.mAllExamList.clear();
         this.mAllExamList.addAll(examList);
 
@@ -1407,7 +1459,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.user_education_show_all_exams).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.user_education_no_exam_skip_button).setVisibility(View.GONE);
-
         }
 
 
@@ -1425,10 +1476,19 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
             mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.VISIBLE);
         }else{
+            //if relevant exams are not there
+            mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.user_education_show_all_exams).setVisibility(View.GONE);
+            mStreamRecyclerView.setVisibility(View.GONE);
+            mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.user_education_no_exam_skip_button).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
             TextView emptyText = (TextView) mRootView.findViewById(R.id.empty) ;
             emptyText.setVisibility(View.VISIBLE);
             emptyText.setText(getString(R.string.no_exam_found));
-            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
+            return;
         }
 
         // show searchView for exam
