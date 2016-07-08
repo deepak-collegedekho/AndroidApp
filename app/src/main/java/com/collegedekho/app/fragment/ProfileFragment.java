@@ -996,30 +996,38 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             scoreTypeList.add(baseObject);
         }
 
+        scoreTypeList.add(0,scoreTypeList.remove(2));
         int currentScoreType = mProfile.getCurrent_score_type();
-        boolean isScoretypeSelected = false;
+//        boolean isScoretypeSelected = false;
         if(currentScoreType == ProfileMacro.MARKS){
-
-        }else if(currentScoreType == ProfileMacro.GRADES){
             scoreTypeList.add(0,scoreTypeList.remove(1));
-        }else if(currentScoreType == ProfileMacro.PERCENTAGE){
+        }else if(currentScoreType == ProfileMacro.GRADES){
             scoreTypeList.add(0,scoreTypeList.remove(2));
+        }else if(currentScoreType == ProfileMacro.PERCENTAGE){
+           // scoreTypeList.add(0,scoreTypeList.remove(2));
         }else if(currentScoreType == ProfileMacro.RANK){
             scoreTypeList.add(0,scoreTypeList.remove(3));
         }else if(currentScoreType == ProfileMacro.PERCENTILE){
             scoreTypeList.add(0,scoreTypeList.remove(4));
         }
         else{
-            isScoretypeSelected = true;
+//            isScoretypeSelected = true;
         }
 
         MaterialSpinner currentScoreTypeSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_current_score_type);
-        if(isScoretypeSelected) {
-            currentScoreTypeSpinner.setItems(scoreTypeList, true);
-            currentScoreTypeSpinner.setText("Select Score Type");
-        }else{
+//        if(isScoretypeSelected) {
+//            currentScoreTypeSpinner.setItems(scoreTypeList, true);
+//            if(mProfile.getCurrent_level_id() == ProfileMacro.LEVEL_TWELFTH || mProfile.getCurrent_level_id() == ProfileMacro.LEVEL_TENTH) {
+//                currentScoreTypeSpinner.setText("Percentage");
+//            } else {
+//                currentScoreTypeSpinner.setText("Select Score Type");
+//            }
+//        }else{
             currentScoreTypeSpinner.setItems(scoreTypeList, false);
-        }
+//            if(mProfile.getCurrent_level_id() == ProfileMacro.LEVEL_TWELFTH || mProfile.getCurrent_level_id() == ProfileMacro.LEVEL_TENTH) {
+//                currentScoreTypeSpinner.setText("Percentage");
+//            }
+//        }
 
 
         // set current passing year info about user
