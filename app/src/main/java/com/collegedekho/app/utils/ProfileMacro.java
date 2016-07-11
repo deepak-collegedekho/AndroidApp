@@ -15013,7 +15013,7 @@ public class ProfileMacro {
     }
 
     public static String getStreamJsonForSubLevel(int id){
-        if(id == 7 || id == 8 || id ==9){
+        if(id == 7 || id == 8 || id ==9 || id ==15){
            return  getStreamJson(7);
         }else{
             return getStreamJson(1);

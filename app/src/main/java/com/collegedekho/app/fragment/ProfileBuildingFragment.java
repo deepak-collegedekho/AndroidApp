@@ -451,10 +451,18 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
    @Override
     public void onPause() {
         super.onPause();
+
+       // this code to remove focus from search view
         if (mExamSearchView != null && !mExamSearchView.isIconified()) {
             mExamSearchView.setIconified(true);
-           // mExamSearchView.clearFocus();
+            mExamSearchView.setQuery("", false);
+            mExamSearchView.onActionViewCollapsed();
+
+            if( mRootView != null){
+                (mRootView.findViewById(R.id.user_education_name_edit_text)).requestFocus();
+            }
         }
+
     }
 
     @Override

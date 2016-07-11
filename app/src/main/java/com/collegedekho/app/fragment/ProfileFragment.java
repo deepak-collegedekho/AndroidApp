@@ -810,7 +810,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         int userStreamId = mProfile.getCurrent_stream_id();
 
         // hide current degree and specialization isf user has current level is school
-        if(userStreamId == 16 || userStreamId == 33|| userStreamId == 34 || userStreamId == 35
+        if(userStreamId == 33|| userStreamId == 34 || userStreamId == 35
                 || userStreamId == 36 || userStreamId == 37 || userStreamId == 38 || userStreamId == 39){
             currentSpecializationSpinner.setVisibility(View.GONE);
             currentDegreeSpinner.setVisibility(View.GONE);
@@ -913,7 +913,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 if(mListener == null)
                     return;
                 int streamId = view.getSelectedSpinnerItemId();
-                if(streamId == 16 || streamId == 33|| streamId == 34 || streamId == 35
+                if(streamId == 33|| streamId == 34 || streamId == 35
                         || streamId == 36 || streamId == 37 || streamId == 38 || streamId == 39){
                     currentSpecializationSpinner.setVisibility(View.GONE);
                     currentDegreeSpinner.setVisibility(View.GONE);
