@@ -277,8 +277,6 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             convertView.findViewById(R.id.placement_layout).setVisibility(View.GONE);
 //                placementPercent.setText("---");
         }
-        TextView likes = ((TextView) convertView.findViewById(R.id.vote_count));
-        likes.setText(String.valueOf(institute.getUpvotes()));
         ((TextView)convertView.findViewById(R.id.applied_count)).setText(""+(institute.getUpvotes()+institute.getShortlist_count()));
         final RecyclerView facilitiesRecycler = (RecyclerView) convertView.findViewById(R.id.facilities_recycler);
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 7, LinearLayoutManager.VERTICAL, false);
@@ -517,15 +515,12 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
 
         if(view != null){
-            ((ImageView) view.findViewById(R.id.cd_reco_card_like)).setImageBitmap(like_bitmap);
             // ((ImageView) view.findViewById(R.id.placement_image)).setImageBitmap(placement_bitmap);
             ((ImageView) view.findViewById(R.id.fees_range_image)).setImageBitmap(fees_bitmap);
             ((ImageView) view.findViewById(R.id.btn_details)).setImageBitmap(info_bitmap);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                (view.findViewById(R.id.likes_layout)).setBackground(drawableBubble);
                 (view.findViewById(R.id.heart_layout)).setBackground(drawableHeart);
             }else{
-                (view.findViewById(R.id.likes_layout)).setBackgroundResource(R.drawable.ic_wishlist_bubble);
                 (view.findViewById(R.id.heart_layout)).setBackgroundResource(R.drawable.ic_wishlist_heart);
             }
             ((ImageView) view.findViewById(R.id.see_all_image)).setImageBitmap(facilityArrow_bitmap);

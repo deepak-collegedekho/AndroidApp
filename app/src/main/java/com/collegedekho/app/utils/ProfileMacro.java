@@ -14778,14 +14778,6 @@ public class ProfileMacro {
             "    {\n" +
             "        \"id\": 14,\n" +
             "        \"name\": \"Diploma\"\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"id\": 5,\n" +
-            "        \"name\": \"PG 1st Year\"\n" +
-            "    },\n" +
-            "    {\n" +
-            "        \"id\": 6,\n" +
-            "        \"name\": \"PG 2nd Year\"\n" +
             "    }\n" +
             "]";
 
@@ -15382,7 +15374,7 @@ public class ProfileMacro {
         //Hence -1 on passingYear.
         //Utils.GetCurrentMonth returns index values for months
         //July me 6 return kar raha hai sala
-        passingMonth += 1;
+        passingMonth -= 1;
         if (Utils.GetCurrentMonth() >= 1 && Utils.GetCurrentMonth() <= passingMonth)
             passingYear -= 1;
 

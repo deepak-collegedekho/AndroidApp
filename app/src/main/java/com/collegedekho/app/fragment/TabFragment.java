@@ -663,8 +663,6 @@ public class TabFragment extends  BaseFragment{
 
             Utils.SetCounterAnimation(mExploreCountTV, explore, "" , "", Constants.ANIM_SHORT_DURATION);
             mExploreCountTV.setContentDescription(String.valueOf(explore));
-
-//            important_dateTV.setText(""+this.mExamSummary.getNext_important_date());
         } else {
             mRecommendedCountTV.setVisibility(View.GONE);
             mTrendingCountTV.setVisibility(View.GONE);

@@ -121,6 +121,7 @@
                     android:orientation="horizontal"
                     android:weightSum="1"
                     android:paddingLeft="@dimen/m3dp"
+                    android:visibility="gone"
                     >
                     <LinearLayout
                         android:id="@+id/card_institute_button_like_parent"

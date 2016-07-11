@@ -211,8 +211,6 @@ public final class WishlistCardAdapter {
             this.mCardPeekView.findViewById(R.id.wishlist_institute_placement_layout).setVisibility(View.GONE);
 //                placementPercent.setText("---");
         }
-        TextView likes = ((TextView) this.mCardPeekView.findViewById(R.id.wishlist_institute_vote_count));
-        likes.setText(String.valueOf(this.mInstitute.getUpvotes()));
         ((TextView) this.mCardPeekView.findViewById(R.id.wishlist_applied_count)).setText("" + (this.mInstitute.getUpvotes() + this.mInstitute.getShortlist_count()));
         mFacilitiesRecycler = (RecyclerView) this.mCardPeekView.findViewById(R.id.wishlist_institute_facilities_recycler);
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 7, LinearLayoutManager.VERTICAL, false);
@@ -456,11 +454,8 @@ public final class WishlistCardAdapter {
             facilityArrow_bitmap =  Utils.getBitmapDrawable(this.drawableFacilityArrow);
 
         if(view != null){
-            ((ImageView) view.findViewById(R.id.wishlist_card_like)).setImageBitmap(like_bitmap);
-            // ((ImageView) view.findViewById(R.id.wishlist_institute_placement_image)).setImageBitmap(placement_bitmap);
             ((ImageView) view.findViewById(R.id.wishlist_institute_fees_range_image)).setImageBitmap(fees_bitmap);
             ((ImageView) view.findViewById(R.id.wishlist_btn_details)).setImageBitmap(info_bitmap);
-            (view.findViewById(R.id.wishlist_likes_layout)).setBackground(drawableBubble);
             (view.findViewById(R.id.wishlist_heart_layout)).setBackground(drawableHeart);
             ((ImageView) view.findViewById(R.id.wishlist_institute_see_all_image)).setImageBitmap(facilityArrow_bitmap);
 

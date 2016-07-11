@@ -92,8 +92,8 @@ public class RangeQuestionFragment extends StepByStepFragment {
         final TextView seekBarValue = (TextView) rootView.findViewById(R.id.range_value);
 
         SeekBar seekBar = (SeekBar) rootView.findViewById(R.id.range_seekbar);
-        seekBar.setProgress((this.mMin + this.mMax) >> 1);
-        seekBar.incrementProgressBy(this.mMax/10);
+        seekBar.setProgress((this.mMin + this.mMax)/2);
+        seekBar.incrementProgressBy(5000);
         seekBar.setMax(this.mMax);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

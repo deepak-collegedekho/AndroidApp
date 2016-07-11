@@ -26,6 +26,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -193,8 +194,8 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
             rootView.findViewById(R.id.button_filter).setVisibility(View.GONE);
             rootView.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
         }
-        filterBtn=rootView.findViewById(R.id.button_filter);
-        filters=rootView.findViewById(R.id.filter_tokenLL);
+        filterBtn = rootView.findViewById(R.id.button_filter);
+        filters = rootView.findViewById(R.id.filter_tokenLL);
 
         tokenAdapter = new FilteredArrayAdapter<String>(getActivity(), R.layout.contact_token, new String[]{}) {
             @Override

@@ -37,22 +37,26 @@
         android:background="?attr/colorPrimary"
         android:paddingRight="@dimen/m2dp"
         android:visibility="gone"
-        android:orientation="horizontal">
-           <ScrollView
-               android:layout_width="match_parent"
-               android:layout_height="match_parent">
-        <com.collegedekho.app.widget.tag.textview.ContactsCompletionView
-            android:id="@+id/searchView"
+        android:orientation="horizontal"
+        >
+        <ScrollView
+            android:id="@+id/institute_listing_filter_tags_container"
             android:layout_width="match_parent"
-            android:background="@color/white"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/m5dp"
-            android:paddingRight="@dimen/m5dp"
-            android:imeOptions="actionDone"
-            android:textColor="@color/black"
-            android:textSize="19sp"
-            android:inputType="none"
-            android:focusableInTouchMode="true" />
+            android:layout_height="match_parent"
+            >
+            <com.collegedekho.app.widget.tag.textview.ContactsCompletionView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:background="@color/white"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/m5dp"
+                android:paddingRight="@dimen/m5dp"
+                android:imeOptions="actionDone"
+                android:textColor="@color/black"
+                android:textSize="19sp"
+                android:inputType="none"
+                android:focusableInTouchMode="true"
+                />
         </ScrollView>
     </LinearLayout>
 

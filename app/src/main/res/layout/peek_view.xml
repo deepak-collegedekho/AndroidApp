@@ -121,35 +121,6 @@
                 />
 
             <LinearLayout
-                android:id="@+id/wishlist_likes_layout"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
-                android:layout_alignBottom="@id/wishlist_institute_image"
-                android:layout_marginLeft="@dimen/m10dp"
-                android:gravity="center"
-                android:layout_toRightOf="@id/wishlist_institute_rating_value"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/wishlist_card_like"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="@dimen/m5dp"
-                    android:padding="@dimen/m2dp"/>
-
-                <TextView
-                    android:id="@+id/wishlist_institute_vote_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="@dimen/m5dp"
-                    android:padding="@dimen/m4dp"
-                    android:text="86"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"/>
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/wishlist_overlay_layout"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"

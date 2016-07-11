@@ -409,7 +409,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
 //        this.mLikeImageView = (ImageView)mTopCard.findViewById(R.id.like_textview);
 //        this.mDislikeImageView = (ImageView)mTopCard.findViewById(R.id.dislike_textview);
 //        this.mUndecidedImageView = (ImageView)mTopCard.findViewById(R.id.decide_later_textview);
-        this.mTextView = (TextView) mTopCard.findViewById(R.id.card_recommended_institute_detail);
+//        this.mTextView = (TextView) mTopCard.findViewById(R.id.card_recommended_institute_detail);
 
 //        this.mLikeImageView .setBackgroundResource(R.drawable.ic_shortlist_vector);
 //        this.mDislikeImageView.setBackgroundResource(R.drawable.ic_not_interested_vector);

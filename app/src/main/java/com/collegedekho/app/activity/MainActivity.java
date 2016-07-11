@@ -235,6 +235,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
+//TODO::Put DataObserver on Filter count. If it changes, delete all exam summary to get new
+
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, NavigationView.OnNavigationItemSelectedListener,
         HomeFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
@@ -358,11 +360,8 @@ public class MainActivity extends AppCompatActivity
     ProgressBar searchProgress;
     Handler gcmDialogHandler=new Handler();
     Runnable gcmDialogRunnable;
-    private FrameLayout mContainerFrameLayout;
     private Toolbar mToolbar;
     public View currentBottomItem;
-    private int currentBottomId;
-    public boolean isTabFragmentAdded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -3077,8 +3076,10 @@ public class MainActivity extends AppCompatActivity
      */
     private void mStepByStepDone(String response) {
         try {
-            StepByStepResult sbsResult = JSON.std.beanFrom(StepByStepResult.class, response);
+            //Since after this all the filters are modified in all probabilities.
+            DataBaseHelper.getInstance(this).deleteAllExamSummary();
 
+            StepByStepResult sbsResult = JSON.std.beanFrom(StepByStepResult.class, response);
 
             this.requestForProfile(null, Request.Method.GET);
 
@@ -3862,7 +3863,18 @@ public class MainActivity extends AppCompatActivity
     public void onEndReached(String next, int listType) {
         if (next == null || next.equalsIgnoreCase("null")) return;
         if (listType == Constants.INSTITUTE_TYPE)
-            this.mMakeNetworkCall(Constants.TAG_NEXT_INSTITUTE, next, this.mFilterKeywords);
+        {
+            //Add institute exam tag uri, but only in case of explore option
+            //Because SBS and Search shouldn't be listed as per exams filters
+            Map<String , String> params = this.mGetTheFilters();
+
+            if(this.mExamTag != null && !this.mExamTag.isEmpty())
+                params.put("tag_uris[" + (params.size()) + "]",this.mExamTag);
+
+            this.mMakeNetworkCall(Constants.TAG_NEXT_INSTITUTE, next, params);
+
+            //TODO:: Its Dangerous. Remove common tags for search, sbs and explore institute list in case of next. Each Tag should be made unique as far as possible. And when we are stable we should trim the possible cases to common tag.
+        }
        else if (listType == Constants.WISH_LIST_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_WISHLIST_INSTITUTE, next, null);
         else if (listType == Constants.NEWS_TYPE)
@@ -6627,7 +6639,7 @@ public class MainActivity extends AppCompatActivity
     private void doSearch(String searchString) {
 
         if (currentFragment != null && currentFragment instanceof InstituteListFragment) {
-
+            this.mExamTag = "";
             this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/search=" + searchString, null);
         } else if (currentFragment != null && currentFragment instanceof QnAQuestionsListFragment) {
 
@@ -6639,7 +6651,7 @@ public class MainActivity extends AppCompatActivity
 
             this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, Constants.BASE_URL + "articles/search=" + searchString + "/", null);
         } else if ((currentFragment != null && currentFragment instanceof HomeFragment) || (currentFragment != null && currentFragment instanceof TabFragment)) {
-
+            this.mExamTag = "";
             this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/search=" + searchString + "/", null);
         }
     }
@@ -6647,21 +6659,14 @@ public class MainActivity extends AppCompatActivity
     private void closeSearch() {
 
         if (currentFragment != null && currentFragment instanceof InstituteListFragment) {
-
             this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", null);
         } else if (currentFragment != null && currentFragment instanceof QnAQuestionsListFragment) {
             this.mMakeNetworkCall(Constants.SEARCH_QNA, Constants.BASE_URL + "personalize/qna/", null);
-
         } else if (currentFragment != null && currentFragment instanceof NewsFragment) {
-
             this.mMakeNetworkCall(Constants.SEARCH_NEWS, Constants.BASE_URL + "personalize/news", null);
         } else if (currentFragment != null && currentFragment instanceof ArticleFragment) {
-
             this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, Constants.BASE_URL + "personalize/articles", null);
-        } else {
-//            this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL+"personalize/institutes/", null);
         }
-
     }
 
     Runnable searchRunnable;
