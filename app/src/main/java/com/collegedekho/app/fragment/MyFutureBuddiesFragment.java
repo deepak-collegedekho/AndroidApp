@@ -93,8 +93,10 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                 else
                 {
                     User user =MainActivity.user;
-                    if (user == null || user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous user"))
-                    {
+                    if (user == null || user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous user")) {
+
+                        String name = MainActivity.mProfile.getName();
+
                         mChatText.setText("");
                          // get name from my profile me
                         if(user.profileData[0] != null){

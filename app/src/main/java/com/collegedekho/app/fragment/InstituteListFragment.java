@@ -116,6 +116,11 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_institute_listing, container, false);
 
+        String definedFilters = getActivity().getSharedPreferences(((MainActivity) getActivity()).getResourceString(R.string.PREFS), getActivity().MODE_PRIVATE).getString(Constants.SELECTED_FILTERS, null);
+        if (definedFilters != null && definedFilters != "") {
+
+        }
+
         Animation animation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.simple_grow);
 
         //toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
@@ -421,14 +426,14 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         View v = getView();
         if (v != null) {
             this.filterCount = filterCount;
-            if (filterCount <= 2) {
-                getView().findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
-                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter_vector), this.getActivity().getResources().getColor(R.color.white)));
-            }
-            else {
+//            if (filterCount <= 2) {
+//                getView().findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
+//                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter_vector), this.getActivity().getResources().getColor(R.color.white)));
+//            }
+//            else {
                 getView().findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
                 ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter_vector), this.getActivity().getResources().getColor(R.color.primary_orange)));
-            }
+//            }
             if(filtersApplied == 0){
                 v.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
                 ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter_vector), this.getActivity().getResources().getColor(R.color.white)));
