@@ -487,7 +487,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     public void OnInstituteLiked(Institute institute, boolean isLastCard) {
         this.mRemoveInstituteFromList();
         if(isLastCard){
-            if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal() && this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null")){
+            if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()
+                    && this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null")){
                 this.mListener.OnCDRecommendedLoadMoreBuzzlist(this.mNextUrl);
                 return;
             }

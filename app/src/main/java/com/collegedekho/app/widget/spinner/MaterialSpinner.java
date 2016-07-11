@@ -78,6 +78,7 @@ public class MaterialSpinner extends TextView {
   private boolean isMultiSelection;
   private List<ProfileSpinnerItem> items;
   private Context mContext ;
+  private TextView mTitle;
 
   public MaterialSpinner(Context context) {
     super(context);
@@ -149,6 +150,9 @@ public class MaterialSpinner extends TextView {
         setCompoundDrawablesWithIntrinsicBounds(null, null, arrowDrawable, null);
       }
     }
+    mTitle = new TextView(mContext);
+    mTitle.setText("Title");
+
 
     popupWindow = new PopupWindow(context);
     LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -239,6 +243,7 @@ public class MaterialSpinner extends TextView {
       }
     });
   }
+
 
   @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     popupWindow.setWidth(MeasureSpec.getSize(widthMeasureSpec));

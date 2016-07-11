@@ -14,7 +14,7 @@ import android.view.animation.DecelerateInterpolator;
 import com.collegedekho.app.R;
 
 /**
- * Created by Mikhael LOPEZ on 16/10/2015.
+ * Created by Suresh Saini on 16/10/2015.
  */
 public class CircularProgressBar extends View {
 

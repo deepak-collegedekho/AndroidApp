@@ -409,7 +409,7 @@ public class MainActivity extends AppCompatActivity
         this.mResources = getResources();
         //this.getBitMapResources();
 
-        this.mSnackbar = Snackbar.make(this.findViewById(R.id.main_activity_container), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
+        this.mSnackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
         Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
         layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
 
@@ -722,7 +722,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         mToolbar.setNavigationContentDescription("Select to go to home screen");
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_activity_container);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         // TODO :: implement navigation drawer
        /* ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -750,7 +750,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_share) {
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_activity_container);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -4546,7 +4546,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_activity_container);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }

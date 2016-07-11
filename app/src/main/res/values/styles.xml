@@ -12,6 +12,7 @@
         <item name="android:activatedBackgroundIndicator">@drawable/bg_navigation_activated</item>
         <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
     </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -657,5 +658,11 @@
         <item name="android:layout_marginTop">@dimen/m10dp</item>
         <item name="android:textColorHint">@color/black</item>
     </style>
+    <style name="ProfileTitleSpinner" parent="Theme.AppCompat">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginTop">@dimen/m10dp</item>
+    </style>
+
 
 </resources>

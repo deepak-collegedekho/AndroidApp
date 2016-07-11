@@ -436,7 +436,7 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
                     return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
                 }
         } else if (question.getName().equals("preferred_mode")) {
-                if (MainActivity.mProfile.getPreferred_mode() == -1) {
+                if (MainActivity.mProfile.getPreferred_mode() == 0) {
                     return question;
                 } else {
                     questionAnswered(question);
@@ -456,7 +456,15 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
                     questionAnswered(question);
                     return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
                 }
-        } else {
+        } else if (question.getName().equals("preferred_fee_range_max")) {
+            if (MainActivity.mProfile.getPreferred_fee_range_max() == 0) {
+                return question;
+            } else {
+                questionAnswered(question);
+                return getQuestion(stepByStepQuestions = new ArrayList<>(JSON.std.listOfFrom(StepByStepQuestion.class, sharedPreferences.getString(Constants.QUESTIONS_LIST_KEY, null))));
+            }
+        }
+        else {
                 return question;
         }
     }

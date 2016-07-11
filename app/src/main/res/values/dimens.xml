@@ -68,6 +68,7 @@
     <dimen name="m180dp">180dp</dimen>
     <dimen name="m200dp">200dp</dimen>
     <dimen name="m220dp">220dp</dimen>
+    <dimen name="m250dp">250dp</dimen>
     <dimen name="m280dp">280dp</dimen>
     <dimen name="m300dp">300dp</dimen>
     <dimen name="m400dp">400dp</dimen>

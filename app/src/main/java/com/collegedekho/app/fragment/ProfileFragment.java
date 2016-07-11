@@ -109,7 +109,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         if(mProfile.getIs_verified() == ProfileMacro.NUMBER_VERIFIED)
             mRootView.findViewById(R.id.profile_login_button).setVisibility(View.GONE);
         else
-           mRootView.findViewById(R.id.profile_login_button).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.profile_login_button).setVisibility(View.VISIBLE);
 
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             mPlusDrawable = VectorDrawableCompat.create(getActivity().getResources(), R.drawable.ic_add_inline_vector23dp, null);
@@ -169,7 +169,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         if (email != null && !email.isEmpty() && !email.contains("@anonymouscollegedekho.com")) {
             ((TextView) mRootView.findViewById(R.id.profile_info_email)).setText(email);
         } else {
-             email = Utils.getDeviceEmail(getActivity());
+            email = Utils.getDeviceEmail(getActivity());
             ((TextView) mRootView.findViewById(R.id.profile_info_email)).setText(email);
         }
 
@@ -514,46 +514,46 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 mRequestForImageCapture();
                 break;
             case R.id.profile_expand_info_btn:
-                    View view = mRootView.findViewById(R.id.profile_expanded_info_layout);
-                    if(view.getVisibility()== View.VISIBLE) {
-                        ((ImageView)mRootView.findViewById(R.id.profile_expand_info_btn)).setImageDrawable(mPlusDrawable);
-                        view.setVisibility(View.GONE);
-                    }else {
-                        ((ImageView)mRootView.findViewById(R.id.profile_expand_info_btn)).setImageDrawable(mMinusDrawable);
-                        view.setVisibility(View.VISIBLE);
-                     }
+                View view = mRootView.findViewById(R.id.profile_expanded_info_layout);
+                if(view.getVisibility()== View.VISIBLE) {
+                    ((ImageView)mRootView.findViewById(R.id.profile_expand_info_btn)).setImageDrawable(mPlusDrawable);
+                    view.setVisibility(View.GONE);
+                }else {
+                    ((ImageView)mRootView.findViewById(R.id.profile_expand_info_btn)).setImageDrawable(mMinusDrawable);
+                    view.setVisibility(View.VISIBLE);
+                }
                 break;
             case R.id.profile_expand_education_btn:
-                    view = mRootView.findViewById(R.id.profile_expanded_education_layout);
-                    if(view.getVisibility()== View.VISIBLE) {
-                        ((ImageView)mRootView.findViewById(R.id.profile_expand_education_btn)).setImageDrawable(mPlusDrawable);
-                        view.setVisibility(View.GONE);
-                    }else {
-                        ((ImageView)mRootView.findViewById(R.id.profile_expand_education_btn)).setImageDrawable(mMinusDrawable);
-                        view.setVisibility(View.VISIBLE);
-                    }
+                view = mRootView.findViewById(R.id.profile_expanded_education_layout);
+                if(view.getVisibility()== View.VISIBLE) {
+                    ((ImageView)mRootView.findViewById(R.id.profile_expand_education_btn)).setImageDrawable(mPlusDrawable);
+                    view.setVisibility(View.GONE);
+                }else {
+                    ((ImageView)mRootView.findViewById(R.id.profile_expand_education_btn)).setImageDrawable(mMinusDrawable);
+                    view.setVisibility(View.VISIBLE);
+                }
                 break;
             case R.id.profile_expand_preferred_btn:
-                    view = mRootView.findViewById(R.id.profile_expanded_preferred_layout);
-                    if(view.getVisibility()== View.VISIBLE) {
-                        ((ImageView)mRootView.findViewById(R.id.profile_expand_preferred_btn)).setImageDrawable(mPlusDrawable);
-                        setPreferredEducationInfo(false);
-                        view.setVisibility(View.GONE);
-                    } else {
-                        ((ImageView)mRootView.findViewById(R.id.profile_expand_preferred_btn)).setImageDrawable(mMinusDrawable);
-                        view.setVisibility(View.VISIBLE);
-                        setPreferredEducationInfo(true);
-                    }
+                view = mRootView.findViewById(R.id.profile_expanded_preferred_layout);
+                if(view.getVisibility()== View.VISIBLE) {
+                    ((ImageView)mRootView.findViewById(R.id.profile_expand_preferred_btn)).setImageDrawable(mPlusDrawable);
+                    setPreferredEducationInfo(false);
+                    view.setVisibility(View.GONE);
+                } else {
+                    ((ImageView)mRootView.findViewById(R.id.profile_expand_preferred_btn)).setImageDrawable(mMinusDrawable);
+                    view.setVisibility(View.VISIBLE);
+                    setPreferredEducationInfo(true);
+                }
                 break;
 
             case R.id.profile_expand_exams_btn:
-                 if(mRootView.findViewById(R.id.profile_exams_name).isSelected() == true) {
+                if(mRootView.findViewById(R.id.profile_exams_name).isSelected() == true) {
                     // ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mPlusDrawable);
-                        mExpandUserExamsLayout(false);
-                    }else{
+                    mExpandUserExamsLayout(false);
+                }else{
                     // ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mMinusDrawable);
-                        mExpandUserExamsLayout(true);
-                    }
+                    mExpandUserExamsLayout(true);
+                }
                 break;
 
             case R.id.profile_expand_other_info_btn:
@@ -835,7 +835,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                         // request for degrees
                         mRequestForCurrentSubLevelDegreesList(userSubLevelId);
 
-                      currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJsonForSubLevel(pObj.getId()));
+                        currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJsonForSubLevel(pObj.getId()));
                         int streamCount = currentStreamList.size();
                         for(int j =0 ; j < streamCount; j++){
                             ProfileSpinnerItem pStreamObj = currentStreamList.get(j);
@@ -888,7 +888,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                             currentStreamSpinner.setText("Select your Stream");
 
                         // hide specialization and degree layout if stream is is school level
-                         if(selectedId == 7 || selectedId == 8 || selectedId == 9){
+                        if(selectedId == 7 || selectedId == 8 || selectedId == 9){
                             currentSpecializationSpinner.setVisibility(View.GONE);
                             currentDegreeSpinner.setVisibility(View.GONE);
                         }
@@ -956,7 +956,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             e.printStackTrace();
         }
 
-       // set education mode
+        // set education mode
         int  currentEducationModeId = mProfile.getCurrent_mode();
         MaterialSpinner educationModeSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_current_mode);
         ArrayList<ProfileSpinnerItem> educationModeList = ProfileMacro.getEducationModeList();
@@ -1002,7 +1002,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }else if(currentScoreType == ProfileMacro.GRADES){
             scoreTypeList.add(0,scoreTypeList.remove(2));
         }else if(currentScoreType == ProfileMacro.PERCENTAGE){
-           // scoreTypeList.add(0,scoreTypeList.remove(2));
+            // scoreTypeList.add(0,scoreTypeList.remove(2));
         }else if(currentScoreType == ProfileMacro.RANK){
             scoreTypeList.add(0,scoreTypeList.remove(3));
         }else if(currentScoreType == ProfileMacro.PERCENTILE){
@@ -1021,7 +1021,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 //                currentScoreTypeSpinner.setText("Select Score Type");
 //            }
 //        }else{
-            currentScoreTypeSpinner.setItems(scoreTypeList, false);
+        currentScoreTypeSpinner.setItems(scoreTypeList, false);
 //            if(mProfile.getCurrent_level_id() == ProfileMacro.LEVEL_TWELFTH || mProfile.getCurrent_level_id() == ProfileMacro.LEVEL_TENTH) {
 //                currentScoreTypeSpinner.setText("Percentage");
 //            }
@@ -1459,17 +1459,17 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             userCityIdValue = userCityIdValue +userCityId;
         }else{
             if(mProfile != null && mProfile.getCity_id() > 0)
-              userCityIdValue = ""+mProfile.getCity_id();
+                userCityIdValue = ""+mProfile.getCity_id();
         }
         String userSocialCategoryIdValue ="";
         int userSocialCategoryId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_category)).getSelectedSpinnerItemId();
         if (userSocialCategoryId > 0) {
-           userSocialCategoryIdValue = userSocialCategoryIdValue+userSocialCategoryId;
+            userSocialCategoryIdValue = userSocialCategoryIdValue+userSocialCategoryId;
         }
         String userMotherTongueIdValue = "";
         int userMotherTongueId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_mother_tongue)).getSelectedSpinnerItemId();
-       if (userMotherTongueId > 0) {
-           userMotherTongueIdValue = userMotherTongueIdValue+userMotherTongueId;
+        if (userMotherTongueId > 0) {
+            userMotherTongueIdValue = userMotherTongueIdValue+userMotherTongueId;
         }
 
         HashMap<String, String> params = new HashMap<>();
@@ -1491,9 +1491,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         String currentSubLevelIdValue ="";
         int userCurrentSubLevelId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_sub_level)).getSelectedSpinnerItemId();
         if (userCurrentSubLevelId > 0) {
-           currentSubLevelIdValue  +=  userCurrentSubLevelId;
+            currentSubLevelIdValue  +=  userCurrentSubLevelId;
         }
-         String currentStreamIdValue ="";
+        String currentStreamIdValue ="";
         int userCurrentStreamId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_stream)).getSelectedSpinnerItemId();
        /* if (userCurrentStreamId > 0) {
             currentStreamIdValue += userCurrentStreamId;
@@ -1501,17 +1501,17 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             if(mProfile != null && mProfile.getCurrent_stream_id() > 0)
             currentStreamIdValue = ""+mProfile.getCurrent_stream_id();
         }*/
-       if (userCurrentStreamId < 0) {
+        if (userCurrentStreamId < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Stream.");
             return;
         }else{
-           currentStreamIdValue += userCurrentStreamId;
-       }
+            currentStreamIdValue += userCurrentStreamId;
+        }
         String currentSpecilizationIdValue ="";
         int userCurrentSpecializationId = mProfile.getCurrent_specialization_id();
         if(!(userCurrentStreamId == 16 || userCurrentStreamId == 7 || userCurrentStreamId == 33 ||userCurrentStreamId == 34 ||
                 userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37) || userCurrentStreamId == 38 || userCurrentStreamId == 39){
-             userCurrentSpecializationId= ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_specialization)).getSelectedSpinnerItemId();
+            userCurrentSpecializationId= ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_specialization)).getSelectedSpinnerItemId();
             /*if (userCurrentSpecializationId > 0) {
                 currentSpecilizationIdValue +=userCurrentSpecializationId ;
             }else{
@@ -1592,8 +1592,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
         String preferredSubLevelValue ="";
         int preferredSubLevelId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_level)).getSelectedSpinnerItemId();
-       if (preferredSubLevelId  > 0) {
-           preferredSubLevelValue += preferredSubLevelId;
+        if (preferredSubLevelId  > 0) {
+            preferredSubLevelValue += preferredSubLevelId;
         }
         String preferredStreamIdValue ="";
         int preferredStreamId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_stream)).getSelectedSpinnerItemId();
@@ -1603,32 +1603,32 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             if(mProfile != null && mProfile.getPreferred_stream_id() > 0)
                 preferredStreamIdValue = ""+mProfile.getPreferred_stream_id();
         }*/
-         if (preferredStreamId < 0) {
+        if (preferredStreamId < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Stream.");
             return;
         }
         else{
-             preferredStreamIdValue += preferredStreamId;
-         }
+            preferredStreamIdValue += preferredStreamId;
+        }
         String preferredSpecializationIdvalue ="";
         int preferredSpecializationId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_specialization)).getSelectedSpinnerItemId();
-        /*if (preferredSpecializationId  >0) {
+        if (preferredSpecializationId  >0) {
             preferredSpecializationIdvalue +=preferredSpecializationId ;
         }
         else{
             if(mProfile != null && mProfile.getPreferred_specialization_id() > 0)
                 preferredSpecializationIdvalue = ""+mProfile.getPreferred_specialization_id();
-        }*/
-        if (preferredSpecializationId < 0) {
+        }
+       /* if (preferredSpecializationId < 0) {
             Utils.DisplayToast(getContext(), "Please Select your Specialization.");
             return;
         }else{
             preferredSpecializationIdvalue +=preferredSpecializationId ;
-        }
+        }*/
         String feeRangeMaxValue ="";
         int feeRangeMax = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_preferred_feee_range)).getSelectedSpinnerItemId();
-       if (feeRangeMax > 0) {
-           feeRangeMaxValue += feeRangeMax ;
+        if (feeRangeMax > 0) {
+            feeRangeMaxValue += feeRangeMax ;
         }
 
        /* int loanRequiredButtonId = ((SegmentedGroup) mRootView.findViewById(R.id.profile_loan_required_group)).getCheckedRadioButtonId();
@@ -1768,8 +1768,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 if(pObj.isSelected())
                     selectedCityCount++;
             }
-           if(mPreferredCitiesList.size() > 1)
-            preferredCitySpinner.setText("City("+selectedCityCount+")");
+            if(mPreferredCitiesList.size() > 1)
+                preferredCitySpinner.setText("City("+selectedCityCount+")");
         }
 
     }
@@ -1857,7 +1857,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
 
         // Add the camera options.
-       chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
 
         getActivity().startActivityForResult(chooserIntent, Constants.REQUEST_PICK_IMAGE);
     }
@@ -1994,15 +1994,15 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     public void updateUserName(){
         if(MainActivity.mProfile == null)
             return;
-            String name = MainActivity.mProfile.getName();
-            if(name != null && !name.isEmpty()
-                    &&  !name.equalsIgnoreCase(getResources().getString(R.string.ANONYMOUS_USER))){
-                ((TextView)mRootView.findViewById(R.id.profile_edit_name)).setText(name);
-            }
+        String name = MainActivity.mProfile.getName();
+        if(name != null && !name.isEmpty()
+                &&  !name.equalsIgnoreCase(getResources().getString(R.string.ANONYMOUS_USER))){
+            ((TextView)mRootView.findViewById(R.id.profile_edit_name)).setText(name);
+        }
 
-            String image = MainActivity.mProfile.getImage();
-            if (image != null && ! image.isEmpty())
-                mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+        String image = MainActivity.mProfile.getImage();
+        if (image != null && ! image.isEmpty())
+            mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
 
     }
 
@@ -2014,28 +2014,28 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             mRootView.findViewById(R.id.profile_expand_info_btn).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.profile_info_edit_layout).setVisibility(View.GONE);
             mRootView.findViewById(R.id.profile_expanded_info_layout).setVisibility(View.GONE);
-           // onClick(mRootView.findViewById(R.id.profile_expand_info_btn));
+            // onClick(mRootView.findViewById(R.id.profile_expand_info_btn));
         }else if(viewPosition == 1){
             mRootView.findViewById(R.id.profile_education_layout).setVisibility(View.VISIBLE);
             ((ImageView)mRootView.findViewById(R.id.profile_expand_education_btn)).setImageDrawable(mPlusDrawable);
             mRootView.findViewById(R.id.profile_expand_education_btn).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.profile_education_edit_layout).setVisibility(View.GONE);
             mRootView.findViewById(R.id.profile_expanded_education_layout).setVisibility(View.GONE);
-          //  onClick(mRootView.findViewById(R.id.profile_expand_education_btn));
+            //  onClick(mRootView.findViewById(R.id.profile_expand_education_btn));
         }else if(viewPosition == 2){
             mRootView.findViewById(R.id.profile_preferred_layout).setVisibility(View.VISIBLE);
             ((ImageView)mRootView.findViewById(R.id.profile_expand_preferred_btn)).setImageDrawable(mPlusDrawable);
             mRootView.findViewById(R.id.profile_expand_preferred_btn).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.profile_preferred_edit_layout).setVisibility(View.GONE);
             mRootView.findViewById(R.id.profile_expanded_preferred_layout).setVisibility(View.GONE);
-          //  onClick(mRootView.findViewById(R.id.profile_expand_preferred_btn));
+            //  onClick(mRootView.findViewById(R.id.profile_expand_preferred_btn));
         }else if(viewPosition == 4){
             mRootView.findViewById(R.id.profile_other_info_layout).setVisibility(View.VISIBLE);
             ((ImageView)mRootView.findViewById(R.id.profile_expand_other_info_btn)).setImageDrawable(mPlusDrawable);
-           mRootView.findViewById(R.id.profile_expand_other_info_btn).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.profile_expand_other_info_btn).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.profile_other_info_edit_layout).setVisibility(View.GONE);
             mRootView.findViewById(R.id.profile_expanded_other_info_layout).setVisibility(View.GONE);
-           // onClick(mRootView.findViewById(R.id.profile_expand_other_info_btn));
+            // onClick(mRootView.findViewById(R.id.profile_expand_other_info_btn));
         }
     }
 

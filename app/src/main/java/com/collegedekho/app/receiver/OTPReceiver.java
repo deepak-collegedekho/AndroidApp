@@ -9,7 +9,9 @@ import android.telephony.SmsMessage;
 
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.OTPVerificationFragment;
+import com.collegedekho.app.fragment.PostAnonymousLoginFragment;
 import com.collegedekho.app.resource.Constants;
 
 import java.util.HashMap;
@@ -42,8 +44,13 @@ public class OTPReceiver extends BroadcastReceiver {
                                     // TODO :: change this code  instead of checking current
                                     // TODO:: instance to some other logic
                                     if(MainActivity.currentFragment != null
-                                            && !(MainActivity.currentFragment instanceof OTPVerificationFragment))
-                                    {
+                                            && (MainActivity.currentFragment instanceof LoginFragment
+                                            || MainActivity.currentFragment instanceof OTPVerificationFragment
+                                            || MainActivity.currentFragment instanceof PostAnonymousLoginFragment)) {
+                                        Intent otpIntent = new Intent(Constants.OTP_INTENT_FILTER);
+                                        otpIntent.putExtra(Constants.USER_OTP, otp);
+                                        LocalBroadcastManager.getInstance(context).sendBroadcast(otpIntent);
+                                    }else{
                                         Profile profile = MainActivity.mProfile;
                                         if(profile!= null && profile.getPhone_no() != null
                                                 && profile.getPhone_no().length() ==10){
@@ -57,10 +64,6 @@ public class OTPReceiver extends BroadcastReceiver {
 
                                         }
 
-                                    }else {
-                                        Intent otpIntent = new Intent(Constants.OTP_INTENT_FILTER);
-                                        otpIntent.putExtra(Constants.USER_OTP, otp);
-                                        LocalBroadcastManager.getInstance(context).sendBroadcast(otpIntent);
                                     }
                                 }
                             }

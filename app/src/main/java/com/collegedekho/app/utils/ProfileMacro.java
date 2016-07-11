@@ -1,6 +1,7 @@
 package com.collegedekho.app.utils;
 
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
 
 import java.util.ArrayList;
@@ -14747,6 +14748,10 @@ public class ProfileMacro {
             "        \"name\": \"12th\"\n" +
             "    },\n" +
             "    {\n" +
+            "        \"id\": 15,\n" +
+            "        \"name\": \"Completed 12th\"\n" +
+            "    },\n" +
+            "    {\n" +
             "        \"id\": 1,\n" +
             "        \"name\": \"College 1st Year\"\n" +
             "    },\n" +
@@ -14761,6 +14766,10 @@ public class ProfileMacro {
             "    {\n" +
             "        \"id\": 4,\n" +
             "        \"name\": \"College 4th Year\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 16,\n" +
+            "        \"name\": \"Completed College\"\n" +
             "    },\n" +
             "    {\n" +
             "        \"id\": 13,\n" +
@@ -15186,7 +15195,7 @@ public class ProfileMacro {
 
         for (int i = 1; i < 6; i++) {
             ProfileSpinnerItem item = new  ProfileSpinnerItem();
-            item.setId(i);
+            item.setId(i*100000);
             item.setName(getFeeRangeName(i*100000));
             feesRangeList.add(item);
         }
@@ -15277,8 +15286,11 @@ public class ProfileMacro {
                 return ProfileMacro.CURRENT_SUB_LEVEL_SCHOOL_10TH;
             else if(which == 1)
                 return ProfileMacro.CURRENT_SUB_LEVEL_SCHOOL_11TH;
-            else
+            else if(which == 2)
                 return ProfileMacro.CURRENT_SUB_LEVEL_SCHOOL_12TH;
+            else
+                return ProfileMacro.CURRENT_SUB_LEVEL_12TH_COMPLETE;
+
         }else  if(level == ProfileMacro.LEVEL_UNDER_GRADUATE){
             if(which == 0)
                 return ProfileMacro.CURRENT_SUB_LEVEL_COLLEGE_1;
@@ -15286,8 +15298,10 @@ public class ProfileMacro {
                 return ProfileMacro.CURRENT_SUB_LEVEL_COLLEGE_2;
             else if(which == 2)
                 return ProfileMacro.CURRENT_SUB_LEVEL_COLLEGE_3;
-            else
+            else if(which == 3)
                 return ProfileMacro.CURRENT_SUB_LEVEL_COLLEGE_4;
+            else
+                return ProfileMacro.CURRENT_SUB_LEVEL_COLLEGE_COMPLETE;
         }
         else {
             if (which == 0)
@@ -15455,10 +15469,12 @@ public class ProfileMacro {
     public static int CURRENT_SUB_LEVEL_SCHOOL_10TH = 7;
     public static int CURRENT_SUB_LEVEL_SCHOOL_11TH = 9;
     public static int CURRENT_SUB_LEVEL_SCHOOL_12TH = 8;
+    public static int CURRENT_SUB_LEVEL_12TH_COMPLETE = 15;
     public static int CURRENT_SUB_LEVEL_COLLEGE_1 = 1;
     public static int CURRENT_SUB_LEVEL_COLLEGE_2 = 2;
     public static int CURRENT_SUB_LEVEL_COLLEGE_3 = 3;
     public static int CURRENT_SUB_LEVEL_COLLEGE_4 = 4;
+    public static int CURRENT_SUB_LEVEL_COLLEGE_COMPLETE = 16;
     public static int CURRENT_SUB_LEVEL_PG_1 = 5;
     public static int CURRENT_SUB_LEVEL_PG_2 = 6;
 
@@ -15502,8 +15518,8 @@ public class ProfileMacro {
     public static int GENDER_FEMALE = 2;
 
     // Sub Level String Arrays
-    public static CharSequence[] SUB_LEVEL_SCHOOL = {"In 10th", "In 11th", "In 12th"};
-    public static CharSequence[] SUB_LEVEL_COLLEGE = {"College 1st Year", "College 2nd Year", "College 3rd Year", "College 4th Year"};
+    public static CharSequence[] SUB_LEVEL_SCHOOL = {"In 10th", "In 11th", "In 12th", "Completed 12th"};
+    public static CharSequence[] SUB_LEVEL_COLLEGE = {"College 1st Year", "College 2nd Year", "College 3rd Year", "College 4th Year", "Completed College"};
     public static CharSequence[] SUB_LEVEL_PG = {"PG 1st year", "PG 2nd year"};
 
     private static ArrayList<ProfileSpinnerItem> motherTongueList ;
