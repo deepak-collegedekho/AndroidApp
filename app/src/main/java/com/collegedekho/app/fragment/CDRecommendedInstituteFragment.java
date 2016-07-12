@@ -1,6 +1,5 @@
 package com.collegedekho.app.fragment;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,12 +35,11 @@ import java.util.List;
 public class CDRecommendedInstituteFragment extends BaseFragment implements SimpleCardStackAdapter.OnCDRecommendedAdapterInterface, CardContainer.OnSwipeDirectionListener {
     public static final String TITLE = "CDRecommendedInstitutes";
     private static final String ARG_INSTITUTE = "cdrecommendedinstitute";
-    private static final String ARG_UNDECIDED_INSTITUTE_COUNT = "undecided_institute_count";
-    private static final String ARG_WISHLIST_INSTITUTE_COUNT = "wishlist_institute_count";
-    private static final String ARG_BUZZLIST_INSTITUTE_COUNT = "buzzlist_institute_count";
-
-    public static final int TAB_RECOMMENDED= 1;
-    public static final int TAB_WISHLIST= 2;
+    private static final String ARG_CARD_CATEGORY = "CARD_CATEGORY";
+    private static final String ARG_RECOMMENDED_INSTITUTE_COUNT = "recommended_institute_count";
+    private static final String ARG_WISHLIST_INSTITUTE_COUNT    = "wishlist_institute_count";
+    private static final String ARG_BUZZLIST_INSTITUTE_COUNT    = "buzzlist_institute_count";
+    private static final String ARG_UNDECIDED_INSTITUTE_COUNT   = "undecided_institute_count";
 
     private ArrayList<Institute> mInstitutes;
     private String mTitle;
@@ -67,10 +65,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     private TextView mUndecidedCountText;
     private TextView mBuzzListCountText;
     private TextView mRecommendedCountText;
-    private TextView mWishListCountText;
+    private TextView mShortListCountText;
     private int mUndecidedCount;
-    private int mRecomendedCount;
-    private int mWishListCount;
+    private int mRecommendedCount;
+    private int mShortListCount;
     private int mBuzzListCount;
     private View currentTab;
     public int currentTabId;
@@ -82,16 +80,17 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     }
 
     public static CDRecommendedInstituteFragment newInstance(ArrayList<Institute> institutes, String title,String next,
-                                                             int undecidedCount, int wishListCount, int  buzzListCount, int category) {
+                                                             int recommendedCount, int wishListCount, int  buzzListCount, int undecidedCount, int category) {
         CDRecommendedInstituteFragment fragment = new CDRecommendedInstituteFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(ARG_INSTITUTE, institutes);
         args.putString(ARG_TITLE, title);
         args.putString(ARG_NEXT, next);
-        args.putInt(ARG_UNDECIDED_INSTITUTE_COUNT, undecidedCount);
+        args.putInt(ARG_RECOMMENDED_INSTITUTE_COUNT, recommendedCount);
         args.putInt(ARG_WISHLIST_INSTITUTE_COUNT, wishListCount);
         args.putInt(ARG_BUZZLIST_INSTITUTE_COUNT, buzzListCount);
-        args.putInt("CARD_CATEGORY",category);
+        args.putInt(ARG_UNDECIDED_INSTITUTE_COUNT, undecidedCount);
+        args.putInt(ARG_CARD_CATEGORY,category);
         fragment.setArguments(args);
         return fragment;
     }
@@ -103,12 +102,11 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             this.mInstitutes = this.getArguments().getParcelableArrayList(ARG_INSTITUTE);
             this.mTitle = this.getArguments().getString(ARG_TITLE);
             this.mNextUrl = this.getArguments().getString(ARG_NEXT);
-            if(mInstitutes != null)
-            this.mRecomendedCount = this.mInstitutes.size();
-            this.mUndecidedCount = this.getArguments().getInt(ARG_UNDECIDED_INSTITUTE_COUNT);
-            this.mWishListCount = this.getArguments().getInt(ARG_WISHLIST_INSTITUTE_COUNT);
+            this.mRecommendedCount = this.getArguments().getInt(ARG_RECOMMENDED_INSTITUTE_COUNT);
+            this.mShortListCount = this.getArguments().getInt(ARG_WISHLIST_INSTITUTE_COUNT);
             this.mBuzzListCount = this.getArguments().getInt(ARG_BUZZLIST_INSTITUTE_COUNT);
-            this.CARD_CATEGORY =this.getArguments().getInt("CARD_CATEGORY");
+            this.mUndecidedCount = this.getArguments().getInt(ARG_UNDECIDED_INSTITUTE_COUNT);
+            this.CARD_CATEGORY =this.getArguments().getInt(ARG_CARD_CATEGORY);
         }
     }
 
@@ -139,7 +137,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mUndecidedCountText    = (TextView)rootView.findViewById(R.id.badge_counter);
         this.mBuzzListCountText     = (TextView)rootView.findViewById(R.id.cd_reco_buzzlist_count);
         this.mRecommendedCountText  = (TextView)rootView.findViewById(R.id.cd_reco_recommended_count);
-        this.mWishListCountText     = (TextView)rootView.findViewById(R.id.cd_reco_wishlist_count);
+        this.mShortListCountText = (TextView)rootView.findViewById(R.id.cd_reco_wishlist_count);
         this.questionLayout         = rootView.findViewById(R.id.ask_user_layout);
         this.mNoMoreFeaturedLayout  = rootView.findViewById(R.id.no_more_featured_layout);
         this.wishListRecyclerView   = (RecyclerView) rootView.findViewById(R.id.cd_reco_wish_list_institute_grid);
@@ -153,8 +151,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.wishListRecyclerView.addOnScrollListener(scrollListener);
 
         this.mUndecidedCountText.setText(""+this.mUndecidedCount);
-        this.mRecommendedCountText.setText(""+this.mRecomendedCount);
-        this.mWishListCountText.setText(""+this.mWishListCount);
+        this.mRecommendedCountText.setText(""+this.mRecommendedCount);
+        this.mShortListCountText.setText(""+this.mShortListCount);
         this.mBuzzListCountText.setText(""+this.mBuzzListCount);
 
         if(CARD_CATEGORY ==Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
@@ -714,13 +712,13 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         catch (Exception e){
             Log.e(TITLE, e.getMessage());
         }
-        if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()){
-            this.mRecomendedCount = this.mInstitutes.size();
-            this.mRecommendedCountText.setText(""+mRecomendedCount);
+        /*if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()){
+            this.mRecommendedCount = this.mInstitutes.size();
+            this.mRecommendedCountText.setText(""+ mRecommendedCount);
         }else if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()){
             this.mBuzzListCount = this.mInstitutes.size();
             this.mBuzzListCountText.setText(""+mBuzzListCount);
-        }
+        }*/
     }
 
 
@@ -786,11 +784,56 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         void displayMessage(int messageId);
     }
 
+    public void AddInstituteInShortList() {
+        this.mShortListCount++;
+        this.mShortListCountText.setText(""+this.mShortListCount);
+        if (!IS_UNDECIDED_INSTITUTES) {
+            if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()) {
+                this.mRecommendedCount--;
+                this.mRecommendedCountText.setText("" + mRecommendedCount);
+            } else if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()) {
+                this.mBuzzListCount--;
+                ;
+                this.mBuzzListCountText.setText("" + mBuzzListCount);
+            }
+        }
+    }
+
+    public void updateInstitutesCountOnNotinterested(){
+        if (!IS_UNDECIDED_INSTITUTES) {
+            if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()) {
+                this.mRecommendedCount--;
+                this.mRecommendedCountText.setText("" + mRecommendedCount);
+            } else if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()) {
+                this.mBuzzListCount--;
+                ;
+                this.mBuzzListCountText.setText("" + mBuzzListCount);
+            }
+        }
+    }
+
+
+    public void RemoveInstituteFromShortList(int position){
+        this.mInstitutes.remove(position);
+        this.mShortListCount--;
+        this.mShortListCountText.setText(""+mShortListCount);
+        this.mWishlistInstituteListAdapter.notifyItemRemoved(position);
+        this.mWishlistInstituteListAdapter.notifyDataSetChanged();
+    }
+
 
     public void mUpdateUndecidedCount(int undecidedCount,boolean isIncrement)
     {
-        if (!IS_UNDECIDED_INSTITUTES && !isIncrement){
-            this.mUndecidedCount = undecidedCount;
+        if (!IS_UNDECIDED_INSTITUTES && !isIncrement) {
+                 this.mUndecidedCount = undecidedCount + 1;
+            if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()) {
+                this.mRecommendedCount--;
+                this.mRecommendedCountText.setText("" + mRecommendedCount);
+            } else if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()) {
+                this.mBuzzListCount--;
+                ;
+                this.mBuzzListCountText.setText("" + mBuzzListCount);
+            }
 
         }else if (IS_UNDECIDED_INSTITUTES && isIncrement){
             this.mUndecidedCount = mUndecidedCount-1;
@@ -810,10 +853,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         Animation animation=AnimationUtils.loadAnimation(getActivity(),R.anim.pulse);
         mUndecidedCountText.startAnimation(animation);
     }
-    public void mUpdateWishListCount() {
-        mWishListCount++;
-        mWishListCountText.setText(""+this.mWishListCount);
-    }
+
+
+
 
     public void updateList(List<Institute> institutes, String next) {
         if(getView() == null)
@@ -822,8 +864,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mInstitutes.addAll(institutes);
         this.IS_UNDECIDED_INSTITUTES = false;
         this.mUndecidedCountText.setClickable(true);
-        this.mRecomendedCount = mInstitutes.size();
-        this.mRecommendedCountText.setText(""+mRecomendedCount);
         this.mTitle = "CD Recommended Colleges";
         this.mPageTitleTV.setText(mTitle);
         if (this.mInstitutes.size() == 0)
@@ -891,8 +931,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.IS_UNDECIDED_INSTITUTES = false;
         this.mInstitutes.addAll(institutes);
         this.mUndecidedCountText.setClickable(true);
-        this.mBuzzListCount = this.mInstitutes.size();
-        this.mBuzzListCountText.setText(""+mBuzzListCount);
         mTitle = "Featured Colleges";
         this.mPageTitleTV.setText(mTitle);
         //this.mCardContainer.setListener(null);
@@ -939,8 +977,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.IS_UNDECIDED_INSTITUTES = false;
         this.mInstitutes.addAll(institutes);
         this.mUndecidedCountText.setClickable(true);
-        this.mWishListCount = this.mInstitutes.size();
-        this.mWishListCountText.setText(""+mWishListCount);
         mTitle = "Shortlisted Colleges";
         this.mPageTitleTV.setText(mTitle);
         if (this.mInstitutes.size() == 0) {
@@ -963,14 +999,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             ((MainActivity) getActivity()).hideProgressDialog();
     }
 
-
-    public void RemoveInstitute(int position)
-    {
-        this.mInstitutes.remove(position);
-        this.mWishListCountText.setText(""+this.mInstitutes.size());
-        this.mWishlistInstituteListAdapter.notifyItemRemoved(position);
-        this.mWishlistInstituteListAdapter.notifyDataSetChanged();
-    }
 
     public void UpdateAppliedStatus(int position)
     {

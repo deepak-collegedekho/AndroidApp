@@ -346,6 +346,7 @@ public class MainActivity extends AppCompatActivity
     private int mUndecidedInstitutesCount;
     private int mShortListInstituteCount;
     private int mBuzzListInstituteCount;
+    private int mRecommendedInstituteCount;
     private Snackbar mSnackbar;
     private boolean IS_USER_CREATED;
     public  boolean IS_HOME_LOADED;
@@ -1725,6 +1726,9 @@ public class MainActivity extends AppCompatActivity
             if (map.containsKey("buzzlist_count"))
                 this.mBuzzListInstituteCount = Integer.valueOf(JSON.std.asString(map.get("buzzlist_count")));
 
+            if (map.containsKey("recommended_count"))
+                this.mRecommendedInstituteCount = Integer.valueOf(JSON.std.asString(map.get("recommended_count")));
+
             return JSON.std.asString(map.get("results"));
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -1933,7 +1937,7 @@ public class MainActivity extends AppCompatActivity
 
                 if (fragment == null) {
                     this.mDisplayFragment(CDRecommendedInstituteFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next,
-                            this.mUndecidedInstitutesCount, this.mShortListInstituteCount, this.mBuzzListInstituteCount,cdRecommendedInstituteType.ordinal()), !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
+                            this.mRecommendedInstituteCount, this.mShortListInstituteCount, this.mBuzzListInstituteCount, this.mUndecidedInstitutesCount,cdRecommendedInstituteType.ordinal()), !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
                 } else {
                     if (fragment instanceof CDRecommendedInstituteFragment) {
                         if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED) {
@@ -2850,6 +2854,7 @@ public class MainActivity extends AppCompatActivity
                 this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.NOT_INERESTED);
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
+                this.mUpdateNotInterestedCount();
                 if (tags.length == 5) {
                     this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
                     parentIndex = tags[3];
@@ -2894,7 +2899,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }else if (tags.length == 2) {
                     ++this.mUndecidedInstitutesCount;
-                    this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, false);
+                    this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount-1, false);
                     this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.UNDECIDED);
                     parentIndex = tags[1];
                     if (parentIndex.equals("true"))
@@ -2944,11 +2949,25 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment instanceof WishlistFragment)
             ((WishlistFragment) currentFragment).RemoveInstitute(i);
         else if(currentFragment instanceof CDRecommendedInstituteFragment)
-             ((CDRecommendedInstituteFragment) currentFragment).RemoveInstitute(i);
+             ((CDRecommendedInstituteFragment) currentFragment).RemoveInstituteFromShortList(i);
         else if(currentFragment instanceof InstituteDetailFragment && i < 0)
             ((InstituteDetailFragment) currentFragment).OnInstituteRemoved();
     }
 
+
+    private void mUpdateUndecidedCount(int i, boolean isIncremented) {
+        if (currentFragment instanceof CDRecommendedInstituteFragment)
+            ((CDRecommendedInstituteFragment) currentFragment).mUpdateUndecidedCount(i, isIncremented);
+    }
+
+    private void mUpdateWishListCount() {
+        if (currentFragment instanceof CDRecommendedInstituteFragment)
+            ((CDRecommendedInstituteFragment) currentFragment).AddInstituteInShortList();
+    }
+    private void mUpdateNotInterestedCount() {
+        if (currentFragment instanceof CDRecommendedInstituteFragment)
+            ((CDRecommendedInstituteFragment) currentFragment).updateInstitutesCountOnNotinterested();
+    }
     private synchronized void mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType type) {
         //Events
         Map<String, Object> eventValue = new HashMap<>();
@@ -2969,16 +2988,6 @@ public class MainActivity extends AppCompatActivity
 
         //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), eventValue, this);
-    }
-
-    private void mUpdateUndecidedCount(int i, boolean isIncremented) {
-        if (currentFragment instanceof CDRecommendedInstituteFragment)
-            ((CDRecommendedInstituteFragment) currentFragment).mUpdateUndecidedCount(i, isIncremented);
-    }
-
-    private void mUpdateWishListCount() {
-        if (currentFragment instanceof CDRecommendedInstituteFragment)
-            ((CDRecommendedInstituteFragment) currentFragment).mUpdateWishListCount();
     }
 
     private void mOnPsychometricTestCompleted(String streamId, String streamName, String response) {
