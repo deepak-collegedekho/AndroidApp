@@ -15221,23 +15221,18 @@ public class ProfileMacro {
         if(currentPassingYearList == null)
             currentPassingYearList = new ArrayList<>();
 
-        if(currentPassingYearList.size() == 8)
+        if(currentPassingYearList.size() == 12)
             return currentPassingYearList;
 
         int currentYear = Utils.GetCurrentYear();
         int count = 0;
 
         // if you will increase count then size of year list will be also increase.
-        for (int i = currentYear - 2; i < currentYear + 6; i++) {
+        for (int i = currentYear - 6; i < currentYear + 6; i++) {
             ProfileSpinnerItem item = new  ProfileSpinnerItem();
 
             item.setId(count++);
 
-/*
-            if (i == currentYear - 2)
-                item.setName("Before " + String.valueOf(i+1));
-*/
-            //else
             item.setName(String.valueOf(i));
 
             currentPassingYearList.add(item);
@@ -15253,16 +15248,16 @@ public class ProfileMacro {
         if(preferredAddmisionYearList.size() == 5)
             return preferredAddmisionYearList;
 
-        int passingYear = GetPassingYearBySubLevelID(MainActivity.mProfile.getCurrent_sublevel_id());
-        int count = 0;
+        int preferredCurrentEducationPassingYear = MainActivity.mProfile.getCurrent_passing_year();
 
-        for (int i = passingYear; i < passingYear + 5; i++) {
+        if (preferredCurrentEducationPassingYear <= 0)
+            preferredCurrentEducationPassingYear = Utils.GetCurrentYear();
+
+        for (int i = preferredCurrentEducationPassingYear; i < preferredCurrentEducationPassingYear + 5; i++) {
             ProfileSpinnerItem item = new  ProfileSpinnerItem();
+
             item.setId(i);
 
-            /*if (i == passingYear)
-                item.setName("After " + String.valueOf(i));
-            else*/
             item.setName(String.valueOf(i));
 
             preferredAddmisionYearList.add(item);
@@ -15391,6 +15386,29 @@ public class ProfileMacro {
 
         return -1;
     }
+
+    public static int GetYearIndexInPassingYearList(int year) {
+        for (ProfileSpinnerItem item : currentPassingYearList)
+        {
+            if (item.getName().equals(String.valueOf(year)))
+                return item.getId();
+        }
+
+        return -1;
+    }
+
+    public static int GetYearIndexInAddmissionYearList(int year) {
+        for(int i = 0; i < preferredAddmisionYearList.size(); i++)
+        {
+            ProfileSpinnerItem item = preferredAddmisionYearList.get(i);
+
+            if (item.getName().equals(String.valueOf(year)))
+                return i;
+        }
+
+        return -1;
+    }
+
 
     // language macros
     public static int MOTHER_TONGUE_ASSAMESE = 1;

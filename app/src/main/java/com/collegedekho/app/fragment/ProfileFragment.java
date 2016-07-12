@@ -48,8 +48,6 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
 
-import org.apache.tools.ant.Main;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -231,13 +229,22 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         if(currentPassingYear >= 2000) {
             ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(""+currentPassingYear);
         } else {
-            int passingYear = ProfileMacro.GetPassingYearBySubLevelID(MainActivity.mProfile.getCurrent_sublevel_id());
-            ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(String.valueOf(passingYear));
+            ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(String.valueOf(Utils.GetCurrentYear()));
+
             //TODO :: save it locally and send it to server when you have more than 5 unsynced keys
             HashMap<String, String> hashMap = new HashMap<>();
-            hashMap.put("current_passing_year", String.valueOf(passingYear));
+
+            hashMap.put("current_passing_year", String.valueOf(Utils.GetCurrentYear()));
+            hashMap.put("preferred_year_of_admission", String.valueOf(String.valueOf(Utils.GetCurrentYear())));
+
             ((MainActivity) getActivity()).requestForProfile(hashMap, Request.Method.POST);
+
+            MainActivity.mProfile.setPreferred_year_of_admission(Utils.GetCurrentYear());
+
+
+            MainActivity.mProfile.setCurrent_passing_year(Utils.GetCurrentYear());
         }
+
         // set User Stream Name in Current Education
         String currentStream = mProfile.getCurrent_stream_name();
         if (currentStream != null && !currentStream.isEmpty()){
@@ -341,11 +348,29 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
         }
 
+        //set user admission year
         int preferredYear = mProfile.getPreferred_year_of_admission();
         if(preferredYear >= 2000 ){
             ((TextView) view.findViewById(R.id.profile_preferences_year)).setText(""+preferredYear);
         }else
-            ((TextView)view.findViewById(R.id.profile_preferences_year)).setText("NA");
+        {
+            //if nothing is set in profile, dig in current passing year from profile and set it as admission year
+            int currentEducationPassingYear = MainActivity.mProfile.getCurrent_passing_year();
+
+            //if current passing year is not set set current year as admission year
+            if (currentEducationPassingYear <= 0)
+                currentEducationPassingYear = Utils.GetCurrentYear();
+
+            ((TextView) mRootView.findViewById(R.id.profile_preferences_year)).setText(String.valueOf(currentEducationPassingYear));
+
+            //TODO :: save it locally and send it to server when you have more than 5 unsynced keys
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("preferred_year_of_admission", String.valueOf(currentEducationPassingYear));
+
+            ((MainActivity) getActivity()).requestForProfile(hashMap, Request.Method.POST);
+
+            MainActivity.mProfile.setPreferred_year_of_admission(currentEducationPassingYear);
+        }
 
 
         int preferredMode = mProfile.getPreferred_mode();
@@ -902,7 +927,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                         mRequestForCurrentSubLevelDegreesList(selectedId);
 
                         // set passing year based on current sublevelID
-                        currentPassingYearSpinner.setSelectedIndex(ProfileMacro.ComputePassingYearIndexOnSelectedSubLevel(selectedId));
+                        //currentPassingYearSpinner.setSelectedIndex(ProfileMacro.ComputePassingYearIndexOnSelectedSubLevel(selectedId));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -1034,7 +1059,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 //        }
 
         // set current passing year info about user
-        int  currentPassingYear = mProfile.getCurrent_passing_year();
+        int currentPassingYear = mProfile.getCurrent_passing_year();
         ArrayList<ProfileSpinnerItem> passingYearList = ProfileMacro.getCurrentPassingYearList();
         if(currentPassingYear >= 1) {
             int yearCount = passingYearList.size();
@@ -1049,12 +1074,20 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             }
             currentPassingYearSpinner.setItems(passingYearList, false);
         }else{
-            currentPassingYearSpinner.setItems(passingYearList, true);
+            currentPassingYearSpinner.setItems(passingYearList, false);
 
-            int passingYear = ProfileMacro.GetPassingYearBySubLevelID(MainActivity.mProfile.getCurrent_sublevel_id());
-            int passingYearID = ProfileMacro.GetPassingYearIndexByPassingYear(passingYear);
+            try
+            {
+                //select current year as preferred year for passing the current level
+                int indexForCurrentYear = ProfileMacro.GetYearIndexInPassingYearList(Utils.GetCurrentYear());
 
-            currentPassingYearSpinner.setSelectedIndex(passingYearID);
+                if (indexForCurrentYear >= 0)
+                    currentPassingYearSpinner.setSelectedIndex(indexForCurrentYear);
+            }
+            catch(Exception e)
+            {
+
+            }
         }
     }
 
@@ -1317,7 +1350,23 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             preferredYearSpinner.setItems(preferredAdmissionList, false);
         }else{
             preferredYearSpinner.setItems(preferredAdmissionList, true);
-            preferredYearSpinner.setText("Preferred Year");
+            //preferredYearSpinner.setText("Preferred Year");
+
+            try
+            {
+                //set current passing year, if set
+                //else set current year as passing year if nothing is set in the profile
+                int preferredCurrentPassingYear = MainActivity.mProfile.getCurrent_passing_year();
+
+                if (preferredCurrentPassingYear > 0)
+                    preferredYearSpinner.setSelectedIndex(ProfileMacro.GetYearIndexInAddmissionYearList(preferredCurrentPassingYear));
+                else
+                    preferredYearSpinner.setSelectedIndex(Utils.GetCurrentYear());
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         // set preferred education mode
@@ -1575,6 +1624,13 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         params.put("current_score", currentScore);
         params.put("current_score_type", currentScoreIdValue);
         params.put("current_passing_year", currentPassingYear);
+
+        //set preferred year of admission for user if current passing year is equal to or greater than current year
+        //because you can't travel back in time and take admission
+        //and if can travel back in time why would you study there
+        if (Integer.parseInt(currentPassingYear) >= Utils.GetCurrentYear())
+            params.put("preferred_year_of_admission", currentPassingYear);
+
         mListener.requestForUserProfileUpdate(params, 1);
     }
 

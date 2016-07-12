@@ -684,7 +684,7 @@
 
                                 <TextView
                                     style="@style/AppTheme.profileTextViewExpendedTitle"
-                                    android:text="Year"/>
+                                    android:text="Admission Year"/>
 
                                 <TextView
                                     style="@style/AppTheme.profileTextViewColon"/>
