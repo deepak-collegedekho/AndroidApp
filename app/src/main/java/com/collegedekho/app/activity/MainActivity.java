@@ -489,7 +489,7 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
 
         if (fragment == null) {
-            this.mDisplayFragment(TabFragment.newInstance(tabPosition, new ArrayList<>(mUserExamsList)), true, TabFragment.class.getSimpleName());
+            this.mDisplayFragment(TabFragment.newInstance(tabPosition, new ArrayList<>(mProfile.getYearly_exams())), true, TabFragment.class.getSimpleName());
 //            this.mDisplayFragment(TabFragment.newInstance(tabPosition, new ArrayList<>(mUserExamsList)), true, TabFragment.class.getSimpleName());
         } else {
             if (currentFragment instanceof TabFragment) {
@@ -2431,7 +2431,7 @@ public class MainActivity extends AppCompatActivity
                 this.mOnExamsLoaded(response, false);
                 break;
             case Constants.TAG_USER_EXAMS_SUBMISSION:
-                mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_EXAMS, Constants.BASE_URL +"profile/", null);
+                //mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_EXAMS, Constants.BASE_URL +"profile/", null);
                 this.mOnUserExamsSubmitted(response);
                 break;
             case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
@@ -4901,17 +4901,22 @@ public class MainActivity extends AppCompatActivity
         mLoadHomeScreen(response);
     }
 
-    private void onUserExamsEdited(String response) {
+    private void onUserExamsEdited(String responseJson) {
         isReloadProfile = true;
         try {
             DataBaseHelper.getInstance(this).deleteAllExamSummary();
-            onUpdateUserExams(response);
+            //onUpdateUserExams(responseJson);
+            try {
+                MainActivity.mProfile = JSON.std.beanFrom(Profile.class,responseJson);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             onBackPressed();
             if(currentFragment instanceof  TabFragment){
                 ((TabFragment) currentFragment).setSelectedTab(3);
-                ((TabFragment) currentFragment).updateExamsList(user.getUser_exams());
+                ((TabFragment) currentFragment).updateExamsList(mProfile.getYearly_exams());
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -5222,8 +5227,10 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public void onExamsEdited(JSONObject params) {
-        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/", params, 1);
+    public void onExamsEdited(HashMap<String, String> params) {
+       // this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/", params, 1);
+        this.mMakeNetworkCall(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST, Constants.BASE_URL + "profile/", params, Request.Method.POST);
+
     }
 
     @Override
@@ -5290,10 +5297,10 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public void onExamTabSelected(ExamDetail examDetailObj) {
+    public void onExamTabSelected(ProfileExam examDetailObj) {
         if (examDetailObj == null) return;
-        String id = examDetailObj.getId();
-        String dbSummary = DataBaseHelper.getInstance(this).getExamSummary(Integer.parseInt(id));
+        int id = examDetailObj.getId();
+        String dbSummary = DataBaseHelper.getInstance(this).getExamSummary(id);
         if (dbSummary != null) {
             mUpdateExamDetail(dbSummary, false);
             return;
@@ -5303,7 +5310,7 @@ public class MainActivity extends AppCompatActivity
         if (params == null)
             params = new HashMap<>();
 
-        params.put("tag_uris[" + (params.size()) + "]", examDetailObj.getExam_tag());
+       params.put("tag_uris[" + (params.size()) + "]", examDetailObj.getExam_tag());
 
         this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/" + id + "/summary/", params);
     }
@@ -5558,20 +5565,29 @@ public class MainActivity extends AppCompatActivity
 
 
     private void mOnUserExamsSubmitted(String responseJson) {
-        if (responseJson != null && !responseJson.isEmpty()) {
+       /* if (responseJson != null && !responseJson.isEmpty()) {
             try {
                 onUpdateUserExams(responseJson);
             } catch (IOException e) {
 
             }
+        }*/
+        try {
+            MainActivity.mProfile = JSON.std.beanFrom(Profile.class,responseJson);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         if(currentFragment instanceof ProfileBuildingFragment)
             ((ProfileBuildingFragment)currentFragment).onExamSubmittedSuccessfully();
     }
 
-    @Override
+    /*@Override
     public void onUserExamSelected(JSONObject examJson) {
         this.mMakeJsonObjectNetworkCall(Constants.TAG_USER_EXAMS_SUBMISSION, Constants.BASE_URL + "yearly-exams/", examJson, Request.Method.POST);
+    }*/
+    @Override
+    public void onUserExamSelected(HashMap<String, String> params) {
+        this.mMakeNetworkCall(Constants.TAG_USER_EXAMS_SUBMISSION, Constants.BASE_URL + "profile/", params, Request.Method.POST);
     }
 
     @Override
@@ -6486,15 +6502,17 @@ public class MainActivity extends AppCompatActivity
     private void onTabMenuSelected(int tabPosition) {
 
         //TODO::  remove this when future buddies tab are present
+        if(mProfile != null) {
+            ArrayList<ProfileExam> userExamList = mProfile.getYearly_exams();
+            //if (mUserExamsList == null) mUserExamsList = new ArrayList<>();
 
-        if (mUserExamsList == null) mUserExamsList = new ArrayList<>();
-
-        if(tabPosition == 3 && mUserExamsList.size() < 1){
+            if (tabPosition == 3 && userExamList.size() < 1) {
 //            mDisplayCurrentEducationFragment(true);
-            fromTabFragment = true;
-            onRequestForUserExamsUpdate();
-            mHomeTabContainer.setVisibility(View.GONE);
-            return;
+                fromTabFragment = true;
+                onRequestForUserExamsUpdate();
+                mHomeTabContainer.setVisibility(View.GONE);
+                return;
+            }
         }
 
 //        if (this.mUserExamsList.size() <= 0)
@@ -6505,7 +6523,7 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
 
         if (fragment == null)
-            this.mDisplayFragment(TabFragment.newInstance(tabPosition, new ArrayList<>(mUserExamsList)), true, TabFragment.class.getSimpleName());
+            this.mDisplayFragment(TabFragment.newInstance(tabPosition, new ArrayList<>(mProfile.getYearly_exams())), true, TabFragment.class.getSimpleName());
         else {
             if (currentFragment instanceof TabFragment) {
                 ((TabFragment) currentFragment).updateTabFragment(tabPosition);

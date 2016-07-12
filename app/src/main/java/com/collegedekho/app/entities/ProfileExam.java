@@ -12,6 +12,7 @@ public class ProfileExam implements Parcelable{
     private int status ;
     private String exam_short_name ="";
     private String exam_name ="";
+    private String exam_tag ="";
     private int score;
     private int year;
     private int id;
@@ -24,6 +25,7 @@ public class ProfileExam implements Parcelable{
         status = in.readInt();
         exam_short_name = in.readString();
         exam_name = in.readString();
+        exam_tag = in.readString();
         score = in.readInt();
         year = in.readInt();
         id = in.readInt();
@@ -65,6 +67,14 @@ public class ProfileExam implements Parcelable{
         this.exam_name = exam_name;
     }
 
+    public String getExam_tag() {
+        return exam_tag;
+    }
+
+    public void setExam_tag(String exam_tag) {
+        this.exam_tag = exam_tag;
+    }
+
     public int getScore() {
         return score;
     }
@@ -99,6 +109,7 @@ public class ProfileExam implements Parcelable{
         dest.writeInt(status);
         dest.writeString(exam_short_name);
         dest.writeString(exam_name);
+        dest.writeString(exam_tag);
         dest.writeInt(score);
         dest.writeInt(year);
         dest.writeInt(id);

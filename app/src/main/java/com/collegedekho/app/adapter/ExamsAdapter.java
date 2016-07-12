@@ -43,6 +43,24 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
     public ExamsAdapter(Context context, ArrayList<Exam> examList){
         this.mContext = context;
         this.mExamList.addAll(examList);
+
+        if(mExamList != null && !mExamList.isEmpty()){
+            int examCount = mExamList.size();
+            for (int i = 0; i < examCount; i++) {
+                Exam exam = mExamList.get(i);
+                ArrayList<ExamDetail> examDetailList = exam.getExam_details();
+                if(examDetailList == null)continue;
+                int count = examDetailList.size();
+                for (int j = 0; j < count; j++) {
+                    ExamDetail obj = examDetailList.get(j);
+                    if (obj == null) continue;
+                   if (obj.is_preparing()) {
+                        obj.setSelected(true);
+                       exam.setSelected(true);
+                    }
+                }
+            }
+        }
         textColorId = this.mContext.getResources().getColor(R.color.text_light_grey);
     }
 
@@ -81,9 +99,9 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
             //  by this we can disable click on this exam while updating exams.
             if(obj.is_preparing()){
                 selectedPosition=i;
-                obj.setSelected(true);
-                exam.setSelected(true);
-                exam.setPreparing(true);
+               // obj.setSelected(true);
+               // exam.setSelected(true);
+               // exam.setPreparing(true);
             }
         }
 
@@ -100,18 +118,18 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                 selectedPosition =0;
             holder.mYearSpinner.setSelection(selectedPosition);
             holder.mExamName.setTextColor(Color.WHITE);
-            if(exam.isPreparing()){
+           /* if(exam.isPreparing()){
                 holder.mExamName.setEnabled(false);
                 holder.mYearSpinner.setEnabled(false);
             }else{
                 holder.mExamName.setEnabled(true);
                 holder.mYearSpinner.setEnabled(true);
-            }
+            }*/
         }else {
             holder.mExamName.setSelected(false);
             holder.mYearSpinner.setSelected(false);
-            holder.mExamName.setEnabled(true);
-            holder.mYearSpinner.setEnabled(true);
+           // holder.mExamName.setEnabled(true);
+            //holder.mYearSpinner.setEnabled(true);
             holder.mExamName.setTextColor(textColorId);
         }
         // show exam layout

@@ -182,7 +182,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         if(this.mAdapter == null){
             this.mAdapter = new SimpleCardStackAdapter(getActivity(), this.getContext(), this, CARD_CATEGORY);
         }
-
         this.mAdapter.clear();
         this.mAddCardInAdapter(this.mInstitutes);
         this.mCardContainer.setAdapter(this.mAdapter);

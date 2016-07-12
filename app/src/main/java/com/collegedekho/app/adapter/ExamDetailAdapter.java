@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.collegedekho.app.entities.ExamDetail;
+import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.fragment.ExamDetailFragment;
 
 import java.util.ArrayList;
@@ -14,11 +15,11 @@ import java.util.ArrayList;
  */
 public class ExamDetailAdapter extends FragmentStatePagerAdapter {
 
-    ArrayList<ExamDetail> mExamDetailList;
+    ArrayList<ProfileExam> mExamDetailList;
     private ExamDetailFragment mExamFragment[];
     private int count;
 
-    public ExamDetailAdapter(FragmentManager fm, ArrayList<ExamDetail> examDetailList) {
+    public ExamDetailAdapter(FragmentManager fm, ArrayList<ProfileExam> examDetailList) {
         super(fm);
         if(examDetailList != null){
             count = examDetailList.size();
@@ -29,7 +30,7 @@ public class ExamDetailAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        this.mExamFragment[position] = ExamDetailFragment.newInstance(mExamDetailList);
+        this.mExamFragment[position] = ExamDetailFragment.newInstance(mExamDetailList.get(position));
         return mExamFragment[position];
     }
 
@@ -40,12 +41,15 @@ public class ExamDetailAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        ExamDetail examDetailObj =  mExamDetailList.get(position);
+        ProfileExam examDetailObj =  mExamDetailList.get(position);
         if(examDetailObj != null){
             String title = examDetailObj.getExam_short_name().trim();
-            if(examDetailObj.getYear() != null && examDetailObj.getYear().trim() != ""){
-                title = title + "  " + examDetailObj.getYear().trim();
-            }
+            //if(examDetailObj.getYear() != null && examDetailObj.getYear()){
+               if(title == null || title.isEmpty()){
+                   title = examDetailObj.getExam_name();
+               }
+                title = title + "  " + examDetailObj.getYear();
+            //}
             return title;
         }
         return "Exam";

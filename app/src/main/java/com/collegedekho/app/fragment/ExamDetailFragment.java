@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.ExamDetail;
+import com.collegedekho.app.entities.ProfileExam;
 
 import java.util.ArrayList;
 
@@ -25,10 +26,10 @@ public class ExamDetailFragment extends BaseFragment{
         //  empty constructor
     }
 
-    public static ExamDetailFragment newInstance(ArrayList<ExamDetail> examDetailList) {
+    public static ExamDetailFragment newInstance(ProfileExam examDetailList) {
         ExamDetailFragment fragment = new ExamDetailFragment();
         Bundle args = new Bundle();
-        args.putParcelableArrayList(EXAM_LIST, examDetailList);
+        args.putParcelable(EXAM_LIST, examDetailList);
         fragment.setArguments(args);
         return fragment;
     }

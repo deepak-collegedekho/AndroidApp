@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamsAdapter;
@@ -26,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by sureshsaini on 30/11/15.
@@ -252,9 +254,12 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
             return;
 
         boolean isExamSelected = false;
-        JSONObject parentJsonObject=new JSONObject();
-        JSONArray parentArray=new JSONArray();
+        //JSONObject parentJsonObject=new JSONObject();
+       // JSONArray parentArray=new JSONArray();
         //ArrayList<Exam> adapterExamList = mExamAdapter.getExamsList();
+        StringBuffer selectedExamsBuffer = new StringBuffer();
+        selectedExamsBuffer.append("[");
+        int firsttime =0;
         if(mExamList != null && !mExamList.isEmpty()) {
             for (Exam exam:mExamList) {
                 if(exam == null || !exam.isSelected())continue;
@@ -264,11 +269,26 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
 
                 for (ExamDetail examDetailObj:detailList) {
                     if(examDetailObj == null || !examDetailObj.isSelected())continue;
-                    JSONObject examHash = new JSONObject();
+                   // JSONObject examHash = new JSONObject();
                     try {
-                        examHash.putOpt(MainActivity.getResourceString(R.string.EXAM_ID),examDetailObj.getId());
-                        examHash.putOpt(MainActivity.getResourceString(R.string.MARKS),examDetailObj.getScore());
-                        parentArray.put(examHash);
+                        if(firsttime != 0){
+                            selectedExamsBuffer.append(",");
+                        }
+                        selectedExamsBuffer.append("{\"id\":").append(examDetailObj.getId())
+                                .append(",").append("\"score\":").append(examDetailObj.getScore());
+
+                        if(examDetailObj.isResult_out()){
+
+                            String date = examDetailObj.getExam_date();
+                            selectedExamsBuffer.append(",").append("\"status\":").append(1);
+                        }else{
+                            selectedExamsBuffer.append(",").append("\"status\":").append(2);
+                        }
+                        selectedExamsBuffer.append("}");
+                        firsttime++;
+                       // examHash.putOpt(MainActivity.getResourceString(R.string.EXAM_ID),examDetailObj.getId());
+                        //examHash.putOpt(MainActivity.getResourceString(R.string.MARKS),examDetailObj.getScore());
+                       // parentArray.put(examHash);
                         isExamSelected = true;
                         if(mainActivity!=null){
                             mainActivity.isBackPressEnabled=true;
@@ -279,12 +299,13 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
                 }
             }
         }
-        try {
+        selectedExamsBuffer.append("]");
+       /* try {
             parentJsonObject.put(MainActivity.getResourceString(R.string.RESULTS),parentArray);
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-        if(!isExamSelected){
+        }*/
+       /* if(!isExamSelected){
             if(!isEditMode) {
                 mListener.displayMessage(R.string.SELECT_ONE_EXAM);
                 return;
@@ -295,13 +316,15 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
                 mListener.displayMessage(R.string.SELECT_ONE_EXAM);
             }
             return;
-
-        }
+        }*/
         /*if(!isEditMode) {
             this.mListener.onExamsSelected(parentJsonObject);
         }else {*/
-            this.mListener.onExamsEdited(parentJsonObject);
+          //  this.mListener.onExamsEdited(parentJsonObject);
        // }
+        HashMap<String, String> userParams = new HashMap<>();
+        userParams.put("yearly_exams", selectedExamsBuffer.toString());
+        this.mListener.onExamsEdited(userParams);
 
     }
 
@@ -317,8 +340,9 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
      */
     public  interface OnExamsSelectListener {
        // void onExamsSelected(JSONObject params);
-        void onExamsEdited(JSONObject params);
+        void onExamsEdited(HashMap<String, String> params);
         void onCancelExamSubmission();
         void displayMessage(int messageId);
+        void requestForProfile(HashMap<String, String> params, int method);
     }
 }

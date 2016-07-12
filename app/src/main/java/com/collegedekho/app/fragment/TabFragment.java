@@ -21,6 +21,7 @@ import com.collegedekho.app.adapter.ExamDetailAdapter;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.listener.OnSwipeTouchListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
@@ -43,9 +44,9 @@ public class TabFragment extends  BaseFragment{
     private int selectedTabPosition = 0;
     private int selectedSubMenuPosition = 0;
     private  OnHomeItemSelectListener mListener;
-    private ArrayList<ExamDetail> mExamDetailList;
+    private ArrayList<ProfileExam> mExamDetailList;
     private ExamDetailAdapter mDetailsAdapter;
-    private ExamDetail mExamDetail;
+    private ProfileExam mExamDetail;
     private ExamSummary mExamSummary;
     private ViewPager mExamTabPager  = null;
     private PagerTabStrip mPagerHeader = null;
@@ -61,7 +62,7 @@ public class TabFragment extends  BaseFragment{
     TextView mShortlistCountTV;
     TextView mExploreCountTV;
 
-    public static TabFragment newInstance(int tabPosoition,ArrayList<ExamDetail> examList) {
+    public static TabFragment newInstance(int tabPosoition,ArrayList<ProfileExam> examList) {
         TabFragment fragment = new TabFragment();
         Bundle args = new Bundle();
         args.putInt(PARAM1, tabPosoition);
@@ -192,8 +193,8 @@ public class TabFragment extends  BaseFragment{
         }
 
         if(mExamDetailList == null || mExamDetailList.isEmpty()){
-            if(MainActivity.user != null)
-                mExamDetailList = MainActivity.user.getUser_exams();
+            if(MainActivity.mProfile != null)
+                mExamDetailList = MainActivity.mProfile.getYearly_exams();
         }
 
         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
@@ -234,8 +235,8 @@ public class TabFragment extends  BaseFragment{
 
             if(this.mListener != null)
             {
-                this.mExamDetail = new ExamDetail();
-                this.mExamDetail.setId("0");
+                this.mExamDetail = new ProfileExam();
+                this.mExamDetail.setId(0);
             }
         }
 //        rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnClickListener(this);
@@ -283,7 +284,7 @@ public class TabFragment extends  BaseFragment{
         return rootView;
     }
 
-    public void updateExamsList(ArrayList<ExamDetail> examsList){
+    public void updateExamsList(ArrayList<ProfileExam> examsList){
         if(mExamDetailList == null)
             return;
         this.mExamDetailList=examsList;
@@ -298,9 +299,9 @@ public class TabFragment extends  BaseFragment{
         MainActivity mainActivity = (MainActivity)getActivity();
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
-            if (MainActivity.user.getUser_exams() != null && MainActivity.user.getUser_exams().size()>0) {
+            if (MainActivity.mProfile.getYearly_exams() != null && MainActivity.mProfile.getYearly_exams().size()>0) {
                 mExamsTabLayout.setVisibility(View.VISIBLE);
-                this.mExamDetailList = MainActivity.user.getUser_exams();
+                this.mExamDetailList = MainActivity.mProfile.getYearly_exams();
                 this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
                 mExamTabPager.setAdapter(this.mDetailsAdapter);
                 mExamTabPager.invalidate();
@@ -310,6 +311,8 @@ public class TabFragment extends  BaseFragment{
                 if (selectedTabPosition < mExamDetailList.size())
                     mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
             }else {
+                if(selectedTabPosition == 3)
+                    selectedTabPosition =1;
                 mainActivity.mUpdateTabMenuItem(this.selectedTabPosition,0);
                 mExamsTabLayout.setVisibility(View.GONE);
             }
@@ -322,8 +325,8 @@ public class TabFragment extends  BaseFragment{
 
             if(this.mListener != null)
             {
-                this.mExamDetail = new ExamDetail();
-                this.mExamDetail.setId("0");
+                this.mExamDetail = new ProfileExam();
+                this.mExamDetail.setId(0);
             }
         }
 /*
@@ -445,7 +448,7 @@ public class TabFragment extends  BaseFragment{
     private void mExamTabSelected(int position) {
         if(this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() >position) {
             this.mExamDetail = this.mExamDetailList.get(position);
-            this.examId = Integer.parseInt(mExamDetail.getId());
+            this.examId = mExamDetail.getId();
             updateCollegeCount(selectedTabPosition);
         }
     }
@@ -754,17 +757,17 @@ public class TabFragment extends  BaseFragment{
             if(selectedSubMenuPosition == 1){
                 if (this.mExamDetail != null) {
                     this.mHomeWidgetSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/calendar/", null);
-                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, mExamDetail.getId()).apply();
+                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, ""+mExamDetail.getId()).apply();
                 }
             } else if(selectedSubMenuPosition == 2) {
                 if (this.mExamDetail != null) {
                     this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS , Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/syllabus/", null);
-                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  mExamDetail.getId()).commit();
+                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  ""+mExamDetail.getId()).commit();
                 }
             } else if(selectedSubMenuPosition == 3) {
                 if (this.mExamDetail != null) {
                     this.mHomeWidgetSelected(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", null);
-                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  mExamDetail.getId()).commit();
+                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, ""+mExamDetail.getId()).commit();
                 }
             }
         } else if (selectedTabPosition == 4){
@@ -874,7 +877,7 @@ public class TabFragment extends  BaseFragment{
     }
     public  interface OnHomeItemSelectListener {
 
-        void onExamTabSelected(ExamDetail tabPosition);
+        void onExamTabSelected(ProfileExam tabPosition);
         void onHomeItemSelected(String requestType, String url,String examTag);
         void requestForProfileFragment();
         void onTabStepByStep();

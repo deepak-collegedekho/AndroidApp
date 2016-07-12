@@ -1173,8 +1173,8 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
         TextView  userExamSTxtView = (TextView) mRootView.findViewById(R.id.user_education_exams);
 
-        if(MainActivity.user != null) {
-            ArrayList<ExamDetail>  userExamList = MainActivity.user.getUser_exams();
+        if(MainActivity.mProfile != null) {
+            ArrayList<ProfileExam>  userExamList = MainActivity.mProfile.getYearly_exams();
             StringBuffer examsNameBuffer = new StringBuffer();
             if(userExamList != null && userExamList.size() >=1) {
                 int count = userExamList.size();
@@ -1263,6 +1263,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 if(MainActivity.mProfile != null)
                     MainActivity.mProfile.setPhone_no(userPhoneNumber);
             }
+        }else{
+            if(MainActivity.mProfile != null)
+                profileParams.put(getString(R.string.USER_PHONE),MainActivity.mProfile.getPhone_no());
         }
         return true;
     }
@@ -1281,9 +1284,13 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         }
 
         boolean isExamSelected = false;
-        JSONObject parentJsonObject=new JSONObject();
-        JSONArray parentArray=new JSONArray();
+       // JSONObject parentJsonObject=new JSONObject();
+        //JSONArray parentArray=new JSONArray();
       //  ArrayList<Exam> adapterExamList = mExamAdapter.getExamsList();
+
+        StringBuffer selectedExamsBuffer = new StringBuffer();
+        selectedExamsBuffer.append("[");
+        int firsttime =0;
         if(mAllExamList != null && !mAllExamList.isEmpty()) {
             for (Exam exam:mAllExamList) {
                 if(exam == null || !exam.isSelected())continue;
@@ -1293,12 +1300,27 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
                 for (ExamDetail examDetailObj:detailList) {
                     if(examDetailObj == null || !examDetailObj.isSelected())continue;
-                    JSONObject examHash = new JSONObject();
+                    //JSONObject examHash = new JSONObject();
                     try {
-                        examHash.putOpt(MainActivity.getResourceString(R.string.EXAM_ID),examDetailObj.getId());
+                        if(firsttime != 0){
+                            selectedExamsBuffer.append(",");
+                        }
+                        selectedExamsBuffer.append("{\"id\":").append(examDetailObj.getId())
+                                .append(",").append("\"score\":").append(examDetailObj.getScore());
+
+                        if(examDetailObj.isResult_out()){
+
+                            String date = examDetailObj.getExam_date();
+                            selectedExamsBuffer.append(",").append("\"status\":").append(1);
+                        }else{
+                            selectedExamsBuffer.append(",").append("\"status\":").append(2);
+                        }
+                        selectedExamsBuffer.append("}");
+                        firsttime++;
+                       /* examHash.putOpt(MainActivity.getResourceString(R.string.EXAM_ID),examDetailObj.getId());
                         examHash.putOpt(MainActivity.getResourceString(R.string.SCORE),examDetailObj.getScore());
                         examHash.putOpt(MainActivity.getResourceString(R.string.STATUS),examDetailObj.getStatus());
-                        parentArray.put(examHash);
+                        parentArray.put(examHash);*/
                         isExamSelected = true;
                     }catch (Exception e){
                         e.printStackTrace();
@@ -1306,37 +1328,39 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 }
             }
         }
-        try {
+        selectedExamsBuffer.append("]");
+       /* try {
             parentJsonObject.put(MainActivity.getResourceString(R.string.RESULTS),parentArray);
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
         // check user's name and phone Number
         HashMap<String, String> userParams = new HashMap<>();
         if(!getUserNameAndPhone(userParams)){
             return;
         }
 
-        if(userParams.size() >= 1)
-            this.mListener.requestForProfile(userParams, Request.Method.POST);
-
         if(!isExamSelected){
             mListener.displayMessage(R.string.SELECT_ONE_EXAM);
             return;
         }
 
+       // if(userParams.size() >= 1)
+         //   this.mListener.requestForProfile(userParams, Request.Method.POST);
 
-        this.mListener.onUserExamSelected(parentJsonObject);
+        userParams.put("yearly_exams", selectedExamsBuffer.toString());
+        this.mListener.onUserExamSelected(userParams);
+
 
         this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
 
         this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_EXAM_SELECTED);
 
-        for (int n = 0; n < parentArray.length(); n++) {
+       // for (int n = 0; n < parentArray.length(); n++) {
             try
             {
-                JSONObject examDetail = (JSONObject) parentArray.get(n);
-                ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_EXAM_SELECTED), examDetail.get(MainActivity.getResourceString(R.string.EXAM_ID)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.SCORE)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.STATUS)));
+               // JSONObject examDetail = (JSONObject) parentArray.get(n);
+                ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_EXAM_SELECTED), selectedExamsBuffer.toString());//examDetail.get(MainActivity.getResourceString(R.string.EXAM_ID)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.SCORE)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.STATUS)));
 
                 //Events
                 AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
@@ -1347,7 +1371,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             {
 
             }
-        }
+       // }
 
         this.mResetEventVariables();
     }
@@ -1718,7 +1742,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
      */
     public interface OnUserEducationInteractionListener {
         void onSkipSelectedInProfileBuilding();
-        void onUserExamSelected(JSONObject examJson);
+        void onUserExamSelected(HashMap<String, String> examJson);
         void displayMessage(int messageId);
         void requestForProfile(HashMap<String, String> params, int method);
         void onRequestForUserExams();
