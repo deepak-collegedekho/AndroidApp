@@ -857,13 +857,17 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
 
 
-    public void updateList(List<Institute> institutes, String next) {
+    public void updateRecommendedList(List<Institute> institutes, String next,int mRecommendedCount) {
         if(getView() == null)
             return;
         this.mInstitutes.clear();
         this.mInstitutes.addAll(institutes);
         this.IS_UNDECIDED_INSTITUTES = false;
         this.mUndecidedCountText.setClickable(true);
+        if(this.mRecommendedCount <= 0) {
+            this.mRecommendedCount = mRecommendedCount;
+            this.mRecommendedCountText.setText(""+ this.mRecommendedCount);
+        }
         this.mTitle = "CD Recommended Colleges";
         this.mPageTitleTV.setText(mTitle);
         if (this.mInstitutes.size() == 0)
@@ -926,11 +930,15 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             ((MainActivity) getActivity()).hideProgressDialog();
     }
 
-    public void updateBuzzList(List<Institute> institutes, String next) {
+    public void updateBuzzList(List<Institute> institutes, String next, int buzzListCount) {
         this.mInstitutes.clear();
         this.IS_UNDECIDED_INSTITUTES = false;
         this.mInstitutes.addAll(institutes);
         this.mUndecidedCountText.setClickable(true);
+        if(this.mBuzzListCount <= 0) {
+            this.mBuzzListCount = buzzListCount;
+            this.mBuzzListCountText.setText(""+this.mBuzzListCount);
+        }
         mTitle = "Featured Colleges";
         this.mPageTitleTV.setText(mTitle);
         //this.mCardContainer.setListener(null);
@@ -977,6 +985,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.IS_UNDECIDED_INSTITUTES = false;
         this.mInstitutes.addAll(institutes);
         this.mUndecidedCountText.setClickable(true);
+        //this.mShortListCount = this.mInstitutes.size();
+        //this.mShortListCountText.setText(""+ mShortListCount);
         mTitle = "Shortlisted Colleges";
         this.mPageTitleTV.setText(mTitle);
         if (this.mInstitutes.size() == 0) {

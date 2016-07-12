@@ -1925,9 +1925,9 @@ public class MainActivity extends AppCompatActivity
                     if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED) {
                         ((CDRecommendedInstituteFragment) currentFragment).showUndecidedInstitutes(this.mInstituteList, next);
                     }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED) {
-                        ((CDRecommendedInstituteFragment) currentFragment).updateList(this.mInstituteList, next);
+                        ((CDRecommendedInstituteFragment) currentFragment).updateRecommendedList(this.mInstituteList, next, this.mRecommendedInstituteCount);
                     }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.BUZZLIST){
-                        ((CDRecommendedInstituteFragment) currentFragment).updateBuzzList(this.mInstituteList, next);
+                        ((CDRecommendedInstituteFragment) currentFragment).updateBuzzList(this.mInstituteList, next, this.mBuzzListInstituteCount);
                     }
                 }
             } else {
@@ -1943,11 +1943,11 @@ public class MainActivity extends AppCompatActivity
                         if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED) {
                             ((CDRecommendedInstituteFragment) fragment).showUndecidedInstitutes(this.mInstituteList, next);
                         }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED) {
-                            ((CDRecommendedInstituteFragment) fragment).updateList(this.mInstituteList, next);
+                            ((CDRecommendedInstituteFragment) fragment).updateRecommendedList(this.mInstituteList, next, this.mRecommendedInstituteCount);
                         }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.SHORTLISTED){
                             ((CDRecommendedInstituteFragment) currentFragment).updateWishList(this.mInstituteList, next);
                         }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.BUZZLIST){
-                            ((CDRecommendedInstituteFragment) currentFragment).updateBuzzList(this.mInstituteList, next);
+                            ((CDRecommendedInstituteFragment) currentFragment).updateBuzzList(this.mInstituteList, next,this.mBuzzListInstituteCount);
                         }
                     }
 
