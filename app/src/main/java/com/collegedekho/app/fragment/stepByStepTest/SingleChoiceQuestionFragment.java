@@ -36,6 +36,7 @@ public class SingleChoiceQuestionFragment extends StepByStepFragment implements 
     private static final String ARG_TYPE = "type";
     private StepByStepQuestion pQuestion;
     private boolean mIsRequired;
+    private boolean mIsSkippable;
     private ChoiceListAdapter mChoiceListAdapter;
     private boolean mAnswered;
     private ArrayList<StepByStepChoice> mChoiceHashMap;
@@ -60,6 +61,10 @@ public class SingleChoiceQuestionFragment extends StepByStepFragment implements 
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             pQuestion = getArguments().getParcelable(ARG_QUESTION);
+            if(pQuestion!=null) {
+                mIsRequired = pQuestion.isRequired();
+                mIsSkippable = pQuestion.is_skippable();
+            }
         }
     }
 
@@ -224,5 +229,10 @@ public class SingleChoiceQuestionFragment extends StepByStepFragment implements 
         public void setSelectedIndex(int index){
             mSelectedPosition = index;
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 }

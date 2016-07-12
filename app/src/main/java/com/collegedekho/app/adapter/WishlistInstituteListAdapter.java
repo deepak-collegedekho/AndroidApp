@@ -286,9 +286,6 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
 
     @Override
     public void onBindViewHolder(final InstituteHolder instituteHolder, int position) {
-        /*if (instituteHolder.instituteCard.getTag() == null)
-            instituteHolder.instituteCard.setTag("");*/
-
         Institute institute = this.mInstitutes.get(position);
         institute.setPosition(position);
 

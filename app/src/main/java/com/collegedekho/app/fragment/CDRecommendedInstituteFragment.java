@@ -277,7 +277,12 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mListener = null;
         listener = null;
         if (getActivity() != null)
-            ((MainActivity) getActivity()).setCurrentInstitute(null);
+        {
+            //((MainActivity) getActivity()).setCurrentInstitute(null);
+            Institute institute = ((MainActivity) getActivity()).getCurrentInstitute();
+            if (institute != null)
+                institute.setPosition(-1);
+        }
     }
 
     @Override
@@ -332,7 +337,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             //update the list
             this.mWishlistInstituteListAdapter.notifyDataSetChanged();
 
-            this.mMainActivity.setCurrentInstitute(null);
+            //this.mMainActivity.setCurrentInstitute(null);
+            institute.setPosition(-1);
         }
     }
 
@@ -340,7 +346,12 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     public void onDestroy()
     {
         if (getActivity() != null)
-            ((MainActivity) getActivity()).setCurrentInstitute(null);
+        {
+            //((MainActivity) getActivity()).setCurrentInstitute(null);
+            Institute institute = ((MainActivity) getActivity()).getCurrentInstitute();
+            if (institute != null)
+                institute.setPosition(-1);
+        }
         super.onDestroy();
     }
 

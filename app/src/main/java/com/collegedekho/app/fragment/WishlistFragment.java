@@ -246,7 +246,8 @@ public class WishlistFragment extends BaseFragment {
                 //update the list
                 this.mWishlistInstituteListAdapter.notifyDataSetChanged();
 
-                this.mMainActivity.setCurrentInstitute(null);
+                //this.mMainActivity.setCurrentInstitute(null);
+                institute.setPosition(-1);
             }
         }
     }
@@ -254,7 +255,12 @@ public class WishlistFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         this.peekAndPop.destroy();
-        this.mMainActivity.setCurrentInstitute(null);
+        //this.mMainActivity.setCurrentInstitute(null);
+        Institute institute = this.mMainActivity.getCurrentInstitute();
+
+        if (institute != null)
+            institute.setPosition(-1);
+
         super.onDestroy();
     }
 

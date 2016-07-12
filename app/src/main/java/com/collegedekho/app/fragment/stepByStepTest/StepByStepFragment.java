@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment.stepByStepTest;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.HapticFeedbackConstants;
@@ -9,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.StepByStepAdapter;
 import com.collegedekho.app.display.NonSwipeableViewPager;
 import com.collegedekho.app.display.ZoomPageTransformer;
@@ -45,6 +48,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
     private StepByStepQuestion.CurrentLevels mCurrentLevel;
     private int mQuestionSetCount = 1;
     private boolean mIsFinished = false;
+    private boolean mIsStreamQuestionSkipped = false;
 
     // TODO: Rename and change types of parameters
     private ArrayList<StepByStepQuestion> mStepByStepQuestions;
@@ -83,6 +87,11 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
         this.mQuestionSetCount = questionSetCount;
     }
 
+    public void incrementQuestionSetCount()
+    {
+        this.mQuestionSetCount += 1;
+    }
+
     public void updateQuestionSet(ArrayList<StepByStepQuestion> stepByStepQuestion)
     {
         this.mNextButton.setEnabled(true);
@@ -109,6 +118,9 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mStepByStepQuestions = getArguments().getParcelableArrayList(QUESTION_LIST);
+
+            if (MainActivity.mProfile.getCurrent_stream_id() > 0)
+                mQuestionSetCount = 2;
         }
     }
 
@@ -117,13 +129,15 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_step_by_step, container, false);
+
         this.mViewPager = (NonSwipeableViewPager) rootView.findViewById(R.id.sbs_pager);
         this.mViewPager.setHapticFeedbackEnabled(true);
         this.mViewPager.setPageTransformer(true, new ZoomPageTransformer());
-        this.mNextButton = (FloatingActionButton) rootView.findViewById(R.id.sbs_button_next);
 
         this.mQuestionAdapter = new StepByStepAdapter(getActivity().getSupportFragmentManager(), getActivity().getApplicationContext(), this.mStepByStepQuestions);
         this.mViewPager.setAdapter(this.mQuestionAdapter);
+
+        this.mNextButton = (FloatingActionButton) rootView.findViewById(R.id.sbs_button_next);
 
         this.mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,6 +146,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                 int skipBy = 1;
                 int currentIndex;
                 boolean isRequired;
+                boolean isSkippable;
                 boolean isAnswered;
                 StepByStepFragment inContextFragment;
 
@@ -152,6 +167,8 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
 
                 isRequired = inContextFragment.isRequired();
 
+                isSkippable = inContextFragment.isSkippable();
+
                 isAnswered = inContextFragment.isAnswered();
 
                 if (isAnswered) {
@@ -159,7 +176,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                     carryOnToNext = true;
                 } else {
                     //if not Answered and is not required then carry on to next question
-                    if (!isRequired) {
+                    if (!isRequired || isSkippable) {
                         //skipBy = ((mStepByStepQuestions.get(currentIndex)).getSecondary()).size() + 1;
                         carryOnToNext = true;
                     }
@@ -201,7 +218,6 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                                 String tag = Constants.TAG_LOAD_STEP_BY_STEP + "#" + StepByStepQuestion.CurrentLevels.IN_SCHOOL + "#" + String.valueOf(StepByStepFragment.this.mQuestionSetCount);
                                 String url = Constants.BASE_URL + "step-by-step/" +  answerValue + "/ug-ques-" + questionSetCount;
                                 StepByStepFragment.this.mNextButton.setEnabled(false);
-                                //StepByStepFragment.this.mNextButton.setText("Loading questions..");
                                 StepByStepFragment.this.mGetQuestions(tag, url);
                             }
                         }
@@ -239,7 +255,8 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                                 String url = Constants.BASE_URL + "step-by-step/" +  answerValue + "/pg-ques-" + questionSetCount;
                                 StepByStepFragment.this.mNextButton.setEnabled(false);
                                 //StepByStepFragment.this.mNextButton.setText("Loading questions..");
-                                StepByStepFragment.this.mGetQuestions(tag, url);                            }
+                                StepByStepFragment.this.mGetQuestions(tag, url);
+                            }
                         }
                     }
                 } else {
@@ -251,6 +268,29 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
 
         return rootView;
     }
+
+/*
+    @Override
+    public void onResume() {
+
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                if (!StepByStepFragment.this.mIsStreamQuestionSkipped)
+                {
+                    if (StepByStepFragment.this.mStepByStepQuestions.get(StepByStepFragment.this.mViewPager.getCurrentItem()).is_skippable())
+                    {
+                        StepByStepFragment.this.mIsStreamQuestionSkipped = true;
+                        StepByStepFragment.this.mNextButton.performClick();
+
+                        Toast.makeText(StepByStepFragment.this.getActivity(), "We know your preference for stream", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }, 1000);
+
+        super.onResume();
+    }
+*/
 
     private String mGetQuestionSetCountIncrementedString()
     {
@@ -306,6 +346,11 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
     public void onDetach() {
         super.onDetach();
         this.mListener = null;
+    }
+
+    @Override
+    public boolean isSkippable() {
+        return false;
     }
 
     @Override
@@ -395,5 +440,4 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
     {
         StepByStepFragment.mAnswersMap = new JSONObject();
     }
-
 }

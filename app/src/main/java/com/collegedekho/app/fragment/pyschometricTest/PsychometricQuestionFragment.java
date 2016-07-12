@@ -26,6 +26,11 @@ public class PsychometricQuestionFragment extends Fragment implements Psychometr
     }
 
     @Override
+    public boolean isSkippable() {
+        return false;
+    }
+
+    @Override
     public boolean isRequired() {
         return true;
     }

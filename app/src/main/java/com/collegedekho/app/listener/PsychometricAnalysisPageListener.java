@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
  */
 public interface PsychometricAnalysisPageListener
 {
+    public boolean isSkippable();
+
     public boolean isRequired();
 
     public boolean hasSecondary();
@@ -23,5 +25,4 @@ public interface PsychometricAnalysisPageListener
     public void updateAndSetAnswer();
 
     public boolean isAnswerDeemedForSecondary();
-
 }

@@ -2384,9 +2384,15 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_SKIP_LOGIN:
             case Constants.TAG_TRUE_SDK_LOGIN:
             case Constants.TAG_FACEBOOK_LOGIN:
+                //Deleting exam summary on login, since old user's and new user's are merged. And profile is taken from latest user.
+                // So old user's exam summary gets obsolete. We need to reset the cache
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 this.mUpdateUserPreferences(response);
                 break;
             case Constants.TAG_PHONE_NUMBER_LOGIN:
+                //Deleting exam summary on login, since old user's and new user's are merged. And profile is taken from latest user.
+                // So old user's exam summary gets obsolete. We need to reset the cache
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 this.onOTPVerifiedResponse(response);
                 break;
             case Constants.TEMPORARY_TAG_PROFILE_BUILD:
@@ -3080,7 +3086,6 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayStepByStepQuestion(String response){//, String currentLevel, String questionSetCount) {
         try {
             //set current level
-
             int currentLevel = mProfile.getCurrent_level_id();
             if(currentLevel != 0) {
                 if (currentLevel == ProfileMacro.LEVEL_TWELFTH || currentLevel == ProfileMacro.LEVEL_TENTH) {
@@ -3091,7 +3096,6 @@ public class MainActivity extends AppCompatActivity
                     StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE);
                 }
             }
-            //StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.valueOf(currentLevel));
 
             response = response.substring(13, response.length() - 1);
 
@@ -5450,30 +5454,58 @@ public class MainActivity extends AppCompatActivity
 
     private void startStepByStep()
     {
+        boolean streamSet;
+        String urlPart = "";
+        int streamID = MainActivity.mProfile.getCurrent_stream_id();
+
+        String startWithQuestionNumber = "one";
+
+        if (streamID > 0)
+        {
+            urlPart = streamID + "/";
+            streamSet = true;
+            startWithQuestionNumber = "two";
+        }
+
         int currentLevel = mProfile.getCurrent_level_id();
+
         if(currentLevel == ProfileMacro.LEVEL_TWELFTH || currentLevel == ProfileMacro.LEVEL_TENTH) {
-            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/ug-ques-one/", null);
+            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/" + urlPart + "ug-ques-" + startWithQuestionNumber + "/", null);
         }else if(currentLevel == ProfileMacro.LEVEL_POST_GRADUATE || currentLevel == ProfileMacro.LEVEL_UNDER_GRADUATE ){
-            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
-        }else {
+            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/" + urlPart + "pg-ques-" + startWithQuestionNumber + "/", null);
+        }
+        else {
             new AlertDialog.Builder(this)
                     .setTitle("Currently Studying at?")
                     .setSingleChoiceItems(StepByStepQuestion.CurrentLevels.getValues(), -1,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    boolean streamSet;
+                                    String urlPart = "";
+                                    int streamID = MainActivity.mProfile.getCurrent_stream_id();
+
+                                    String startWithQuestionNumber = "one";
+
+                                    if (streamID > 0)
+                                    {
+                                        urlPart = streamID + "/";
+                                        streamSet = true;
+                                        startWithQuestionNumber = "two";
+                                    }
+
                                     switch (which) {
                                         case 0:
                                             StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.IN_SCHOOL);
-                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/ug-ques-one/", null);
+                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/" + urlPart + "ug-ques-" + startWithQuestionNumber + "/", null);
                                             break;
                                         case 1:
                                             StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE);
-                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
+                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/" + urlPart + "pg-ques-" + startWithQuestionNumber + "/", null);
                                             break;
                                         case 2:
                                             StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.POSTGRADUATE_COLLEGE);
-                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP , Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
+                                            MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP , Constants.BASE_URL + "step-by-step/" + urlPart + "pg-ques-" + startWithQuestionNumber + "/", null);
                                             break;
                                         default:
                                             break;

@@ -43,6 +43,7 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
     private StepByStepQuestion pQuestion;
     private int mType;
     private boolean mIsRequired;
+    private boolean mIsSkippable;
     private ChoiceListAdapter mChoiceListAdapter;
     private boolean mAnswered;
     private ArrayList<StepByStepChoice> mChoiceHashMap;
@@ -71,6 +72,7 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
             this.pQuestion = getArguments().getParcelable(ARG_QUESTION);
             if(pQuestion!=null){
                 this.mIsRequired = this.pQuestion.isRequired();
+                this.mIsSkippable = this.pQuestion.is_skippable();
                 this.mIsChecked = new boolean[this.pQuestion.getChoices().size()];
             }
             this.mAnswers = new HashMap<Integer, Integer>();
@@ -81,6 +83,7 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_multiple_choice_question, container, false);
+
         ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setText(pQuestion.getText());
         ListView choiceList = (ListView) rootView.findViewById(R.id.multiple_choice_list);
         choiceList.setOnItemClickListener(this);

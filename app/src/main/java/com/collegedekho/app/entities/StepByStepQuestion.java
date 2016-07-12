@@ -25,6 +25,7 @@ public class StepByStepQuestion implements Parcelable {
     private String name;
     private String text;
     private int image;
+    private boolean is_skippable;
     private boolean required;
     private ArrayList<StepByStepChoice> choices;
     private String type;
@@ -40,6 +41,7 @@ public class StepByStepQuestion implements Parcelable {
         name = source.readString();
         image = source.readInt();
         required = source.readInt() == 1;
+        is_skippable = source.readInt() == 1;
         choices = new ArrayList<>();
         source.readTypedList(choices, StepByStepChoice.CREATOR);
         type = source.readString();
@@ -59,6 +61,7 @@ public class StepByStepQuestion implements Parcelable {
         dest.writeString(name);
         dest.writeInt(image);
         dest.writeInt(required ? 1 : 0);
+        dest.writeInt(is_skippable ? 1 : 0);
         dest.writeTypedList(choices);
         dest.writeString(type);
         dest.writeTypedList(other_choices);
@@ -118,6 +121,14 @@ public class StepByStepQuestion implements Parcelable {
 
     public void setOther_choices(ArrayList<StepByStepChoice> other_choices) {
         this.other_choices = other_choices;
+    }
+
+    public boolean is_skippable() {
+        return is_skippable;
+    }
+
+    public void setIs_skippable(boolean is_skippable) {
+        this.is_skippable = is_skippable;
     }
 
     public enum CurrentLevels {

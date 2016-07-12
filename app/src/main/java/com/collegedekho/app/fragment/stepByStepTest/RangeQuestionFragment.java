@@ -28,6 +28,7 @@ public class RangeQuestionFragment extends StepByStepFragment {
 
     private StepByStepQuestion pQuestion;
     private boolean mIsRequired;
+    private boolean mIsSkippable;
     private String mType;
     private boolean mAnswered;
     private ArrayList<StepByStepChoice> mChoiceHashMap;
@@ -55,6 +56,7 @@ public class RangeQuestionFragment extends StepByStepFragment {
             pQuestion = getArguments().getParcelable(ARG_QUESTION);
             if(pQuestion!=null) {
                 mIsRequired = pQuestion.isRequired();
+                mIsSkippable = pQuestion.is_skippable();
             }
         }
     }
@@ -63,6 +65,7 @@ public class RangeQuestionFragment extends StepByStepFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_range_question, container, false);
+
         ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setText(pQuestion.getText());
 
         this.mChoiceHashMap = this.pQuestion.getChoices();
@@ -93,7 +96,7 @@ public class RangeQuestionFragment extends StepByStepFragment {
 
         SeekBar seekBar = (SeekBar) rootView.findViewById(R.id.range_seekbar);
         seekBar.setProgress((this.mMin + this.mMax)/2);
-        seekBar.incrementProgressBy(5000);
+        seekBar.incrementProgressBy(100000);
         seekBar.setMax(this.mMax);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
