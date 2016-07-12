@@ -19,6 +19,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.MyFBCommentsListAdapter;
 import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
+import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
@@ -92,16 +93,14 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                     mListener.displayMessage(R.string.ENTER_YOUR_MESSAGE);
                 else
                 {
-                    User user =MainActivity.user;
-                    if (user == null || user.getName().isEmpty() || user.getName().equalsIgnoreCase("Anonymous user")) {
-
-                        String name = MainActivity.mProfile.getName();
+                    Profile profile = MainActivity.mProfile;
+                    if (profile == null || profile.getName() == null || profile.getName().isEmpty() || profile.getName().equalsIgnoreCase("Anonymous user")) {
 
                         mChatText.setText("");
                          // get name from my profile me
-                        if(user.profileData[0] != null){
+                        if(profile.getName() != null){
                             HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), user.profileData[0]);
+                            hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), profile.getName());
                             mListener.onNameUpdated(hashMap, value.trim());
                             return;
                         }

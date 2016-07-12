@@ -3474,6 +3474,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_EXAM_SUMMARY:
             case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
             case Constants.WIDGET_SYLLABUS:
+            case Constants.CARD_BUZZLIST_INSTITUTES:
                 return "Loading....";
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
                 return "Loading Profile...";
@@ -5655,10 +5656,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnCDRecommendedLoadMoreBuzzlist() {
-        Map<String, String> params = this.mGetTheFilters();
-        if(this.mExamTag != null && !this.mExamTag.isEmpty())
-            params.put("tag_uris[" + (params.size()) + "]", this.mExamTag);
-        this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2", params);
+        this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2", null);
     }
     @Override
     public void OnAppliedInstitute(Institute institute, boolean islastcard) {

@@ -433,7 +433,7 @@
 
         <!--Login msg-->
     <string name="personalize_your_app">Personalize your app </string>
-    <string name="perfect_set_of_recommended">\u2022 Perfect set of recommended colleges</string>
+    <string name="perfect_set_of_recommended">For a perfect set of recommended colleges</string>
     <string name="based_on_your_preferences">\u2022 Based on your preferences</string>
     <string name="otp_verification">OTP Verification</string>
     <string name="enter_6_digit_OTP">Enter 6 digit OTP</string>
