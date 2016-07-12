@@ -196,6 +196,27 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/sign_up_skip_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|right"
+        android:padding="@dimen/m8dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/TAG_SKIP"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/heading_color"
+            android:background="@drawable/border_bottom"
+            android:contentDescription="@string/sign_up_skip_description"
+            android:textSize="18sp" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/splash_no_internet_info_layout"
         android:layout_width="match_parent"

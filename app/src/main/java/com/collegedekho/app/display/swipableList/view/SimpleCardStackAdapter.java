@@ -83,7 +83,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        Log.e("getView ", " step 1 position  is " + position + " time is " + System.currentTimeMillis());
+        Log.e("POSITION SAM", " step 1 position  is " + position + " time is " + System.currentTimeMillis());
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.wishlist_card_layout, parent, false);
@@ -132,7 +132,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         model.setOnCardDismissedListener(new CardModel.OnCardDismissedListener() {
             @Override
             public void onLike() {
-                Log.d("SAMAKSH","PARTNER STATUS :: "+((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute().getPartner_status());
+                Log.d("POSITION SAM", " step 1 position  is " + position);
                 if (position > 0)
                     SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
                 if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext()) {
@@ -143,6 +143,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
             @Override
             public void onDislike() {
+                Log.d("POSITION SAM", " step 1 position  is " + position);
                 if (position > 0)
                     SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
                 if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext()) {
@@ -153,6 +154,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
             @Override
             public void onUpSwipe() {
+                Log.d("POSITION SAM", " step 1 position  is " + position);
                 if (position > 0)
                     SimpleCardStackAdapter.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
                 if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext()) {

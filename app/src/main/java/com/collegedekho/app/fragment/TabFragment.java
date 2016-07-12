@@ -600,6 +600,7 @@ public class TabFragment extends  BaseFragment{
 
             firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
             secondSubMenuIV.setImageResource(R.drawable.ic_syllabus);
+            thirdSubMenuIV.setImageResource(R.drawable.ic_important_dates);
 
             firstSubMenuTV.setText("Test Calendar");
             firstSubMenuTV.setContentDescription("Test preparation calendar");

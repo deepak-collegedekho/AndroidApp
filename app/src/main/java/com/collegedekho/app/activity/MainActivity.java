@@ -1462,6 +1462,7 @@ public class MainActivity extends AppCompatActivity
             this.mHandleDeepLinking(this.mDeepLinkingURI);
         }else if ((MainActivity.mProfile.getExams_set() == ProfileMacro.EXAMS_SELECTED)
                 || IS_HOME_LOADED){
+            mShowAppBarLayout();
             //if (IS_HOME_LOADED) {
                 mLoadHomeScreen(null);
             //}
@@ -2230,6 +2231,7 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.container, fragment, getResourceString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
             fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
             fragmentTransaction.commit();
+            mHideAppBarLayout();
 
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
@@ -2346,8 +2348,24 @@ public class MainActivity extends AppCompatActivity
         params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
         findViewById(R.id.main_container).setLayoutParams(params);
 
+        getSupportActionBar().show();
+
         if (findViewById(R.id.app_bar_layout).getVisibility() != View.VISIBLE)
             findViewById(R.id.app_bar_layout).setVisibility(View.VISIBLE);
+
+        /*if(mToolbar.getVisibility() != View.VISIBLE)
+            mToolbar.setVisibility(View.VISIBLE);*/
+    }
+
+    private void mHideAppBarLayout(){
+        //  show appBarLayout and toolBar
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.main_container).getLayoutParams();
+        params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+        findViewById(R.id.main_container).setLayoutParams(params);
+
+        getSupportActionBar().hide();
+//        if (findViewById(R.id.app_bar_layout).getVisibility() == View.VISIBLE)
+//            findViewById(R.id.app_bar_layout).setVisibility(View.GONE);
 
         /*if(mToolbar.getVisibility() != View.VISIBLE)
             mToolbar.setVisibility(View.VISIBLE);*/
@@ -3026,9 +3044,6 @@ public class MainActivity extends AppCompatActivity
                     DataBaseHelper.getInstance(this).updateExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()), responseJson);
                 }
                 this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
-            }
-            if(update){
-
             }
             this.currentFragment.updateExamSummary(examSummary);
             if(update){
@@ -4654,7 +4669,10 @@ public class MainActivity extends AppCompatActivity
                 boolean canGoBack = ((WebViewFragment) currentFragment).canGoBack();
               if(canGoBack)
                 return;
+            }else if (currentFragment instanceof PostAnonymousLoginFragment){
+                mShowAppBarLayout();
             }
+
         }
 
         if (backStackCount == 0 && !Constants.READY_TO_CLOSE) {
@@ -5688,7 +5706,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnCDRecommendedLoadMoreBuzzlist() {
-        this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2", null);
+//        Map<String, String> params = this.mGetTheFilters();
+//        if (params == null)
+//            params = new HashMap<>();
+        this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2",null);
     }
     @Override
     public void OnAppliedInstitute(Institute institute, boolean islastcard) {

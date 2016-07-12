@@ -91,8 +91,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                 final String value = mChatText.getText().toString();
                 if (value.trim().equals(""))
                     mListener.displayMessage(R.string.ENTER_YOUR_MESSAGE);
-                else
-                {
+                else {
                     Profile profile = MainActivity.mProfile;
                     if (profile == null || profile.getName() == null || profile.getName().isEmpty() || profile.getName().equalsIgnoreCase("Anonymous user")) {
 

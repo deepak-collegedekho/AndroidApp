@@ -111,6 +111,7 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
 
         });
 
+        rootView.findViewById(R.id.sign_up_skip_layout).setOnClickListener(this);
         (rootView.findViewById(R.id.fb_login)).setOnClickListener(this);
         (rootView.findViewById(R.id.login_verify_phone_button)).setOnClickListener(this);
         (rootView.findViewById(R.id.login_phone_submit_button)).setOnClickListener(this);
@@ -170,6 +171,9 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
             case R.id.login_resend_otp:
                 mRequestForOtp();
                 break;
+            case R.id.sign_up_skip_layout:
+                mSkipLogin();
+                break;
         }
     }
     private void mPhoneNumberSubmitted(){
@@ -203,8 +207,10 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
         }else{
             mOtpET.setError("Invalid OTP");
         }
+    }
 
-
+    public void mSkipLogin(){
+        ((MainActivity) getActivity()).onBackPressed();
     }
 
     public void onInvalidOtp() {
