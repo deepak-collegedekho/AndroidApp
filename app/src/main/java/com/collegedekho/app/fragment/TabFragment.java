@@ -18,6 +18,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamDetailAdapter;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ExamSummary;
+import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.listener.OnSwipeTouchListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
@@ -795,17 +796,47 @@ public class TabFragment extends  BaseFragment{
         }
     };
 
+    public void updateUserInfo() {
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+        View view = getView();
+        if (view == null || MainActivity.mProfile == null)
+            return;
+
+        TextView mProfileName = (TextView) view.findViewById(R.id.user_name);
+        TextView mProfileNumber = (TextView) view.findViewById(R.id.user_phone);
+
+        Profile profile = MainActivity.mProfile;
+        String name = profile.getName();
+        if (name == null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
+            mProfileName.setText("Name : Anonymous User");
+        } else {
+            String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
+            mProfileName.setText("Name : " + userName);
+        }
+
+        String phone = profile.getPhone_no();
+        if (phone == null || phone.isEmpty() || phone == "null") {
+            mProfileNumber.setText("Phone : Not Set");
+        } else {
+            mProfileNumber.setText("Phone : " + phone);
+        }
+
+        CircularProgressBar profileCompleted = (CircularProgressBar) view.findViewById(R.id.user_profile_progress);
+        profileCompleted.setProgress(0);
+        profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
+    }
+
+
+        /**
+         * This interface must be implemented by activities that contain this
+         * fragment to allow an interaction in this fragment to be communicated
+         * to the activity and potentially other fragments contained in that
+         * activity.
+         * <p>
+         * See the Android Training lesson <a href=
+         * "http://developer.android.com/training/basics/fragments/communicating.html"
+         * >Communicating with Other Fragments</a> for more information.
+         */
     public int getSelectedTabPosition(){
         return selectedTabPosition;
     }

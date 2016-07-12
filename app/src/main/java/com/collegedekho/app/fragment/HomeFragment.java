@@ -107,7 +107,7 @@ public class HomeFragment extends BaseFragment {
         } catch (Exception e) {
 
         }
-
+        Constants.READY_TO_CLOSE = false;
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             mainActivity.currentFragment = this;

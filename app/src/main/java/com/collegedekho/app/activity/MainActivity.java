@@ -711,7 +711,8 @@ public class MainActivity extends AppCompatActivity
                     return;
                 else if (currentFragment instanceof OTPVerificationFragment)
                     return;
-                else if(isFromNotification && (currentFragment instanceof ProfileFragment || currentFragment instanceof CDRecommendedInstituteFragment)){
+                else if(isFromNotification && (currentFragment instanceof ProfileFragment
+                        || currentFragment instanceof CDRecommendedInstituteFragment)){
                     MainActivity.this.onBackPressed();
                 }
 
@@ -1142,8 +1143,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if ( currentFragment instanceof ProfileBuildingFragment || currentFragment instanceof ProfileFragment || currentFragment instanceof ExamsFragment
-                || currentFragment instanceof StreamFragment || currentFragment instanceof PsychometricStreamFragment
+        if ( currentFragment instanceof ProfileBuildingFragment || currentFragment instanceof ProfileFragment
+                || currentFragment instanceof ExamsFragment || currentFragment instanceof StreamFragment
+                || currentFragment instanceof PsychometricStreamFragment || currentFragment instanceof StepByStepFragment
                 || currentFragment instanceof  OTPVerificationFragment ||currentFragment instanceof WebViewFragment
                 || currentFragment instanceof PsychometricTestParentFragment) {
             menu.setGroupVisible(R.id.main_menu_group, false);
@@ -1195,8 +1197,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         if(currentFragment instanceof  HomeFragment){
-            boolean tute_complete = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Home Tute", false);
-            if(!tute_complete){
+            boolean tuteCompleted = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Home Tute", false);
+            if(!tuteCompleted){
                 menu.setGroupVisible(R.id.search_menu_group, false);
                 menu.setGroupVisible(R.id.main_menu_group, false);
             }else {
@@ -1657,7 +1659,11 @@ public class MainActivity extends AppCompatActivity
                 ((ProfileBuildingFragment) currentFragment).profileImageUploadedSuccesfully();
             }
             else if(currentFragment instanceof  HomeFragment){
+
                 ((HomeFragment)currentFragment).updateUserInfo();
+            }else if(currentFragment instanceof  TabFragment){
+
+                ((TabFragment)currentFragment).updateUserInfo();
             }
 
         } catch (IOException e) {
@@ -4599,10 +4605,10 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        }
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        if (drawer.isDrawerOpen(GravityCompat.START)) {
+//            drawer.closeDrawer(GravityCompat.START);
+//        }
         if (!isBackPressEnabled) {
             return;
         }

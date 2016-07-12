@@ -2000,11 +2000,12 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     public void updateUserName(){
         if(MainActivity.mProfile == null)
             return;
-        String name = MainActivity.mProfile.getName();
+       /* String name = MainActivity.mProfile.getName();
         if(name != null && !name.isEmpty()
                 &&  !name.equalsIgnoreCase(getResources().getString(R.string.ANONYMOUS_USER))){
             ((TextView)mRootView.findViewById(R.id.profile_edit_name)).setText(name);
-        }
+        }*/
+        updateUserProfile();
 
         String image = MainActivity.mProfile.getImage();
         if (image != null && ! image.isEmpty())

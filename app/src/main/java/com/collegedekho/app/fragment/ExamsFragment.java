@@ -79,7 +79,7 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
 
        RecyclerView mStreamRecyclerView = (RecyclerView)rootView.findViewById(R.id.exams_recycle_view);
         mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        mStreamRecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
+        //mStreamRecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 8, true));
 
 
         mExamSearchView = (SearchView) rootView.findViewById(R.id.user_exam_search_view);

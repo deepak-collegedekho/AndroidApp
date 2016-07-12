@@ -501,6 +501,7 @@
                         android:id="@+id/profile_edit_current_score"
                         style="@style/AppTheme.EditText.bg_holo_dark"
                         android:hint="Current Score"
+                        android:layout_height="@dimen/m35dp"
                         android:layout_width="0dp"
                         android:layout_weight=".4"
                         android:layout_gravity="left"
