@@ -243,6 +243,7 @@
         android:layout_weight=".5"
         android:orientation="horizontal"
         android:paddingTop="5dp"
+        android:gravity="center"
         android:paddingBottom="15dp"
         android:weightSum="1">
 
@@ -286,7 +287,8 @@
             android:background="@drawable/rounded_box_blue"
             android:tag="3"
             android:layout_marginLeft="40dp"
-            android:layout_weight=".5" >
+            android:layout_marginRight="15dp"
+            android:layout_weight="0.5" >
 
 
             <TextView android:id="@+id/trending_count"
@@ -333,8 +335,7 @@
             android:background="@drawable/rounded_box_blue"
             android:tag="4"
             android:layout_weight=".5"
-            android:layout_marginRight="40dp"
-            android:layout_marginLeft="15dp" >
+            android:layout_marginRight="40dp">
 
 
             <TextView android:id="@+id/explore_count"

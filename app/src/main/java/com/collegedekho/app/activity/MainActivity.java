@@ -349,6 +349,7 @@ public class MainActivity extends AppCompatActivity
     private Snackbar mSnackbar;
     private boolean IS_USER_CREATED;
     public  boolean IS_HOME_LOADED;
+    private  boolean IS_FROM_PROFILE_BUILDING = false;
     private static Context mContext;
     public static TrueClient mTrueClient;
     private Resources mResources ;
@@ -2450,6 +2451,12 @@ public class MainActivity extends AppCompatActivity
                 this.mCurrentTitle = "Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 mClearBackStack();
+                mShowAppBarLayout();
+                if(!IS_HOME_LOADED ){
+                    IS_HOME_LOADED = true;
+                    getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_HOME_LOADED), true).apply();
+                    isFromNotification = true;
+                }
                 this.mDisplayInstituteList(response, true, true);
                 break;
 
@@ -2752,6 +2759,14 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case Constants.TAG_LOAD_STEP_BY_STEP:
+                /*if (tags.length > 1) {
+                    parentIndex = tags[1];
+                    childIndex = tags[2];
+                    this.mDisplayStepByStepQuestion(response, parentIndex, childIndex);
+                }*/
+                this.mDisplayStepByStepQuestion(response);//, parentIndex, childIndex);
+                break;
+            case Constants.TAG_LOAD_STEP_BY_STEP_FROM_PROFILE_BUILDING:
                 /*if (tags.length > 1) {
                     parentIndex = tags[1];
                     childIndex = tags[2];
@@ -3110,8 +3125,8 @@ public class MainActivity extends AppCompatActivity
 
             MainActivity.mProfile.setStep_by_step_given(1);
             //move to profile
-//            this.mClearBackStack();
             this.onHomeItemSelected(Constants.WIDGET_INSTITUTES_SBS, Constants.BASE_URL + "personalize/institutes/",null);
+
 //            this.mLoadHomeScreen(null);
         } catch (IOException e) {
             e.printStackTrace();
@@ -5401,7 +5416,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onStepByStep() {
+//        mClearBackStack();
         this.startStepByStep();
+//        isFromNotification = true;
     }
 
     private void startStepByStep()

@@ -52,6 +52,7 @@ public class Constants
     public static final String TAG_PSYCHOMETRIC_RESPONSE = "load_psychometric_response";
     public static final String TAG_EDIT_PSYCHOMETRIC_QUESTIONS = "load_edit_psychometric_questions";
     public static final String TAG_LOAD_STEP_BY_STEP = "load_step_by_step";
+    public static final String TAG_LOAD_STEP_BY_STEP_FROM_PROFILE_BUILDING = "load_step_by_step_from_profile_building";
     public static final String TAG_UPDATE_STREAM = "update_stream";
     public static final String WIDGET_INSTITUTES = "institutes";
     public static final String WIDGET_INSTITUTES_SBS = "institutes_sbs";

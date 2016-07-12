@@ -513,6 +513,7 @@
     <string name="please_enter_your_marks">"Please enter your marks"</string>
     <string name="show_more">Show More...</string>
     <string name="show_less">Show Less...</string>
+    <string name="TAG_FROM_PROFILE_BUILDING">from_profile_building</string>
 
     <!-- user profile tags-->
 </resources>

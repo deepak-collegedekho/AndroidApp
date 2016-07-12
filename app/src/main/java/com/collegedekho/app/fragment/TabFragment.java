@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -490,6 +492,15 @@ public class TabFragment extends  BaseFragment{
                     LinearLayout.LayoutParams.MATCH_PARENT, 0, .5f);
             ll.setLayoutParams(lp);
 
+            LinearLayout ll2 = (LinearLayout)view.findViewById(R.id.home_widget_second_layout);
+            ll2.setLayoutParams(lp);
+
+            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) ((RelativeLayout) getView().findViewById(R.id.home_widget_third)).getLayoutParams();;
+            int marginLeftInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40 , getResources().getDisplayMetrics());
+            int marginRightInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15 , getResources().getDisplayMetrics());
+            lp2.setMargins(marginLeftInDp,0,marginRightInDp,0);
+            getView().findViewById(R.id.home_widget_third).setLayoutParams(lp2);
+
             //this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.GONE);
 
             firstSubMenuIV.setImageResource(R.drawable.ic_institute);
@@ -506,7 +517,8 @@ public class TabFragment extends  BaseFragment{
             fourthSubMenuTV.setText(MainActivity.getResourceString(R.string.TAG_TAB_EXPLORE_COLLEGS));
             fourthSubMenuTV.setContentDescription("Select to Explore all Institutes");
 
-            ll.getChildAt(1).setVisibility(View.VISIBLE);
+            ll2.getChildAt(0).setVisibility(View.VISIBLE);
+            ll2.getChildAt(1).setVisibility(View.VISIBLE);
 
             this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
 
@@ -538,7 +550,8 @@ public class TabFragment extends  BaseFragment{
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, 0, 0.5f);
             ll.setLayoutParams(lp);
-
+            LinearLayout ll2 = (LinearLayout)view.findViewById(R.id.home_widget_second_layout);
+            ll2.setLayoutParams(lp);
             //this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.GONE);
 
             firstSubMenuIV.setImageResource(R.drawable.ic_chat_bubble_widget);
@@ -549,12 +562,13 @@ public class TabFragment extends  BaseFragment{
             secondSubMenuTV.setText("Q & A");
             secondSubMenuTV.setContentDescription("FAQ's");
 
-            ll.getChildAt(1).setVisibility(View.VISIBLE);
+            ll2.getChildAt(0).setVisibility(View.VISIBLE);
+            ll2.getChildAt(1).setVisibility(View.VISIBLE);
 
             this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
             view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
 
-        }else   if(this.selectedTabPosition == 3){
+        }else  if(this.selectedTabPosition == 3){
             IS_PREPARE_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("prepare_tute", false);
             if(view != null ){
                 View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
@@ -575,7 +589,14 @@ public class TabFragment extends  BaseFragment{
                     LinearLayout.LayoutParams.MATCH_PARENT, 0, 0.5f);
             ll.setLayoutParams(lp);
 
-            //this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.GONE);
+            LinearLayout ll2 = (LinearLayout)view.findViewById(R.id.home_widget_second_layout);
+
+            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) ((RelativeLayout) getView().findViewById(R.id.home_widget_third)).getLayoutParams();;
+            int marginInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45 , getResources().getDisplayMetrics());
+            lp2.setMargins(marginInDp,0,marginInDp,0);
+            getView().findViewById(R.id.home_widget_third).setLayoutParams(lp2);
+
+//            this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.GONE);
 
             firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
             secondSubMenuIV.setImageResource(R.drawable.ic_syllabus);
@@ -587,12 +608,13 @@ public class TabFragment extends  BaseFragment{
             thirdSubMenuTV.setText("Important Dates");
             thirdSubMenuTV.setContentDescription("Important Dates");
 
-            ll.getChildAt(1).setVisibility(View.VISIBLE);
+            ll2.getChildAt(0).setVisibility(View.VISIBLE);
+            ll2.getChildAt(1).setVisibility(View.GONE);
 
             this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
-            view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
+            view.findViewById(R.id.home_widget_second_layout).setVisibility(View.VISIBLE);
 
-        }else   if(this.selectedTabPosition == 4){
+        }else  if(this.selectedTabPosition == 4){
 //            IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
 //            if(view != null ){
 //                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
@@ -620,6 +642,9 @@ public class TabFragment extends  BaseFragment{
                     LinearLayout.LayoutParams.MATCH_PARENT, 0, 0.5f);
             ll.setLayoutParams(lp);
 
+            LinearLayout ll2 = (LinearLayout)view.findViewById(R.id.home_widget_second_layout);
+            ll2.setLayoutParams(lp);
+
             //this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.GONE);
 
             firstSubMenuIV.setImageResource(R.drawable.ic_news);
@@ -630,7 +655,8 @@ public class TabFragment extends  BaseFragment{
             secondSubMenuTV.setText("Articles");
             secondSubMenuTV.setContentDescription("Articles");
 
-            ll.getChildAt(1).setVisibility(View.VISIBLE);
+            ll2.getChildAt(0).setVisibility(View.VISIBLE);
+            ll2.getChildAt(1).setVisibility(View.VISIBLE);
 
             this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
             view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
@@ -732,6 +758,11 @@ public class TabFragment extends  BaseFragment{
             } else if(selectedSubMenuPosition == 2) {
                 if (this.mExamDetail != null) {
                     this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS , Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/syllabus/", null);
+                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  mExamDetail.getId()).commit();
+                }
+            } else if(selectedSubMenuPosition == 3) {
+                if (this.mExamDetail != null) {
+                    this.mHomeWidgetSelected(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", null);
                     getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  mExamDetail.getId()).commit();
                 }
             }
