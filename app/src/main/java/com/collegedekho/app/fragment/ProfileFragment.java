@@ -214,8 +214,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         //  else set user's current holding degree name in current education
 
         int userCurrentStreamId = mProfile.getCurrent_stream_id();
-        if (userCurrentStreamId == 16 || userCurrentStreamId == 33 || userCurrentStreamId == 34 ||
-                userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37) {
+        if (userCurrentStreamId == 33 || userCurrentStreamId == 34 || userCurrentStreamId == 35 || userCurrentStreamId == 36
+                || userCurrentStreamId == 37 || userCurrentStreamId == 38 || userCurrentStreamId == 39) {
             ((TextView) mRootView.findViewById(R.id.profile_education_degree)).setText("School");
         } else {
             String currentDegreeName = mProfile.getCurrent_degree_name();
@@ -249,8 +249,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         // hide specialization if user current
         // level is school else show his/her specialization
         userCurrentStreamId = mProfile.getCurrent_stream_id();
-        if(userCurrentStreamId == 16 || userCurrentStreamId == 33 ||userCurrentStreamId == 34 ||
-                userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37){
+        if(userCurrentStreamId == 33 ||userCurrentStreamId == 34 || userCurrentStreamId == 35  || userCurrentStreamId == 36
+                || userCurrentStreamId == 37 ||userCurrentStreamId == 38 || userCurrentStreamId == 39){
             mRootView.findViewById(R.id.profile_education_specialization_layout).setVisibility(View.GONE);
         }
         else{
@@ -870,10 +870,16 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
 
             if(currentStreamList == null){
-                currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJson(2));
+                currentStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getStreamJsonForSubLevel(mProfile.getCurrent_sublevel_id()));
                 currentStreamSpinner.setItems(currentStreamList, true);
                 if(currentStreamList.size() > 1)
                     currentStreamSpinner.setText("Select your Stream");
+
+                if(mListener != null){
+                    mListener.requestForSpecialization(userStreamId, ProfileMacro.CURRENT_EDUCATION);
+                    currentSpecializationSpinner.setText("Loading...");
+                    currentSpecializationSpinner.hideArrow();
+                }
             }
 
             currentSubLevelSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
@@ -888,7 +894,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                             currentStreamSpinner.setText("Select your Stream");
 
                         // hide specialization and degree layout if stream is is school level
-                        if(selectedId == 7 || selectedId == 8 || selectedId == 9){
+                        if(selectedId == 7 || selectedId == 8 || selectedId == 9 || selectedId == 15){
                             currentSpecializationSpinner.setVisibility(View.GONE);
                             currentDegreeSpinner.setVisibility(View.GONE);
                         }
@@ -1509,8 +1515,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
         String currentSpecilizationIdValue ="";
         int userCurrentSpecializationId = mProfile.getCurrent_specialization_id();
-        if(!(userCurrentStreamId == 16 || userCurrentStreamId == 7 || userCurrentStreamId == 33 ||userCurrentStreamId == 34 ||
-                userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37) || userCurrentStreamId == 38 || userCurrentStreamId == 39){
+        if(!(userCurrentStreamId == 33 ||userCurrentStreamId == 34 || userCurrentStreamId == 35 || userCurrentStreamId == 36
+                || userCurrentStreamId == 37) || userCurrentStreamId == 38 || userCurrentStreamId == 39){
             userCurrentSpecializationId= ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_specialization)).getSelectedSpinnerItemId();
             /*if (userCurrentSpecializationId > 0) {
                 currentSpecilizationIdValue +=userCurrentSpecializationId ;
@@ -1527,8 +1533,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
         String currentDegreeIdValue ="";
         int currentDegreeId = mProfile.getCurrent_degree_id();
-        if(!(userCurrentStreamId == 16 || userCurrentStreamId == 7 || userCurrentStreamId == 33 ||userCurrentStreamId == 34 ||
-                userCurrentStreamId == 35 || userCurrentStreamId == 36 || userCurrentStreamId == 37 || userCurrentStreamId == 38 || userCurrentStreamId == 39) ){
+        if(!(userCurrentStreamId == 33 ||userCurrentStreamId == 34 ||  userCurrentStreamId == 35 || userCurrentStreamId == 36
+                || userCurrentStreamId == 37 || userCurrentStreamId == 38 || userCurrentStreamId == 39) ){
             currentDegreeId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_degree)).getSelectedSpinnerItemId();
            /* if (currentDegreeId > 0) {
                 currentDegreeIdValue += currentDegreeId;

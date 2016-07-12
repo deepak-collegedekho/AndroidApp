@@ -3038,7 +3038,7 @@ public class MainActivity extends AppCompatActivity
 
             int currentLevel = mProfile.getCurrent_level_id();
             if(currentLevel != 0) {
-                if (currentLevel == ProfileMacro.LEVEL_TWELFTH) {
+                if (currentLevel == ProfileMacro.LEVEL_TWELFTH || currentLevel == ProfileMacro.LEVEL_TENTH) {
                     StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.IN_SCHOOL);
                 } else if (currentLevel == ProfileMacro.LEVEL_UNDER_GRADUATE) {
                     StepByStepQuestion.setCurrentLevel(StepByStepQuestion.CurrentLevels.GRADUATE_COLLEGE);
@@ -5400,10 +5400,10 @@ public class MainActivity extends AppCompatActivity
 
     private void startStepByStep()
     {
-        int preferredLevel = mProfile.getPreferred_level();
-        if(preferredLevel == ProfileMacro.LEVEL_UNDER_GRADUATE ) {
+        int currentLevel = mProfile.getCurrent_level_id();
+        if(currentLevel == ProfileMacro.LEVEL_TWELFTH || currentLevel == ProfileMacro.LEVEL_TENTH) {
             MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/ug-ques-one/", null);
-        }else if(preferredLevel == ProfileMacro.LEVEL_POST_GRADUATE) {
+        }else if(currentLevel == ProfileMacro.LEVEL_POST_GRADUATE || currentLevel == ProfileMacro.LEVEL_UNDER_GRADUATE ){
             MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/pg-ques-one/", null);
         }else {
             new AlertDialog.Builder(this)
