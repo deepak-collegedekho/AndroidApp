@@ -35,7 +35,6 @@ public class RangeQuestionFragment extends StepByStepFragment {
     private int mMin;
     private int mMax;
     private int mProgress;
-    private final int stepSize = 10;
 
     public RangeQuestionFragment() {
         // Required empty public constructor
@@ -97,19 +96,37 @@ public class RangeQuestionFragment extends StepByStepFragment {
 
         SeekBar seekBar = (SeekBar) rootView.findViewById(R.id.range_seekbar);
         seekBar.setMax(this.mMax);
-        seekBar.setProgress(0);
-        seekBarValue.setText(String.valueOf(0));
+        seekBar.setProgress(100000);
+        seekBarValue.setText(String.valueOf(100000));
+
+        this.mProgress = 100000;
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
             {
+                int calculatedProgress = 0;
                 mAnswered = true;
 
-                progress = (Math.round(progress/stepSize))*stepSize;
                 seekBar.setProgress(progress);
-                seekBarValue.setText(progress + "");
+
+                if (progress < 100000)
+                {
+                    seekBarValue.setText(calculatedProgress + "");
+                }
+                else
+                {
+                    int firstDigit = Integer.parseInt(Integer.toString(progress).substring(0, 1));
+                    calculatedProgress = (firstDigit * 100000);
+
+                    if (progress > calculatedProgress)
+                    {
+                        seekBarValue.setText(calculatedProgress + "");
+                    }
+                }
+
+                mProgress = calculatedProgress;
             }
 
             @Override
