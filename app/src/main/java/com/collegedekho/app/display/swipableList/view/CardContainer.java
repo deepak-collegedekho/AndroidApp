@@ -575,7 +575,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
             float dy = e2.getY() - e1.getY();
             if (Math.abs(dx) > mTouchSlop &&
                     Math.abs(velocityX) > Math.abs(velocityY) &&
-                    Math.abs(velocityX) > mFlingSlop * 3) {
+                    Math.abs(velocityX) > mFlingSlop * 24) {
                 float targetX = topCard.getX();
                 float targetY = topCard.getY();
                 long duration = 0;
@@ -637,7 +637,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
             }
             else if (Math.abs(dy) > mTouchSlop &&
                     Math.abs(velocityY) > Math.abs(velocityX) &&
-                    Math.abs(velocityY) > mFlingSlop * 3) {
+                    Math.abs(velocityY) > mFlingSlop * 24) {
                 float targetX = topCard.getX();
                 float targetY = topCard.getY();
                 long duration = 0;

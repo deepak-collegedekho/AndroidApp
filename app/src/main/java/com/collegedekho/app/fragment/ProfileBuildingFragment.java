@@ -1181,11 +1181,18 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 if(count >= 2)
                     count = 2;
                 for (int i = 0; i < count; i++) {
-                    if(i==0)
-                        examsNameBuffer.append(userExamList.get(i).getExam_name());
-                    else
-                        examsNameBuffer.append(", ").append(userExamList.get(i).getExam_name());
-
+                    ProfileExam exam = userExamList.get(i);
+                    if(exam == null)
+                        continue;
+                    String examName = exam.getExam_short_name();
+                    if(examName == null || examName.isEmpty()){
+                        examName = exam.getExam_name();
+                    }
+                    if(i==0) {
+                        examsNameBuffer.append(examName);
+                    } else {
+                        examsNameBuffer.append(", ").append(examName);
+                    }
                 }
                 if(count < userExamList.size())
                     examsNameBuffer.append(".....");
