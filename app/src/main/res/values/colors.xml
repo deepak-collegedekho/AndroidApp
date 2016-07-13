@@ -63,6 +63,8 @@
     //swipeble card colors
     <color name="card_bg">#EBEBEB</color>
     <color name="card_outline">#D0D0CE</color>
+    <color name="alpha_component_transparent">#00ededed</color>
+
     //gradient colors
     <color name="start_gradient">#8dfffefe</color>
     <color name="end_gradient">#96a7aca7</color>

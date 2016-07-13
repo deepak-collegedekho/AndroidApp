@@ -47,6 +47,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
     private final ImageLoader imageLoader;
     private OnCDRecommendedAdapterInterface mListener;
     private boolean mLoadingNext;
+    private boolean isLast;
     private Context mContext;
     private Vector<CardModel> mData;
     private TextView mFacilityText;
@@ -155,11 +156,12 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
                 int position = model.getTag();
                 Log.d("POSITION SAM", " step 1 position  is " + position);
-                if (position > 0)
-                    SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
-                if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext()) {
-                    SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), true);
+
+                if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext() && SimpleCardStackAdapter.this.mListener.isLast()) {
+                    SimpleCardStackAdapter.this.mListener.OnInstituteLiked(model.getInstitute(), true);
                     SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
+                }else {
+                    SimpleCardStackAdapter.this.mListener.OnInstituteLiked(model.getInstitute(), false);
                 }
             }
 
@@ -167,11 +169,11 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             public void onDislike(CardModel model) {
                 int position = model.getTag();
                 Log.d("POSITION SAM", " step 1 position  is " + position);
-                if (position > 0)
-                    SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
-                if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext()) {
+                if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext() && SimpleCardStackAdapter.this.mListener.isLast()) {
                     SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), true);
                     SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
+                } else {
+                    SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
                 }
             }
 
@@ -179,11 +181,11 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             public void onUpSwipe(CardModel model) {
                 int position = model.getTag();
                 Log.d("POSITION SAM", " step 1 position  is " + position +" id "+model.getInstitute().getId());
-                if (position > 0)
-                    SimpleCardStackAdapter.this.mListener.OnDecideLater(model.getInstitute(), false);
-                if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext()) {
+                if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext() && SimpleCardStackAdapter.this.mListener.isLast()) {
                     SimpleCardStackAdapter.this.mListener.OnDecideLater(model.getInstitute(), true);
                     SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
+                }else {
+                    SimpleCardStackAdapter.this.mListener.OnDecideLater(model.getInstitute(), false);
                 }
             }
         });
@@ -225,7 +227,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
        /* if (BitMapHolder.DEFAULT_BANNER != null)
             fadeInImageView.setLocalImageBitmap(BitMapHolder.DEFAULT_BANNER, true);
         else*/
-            fadeInImageView.setBackgroundResource(R.drawable.default_banner);
+        fadeInImageView.setBackgroundResource(R.drawable.default_banner);
 
 
         TextView streamTV = ((TextView) convertView.findViewById(R.id.recommended_streams));
@@ -538,18 +540,13 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
     public interface OnCDRecommendedAdapterInterface {
         void OnLoadNext();
-
         void OnInstituteSelected(Institute institute);
-
         void OnInstituteLiked(Institute institute, boolean isLastCard);
-
         void OnInstituteDislike(Institute institute, boolean isLastCard);
-
         void OnDecideLater(Institute institute, boolean isLastCard);
-
         void OnShowMessage(String message);
-
         void OnAppliedInstitute(Institute institute);
+        boolean isLast();
 
         //void onRemoveShortlisted(Institute institute);
     }

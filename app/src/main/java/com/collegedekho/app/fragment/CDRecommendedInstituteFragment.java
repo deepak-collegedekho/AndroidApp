@@ -42,6 +42,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     private static final String ARG_UNDECIDED_INSTITUTE_COUNT   = "undecided_institute_count";
 
     private ArrayList<Institute> mInstitutes;
+    private ArrayList<Institute> mInstitutesForCard;
     private String mTitle;
     private SimpleCardStackAdapter mAdapter;
     private OnCDRecommendedInstituteListener mListener;
@@ -100,6 +101,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mInstitutes = this.getArguments().getParcelableArrayList(ARG_INSTITUTE);
+            this.mInstitutesForCard = new ArrayList<>(this.mInstitutes);
             this.mTitle = this.getArguments().getString(ARG_TITLE);
             this.mNextUrl = this.getArguments().getString(ARG_NEXT);
             this.mRecommendedCount = this.getArguments().getInt(ARG_RECOMMENDED_INSTITUTE_COUNT);
@@ -182,8 +184,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         if(this.mAdapter == null){
             this.mAdapter = new SimpleCardStackAdapter(this.getContext(), this, CARD_CATEGORY);
         }
-        this.mAdapter.clear();
-        this.mAddCardInAdapter(this.mInstitutes);
+        this.setUpStackAdapter();
         this.mCardContainer.setAdapter(this.mAdapter);
 
         if(this.IS_UNDECIDED_INSTITUTES) {
@@ -253,7 +254,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         try {
             if (context instanceof MainActivity)
                 this.mListener = (OnCDRecommendedInstituteListener) context;
-                listener = (OnCDRecommendedInstituteListener) context;
+            listener = (OnCDRecommendedInstituteListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnCDRecommendedInstituteListener");
@@ -479,8 +480,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 //                    mEmptyTextView.setText("Looking for more institutes...");
 //                    mEmptyTextView.setVisibility(View.VISIBLE);
 //                } else {
-                    mEmptyTextView.setText("Looking for more institutes...");
-                    mEmptyTextView.setVisibility(View.VISIBLE);
+                mEmptyTextView.setText("Looking for more institutes...");
+                mEmptyTextView.setVisibility(View.VISIBLE);
 //                }
                 break;
             case R.id.request_for_undecided_ok:
@@ -511,6 +512,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     @Override
     public void OnInstituteLiked(Institute institute, boolean isLastCard) {
 //        mEmptyTextView.setVisibility(View.GONE);
+        this.setUpStackAdapter();
         this.mRemoveInstituteFromList();
         boolean isFeatured = false;
         String nextUrl = null;
@@ -551,14 +553,14 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 //        if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()){
 //            this.mListener.OnCDRecommendedInstituteLiked(institute, isLastCard, false ,isFeatured);
 //        } else {
-            this.mListener.OnCDRecommendedInstituteLiked(institute, isLastCard, this.IS_UNDECIDED_INSTITUTES, isFeatured,nextUrl);
-//        }
+        this.mListener.OnCDRecommendedInstituteLiked(institute, isLastCard, this.IS_UNDECIDED_INSTITUTES, isFeatured,nextUrl);
     }
 
 
     @Override
     public void OnInstituteDislike(Institute institute, boolean isLastCard) {
 //        mEmptyTextView.setVisibility(View.GONE);
+        this.setUpStackAdapter();
         this.mRemoveInstituteFromList();
         boolean isFeatured = false;
         String nextUrl = null;
@@ -605,7 +607,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     @Override
     public void OnDecideLater(Institute institute, boolean isLastCard) {
 //        mEmptyTextView.setVisibility(View.GONE);
-       // Log.d("onDecide later SAM", " position  last card " +isLastCard);
+
+        this.setUpStackAdapter();
         this.mRemoveInstituteFromList();
         boolean isFeatured = false;
         String nextUrl = null;
@@ -667,6 +670,15 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             if(institute.getGroups_exists()==1) {
                 removeTopCard(institute);
             }
+        }
+    }
+
+    @Override
+    public boolean isLast(){
+        if(mInstitutes.size() <= 1){
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -837,7 +849,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     public void mUpdateUndecidedCount(int undecidedCount,boolean isIncrement)
     {
         if (!IS_UNDECIDED_INSTITUTES && !isIncrement) {
-                 this.mUndecidedCount = undecidedCount + 1;
+            this.mUndecidedCount = undecidedCount + 1;
             if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()) {
                 this.mRecommendedCount--;
                 this.mRecommendedCountText.setText("" + mRecommendedCount);
@@ -891,8 +903,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         else
         {
             this.mCardContainer.setVisibility(View.VISIBLE);
-            this.mAdapter.clear();
-            this.mAddCardInAdapter(this.mInstitutes);
+            this.setUpStackAdapter();
             this.mNextUrl = next;
             this.mAdapter.setLoadingNext(false);
             this.loading = false;
@@ -931,8 +942,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             this.mCardContainer.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
             this.questionLayout.setVisibility(View.INVISIBLE);
-            this.mAdapter.clear();
-            this.mAddCardInAdapter(this.mInstitutes);
+            this.setUpStackAdapter();
             this.mAdapter.setLoadingNext(false);
             this.loading = false;
             this.mNextUrl = next;
@@ -967,8 +977,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
         } else {
             this.mCardContainer.setVisibility(View.VISIBLE);
-            this.mAdapter.clear();
-            this.mAddCardInAdapter(this.mInstitutes);
+            this.setUpStackAdapter();;
             this.mAdapter.setLoadingNext(false);
             this.loading = false;
             this.mNextUrl = next;
@@ -1053,4 +1062,16 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             }
         });
     }
+
+    public void setUpStackAdapter(){
+        if(this.mInstitutes != null && !this.mInstitutes.isEmpty()){
+            this.mAdapter.clear();
+            List<Institute> list = new ArrayList<>();
+            list.add(mInstitutes.get(0));
+            this.mAddCardInAdapter(list);
+        } else {
+            mAdapter.clear();
+        }
+    }
+
 }
