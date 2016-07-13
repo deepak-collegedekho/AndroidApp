@@ -35,6 +35,7 @@ public class RangeQuestionFragment extends StepByStepFragment {
     private int mMin;
     private int mMax;
     private int mProgress;
+    private final int stepSize = 10;
 
     public RangeQuestionFragment() {
         // Required empty public constructor
@@ -95,9 +96,9 @@ public class RangeQuestionFragment extends StepByStepFragment {
         final TextView seekBarValue = (TextView) rootView.findViewById(R.id.range_value);
 
         SeekBar seekBar = (SeekBar) rootView.findViewById(R.id.range_seekbar);
-        seekBar.setProgress((this.mMin + this.mMax)/2);
-        seekBar.incrementProgressBy(100000);
         seekBar.setMax(this.mMax);
+        seekBar.setProgress(0);
+        seekBarValue.setText(String.valueOf(0));
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -106,10 +107,9 @@ public class RangeQuestionFragment extends StepByStepFragment {
             {
                 mAnswered = true;
 
-                progress = progress / 10;
-                progress = progress * 10;
-                mProgress = progress;
-                seekBarValue.setText(String.valueOf(progress));
+                progress = (Math.round(progress/stepSize))*stepSize;
+                seekBar.setProgress(progress);
+                seekBarValue.setText(progress + "");
             }
 
             @Override
@@ -121,15 +121,6 @@ public class RangeQuestionFragment extends StepByStepFragment {
 
             }
         });
-
-        //mAnswertext.setHint(pQuestion.text);
-
-        //mAnswertext.
-
-        /*if (mType == TYPE_PRIMARY) {
-            if (pQuestion.type.equals(Constants.QTYPE_RANGE))
-                rootView.findViewById(R.id.answer_list).setVisibility(View.GONE);
-        }*/
 
         return rootView;
     }

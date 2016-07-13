@@ -25,7 +25,7 @@
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_weight=".5"
-            android:background="@drawable/rounded_box_light_blue_20px"
+            android:background="@drawable/rounded_box_dark_blue_20px"
             android:layout_height="match_parent" >
 
             <TextView
@@ -88,7 +88,7 @@
             android:layout_width="0dp"
             android:layout_weight=".5"
             android:layout_marginLeft="@dimen/m5dp"
-            android:background="@drawable/rounded_box_light_blue_20px"
+            android:background="@drawable/rounded_box_dark_blue_20px"
             android:layout_height="match_parent" >
 
             <ImageView
@@ -160,7 +160,7 @@
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_weight=".5"
-            android:background="@drawable/rounded_box_light_blue_20px"
+            android:background="@drawable/rounded_box_dark_blue_20px"
             android:layout_height="match_parent" >
 
             <ImageView
@@ -222,7 +222,7 @@
             android:layout_width="0dp"
             android:layout_weight=".5"
             android:layout_marginLeft="@dimen/m5dp"
-            android:background="@drawable/rounded_box_light_blue_20px"
+            android:background="@drawable/rounded_box_dark_blue_20px"
             android:layout_height="match_parent" >
 
             <ImageView
