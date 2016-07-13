@@ -174,7 +174,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 this.mEmptyTextView.setText("No Featured college found...");
             else
                 this.mEmptyTextView.setText("No colleges found");
-
         }else {
             this.mEmptyTextView.setVisibility(View.GONE);
         }

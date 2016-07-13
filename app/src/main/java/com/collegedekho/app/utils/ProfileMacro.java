@@ -15179,11 +15179,11 @@ public class ProfileMacro {
      */
 
     public static ArrayList<ProfileSpinnerItem> getFeesRangeList(){
-        if(feesRangeList == null)
-            feesRangeList = new ArrayList<>();
-
+        //if(feesRangeList == null)
+          ArrayList<ProfileSpinnerItem>  feesRangeList = new ArrayList<>();
+/*
         if(feesRangeList.size() == 5)
-            return feesRangeList;
+            return feesRangeList;*/
 
         for (int i = 1; i < 6; i++) {
             ProfileSpinnerItem item = new  ProfileSpinnerItem();
@@ -15534,7 +15534,7 @@ public class ProfileMacro {
 
     private static ArrayList<ProfileSpinnerItem> motherTongueList ;
     private static ArrayList<ProfileSpinnerItem> socialCategoryList;
-    private static ArrayList<ProfileSpinnerItem> feesRangeList;
+    //private static ArrayList<ProfileSpinnerItem> feesRangeList;
     private static ArrayList<ProfileSpinnerItem> educationModeList;
     private static ArrayList<ProfileSpinnerItem> currentPassingYearList;
     private static ArrayList<ProfileSpinnerItem> preferredAddmisionYearList;

@@ -1392,15 +1392,15 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
 
         // set preferred fee range
-        int  maxfeeRangeId = mProfile.getPreferred_fee_range_max();
+        int  maxFeeRange = mProfile.getPreferred_fee_range_max();
         MaterialSpinner feesRangeSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_preferred_feee_range);
         ArrayList<ProfileSpinnerItem> feesRangeList = ProfileMacro.getFeesRangeList();
-        if(maxfeeRangeId >= 1) {
+        if(maxFeeRange >= 10) {
             int feesRangeCount = feesRangeList.size();
-            for (int i = 0; i < feesRangeCount; i++) {
+            for (int i = feesRangeCount-1; i >= 0; i--) {
                 ProfileSpinnerItem pObj = feesRangeList.get(i);
                 if (pObj == null) continue;
-                if (maxfeeRangeId == pObj.getId()) {
+                if (maxFeeRange >= pObj.getId()) {
                     feesRangeList.remove(i);
                     feesRangeList.add(0, pObj);
                     break;

@@ -567,9 +567,9 @@ public class CardContainer extends AdapterView<ListAdapter> {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             //Log.d("Fling", "Fling with " + velocityX + ", " + velocityY);
-            if (mListener==null){
+            if (mListener == null)
                 return false;
-            }
+
             final View topCard = mTopCard;
             float dx = e2.getX() - e1.getX();
             float dy = e2.getY() - e1.getY();

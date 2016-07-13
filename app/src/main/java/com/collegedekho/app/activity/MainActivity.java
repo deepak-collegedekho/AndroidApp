@@ -1978,9 +1978,9 @@ public class MainActivity extends AppCompatActivity
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE_LIST);
 
             if (currentFragment instanceof InstituteListFragment) {
-                ((InstituteListFragment) fragment).clearList();
-                ((InstituteListFragment) fragment).updateList(this.mInstituteList, next);
-                ((InstituteListFragment) fragment).updateFilterButton(this.mFilterCount);
+                ((InstituteListFragment) currentFragment).clearList();
+                ((InstituteListFragment) currentFragment).updateList(this.mInstituteList, next);
+                ((InstituteListFragment) currentFragment).updateFilterButton(this.mFilterCount);
             }else {
                 this.mDisplayFragment(InstituteListFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed, this.mFilterCount,listType), !isFromNotification, Constants.TAG_FRAGMENT_INSTITUTE_LIST);
             }
