@@ -5717,6 +5717,8 @@ public class MainActivity extends AppCompatActivity
         } else {
             this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
         }
+        Log.e("DEBUG_RESOURCE_URI",institute.getResource_uri());
+        Log.e("DEBUG_RESOURCE_URI",institute.getName());
     }
 
 
