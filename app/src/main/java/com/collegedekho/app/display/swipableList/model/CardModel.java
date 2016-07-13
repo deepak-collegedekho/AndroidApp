@@ -21,6 +21,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.CardView;
 import android.view.View;
 
 import com.collegedekho.app.entities.Institute;
@@ -33,15 +34,16 @@ public class CardModel {
 	private Drawable cardLikeImageDrawable;
 	private Drawable cardDislikeImageDrawable;
 	private Institute institute;
+	private int mTag;
 
     private OnCardDismissedListener mOnCardDismissedListener = null;
     private OnClickListener mOnClickListener = null;
     private View.OnTouchListener mOnTouchListener = null;
 
     public interface OnCardDismissedListener {
-        void onLike();
-        void onDislike();
-		void onUpSwipe();
+        void onLike(CardModel model);
+        void onDislike(CardModel model);
+		void onUpSwipe(CardModel model);
     }
 
     public interface OnClickListener {
@@ -143,4 +145,12 @@ public class CardModel {
     public void setOnTouchListener(View.OnTouchListener mOnTouchListener) {
         this.mOnTouchListener = mOnTouchListener;
     }
+
+	public int getTag() {
+		return mTag;
+	}
+
+	public void setTag(int mTag) {
+		this.mTag = mTag;
+	}
 }

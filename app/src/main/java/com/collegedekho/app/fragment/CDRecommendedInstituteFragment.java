@@ -174,12 +174,13 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 this.mEmptyTextView.setText("No Featured college found...");
             else
                 this.mEmptyTextView.setText("No colleges found");
+
         }else {
             this.mEmptyTextView.setVisibility(View.GONE);
         }
 
         if(this.mAdapter == null){
-            this.mAdapter = new SimpleCardStackAdapter(getActivity(), this.getContext(), this, CARD_CATEGORY);
+            this.mAdapter = new SimpleCardStackAdapter(this.getContext(), this, CARD_CATEGORY);
         }
         this.mAdapter.clear();
         this.mAddCardInAdapter(this.mInstitutes);
@@ -604,6 +605,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     @Override
     public void OnDecideLater(Institute institute, boolean isLastCard) {
 //        mEmptyTextView.setVisibility(View.GONE);
+       // Log.d("onDecide later SAM", " position  last card " +isLastCard);
         this.mRemoveInstituteFromList();
         boolean isFeatured = false;
         String nextUrl = null;

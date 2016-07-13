@@ -6527,9 +6527,15 @@ public class MainActivity extends AppCompatActivity
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
 
-        if (fragment == null)
-            this.mDisplayFragment(TabFragment.newInstance(tabPosition, new ArrayList<>(mProfile.getYearly_exams())), true, TabFragment.class.getSimpleName());
-        else {
+        if (fragment == null) {
+
+            ArrayList<ProfileExam> list = new ArrayList<>();
+            if(mProfile != null && mProfile.getYearly_exams() != null) {
+             list.addAll(mProfile.getYearly_exams());
+            }
+            this.mDisplayFragment(TabFragment.newInstance(tabPosition, list), true, TabFragment.class.getSimpleName());
+
+        }else {
             if (currentFragment instanceof TabFragment) {
                 ((TabFragment) currentFragment).updateTabFragment(tabPosition);
             } else{

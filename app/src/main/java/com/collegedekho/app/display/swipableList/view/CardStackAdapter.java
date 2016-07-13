@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.display.swipableList.view;
 
 import android.content.Context;
@@ -15,10 +16,12 @@ import java.util.Vector;
 public abstract class CardStackAdapter extends BaseAdapter {
 	private final Context mContext;
 
-	/**
+	*/
+/**
 	 * Lock used to modify the content of {@link #mData}. Any write operation
 	 * performed on the deque should be synchronized on this lock.
-	 */
+	 *//*
+
 	private Vector<CardModel> mData;
 
     private boolean mShouldFillCardBackground = false;
@@ -101,3 +104,4 @@ public abstract class CardStackAdapter extends BaseAdapter {
 		return mContext;
 	}
 }
+*/

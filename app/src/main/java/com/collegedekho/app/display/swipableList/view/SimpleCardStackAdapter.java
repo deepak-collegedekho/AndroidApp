@@ -2,7 +2,6 @@ package com.collegedekho.app.display.swipableList.view;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +23,6 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.Transformation;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -51,29 +49,49 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
     private boolean mLoadingNext;
     private Context mContext;
     private Vector<CardModel> mData;
-    private String examTag="";
-    private TextView mfacilityText;
+    private TextView mFacilityText;
     private Drawable backgroundBorder;
+
+    // drawables
+    private Drawable drawableLike ;
+    private Drawable drawableFees ;
+    private Drawable drawablePlacement ;
+    private Drawable drawableInfo ;
+    private Drawable drawableBubble ;
+    private Drawable drawableHeart ;
+    private Drawable drawableFacilityArrow ;
+    public static Bitmap like_bitmap;
+    //public static Bitmap placement_bitmap;
+    public static Bitmap fees_bitmap;
+    public static Bitmap info_bitmap;
+    public static Bitmap facilityArrow_bitmap;
 
 
     //private int cardCategory;
-    public SimpleCardStackAdapter(Activity activity, Context context, OnCDRecommendedAdapterInterface listener, int cardCategory) {
+    public SimpleCardStackAdapter(Context context, OnCDRecommendedAdapterInterface listener, int cardCategory) {
         this.imageLoader = MySingleton.getInstance(context).getImageLoader();
         this.mListener = listener;
         this.mContext = context;
         this.mData = new Vector<>();
         if(cardCategory == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()){
-            backgroundBorder = mContext.getResources().getDrawable(R.drawable.bg_rounded_blue_border_box);
+            backgroundBorder = ContextCompat.getDrawable(mContext, R.drawable.bg_rounded_blue_border_box);
         } else if(cardCategory == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()){
-            backgroundBorder = mContext.getResources().getDrawable(R.drawable.bg_rounded_orange_border_box);
+            backgroundBorder = ContextCompat.getDrawable(mContext, R.drawable.bg_rounded_orange_border_box);
         }
+            this.drawableLike = ContextCompat.getDrawable(mContext, R.drawable.ic_like);
+            this.drawableFees = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_fees);
+        //  this. drawablePlacement = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_placement);
+            this. drawableInfo = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_information);
+            this. drawableBubble = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_bubble);
+            this. drawableHeart = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_heart);
+            this. drawableFacilityArrow = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_arrow_down);
 
-       // this.cardCategory =cardCategory;
+
+        // this.cardCategory =cardCategory;
     }
 
     public void addAll(ArrayList<CardModel> item) {
         mData.addAll(item);
-
         notifyDataSetChanged();
     }
 
@@ -83,19 +101,22 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        Log.e("POSITION SAM", " step 1 position  is " + position + " time is " + System.currentTimeMillis());
+        Log.e("POSITION SAM", " step 1 position  is " + position +"id "+getCardModel(position).getInstitute().getId());//+ " time is " + System.currentTimeMillis());
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.wishlist_card_layout, parent, false);
         }
 
         convertView.findViewById(R.id.institute_card_layout).setBackground(backgroundBorder);
+        convertView.setTag(position);
 
         setVectorDrawable(convertView);
 
-        this.mfacilityText = (TextView) (convertView.findViewById(R.id.facility_toast));
+        this.mFacilityText = (TextView) (convertView.findViewById(R.id.facility_toast));
 
-        final CardModel model = getCardModel(position);
+        CardModel model = getCardModel(position);
+        model.setTag(position);
+
         this.mParseAndPopulateCards(model, convertView);
 
         //card_recommended_institute_container
@@ -105,11 +126,10 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
             }
         });
-       /* if (cardCategory == Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
-            ((TextView) convertView.findViewById(R.id.btn_apply_now)).setText("REMOVE");
-        }else {*/
-            ((TextView) convertView.findViewById(R.id.btn_apply_now)).setText("APPLY NOW");
-        //}
+        TextView applyNowTV = (TextView) convertView.findViewById(R.id.btn_apply_now);
+        applyNowTV.setTag(position);
+        applyNowTV.setText("APPLY NOW");
+
         (convertView.findViewById(R.id.btn_apply_now)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,7 +151,9 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
         model.setOnCardDismissedListener(new CardModel.OnCardDismissedListener() {
             @Override
-            public void onLike() {
+            public void onLike(CardModel model) {
+
+                int position = model.getTag();
                 Log.d("POSITION SAM", " step 1 position  is " + position);
                 if (position > 0)
                     SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
@@ -142,7 +164,8 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             }
 
             @Override
-            public void onDislike() {
+            public void onDislike(CardModel model) {
+                int position = model.getTag();
                 Log.d("POSITION SAM", " step 1 position  is " + position);
                 if (position > 0)
                     SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
@@ -153,12 +176,13 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             }
 
             @Override
-            public void onUpSwipe() {
-                Log.d("POSITION SAM", " step 1 position  is " + position);
+            public void onUpSwipe(CardModel model) {
+                int position = model.getTag();
+                Log.d("POSITION SAM", " step 1 position  is " + position +" id "+model.getInstitute().getId());
                 if (position > 0)
-                    SimpleCardStackAdapter.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
+                    SimpleCardStackAdapter.this.mListener.OnDecideLater(model.getInstitute(), false);
                 if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext()) {
-                    SimpleCardStackAdapter.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), true);
+                    SimpleCardStackAdapter.this.mListener.OnDecideLater(model.getInstitute(), true);
                     SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
                 }
             }
@@ -287,7 +311,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         View seeAllButton = convertView.findViewById(R.id.see_all_layout);
         final ArrayList<Facility> facilityArrayList = institute.getFacilities();
         if (facilityArrayList != null && !facilityArrayList.isEmpty()) {
-            facilitiesRecycler.setAdapter(new FacilitiesAdapter(facilityArrayList, this.mfacilityText));
+            facilitiesRecycler.setAdapter(new FacilitiesAdapter(facilityArrayList, this.mFacilityText));
             if (facilityArrayList.size() > 7) {
                 seeAllButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -474,35 +498,10 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         });
     }
 
-    private Drawable drawableLike ;
-    private Drawable drawableFees ;
-    private Drawable drawablePlacement ;
-    private Drawable drawableInfo ;
-    private Drawable drawableBubble ;
-    private Drawable drawableHeart ;
-    private Drawable drawableFacilityArrow ;
-    public static Bitmap like_bitmap;
-    //public static Bitmap placement_bitmap;
-    public static Bitmap fees_bitmap;
-    public static Bitmap info_bitmap;
-    public static Bitmap facilityArrow_bitmap;
+
 
     private void setVectorDrawable(View view){
 
-        if(this.drawableLike == null)
-            this.drawableLike = ContextCompat.getDrawable(mContext, R.drawable.ic_like);
-        if(this.drawableFees == null)
-            this.drawableFees = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_fees);
-        //if(this.drawablePlacement == null)
-        //  this. drawablePlacement = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_placement);
-        if(this.drawableInfo == null)
-            this. drawableInfo = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_information);
-        if(this.drawableBubble == null)
-            this. drawableBubble = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_bubble);
-        if(this.drawableHeart == null)
-            this. drawableHeart = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_heart);
-        if(this.drawableFacilityArrow == null)
-            this. drawableFacilityArrow = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_arrow_down);
 
         if(like_bitmap == null)
             like_bitmap   =  Utils.getBitmapDrawable(this.drawableLike);

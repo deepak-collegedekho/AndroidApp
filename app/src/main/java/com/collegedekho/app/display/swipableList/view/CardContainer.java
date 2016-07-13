@@ -168,7 +168,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
             mTopCard = getChildAt(childCount - 1);
             if (mTopCard != null)
             {
-                mAssignUICOmponentsForTopCard();
+               // mAssignUICOmponentsForTopCard();
                 mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
             }
         }
@@ -404,19 +404,19 @@ public class CardContainer extends AdapterView<ListAdapter> {
         return true;
     }
 
-    private void mAssignUICOmponentsForTopCard()
+    /*private void mAssignUICOmponentsForTopCard()
     {
-//        this.mLikeImageView = (ImageView)mTopCard.findViewById(R.id.like_textview);
-//        this.mDislikeImageView = (ImageView)mTopCard.findViewById(R.id.dislike_textview);
-//        this.mUndecidedImageView = (ImageView)mTopCard.findViewById(R.id.decide_later_textview);
-//        this.mTextView = (TextView) mTopCard.findViewById(R.id.card_recommended_institute_detail);
+        this.mLikeImageView = (ImageView)mTopCard.findViewById(R.id.like_textview);
+        this.mDislikeImageView = (ImageView)mTopCard.findViewById(R.id.dislike_textview);
+        this.mUndecidedImageView = (ImageView)mTopCard.findViewById(R.id.decide_later_textview);
+        this.mTextView = (TextView) mTopCard.findViewById(R.id.card_recommended_institute_detail);
 
-//        this.mLikeImageView .setBackgroundResource(R.drawable.ic_shortlist_vector);
-//        this.mDislikeImageView.setBackgroundResource(R.drawable.ic_not_interested_vector);
-//        this.mUndecidedImageView.setBackgroundResource(R.drawable.ic_undecided_vector);
+        this.mLikeImageView .setBackgroundResource(R.drawable.ic_shortlist_vector);
+        this.mDislikeImageView.setBackgroundResource(R.drawable.ic_not_interested_vector);
+        this.mUndecidedImageView.setBackgroundResource(R.drawable.ic_undecided_vector);
 
 
-    }
+    }*/
 
 //    private void mfadeInOneFadeOutAllOthers(int viewID)   {
 //        switch(viewID)
@@ -590,44 +590,49 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
                 duration = Math.min(500, duration);
 
-                mTopCard = getChildAt(getChildCount() - 2);
-
-                if(mTopCard != null)
-                {
-                    mAssignUICOmponentsForTopCard();
-                    mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
-                }
-
                 CardModel cardModel = (CardModel) getAdapter().getItem(getChildCount() - 1);
 
                 if (cardModel.getOnCardDismissedListener() != null) {
+                    boolean isListener = false;
                     if ( targetX > 0 ) {
-                        cardModel.getOnCardDismissedListener().onLike();
+                         isListener = true;
+                        cardModel.getOnCardDismissedListener().onLike(cardModel);
+                        cardModel.setOnCardDismissedListener(null);
                     } else {
-                        cardModel.getOnCardDismissedListener().onDislike();
+                        isListener = true;
+                        cardModel.getOnCardDismissedListener().onDislike(cardModel);
+                        cardModel.setOnCardDismissedListener(null);
                     }
+
+                    if(isListener) {
+                        topCard.animate()
+                                .setDuration(duration)
+                                .alpha(.75f)
+                                .setInterpolator(new LinearInterpolator())
+                                .x(targetX)
+                                .y(targetY)
+                                //.rotation(Math.copySign(45, velocityX))
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        mTopCard = getChildAt(getChildCount() - 2);
+                                        if (mTopCard != null) {
+                                            mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
+                                        }
+                                        removeViewInLayout(topCard);
+                                        ensureFull();
+                                    }
+
+                                    @Override
+                                    public void onAnimationCancel(Animator animation) {
+                                        onAnimationEnd(animation);
+                                    }
+                                });
+                    }
+
                     mListener.onActionCancel();
                 }
 
-                topCard.animate()
-                        .setDuration(duration)
-                        .alpha(.75f)
-                        .setInterpolator(new LinearInterpolator())
-                        .x(targetX)
-                        .y(targetY)
-                        //.rotation(Math.copySign(45, velocityX))
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                removeViewInLayout(topCard);
-                                ensureFull();
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-                                onAnimationEnd(animation);
-                            }
-                        });
                 return true;
             }
             else if (Math.abs(dy) > mTouchSlop &&
@@ -647,11 +652,49 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
                 duration = Math.min(500, duration);
 
+
+                /*int  itemPosition = -1;
+                try{
+                    itemPosition = Integer.parseInt(topCard.getTag().toString());
+                }
+                catch(NumberFormatException e){
+                    e.printStackTrace();
+                }*/
+               Log.e("POSITION SAM", "child postion "+getChildCount() );
+
                 CardModel cardModel = (CardModel)getAdapter().getItem(getChildCount() - 1);
 
                 if (cardModel.getOnCardDismissedListener() != null) {
                     if ( targetY < 0 ) {
-                        cardModel.getOnCardDismissedListener().onUpSwipe();
+                        cardModel.getOnCardDismissedListener().onUpSwipe(cardModel);
+                        cardModel.setOnCardDismissedListener(null);
+
+                        topCard.animate()
+                                .setDuration(duration)
+                                .alpha(.75f)
+                                .setInterpolator(new LinearInterpolator())
+                                .x(targetX)
+                                .y(targetY)
+                                //.rotation(Math.copySign(45, velocityY))
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        mTopCard = getChildAt(getChildCount() - 2);
+
+                                        if(mTopCard != null)
+                                        {
+                                            // mAssignUICOmponentsForTopCard();
+                                            mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
+                                        }
+                                        removeViewInLayout(topCard);
+                                        ensureFull();
+                                    }
+
+                                    @Override
+                                    public void onAnimationCancel(Animator animation) {
+                                        onAnimationEnd(animation);
+                                    }
+                                });
                     }
                     else
                     {
@@ -670,33 +713,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
                     mListener.onActionCancel();
                 }
 
-                mTopCard = getChildAt(getChildCount() - 2);
-
-                if(mTopCard != null)
-                {
-                    mAssignUICOmponentsForTopCard();
-                    mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
-                }
-
-                topCard.animate()
-                        .setDuration(duration)
-                        .alpha(.75f)
-                        .setInterpolator(new LinearInterpolator())
-                        .x(targetX)
-                        .y(targetY)
-                        //.rotation(Math.copySign(45, velocityY))
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                removeViewInLayout(topCard);
-                                ensureFull();
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-                                onAnimationEnd(animation);
-                            }
-                        });
 
                 return true;
             } else
