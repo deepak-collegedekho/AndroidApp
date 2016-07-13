@@ -2864,7 +2864,9 @@ public class MainActivity extends AppCompatActivity
                     this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
                     parentIndex = tags[1];
                     if (parentIndex.equals("true"))
-                    this.OnCDRecommendedLoadNext();
+                        this.OnCDRecommendedLoadNext();
+                    else
+                        Log.d("CD RECO ERROR :: ", " YES HERE isLastCard :: false");
                 }
                 break;
             case Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE:
@@ -5339,6 +5341,7 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(requestType, url, null);
             return;
         } else if (requestType.equals(Constants.TAG_MY_ALERTS)) {
+
             this.mMakeNetworkCall(requestType, url, null);
             return;
         }

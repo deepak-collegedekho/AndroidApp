@@ -290,6 +290,9 @@ public class TabFragment extends  BaseFragment{
         this.mExamDetailList=examsList;
         this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
         mExamTabPager.setAdapter(this.mDetailsAdapter);
+        if(mExamDetailList != null && !mExamDetailList.isEmpty()){
+            this.mExamDetail = this.mExamDetailList.get(this.mExamTabPager.getCurrentItem());
+        }
     }
 
 
@@ -305,6 +308,9 @@ public class TabFragment extends  BaseFragment{
                 this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
                 mExamTabPager.setAdapter(this.mDetailsAdapter);
                 mExamTabPager.invalidate();
+                if(mExamDetailList != null && !mExamDetailList.isEmpty()){
+                    this.mExamDetail = this.mExamDetailList.get(this.mExamTabPager.getCurrentItem());
+                }
                 mainActivity.mUpdateTabMenuItem(this.selectedTabPosition,0);
                 if(mPagerHeader != null)
                     ((ViewPager.LayoutParams) mPagerHeader.getLayoutParams()).isDecor = true;
@@ -766,7 +772,7 @@ public class TabFragment extends  BaseFragment{
                 }
             } else if(selectedSubMenuPosition == 3) {
                 if (this.mExamDetail != null) {
-                    this.mHomeWidgetSelected(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", null);
+                    this.mHomeWidgetSelected(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", this.mExamDetail.getExam_tag());
                     getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, ""+mExamDetail.getId()).commit();
                 }
             }

@@ -668,7 +668,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         }
     }
 
-
     public void removeTopCard(Institute institute){
         if(mInstitutes != null && mInstitutes.size() > 0 && mCardContainer != null &&
                 institute!=null && mInstitutes.contains(institute)) {
