@@ -102,7 +102,6 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        Log.e("POSITION SAM", " step 1 position  is " + position +"id "+getCardModel(position).getInstitute().getId());//+ " time is " + System.currentTimeMillis());
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.wishlist_card_layout, parent, false);
@@ -116,7 +115,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         this.mFacilityText = (TextView) (convertView.findViewById(R.id.facility_toast));
 
         CardModel model = getCardModel(position);
-        model.setTag(position);
+        model.setTag(mData.size()-1-position);
 
         this.mParseAndPopulateCards(model, convertView);
 
@@ -153,40 +152,35 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         model.setOnCardDismissedListener(new CardModel.OnCardDismissedListener() {
             @Override
             public void onLike(CardModel model) {
-
-                int position = model.getTag();
-                Log.d("POSITION SAM", " step 1 position  is " + position);
-
                 if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext() && SimpleCardStackAdapter.this.mListener.isLast()) {
-                    SimpleCardStackAdapter.this.mListener.OnInstituteLiked(model.getInstitute(), true);
+                    SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute(), true);
                     SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
                 }else {
-                    SimpleCardStackAdapter.this.mListener.OnInstituteLiked(model.getInstitute(), false);
+                    SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute(), false);
                 }
+//                SimpleCardStackAdapter.this.notifyDataSetChanged();
             }
 
             @Override
             public void onDislike(CardModel model) {
-                int position = model.getTag();
-                Log.d("POSITION SAM", " step 1 position  is " + position);
                 if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext() && SimpleCardStackAdapter.this.mListener.isLast()) {
                     SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), true);
                     SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
                 } else {
                     SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
                 }
+//                SimpleCardStackAdapter.this.notifyDataSetChanged();
             }
 
             @Override
             public void onUpSwipe(CardModel model) {
-                int position = model.getTag();
-                Log.d("POSITION SAM", " step 1 position  is " + position +" id "+model.getInstitute().getId());
                 if (position == 0 && !SimpleCardStackAdapter.this.isLoadingNext() && SimpleCardStackAdapter.this.mListener.isLast()) {
-                    SimpleCardStackAdapter.this.mListener.OnDecideLater(model.getInstitute(), true);
+                    SimpleCardStackAdapter.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute(), true);
                     SimpleCardStackAdapter.this.mListener.OnShowMessage("Looking for more institutes..");
                 }else {
-                    SimpleCardStackAdapter.this.mListener.OnDecideLater(model.getInstitute(), false);
+                    SimpleCardStackAdapter.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute(), false);
                 }
+//                SimpleCardStackAdapter.this.notifyDataSetChanged();
             }
         });
 
@@ -558,11 +552,16 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return getCardModel(position);
+        try{
+            return getCardModel(position);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public CardModel getCardModel(int position) {
-        return mData.get(mData.size() - 1 - position);
+        return mData.get(position);
     }
 
     @Override

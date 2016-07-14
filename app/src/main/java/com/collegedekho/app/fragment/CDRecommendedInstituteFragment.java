@@ -315,6 +315,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             currentTab = getView().findViewById(R.id.tab_wishlist);
             currentTabId=2;
         }
+
         getActivity().invalidateOptionsMenu();
 
         this.mMainActivity = (MainActivity) this.getActivity();
@@ -340,6 +341,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             //this.mMainActivity.setCurrentInstitute(null);
             institute.setPosition(-1);
         }
+        setUpStackAdapter();
     }
 
     @Override
@@ -506,12 +508,17 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
     @Override
     public void OnInstituteSelected(Institute institute) {
-        this.mListener.OnCDRecommendedInstituteSelected(institute);
+        if(institute != null){
+            this.mListener.OnCDRecommendedInstituteSelected(institute);
+        }
     }
 
     @Override
     public void OnInstituteLiked(Institute institute, boolean isLastCard) {
 //        mEmptyTextView.setVisibility(View.GONE);
+        if(institute == null){
+            return;
+        }
         this.mRemoveInstituteFromList();
         this.setUpStackAdapter();
         boolean isFeatured = false;
@@ -560,6 +567,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     @Override
     public void OnInstituteDislike(Institute institute, boolean isLastCard) {
 //        mEmptyTextView.setVisibility(View.GONE);
+        if(institute == null){
+            return;
+        }
         this.mRemoveInstituteFromList();
         this.setUpStackAdapter();
         boolean isFeatured = false;
@@ -607,6 +617,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     @Override
     public void OnDecideLater(Institute institute, boolean isLastCard) {
 //        mEmptyTextView.setVisibility(View.GONE);
+        if(institute == null){
+            return;
+        }
         this.mRemoveInstituteFromList();
         this.setUpStackAdapter();
         boolean isFeatured = false;
@@ -654,6 +667,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
     @Override
     public void OnAppliedInstitute(Institute institute) {
+        if(institute == null){
+            return;
+        }
         if(mListener != null) {
             boolean flag = false;
             if(mInstitutes != null &&  mInstitutes.size() ==1){
@@ -693,6 +709,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             }*/
 
         }
+        setUpStackAdapter();
     }
 
 
@@ -708,7 +725,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     private void mRemoveInstituteFromList()
     {
         try {
-            this.mInstitutes.remove(0);
+            int size = mAdapter.getCount();
+            int total = mInstitutes.size();
+            this.mInstitutes.remove(total-1);
             if(this.mInstitutes.size() <= 0) {
                 if (this.mNextUrl == null || this.mNextUrl.equalsIgnoreCase("null")) {
 
@@ -900,8 +919,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         else
         {
             this.mCardContainer.setVisibility(View.VISIBLE);
-            this.setUpStackAdapter();
             this.mNextUrl = next;
+            setUpStackAdapter();
             this.mAdapter.setLoadingNext(false);
             this.loading = false;
            /* if (canAnimate) {
@@ -1063,14 +1082,21 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     public void setUpStackAdapter(){
         if(this.mInstitutes != null && !this.mInstitutes.isEmpty()){
             this.mAdapter.clear();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
                     List<Institute> list = new ArrayList<>();
-                    list.add(mInstitutes.get(0));
+                    int i = 0;
+                    if(mInstitutes.size() >= 2) {
+                        for (i = 0; i < 2 && i < mInstitutes.size(); i++) {
+                            list.add(mInstitutes.get(mInstitutes.size()-2+i));
+                        }
+                    } else if (mInstitutes.size() == 1){
+                        list.add(mInstitutes.get(0));
+                    }
                     mAddCardInAdapter(list);
-                }
-            },200);
+//                }
+//            },0);
             questionLayout.setVisibility(View.GONE);
         } else {
             mAdapter.clear();

@@ -5740,8 +5740,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
         }
-        Log.e("DEBUG_RESOURCE_URI",institute.getResource_uri());
-        Log.e("DEBUG_RESOURCE_URI",institute.getName());
     }
 
 
@@ -5777,6 +5775,7 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
         }
     }
+
     @Override
     public void OnCDRecommendedLoadUndecidedInstitutes(String url) {
         this.mMakeNetworkCall(Constants.TAG_LOAD_UNDECIDED_INSTITUTE, url, null, Request.Method.GET);
@@ -5819,6 +5818,7 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_WISHLIST), this.mInstitute.getResource_uri());
             AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
         }
+//        Log.e("DEBUG_APPLIED",institute.getName());
     }
 
     @Override
