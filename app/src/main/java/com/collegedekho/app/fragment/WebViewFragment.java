@@ -24,6 +24,7 @@ import android.widget.ProgressBar;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.collegedekho.app.resource.Constants;
 
 /**
  * Created by Bashir on 8/4/16.
@@ -88,6 +89,7 @@ public class WebViewFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        Constants.IS_CAF_LOADED = true;
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null)
             mainActivity.currentFragment = this;

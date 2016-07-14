@@ -2873,6 +2873,8 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE:
+                this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
+                this.mUpdateWishListCount();
                 if (tags.length == 2) {
                     parentIndex = tags[1];
                     if (parentIndex.equals("true"))
@@ -6530,11 +6532,13 @@ public class MainActivity extends AppCompatActivity
         Animation translateUp= AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_up);
         Animation translateDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_down);
 
-        if(viewToMoveUp != null){
-            viewToMoveUp.startAnimation(translateUp);
-        }
-        if(viewToMoveDown != null){
-            viewToMoveDown.startAnimation(translateDown);
+        if(viewToMoveDown != viewToMoveUp) {
+            if (viewToMoveUp != null) {
+                viewToMoveUp.startAnimation(translateUp);
+            }
+            if (viewToMoveDown != null) {
+                viewToMoveDown.startAnimation(translateDown);
+            }
         }
     }
 

@@ -204,6 +204,7 @@ public class Constants
     public static final int ID_STATE = 6;
     public static final int ID_INSTITUTE_TYPE = 4;
     public static final int ID_HOSTEL = 8;
+    public static boolean IS_CAF_LOADED = false;
 
     public static final int NUMBER_OF_COMMENTS_IN_ONE_GO = 100;
 
