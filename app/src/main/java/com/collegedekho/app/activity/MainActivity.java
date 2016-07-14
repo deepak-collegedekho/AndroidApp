@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -150,6 +151,7 @@ import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.listener.OnArticleSelectListener;
 import com.collegedekho.app.listener.OnNewsSelectListener;
 import com.collegedekho.app.listener.ProfileFragmentListener;
+import com.collegedekho.app.receiver.OTPReceiver;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.utils.AnalyticsUtils;
@@ -2308,7 +2310,8 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.container, fragment, tag);
             if (addToBackstack)
                 fragmentTransaction.addToBackStack(fragment.toString());
-            fragmentTransaction.commit();
+            //fragmentTransaction.commit();
+            fragmentTransaction.commitAllowingStateLoss();
 
             if (this.currentFragment instanceof HomeFragment) {
 
@@ -5618,7 +5621,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void OnTakeMeToRecommended() {
         mClearBackStack();
-        this.mMakeNetworkCall(Constants.TAKE_ME_TO_RECOMMENDED, Constants.BASE_URL + "personalize/institutes/",null);
+        this.mMakeNetworkCall(Constants.TAKE_ME_TO_RECOMMENDED, Constants.BASE_URL + "personalize/recommended-institutes/",null);
 
     }
 
@@ -6165,6 +6168,15 @@ public class MainActivity extends AppCompatActivity
                     }
                 }else{
                    // mUpdateUserPreferences(response);
+                    //Remove the BroadcastReciever for SMS
+                    ComponentName component = new ComponentName(this, OTPReceiver.class);
+
+                    int status = this.getPackageManager().getComponentEnabledSetting(component);
+                    if(status == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
+                        Log.d("MainActivity","receiver is enabled");
+                        //Disable
+                        this.getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_DISABLED , PackageManager.DONT_KILL_APP);
+                    }
 
                     // TODO :: delete this code flow when new common logi api is ready
 

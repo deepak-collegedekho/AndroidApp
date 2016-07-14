@@ -13,6 +13,7 @@ import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.OTPVerificationFragment;
 import com.collegedekho.app.fragment.PostAnonymousLoginFragment;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.ProfileMacro;
 
 import java.util.HashMap;
 
@@ -22,6 +23,10 @@ import java.util.HashMap;
 public class OTPReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        //Return if user is already verified
+        if (MainActivity.mProfile != null && MainActivity.mProfile.getIs_verified() == ProfileMacro.NUMBER_VERIFIED)
+            return;
+
         if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")){
             try {
                 Bundle bundle= intent.getExtras();

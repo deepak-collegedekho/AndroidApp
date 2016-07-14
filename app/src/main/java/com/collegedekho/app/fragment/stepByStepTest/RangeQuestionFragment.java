@@ -109,12 +109,20 @@ public class RangeQuestionFragment extends StepByStepFragment {
                 int calculatedProgress = 0;
                 mAnswered = true;
 
+                //setting progress
                 seekBar.setProgress(progress);
 
+                /*--------------this logic is here to make the user see only the interval figures in lakhs--------------*/
+
+                //if progress is less than a lakh, show 0
                 if (progress < 100000)
                 {
                     seekBarValue.setText(calculatedProgress + "");
                 }
+                //if progress is more than or equal to a lakh,
+                //show progress by this logic
+                //get first digit of the progress and multiply it with a lakh
+                //in case of 10 lakh: set 10 lakh if progress is equal to 10 lakh
                 else
                 {
                     int firstDigit = Integer.parseInt(Integer.toString(progress).substring(0, 1));
@@ -122,6 +130,9 @@ public class RangeQuestionFragment extends StepByStepFragment {
 
                     if (progress > calculatedProgress)
                     {
+                        if (progress == mMax)
+                            calculatedProgress = mMax;
+
                         seekBarValue.setText(calculatedProgress + "");
                     }
                 }
