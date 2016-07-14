@@ -391,6 +391,9 @@ public class MaterialSpinner extends TextView {
    *     The item type
    */
   public <T> void setItems(@NonNull List<T> items, boolean isItemSelected) {
+    if(items == null)
+      return;
+
     this.items = (List<ProfileSpinnerItem>) items;
     numberOfItems = items.size();
 

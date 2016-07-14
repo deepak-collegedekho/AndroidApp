@@ -5562,6 +5562,26 @@ public class MainActivity extends AppCompatActivity
 
         this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, examUrl.toString(), null, Request.Method.GET);
     }
+    @Override
+    public void onRequestForUserExamsUpdate() {
+      /*  if(mProfile != null &&  mProfile.getPreferred_level() ==  0){
+            this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL +"stream-yearly-exams/?stream_id="+mProfile.getPreferred_stream_id(),null, Request.Method.GET);
+        }else {
+            this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/", null);
+        }*/
+        StringBuffer  examUrl = new StringBuffer(Constants.BASE_URL);
+        examUrl.append("stream-yearly-exams/?preferred_level="+mProfile.getPreferred_level());
+
+        int userPreferredStreamId = mProfile.getPreferred_stream_id();
+        if(userPreferredStreamId > 0){
+            examUrl.append("&preferred_stream="+userPreferredStreamId);
+        }else{
+            examUrl.append("&current_stream="+mProfile.getCurrent_stream_id());
+        }
+
+        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, examUrl.toString(), null, Request.Method.GET);
+
+    }
 
     @Override
     public void onRequestForLevelStreams(int levelId, int levelType) {
@@ -6573,14 +6593,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onRequestForUserExamsUpdate() {
-        if(mProfile != null &&  mProfile.getPreferred_level() ==  0){
-                this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL +"stream-yearly-exams/?stream_id="+mProfile.getPreferred_stream_id(),null, Request.Method.GET);
-        }else {
-            this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/", null);
-        }
-    }
+
 
 
     private void onPNSNews(String response) {

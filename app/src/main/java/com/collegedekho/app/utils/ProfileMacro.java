@@ -14778,6 +14778,14 @@ public class ProfileMacro {
             "    {\n" +
             "        \"id\": 14,\n" +
             "        \"name\": \"Diploma\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 5,\n" +
+            "        \"name\": \"PG 1st Year\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": 6,\n" +
+            "        \"name\": \"PG 2nd Year\"\n" +
             "    }\n" +
             "]";
 
