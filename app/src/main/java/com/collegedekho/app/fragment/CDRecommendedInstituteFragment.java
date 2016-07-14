@@ -581,7 +581,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         boolean isFeatured = false;
         String nextUrl = null;
         if(isLastCard){
-            if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()){
+            if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal() && !IS_UNDECIDED_INSTITUTES){
                 isFeatured = true;
                 if(this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null")) {
                     nextUrl = this.mNextUrl;
@@ -631,7 +631,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         boolean isFeatured = false;
         String nextUrl = null;
         if(isLastCard){
-            if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()){
+            if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal() && !IS_UNDECIDED_INSTITUTES){
                 isFeatured = true;
                 if(this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null")) {
                     nextUrl = this.mNextUrl;
@@ -679,6 +679,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         if(mListener != null) {
             boolean flag = false;
             if(mInstitutes != null &&  mInstitutes.size() ==1){
+                flag = true;
                 this.mEmptyTextView.setVisibility(View.INVISIBLE);
                 setUpStackAdapter();
                 this.mEmptyTextView.setText("Looking for more institutes...");
