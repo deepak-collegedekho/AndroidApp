@@ -6276,6 +6276,7 @@ public class MainActivity extends AppCompatActivity
                     //Events
                     AnalyticsUtils.SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
 
+                    if(currentFragment instanceof  OTPVerificationFragment)
                     onBackPressed();
                 } else {
                     if (currentFragment != null && currentFragment instanceof OTPVerificationFragment) {

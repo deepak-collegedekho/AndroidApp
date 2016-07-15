@@ -89,7 +89,6 @@ public class WebViewFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Constants.IS_CAF_LOADED = true;
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null)
             mainActivity.currentFragment = this;
@@ -168,6 +167,7 @@ public class WebViewFragment extends BaseFragment {
 
                 if(url.contains("https://m.collegedekho.com/caf-login-signup/?institute_id=")){
                     baseUrl = url;
+                    Constants.IS_CAF_LOADED = true; // for shortlist card in cd reco
                   }
 
                 View v = getView();
