@@ -330,6 +330,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
         Institute institute = this.mMainActivity.getCurrentInstitute();
 
+        //this logic is here so that if there is any institute removed from shortlisting from inside of InnstituteDetailPage. We can remove that institute from screen.
         if (institute != null && institute.getPosition() >= 0)
         {
             //removed from shortlist

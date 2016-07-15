@@ -3003,9 +3003,15 @@ public class MainActivity extends AppCompatActivity
         this.mInstitute.setIs_shortlisted(0);
 
         if (currentFragment instanceof WishlistFragment)
+        {
+            this.mInstitute.setPosition(-1);
             ((WishlistFragment) currentFragment).RemoveInstitute(i);
+        }
         else if(currentFragment instanceof CDRecommendedInstituteFragment)
-             ((CDRecommendedInstituteFragment) currentFragment).RemoveInstituteFromShortList(i);
+        {
+            this.mInstitute.setPosition(-1);
+            ((CDRecommendedInstituteFragment) currentFragment).RemoveInstituteFromShortList(i);
+        }
         else if(currentFragment instanceof InstituteDetailFragment && i < 0)
             ((InstituteDetailFragment) currentFragment).OnInstituteRemoved();
     }
@@ -6004,7 +6010,8 @@ public class MainActivity extends AppCompatActivity
                     params.put(getResourceString(R.string.USER_EMAIL), email);
                     params.put(getResourceString(R.string.USER_PHONE), phone);
                     params.put(getResourceString(R.string.APPLY_YEAR), mYear);
-                    mMakeNetworkCall( TAG,"http://5277a9ef.ngrok.io/api/1/lms/", params, Request.Method.POST);//Constants.BASE_URL + "lms/", params, Request.Method.POST);
+                    mMakeNetworkCall( TAG, Constants.BASE_URL + "lms/", params, Request.Method.POST);
+
 
                     // update user profile  also with apply form data
                     final HashMap<String, String> profileParams = new HashMap<>();

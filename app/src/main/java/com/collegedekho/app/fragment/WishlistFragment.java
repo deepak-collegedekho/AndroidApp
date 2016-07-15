@@ -248,6 +248,13 @@ public class WishlistFragment extends BaseFragment {
 
                 //this.mMainActivity.setCurrentInstitute(null);
                 institute.setPosition(-1);
+
+                if(mInstitutes == null || mInstitutes.size() <= 0){
+                    mEmptyTextView.setVisibility(View.VISIBLE);
+                    mEmptyTextView.setText("You don't have any Shortlisted college. Please Shortlist colleges from Listing !");
+                }else{
+                    mEmptyTextView.setVisibility(View.GONE);
+                }
             }
         }
     }
