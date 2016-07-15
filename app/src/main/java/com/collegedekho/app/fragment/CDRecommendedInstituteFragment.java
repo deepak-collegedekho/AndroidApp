@@ -909,6 +909,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
 
     public void updateRecommendedList(List<Institute> institutes, String next,int mRecommendedCount) {
+        CARD_CATEGORY = Constants.CDRecommendedInstituteType.UNBAISED.ordinal();
         if(getView() == null)
             return;
         this.mInstitutes.clear();
@@ -921,17 +922,13 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         }
         this.mTitle = "CD Recommended Colleges";
         this.mPageTitleTV.setText(mTitle);
-        if (this.mInstitutes.size() == 0)
-        {
-            mMainActivity.translateAnimation(null,currentTab);
-            currentTab = null;
-
+        if (this.mInstitutes.size() == 0) {
+//            mMainActivity.translateAnimation(null,currentTab);
+//            currentTab = null;
             this.mEmptyTextView.setText("No more institutes");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.mCardContainer.setVisibility(View.GONE);
-        }
-        else
-        {
+        } else {
             if(getView() != null){
                 View v = getView().findViewById(R.id.tab_recommended);
                 mMainActivity.translateAnimation(v,currentTab);
@@ -940,7 +937,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
             this.mCardContainer.setVisibility(View.VISIBLE);
             this.mNextUrl = next;
-            setUpStackAdapter();
             this.mAdapter.setLoadingNext(false);
             this.loading = false;
            /* if (canAnimate) {
@@ -955,11 +951,13 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 }, 2000);
             }*/
         }
+        setUpStackAdapter();
         if (getActivity() != null)
             ((MainActivity) getActivity()).hideProgressDialog();
     }
 
     public void showUndecidedInstitutes(List<Institute> institutes, String next) {
+        CARD_CATEGORY = Constants.CDRecommendedInstituteType.UNDECIDED.ordinal();
         this.mInstitutes.clear();
         this.IS_UNDECIDED_INSTITUTES = true;
         this.mInstitutes.addAll(institutes);
@@ -969,11 +967,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         {
             this.mEmptyTextView.setText("Looking for more institutes...");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
-            setUpStackAdapter();
             this.mCardContainer.setVisibility(View.GONE);
 
-            mMainActivity.translateAnimation(null,currentTab);
-            currentTab = null;
+//            mMainActivity.translateAnimation(null,currentTab);
+//            currentTab = null;
 
             if(mListener != null) {
                 mListener.OnCDRecommendedLoadNext();
@@ -982,21 +979,20 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             this.mCardContainer.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setVisibility(View.GONE);
             this.questionLayout.setVisibility(View.INVISIBLE);
-            this.setUpStackAdapter();
             this.mAdapter.setLoadingNext(false);
-
-            mMainActivity.translateAnimation(null,currentTab);
-            currentTab = null;
-
             this.loading = false;
             this.mNextUrl = next;
         }
+        setUpStackAdapter();
+        mMainActivity.translateAnimation(null,currentTab);
+        currentTab = null;
 
         if (getActivity() != null)
             ((MainActivity) getActivity()).hideProgressDialog();
     }
 
     public void updateBuzzList(List<Institute> institutes, String next, int buzzListCount) {
+        CARD_CATEGORY = Constants.CDRecommendedInstituteType.BUZZLIST.ordinal();
         this.mInstitutes.clear();
         this.IS_UNDECIDED_INSTITUTES = false;
         this.mInstitutes.addAll(institutes);
@@ -1007,25 +1003,22 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         }
         mTitle = "Featured Colleges";
         this.mPageTitleTV.setText(mTitle);
-        //this.mCardContainer.setListener(null);
-        // boolean canAnimate = mAdapter.getCardCategory() != Constants.CDRecommendedInstituteType.BUZZLIST.ordinal();
-        //this.mAdapter.setCardCategory(Constants.CDRecommendedInstituteType.BUZZLIST.ordinal());
+
         if (this.mInstitutes.size() == 0) {
             this.mEmptyTextView.setText("No more institutes");
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             questionLayout.setVisibility(View.INVISIBLE);
             this.mCardContainer.setVisibility(View.GONE);
 
-            mMainActivity.translateAnimation(null,currentTab);
-            currentTab = null;
+//            mMainActivity.translateAnimation(null,currentTab);
+//            currentTab = null;
 
             if (mListener != null) {
                 mListener.onNextBuzzList();
             }
 
         } else {
-            this.mCardContainer.setVisibility(View.VISIBLE);
-            this.setUpStackAdapter();;
+            this.mCardContainer.setVisibility(View.VISIBLE);;
             this.mAdapter.setLoadingNext(false);
             this.loading = false;
             this.mNextUrl = next;
@@ -1035,21 +1028,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 mMainActivity.translateAnimation(v,currentTab);
                 currentTab = v;
             }
-
-            /*if (canAnimate) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Animation animation = AnimationUtils.loadAnimation(getActivity(),
-                                R.anim.window_maximize_animation);
-                        mCardContainer.startAnimation(animation);
-                        mEmptyTextView.setVisibility(View.GONE);
-                        cardState.delete(0,cardState.length());
-                    }
-                }, 500);
-            }*/
         }
-
+        setUpStackAdapter();
         if (getActivity() != null)
             ((MainActivity) getActivity()).hideProgressDialog();
 
@@ -1057,6 +1037,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
 
     public void updateWishList(List<Institute> institutes, String next) {
+        CARD_CATEGORY = Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal();
         this.mInstitutes.clear();
         this.IS_UNDECIDED_INSTITUTES = false;
         this.mInstitutes.addAll(institutes);
@@ -1075,6 +1056,13 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             this.mEmptyTextView.setVisibility(View.GONE);
             this.questionLayout.setVisibility(View.GONE);
             wishListRecyclerView.setVisibility(View.VISIBLE);
+
+            if(getView() != null){
+                View v = getView().findViewById(R.id.tab_wishlist);
+                mMainActivity.translateAnimation(v,currentTab);
+                currentTab = v;
+            }
+
             this.mWishlistInstituteListAdapter.lastPosition = this.mInstitutes.size() - 1;
             this.mWishlistInstituteListAdapter.notifyDataSetChanged();
             loading = false;
@@ -1139,10 +1127,18 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             questionLayout.setVisibility(View.GONE);
         } else {
             mAdapter.clear();
-            if(mUndecidedCount > 0){
-                questionLayout.setVisibility(View.VISIBLE);
+            if(!IS_UNDECIDED_INSTITUTES) {
+                if (mUndecidedCount > 0) {
+                    questionLayout.setVisibility(View.VISIBLE);
+                } else {
+                    questionLayout.setVisibility(View.GONE);
+                    mEmptyTextView.setText("No more institutes");
+                }
             } else {
-                questionLayout.setVisibility(View.GONE);
+                if (mUndecidedCount < 1) {
+                    questionLayout.setVisibility(View.GONE);
+                    mEmptyTextView.setText("No more institutes");
+                }
             }
         }
     }
