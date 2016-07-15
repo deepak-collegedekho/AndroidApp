@@ -1935,42 +1935,44 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             // Get the cursor
             Cursor cursor = getActivity().getContentResolver().query(filePath,
                     filePathColumn, null, null, null);
-            // Move to first row
-            cursor.moveToFirst();
+            if(cursor != null) {
+                // Move to first row
+                cursor.moveToFirst();
 
-            int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
-            String imgDecodableString = cursor.getString(columnIndex);
-            cursor.close();
+                int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
+                String imgDecodableString = cursor.getString(columnIndex);
+                cursor.close();
 
-            File sourceFile =  new File(imgDecodableString);
-            FileChannel source = null;
-            FileChannel destination = null;
-            try {
-                source = new FileInputStream(sourceFile).getChannel();
-                destination = new FileOutputStream(uploadTempImageFile).getChannel();
-                if (destination != null && source != null) {
-                    try {
-                        destination.transferFrom(source, 0, source.size());
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                File sourceFile = new File(imgDecodableString);
+                FileChannel source = null;
+                FileChannel destination = null;
+                try {
+                    source = new FileInputStream(sourceFile).getChannel();
+                    destination = new FileOutputStream(uploadTempImageFile).getChannel();
+                    if (destination != null && source != null) {
+                        try {
+                            destination.transferFrom(source, 0, source.size());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-                if (source != null) {
-                    try {
-                        source.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (source != null) {
+                        try {
+                            source.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-                if (destination != null) {
-                    try {
-                        destination.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (destination != null) {
+                        try {
+                            destination.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             }
             mImageCaptureUri = Uri.fromFile(uploadTempImageFile);
         }
