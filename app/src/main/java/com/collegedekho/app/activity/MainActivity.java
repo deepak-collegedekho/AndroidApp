@@ -7145,10 +7145,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onDisplayWebFragment(String url){
-        if(currentFragment instanceof WebViewFragment){
+
+        if (MainActivity.mProfile != null)
+            url = url + "/?user_id=" + MainActivity.mProfile.getId();
+
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.ACTION_OPEN_WEB_URL);
+
+        if(fragment != null && currentFragment instanceof WebViewFragment){
             ((WebViewFragment) currentFragment).loadUrl(url);
-        }else {
-            mDisplayFragment(WebViewFragment.newInstance(url),!isFromNotification,Constants.ACTION_OPEN_WEB_URL);
+        }
+        else {
+            mDisplayFragment(WebViewFragment.newInstance(url), !isFromNotification, Constants.ACTION_OPEN_WEB_URL);
         }
     }
 
