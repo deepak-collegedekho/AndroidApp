@@ -832,33 +832,71 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     }
 
     public void AddInstituteInShortList() {
-        this.mShortListCount++;
-        this.mShortListCountText.setText(""+this.mShortListCount);
         if (!IS_UNDECIDED_INSTITUTES) {
             if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()) {
-                this.mRecommendedCount--;
-                this.mRecommendedCountText.setText("" + mRecommendedCount);
+
+                this.mShortListCount++;
+                this.mShortListCountText.setText(""+this.mShortListCount);
+                if(this.mRecommendedCount > 0) {
+                    this.mRecommendedCount--;
+                    this.mRecommendedCountText.setText("" + mRecommendedCount);
+                }
+
+                if(mInstitutes != null){
+                    int size = mInstitutes.size();
+                    if(mRecommendedCount <= 20 && size != mRecommendedCount){
+                        this.mRecommendedCount = size;
+                        this.mRecommendedCountText.setText("" + mRecommendedCount);
+                    }
+                }
             } else if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()) {
-                this.mBuzzListCount--;
-                ;
-                this.mBuzzListCountText.setText("" + mBuzzListCount);
+
+                this.mShortListCount++;
+                this.mShortListCountText.setText(""+this.mShortListCount);
+                if(this.mBuzzListCount > 0) {
+                    this.mBuzzListCount--;
+                    this.mBuzzListCountText.setText("" + mBuzzListCount);
+                }
+                if(mInstitutes != null){
+                    int size = mInstitutes.size();
+                    if(mBuzzListCount <= 20 && size != mBuzzListCount){
+                        this.mBuzzListCount = size;
+                        this.mBuzzListCountText.setText("" + mBuzzListCount);
+                    }
+                }
             }
         }
-//        else {
-//            this.mUndecidedCount = mUndecidedCount-1;
-//            this.mUndecidedCountText.setText(""+this.mUndecidedCount);
-//        }
     }
 
     public void updateInstitutesCountOnNotinterested(){
         if (!IS_UNDECIDED_INSTITUTES) {
             if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()) {
-                this.mRecommendedCount--;
-                this.mRecommendedCountText.setText("" + mRecommendedCount);
+
+                if (this.mRecommendedCount > 0) {
+                    this.mRecommendedCount--;
+                    this.mRecommendedCountText.setText("" + mRecommendedCount);
+                }
+
+                if (mInstitutes != null) {
+                    int size = mInstitutes.size();
+                    if (mRecommendedCount <= 20 && size != mRecommendedCount) {
+                        this.mRecommendedCount = size;
+                        this.mRecommendedCountText.setText("" + mRecommendedCount);
+                    }
+                }
             } else if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()) {
-                this.mBuzzListCount--;
-                ;
-                this.mBuzzListCountText.setText("" + mBuzzListCount);
+
+                if (this.mBuzzListCount > 0) {
+                    this.mBuzzListCount--;
+                    this.mBuzzListCountText.setText("" + mBuzzListCount);
+                }
+                if (mInstitutes != null) {
+                    int size = mInstitutes.size();
+                    if (mBuzzListCount <= 20 && size != mBuzzListCount) {
+                        this.mBuzzListCount = size;
+                        this.mBuzzListCountText.setText("" + mBuzzListCount);
+                    }
+                }
             }
         }
     }
@@ -877,14 +915,15 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     {
         if (!IS_UNDECIDED_INSTITUTES && !isIncrement) {
             this.mUndecidedCount = undecidedCount + 1;
-            if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()) {
+            /*if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()) {
                 this.mRecommendedCount--;
                 this.mRecommendedCountText.setText("" + mRecommendedCount);
             } else if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()) {
                 this.mBuzzListCount--;
                 ;
                 this.mBuzzListCountText.setText("" + mBuzzListCount);
-            }
+            }*/
+            updateInstitutesCountOnNotinterested();
 
         }else if (IS_UNDECIDED_INSTITUTES && isIncrement){
             this.mUndecidedCount = mUndecidedCount-1;
@@ -916,9 +955,16 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mInstitutes.addAll(institutes);
         this.IS_UNDECIDED_INSTITUTES = false;
         this.mUndecidedCountText.setClickable(true);
-        if(this.mRecommendedCount <= 0) {
+        //if(this.mRecommendedCount <= 0) {
             this.mRecommendedCount = mRecommendedCount;
             this.mRecommendedCountText.setText(""+ this.mRecommendedCount);
+        //}
+        if(mInstitutes != null){
+            int size = mInstitutes.size();
+            if(this.mRecommendedCount <= 20 && size != mRecommendedCount){
+                this.mRecommendedCount = size;
+                this.mRecommendedCountText.setText("" + mRecommendedCount);
+            }
         }
         this.mTitle = "CD Recommended Colleges";
         this.mPageTitleTV.setText(mTitle);
@@ -997,9 +1043,16 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.IS_UNDECIDED_INSTITUTES = false;
         this.mInstitutes.addAll(institutes);
         this.mUndecidedCountText.setClickable(true);
-        if(this.mBuzzListCount <= 0) {
+       // if(this.mBuzzListCount <= 0) {
             this.mBuzzListCount = buzzListCount;
             this.mBuzzListCountText.setText(""+this.mBuzzListCount);
+       // }
+        if(mInstitutes != null){
+            int size = mInstitutes.size();
+            if(mBuzzListCount <= 20 && size != mBuzzListCount){
+                this.mBuzzListCount = size;
+                this.mBuzzListCountText.setText("" + mBuzzListCount);
+            }
         }
         mTitle = "Featured Colleges";
         this.mPageTitleTV.setText(mTitle);

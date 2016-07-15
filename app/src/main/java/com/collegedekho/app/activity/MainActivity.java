@@ -711,17 +711,24 @@ public class MainActivity extends AppCompatActivity
                     ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
                 else if (currentFragment instanceof CalendarParentFragment)
                     ((CalendarParentFragment) currentFragment).submitCalendarData();
-                else if (currentFragment instanceof ExamsFragment)
-                    return;
+                /*else if (currentFragment instanceof ExamsFragment)
+                    return;*/
                 else if (currentFragment instanceof OTPVerificationFragment)
                     return;
-                else if(isFromNotification && (currentFragment instanceof ProfileFragment
-                        || currentFragment instanceof CDRecommendedInstituteFragment)){
-                    MainActivity.this.onBackPressed();
-                }
+                else if(isFromNotification ) {
 
+                    mClearBackStack();
+                    isFromNotification = false;
+                    mLoadUserStatusScreen();
+                    return;
+                }/*&& (currentFragment instanceof ProfileFragment
+                        || currentFragment instanceof CDRecommendedInstituteFragment)) {
+                       MainActivity.this.onBackPressed();
+                  return;
+                }*/
                 mClearBackStack();
                 invalidateOptionsMenu();
+
             }
         });
 
@@ -5602,7 +5609,7 @@ public class MainActivity extends AppCompatActivity
             examUrl.append("&current_stream="+mProfile.getCurrent_stream_id());
         }
 
-        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, examUrl.toString(), null, Request.Method.GET);
+        this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, examUrl.toString(), null, Request.Method.GET);
 
     }
 
@@ -5995,7 +6002,7 @@ public class MainActivity extends AppCompatActivity
                     params.put(getResourceString(R.string.USER_EMAIL), email);
                     params.put(getResourceString(R.string.USER_PHONE), phone);
                     params.put(getResourceString(R.string.APPLY_YEAR), mYear);
-                    mMakeNetworkCall( TAG,Constants.BASE_URL + "lms/", params, Request.Method.POST);
+                    mMakeNetworkCall( TAG,"http://5277a9ef.ngrok.io/api/1/lms/", params, Request.Method.POST);//Constants.BASE_URL + "lms/", params, Request.Method.POST);
 
                     // update user profile  also with apply form data
                     final HashMap<String, String> profileParams = new HashMap<>();
