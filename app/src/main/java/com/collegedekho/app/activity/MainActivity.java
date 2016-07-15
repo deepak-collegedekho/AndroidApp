@@ -880,6 +880,8 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case Constants.ACTION_OPEN_WEB_URL:
+                if (MainActivity.mProfile != null)
+                    MainActivity.resource_uri = MainActivity.resource_uri + "/?user_id=" + MainActivity.mProfile.getId();
                 onDisplayWebFragment(MainActivity.resource_uri);
                 break;
 
@@ -3543,7 +3545,7 @@ public class MainActivity extends AppCompatActivity
     public static String GetPersonalizedMessage(String tag) {
         switch (tag) {
             case Constants.TAG_WISH_LIST_APPLIED_COURSE:
-                return "Applying For institute";
+                return "Applying to institute";
             case Constants.TAG_LOAD_STREAM:
             case Constants.TAG_UPDATE_STREAM:
             case Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM:
@@ -7152,10 +7154,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onDisplayWebFragment(String url){
-
-        if (MainActivity.mProfile != null)
-            url = url + "/?user_id=" + MainActivity.mProfile.getId();
-
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.ACTION_OPEN_WEB_URL);
 
         if(fragment != null && currentFragment instanceof WebViewFragment){
