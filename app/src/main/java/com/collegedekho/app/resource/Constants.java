@@ -64,6 +64,7 @@ public class Constants
     public static final String PNS_QNA = "pns_qna";
     public static final String PNS_ARTICLES="pns_articles";
     public static final String WIDGET_RECOMMENDED_INSTITUTES = "recommended_institutes";
+    public static final String WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE = "recommended_institutes_from_profile";
     public static final String WIDGET_SHORTLIST_INSTITUTES = "shortlist_institutes";
     public static final String CARD_SHORTLIST_INSTITUTES = "card_shortlist_institutes";
     public static final String CARD_BUZZLIST_INSTITUTES = "card_buzzlist_institutes";

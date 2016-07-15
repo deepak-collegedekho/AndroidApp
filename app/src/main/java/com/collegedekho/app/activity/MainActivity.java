@@ -1622,7 +1622,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void toRecommended() {
-        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/", null);
+        this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE, Constants.BASE_URL + "personalize/recommended-institutes/", null);
     }
 
     @Override
@@ -2528,7 +2528,23 @@ public class MainActivity extends AppCompatActivity
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED, false);
                 }
                 break;
-
+            case Constants.WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE:
+                mClearBackStack();
+                this.mCurrentTitle = "Recommended Institutes";
+                Constants.IS_RECOMENDED_COLLEGE = true;
+                if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED, true);
+                } else {
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED, false);
+                }
+                 new Handler().post(new Runnable() {
+                     @Override
+                     public void run() {
+                         isFromNotification = true;
+                         Constants.READY_TO_CLOSE = false;
+                     }
+                 });
+                break;
             case Constants.CARD_SHORTLIST_INSTITUTES:
                 this.mCurrentTitle = "Shortlisted Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
@@ -3543,6 +3559,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.WIDGET_TRENDING_INSTITUTES:
             case Constants.WIDGET_SHORTLIST_INSTITUTES:
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
+            case Constants.WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE:
                 return "Loading Institutes...";
             case Constants.WIDGET_NEWS:
                 return "Loading News...";
@@ -5327,6 +5344,7 @@ public class MainActivity extends AppCompatActivity
     public void onHomeItemSelected(String requestType, String url, String tag) {
         if (requestType.equalsIgnoreCase(Constants.WIDGET_INSTITUTES)
                 || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES)
+                || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE)
                 || requestType.equalsIgnoreCase(Constants.WIDGET_TRENDING_INSTITUTES)
                 || requestType.equalsIgnoreCase(Constants.WIDGET_INSTITUTES_SBS)){
             //Suggesting System that its a good time to do GC
@@ -5734,7 +5752,11 @@ public class MainActivity extends AppCompatActivity
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("1"));
 
-        mDisplayOtpVerificationFragment();
+        if (MainActivity.mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED && setupOtpRequest(true)) {
+            Constants.IS_CAF_LOADED = true;
+            mDisplayOtpVerificationFragment();
+        }
+
         if (isUndecided && !isFeatured) {
             this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard + "#" + isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
         } else if (isFeatured) {

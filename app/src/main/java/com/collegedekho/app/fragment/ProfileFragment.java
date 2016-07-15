@@ -1938,7 +1938,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             // Move to first row
             cursor.moveToFirst();
 
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
             String imgDecodableString = cursor.getString(columnIndex);
             cursor.close();
 
