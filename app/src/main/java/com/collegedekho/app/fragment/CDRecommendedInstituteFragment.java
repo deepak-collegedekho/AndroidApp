@@ -335,7 +335,20 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         {
             //removed from shortlist
             if (institute.getIs_shortlisted() == 0)
+            {
                 this.mInstitutes.remove(institute.getPosition());
+                this.mWishlistInstituteListAdapter.notifyItemRemoved(institute.getPosition());
+
+                this.mShortListCount--;
+                this.mShortListCountText.setText(""+mShortListCount);
+
+                if(mInstitutes == null || mInstitutes.size() <= 0){
+                    mEmptyTextView.setVisibility(View.VISIBLE);
+                    mEmptyTextView.setText("You don't have any Shortlisted college. Please Shortlist colleges from Listing !");
+                }else{
+                    mEmptyTextView.setVisibility(View.GONE);
+                }
+            }
                 //applied
             else
                 this.mInstitutes.set(institute.getPosition(), institute);
