@@ -11,11 +11,14 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.widget.CircularImageView;
 
 import java.util.ArrayList;
 
@@ -25,6 +28,7 @@ import java.util.ArrayList;
  */
 public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
 
+    private final ImageLoader mImageLoader;
     private static final String TAG = "MyFBEnumerationAdapter";
     private ArrayList<MyFutureBuddiesEnumeration> mMyFBEnumeration;
     private Context mContext;
@@ -33,6 +37,7 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
     public MyFBEnumerationAdapter(Context context, ArrayList<MyFutureBuddiesEnumeration> fbEnumeration) {
         this.mMyFBEnumeration = fbEnumeration;
         this.mContext = context;
+        this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
     }
 
     @Override
@@ -73,8 +78,18 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
         myFBEnumerationHolder.instituteLocation.setText(text);
         //myFBEnumerationHolder.commentsCount.setText(String.valueOf(myFBEnumeration.getComments_count()) + " chats");
         myFBEnumerationHolder.membersCount.setText(String.valueOf(myFBEnumeration.getMembers_count()));
+        updateInstituteLogoImage(myFBEnumeration.getInstitute_logo(), myFBEnumerationHolder.instituteLogo);
 
         this.setAnimation(myFBEnumerationHolder.container, position);
+    }
+
+
+    public void updateInstituteLogoImage(String image, CircularImageView imageView){
+        imageView.setDefaultImageResId(R.drawable.ic_cd);
+        imageView.setErrorImageResId(R.drawable.ic_cd);
+
+        if (image != null && !image.isEmpty())
+            imageView.setImageUrl(image, mImageLoader);
     }
 
     @Override
@@ -110,6 +125,7 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
         RelativeLayout unreadCountLayout;
         TextView unreadCount;
         CardView container;
+        CircularImageView instituteLogo;
 
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener mListener;
 
@@ -123,7 +139,7 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
             this.unreadCount = (TextView)itemView.findViewById(R.id.unread_count);
             this.unreadCountLayout= (RelativeLayout)itemView.findViewById(R.id.unread_notify_layout);
             this.container = (CardView) itemView.findViewById(R.id.card_fb_enumeration_container);
-
+            this.instituteLogo = (CircularImageView) itemView.findViewById(R.id.fb_member_institute_logo);
             this.mListener = listener;
 
             itemView.setOnClickListener(this);

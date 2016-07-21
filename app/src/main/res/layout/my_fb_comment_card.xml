@@ -62,18 +62,47 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     >
+
+                    <com.collegedekho.app.widget.CircularImageView
+                        android:id="@+id/my_fb_comment_user_image"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="@dimen/m10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_gravity="center_vertical"
+                        app:srcCompat="@drawable/ic_profile_default"
+                        android:visibility="visible"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"/>
+
+                    <com.collegedekho.app.widget.CircularImageView
+                        android:id="@+id/my_fb_comment_user_image_self"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginRight="@dimen/m10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_gravity="center_vertical"
+                        app:srcCompat="@drawable/ic_profile_default"
+                        android:visibility="visible"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"/>
+
                     <TextView
                         android:id="@+id/my_fb_comment_user_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginTop="10dp"
                         android:textStyle="bold"
                         android:text="Harsh Vardhan"
                         android:textColor="@color/primary_color"
                         android:textSize="16sp"
-                        android:gravity="left"
+                        android:layout_toRightOf="@+id/my_fb_comment_user_image"
+                        android:layout_toLeftOf="@+id/my_fb_comment_user_image_self"
                         android:paddingLeft="@dimen/m10dp"
                         android:paddingRight="@dimen/m10dp"
                         />
+
                     <ImageView
                         android:id="@+id/my_fb_comment_sent_notifier"
                         android:layout_width="wrap_content"

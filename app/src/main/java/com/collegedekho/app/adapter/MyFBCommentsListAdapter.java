@@ -13,11 +13,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
+import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
+import com.collegedekho.app.widget.CircularImageView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,6 +39,7 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
     private ArrayList<MyFutureBuddyComment> mMyFBCommentList;
     private Context mContext;
     private volatile SimpleDateFormat mSDF;
+    private final ImageLoader mImageLoader;
     public boolean IS_UP_SCROLLING = true;
 
 
@@ -43,6 +47,7 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
     public MyFBCommentsListAdapter(Context context, ArrayList<MyFutureBuddyComment> myFBCommentList) {
         this.mMyFBCommentList = myFBCommentList;
         this.mContext = context;
+        this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
     }
 
     @Override
@@ -136,12 +141,18 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
             qnaAnswerHolder.time.setPadding(left,0,right,bottom);
             qnaAnswerHolder.time.setTextColor(this.mContext.getResources().getColor(R.color.chat_time_blue));
 
+            qnaAnswerHolder.mUserImageSelf.setVisibility(View.VISIBLE);
+            qnaAnswerHolder.mUserImageOther.setVisibility(View.GONE);
+
             if (myFBComment.isCommentSent())
                 qnaAnswerHolder.mSentNotifier.setVisibility(View.VISIBLE);
 
-            qnaAnswerHolder.userName.setVisibility(View.GONE);
+            qnaAnswerHolder.userName.setVisibility(View.VISIBLE);
+            qnaAnswerHolder.userName.setText(myFBComment.getUser());
             qnaAnswerHolder.setIsRecyclable(false);
 
+            updateUserImage(myFBComment.getUser_image(), qnaAnswerHolder.mUserImageSelf);
+            qnaAnswerHolder.mUserImageOther.setPadding(left,0,right,0);
         }
         else
         {
@@ -155,12 +166,25 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
             int right = Utils.getPadding(mContext,10);
             int top = Utils.getPadding(mContext,20);
             int bottom = Utils.getPadding(mContext,5);
-            qnaAnswerHolder.userName.setPadding(left,top,right,0);
+            qnaAnswerHolder.userName.setPadding(left,0,right,0);
             qnaAnswerHolder.time.setPadding(left,0,right,bottom);
             qnaAnswerHolder.time.setTextColor(mContext.getResources().getColor(R.color.chat_time_gray));
-
             qnaAnswerHolder.userName.setText(myFBComment.getUser());
+
+            qnaAnswerHolder.mUserImageSelf.setVisibility(View.GONE);
+            qnaAnswerHolder.mUserImageOther.setVisibility(View.VISIBLE);
+
+            updateUserImage(myFBComment.getUser_image(), qnaAnswerHolder.mUserImageOther);
+            qnaAnswerHolder.mUserImageOther.setPadding(left,top,right,0);
         }
+    }
+
+    public void updateUserImage(String image, CircularImageView imageView){
+        imageView.setDefaultImageResId(R.drawable.ic_profile_default);
+        imageView.setErrorImageResId(R.drawable.ic_profile_default);
+
+        if (image != null && !image.isEmpty())
+            imageView.setImageUrl(image, mImageLoader);
     }
 
     @Override
@@ -177,6 +201,8 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         LinearLayout myFbCardLayout;
         CardView myFbCard;
         ImageView mSentNotifier;
+        CircularImageView mUserImageOther;
+        CircularImageView mUserImageSelf;
 
         MyFutureBuddiesFragment.OnMyFBInteractionListener mListener;
 
@@ -191,6 +217,8 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
             this.mSentNotifier = (ImageView) itemView.findViewById(R.id.my_fb_comment_sent_notifier);
             this.time = (TextView) itemView.findViewById(R.id.my_fb_comment_time);
             this.date = (TextView) itemView.findViewById(R.id.my_fb_comment_date);
+            this.mUserImageOther = (CircularImageView) itemView.findViewById(R.id.my_fb_comment_user_image);
+            this.mUserImageSelf = (CircularImageView) itemView.findViewById(R.id.my_fb_comment_user_image_self);
 
             this.mListener = listener;
         }

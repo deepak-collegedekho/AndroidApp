@@ -64,7 +64,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -347,7 +346,7 @@ public class MainActivity extends AppCompatActivity
     private String mExamTag;
     private int mUndecidedInstitutesCount;
     private int mShortListInstituteCount;
-    private int mBuzzListInstituteCount;
+    private int mFeaturedInstituteCount;
     private int mRecommendedInstituteCount;
     private Snackbar mSnackbar;
     private boolean IS_USER_CREATED;
@@ -1736,7 +1735,7 @@ public class MainActivity extends AppCompatActivity
                 this.mShortListInstituteCount = Integer.valueOf(JSON.std.asString(map.get("shortlist_count")));
 
             if (map.containsKey("buzzlist_count"))
-                this.mBuzzListInstituteCount = Integer.valueOf(JSON.std.asString(map.get("buzzlist_count")));
+                this.mFeaturedInstituteCount = Integer.valueOf(JSON.std.asString(map.get("buzzlist_count")));
 
             if (map.containsKey("recommended_count"))
                 this.mRecommendedInstituteCount = Integer.valueOf(JSON.std.asString(map.get("recommended_count")));
@@ -1936,10 +1935,10 @@ public class MainActivity extends AppCompatActivity
                     this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
                     if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED) {
                         ((CDRecommendedInstituteFragment) currentFragment).showUndecidedInstitutes(this.mInstituteList, next);
-                    }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED) {
+                    }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.RECOMMENDED) {
                         ((CDRecommendedInstituteFragment) currentFragment).updateRecommendedList(this.mInstituteList, next, this.mRecommendedInstituteCount);
-                    }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.BUZZLIST){
-                        ((CDRecommendedInstituteFragment) currentFragment).updateBuzzList(this.mInstituteList, next, this.mBuzzListInstituteCount);
+                    }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.FEATURED){
+                        ((CDRecommendedInstituteFragment) currentFragment).updateBuzzList(this.mInstituteList, next, this.mFeaturedInstituteCount);
                     }
                 }
             } else {
@@ -1949,17 +1948,17 @@ public class MainActivity extends AppCompatActivity
 
                 if (fragment == null) {
                     this.mDisplayFragment(CDRecommendedInstituteFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next,
-                            this.mRecommendedInstituteCount, this.mShortListInstituteCount, this.mBuzzListInstituteCount, this.mUndecidedInstitutesCount,cdRecommendedInstituteType.ordinal()), !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
+                            this.mRecommendedInstituteCount, this.mShortListInstituteCount, this.mFeaturedInstituteCount, this.mUndecidedInstitutesCount,cdRecommendedInstituteType.ordinal()), !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
                 } else {
                     if (fragment instanceof CDRecommendedInstituteFragment) {
                         if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED) {
                             ((CDRecommendedInstituteFragment) fragment).showUndecidedInstitutes(this.mInstituteList, next);
-                        }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNBAISED) {
+                        }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.RECOMMENDED) {
                             ((CDRecommendedInstituteFragment) fragment).updateRecommendedList(this.mInstituteList, next, this.mRecommendedInstituteCount);
-                        }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.SHORTLISTED){
+                        }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.SHORTLIST){
                             ((CDRecommendedInstituteFragment) currentFragment).updateWishList(this.mInstituteList, next);
-                        }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.BUZZLIST){
-                            ((CDRecommendedInstituteFragment) currentFragment).updateBuzzList(this.mInstituteList, next,this.mBuzzListInstituteCount);
+                        }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.FEATURED){
+                            ((CDRecommendedInstituteFragment) currentFragment).updateBuzzList(this.mInstituteList, next,this.mFeaturedInstituteCount);
                         }
                     }
 
@@ -2096,6 +2095,7 @@ public class MainActivity extends AppCompatActivity
                 myFBComment.setCommentSent(true);
                 myFBComment.setIndex(i);
                 myFBComment.setFbIndex(index);
+                myFBComment.setUser_image(comment.getString("user_image"));
 
                 myFBCommentsSet.add(myFBComment);
             }
@@ -2123,7 +2123,7 @@ public class MainActivity extends AppCompatActivity
         if(position<0 || position>=mInstituteList.size()){
             return;
         }
-        this.mDisplayInstituteByEntity(this.mInstituteList.get(position), Constants.CDRecommendedInstituteType.UNBAISED);
+        this.mDisplayInstituteByEntity(this.mInstituteList.get(position), Constants.CDRecommendedInstituteType.RECOMMENDED);
     }
 
     private void mDisplayInstituteByEntity(Institute institute, Constants.CDRecommendedInstituteType instituteType) {
@@ -2133,10 +2133,10 @@ public class MainActivity extends AppCompatActivity
 //        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_INSTITUTE);
 //
 //        if (fragment == null)
-        if (instituteType == Constants.CDRecommendedInstituteType.SHORTLISTED)
-            this.mDisplayFragment(InstituteDetailFragment.newInstance(institute, Constants.CDRecommendedInstituteType.SHORTLISTED), true, Constants.TAG_FRAGMENT_INSTITUTE);
+        if (instituteType == Constants.CDRecommendedInstituteType.SHORTLIST)
+            this.mDisplayFragment(InstituteDetailFragment.newInstance(institute, Constants.CDRecommendedInstituteType.SHORTLIST), true, Constants.TAG_FRAGMENT_INSTITUTE);
         else
-            this.mDisplayFragment(InstituteDetailFragment.newInstance(institute, Constants.CDRecommendedInstituteType.UNBAISED), true, Constants.TAG_FRAGMENT_INSTITUTE);
+            this.mDisplayFragment(InstituteDetailFragment.newInstance(institute, Constants.CDRecommendedInstituteType.RECOMMENDED), true, Constants.TAG_FRAGMENT_INSTITUTE);
 //        else
 //            this.mDisplayFragment(fragment, false, Constants.TAG_FRAGMENT_INSTITUTE);
 
@@ -2513,9 +2513,9 @@ public class MainActivity extends AppCompatActivity
                 mShowAppBarLayout();
                 Constants.IS_RECOMENDED_COLLEGE = true;
                 if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED, true);
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.RECOMMENDED, true);
                 } else {
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED, false);
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.RECOMMENDED, false);
                 }
                 break;
             case Constants.TAG_LOAD_USER_PREFERENCES:
@@ -2532,9 +2532,9 @@ public class MainActivity extends AppCompatActivity
                 this.mCurrentTitle = "Recommended Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = true;
                 if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED, true);
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.RECOMMENDED, true);
                 } else {
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED, false);
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.RECOMMENDED, false);
                 }
                 break;
             case Constants.WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE:
@@ -2542,9 +2542,9 @@ public class MainActivity extends AppCompatActivity
                 this.mCurrentTitle = "Recommended Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = true;
                 if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED, true);
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.RECOMMENDED, true);
                 } else {
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNBAISED, false);
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.RECOMMENDED, false);
                 }
                  new Handler().post(new Runnable() {
                      @Override
@@ -2557,16 +2557,16 @@ public class MainActivity extends AppCompatActivity
             case Constants.CARD_SHORTLIST_INSTITUTES:
                 this.mCurrentTitle = "Shortlisted Institutes";
                 Constants.IS_RECOMENDED_COLLEGE = false;
-                this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.SHORTLISTED, false);
+                this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.SHORTLIST, false);
                 break;
             case Constants.CARD_BUZZLIST_INSTITUTES:
                 this.mCurrentTitle = "Featured Colleges";
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.BUZZLIST, true);
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.FEATURED, true);
 
                 } else {
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.BUZZLIST, false);
+                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.FEATURED, false);
                 }
                 break;
             case Constants.TAG_NEXT_WISHLIST_INSTITUTE:
@@ -2871,101 +2871,45 @@ public class MainActivity extends AppCompatActivity
                 this.onUpdateTitleResponse(response);
                 break;
             case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
-                this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.SHORTLISTED);
+                this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.SHORTLIST);
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
-                this.mUpdateWishListCount();
-                if (tags.length == 5) {
-                    this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
-                    parentIndex = tags[3];
-                    if (parentIndex.equals("true")) {
-                        parentIndex = tags[1];
-                        if (parentIndex.equals("true")) {
-                            try{
-                                hideProgressDialog();
-                            }catch (Exception e){ e.printStackTrace(); }
-                            hideProgressDialog = false;
-                            this.OnCDRecommendedLoadMoreBuzzlist();
-                        }
-                    }
-                }else if (tags.length == 2) {
-                    this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
-                    parentIndex = tags[1];
-                    if (parentIndex.equals("true"))
-                        this.OnCDRecommendedLoadNext();
-                    else
-                        Log.d("CD RECO ERROR :: ", " YES HERE isLastCard :: false");
-                }
-                break;
-            case Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE:
-                this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
-                this.mUpdateWishListCount();
-                if (tags.length == 2) {
-                    parentIndex = tags[1];
-                    if (parentIndex.equals("true"))
-                        this.OnCDRecommendedLoadNext();
-                }
+                hideProgressDialog = updateCDRecommendedFragment(tags);
+                refreshCountOnShortlist(tags[2]);
+                updateCountInCDRecommendedFragment();
                 break;
             case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
-                this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.NOT_INERESTED);
+                this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.NOT_INTERESTED);
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
-                this.mUpdateNotInterestedCount();
-                if (tags.length == 5) {
-                    this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
-                    parentIndex = tags[3];
-                    if (parentIndex.equals("true")) {
-                        parentIndex = tags[1];
-                        if (parentIndex.equals("true")) {
-                            try{
-                                hideProgressDialog();
-                            }catch (Exception e){ e.printStackTrace(); }
-                            hideProgressDialog = false;
-                            this.OnCDRecommendedLoadMoreBuzzlist();
-                        }
-                    }
-                }else if (tags.length == 2) {
-                    parentIndex = tags[1];
-                    if (parentIndex.equals("true"))
-                        this.OnCDRecommendedLoadNext();
+                hideProgressDialog = updateCDRecommendedFragment(tags);
+                refreshCountOnNotInterested(tags[2]);
+                updateCountInCDRecommendedFragment();
+                break;
+            case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
+                hideProgressDialog = updateCDRecommendedFragment(tags);
+                refreshCountOnDecideLater(tags[2]);
+                updateCountInCDRecommendedFragment();
+                break;
+            case Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE:
+//                this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
+//                mShortListInstituteCount++;
+//                this.mUpdateShortListCount(mShortListInstituteCount,true);
+                if (tags.length == 4) {
+                    hideProgressDialog = updateCDRecommendedFragment(tags);
+                    refreshCountOnApplied(tags[2]);
+                } else {
+                    mShortListInstituteCount++;
                 }
+                updateCountInCDRecommendedFragment();
                 break;
             case Constants.TAG_LOAD_UNDECIDED_INSTITUTE:
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNDECIDED, true);
+                this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNDECIDED, true);
                 break;
 
             case Constants.TAG_LOAD_BUZZLIST_INSTITUTE:
-                this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.BUZZLIST, true);
+                this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.FEATURED, true);
                 break;
 
-            case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
-                DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                if (tags.length == 5) {
-                    this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount, true);
-                    parentIndex = tags[3];
-                    if (parentIndex.equals("true")) {
-                        parentIndex = tags[1];
-                        if (parentIndex.equals("true")) {
-                            try{
-                                hideProgressDialog();
-                            }catch (Exception e){ e.printStackTrace(); }
-                            hideProgressDialog = false;
-                            this.OnCDRecommendedLoadMoreBuzzlist();
-                        }
-                    }
-                }else if (tags.length == 2) {
-                    ++this.mUndecidedInstitutesCount;
-                    this.mUpdateUndecidedCount(this.mUndecidedInstitutesCount-1, false);
-                    this.mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType.UNDECIDED);
-                    parentIndex = tags[1];
-                    if (parentIndex.equals("true"))
-                        this.OnCDRecommendedLoadNext();
-                }
-                else if (tags.length == 1)
-                {
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.UNDECIDED, true);
-                }
-                break;
             case Constants.TAG_USER_EXAMS_DELETE:
                 MainActivity.user.setUser_exams(new ArrayList<ExamDetail>());
                 MainActivity.mProfile.setYearly_exams(new ArrayList<ProfileExam>());
@@ -2986,6 +2930,116 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private boolean updateCDRecommendedFragment(String[] tags){
+        String parentIndex;
+        boolean hideProgressDialog = true;
+        if (tags.length == 4) {
+            parentIndex = tags[1];
+            if (parentIndex.equals("true")) {
+                try {
+                    hideProgressDialog();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                hideProgressDialog = false;
+                parentIndex = tags[2];
+                if (parentIndex.equals(Constants.TAG_CD_RECOMMENDED)) {
+                    this.OnCDRecommendedLoadNext();
+                } else if (parentIndex.equals(Constants.TAG_CD_FEATURED)) {
+                    this.OnCDRecommendedLoadMoreBuzzlist();
+                } else if (parentIndex.equals(Constants.TAG_CD_UNDECIDED)) {
+                    if (tags[3] != null && !tags[3].equalsIgnoreCase("null")) {
+                        this.OnCDRecommendedLoadUndecidedInstitutes(tags[3]);
+                    } else {
+                        this.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/?action=3");
+                    }
+                }
+            }
+        }
+        return hideProgressDialog;
+    }
+
+    private void refreshCountOnShortlist(String tag){
+        if (tag.equals(Constants.TAG_CD_RECOMMENDED)) {
+            mRecommendedInstituteCount--;
+        } else if (tag.equals(Constants.TAG_CD_FEATURED)) {
+            mFeaturedInstituteCount--;
+        } else if (tag.equals(Constants.TAG_CD_UNDECIDED)) {
+            this.mUndecidedInstitutesCount--;
+        }
+        mShortListInstituteCount++;
+    }
+
+    private void refreshCountOnNotInterested(String tag){
+        if (tag.equals(Constants.TAG_CD_RECOMMENDED)) {
+            mRecommendedInstituteCount--;
+        } else if (tag.equals(Constants.TAG_CD_FEATURED)) {
+            mFeaturedInstituteCount--;
+        } else if (tag.equals(Constants.TAG_CD_UNDECIDED)) {
+            this.mUndecidedInstitutesCount--;
+        }
+    }
+
+    private void refreshCountOnDecideLater(String tag){
+        if (tag.equals(Constants.TAG_CD_RECOMMENDED)) {
+            mRecommendedInstituteCount--;
+            this.mUndecidedInstitutesCount++;
+        } else if (tag.equals(Constants.TAG_CD_FEATURED)) {
+            mFeaturedInstituteCount--;
+            this.mUndecidedInstitutesCount++;
+        } else if (tag.equals(Constants.TAG_CD_UNDECIDED)) {
+
+        }
+    }
+
+    private void refreshCountOnApplied(String tag){
+        if (tag.equals(Constants.TAG_CD_RECOMMENDED)) {
+            mRecommendedInstituteCount--;
+        } else if (tag.equals(Constants.TAG_CD_FEATURED)) {
+            mFeaturedInstituteCount--;
+        } else if (tag.equals(Constants.TAG_CD_UNDECIDED)) {
+            mUndecidedInstitutesCount--;
+        }
+        if(!tag.equals(Constants.TAG_CD_SHORTLIST)) {
+            mShortListInstituteCount++;
+        }
+    }
+
+    public void decreaseRecommendedCount(){
+        this.mRecommendedInstituteCount--;
+    }
+    public void decreaseUndecidedCount(){
+        this.mUndecidedInstitutesCount--;
+    }
+    public void decreaseFeaturedCount(){
+        this.mFeaturedInstituteCount--;
+    }
+    public void decreaseShortlistCount(){
+        this.mShortListInstituteCount--;
+    }
+
+    public int getmRecommendedInstituteCount(){
+        return mRecommendedInstituteCount;
+    }
+    public int getUndecidedInstituteCount(){
+        return mUndecidedInstitutesCount;
+    }
+    public int getShortlistedInstituteCount(){
+        return mShortListInstituteCount;
+    }
+    public int getFeaturedInstituteCount(){
+        return mFeaturedInstituteCount;
+    }
+    public int getShortlistInstituteCount(){
+        return mShortListInstituteCount;
+    }
+
+    private void updateCountInCDRecommendedFragment(){
+        if (currentFragment instanceof CDRecommendedInstituteFragment) {
+            ((CDRecommendedInstituteFragment) currentFragment).updateCount(this.mUndecidedInstitutesCount, this.mShortListInstituteCount, this.mFeaturedInstituteCount, this.mRecommendedInstituteCount);
+        }
+    }
+
     private void mUpdateAppliedInstituteWishlist(int i)
     {
         this.mInstitute.setIs_applied(true);
@@ -3002,34 +3056,17 @@ public class MainActivity extends AppCompatActivity
     {
         this.mInstitute.setIs_shortlisted(0);
 
-        if (currentFragment instanceof WishlistFragment)
-        {
+        if (currentFragment instanceof WishlistFragment) {
             this.mInstitute.setPosition(-1);
             ((WishlistFragment) currentFragment).RemoveInstitute(i);
-        }
-        else if(currentFragment instanceof CDRecommendedInstituteFragment)
-        {
+        } else if(currentFragment instanceof CDRecommendedInstituteFragment) {
             this.mInstitute.setPosition(-1);
-            ((CDRecommendedInstituteFragment) currentFragment).RemoveInstituteFromShortList(i);
-        }
-        else if(currentFragment instanceof InstituteDetailFragment && i < 0)
+            this.mShortListInstituteCount--;
+            ((CDRecommendedInstituteFragment) currentFragment).removeInstituteFromShortList(i);
+        } else if(currentFragment instanceof InstituteDetailFragment && i < 0)
             ((InstituteDetailFragment) currentFragment).OnInstituteRemoved();
     }
 
-
-    private void mUpdateUndecidedCount(int i, boolean isIncremented) {
-        if (currentFragment instanceof CDRecommendedInstituteFragment)
-            ((CDRecommendedInstituteFragment) currentFragment).mUpdateUndecidedCount(i, isIncremented);
-    }
-
-    private void mUpdateWishListCount() {
-        if (currentFragment instanceof CDRecommendedInstituteFragment)
-            ((CDRecommendedInstituteFragment) currentFragment).AddInstituteInShortList();
-    }
-    private void mUpdateNotInterestedCount() {
-        if (currentFragment instanceof CDRecommendedInstituteFragment)
-            ((CDRecommendedInstituteFragment) currentFragment).updateInstitutesCountOnNotinterested();
-    }
     private synchronized void mSendCDRecommendationInstituteActionEvents(Constants.CDRecommendedInstituteType type) {
         //Events
         Map<String, Object> eventValue = new HashMap<>();
@@ -3040,11 +3077,11 @@ public class MainActivity extends AppCompatActivity
             case UNDECIDED:
                 eventValue.put(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.UNDECIDED.toString());
                 break;
-            case SHORTLISTED:
-                eventValue.put(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.SHORTLISTED.toString());
+            case SHORTLIST:
+                eventValue.put(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.SHORTLIST.toString());
                 break;
-            case NOT_INERESTED:
-                eventValue.put(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.NOT_INERESTED.toString());
+            case NOT_INTERESTED:
+                eventValue.put(Constants.CD_RECOMMENDED_INSTITUTE_ACTION_TYPE, Constants.CDRecommendedInstituteType.NOT_INTERESTED.toString());
                 break;
         }
 
@@ -3920,7 +3957,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnWishlistInstituteSelected(Institute institute, boolean isFromCard) {
-        this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.SHORTLISTED);
+        this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.SHORTLIST);
     }
 
     @Override
@@ -5755,64 +5792,43 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnCDRecommendedInstituteSelected(Institute institute) {
-        this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.UNBAISED);
+        this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.RECOMMENDED);
         Log.e("CD-RE", "Selected:CD Reco Institute is : " + institute.getId());
     }
 
     @Override
-    public void OnCDRecommendedInstituteLiked(Institute institute, boolean isLastCard, boolean isUndecided, boolean isFeatured, String nextUrl) {
+    public void OnCDRecommendedInstituteLiked(Institute institute, boolean isLastCard, String cardCategory, String nextUrl) {
         this.mInstitute = institute;
         Log.e("CD-RE", "Like:CD Reco Institute is : " + institute.getId());
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("1"));
-
         if (MainActivity.mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED && setupOtpRequest(true)) {
             Constants.IS_CAF_LOADED = true;
             mDisplayOtpVerificationFragment();
         }
-
-        if (isUndecided && !isFeatured) {
-            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard + "#" + isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-        } else if (isFeatured) {
-            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard + "#" + isUndecided + "#" + isFeatured + "#" + nextUrl, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-        } else {
-            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-        }
+        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard + "#" + cardCategory + "#" + nextUrl, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
 
 
     @Override
-    public void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard, boolean isUndecided, boolean isFeatured, String nextUrl) {
+    public void OnCDRecommendedInstituteDislike(Institute institute, boolean isLastCard, String cardCategory, String nextUrl) {
         this.mInstitute = institute;
         Log.e("CD-RE", "Dislike:CD Reco Institute is : " + institute.getId());
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("2"));
-        if (isUndecided && !isFeatured){
-            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + isLastCard + "#" + isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-        }else if (isFeatured) {
-            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + isLastCard + "#" + isUndecided + "#" + isFeatured + "#" + nextUrl, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-        } else {
-            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-        }
+        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE + "#" + isLastCard + "#" + cardCategory + "#" + nextUrl, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
 
     @Override
-    public void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard, boolean isUndecided, boolean isFeatured, String nextUrl) {
+    public void OnCDRecommendedInstituteDecideLater(Institute institute, boolean isLastCard, String cardCategory, String nextUrl) {
         this.mInstitute = institute;
         Log.e("CD-RE", "Decide Later:CD Reco Institute is : " + institute.getId());
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("3"));
-
-        if (isUndecided && !isFeatured) {
-            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard + "#" + isUndecided, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-        } else if (isFeatured) {
-            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard + "#" + isUndecided + "#" + isFeatured + "#" + nextUrl, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-        } else {
-            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
-        }
+        this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE + "#" + isLastCard + "#" + cardCategory + "#" + nextUrl, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
 
     @Override
@@ -5822,13 +5838,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnCDRecommendedLoadMoreBuzzlist() {
-//        Map<String, String> params = this.mGetTheFilters();
-//        if (params == null)
-//            params = new HashMap<>();
         this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2",null);
     }
     @Override
-    public void OnAppliedInstitute(Institute institute, boolean islastcard) {
+    public void OnAppliedInstitute(Institute institute, boolean islastcard, String cardCategory) {
         this.mInstitute = institute;
         Map<String, Object> eventValue = new HashMap<>();
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
@@ -5845,12 +5858,12 @@ public class MainActivity extends AppCompatActivity
             params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
             params.put("action", String.valueOf("1"));
 
-            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE+"#"+islastcard , institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
+            this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE + "#" + islastcard + "#" + cardCategory + "#null" , institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
         }
         else
         {
             eventValue.put(MainActivity.getResourceString(R.string.APPLY_INSTITUTE), Constants.CDInstituteType.NON_PARTNER.toString());
-            requestForApplyInstitute(Constants.TAG_WISH_LIST_APPLIED_COURSE,new HashMap<String, String>(),Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE+"#"+islastcard);
+            requestForApplyInstitute(Constants.TAG_WISH_LIST_APPLIED_COURSE,new HashMap<String, String>(),Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE + "#" + islastcard + "#" + cardCategory + "#null");
         }
 
         if(this.mInstitute != null) {
@@ -5887,8 +5900,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void OnCDRecommendedLoadNext()
-    {
+    public void OnCDRecommendedLoadNext() {
         Map<String , String> params = this.mGetTheFilters();
         if(this.mExamTag != null && !this.mExamTag.isEmpty())
             params.put("tag_uris[" + (params.size()) + "]", this.mExamTag);
@@ -6691,7 +6703,7 @@ public class MainActivity extends AppCompatActivity
             if (this.mInstituteList != null && !this.mInstituteList.isEmpty()) {
                 this.mInstitute = this.mInstituteList.get(0);
                 int id = this.mInstituteList.get(0).getId();
-                this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute, Constants.CDRecommendedInstituteType.UNBAISED), false, Constants.TAG_FRAGMENT_INSTITUTE);
+                this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute, Constants.CDRecommendedInstituteType.RECOMMENDED), false, Constants.TAG_FRAGMENT_INSTITUTE);
 
                 //this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
@@ -7152,7 +7164,7 @@ public class MainActivity extends AppCompatActivity
             List<Institute> list = JSON.std.listOfFrom(Institute.class, "[" + response + "]");
             if (list != null && !list.isEmpty()) {
                 Institute institute = list.get(0);
-                this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.UNBAISED);
+                this.mDisplayInstituteByEntity(institute, Constants.CDRecommendedInstituteType.RECOMMENDED);
             }
 
         } catch (Exception e) {

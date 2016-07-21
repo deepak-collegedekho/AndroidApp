@@ -23,6 +23,7 @@ import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.widget.CircularImageView;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -57,6 +58,8 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         }
     }
 
+
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Institute institute = this.mInstitutes.get(position);
@@ -81,6 +84,10 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             text += "Established in: " + institute.getEstb_date().substring(0, 4);
         instituteHolder.instiLocation.setText(text);
         instituteHolder.addFacilities(institute.getFacilities());
+
+        if(mViewType == Constants.VIEW_INTO_LIST)
+            instituteHolder.updateInstituteLogoImage(institute.getLogo());
+
         instituteHolder.likeButton.setSelected(institute.getCurrent_user_vote_type() == 0);
         instituteHolder.upvoteCount.setText(String.valueOf(institute.getUpvotes()));
         //instituteHolder.dislikeButton.setSelected(institute.getCurrent_user_vote_type() == 1);
@@ -178,6 +185,7 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         TextView mShortListTV;
         TextView upvoteCount;
         ProgressBar mProgressBar;
+        CircularImageView instiLogo;
         //ProgressBar dislikeProgressBar;
         InstituteListFragment.OnInstituteSelectedListener mListener;
 
@@ -189,6 +197,8 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             else
                 instituteCard = (CardView) itemView.findViewById(R.id.institute_grid_card);
 
+            if(mViewType == Constants.VIEW_INTO_LIST)
+                instiLogo = (CircularImageView) itemView.findViewById(R.id.institute_list_logo);
             instiName = (TextView) itemView.findViewById(R.id.card_institute_name);
             instiLocation = (TextView) itemView.findViewById(R.id.card_institute_location);
             instiCourses = (TextView) itemView.findViewById(R.id.card_institute_courses);
@@ -208,6 +218,14 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
             (itemView.findViewById(R.id.card_institute_button_like_parent)).setOnClickListener(this);
             //dislikeButton.setOnClickListener(this);
             //itemView.setOnClickListener(this);
+        }
+
+        public void updateInstituteLogoImage(String image){
+            instiLogo.setDefaultImageResId(R.drawable.ic_cd);
+            instiLogo.setErrorImageResId(R.drawable.ic_cd);
+
+            if (image != null && !image.isEmpty())
+                instiLogo.setImageUrl(image, mImageLoader);
         }
 
         public void addFacilities(ArrayList<Facility> facilities) {

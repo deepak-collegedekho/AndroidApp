@@ -26,6 +26,7 @@ public class MyFutureBuddyComment implements Parcelable {
     private int fbIndex;
     private String token;
     private boolean commentSent;
+    private String  user_image;
 
     public MyFutureBuddyComment() {
     }
@@ -37,6 +38,7 @@ public class MyFutureBuddyComment implements Parcelable {
         index = source.readInt();
         fbIndex = source.readInt();
         token = source.readString();
+        user_image = source.readString();
     }
 
     @Override
@@ -52,6 +54,7 @@ public class MyFutureBuddyComment implements Parcelable {
         dest.writeInt(index);
         dest.writeInt(fbIndex);
         dest.writeString(token);
+        dest.writeString(user_image);
     }
 
     public String getUser() {
@@ -108,5 +111,13 @@ public class MyFutureBuddyComment implements Parcelable {
 
     public void setCommentSent(boolean commentSent) {
         this.commentSent = commentSent;
+    }
+
+    public String getUser_image() {
+        return user_image;
+    }
+
+    public void setUser_image(String user_image) {
+        this.user_image = user_image;
     }
 }

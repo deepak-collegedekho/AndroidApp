@@ -84,6 +84,13 @@ public class Constants
     //public static final String IP = "http://192.168.8.101";
     //public static final String IP = "http://192.168.56.1";
     //public static final String BASE_URL = IP + ":8000/api/1/";
+
+    // TAGs for CD Recommended Fragment Volley Requests.
+    public static final String TAG_CD_RECOMMENDED   = "tag_cd_recommended";
+    public static final String TAG_CD_FEATURED      = "tag_cd_featured";
+    public static final String TAG_CD_UNDECIDED     = "tag_cd_undecided";
+    public static final String TAG_CD_SHORTLIST     = "tag_cd_shortlist";
+
     public static final String BASE_URL = IP + "/api/1/";
     public static final String CAF_URL = "https://m.collegedekho.com/caf-login-signup/";
     public static final String TAG_LOAD_COURSES = "load_courses";
@@ -266,7 +273,7 @@ public class Constants
     public static final String CD_RECOMMENDED_INSTITUTE_ACTION_TYPE = "cd_recommended_institute_action_type";
 
     public enum CDRecommendedInstituteType {
-        UNDECIDED, SHORTLISTED, NOT_INERESTED, UNBAISED, BUZZLIST
+        RECOMMENDED, FEATURED, UNDECIDED, SHORTLIST, NOT_INTERESTED
     }
 
     public enum CDInstituteType {

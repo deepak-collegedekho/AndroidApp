@@ -18,11 +18,27 @@
         android:orientation="horizontal"
         android:weightSum="1"
         >
+
+        <com.collegedekho.app.widget.CircularImageView
+            android:id="@+id/institute_list_logo"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2"
+            android:layout_gravity="center_vertical"
+            app:srcCompat="@drawable/ic_cd_colored"
+            android:visibility="visible"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="5dp"
+            app:civ_fill_color="@color/white"
+            app:civ_border_width="2dp"
+            app:civ_border_color="@color/chat_time_gray" />
+
         <LinearLayout
             android:id="@+id/card_institute_definition"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight=".6"
+            android:layout_weight=".55"
             android:orientation="vertical"
             android:weightSum="1"
             android:layout_marginLeft="3dp"
@@ -94,7 +110,7 @@
             android:id="@+id/card_institute_stats_and_controls"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight=".4"
+            android:layout_weight=".25"
             android:orientation="horizontal"
             android:weightSum="1"
             >

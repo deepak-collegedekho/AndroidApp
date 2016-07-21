@@ -104,7 +104,7 @@ public class InstituteDetailFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_institute_detail, container, false);
 
 
-        if (this.mInstituteType == Constants.CDRecommendedInstituteType.SHORTLISTED)
+        if (this.mInstituteType == Constants.CDRecommendedInstituteType.SHORTLIST)
         {
             Animation animation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.simple_grow);
 
