@@ -79,7 +79,7 @@
                         android:id="@+id/my_fb_comment_user_image_self"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_marginRight="@dimen/m10dp"
+                        android:layout_marginRight="@dimen/m16dp"
                         android:layout_marginTop="10dp"
                         android:layout_gravity="center_vertical"
                         app:srcCompat="@drawable/ic_profile_default"
@@ -108,9 +108,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="2dp"
                         app:srcCompat="@drawable/ic_check_black"
                         android:layout_alignParentRight="true"
-                        android:visibility="gone"
+                        android:layout_alignParentTop="true"
+                        android:visibility="visible"
                         />
                 </RelativeLayout>
                 <TextView

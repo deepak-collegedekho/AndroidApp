@@ -119,6 +119,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_recommended_institute_listing, container, false);
 
+        /**
+         * Get the Tutorial Status. Show tute layout if tute has not been performed.
+        * */
         this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), false);
         if(!IS_TUTE_COMPLETED) {
             rootView.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);
@@ -128,6 +131,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             rootView.findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
             rootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
         }
+
+
 
         listType = Constants.WISH_LIST_TYPE;
         this.mCardContainer = (CardContainer) rootView.findViewById(R.id.fragment_recommended_institute_cards_container);
@@ -147,6 +152,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.wishListRecyclerView   = (RecyclerView) rootView.findViewById(R.id.cd_reco_wish_list_institute_grid);
         this.progressBarLL          = (LinearLayout)rootView.findViewById(R.id.progressBarLL);
 
+        /**
+         * Setting the wishlist adapter and layout for showing wishlist institutes.
+         * */
         layoutManager = new GridLayoutManager(getActivity(), 3);
         this.wishListRecyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 0, false));
         this.wishListRecyclerView.setLayoutManager(layoutManager);
@@ -154,6 +162,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.wishListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         this.wishListRecyclerView.addOnScrollListener(scrollListener);
 
+        /**
+         * Updating the count of the institutes. The same process has been repeated in the onResume
+         * method also. We may remove this functionality.
+         * */
         this.mUndecidedCountText.setText(""+this.mUndecidedCount);
         this.mRecommendedCountText.setText(""+this.mRecommendedCount);
         this.mShortListCountText.setText(""+this.mShortListCount);
@@ -163,11 +175,14 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             this.mAdapter = new SimpleCardStackAdapter(this.getContext(), this, CARD_CATEGORY);
         }
 
+        /**
+         * Setting up the swipe card adapter.
+         * */
         this.setUpStackAdapter();
         this.mCardContainer.setAdapter(this.mAdapter);
 
-        getMinimizeAnimation();
 
+        getMinimizeAnimation();
         setupPeekAndPopStandard();
 
         rootView.findViewById(R.id.badge_counter_layout).setOnClickListener(this);
@@ -184,6 +199,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         return rootView;
     }
 
+    /**
+     * This method creates and adds input cards in the swipe adapter.
+     * */
     private void mAddCardInAdapter(List<Institute> list)
     {
         final  ArrayList<CardModel> modelArrayList = new ArrayList<>();
@@ -195,21 +213,23 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         mAdapter.addAll(modelArrayList);
     }
 
-//    public void setDrawableBorder(){
-//        if(mAdapter != null)
-//            mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_orange_border_box));
-//    }
-
     private void setupPeekAndPopStandard() {
+
         peekAndPop = new PeekAndPop.Builder(this.getActivity())
                 .blurBackground(true)
                 .peekLayout(R.layout.peek_view)
                 .parentViewGroupToDisallowTouchEvents(wishListRecyclerView)
                 .build();
-        this.mWishlistInstituteListAdapter = new WishlistInstituteListAdapter(this.getActivity(), this.mInstitutes, Constants.TYPE_STANDARD, peekAndPop);
+
+        this.mWishlistInstituteListAdapter = new WishlistInstituteListAdapter(this.getActivity()
+                , this.mInstitutes, Constants.TYPE_STANDARD, peekAndPop);
+
         wishListRecyclerView.setAdapter(this.mWishlistInstituteListAdapter);
     }
 
+    /**
+     * This method is used to switch the display from shortlist to swipe layout and vice versa.
+     * */
     private void showWishListUI(boolean isShow){
         if(isShow){
             mCardContainer.setVisibility(View.GONE);
@@ -272,19 +292,33 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     @Override
     public void onResume() {
         super.onResume();
+
+        /**
+         * If the user has selected the institute from inside the shortlist and then comes back then
+         * CAF has to be set false. The actual functionality of this method has been handled in the
+         * MainActivity.
+         * */
         if(Constants.IS_CAF_LOADED) {
             Constants.IS_CAF_LOADED = false;
-//            mUpdateShortlistCount(mShortListCount,true);
         }
+
         if (getView() != null)
             getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
         getActivity().invalidateOptionsMenu();
         this.mMainActivity = (MainActivity) this.getActivity();
 
+        /**
+         * This updates the count in the Layout and Displays the count.
+         * */
         updateCount(mMainActivity.getUndecidedInstituteCount(),mMainActivity.getShortlistedInstituteCount()
                 ,mMainActivity.getFeaturedInstituteCount(),mMainActivity.getmRecommendedInstituteCount());
 
+        /**
+         * The Below code handles the tab animation ie which tab to bring up and when it basically
+         * calls translate animation method of MainActivity. The border edge color of swipe card is
+         * also set in the below code.
+         * */
         if(CARD_CATEGORY ==Constants.CDRecommendedInstituteType.RECOMMENDED.ordinal()){
             if(getView() != null) {
                 View v = getView().findViewById(R.id.tab_recommended);
@@ -309,6 +343,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             mMainActivity.translateAnimation(null,currentTab);
         }
 
+        /**
+         * If we have come back to the Shortlist Page then we need to show the WishlistUI or else we
+         * need to show the SwipeUI
+         * */
         if(CARD_CATEGORY ==Constants.CDRecommendedInstituteType.SHORTLIST.ordinal()){
             mEmptyTextView.setVisibility(View.GONE);
             questionLayout.setVisibility(View.GONE);
@@ -319,9 +357,16 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             questionLayout.setVisibility(View.GONE);
         }
 
+
+        /**
+         * If user goes inside institute detail from shortlisted institute and deleted the institute
+         * then this functionality handles the deletion in CD recommended fragment.
+         * */
         if (this.mMainActivity != null) {
             this.mMainActivity.currentFragment = this;
             mMainActivity.translateAnimation(currentTab, null);
+
+            // Get the institute to be removed.
             Institute institute = this.mMainActivity.getCurrentInstitute();
             if (institute != null && institute.getPosition() >= 0)
             {
@@ -336,7 +381,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
                     if(mInstitutes == null || mInstitutes.size() <= 0){
                         mEmptyTextView.setVisibility(View.VISIBLE);
-                        mEmptyTextView.setText("You don't have any Shortlisted college. Please Shortlist colleges from Listing !");
+                        mEmptyTextView.setText("You don't have any Shortlisted college. Please " +
+                                "Shortlist colleges from Listing !");
                     }else{
                         mEmptyTextView.setVisibility(View.GONE);
                     }
@@ -353,6 +399,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
             }
         }
+
+        /**
+         * Set up the Swipe stack adapter. If returning to some other page than the shortlist page
+         * */
         setUpStackAdapter();
     }
 
@@ -486,6 +536,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mListener.OnCDRecommendedLoadNext();
     }
 
+    /**
+     * This method handles the functionality of institute being selected from the swipe list.
+     * */
     @Override
     public void OnInstituteSelected(Institute institute) {
         if(institute != null){
@@ -493,15 +546,24 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         }
     }
 
+    /**
+     * This method handles functionality of right swipe.
+     * */
     @Override
     public void OnInstituteLiked(Institute institute, boolean isLastCard) {
         if(institute == null){
             return;
         }
+        // Get the type of card swiped and set the adapter accordingly if the card is last or not.
         String cardCategory = getCardCategoryTagAndSetAdapter(isLastCard);
+        // Send the shortlist action of institute to the backend keeping in mind what tye of card is
+        // sent and whether it is the last card
         this.mListener.OnCDRecommendedInstituteLiked(institute, isLastCard, cardCategory ,this.mNextUrl);
     }
 
+    /**
+     * This method handles functionality of left swipe. It is similar to OnInstituteLiked.
+     * */
     @Override
     public void OnInstituteDislike(Institute institute, boolean isLastCard) {
         if(institute == null){
@@ -511,6 +573,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mListener.OnCDRecommendedInstituteDislike(institute, isLastCard,cardCategory, mNextUrl);
     }
 
+    /**
+     * This method handles functionality of up swipe. It is similar to OnInstituteLiked.
+     * */
     @Override
     public void OnDecideLater(Institute institute, boolean isLastCard) {
         if(institute == null){
@@ -520,6 +585,11 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mListener.OnCDRecommendedInstituteDecideLater(institute, isLastCard, cardCategory, mNextUrl);
     }
 
+    /**
+     * This method return the tag associated with the type of card. It removed the swiped institute.
+     * It also set's up the adapter accordingly. Depending on whether the institute was last or not
+     * it shows the message.
+     * */
     public String getCardCategoryTagAndSetAdapter(boolean isLastCard){
         this.mRemoveInstituteFromList();
         this.setUpStackAdapter();
@@ -534,9 +604,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             cardCategory = Constants.TAG_CD_SHORTLIST;
         }
         if(isLastCard){
-//            else if(this.mNextUrl != null && !this.mNextUrl.equalsIgnoreCase("null")){
-//                this.mListener.OnCDRecommendedLoadUndecidedInstitutes(this.mNextUrl);
-//            }
             this.OnShowMessage("Looking for institutes");
         }else {
             this.OnShowMessage("");
@@ -558,6 +625,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         }
     }
 
+    /**
+     * This method handles the apply functionality.
+     * */
     @Override
     public void OnAppliedInstitute(Institute institute) {
         if(institute == null){
@@ -573,7 +643,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 this.mCardContainer.setVisibility(View.GONE);
 
             }
+            // Setup the adapter and remove the institute get the card category.
             String cardCategory = getCardCategoryTagAndSetAdapter(flag);
+            // Send the apply request to the backend.
             this.mListener.OnAppliedInstitute(institute,flag,cardCategory);
 
             if(institute.getGroups_exists()==1) {
@@ -591,6 +663,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         }
     }
 
+    /**
+     * This removes the top card institute.
+     * */
     public void removeTopCard(Institute institute){
         if(mInstitutes != null && mInstitutes.size() > 0 && mCardContainer != null &&
                 institute!=null && mInstitutes.contains(institute)) {
@@ -600,51 +675,28 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         setUpStackAdapter();
     }
 
+    /**
+     * This method request the undecided institutes from the backend.
+     * */
     private void mRequestForUndecidedInstitutes(){
-
         mEmptyTextView.setText("Loading Undecided institutes...");
         mEmptyTextView.setVisibility(View.VISIBLE);
         if(mListener != null)
             this.mListener.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/?action=3");
-
     }
 
+    /**
+     * This method removed the institute being swiped.
+     * */
     private void mRemoveInstituteFromList() {
         try {
             int size = mAdapter.getCount();
             int total = mInstitutes.size();
             this.mInstitutes.remove(total-1);
-//            if(this.mInstitutes.size() <= 0) {
-//                if (this.mNextUrl == null || this.mNextUrl.equalsIgnoreCase("null")) {
-//
-//                    if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.UNBAISED.ordinal())
-//                        this.mEmptyTextView.setText("No more institutes");
-//                    else if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal())
-//                        this.mEmptyTextView.setText("No more institutes");
-//                    else
-//                        this.mEmptyTextView.setText("No more institutes");
-//
-//                    this.mEmptyTextView.setVisibility(View.VISIBLE);
-//                    this.mCardContainer.setVisibility(View.GONE);
-//                    questionLayout.setVisibility(View.INVISIBLE);
-//                } else {
-//                    mEmptyTextView.setVisibility(View.INVISIBLE);
-//                    this.mEmptyTextView.setText("Looking for more institutes...");
-//                    this.mEmptyTextView.setVisibility(View.VISIBLE);
-//                    this.mCardContainer.setVisibility(View.GONE);
-//                }
-//            }
         }
         catch (Exception e){
             Log.e(TITLE, e.getMessage());
         }
-        /*if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()){
-            this.mRecommendedCount = this.mInstitutes.size();
-            this.mRecommendedCountText.setText(""+ mRecommendedCount);
-        }else if(CARD_CATEGORY == Constants.CDRecommendedInstituteType.BUZZLIST.ordinal()){
-            this.mBuzzListCount = this.mInstitutes.size();
-            this.mBuzzListCountText.setText(""+mBuzzListCount);
-        }*/
     }
 
 
@@ -711,6 +763,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         void displayMessage(int messageId);
     }
 
+    /**
+     * This method updates and displays the count of the institutes.
+     * */
     public void updateCount(int mUndecidedInstitutesCount, int mShortListInstituteCount, int mFeaturedInstituteCount, int mRecommendedInstituteCount){
         if(mUndecidedInstitutesCount >= 0){
             this.mUndecidedCount = mUndecidedInstitutesCount;
@@ -745,8 +800,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         }
     }
 
+    /**
+     * This method is no longer used. The functionality is handled in the MainActivity.
+     * */
     public void mUpdateShortlistCount(int shortListCount, boolean isIncrement) {
-
         if (CARD_CATEGORY != Constants.CDRecommendedInstituteType.SHORTLIST.ordinal()) {
             if(getActivity()!=null){
                 if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.RECOMMENDED.ordinal()) {
@@ -772,7 +829,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     }
 
 
-
+    /**
+     * This method removes insitute in case of removing it from shortlist.
+     * */
     public void removeInstituteFromShortList(int position){
         if(position >= 0 && mInstitutes!=null && position < mInstitutes.size()){
             this.mInstitutes.remove(position);
@@ -790,8 +849,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         }
     }
 
-
-
+    /**
+     * In case of last card of recommended type this method is called. Here we handle the response
+     * from the server. We display institute or message accordingly.
+     * */
     public void updateRecommendedList(List<Institute> institutes, String next,int mRecommendedCount) {
         CARD_CATEGORY = Constants.CDRecommendedInstituteType.RECOMMENDED.ordinal();
         if(getView() == null)
@@ -811,13 +872,16 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 this.mRecommendedCountText.setText("" + mRecommendedCount);
             }
         }
-
         setLayoutAndShowMessage(next);
         setUpStackAdapter();
         if (getActivity() != null)
             ((MainActivity) getActivity()).hideProgressDialog();
     }
 
+    /**
+     * In case of last card of undecided type this method is called. Here we handle the response
+     * from the server. We display institute or message accordingly.
+     * */
     public void showUndecidedInstitutes(List<Institute> institutes, String next) {
         CARD_CATEGORY = Constants.CDRecommendedInstituteType.UNDECIDED.ordinal();
         this.mInstitutes.clear();
@@ -834,11 +898,14 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             ((MainActivity) getActivity()).hideProgressDialog();
     }
 
+    /**
+     * In case of last card of featured type this method is called. Here we handle the response
+     * from the server. We display institute or message accordingly.
+     * */
     public void updateBuzzList(List<Institute> institutes, String next, int buzzListCount) {
         CARD_CATEGORY = Constants.CDRecommendedInstituteType.FEATURED.ordinal();
         this.mInstitutes.clear();
         this.IS_UNDECIDED_INSTITUTES = false;
-//        mInstitutes.clear();
         this.mInstitutes.addAll(institutes);
         this.mUndecidedCountText.setClickable(true);
        // if(this.mBuzzListCount <= 0) {
@@ -861,6 +928,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
     }
 
+    /**
+     * This method handles the functionality of showing shortlist or swipe layout and showing
+     * animation of tab.
+     * */
     public void setLayoutAndShowMessage(String next){
         if (this.mInstitutes.size() == 0) {
             this.mEmptyTextView.setText("No more institutes");
@@ -952,6 +1023,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         });
     }
 
+    /**
+     * This method set's up the wipe adapter. It puts maximum 2 institutes at a time.
+     * */
     public void setUpStackAdapter(){
         this.mAdapter.clear();
         if(this.mInstitutes != null && !this.mInstitutes.isEmpty()){
