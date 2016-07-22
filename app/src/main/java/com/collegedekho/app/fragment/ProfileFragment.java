@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
+import com.collegedekho.app.widget.CustomSwipeRefreshLayout;
 import com.collegedekho.app.widget.spinner.MaterialSpinner;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.gson.JsonObject;
@@ -62,7 +64,7 @@ import java.util.List;
 /**
  * Created by sureshsaini on 17/5/16.
  */
-public class ProfileFragment extends BaseFragment implements ProfileFragmentListener {
+public class ProfileFragment extends BaseFragment implements ProfileFragmentListener, CustomSwipeRefreshLayout.OnRefreshListener {
 
     private static String TAG ="Profile Fragment";
     private static String PARAM1  = "param1";
@@ -80,6 +82,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     private static List<ProfileSpinnerItem> mPreferredCitiesList;
     private static List<ProfileSpinnerItem> mPreferredDegreesList;
     private RelativeLayout mUserImageLayout;
+    private CustomSwipeRefreshLayout mSwipeRefreshLayout;
 
     public static ProfileFragment getInstance(Profile profile){
         ProfileFragment fragment = new ProfileFragment();
@@ -103,6 +106,10 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        this.mSwipeRefreshLayout = (CustomSwipeRefreshLayout) mRootView.findViewById(R.id.profile_swipe_refresh_container);
+        this.mSwipeRefreshLayout.setOnRefreshListener(this);
+//        this.mSwipeRefreshLayout.setEnabled(false);
 
         if(mProfile.getIs_verified() == ProfileMacro.NUMBER_VERIFIED)
             mRootView.findViewById(R.id.profile_login_button).setVisibility(View.GONE);
@@ -493,6 +500,15 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     @Override
     public void hide() {
+    }
+
+    @Override
+    public void onRefresh() {
+        Log.d("SWIPE :", " SUCCESS");
+        if(mListener != null)
+            this.mListener.onRefreshProfile();
+        else
+            this.mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -2181,6 +2197,14 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     }
 
+    public void mRefreshProfileOnResponse(Profile profile){
+        if(profile != null){
+            ProfileFragment.mProfile = profile;
+            this.updateUserProfile();
+        }
+        this.mSwipeRefreshLayout.setRefreshing(false);
+    }
+
 
     public void updateUserDegreesList(String requestType, ArrayList<ProfileSpinnerItem> userDegreesList) {
         if(mRootView == null || userDegreesList == null)
@@ -2245,7 +2269,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     }
 
-
     public interface  UserProfileListener{
         void requestForUserProfileUpdate(HashMap<String, String> params, int ViewPosition);
         void displayMessage(int messageId);
@@ -2256,5 +2279,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         void requestForDegrees(int levelId, String requestType);
         void toDashboard();
         void toRecommended();
+        void onRefreshProfile();
     }
 }

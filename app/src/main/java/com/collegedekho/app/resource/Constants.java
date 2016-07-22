@@ -96,6 +96,7 @@ public class Constants
     public static final String CAF_URL = "https://m.collegedekho.com/caf-login-signup/";
     public static final String TAG_LOAD_COURSES = "load_courses";
     public static final String TAG_LOAD_PROFILE = "load_profile";
+    public static final String TAG_REFRESH_PROFILE = "refresh_profile";
     public static final String TAG_APPLIED_COURSE = "applied_course";
     public static final String TAG_WISH_LIST_APPLIED_COURSE = "wish_listLapplied_course";
     public static final String TAG_POST_QUESTION = "post_question";

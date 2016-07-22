@@ -1554,8 +1554,21 @@ public class MainActivity extends AppCompatActivity
      */
    @Override
     public void requestForUserProfileUpdate(HashMap<String, String> params, int viewPosition) {
-
         this.mMakeNetworkCall(Constants.TAG_UPDATE_USER_PROFILE+"#"+viewPosition, Constants.BASE_URL +"profile/", params, Request.Method.POST);
+    }
+
+    public void onRefreshProfile(){
+        this.mMakeNetworkCall(Constants.TAG_REFRESH_PROFILE, Constants.BASE_URL + "profile/", null);
+    }
+
+    private void mParseAndRefreshProfileResponse(String response){
+        try {
+            MainActivity.mProfile = JSON.std.beanFrom(Profile.class,response);
+            if(currentFragment instanceof  ProfileFragment)
+                ((ProfileFragment) currentFragment).mRefreshProfileOnResponse(MainActivity.mProfile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -2469,6 +2482,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_LOAD_PROFILE:
                 this.mParseProfileResponse(response);
+                break;
+            case Constants.TAG_REFRESH_PROFILE:
+                this.mParseAndRefreshProfileResponse(response);
                 break;
             case Constants.TAG_LAUNCH_USER_HOME:
                 this.onUpdateUserPreferences(response);
@@ -3688,6 +3704,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_UPDATE_PROFILE_EXAMS:
             case Constants.TAG_REQUEST_FOR_EXAMS:
             case Constants.REFRESH_CHATROOM:
+            case Constants.TAG_REFRESH_PROFILE:
                 return null;
             case "":
                 return null;
