@@ -77,6 +77,7 @@ public class Constants
     public static final String WIDGET_NEWS = "news";
     public static final String WIDGET_ARTICES = "articles";
     public static final String WIDGET_FORUMS = "forums";
+    public static final String REFRESH_CHATROOM = "refresh_chatroom";
     public static final String TAG_LOAD_QNA_QUESTIONS = "qna";
     //public static final String IP = "http://10.0.3.2";
     //public static final String IP = "http://www.launch.collegedekho.com";
@@ -315,4 +316,5 @@ public class Constants
     public static final int TYPE_FLING = 2;
     public static final int TYPE_HOLD_AND_RELEASE = 3;
     public static final int TYPE_EXAMPLE = 4;
+
 }

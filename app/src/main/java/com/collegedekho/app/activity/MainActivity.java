@@ -2041,6 +2041,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void mRefreshChatRoom(String response){
+        try {
+            if(currentFragment instanceof  MyFutureBuddiesEnumerationFragment){
+                this.mFbEnumeration = JSON.std.listOfFrom(MyFutureBuddiesEnumeration.class, this.extractResults(response));
+                ((MyFutureBuddiesEnumerationFragment) currentFragment).refreshChatRoom(new ArrayList<>(this.mFbEnumeration));
+            }
+
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
     private void mShowMyFB(String response, int index, int commentsCount) {
         try {
             this.mFB = this.mParseAndPopulateMyFB(response, index);
@@ -2607,6 +2619,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.WIDGET_FORUMS:
                 this.mShowMyFBEnumeration(response);
+                break;
+            case Constants.REFRESH_CHATROOM:
+                this.mRefreshChatRoom(response);
                 break;
             case Constants.TAG_LOAD_COURSES:
                 this.mUpdateCourses(response);
@@ -3672,6 +3687,8 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_UPDATE_PROFILE_OBJECT:
             case Constants.TAG_UPDATE_PROFILE_EXAMS:
             case Constants.TAG_REQUEST_FOR_EXAMS:
+            case Constants.REFRESH_CHATROOM:
+                return null;
             case "":
                 return null;
             case Constants.TAG_SUBMIT_SBS_EXAM:
@@ -5391,6 +5408,12 @@ public class MainActivity extends AppCompatActivity
        params.put("tag_uris[" + (params.size()) + "]", examDetailObj.getExam_tag());
 
         this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/" + id + "/summary/", params);
+    }
+
+    @Override
+    public void onChatRoomSwipedDown(String requestType, String url){
+        Map<String, String> params = new HashMap<>();
+        this.mMakeNetworkCall(requestType, url, params);
     }
 
     public void onHomeItemSelected(String requestType, String url, String tag) {

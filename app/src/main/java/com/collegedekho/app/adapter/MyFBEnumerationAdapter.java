@@ -40,6 +40,10 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
         this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
     }
 
+    public void setUpEnumerationData(ArrayList<MyFutureBuddiesEnumeration> fbEnumeration){
+        this.mMyFBEnumeration = fbEnumeration;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rootView = LayoutInflater.from(this.mContext).inflate(R.layout.my_fb_institute_item, parent, false);

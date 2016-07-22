@@ -24,13 +24,21 @@
 
         <include layout="@layout/layout_empty"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/fb_enumeration"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/fb_enumeration_swipe_refresh_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="5dp"
-            android:layout_gravity="right"
-            />
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/fb_enumeration"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:layout_gravity="right"
+                />
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
     </LinearLayout>
 
     <include layout="@layout/layout_progressbar"/>

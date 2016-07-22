@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +22,7 @@ import com.collegedekho.app.resource.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
+public class MyFutureBuddiesEnumerationFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TITLE = "Forums";
 
     private static final String ARG_PARAM1 = "param1";
@@ -30,6 +31,9 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
     private MyFBEnumerationAdapter mMyFBEnumerationAdapter;
     private TextView mEmptyTextView;
     private boolean IS_TUTE_COMPLETED = true;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private OnMyFBSelectedListener mListener;
+    private View mRootView;
 
     public static MyFutureBuddiesEnumerationFragment newInstance(ArrayList<MyFutureBuddiesEnumeration> fbEnumeration, String next) {
         MyFutureBuddiesEnumerationFragment fragment = new MyFutureBuddiesEnumerationFragment();
@@ -58,14 +62,15 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_my_future_buddies_enumeration, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_my_future_buddies_enumeration, container, false);
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.MY_FB_SCREEN_TUTE), false);
 
-        this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
-        this.progressBarLL = (LinearLayout) rootView.findViewById(R.id.progressBarLL);
+        this.mEmptyTextView = (TextView) mRootView.findViewById(android.R.id.empty);
+        this.progressBarLL = (LinearLayout) mRootView.findViewById(R.id.progressBarLL);
+        this.mSwipeRefreshLayout = (SwipeRefreshLayout) mRootView.findViewById(R.id.fb_enumeration_swipe_refresh_container);
+        this.mSwipeRefreshLayout.setOnRefreshListener(this);
 
-
-        RecyclerView fbEnumerationView = (RecyclerView) rootView.findViewById(R.id.fb_enumeration);
+        RecyclerView fbEnumerationView = (RecyclerView) mRootView.findViewById(R.id.fb_enumeration);
 
         this.mMyFBEnumerationAdapter = new MyFBEnumerationAdapter(getActivity(), this.mFbEnumeration);
         layoutManager = new LinearLayoutManager(getActivity());
@@ -86,7 +91,7 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
             fbEnumerationView.setVisibility(View.VISIBLE);
         }
 
-        rootView.findViewById(R.id.myfb_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
+        mRootView.findViewById(R.id.myfb_tour_guide_image).setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -97,7 +102,7 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
             }
         });
 
-        return rootView;
+        return mRootView;
     }
 
 
@@ -105,8 +110,10 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            if(context instanceof  MainActivity)
-                listener = (OnMyFBSelectedListener)context;
+            if(context instanceof  MainActivity) {
+                listener = (OnMyFBSelectedListener) context;
+                mListener = (OnMyFBSelectedListener) context;
+            }
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnMyFBSelectedListener");
@@ -162,8 +169,26 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment {
 
     }
 
+    @Override
+    public void onRefresh() {
+        this.mRefreshChatRoom(Constants.REFRESH_CHATROOM, Constants.BASE_URL + "personalize/forums");
+    }
+
+    private void mRefreshChatRoom(String requestType, String url)
+    {
+        if(mListener != null)
+            this.mListener.onChatRoomSwipedDown(requestType, url);
+    }
+
+    public void refreshChatRoom(ArrayList<MyFutureBuddiesEnumeration> mFbEnumeration) {
+        this.mMyFBEnumerationAdapter.setUpEnumerationData(mFbEnumeration);
+        this.mMyFBEnumerationAdapter.notifyDataSetChanged();
+        this.mSwipeRefreshLayout.setRefreshing(false);
+    }
+
     public interface OnMyFBSelectedListener extends BaseListener{
         void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position, int commentsCount);
+        void onChatRoomSwipedDown(String requestType, String url);
         void displayMessage(int messageId);
         @Override
         void onEndReached(String next, int type);
