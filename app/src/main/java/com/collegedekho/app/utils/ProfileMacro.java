@@ -15506,7 +15506,7 @@ public class ProfileMacro {
     public static int LEVEL_TWELFTH= 7;
 
 
-    // user is preparing for exams
+    // mDeviceProfile is preparing for exams
     public static int PREPARING_FOR_EXAM  = 1;
     public static int NOT_PREPARING_FOR_EXAM = 0;
 

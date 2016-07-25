@@ -5,7 +5,7 @@ import android.util.Log;
 
 /**
  * Created with IntelliJ IDEA.
- * User: alex
+ * DeviceProfile: alex
  * Date: 6/23/13
  * Time: 9:13 AM
  * To change this template use File | Settings | File Templates.

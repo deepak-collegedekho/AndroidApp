@@ -14,7 +14,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static DataBaseHelper DB_INSTANCE;
     private String CREATE_EXAMS_TABLE = "CREATE TABLE IF NOT EXISTS user_exams(id INTEGER AUTO INCREMENT PRIMARY KEY,exam_id INTEGER,exam_data TEXT)";
     private String CREATE_EXAMS_SUMMARY = "CREATE TABLE IF NOT EXISTS exams_summary(id INTEGER AUTO INCREMENT PRIMARY KEY,yearly_exam_id INTEGER,summary TEXT)";
-    private String CREATE_USER_TABLE = "CREATE TABLE IF NOT EXISTS user(id INTEGER AUTO INCREMENT PRIMARY KEY,user_id INTEGER,user_data TEXT)";
+    private String CREATE_USER_TABLE = "CREATE TABLE IF NOT EXISTS mDeviceProfile(id INTEGER AUTO INCREMENT PRIMARY KEY,user_id INTEGER,user_data TEXT)";
 
     public static DataBaseHelper getInstance(Context context) {
         if (DB_INSTANCE == null) {
@@ -147,7 +147,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         try {
-            String insertQuery = "INSERT INTO user (user_id,user_data) VALUES (" + userId + ",'" + userData + "')";
+            String insertQuery = "INSERT INTO mDeviceProfile (user_id,user_data) VALUES (" + userId + ",'" + userData + "')";
             db.execSQL(insertQuery);
         } catch (Exception e) {
             e.printStackTrace();
@@ -165,7 +165,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String user = null;
         try {
-            String getQuery = "SELECT * FROM user WHERE user_id = " + userId;
+            String getQuery = "SELECT * FROM mDeviceProfile WHERE user_id = " + userId;
             Cursor cursor = db.rawQuery(getQuery, null);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
@@ -192,7 +192,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         try {
-            String updateQuery = "UPDATE user SET user_data= '" + userData + "' WHERE user_id = " + userId;
+            String updateQuery = "UPDATE mDeviceProfile SET user_data= '" + userData + "' WHERE user_id = " + userId;
             db.execSQL(updateQuery);
         } catch (Exception e) {
             e.printStackTrace();
@@ -209,7 +209,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         try {
-            String updateQuery = "DELETE FROM user WHERE user_id = " + userId;
+            String updateQuery = "DELETE FROM mDeviceProfile WHERE user_id = " + userId;
             db.execSQL(updateQuery);
         } catch (Exception e) {
             e.printStackTrace();

@@ -259,7 +259,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
         }
     }
 
-    public QnAQuestions validateData(View rootView)
+    public QnAQuestions validateData()
     {
 
         String title =  this.mQuestionTitle.getText().toString();
@@ -308,7 +308,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
     {
         View view = getView();
         if (view != null) {
-            QnAQuestions q = validateData(view);
+            QnAQuestions q = validateData();
             if (q != null && mListener != null)
             {
                 this.mQuestionTitle.setText("");

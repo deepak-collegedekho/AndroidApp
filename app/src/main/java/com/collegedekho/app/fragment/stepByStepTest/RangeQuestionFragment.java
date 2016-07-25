@@ -112,7 +112,7 @@ public class RangeQuestionFragment extends StepByStepFragment {
                 //setting progress
                 seekBar.setProgress(progress);
 
-                /*--------------this logic is here to make the user see only the interval figures in lakhs--------------*/
+                /*--------------this logic is here to make the mDeviceProfile see only the interval figures in lakhs--------------*/
 
                 //if progress is less than a lakh, show 0
                 if (progress < 100000)

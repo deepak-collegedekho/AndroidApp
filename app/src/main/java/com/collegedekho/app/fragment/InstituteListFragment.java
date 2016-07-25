@@ -143,7 +143,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
         fab.startAnimation(animation);
 
-        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.INSTITUTE_LIST_SCREEN_TUTE), false);
+        IS_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.INSTITUTE_LIST_SCREEN_TUTE), false);
 
         if (IS_TUTE_COMPLETED)
             rootView.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
@@ -218,7 +218,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
                 v.setVisibility(View.GONE);
                 IS_TUTE_COMPLETED = true;
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.INSTITUTE_LIST_SCREEN_TUTE), true).apply();
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.INSTITUTE_LIST_SCREEN_TUTE), true).apply();
                 if(filterAllowed && mInstitutes!=null && mInstitutes.size()>0 && listType!=Constants.INSTITUTE_SEARCH_TYPE) {
                     rootView.findViewById(R.id.button_filter).setVisibility(View.VISIBLE);
                 }

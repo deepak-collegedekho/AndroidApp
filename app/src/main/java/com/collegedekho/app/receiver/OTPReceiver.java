@@ -23,7 +23,7 @@ import java.util.HashMap;
 public class OTPReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        //Return if user is already verified
+        //Return if mDeviceProfile is already verified
         if (MainActivity.mProfile != null && MainActivity.mProfile.getIs_verified() == ProfileMacro.NUMBER_VERIFIED)
             return;
 

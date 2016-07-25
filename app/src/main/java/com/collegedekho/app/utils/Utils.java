@@ -155,7 +155,7 @@ public class Utils {
     }
 
     /**
-     * This method is used to chck user's email address
+     * This method is used to chck mDeviceProfile's email address
      * @param target
      * @return
      */
@@ -167,7 +167,7 @@ public class Utils {
     }
 
     /**
-     * This method is used to check user's contact
+     * This method is used to check mDeviceProfile's contact
      * number is having a valid format
      * @param target
      * @return
@@ -181,7 +181,7 @@ public class Utils {
     }
 
     /**
-     * This metos is used to check user's name is in valid format
+     * This metos is used to check mDeviceProfile's name is in valid format
      * @param target
      * @return
      */

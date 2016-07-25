@@ -95,7 +95,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
             ExamDetail obj = examDetail.get(i);
             if(obj == null)continue;
             year[i] = obj.getYear();
-            // if user is preparing for the exam then set exam as preparing true
+            // if mDeviceProfile is preparing for the exam then set exam as preparing true
             //  by this we can disable click on this exam while updating exams.
             if(obj.is_preparing()){
                 selectedPosition=i;

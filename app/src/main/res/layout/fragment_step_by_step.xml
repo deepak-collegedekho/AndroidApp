@@ -20,7 +20,6 @@
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/activity_horizontal_margin_small"
         android:paddingRight="@dimen/activity_horizontal_margin_small"
-        android:layout_above="@id/button_next"
         />
 <!--    <TextView
         android:id="@+id/sbs_button_next"

@@ -215,8 +215,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         // set basic info progress
         setProfileProgressStatus((ProgressBar) mRootView.findViewById(R.id.profile_info_progress), mProfile.getBasic_progress());
 
-        //  set degree name school if user is currently in school and does not have any degree
-        //  else set user's current holding degree name in current education
+        //  set degree name school if mDeviceProfile is currently in school and does not have any degree
+        //  else set mDeviceProfile's current holding degree name in current education
 
         int userCurrentStreamId = mProfile.getCurrent_stream_id();
         if (userCurrentStreamId == 33 || userCurrentStreamId == 34 || userCurrentStreamId == 35 || userCurrentStreamId == 36
@@ -231,7 +231,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             }
         }
 
-        // set user's Passing Year
+        // set mDeviceProfile's Passing Year
         int currentPassingYear = mProfile.getCurrent_passing_year();
         if(currentPassingYear >= 2000) {
             ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(""+currentPassingYear);
@@ -252,7 +252,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             MainActivity.mProfile.setCurrent_passing_year(Utils.GetCurrentYear());
         }
 
-        // set User Stream Name in Current Education
+        // set DeviceProfile Stream Name in Current Education
         String currentStream = mProfile.getCurrent_stream_name();
         if (currentStream != null && !currentStream.isEmpty()){
             ((TextView)mRootView.findViewById(R.id.profile_education_stream)).setText(currentStream);
@@ -260,7 +260,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             ((TextView)mRootView.findViewById(R.id.profile_education_stream)).setText("NA");
         }
 
-        // hide specialization if user current
+        // hide specialization if mDeviceProfile current
         // level is school else show his/her specialization
         userCurrentStreamId = mProfile.getCurrent_stream_id();
         if(userCurrentStreamId == 33 ||userCurrentStreamId == 34 || userCurrentStreamId == 35  || userCurrentStreamId == 36
@@ -278,7 +278,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             }
         }
 
-        // set user's current score which he/she achieved in last degree or in school
+        // set mDeviceProfile's current score which he/she achieved in last degree or in school
         int currentScore = mProfile.getCurrent_score();
         int scoreType = mProfile.getCurrent_score_type();
         if (scoreType <=  0){
@@ -287,7 +287,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(currentScore +" "+  ProfileMacro.getCurrentScoreTypeName(scoreType));
         }
 
-        // set user's education mode
+        // set mDeviceProfile's education mode
         int currentMode = mProfile.getCurrent_mode();
         {
             ((TextView) mRootView.findViewById(R.id.profile_education_mode)).setText(ProfileMacro.getEducationModeName(currentMode));
@@ -295,15 +295,15 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
         setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_education_progress), mProfile.getCurrent_education_progress());
 
-        // set user preferred info
+        // set mDeviceProfile preferred info
         setPreferredEducationInfo(false);
 
         setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_exams_progress), mProfile.getExams_progress());
 
-        //  set User Exams Names
+        //  set DeviceProfile Exams Names
         mExpandUserExamsLayout(false);
 
-        //  set User Others Info
+        //  set DeviceProfile Others Info
         String fatherName = mProfile.getFathers_name();
         if (fatherName != null && !fatherName.isEmpty()){
             ((TextView)mRootView.findViewById(R.id.profile_father_name)).setText(fatherName);
@@ -330,7 +330,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     }
 
     /**
-     *  this method is to  update user preferred education info
+     *  this method is to  update mDeviceProfile preferred education info
      *  on preference part of screen
      * @param isShowAllInfo
      */
@@ -355,7 +355,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
         }
 
-        //set user admission year
+        //set mDeviceProfile admission year
         int preferredYear = mProfile.getPreferred_year_of_admission();
         if(preferredYear >= 2000 ){
             ((TextView) view.findViewById(R.id.profile_preferences_year)).setText(""+preferredYear);
@@ -449,7 +449,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         setProfileProgressStatus(view.findViewById(R.id.profile_preferences_progress), mProfile.getPreference_progress());
     }
     /**
-     * This method is used to set user exams info
+     * This method is used to set mDeviceProfile exams info
      * @param showAll
      */
 
@@ -693,8 +693,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
     }
     /**
-     * This method is used to set user profile info on
-     * profile info  page and user can edit his/her basic info
+     * This method is used to set mDeviceProfile profile info on
+     * profile info  page and mDeviceProfile can edit his/her basic info
      *  on this page like name, phone, city, state.
      */
 
@@ -716,7 +716,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 ((TextView)mRootView.findViewById(R.id.profile_edit_phone)).setText(phone);
             }
         }
-        // set user city and state
+        // set mDeviceProfile city and state
 
         final MaterialSpinner stateSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_state);
         final MaterialSpinner citySpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_city);
@@ -785,7 +785,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
         });
 
-        // set User Social Category
+        // set DeviceProfile Social Category
         MaterialSpinner socialCategorySpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_category);
         int socialCategoryId = mProfile.getSocial_category();
         ArrayList<ProfileSpinnerItem> socialCategoryList = ProfileMacro.getSocialCategoryList();
@@ -806,7 +806,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             socialCategorySpinner.setText("Select Category");
         }
 
-        // set user Mother tongue
+        // set mDeviceProfile Mother tongue
         MaterialSpinner motherTongueSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_mother_tongue);
         int motherTongueId = mProfile.getMother_tongue();
         ArrayList<ProfileSpinnerItem> motherTongueList = ProfileMacro.getMotherTongueList();
@@ -831,8 +831,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     }
     /**
      *
-     * This method is used to set user current education info on
-     * profile current education page and user can edit his/her current education
+     * This method is used to set mDeviceProfile current education info on
+     * profile current education page and mDeviceProfile can edit his/her current education
      * info  on this page like name, degree , stream , city, state.
      */
 
@@ -850,7 +850,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         int userSubLevelId = mProfile.getCurrent_sublevel_id();
         int userStreamId = mProfile.getCurrent_stream_id();
 
-        // hide current degree and specialization isf user has current level is school
+        // hide current degree and specialization isf mDeviceProfile has current level is school
         if(userStreamId == 33|| userStreamId == 34 || userStreamId == 35
                 || userStreamId == 36 || userStreamId == 37 || userStreamId == 38 || userStreamId == 39){
             currentSpecializationSpinner.setVisibility(View.GONE);
@@ -953,7 +953,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             e.printStackTrace();
         }
 
-        // set User Current Specialization
+        // set DeviceProfile Current Specialization
         currentStreamSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
             @Override
             public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
@@ -976,7 +976,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
 
 
-        // set user current degree
+        // set mDeviceProfile current degree
         int userCurrentDegreeId = mProfile.getCurrent_degree_id();
         try {
             List<ProfileSpinnerItem> currentDegreeList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.DEGREE_JSON);
@@ -1074,7 +1074,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 //            }
 //        }
 
-        // set current passing year info about user
+        // set current passing year info about mDeviceProfile
         int currentPassingYear = mProfile.getCurrent_passing_year();
         ArrayList<ProfileSpinnerItem> passingYearList = ProfileMacro.getCurrentPassingYearList();
         if(currentPassingYear >= 1) {
@@ -1109,8 +1109,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     /**
      *
-     * This method is used to set user Preferred education details on
-     * profile current education page and user can edit his/her Preferred education
+     * This method is used to set mDeviceProfile Preferred education details on
+     * profile current education page and mDeviceProfile can edit his/her Preferred education
      * info  on this page like degree, stream , specialization , city, state.
      */
     private void loadUserPreferredInfoEditLayout(){
@@ -1120,7 +1120,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         final MaterialSpinner preferredStreamSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_preferred_stream);
         final MaterialSpinner preferredSpecializationSpinner = (MaterialSpinner)mRootView. findViewById(R.id.profile_edit_preferred_specialization);
 
-        // set user preferred level
+        // set mDeviceProfile preferred level
         int preferredLevelId = mProfile.getPreferred_level();
         int preferredStreamId = mProfile.getPreferred_stream_id();
         List<ProfileSpinnerItem> streamList = null;
@@ -1550,10 +1550,10 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         params.put("city_id", userCityIdValue);
         params.put("social_category", userSocialCategoryIdValue);
         params.put("mother_tongue",userMotherTongueIdValue);
-        mListener.requestForUserProfileUpdate(params,0);
+        mListener.onUserProfileEdited(params,0);
     }
     /**
-     * This method is used to request to update user current
+     * This method is used to request to update mDeviceProfile current
      *  education info like education level , degree, state, city
      *
      */
@@ -1641,17 +1641,17 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         params.put("current_score_type", currentScoreIdValue);
         params.put("current_passing_year", currentPassingYear);
 
-        //set preferred year of admission for user if current passing year is equal to or greater than current year
+        //set preferred year of admission for mDeviceProfile if current passing year is equal to or greater than current year
         //because you can't travel back in time and take admission
         //and if can travel back in time why would you study there
         if (Integer.parseInt(currentPassingYear) >= Utils.GetCurrentYear())
             params.put("preferred_year_of_admission", currentPassingYear);
 
-        mListener.requestForUserProfileUpdate(params, 1);
+        mListener.onUserProfileEdited(params, 1);
     }
 
     /**
-     * This method is used to request to update user preferred
+     * This method is used to request to update mDeviceProfile preferred
      *  education info like education level , degree, state, city
      *
      */
@@ -1789,11 +1789,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         params.put("preferred_cities_ids", "" + cityIds.toString());
         //params.put("preferred_loan_required", loanRequired);
         //params.put("preferred_loan_amount_needed", ""+userPreferredLoanId);
-        mListener.requestForUserProfileUpdate(params, 2);
+        mListener.onUserProfileEdited(params, 2);
     }
 
     /**
-     * This method is used to request to update user other info like
+     * This method is used to request to update mDeviceProfile other info like
      * father name , mother name and coaching institute
      */
     private void mRequestForUpdateOtherInfo() {
@@ -1813,7 +1813,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         params.put("fathers_name", fatherName);
         params.put("mothers_name", motherName);
         params.put("coaching_institute", coachingInstitute);
-        mListener.requestForUserProfileUpdate(params, 4);
+        mListener.onUserProfileEdited(params, 4);
     }
 
 
@@ -2020,7 +2020,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     @Override
     public void uploadUserProfileImage() {
 
-        if(MainActivity.user == null)
+        if(MainActivity.mProfile == null)
             return;
 
         final File imageFile = new File(mImageCaptureUri.getPath());
@@ -2041,7 +2041,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     }
                 })
                 .setTimeout(60 * 60 * 1000)
-                .setHeader("Authorization","Token "+MainActivity.user.getToken())
+                .setHeader("Authorization","Token "+MainActivity.mProfile.getToken())
                 .setMultipartFile("image", "application/json", imageFile)
                 .asJsonObject()
                 // run a callback on completion
@@ -2123,7 +2123,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     private void mRequestForUserExamsUpdate() {
         if(mListener != null)
-            mListener.onRequestForUserExamsUpdate();
+            mListener.onRequestForUserExams();
     }
 
     public void updateUserSpecializationList(String requestType, ArrayList<ProfileSpinnerItem> userSpecializationList) {
@@ -2270,11 +2270,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     }
 
     public interface  UserProfileListener{
-        void requestForUserProfileUpdate(HashMap<String, String> params, int ViewPosition);
+        void onUserProfileEdited(HashMap<String, String> params, int ViewPosition);
         void displayMessage(int messageId);
         void onProfileImageUploaded();
         void onPostAnonymousLogin();
-        void onRequestForUserExamsUpdate();
+        void onRequestForUserExams();
         void requestForSpecialization(int streamId, String requestType);
         void requestForDegrees(int levelId, String requestType);
         void toDashboard();

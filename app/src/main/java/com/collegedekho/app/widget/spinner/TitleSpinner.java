@@ -411,7 +411,7 @@ public class TitleSpinner extends LinearLayout {
     }
 
     /**
-     * Register a callback to be invoked when the {@link PopupWindow} is shown but the user didn't select an item.
+     * Register a callback to be invoked when the {@link PopupWindow} is shown but the mDeviceProfile didn't select an item.
      *
      * @param onNothingSelectedListener
      *     the callback that will run

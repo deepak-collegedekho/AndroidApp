@@ -142,10 +142,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
         mRootView = inflater.inflate(R.layout.fragment_profile_building, container, false);
 
-        /*View nextView = mRootView.findViewById(R.id.user_education_next_button);
-        if (nextView.getAlpha() != 1 && !isResumed())
-            nextView.setX(10000);
-        }*/
         return mRootView;
     }
 
@@ -198,7 +194,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         /// load profile completion Ui Screen
         mLoadUserProfileCompletedUI();
 
-        //view.findViewById(R.id.user_education_show_all_exams).setOnClickListener(this);
         view.findViewById(R.id.user_education_radio_button_school).setOnClickListener(this);
         view.findViewById(R.id.user_education_radio_button_college).setOnClickListener(this);
         view.findViewById(R.id.user_education_radio_button_pg).setOnClickListener(this);
@@ -212,7 +207,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         view.findViewById(R.id.go_to_dash_board).setOnClickListener(this);
         view.findViewById(R.id.go_to_profile).setOnClickListener(this);
         view.findViewById(R.id.user_exam_search_container).setOnClickListener(this);
-       // view.findViewById(R.id.user_education_no_exam_skip_button).setOnClickListener(this);
         mExamSearchView.setOnSearchClickListener(this);
     }
 
@@ -224,7 +218,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         // if current education selected  then show next layout
         if(profile.getCurrent_level_id() >= 1 && profile.getCurrent_sublevel_id() >= 1) {
 
-            // set user profile completion progress
+            // set mDeviceProfile profile completion progress
             CircularProgressBar profileCompleted =  (CircularProgressBar) mRootView.findViewById(R.id.user_profile_progress);
             profileCompleted.setProgress(0);
             profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
@@ -264,16 +258,16 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                     }
                 },300);
                 mRootView.findViewById(R.id.user_education_next_button).setAlpha(1);
-                // show user' current stream Layout
+                // show mDeviceProfile' current stream Layout
                 mRootView.findViewById(R.id.user_education_stream_layout).setVisibility(View.VISIBLE);
                 mRootView.findViewById(R.id.user_education_stream_layout).startAnimation(animationFromTop);
 
-                // set user's current stream
+                // set mDeviceProfile's current stream
                 TextView  currentStreamTxtView = (TextView)mRootView.findViewById(R.id.user_education_stream);
                 currentStreamTxtView.setVisibility(View.VISIBLE);
                 currentStreamTxtView.setText(MainActivity.mProfile.getCurrent_stream_name());
 
-                // change heading for user exams selection
+                // change heading for mDeviceProfile exams selection
                 ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.which_exams_are_you_preparing));
                 mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.VISIBLE);
 
@@ -522,20 +516,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             case R.id.user_exam_search_view:
             case R.id.user_exam_search_container:
                 mExamSearchView.onActionViewExpanded();
-              //  mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.GONE);
-                //getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.GONE);
                 this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SEARCH);
                 ProfileBuildingFragment.mEventValue.put("searching_what", "exams");
                 break;
-           /* case R.id.user_education_no_exam_skip_button:
-                //mTakeMeToDashBoard();
-                onExamSubmittedSuccessfully();
-                this.mEventAction = MainActivity.getResourceString(R.string.ACTION_SEARCH);
-                ProfileBuildingFragment.mEventValue.put("skip when there is no exam", "skip to go dashboard");
-                break;*/
-            /*case R.id.user_education_show_all_exams:
-                onShowAllExamsClecked(view);
-                break;*/
             default:
                 break;
         }
@@ -558,7 +541,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // set user's sub level base
+                                // set mDeviceProfile's sub level base
                                 mUserSubLevelID = ProfileMacro.getSubLevel(which, userLevel);
                                 // Now show Next Button
                                 mAnimateFooterButtons();
@@ -763,7 +746,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 preferredLevelId = ProfileMacro.LEVEL_PHD;
             }
 
-            // set user' current  and preferred level locally
+            // set mDeviceProfile' current  and preferred level locally
             if (MainActivity.mProfile != null) {
                 mLastSelectedCurrentLevelID = MainActivity.mProfile.getCurrent_level_id();
                 MainActivity.mProfile.setCurrent_sublevel_id(mUserSubLevelID);
@@ -779,13 +762,13 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             params.put("current_score", "" + mUserCurrentMarks);
             params.put("current_score_type", "" + ProfileMacro.PERCENTAGE);
 
-            // check user's name and phone Number
+            // check mDeviceProfile's name and phone Number
             if(!getUserNameAndPhone(params)){
                 return;
             }
 
-            // save user profile data on server
-            this.mListener.requestForProfile(params, Request.Method.POST);
+            // save mDeviceProfile profile data on server
+            this.mListener.requestForProfile(params);
 
 
             this.mEventAction = MainActivity.getResourceString(R.string.ACTION_CURRENT_LEVEL_SELECTED);
@@ -867,7 +850,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         }else if( !isStreamSelected && mStreamRecyclerView.getVisibility() == View.VISIBLE){
 
             HashMap<String, String> params = new HashMap<>();
-            // check user's name and phone Number
+            // check mDeviceProfile's name and phone Number
             if(!getUserNameAndPhone(params)){
                 return;
             }
@@ -884,7 +867,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 break;
             }
 
-            // check user has selected current  stream
+            // check mDeviceProfile has selected current  stream
             if(!isStreamSelected){
                 mListener.displayMessage(R.string.please_select_your_stream);
                 return;
@@ -922,43 +905,36 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 this.mListener.onRequestForUserExams();
             }
 
-            // set user'current stream locally
+            // set mDeviceProfile'current stream locally
             if(MainActivity.mProfile != null){
                 // save this id in local to check last selected level was same
                 mLastSelectedCurrentLevelID = MainActivity.mProfile.getCurrent_level_id();
             }
 
-            // save user's current stream id on server
+            // save mDeviceProfile's current stream id on server
             params.put("current_stream_id",""+currentStreamId);
-            this.mListener.requestForProfile(params, Request.Method.POST);
+            this.mListener.requestForProfile(params);
 
 
 
-            // show user' current stream Layout
+            // show mDeviceProfile' current stream Layout
             mRootView.findViewById(R.id.user_education_stream_layout).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.user_education_stream_layout).startAnimation(animationFromTop);
 
-            // set user's current stream
+            // set mDeviceProfile's current stream
             TextView  currentStreamTxtView = (TextView)mRootView.findViewById(R.id.user_education_stream);
             currentStreamTxtView.setVisibility(View.VISIBLE);
             currentStreamTxtView.setText(currentStreamName);
 
-            // change heading for user exams selection
+            // change heading for mDeviceProfile exams selection
             ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.which_exams_are_you_preparing));
             mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.VISIBLE);
 
-            /*TextView textView = (TextView)mRootView.findViewById(R.id.user_education_show_all_exams);
-            textView.setSelected(false);
-            textView.setVisibility(View.VISIBLE);
-            textView.setText("Show More...");*/
 
             cExamQueryListener = new ExamOnQueryListener(mStreamExamList,this,mRootView.findViewById(R.id.user_education_next_button_layout));
             mExamSearchView.setOnQueryTextListener(cExamQueryListener);
             mExamSearchView.setQuery("", false);
             mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(null,mRootView.findViewById(R.id.user_education_next_button_layout)));
-
-
-
 
             ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText("Not Preparing");
 
@@ -1039,8 +1015,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.GONE);
-       // mRootView.findViewById(R.id.user_education_show_all_exams).setVisibility(View.GONE);
-       // mRootView.findViewById(R.id.user_education_no_exam_skip_button).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.VISIBLE);
@@ -1080,8 +1054,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
         mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
-       // mRootView.findViewById(R.id.user_education_show_all_exams).setVisibility(View.GONE);
-       // mRootView.findViewById(R.id.user_education_no_exam_skip_button).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_heading_devider).setVisibility(View.VISIBLE);
@@ -1101,7 +1073,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             }
 
         }
-        // set selected true stream if user has same stream
+        // set selected true stream if mDeviceProfile has same stream
         if(MainActivity.mProfile != null){
 
             int userStreamId = MainActivity.mProfile.getCurrent_stream_id();
@@ -1223,9 +1195,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             if(size >= 1) {
                 HashMap<String, String> userParams = new HashMap<>();
                 userParams.put("yearly_exams", "[]");
-                this.mListener.requestForProfile(userParams, Request.Method.POST);
-
-                MainActivity.user.setUser_exams(new ArrayList<ExamDetail>());
+                this.mListener.requestForProfile(userParams);
                 MainActivity.mProfile.setYearly_exams(new ArrayList<ProfileExam>());
             }
         }
@@ -1280,24 +1250,20 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
     private void onUserExamsSelected() {
 
-        if(this.mListener == null || mExamAdapter == null)
+        if(this.mListener == null || this.mExamAdapter == null)
             return;
 
-        // if user does not have any exam then next button works as not preparing case
-        if(mAllExamList != null && mAllExamList.size() <=0)
-        {
-          mUserEducationSkip();
+        // if mDeviceProfile does not have any exam and want to further proceed
+        // then next button works like "Not Preparing Button"
+        if(this.mAllExamList != null && this.mAllExamList.size() <=0){
+            mUserEducationSkip();
             return;
         }
 
         boolean isExamSelected = false;
-       // JSONObject parentJsonObject=new JSONObject();
-        //JSONArray parentArray=new JSONArray();
-      //  ArrayList<Exam> adapterExamList = mExamAdapter.getExamsList();
-
         StringBuffer selectedExamsBuffer = new StringBuffer();
         selectedExamsBuffer.append("[");
-        int firsttime =0;
+        int firstTime =0;
         if(mAllExamList != null && !mAllExamList.isEmpty()) {
             for (Exam exam:mAllExamList) {
                 if(exam == null || !exam.isSelected())continue;
@@ -1307,41 +1273,32 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
                 for (ExamDetail examDetailObj:detailList) {
                     if(examDetailObj == null || !examDetailObj.isSelected())continue;
-                    //JSONObject examHash = new JSONObject();
-                    try {
-                        if(firsttime != 0){
+
+                        if(firstTime != 0)
                             selectedExamsBuffer.append(",");
-                        }
+                        firstTime++;
+
                         selectedExamsBuffer.append("{\"id\":").append(examDetailObj.getId())
                                 .append(",").append("\"score\":").append(examDetailObj.getScore());
 
                         if(examDetailObj.isResult_out()){
-
+                           //TODO :: set  to exam status as given or preparing base on
+                            // TODO::  result out date  and exam's date
                             String date = examDetailObj.getExam_date();
                             selectedExamsBuffer.append(",").append("\"status\":").append(1);
                         }else{
                             selectedExamsBuffer.append(",").append("\"status\":").append(2);
                         }
                         selectedExamsBuffer.append("}");
-                        firsttime++;
-                       /* examHash.putOpt(MainActivity.getResourceString(R.string.EXAM_ID),examDetailObj.getId());
-                        examHash.putOpt(MainActivity.getResourceString(R.string.SCORE),examDetailObj.getScore());
-                        examHash.putOpt(MainActivity.getResourceString(R.string.STATUS),examDetailObj.getStatus());
-                        parentArray.put(examHash);*/
-                        isExamSelected = true;
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
+
+                         isExamSelected = true;
+
                 }
             }
         }
         selectedExamsBuffer.append("]");
-       /* try {
-            parentJsonObject.put(MainActivity.getResourceString(R.string.RESULTS),parentArray);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-        // check user's name and phone Number
+
+        // check mDeviceProfile's name and phone Number
         HashMap<String, String> userParams = new HashMap<>();
         if(!getUserNameAndPhone(userParams)){
             return;
@@ -1352,12 +1309,8 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             return;
         }
 
-       // if(userParams.size() >= 1)
-         //   this.mListener.requestForProfile(userParams, Request.Method.POST);
-
         userParams.put("yearly_exams", selectedExamsBuffer.toString());
         this.mListener.onUserExamSelected(userParams);
-
 
         this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
 
@@ -1499,7 +1452,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     @Override
     public void uploadUserProfileImage() {
 
-        if(MainActivity.user == null)
+        if(MainActivity.mProfile == null)
             return;
 
         final File imageFile = new File(mImageCaptureUri.getPath());
@@ -1520,7 +1473,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                     }
                 })
                 .setTimeout(60 * 60 * 1000)
-                .setHeader("Authorization","Token "+MainActivity.user.getToken())
+                .setHeader("Authorization","Token "+MainActivity.mProfile.getToken())
                 .setMultipartFile("image", "application/json", imageFile)
                 .asJsonObject()
                 // run a callback on completion
@@ -1596,10 +1549,8 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
             mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.VISIBLE);
-            //mRootView.findViewById(R.id.user_education_show_all_exams).setVisibility(View.GONE);
             mStreamRecyclerView.setVisibility(View.GONE);
             mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.VISIBLE);
-           // mRootView.findViewById(R.id.user_education_no_exam_skip_button).setVisibility(View.VISIBLE);
             TextView emptyText = (TextView) mRootView.findViewById(R.id.empty) ;
             emptyText.setVisibility(View.VISIBLE);
             emptyText.setText(getString(R.string.no_exam_found));
@@ -1608,8 +1559,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         }else{
            mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.VISIBLE);
-          //  mRootView.findViewById(R.id.user_education_show_all_exams).setVisibility(View.VISIBLE);
-          //  mRootView.findViewById(R.id.user_education_no_exam_skip_button).setVisibility(View.GONE);
         }
 
         if (this.mStreamExamList == null)
@@ -1672,14 +1621,14 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
         if(mListener == null)
             return;
-        // check user's name and phone Number
+        // check mDeviceProfile's name and phone Number
         HashMap<String, String> userParams = new HashMap<>();
         if(!getUserNameAndPhone(userParams)){
             return;
         }
 
         if(userParams.size() >= 1)
-            this.mListener.requestForProfile(userParams, Request.Method.POST);
+            this.mListener.requestForProfile(userParams);
 
 
         mRootView.findViewById(R.id.user_education_top_layout).setVisibility(View.GONE);
@@ -1694,14 +1643,14 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
         if(mListener == null)
             return;
-        // check user's name and phone Number
+        // check mDeviceProfile's name and phone Number
         HashMap<String, String> userParams = new HashMap<>();
         if(!getUserNameAndPhone(userParams)){
             return;
         }
 
         if(userParams.size() >= 1)
-            this.mListener.requestForProfile(userParams, Request.Method.POST);
+            this.mListener.requestForProfile(userParams);
 
 
         mRootView.findViewById(R.id.user_education_top_layout).setVisibility(View.GONE);
@@ -1717,14 +1666,14 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         if(mListener == null)
             return;
 
-        // check user's name and phone Number
+        // check mDeviceProfile's name and phone Number
         HashMap<String, String> userParams = new HashMap<>();
         if(!getUserNameAndPhone(userParams)){
             return;
         }
 
         if(userParams.size() >= 1)
-            this.mListener.requestForProfile(userParams, Request.Method.POST);
+            this.mListener.requestForProfile(userParams);
 
         mRootView.findViewById(R.id.user_education_top_layout).setVisibility(View.GONE);
         mListener.OnTakeMeToProfile();
@@ -1751,7 +1700,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         void onSkipSelectedInProfileBuilding();
         void onUserExamSelected(HashMap<String, String> examJson);
         void displayMessage(int messageId);
-        void requestForProfile(HashMap<String, String> params, int method);
+        void requestForProfile(HashMap<String, String> params);
         void onRequestForUserExams();
         void  onRequestForLevelStreams(int levelId, int levelType);
         void OnTakeMeToRecommended();

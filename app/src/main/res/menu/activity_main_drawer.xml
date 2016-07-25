@@ -4,20 +4,20 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_colleges"
-            android:icon="@drawable/ic_recommended_colleges"
+            android:icon="@drawable/ic_cd_colored"
             android:title="Colleges" />
         <item
             android:id="@+id/nav_connect"
             android:icon="@drawable/ic_connect"
             android:title="Ask &amp; Chat" />
         <item
-            android:id="@+id/nav_read"
-            android:icon="@drawable/ic_read"
-            android:title="News" />
-        <item
             android:id="@+id/nav_prepare"
             android:icon="@drawable/ic_prepare"
             android:title="Prepare" />
+        <item
+            android:id="@+id/nav_read"
+            android:icon="@drawable/ic_read"
+            android:title="News" />
     </group>
 
     <item android:title="Communicate">

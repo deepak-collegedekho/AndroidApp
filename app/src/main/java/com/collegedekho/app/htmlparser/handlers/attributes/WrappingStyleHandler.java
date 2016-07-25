@@ -11,7 +11,7 @@ import org.htmlcleaner.TagNode;
 
 /**
  * Created with IntelliJ IDEA.
- * User: alex
+ * DeviceProfile: alex
  * Date: 5/6/13
  * Time: 1:46 PM
  * To change this template use File | Settings | File Templates.

@@ -15,7 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.entities.User;
+import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.fasterxml.jackson.jr.ob.JSON;
@@ -52,7 +52,7 @@ public class ApplyService extends Service {
              @Override
              public void run() {
 
-                 SharedPreferences preferences = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
+                 SharedPreferences preferences = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
         String instituteId = preferences.getString(Constants.INSTITUTE_ID, null);
         if(instituteId != null) {
             Set<String> courseIdList = preferences.getStringSet(instituteId, new HashSet<String>());
@@ -71,16 +71,16 @@ public class ApplyService extends Service {
     }
     private void applyCourse(String instituteCourseID , String instituteID) {
 
-        SharedPreferences preferences = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
         HashMap<String, String> params = new HashMap<>();
 
         if (preferences.contains(Constants.KEY_USER)) {
             try {
-                User user = JSON.std.beanFrom(User.class, preferences.getString(Constants.KEY_USER, null));
+                Profile user = JSON.std.beanFrom(Profile.class, preferences.getString(Constants.KEY_USER, null));
                 if (user != null) {
                     params.put(MainActivity.getResourceString( R.string.USER_NAME), user.getName());
                     params.put(MainActivity.getResourceString( R.string.USER_EMAIL), user.getEmail());
-                    //params.put(Constants.USER_PHONE,user.getPhone());
+                    params.put(MainActivity.getResourceString( R.string.USER_PHONE), user.getPhone_no());
                     mToken = user.getToken();
                 }
             } catch (IOException e) {

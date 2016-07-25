@@ -36,7 +36,7 @@ public class ApplyIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        SharedPreferences preferences = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
         String instituteId = preferences.getString(Constants.INSTITUTE_ID, null);
         if(instituteId != null) {
             Set<String> courseIdList = preferences.getStringSet(instituteId, new HashSet<String>());
@@ -55,16 +55,16 @@ public class ApplyIntentService extends IntentService {
     {
         HashMap<String, String> map = new HashMap<>();
 
-        if (MainActivity.user != null) {
-            map.put(MainActivity.getResourceString(R.string.USER_NAME), MainActivity.user.getName());
-            map.put(MainActivity.getResourceString(R.string.USER_EMAIL), MainActivity.user.getEmail());
+        if (MainActivity.mProfile != null) {
+            map.put(MainActivity.getResourceString(R.string.USER_NAME), MainActivity.mProfile.getName());
+            map.put(MainActivity.getResourceString(R.string.USER_EMAIL), MainActivity.mProfile.getEmail());
 
             TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             String mPhoneNumber = tMgr.getLine1Number();
             if (mPhoneNumber != null) {
                 map.put(MainActivity.getResourceString(R.string.USER_PHONE), mPhoneNumber);
             } else {
-                if (MainActivity.user != null) map.put(MainActivity.getResourceString(R.string.USER_PHONE), MainActivity.user.getPhone_no());
+                if (MainActivity.mProfile != null) map.put(MainActivity.getResourceString(R.string.USER_PHONE), MainActivity.mProfile.getPhone_no());
             }
         }
         map.put(MainActivity.getResourceString(R.string.APPLY_COURSE),instituteCourseID);

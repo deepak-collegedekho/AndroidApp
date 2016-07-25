@@ -54,7 +54,7 @@ public class NotPreparingFragment extends BaseFragment {
                 break;
 
             case R.id.btn_psychometric_test:
-                listener.onPsychometricTest();
+                listener.onPsychometricTestSelected();
                 break;
 
         }
@@ -98,6 +98,6 @@ public class NotPreparingFragment extends BaseFragment {
     public interface OnNotPreparingOptionsListener {
         void onIknowWhatIWant();
         void onStepByStep();
-        void onPsychometricTest();
+        void onPsychometricTestSelected();
     }
 }

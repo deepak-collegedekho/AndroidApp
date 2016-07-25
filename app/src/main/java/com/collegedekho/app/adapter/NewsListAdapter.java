@@ -49,7 +49,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
         this.imageLoader = MySingleton.getInstance(context).getImageLoader();
         this.sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
         this.sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        this.mNewsStream = MainActivity.user.getStream_name();
+        this.mNewsStream = MainActivity.mProfile.getCurrent_stream_name();
     }
 
     @Override
@@ -115,7 +115,7 @@ public class NewsListAdapter extends RecyclerView.Adapter {
             if (position == 0 || this.mNewsChangedPosition == position)
             {
                 if (position == 0)
-                    newsHolder.streamTypeHeader.setText(MainActivity.user.getStream_name()==null?"News":MainActivity.user.getStream_name()+ " News");
+                    newsHolder.streamTypeHeader.setText(MainActivity.mProfile.getCurrent_stream_name() == null?"News":MainActivity.mProfile.getCurrent_stream_name()+ " News");
                 else
                     newsHolder.streamTypeHeader.setText("Other News");
 

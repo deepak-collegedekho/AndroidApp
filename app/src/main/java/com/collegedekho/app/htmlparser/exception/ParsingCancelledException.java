@@ -1,7 +1,7 @@
 package com.collegedekho.app.htmlparser.exception;
 
 /**
-  Simple RuntimeException which is throws when parsing is cancelled by the user.
+  Simple RuntimeException which is throws when parsing is cancelled by the mDeviceProfile.
 
  @author Alex Kuiper
  */

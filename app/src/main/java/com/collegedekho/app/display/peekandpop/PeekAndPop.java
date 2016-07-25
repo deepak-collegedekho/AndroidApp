@@ -193,13 +193,13 @@ public class PeekAndPop {
     }
 
     /**
-     * Check if user has moved or lifted their finger.
+     * Check if mDeviceProfile has moved or lifted their finger.
      * <p/>
      * If lifted, onPop the view and check if their is a drag to action listener, check
      * if it had been dragged enough and send an event if so.
      * <p/>
-     * If moved, check if the user has entered the bounds of the onPeek view.
-     * If the user is within the bounds, and is at the edges of the view, then
+     * If moved, check if the mDeviceProfile has entered the bounds of the onPeek view.
+     * If the mDeviceProfile is within the bounds, and is at the edges of the view, then
      * move it appropriately.
      */
     protected void handleTouch(@NonNull View view, @NonNull MotionEvent event, int position) {
@@ -479,8 +479,8 @@ public class PeekAndPop {
     /**
      * Specify id of view WITHIN the peek layout, this view will trigger the following events:
      * onHold() - when the view is held for a small amount of time
-     * onLeave() - when the view is no longer held but the user is is still touching the screen
-     * onRelease() - when the user releases after holding the view
+     * onLeave() - when the view is no longer held but the mDeviceProfile is is still touching the screen
+     * onRelease() - when the mDeviceProfile releases after holding the view
      * <p/>
      * You can add multiple HoldAndRelease views
      *

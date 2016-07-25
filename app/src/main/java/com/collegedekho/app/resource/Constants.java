@@ -21,27 +21,18 @@ public class Constants
     public static final int REQUEST_PICK_IMAGE = 2 ;
     public static final int REQUEST_CROP_IMAGE = 3 ;
 
-    public static final String PREFS = "sharedprefs";
     public static final String KEY_USER = "user_id";
-    public static final String ANONYMOUS_USER = "Anonymous user";
+    public static final String ANONYMOUS_USER = "Anonymous mDeviceProfile";
     public static final String TAG_FACEBOOK_LOGIN = "user_facebook_login";
     public static final String TAG_TRUE_SDK_LOGIN = "true_sdk_login";
     public static final String TAG_SKIP_LOGIN = "skip_login";
     public static final String TAG_PHONE_NUMBER_LOGIN = "phone_number_login";
     public static final String TAG_USER_LOGIN = "user_login";
     public static final String TAG_EDUCATION_DETAILS_SUBMIT = "user_education_submit";
-    public static final String TAG_EDIT_EDUCATION_DETAILS_SUBMIT = "edited_user_education_submit";
-    public static final String TAG_NOT_PREPARING_EDUCATION_DETAILS_SUBMIT = "user_not_preparing_education_submit";
-    public static final String TAG_EXAMS_LIST = "exams_list";
-    public static final String TAG_EDIT_EXAMS_LIST = "edit_exams_list";
-    public static final String TAG_LOAD_EXAMS_LIST = "load_exams_list";
 
     public static final String TAG_USER_EXAMS_SUBMISSION = "user_exam_submission";
     public static final String TAG_USER_EXAMS_DELETE = "user_exam_delete";
-    public static final String TAG_LOAD_USER_PREFERENCES = "load_user_preferences";
     public static final String TAKE_ME_TO_RECOMMENDED = "take_me_to_recommended";
-    public static final String TAG_LOAD_USER_PREFERENCES_N_BACK = "load_user_preferences_n_back";
-    public static final String TAG_LAUNCH_USER_HOME = "launch_user_home";
     public static final String TAG_SUBMIT_EDITED_EXAMS_LIST = "submit_edited_exams_list";
     public static final String TAG_SUBMIT_PSYCHOMETRIC_EXAM = "submit_psychometric_exam";
     public static final String TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM = "submit_edit_psychometric_exam";
@@ -50,7 +41,6 @@ public class Constants
     public static final String TAG_LOAD_STREAM = "load_stream";
     public static final String TAG_PSYCHOMETRIC_QUESTIONS = "load_psychometric_questions";
     public static final String TAG_PSYCHOMETRIC_RESPONSE = "load_psychometric_response";
-    public static final String TAG_EDIT_PSYCHOMETRIC_QUESTIONS = "load_edit_psychometric_questions";
     public static final String TAG_LOAD_STEP_BY_STEP = "load_step_by_step";
     public static final String TAG_LOAD_STEP_BY_STEP_FROM_PROFILE_BUILDING = "load_step_by_step_from_profile_building";
     public static final String TAG_UPDATE_STREAM = "update_stream";
@@ -138,16 +128,12 @@ public class Constants
     public static final String QTYPE_RANGE = "range";
     public static final String TAG_LOAD_MY_FB = "load_my_fb";
     public static final String TAG_REFRESH_MY_FB = "refresh_my_fb";
-    public static final String TAG_SUBMIT_PSYCHOMETRIC_TEST = "submit_psychometric_test";
-    public static final String TAG_SUBMIT_PREFRENCES = "submit_preferences";
-    public static final String TAG_SUBMIT_EDITED_PREFRENCES = "submit_edited_prefrences";
     public static final String TAG_UPDATE_USER_PROFILE = "update_user_profile";
     public static final String TAG_UPDATE_PROFILE_EXAMS = "update_profile_exams";
     public static final String TAG_UPDATE_PROFILE_OBJECT = "update_profile_object";
     public static final String TAG_REQUEST_FOR_SPECIALIZATION = "request_for_specialization";
     public static final String TAG_REQUEST_FOR_DEGREES = "request_for_degrees";
     public static final String TAG_REQUEST_FOR_EXAMS = "request_for_exams";
-    public static final String TAG_USER_EXAM_SPECIALIZATION = "user_exam_for_specialization";
     public static final String TAG_UPDATE_INSTITUTES = "update_institutes";
     public static final String TAG_FRAGMENT_FILTER_LIST = "fragment_filter_list";
     public static final String TAG_FRAGMENT_QNA_QUESTION_LIST = "fragment_qna_questions_list";
@@ -174,19 +160,22 @@ public class Constants
     public static final String TAG_PSYCHOMETRIC_TEXT_COMPLETED = "psychometric_text_completed";
     public static final String TAG_LOAD_INSTITUTE_NEWS = "institute_news";
     public static final String TAG_LOAD_INSTITUTE_ARTICLE = "institute_article";
-    public static final String TAG_USER_EDUCATION_SET = "user_education_set";
     public static final String SELECTED_EXAM_ID = "selected_exam_id";
     public static final String SEARCH_INSTITUTES = "search_institutes";
     public static final String SEARCH_ARTICLES = "search_articles";
     public static final String SEARCH_NEWS = "search_news";
     public static final String SEARCH_QNA = "search_qna";
-    public static final String TEMPORARY_TAG_PROFILE_BUILD = "temporary_tag_profiule_build";
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;
     public static final int MY_FB_REFRESH_RATE = 10000;
+
     public static final int TYPE_WIFI = 1;
     public static final int TYPE_MOBILE = 2;
+    public static final int TYPE_BLUETOOTH = 7;
+    public static final int TYPE_ETHERNET = 9;
+    public static final int TYPE_VPN = 17;
+
     public static final int TYPE_NOT_CONNECTED = 0;
     public static final String SERVER_FAULT = "The servers made a boo boo. Try again later";
     public static final String NO_CONNECTION_FAULT = "You are not connected to internet. Please connect and try again.";
@@ -243,8 +232,8 @@ public class Constants
     public static final String TAG_RESEND_OTP = "resend_otp";
     public static final String TAG_VERIFY_USER_PHONE = "action_user_login";
     public static final String USER_OTP = "user_otp";
-    public static final String OTP_INTENT_FILTER = "com.cld.user.otp.filter";
-    public static final String OTP_BODY = "Dear User,\nYour OTP for college app verification is-";
+    public static final String OTP_INTENT_FILTER = "com.cld.mDeviceProfile.otp.filter";
+    public static final String OTP_BODY = "Dear DeviceProfile,\nYour OTP for college app verification is-";
     public static final String OTP_CODE = "code";
     public static final String OTP_NUMBER = "CLDAPP";
     public static final String OTP_VERIFICATION = "otp_verification";

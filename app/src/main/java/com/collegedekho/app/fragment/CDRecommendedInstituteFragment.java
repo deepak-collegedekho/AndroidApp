@@ -122,7 +122,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         /**
          * Get the Tutorial Status. Show tute layout if tute has not been performed.
         * */
-        this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), false);
+        this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), false);
         if(!IS_TUTE_COMPLETED) {
             rootView.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.VISIBLE);
@@ -430,7 +430,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                     getView().findViewById(R.id.wishlist_tute_image).setVisibility(View.GONE);
                     getView().findViewById(R.id.wishlist_tute_frame).setVisibility(View.GONE);
                 }
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean("Wishlist tute", true).apply();
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean("Wishlist tute", true).apply();
                 getActivity().invalidateOptionsMenu();
                 break;
             case R.id.badge_counter_layout:
@@ -449,7 +449,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                     getView().findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
                     getView().findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
                 }
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), true).apply();
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), true).apply();
                 getActivity().invalidateOptionsMenu();
                 break;
             case R.id.tab_buzzlist:
@@ -480,7 +480,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 break;
             case R.id.tab_wishlist:
                 mNoMoreFeaturedLayout.setVisibility(View.GONE);
-                this.IS_WISHLIST_TUTE_COMPLETED= getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
+                this.IS_WISHLIST_TUTE_COMPLETED= getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
                 View view = getView();
                 currentTabId = 2;
                 if(view != null){

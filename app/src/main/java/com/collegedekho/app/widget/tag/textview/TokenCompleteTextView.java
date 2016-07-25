@@ -63,7 +63,7 @@ public abstract class TokenCompleteTextView<T> extends MultiAutoCompleteTextView
         ToString //...replace the token with toString of the token object
     }
 
-    //When the user clicks on a token...
+    //When the mDeviceProfile clicks on a token...
     public enum TokenClickStyle {
         None(false), //...do nothing, but make sure the cursor is not in the token
         Delete(false),//...delete the token
@@ -325,7 +325,7 @@ public abstract class TokenCompleteTextView<T> extends MultiAutoCompleteTextView
     }
 
     /**
-     * Sets whether to allow duplicate objects. If false, when the user selects
+     * Sets whether to allow duplicate objects. If false, when the mDeviceProfile selects
      * an object that's already in the view, the current text is just cleared.
      *
      * Defaults to true. Requires that the objects implement equals() correctly.
@@ -369,17 +369,17 @@ public abstract class TokenCompleteTextView<T> extends MultiAutoCompleteTextView
     /**
      * A token view for the object
      *
-     * @param object the object selected by the user from the list
+     * @param object the object selected by the mDeviceProfile from the list
      * @return a view to display a token in the text field for the object
      */
     abstract protected View getViewForObject(T object);
 
     /**
-     * Provides a default completion when the user hits , and there is no item in the completion
+     * Provides a default completion when the mDeviceProfile hits , and there is no item in the completion
      * list
      *
      * @param completionText the current text we are completing against
-     * @return a best guess for what the user meant to complete
+     * @return a best guess for what the mDeviceProfile meant to complete
      */
     abstract protected T defaultObject(String completionText);
 
@@ -467,7 +467,7 @@ public abstract class TokenCompleteTextView<T> extends MultiAutoCompleteTextView
     }
 
     /**
-     * Create a token and hide the keyboard when the user sends the DONE IME action
+     * Create a token and hide the keyboard when the mDeviceProfile sends the DONE IME action
      * Use IME_NEXT if you want to create a token and go to the next field
      */
     private void handleDone() {
@@ -717,7 +717,7 @@ public abstract class TokenCompleteTextView<T> extends MultiAutoCompleteTextView
     public void onFocusChanged(boolean hasFocus, int direction, Rect previous) {
         super.onFocusChanged(hasFocus, direction, previous);
 
-        // See if the user left any unfinished tokens and finish them
+        // See if the mDeviceProfile left any unfinished tokens and finish them
         if(!hasFocus) performCompletion();
 
         // Collapse the view to a single line
@@ -745,7 +745,7 @@ public abstract class TokenCompleteTextView<T> extends MultiAutoCompleteTextView
     }
 
     private SpannableStringBuilder buildSpannableForText(CharSequence text) {
-        //Add a sentinel , at the beginning so the user can remove an inner token and keep auto-completing
+        //Add a sentinel , at the beginning so the mDeviceProfile can remove an inner token and keep auto-completing
         //This is a hack to work around the fact that the tokenizer cannot directly detect spans
         //We don't want a space as the sentinel, and splitChar[0] is guaranteed to be something non-space
         char sentinel = splitChar[0];
@@ -947,7 +947,7 @@ public void callbackFragment()
             } else {
                 String completionText = currentCompletionText();
                 if ( completionText  != null && completionText.length() > 0 ) {
-                    // The user has entered some text that has not yet been tokenized.
+                    // The mDeviceProfile has entered some text that has not yet been tokenized.
                     // Find the beginning of this text and insert the new token there.
                     offset = TextUtils.indexOf(editable, completionText);
                 }

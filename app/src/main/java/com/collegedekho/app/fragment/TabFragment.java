@@ -14,11 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.volley.Request;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamDetailAdapter;
-import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
@@ -31,7 +29,6 @@ import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by sureshsaini on 6/12/15.
@@ -102,8 +99,8 @@ public class TabFragment extends  BaseFragment{
         TextView mProfileNumber = (TextView) rootView.findViewById(R.id.user_phone);
         CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
 
-        IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
-        IS_PREPARE_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("prepare_tute", false);
+        IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+        IS_PREPARE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("prepare_tute", false);
 //        if(IS_COLLEGE_TUTE_COMPLETED){
 //            getActivity().invalidateOptionsMenu();
 //        } else {
@@ -116,7 +113,7 @@ public class TabFragment extends  BaseFragment{
                 view.setVisibility(View.GONE);
                 IS_PREPARE_TUTE_COMPLETED = true;
 //                        getActivity().invalidateOptionsMenu();
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean("prepare_tute", true).apply();
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean("prepare_tute", true).apply();
                 View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                 bottomMenu.animate().translationY(0);
                 bottomMenu.setVisibility(View.VISIBLE);
@@ -139,7 +136,7 @@ public class TabFragment extends  BaseFragment{
                         v.setVisibility(View.GONE);
                         IS_COLLEGE_TUTE_COMPLETED = true;
 //                        getActivity().invalidateOptionsMenu();
-                        getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
+                        getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
                         View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                         bottomMenu.animate().translationY(0);
                         bottomMenu.setVisibility(View.VISIBLE);
@@ -160,12 +157,12 @@ public class TabFragment extends  BaseFragment{
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
 
-        IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+        IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
         if(MainActivity.mProfile != null) {
 
             String name = MainActivity.mProfile.getName();
             if (name == null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
-                mProfileName.setText("Name : Anonymous User");
+                mProfileName.setText("Name : Anonymous DeviceProfile");
                 mProfileName.setVisibility(View.VISIBLE);
             } else {
                 String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -247,7 +244,7 @@ public class TabFragment extends  BaseFragment{
         rootView.findViewById(R.id.profile_image).setOnClickListener(this);
         rootView.findViewById(R.id.include_image_layout).findViewById(R.id.profile_image_edit_button).setOnClickListener(this);
 
-        String psychometricResults = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString("psychometric_report", null);
+        String psychometricResults = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getString("psychometric_report", null);
 
         if (MainActivity.mProfile != null && MainActivity.mProfile.getPsychometric_given() == 1 && psychometricResults != null) {
             rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.GONE);
@@ -260,7 +257,7 @@ public class TabFragment extends  BaseFragment{
         rootView.findViewById(R.id.btn_tab_psychometric_test).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onTabPsychometricTest();
+                mListener.onPsychometricTestSelected();
             }
         });
 
@@ -295,34 +292,35 @@ public class TabFragment extends  BaseFragment{
         }
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
-        MainActivity mainActivity = (MainActivity)getActivity();
-        if (mainActivity != null) {
-            mainActivity.currentFragment = this;
-            if (MainActivity.mProfile.getYearly_exams() != null && MainActivity.mProfile.getYearly_exams().size()>0) {
+
+            if (MainActivity.mProfile.getYearly_exams() != null && MainActivity.mProfile.getYearly_exams().size() > 0) {
                 mExamsTabLayout.setVisibility(View.VISIBLE);
                 this.mExamDetailList = MainActivity.mProfile.getYearly_exams();
                 this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
                 mExamTabPager.setAdapter(this.mDetailsAdapter);
                 mExamTabPager.invalidate();
-                if(mExamDetailList != null && !mExamDetailList.isEmpty()){
+                if (mExamDetailList != null && !mExamDetailList.isEmpty()) {
                     this.mExamDetail = this.mExamDetailList.get(this.mExamTabPager.getCurrentItem());
                 }
-                mainActivity.mUpdateTabMenuItem(this.selectedTabPosition,0);
-                if(mPagerHeader != null)
+                if (mPagerHeader != null)
                     ((ViewPager.LayoutParams) mPagerHeader.getLayoutParams()).isDecor = true;
                 if (selectedTabPosition < mExamDetailList.size())
                     mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
-            }else {
-                if(selectedTabPosition == 3)
-                    selectedTabPosition =1;
-                mainActivity.mUpdateTabMenuItem(this.selectedTabPosition,0);
+            } else {
+                if (selectedTabPosition == 3)
+                    selectedTabPosition = 1;
                 mExamsTabLayout.setVisibility(View.GONE);
             }
+        MainActivity mainActivity = (MainActivity)getActivity();
+        if (mainActivity != null) {
+            mainActivity.currentFragment = this;
+            mainActivity.mUpdateTabMenuItem(this.selectedTabPosition);
+
         }
+
         if(this.mExamDetailList != null && !this.mExamDetailList.isEmpty()) {
             if (this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
                 this.mExamDetail = this.mExamDetailList.get(mExamTabPager.getCurrentItem());
@@ -353,7 +351,7 @@ public class TabFragment extends  BaseFragment{
         super.onPause();
         final MainActivity mainActivity = (MainActivity)getActivity();
         if(mainActivity.currentBottomItem != null){
-            mainActivity.mUpdateTabMenuItem(-2,0);
+            mainActivity.mUpdateTabMenuItem(-2);
 //            mainActivity.currentBottomItem.animate().translationYBy(10f).setDuration(0).start();
 //            mainActivity.currentBottomItem = null;
 
@@ -438,7 +436,7 @@ public class TabFragment extends  BaseFragment{
 //        }
 
         if (view.getId() == R.id.btn_tab_psychometric_test)
-            mListener.onTabPsychometricTest();
+            mListener.onPsychometricTestSelected();
         if (view.getId() == R.id.btn_tab_step_by_step)
             mListener.onTabStepByStep();
         else {
@@ -481,7 +479,7 @@ public class TabFragment extends  BaseFragment{
         ImageView fourthSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_fourth);
 
         if(this.selectedTabPosition == 1){
-            IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+            IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
             if(view != null ){
                 View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                 if(!IS_COLLEGE_TUTE_COMPLETED) {
@@ -578,7 +576,7 @@ public class TabFragment extends  BaseFragment{
             view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
 
         }else  if(this.selectedTabPosition == 3){
-            IS_PREPARE_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("prepare_tute", false);
+            IS_PREPARE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("prepare_tute", false);
             if(view != null ){
                 View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                 if(!IS_PREPARE_TUTE_COMPLETED) {
@@ -763,17 +761,17 @@ public class TabFragment extends  BaseFragment{
             if(selectedSubMenuPosition == 1){
                 if (this.mExamDetail != null) {
                     this.mHomeWidgetSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/calendar/", null);
-                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, ""+mExamDetail.getId()).apply();
+                    getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, ""+mExamDetail.getId()).apply();
                 }
             } else if(selectedSubMenuPosition == 2) {
                 if (this.mExamDetail != null) {
                     this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS , Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/syllabus/", null);
-                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  ""+mExamDetail.getId()).commit();
+                    getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  ""+mExamDetail.getId()).commit();
                 }
             } else if(selectedSubMenuPosition == 3) {
                 if (this.mExamDetail != null) {
                     this.mHomeWidgetSelected(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", this.mExamDetail.getExam_tag());
-                    getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, ""+mExamDetail.getId()).commit();
+                    getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, ""+mExamDetail.getId()).commit();
                 }
             }
         } else if (selectedTabPosition == 4){
@@ -849,7 +847,7 @@ public class TabFragment extends  BaseFragment{
         Profile profile = MainActivity.mProfile;
         String name = profile.getName();
         if (name == null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
-            mProfileName.setText("Name : Anonymous User");
+            mProfileName.setText("Name : Anonymous DeviceProfile");
         } else {
             String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
             mProfileName.setText("Name : " + userName);
@@ -887,7 +885,7 @@ public class TabFragment extends  BaseFragment{
         void onHomeItemSelected(String requestType, String url,String examTag);
         void requestForProfileFragment();
         void onTabStepByStep();
-        void onTabPsychometricTest();
+        void onPsychometricTestSelected();
         public void onTabPsychometricReport();
     }
 

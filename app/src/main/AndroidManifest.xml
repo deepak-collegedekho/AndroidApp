@@ -11,11 +11,11 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- To retrieve the account name (email) as part of sign-in -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <!-- To retrieve OAuth 2.0 tokens or invalidate tokens to disconnect a user's Google account from an app -->
+    <!-- To retrieve OAuth 2.0 tokens or invalidate tokens to disconnect a mDeviceProfile's Google account from an app -->
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <!-- To retrieve user  phone number -->
+    <!-- To retrieve mDeviceProfile  phone number -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!-- To retrieve user  phone number -->
+    <!-- To retrieve mDeviceProfile  phone number -->
     <uses-permission android:name="com.collegedekho.app.permission.C2D_MESSAGE" />
     <!-- To register application for C2D messages -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -45,7 +45,7 @@
         android:hardwareAccelerated="true"
         android:theme="@style/AppTheme"
         >
-        <receiver android:name=".listener.ApplyReceiver">
+        <receiver android:name=".receiver.ApplyReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>

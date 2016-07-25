@@ -50,7 +50,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -79,6 +78,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.database.DataBaseHelper;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Chapters;
+import com.collegedekho.app.entities.DeviceProfile;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ExamSummary;
@@ -102,8 +102,6 @@ import com.collegedekho.app.entities.StepByStepQuestion;
 import com.collegedekho.app.entities.StepByStepResult;
 import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.Subjects;
-import com.collegedekho.app.entities.User;
-import com.collegedekho.app.entities.UserEducation;
 import com.collegedekho.app.entities.VideoEntry;
 import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.entities.YoutubeVideoDetails;
@@ -143,7 +141,6 @@ import com.collegedekho.app.fragment.UserAlertsFragment;
 import com.collegedekho.app.fragment.UserAlertsParentFragment;
 import com.collegedekho.app.fragment.WebViewFragment;
 import com.collegedekho.app.fragment.WishlistFragment;
-import com.collegedekho.app.fragment.pyschometricTest.PsychometricQuestionFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
@@ -153,10 +150,13 @@ import com.collegedekho.app.listener.ProfileFragmentListener;
 import com.collegedekho.app.receiver.OTPReceiver;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
+import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
+import com.collegedekho.app.widget.CircularImageView;
+import com.collegedekho.app.widget.CircularProgressBar;
 import com.collegedekho.app.widget.GifView;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.AccessToken;
@@ -262,7 +262,6 @@ public class MainActivity extends AppCompatActivity
         // to support vector drawable in prelollypop
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
-
         Constants.FilterCategoryMap.put(Constants.ID_FACILITIES, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
         Constants.FilterCategoryMap.put(Constants.ID_HOSTEL, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
 
@@ -286,7 +285,6 @@ public class MainActivity extends AppCompatActivity
     public static Tracker tracker;
 
     public static NetworkUtils mNetworkUtils;
-    private ActionBarDrawerToggle mToggle;
     public static volatile BaseFragment currentFragment;
     private List<Institute> mInstituteList;
     private List<Chapters> chaptersList;
@@ -311,22 +309,10 @@ public class MainActivity extends AppCompatActivity
     private List<Widget> mWidgets;
     public  CallbackManager callbackManager;
     private Date mTimeScreenClicked = new Date();
-    public boolean isReloadProfile = false;
-    public boolean isBackPressEnabled = true;
     public boolean fromTabFragment = false;
     private String mGTMContainerId = "www.collegedekho.com";
     public static Connecto connecto = null;
-
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
-//    private NavigationDrawerFragment mNavigationDrawerFragment;
-    /*
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    // private CharSequence mTitle;
-    private List<ExamDetail> mUserExamsList = new ArrayList<>();
-    public static User user;
+    public DeviceProfile mDeviceProfile;
     public static Profile mProfile;
     static String type = "";
     static String resource_uri = "";
@@ -338,6 +324,7 @@ public class MainActivity extends AppCompatActivity
     private TextView mConnectTab;
     private TextView mPrepareTab;
     private TextView mReadTab;
+    public View currentBottomItem;
 
     private List<MyAlertDate> myAlertsList;
     private boolean isFromNotification;
@@ -350,8 +337,7 @@ public class MainActivity extends AppCompatActivity
     private int mRecommendedInstituteCount;
     private Snackbar mSnackbar;
     private boolean IS_USER_CREATED;
-    public  boolean IS_HOME_LOADED;
-    private  boolean IS_FROM_PROFILE_BUILDING = false;
+    private  boolean IS_HOME_LOADED;
     private static Context mContext;
     public static TrueClient mTrueClient;
     private Resources mResources ;
@@ -360,11 +346,15 @@ public class MainActivity extends AppCompatActivity
      */
     public GoogleApiClient client;
 
-    ProgressBar searchProgress;
-    Handler gcmDialogHandler=new Handler();
-    Runnable gcmDialogRunnable;
+    private SearchView mSearchView = null;
+    private ProgressBar mSearchProgress;
+    private Handler gcmDialogHandler=new Handler();
+    private Runnable gcmDialogRunnable;
+    // navigation drawer and toolbar variables
     private Toolbar mToolbar;
-    public View currentBottomItem;
+    private NavigationView mNavigationView ;
+    private DrawerLayout mDrawerLayout ;
+    public ActionBarDrawerToggle mDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -408,27 +398,16 @@ public class MainActivity extends AppCompatActivity
 
         this.setContentView(R.layout.activity_main);
 
-        this.mResources = getResources();
-        //this.getBitMapResources();
+        // init App
+        init();
 
-        this.mSnackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
-        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
-        layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
-
-        this.mNetworkUtils = new NetworkUtils(this, this);
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_CONTACTS)
-                == PackageManager.PERMISSION_GRANTED ) {
-            getSupportLoaderManager().initLoader(0, null, this);
-        }
         // register with true SDk
-        MainActivity.mTrueClient = new TrueClient(getApplicationContext(), this);
+        this.mRegistrationTrueSdk();
 
         // register with Connecto
         this.mRegistrationConnecto();
 
-        // register fabric Crashlytics
+        // register with fabric Crashlytics
         this.mRegistrationFabricCrashlytics();
 
         // register with Apps Flayer
@@ -442,77 +421,83 @@ public class MainActivity extends AppCompatActivity
 
         this.mSetupGTM();
 
-        mHomeTabContainer = findViewById(R.id.bottom_button_container);
-        mCollegeTab = (TextView)findViewById(R.id.college_list);
-        mConnectTab = (TextView)findViewById(R.id.connect);
-        mPrepareTab = (TextView)findViewById(R.id.prepare);
-        mReadTab    = (TextView)findViewById(R.id.read);
-        mCollegeTab.setOnClickListener(mClickListener);
-        mConnectTab.setOnClickListener(mClickListener);
-        mPrepareTab.setOnClickListener(mClickListener);
-        mReadTab.setOnClickListener(mClickListener);
+        // set up app tool bar
+        this.mSetAppToolBar();
 
-        this.mSetUpAPPToolBar();
+        // load splash screen
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
         // TODO: Move this to where you establish a user session
         logUser();
+
         setupOtpRequest(true);
+
         int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED && IS_HOME_LOADED) {
             Utils.appLaunched(this);
         }
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        searchProgress = (ProgressBar) findViewById(R.id.resource_progress_bar);
+        mSearchProgress = (ProgressBar) findViewById(R.id.resource_progress_bar);
     }
 
+    /**
+     * This method is called to initialize the app
+     */
+    public void init() {
+        // set resource context
+        this.mResources = getResources();
+        //this.getBitMapResources();
 
-    private void selectItem(int tabPosition) {
+        // set snackbar to show msg in snackbar display
+        this.mSnackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
+        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
+        layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
 
-        //TODO::  remove this when future buddies tab are present
+        // create network utills
+        this.mNetworkUtils = new NetworkUtils(this, this);
 
-        if (mUserExamsList == null) mUserExamsList = new ArrayList<>();
-
-        if(tabPosition == 3 && (mUserExamsList == null || mUserExamsList.size() < 1)){
-//            mDisplayCurrentEducationFragment(true);
-            fromTabFragment = true;
-            onRequestForUserExamsUpdate();
-            mHomeTabContainer.setVisibility(View.GONE);
-            return;
+        // start loader for cursor
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
+                == PackageManager.PERMISSION_GRANTED ) {
+            getSupportLoaderManager().initLoader(0, null, this);
         }
 
-//        if (this.mUserExamsList.size() <= 0)
-//            mPrepareTab.setVisibility(View.GONE);
-//        else
-//            mPrepareTab.setVisibility(View.VISIBLE);
+        this.mHomeTabContainer = findViewById(R.id.bottom_button_container);
+        this.mCollegeTab = (TextView)findViewById(R.id.college_list);
+        this.mConnectTab = (TextView)findViewById(R.id.connect);
+        this.mPrepareTab = (TextView)findViewById(R.id.prepare);
+        this.mReadTab    = (TextView)findViewById(R.id.read);
+        this.mCollegeTab.setOnClickListener(mClickListener);
+        this.mConnectTab.setOnClickListener(mClickListener);
+        this.mPrepareTab.setOnClickListener(mClickListener);
+        this.mReadTab.setOnClickListener(mClickListener);
 
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
+        SharedPreferences sp = this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE);
+        try {
+            if (sp.contains(getResourceString(R.string.KEY_USER))) {
+                // load profile mDeviceProfile
+                mProfile = JSON.std.beanFrom(Profile.class, sp.getString(getResourceString(R.string.KEY_USER), null));
+                mNetworkUtils.setToken(MainActivity.mProfile.getToken());
 
-        if (fragment == null) {
-            this.mDisplayFragment(TabFragment.newInstance(tabPosition, new ArrayList<>(mProfile.getYearly_exams())), true, TabFragment.class.getSimpleName());
-//            this.mDisplayFragment(TabFragment.newInstance(tabPosition, new ArrayList<>(mUserExamsList)), true, TabFragment.class.getSimpleName());
-        } else {
-            if (currentFragment instanceof TabFragment) {
-                ((TabFragment) currentFragment).updateTabFragment(tabPosition);
-            } else{
-                this.mDisplayFragment(fragment, true, TabFragment.class.getSimpleName());
+                // mDeviceProfile id register
+                setUserIdWithAllEvents();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            this.IS_USER_CREATED = sp.getBoolean(getResourceString(R.string.USER_CREATED), false);
+            this.IS_HOME_LOADED = sp.getBoolean(getResourceString(R.string.USER_HOME_LOADED), false);
 
         }
     }
 
-
-    @Override
-    public void setTitle(CharSequence title) {
-//        mTitle = title;
-//        getSupportActionBar().setTitle(mTitle);
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-//        mDrawerToggle.syncState();
+    /**
+     * This method is used to register with true sdk
+     */
+    private void mRegistrationTrueSdk() {
+        MainActivity.mTrueClient = new TrueClient(getApplicationContext(), this);
     }
 
     /**
@@ -617,12 +602,12 @@ public class MainActivity extends AppCompatActivity
      * This method is used to register Fabric Crashlytics
      */
     private void mRegistrationFabricCrashlytics() {
-       new Thread(new Runnable() {
-           @Override
-           public void run() {
-               Fabric.with(MainActivity.this, new Crashlytics());
-           }
-       }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Fabric.with(MainActivity.this, new Crashlytics());
+            }
+        }).start();
     }
 
     /**
@@ -674,7 +659,47 @@ public class MainActivity extends AppCompatActivity
         }).start();
 
     }
-   /* private void getBitMapResources(){
+
+
+    public void loadInItData() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED)
+        {
+            // start curser loader
+            getSupportLoaderManager().initLoader(0, null, this);
+
+            // register GCM dialog to ask mDeviceProfile'profile data
+            mRegisterGcmDialog();
+
+            if (IS_USER_CREATED) {
+                // if mDeviceProfile is anonymous  then logout from facebook
+                if (mProfile != null && (mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER))
+                    disconnectFromFacebook();
+
+                this.mLoadUserStatusScreen();
+            } else {
+                disconnectFromFacebook();
+                MainActivity.this.mDisplayLoginFragment();
+            }
+        } else {
+            getUserPermissions();
+        }
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+//        mTitle = title;
+//        getSupportActionBar().setTitle(mTitle);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+//        mDrawerToggle.syncState();
+    }
+
+    /* private void getBitMapResources(){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -696,22 +721,60 @@ public class MainActivity extends AppCompatActivity
         }, 10);
     }
 
-    private void mSetUpAPPToolBar() {
+    private void mSetAppToolBar() {
 
+        // replace default action bar with Tool bar
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        mToolbar.setNavigationIcon(R.drawable.ic_cd_colored);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener(){
+        //getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+
+        // register drawer layout  and toolbar with DrawerToggle
+        //drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+
+                // set user profile image on navigation drawer layout
+                CircularImageView mProfileImage = (CircularImageView)drawerView. findViewById(R.id.profile_image);
+                mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
+                mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
+                String profileImage = MainActivity.mProfile.getImage();
+
+                if (profileImage == null )profileImage ="";
+                mProfileImage.setImageUrl(profileImage, MySingleton.getInstance(getApplicationContext()).getImageLoader());
+
+                // set user's name on navigation drawer
+                String userName = MainActivity.mProfile.getName();
+                if(userName != null ) {
+                    ((TextView)drawerView.findViewById(R.id.user_name)).setText(userName);
+                }
+                // it will show user's profile completion progress on navigation drawer
+                CircularProgressBar profileCompleted =  (CircularProgressBar)drawerView.findViewById(R.id.user_profile_progress);
+                profileCompleted.setProgress(0);
+                profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
+
+            }
+        };
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
+
+        mToolbar.setLogo(R.drawable.ic_cd_colored);
+       /* getToolbarLogoIcon(mToolbar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (currentFragment instanceof SyllabusSubjectsListFragment)
                     ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
                 else if (currentFragment instanceof CalendarParentFragment)
                     ((CalendarParentFragment) currentFragment).submitCalendarData();
-                /*else if (currentFragment instanceof ExamsFragment)
-                    return;*/
                 else if (currentFragment instanceof OTPVerificationFragment)
                     return;
                 else if(isFromNotification ) {
@@ -720,48 +783,46 @@ public class MainActivity extends AppCompatActivity
                     isFromNotification = false;
                     mLoadUserStatusScreen();
                     return;
-                }/*&& (currentFragment instanceof ProfileFragment
-                        || currentFragment instanceof CDRecommendedInstituteFragment)) {
-                       MainActivity.this.onBackPressed();
-                  return;
-                }*/
+                }
                 mClearBackStack();
                 invalidateOptionsMenu();
-
             }
-        });
+        });*/
 
-        mToolbar.setNavigationContentDescription("Select to go to home screen");
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        // TODO :: implement navigation drawer
-       /* ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);*/
     }
+
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        int position = -1;
         if (id == R.id.nav_colleges) {
-            // Handle the camera action
+            position = 1;
         } else if (id == R.id.nav_connect) {
-
-        } else if (id == R.id.nav_read) {
-
+            position = 2;
         } else if (id == R.id.nav_prepare) {
-
+            position = 3;
+        } else if (id == R.id.nav_read) {
+            position = 4;
         } else if (id == R.id.nav_share) {
+            // request for share intent to download app  from playStore
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT,
+                    "Explore top institutions, colleges and universities. Click here to download your personalised guide" +
+                            ": https://play.google.com/store/apps/details?id=com.collegedekho.app&hl=en");
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
         }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        if(position != -1) {
+            mUpdateTabMenuItem(position);
+            onTabMenuSelected(position);
+        }
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        // mDrawerToggle.syncState();
         return true;
     }
 
@@ -930,7 +991,7 @@ public class MainActivity extends AppCompatActivity
                 JSONObject json = response.getJSONObject();
                 try {
                     if (json != null) {
-                        // get user profile info
+                        // get mDeviceProfile profile info
                         String image = "https://graph.facebook.com/" + json.optString("id") + "/picture?type=large";
 
                         HashMap hashMap = new HashMap<>();
@@ -1097,7 +1158,35 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-    SearchView searchView = null;
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                //called when the up affordance/carat in actionbar is pressed
+                if(currentFragment instanceof  HomeFragment){
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+
+                }else if(getSupportFragmentManager().getBackStackEntryCount() >= 1) {
+                    getSupportFragmentManager().popBackStack();
+                }
+                return true;
+            case R.id.action_profile:
+                mDisplayProfileFragment(MainActivity.mProfile, true);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -1108,8 +1197,8 @@ public class MainActivity extends AppCompatActivity
         SearchManager searchManager = (SearchManager) MainActivity.this.getSystemService(Context.SEARCH_SERVICE);
 
         if (searchItem != null) {
-            searchView = (SearchView) searchItem.getActionView();
-            SearchView.SearchAutoComplete autoComplete = (SearchView.SearchAutoComplete) searchView.findViewById(R.id.search_src_text);
+            mSearchView = (SearchView) searchItem.getActionView();
+            SearchView.SearchAutoComplete autoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(R.id.search_src_text);
             // set the hint text color
             autoComplete.setHintTextColor(Color.GRAY);
             // set the text color
@@ -1117,7 +1206,7 @@ public class MainActivity extends AppCompatActivity
             try {
                 Field searchField = SearchView.class.getDeclaredField("mCloseButton");
                 searchField.setAccessible(true);
-                ImageView mSearchCloseButton = (ImageView) searchField.get(searchView);
+                ImageView mSearchCloseButton = (ImageView) searchField.get(mSearchView);
                 if (mSearchCloseButton != null) {
                     mSearchCloseButton.setEnabled(true);
                     AppBarLayout.LayoutParams lp = new AppBarLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -1129,26 +1218,26 @@ public class MainActivity extends AppCompatActivity
                 Log.e(TAG, "Error finding close button", e);
             }
         }
-        if (searchView != null) {
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(MainActivity.this.getComponentName()));
+        if (mSearchView != null) {
+            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(MainActivity.this.getComponentName()));
         }
-        if (searchView != null) {
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setIconifiedByDefault(true);
-            searchView.setQueryHint("Search Institutes");
-            searchView.setOnQueryTextListener(queryTextListener);
-            searchView.setOnCloseListener(queryCloseListener);
-            searchView.setOnSearchClickListener(new View.OnClickListener() {
+        if (mSearchView != null) {
+            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            mSearchView.setIconifiedByDefault(true);
+            mSearchView.setQueryHint("Search Institutes");
+            mSearchView.setOnQueryTextListener(queryTextListener);
+            mSearchView.setOnCloseListener(queryCloseListener);
+            mSearchView.setOnSearchClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
                     if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
                         displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
-                        searchView.onActionViewCollapsed();
+                        mSearchView.onActionViewCollapsed();
                     }
                 }
             });
-            searchView.clearFocus();
+            mSearchView.clearFocus();
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -1163,19 +1252,19 @@ public class MainActivity extends AppCompatActivity
             menu.setGroupVisible(R.id.main_menu_group, false);
         }else {
             if(menu.size()>0)
-            menu.getItem(0).setVisible(true);
+                menu.getItem(0).setVisible(true);
         }
         setSearchAvailable(menu);
 //        if (!getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), false)) {
         if(currentFragment instanceof TabFragment){
             if(((TabFragment) currentFragment).getSelectedTab() == 1){
-                boolean tute_complete = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+                boolean tute_complete = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
                 if(!tute_complete){
                     menu.setGroupVisible(R.id.search_menu_group, false);
                     menu.setGroupVisible(R.id.main_menu_group, false);
                 }
             } else if(((TabFragment) currentFragment).getSelectedTab() == 3){
-                boolean tute_complete = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("prepare_tute", false);
+                boolean tute_complete = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("prepare_tute", false);
                 if(!tute_complete){
                     menu.setGroupVisible(R.id.search_menu_group, false);
                     menu.setGroupVisible(R.id.main_menu_group, false);
@@ -1184,7 +1273,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if(currentFragment instanceof WishlistFragment){
-            boolean tute_complete = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
+            boolean tute_complete = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
             if(!tute_complete){
                 menu.setGroupVisible(R.id.search_menu_group, false);
                 menu.setGroupVisible(R.id.main_menu_group, false);
@@ -1194,13 +1283,13 @@ public class MainActivity extends AppCompatActivity
         if(currentFragment instanceof CDRecommendedInstituteFragment){
             int tab = ((CDRecommendedInstituteFragment) currentFragment).currentTabId;
             if(tab == 1){
-                boolean tute_complete = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), false);
+                boolean tute_complete = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), false);
                 if(!tute_complete){
                     menu.setGroupVisible(R.id.search_menu_group, false);
                     menu.setGroupVisible(R.id.main_menu_group, false);
                 }
             } else if (tab == 2){
-                boolean tute_complete = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
+                boolean tute_complete = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
                 if(!tute_complete){
                     menu.setGroupVisible(R.id.search_menu_group, false);
                     menu.setGroupVisible(R.id.main_menu_group, false);
@@ -1209,7 +1298,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if(currentFragment instanceof  HomeFragment){
-            boolean tuteCompleted = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Home Tute", false);
+            boolean tuteCompleted = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("Home Tute", false);
             if(!tuteCompleted){
                 menu.setGroupVisible(R.id.search_menu_group, false);
                 menu.setGroupVisible(R.id.main_menu_group, false);
@@ -1225,30 +1314,30 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment != null) {
             if (currentFragment instanceof HomeFragment || (currentFragment instanceof TabFragment )) {
                 menu.setGroupVisible(R.id.search_menu_group, true);
-                if (searchView != null) {
-                    searchView.setQueryHint("Search Institutes");
+                if (mSearchView != null) {
+                    mSearchView.setQueryHint("Search Institutes");
                 }
             } else if (currentFragment instanceof ArticleFragment) {
                 menu.setGroupVisible(R.id.search_menu_group, true);
-                if (searchView != null) {
-                    searchView.setQueryHint("Search Articles");
+                if (mSearchView != null) {
+                    mSearchView.setQueryHint("Search Articles");
                 }
             } else if (currentFragment instanceof NewsFragment) {
                 menu.setGroupVisible(R.id.search_menu_group, true);
-                if (searchView != null) {
-                    searchView.setQueryHint("Search News");
+                if (mSearchView != null) {
+                    mSearchView.setQueryHint("Search News");
                 }
 
             } else if (currentFragment instanceof QnAQuestionsListFragment) {
 
                 menu.setGroupVisible(R.id.search_menu_group, true);
-                if (searchView != null) {
-                    searchView.setQueryHint("Search Questions");
+                if (mSearchView != null) {
+                    mSearchView.setQueryHint("Search Questions");
                 }
             } else if (currentFragment instanceof InstituteListFragment && mCurrentTitle != null && !(mCurrentTitle.equals("WishList Institutes") || mCurrentTitle.equals("Recommended Institutes"))) {
                 menu.setGroupVisible(R.id.search_menu_group, true);
-                if (searchView != null) {
-                    searchView.setQueryHint("Search Institutes");
+                if (mSearchView != null) {
+                    mSearchView.setQueryHint("Search Institutes");
                 }
             } else {
                 menu.setGroupVisible(R.id.search_menu_group, false);
@@ -1256,124 +1345,26 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        int id = item.getItemId();
-        if (id == R.id.action_profile) {
-            requestForProfileFragment();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    public void init() {
-        SharedPreferences sp = this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE);
-        try {
-            if (sp.contains(getResourceString(R.string.KEY_USER))) {
-
-
-                MainActivity.user = JSON.std.beanFrom(User.class, sp.getString(getResourceString(R.string.KEY_USER), null));
-                this.mNetworkUtils.setToken(MainActivity.user.getToken());
-
-                if(mProfile == null) {
-                        mProfile = new Profile();
-                        mProfile.setName(user.getName());
-                        mProfile.setEmail(user.getEmail());
-                        mProfile.setPhone_no(user.getPhone_no());
-                        mProfile.setImage(user.getImage());
-                        mProfile.setExams_set(user.getExams_set());
-                    try {
-                        mProfile.setCurrent_level_id((Integer.parseInt(user.getLevel())));
-                        mProfile.setCurrent_sublevel_id(Integer.parseInt(user.getSublevel()));
-                        mProfile.setCurrent_stream_id(Integer.parseInt(user.getStream()));
-                    }catch(Exception e){
-
-                    }
-                }
-
-                this.requestForProfile(null, Request.Method.GET);
-                // user id register
-                setUserIdWithAllEvents();
-
-                // this code for backward compatibility because in first release user stream and level
-                // were saved in uri form instead of IDs. it can be remove after some releases
-                if (MainActivity.user != null && MainActivity.user.getStream() != null && MainActivity.user.getLevel() != null) {
-                    // this code for backward compatibility because in first release user stream and level
-                    // were saved in uri form instead of IDs.
-                    if (MainActivity.user.getStream().length() > 0 && Patterns.WEB_URL.matcher(MainActivity.user.getStream()).matches()) {
-                        String streamId[] = MainActivity.user.getStream().split("/");
-                        MainActivity.user.setStream(streamId[streamId.length - 1]);
-                    }
-                    if (MainActivity.user.getLevel().length() > 0 && Patterns.WEB_URL.matcher(MainActivity.user.getLevel()).matches()) {
-                        String levelId[] = MainActivity.user.getLevel().split("/");
-                        MainActivity.user.setLevel(levelId[levelId.length - 1]);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally {
-            this.IS_USER_CREATED = sp.getBoolean(getResourceString(R.string.USER_CREATED), false);
-            this.IS_HOME_LOADED = sp.getBoolean(getResourceString(R.string.USER_HOME_LOADED), false);
-
-        }
-    }
-
-
-    public void loadInItData() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED)
-        {
-            // start curser loader
-            getSupportLoaderManager().initLoader(0, null, this);
-
-            // register GCM dialog to ask user'profile data
-            mRegisterGcmDialog();
-
-            if (IS_USER_CREATED) {
-                // if user is anonymous  then logout from facebook
-                if (mProfile != null && (mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER))
-                    disconnectFromFacebook();
-
-                this.mLoadUserStatusScreen();
-            } else {
-                disconnectFromFacebook();
-                MainActivity.this.mDisplayLoginFragment();
-            }
-        } else {
-            getUserPermissions();
-        }
-    }
-
 
     /**
-     * This methos is used to register userId with Apps Flyer
+     * This method is used to register userId with Apps Flyer
      * and GA Tracker
      */
     private void setUserIdWithAllEvents(){
-        // register user id with apps flyer
+        // register mDeviceProfile id with apps flyer
         AppsFlyerLib.getInstance().setCustomerUserId(MainActivity.mProfile.getId());
         //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.SESSION_STARTED_DATE_TIME), new Date().toString());
         eventValue.put(getResourceString(R.string.USER_ID), MainActivity.mProfile.getId());
-        eventValue.put(getResourceString(R.string.USER_EMAIL), user.getEmail());
-        eventValue.put(getResourceString(R.string.USER_PHONE), user.getPhone_no());
+        eventValue.put(getResourceString(R.string.USER_EMAIL), mProfile.getEmail());
+        eventValue.put(getResourceString(R.string.USER_PHONE), mProfile.getPhone_no());
 
         MainActivity.AppsflyerTrackerEvent(this,getResourceString(R.string.SESSION_STARTED),eventValue);
-        // register user id with GA tracker
+        // register mDeviceProfile id with GA tracker
         this.tracker.setClientId(MainActivity.mProfile.getId());
-        // register user id with connecto
-        // TODO:: add user phone number in connecto
-        this.connecto.identify(MainActivity.mProfile.getId(), new Traits().putValue(getResourceString(R.string.USER_NAME), MainActivity.user.getName()));
+        // register mDeviceProfile id with connecto
+        this.connecto.identify(MainActivity.mProfile.getId(), new Traits().putValue(getResourceString(R.string.USER_NAME), MainActivity.mProfile.getName()));
         this.connecto.track(getResourceString(R.string.SESSION_STARTED),  new Properties().putValue(getResourceString(R.string.SESSION_STARTED_DATE_TIME), new Date().toString()));
 
     }
@@ -1400,64 +1391,8 @@ public class MainActivity extends AppCompatActivity
         };
         gcmDialogHandler.postDelayed(gcmDialogRunnable,90000);
     }
-
     /**
-     * This method is called when first time anonymous user is created
-     *
-     * @param json
-     *//*
-    private void mUserCreated(String json) {
-        try {
-            User tempUser = MainActivity.user;
-            MainActivity.user = JSON.std.beanFrom(User.class, json);
-            MainActivity.user.setPref(this.userPref);
-            this.mNetworkUtils.setToken(MainActivity.user.getToken());
-
-            if (tempUser != null) {
-                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
-                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
-                MainActivity.user.profileData = tempUser.profileData;
-            }
-
-            if (MainActivity.user.getName().isEmpty() || user.getName().equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER))) {
-                //get name from my profile me
-                //get device id
-                String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-
-                HashMap<String, String> hashMap = new HashMap<>();
-
-                if (user.profileData[0] != null) {
-                    user.setName(user.profileData[0]);
-                    hashMap.put(getResourceString(R.string.USER_NAME), user.profileData[0]);
-                }
-
-                if (user.profileData[1] != null) {
-                    user.setEmail(user.profileData[1]);
-                    hashMap.put(getResourceString(R.string.USER_EMAIL), user.profileData[1]);
-                    this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED + "#" + getResourceString(R.string.ANONYMOUS_USER), Constants.BASE_URL + "preferences/", hashMap);
-                }
-
-                hashMap.put(getResourceString(R.string.USER_DEVICE_ID), deviceId);
-
-                this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED + "#name", Constants.BASE_URL + "preferences/", hashMap);
-            }
-
-            this.connecto.identify(MainActivity.user.getId(), new Traits().putValue(getResourceString(R.string.USER_NAME), MainActivity.user.getName()));
-
-            MainActivity.tracker.setClientId(MainActivity.user.getId());
-
-            String u = JSON.std.asString(MainActivity.user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).commit();
-
-            this.mLoadUserStatusScreen();
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }*/
-
-    /**
-     * This method is used to load screens according to user status
+     * This method is used to load screens according to mDeviceProfile status
      * if education and exam is selected then load profile screen
      * if education is selected but exam is not selected then load exams screen
      * if both are not selected then load education screen
@@ -1466,28 +1401,29 @@ public class MainActivity extends AppCompatActivity
         if (MainActivity.type != null && !MainActivity.type.matches("")) {
             this.isFromNotification = true;
             this.mHandleNotifications(true);
+
         } else if (this.mDeepLinkingURI != null && !this.mDeepLinkingURI.isEmpty()) {
             Log.e("MA: DL URL ", MainActivity.this.mDeepLinkingURI);
             this.isFromDeepLinking = true;
             this.mHandleDeepLinking(this.mDeepLinkingURI);
-        }else if ((MainActivity.mProfile.getExams_set() == ProfileMacro.EXAMS_SELECTED)
-                || IS_HOME_LOADED){
+
+        }else if ((MainActivity.mProfile.getExams_set()
+                == ProfileMacro.EXAMS_SELECTED) || IS_HOME_LOADED){
+            // show App bar layout
             mShowAppBarLayout();
-            //if (IS_HOME_LOADED) {
-                mLoadHomeScreen(null);
-            //}
-            this.mMakeNetworkCall(Constants.TAG_LAUNCH_USER_HOME, Constants.BASE_URL + "preferences/", null);
+            // load mDeviceProfile home screen
+            mDisplayHomeFragment();
+            // request to update profile info if anything is change on server
+            requestForProfile(null);
         }else {
-            mDisplayCurrentEducationFragment();
+            mDisplayProfileBuildingFragment();
         }
     }
 
     @Override
     public void onProfileImageUploaded() {
-
-        this.requestForProfile(null, Request.Method.GET);
+        this.requestForProfile(null);
     }
-
 
     // TODO :: EDIT THIS TO MAKE POST ANONYOUS LOGIN
     @Override
@@ -1495,39 +1431,25 @@ public class MainActivity extends AppCompatActivity
         mDisplayPostAnonymousLoginFragment();
     }
 
-    /**
-     * This method is used to Parse Profile response
-     * @param response
-     */
+
     private void mParseProfileResponse(String response){
         try {
             MainActivity.mProfile = JSON.std.beanFrom(Profile.class,response);
-            mLoadProfileFragment(MainActivity.mProfile, true);
+
+            String u = JSON.std.asString(mProfile);
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-     /**
-      * This method used to request to show user's profile screen  and update profile data ,
-      * if profile data is not available then send a request to load user's profile
-      */
-     @Override
-     public void requestForProfileFragment() {
-         if(MainActivity.mProfile == null)
-             this.mMakeNetworkCall(Constants.TAG_LOAD_PROFILE, Constants.BASE_URL + "profile/", null);
-         else{
-             mLoadProfileFragment(MainActivity.mProfile, true);
-             this.requestForProfile(null, Request.Method.GET);
-         }
-     }
-
     /**
-     * This method is user to load profile fragment
+     * This method is mDeviceProfile to load profile fragment
      * @param profile
      * @param backStack
      */
-    private void mLoadProfileFragment(Profile profile, boolean backStack){
+    private void mDisplayProfileFragment(Profile profile, boolean backStack){
         if(profile == null)
             return;
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
@@ -1545,17 +1467,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * This method is used to update user profile whenever user update
-     *  his/her information about basic info , current education, preferred education details,
-     *  interested exams details and other basic info
-     * @param params
-     * @param viewPosition
-     */
-   @Override
-    public void requestForUserProfileUpdate(HashMap<String, String> params, int viewPosition) {
-        this.mMakeNetworkCall(Constants.TAG_UPDATE_USER_PROFILE+"#"+viewPosition, Constants.BASE_URL +"profile/", params, Request.Method.POST);
-    }
 
     public void onRefreshProfile(){
         this.mMakeNetworkCall(Constants.TAG_REFRESH_PROFILE, Constants.BASE_URL + "profile/", null);
@@ -1572,48 +1483,106 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is used to request for post and get user's profile data
+     * This method is used to request for post and get mDeviceProfile's profile data
      * @param params
-     * @param method
      */
     @Override
-    public void requestForProfile(HashMap<String, String> params, int method){
+    public void requestForProfile(HashMap<String, String> params){
 
         int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
         if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED)
             return;
 
         if(params != null && mProfile != null) {
-            // if user's name is not available or name is anonymous and user has saved his/her
-            // name in me profile then fetch name and save it on server
+            // if mDeviceProfile's name is not available or name is anonymous and mDeviceProfile has saved his/her
+            // name in me profile contacts then fetch name and save it on server
             String name = mProfile.getName();
             if(name == null || name.isEmpty()
                     || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
-                    if (user != null && user.profileData != null
-                            && user.profileData[0]  != null && !user.profileData[0].isEmpty()){
-                        params.put(getString(R.string.USER_NAME), user.profileData[0]);
-                    }
+                if (mDeviceProfile != null && mDeviceProfile.profileData != null
+                        && mDeviceProfile.profileData[0]  != null && !mDeviceProfile.profileData[0].isEmpty()){
+                    params.put(getString(R.string.USER_NAME), mDeviceProfile.profileData[0]);
+                }
             }
-            // if user's email id is anonymous and device play store email id does not
-            // exist in database then sever will allow it to change as user's email id
+            // if mDeviceProfile's email id is anonymous and device play store email id does not
+            // exist in our server database then sever will allow to replace it with mDeviceProfile's email id
             if (mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER) {
                 String email = Utils.getDeviceEmail(getApplicationContext());
                 if(email != null && !email.isEmpty())
                     params.put(getString(R.string.USER_EMAIL), email);
             }
-            // if user phone number is not available and it is saved in me profile
-            // then fetch it  and save it on user's profile
+            // if mDeviceProfile's phone number is not available and it is saved in me profile contacts
+            // then fetch it  and save it on mDeviceProfile's profile
             if (mProfile.getPhone_no() == null || mProfile.getPhone_no().length() < 10) {
-                if (user != null && user.getPrimaryPhone() != null && !user.getPrimaryPhone().isEmpty())
-                    params.put(getString(R.string.USER_PHONE), user.getPrimaryPhone());
+                if (mDeviceProfile != null && mDeviceProfile.getPrimaryPhone() != null && !mDeviceProfile.getPrimaryPhone().isEmpty())
+                    params.put(getString(R.string.USER_PHONE), mDeviceProfile.getPrimaryPhone());
             }
         }
-        mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_OBJECT, Constants.BASE_URL +"profile/", params, method);
+        requestForUserProfileUpdate(Constants.TAG_UPDATE_PROFILE_OBJECT, params);
+    }
+
+    /**
+     * This method is used to update mDeviceProfile profile whenever mDeviceProfile update
+     *  his/her information about basic info , current education, preferred education details,
+     *  interested exams details and other basic info
+     * @param params
+     * @param TAG
+     */
+    public void requestForUserProfileUpdate( String TAG, HashMap<String, String> params) {
+
+        int requestMethod = Request.Method.GET;
+        if(params !=  null)
+            requestMethod = Request.Method.POST;
+
+        this.mMakeNetworkCall(TAG, Constants.BASE_URL +"profile/", params, requestMethod);
+    }
+
+    /**
+     * This method is called when mDeviceProfile select exmas while profile building
+     * @param params
+     */
+    @Override
+    public void onUserExamSelected(HashMap<String, String> params) {
+        this.requestForUserProfileUpdate(Constants.TAG_USER_EXAMS_SUBMISSION, params);
+    }
+
+    @Override
+    public void onUserExamsEdited(HashMap<String, String> params) {
+        this.requestForUserProfileUpdate(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST, params);
+    }
+
+    @Override
+    public void onUserProfileEdited(HashMap<String, String> params,int viewPosition ) {
+        this.requestForUserProfileUpdate(Constants.TAG_UPDATE_USER_PROFILE+"#"+viewPosition, params);
+    }
+    /**
+     * This method used to request to show mDeviceProfile's profile screen  and update profile data ,
+     * if profile data is not available then send a request to load mDeviceProfile's profile
+     */
+    @Override
+    public void requestForProfileFragment() {
+        if(MainActivity.mProfile == null)
+            this.requestForUserProfileUpdate(Constants.TAG_LOAD_PROFILE, null);
+        else{
+            mDisplayProfileFragment(MainActivity.mProfile, true);
+            this.requestForProfile(null);
+        }
+    }
+
+    /**
+     * This method is used to update mDeviceProfile name when mDeviceProfile does not have a name and wants to
+     * chat or asks  a queation and give answer
+     * @param params
+     * @param msg
+     */
+    @Override
+    public void onNameUpdated(HashMap params, String msg) {
+        this.requestForUserProfileUpdate(Constants.TAG_NAME_UPDATED + "#" + msg, params);
     }
 
     /**
      * This method is used to request for specialization list based on
-     * stream which is selected by the user while updating his/her profile
+     * stream which is selected by the mDeviceProfile while updating his/her profile
      * @param streamId
      * @param requestType
      */
@@ -1623,13 +1592,13 @@ public class MainActivity extends AppCompatActivity
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
             this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_SPECIALIZATION + "#" + requestType, Constants.BASE_URL + "specializations/?stream=" + streamId, null, Request.Method.GET);
         }else{
-          //  Utils.DisplayToast(getApplicationContext(), "Check Your Internet ");
+            //  Utils.DisplayToast(getApplicationContext(), "Check Your Internet ");
         }
     }
 
     /**
      * This method is used to request for Degrees list based on
-     * level which is selected by the user while updating his/her profile
+     * level which is selected by the mDeviceProfile while updating his/her profile
      * @param levelId
      * @param requestType
      */
@@ -1652,7 +1621,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *  This method is used to update user profile info
+     *  This method is used to update mDeviceProfile profile info
      *  on Profile page after successfully updating any thing in profile
      * @param tag
      * @param responseJson
@@ -1765,32 +1734,6 @@ public class MainActivity extends AppCompatActivity
         try {
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, extractResults(response));
             this.mDisplayFragment(StreamFragment.newInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
-
-    private void mDisplayStreamsSelection(String response, boolean addToBackstack) {
-        try {
-            Map<String, Object> map = JSON.std.mapFrom(response);
-            String results = JSON.std.asString(map.get("results"));
-            getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putString("psychometric_report", results).apply();
-            List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
-            this.mClearBackStack();
-            this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams),addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
-            mDisplayOtpVerificationFragment();
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
-
-    private void mDisplayStreamsEditSelection(String response, boolean addToBackstack) {
-        try {
-            Map<String, Object> map = JSON.std.mapFrom(response);
-            String results = JSON.std.asString(map.get("results"));
-            List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
-            this.mDisplayFragment(PsychometricStreamFragment.newEditableInstance(new ArrayList(streams),addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
-            mDisplayOtpVerificationFragment();
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1978,9 +1921,10 @@ public class MainActivity extends AppCompatActivity
                     this.mDisplayFragment(fragment, false, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
                 }
             }
-            if (MainActivity.user.getPartner_shortlist_count() > 0) {
+            // TODO::
+           /* if (MainActivity.mDeviceProfile.getPartner_shortlist_count() > 0) {
                 mDisplayOtpVerificationFragment();
-            }
+            }*/
         } catch (IOException e) {
             this.hideProgressDialog();
             Log.e(TAG, e.getMessage());
@@ -2009,9 +1953,10 @@ public class MainActivity extends AppCompatActivity
             }
 
             if(listType==Constants.WISH_LIST_TYPE){
-                if(MainActivity.user.getPartner_shortlist_count()>0) {
+                //TODO::
+               /* if(MainActivity.mDeviceProfile.getPartner_shortlist_count()>0) {
                     mDisplayOtpVerificationFragment();
-                }
+                }*/
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -2036,9 +1981,10 @@ public class MainActivity extends AppCompatActivity
             }
 
             if(listType==Constants.WISH_LIST_TYPE){
-                if(MainActivity.user.getPartner_shortlist_count()>0) {
+                //TODO::
+                /*if(MainActivity.mDeviceProfile.getPartner_shortlist_count()>0) {
                     mDisplayOtpVerificationFragment();
-                }
+                }*/
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -2113,7 +2059,7 @@ public class MainActivity extends AppCompatActivity
 
                 comment = commentsSet.getJSONObject(i);
 
-                myFBComment.setUser(comment.getString("user"));
+                myFBComment.setUser(comment.getString("mDeviceProfile"));
                 myFBComment.setComment(comment.getString("comment"));
                 myFBComment.setAdded_on(comment.getString("added_on"));
                 myFBComment.setToken(comment.getString("token"));
@@ -2178,14 +2124,6 @@ public class MainActivity extends AppCompatActivity
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SELECTED), eventValue, this);
     }
 
-    private void loadPyschometricTest(String response) {
-        Bundle bundle = new Bundle();
-        bundle.putString(PsychometricAnalysisActivity.PSYCHOMETRIC_RESULTS, response);
-
-        Intent activityIntent = new Intent(MainActivity.this, PsychometricAnalysisActivity.class);
-        activityIntent.putExtras(bundle);
-        this.startActivityForResult(activityIntent, PsychometricAnalysisActivity.GET_PSYCHOMETRIC_RESULTS);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -2202,31 +2140,7 @@ public class MainActivity extends AppCompatActivity
                     ||  currentFragment instanceof ProfileBuildingFragment)
                 ((ProfileFragmentListener) currentFragment).uploadUserProfileImage();
 
-        }else if (requestCode == PsychometricAnalysisActivity.GET_PSYCHOMETRIC_RESULTS) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
-                if (PsychometricQuestionFragment.getAnswers() != null) {
-                    //Bundle bundle = data.getExtras();
-                    //HashMap<String, String> hashMap = (HashMap<String, String>) bundle.getSerializable(MainActivity.PSYCHOMETRIC_RESULTS);
-                    JSONObject answersObject = PsychometricQuestionFragment.getAnswers();
-
-                    //TODO: Shim to adhere to server's compliance; removing "[" and  "]" from college_types.
-                    if (answersObject.has("college_types")) {
-                        String str = null;
-                        try {
-                            str = (String) answersObject.get("college_types");
-                            str = str.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "");
-
-                            answersObject.put("college_types", str);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_TEST, Constants.BASE_URL + "psychometrictests/", answersObject, Request.Method.POST);
-                }
-            }
-        } else if (requestCode == Constants.RC_QUIT_VIDEO_PLAYER) {
+        }else if (requestCode == Constants.RC_QUIT_VIDEO_PLAYER) {
             if (currentFragment instanceof SplashFragment) {
                 isFromNotification = false;
                 this.mLoadUserStatusScreen();
@@ -2241,13 +2155,13 @@ public class MainActivity extends AppCompatActivity
         }else if(requestCode==Constants.GCM_RESULT_DATA_KEY && resultCode==RESULT_OK){
             HashMap<String, String> params = null;
             try {
-                 params = (HashMap<String, String>) data.getSerializableExtra(Constants.DIALOG_DATA);
+                params = (HashMap<String, String>) data.getSerializableExtra(Constants.DIALOG_DATA);
             }catch (Exception e){
                 e.printStackTrace();
             }
             // save GCM dialog data on profile
             if(params!=null && !params.isEmpty()) {
-                requestForProfile(params,Request.Method.POST);
+                requestForProfile(params);
             }
         }
     }
@@ -2355,6 +2269,7 @@ public class MainActivity extends AppCompatActivity
                 bottomMenu.animate().translationY(0);
                 bottomMenu.setVisibility(View.VISIBLE);
             }
+            mDisplayHomeAsUpEnabled();
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
         } finally {
@@ -2377,7 +2292,27 @@ public class MainActivity extends AppCompatActivity
         if(!(fragment instanceof InstituteListFragment))
             invalidateOptionsMenu();
     }
-    private boolean isUpdateStreams;
+
+    /**
+     * This method is used to show back arrow icon on if home page
+     * is not loaded
+     */
+    private void mDisplayHomeAsUpEnabled(){
+
+        // it will change hamburger icon into a back arrow on toolbar
+        if (this.currentFragment instanceof HomeFragment)
+            mDrawerToggle.setDrawerIndicatorEnabled(true);
+        else
+           mDrawerToggle.setDrawerIndicatorEnabled(false);
+
+        // set all menu items unchecked when tab fragment is not selected
+        if(!(currentFragment instanceof TabFragment)){
+            int size = mNavigationView.getMenu().size();
+            for (int i = 0; i < size; i++) {
+                mNavigationView.getMenu().getItem(i).setChecked(false);
+            }
+        }
+    }
 
     private void mShowAppBarLayout(){
         //  show appBarLayout and toolBar
@@ -2421,24 +2356,11 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_SKIP_LOGIN:
             case Constants.TAG_TRUE_SDK_LOGIN:
             case Constants.TAG_FACEBOOK_LOGIN:
-                //Deleting exam summary on login, since old user's and new user's are merged. And profile is taken from latest user.
-                // So old user's exam summary gets obsolete. We need to reset the cache
-                DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                this.mUpdateUserPreferences(response);
-                break;
             case Constants.TAG_PHONE_NUMBER_LOGIN:
-                //Deleting exam summary on login, since old user's and new user's are merged. And profile is taken from latest user.
-                // So old user's exam summary gets obsolete. We need to reset the cache
+                //Deleting exam summary on login, since old mDeviceProfile's and new mDeviceProfile's are merged. And profile is taken from latest mDeviceProfile.
+                // So old mDeviceProfile's exam summary gets obsolete. We need to reset the cache
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                this.onOTPVerifiedResponse(response);
-                break;
-            case Constants.TEMPORARY_TAG_PROFILE_BUILD:
-                try {
-                    MainActivity.mProfile = JSON.std.beanFrom(Profile.class,response);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                mLoadUserStatusScreen();
+                this.mUserCreatedSuccessfully(response);
                 break;
             case Constants.TAG_USER_PHONE_ADDED:
                 onMobileNumberSubmitted();
@@ -2446,29 +2368,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_VERIFY_USER_PHONE:
                 this.onOTPVerified(response);
                 break;
-            case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
-                this.mOnUserEducationResponse(response);
-                break;
-            case Constants.TAG_EDIT_EDUCATION_DETAILS_SUBMIT:
-                this.onUserEducationEdited(response);
-                break;
-            case Constants.TAG_NOT_PREPARING_EDUCATION_DETAILS_SUBMIT:
-                this.onNotPreparingEducationResponse(response);
-                break;
-            case Constants.TAG_USER_EDUCATION_SET:
-                this.mUserEducationStepCompleted(response);
-                break;
-            case Constants.TAG_EXAMS_LIST:
-                this.mOnExamsLoaded(response, true);
-                break;
-            case Constants.TAG_EDIT_EXAMS_LIST:
-                this.mOnEditExamsLoaded(response, true);
-                break;
-            case Constants.TAG_LOAD_EXAMS_LIST:
-                this.mOnExamsLoaded(response, false);
-                break;
             case Constants.TAG_USER_EXAMS_SUBMISSION:
-                //mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_EXAMS, Constants.BASE_URL +"profile/", null);
                 this.mOnUserExamsSubmitted(response);
                 break;
             case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
@@ -2485,18 +2385,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_REFRESH_PROFILE:
                 this.mParseAndRefreshProfileResponse(response);
-                break;
-            case Constants.TAG_LAUNCH_USER_HOME:
-                this.onUpdateUserPreferences(response);
-               /* if (!IS_HOME_LOADED) {
-                    this.mClearBackStack();
-                    mLoadHomeScreen(null);
-                }*/
-                break;
-            case Constants.TAG_LOAD_USER_PREFERENCES_N_BACK:
-                isReloadProfile = true;
-                this.onUpdateUserPreferences(response);
-                onBackPressed();
                 break;
             case Constants.TAG_EXAM_SUMMARY:
                 this.mUpdateExamDetail(response, true);
@@ -2546,15 +2434,6 @@ public class MainActivity extends AppCompatActivity
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.RECOMMENDED, false);
                 }
                 break;
-            case Constants.TAG_LOAD_USER_PREFERENCES:
-                mLoadProfileFragment(MainActivity.mProfile, false);
-                getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_HOME_LOADED), true).apply();
-                if(currentFragment instanceof ProfileBuildingFragment)
-                    ((ProfileBuildingFragment)currentFragment).hideNavigationIcon();
-                mShowAppBarLayout();
-                isFromNotification = true;
-                this.onUpdateUserPreferences(response);
-                break;
 
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
                 this.mCurrentTitle = "Recommended Institutes";
@@ -2574,13 +2453,13 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.RECOMMENDED, false);
                 }
-                 new Handler().post(new Runnable() {
-                     @Override
-                     public void run() {
-                         isFromNotification = true;
-                         Constants.READY_TO_CLOSE = false;
-                     }
-                 });
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        isFromNotification = true;
+                        Constants.READY_TO_CLOSE = false;
+                    }
+                });
                 break;
             case Constants.CARD_SHORTLIST_INSTITUTES:
                 this.mCurrentTitle = "Shortlisted Institutes";
@@ -2701,9 +2580,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 this.updateQuestionLikeButton(response, extraTag, Integer.parseInt(like));
                 break;
-            case Constants.TAG_LOAD_PSYCHOMETRIC_TEST:
-                this.loadPyschometricTest(response);
-                break;
+
             case Constants.ACTION_VOTE_QNA_QUESTION_ENTITY:
                 if (tags.length == 3) {
                     parentIndex = tags[1];
@@ -2758,31 +2635,6 @@ public class MainActivity extends AppCompatActivity
                 this.mInstituteQnAUpdated(response);
                 break;
 
-            case Constants.TAG_SUBMIT_PREFRENCES:
-                if (tags.length > 1) {
-                    parentIndex = tags[1];
-                    childIndex = tags[2];
-
-                    if (tags.length > 3)
-                        extraTag = tags[3];
-
-                    this.mStreamAndLevelSelected(response, parentIndex, childIndex, extraTag, false);
-                }
-
-                break;
-
-            case Constants.TAG_SUBMIT_EDITED_PREFRENCES:
-                if (tags.length > 1) {
-                    parentIndex = tags[1];
-                    childIndex = tags[2];
-
-                    if (tags.length > 3)
-                        extraTag = tags[3];
-
-                    this.mStreamAndLevelSelected(response, parentIndex, childIndex, extraTag, true);
-                }
-
-                break;
             case Constants.TAG_REQUEST_FOR_SPECIALIZATION:
                 if (tags.length > 1)
                     updateUserSpecializationList(tags[1], response);
@@ -2823,20 +2675,10 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
-                isUpdateStreams = false;
                 this.onPsychometricTestResponse(response);
                 break;
-
-            case Constants.TAG_EDIT_PSYCHOMETRIC_QUESTIONS:
-                isUpdateStreams = true;
-                this.onEditPsychometricTestResponse(response);
-                break;
-
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
-                this.mDisplayStreamsSelection(response, false);
-                break;
-            case Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM:
-                this.mDisplayStreamsEditSelection(response, true);
+                this.mDisplayStreamsSelection(response);
                 break;
             case Constants.TAG_PSYCHOMETRIC_TEXT_COMPLETED:
                 if (tags.length > 2) {
@@ -2942,20 +2784,12 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case Constants.TAG_USER_EXAMS_DELETE:
-                MainActivity.user.setUser_exams(new ArrayList<ExamDetail>());
                 MainActivity.mProfile.setYearly_exams(new ArrayList<ProfileExam>());
                 break;
-//            case Constants.SUBMITTED_CHAPTER_STATUS:
-//                if (tags.length>1) {
-//                    DataBaseHelper.getInstance(this).deleteExamSummary(Integer.parseInt(tags[1]));
-//                    if(currentFragment instanceof  HomeFragment)
-//                        ((HomeFragment)currentFragment).updateSyllabus();
-//                }
-//                break;
         }
         try {
             if(hideProgressDialog)
-            hideProgressDialog();
+                hideProgressDialog();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -3065,11 +2899,70 @@ public class MainActivity extends AppCompatActivity
         return mShortListInstituteCount;
     }
 
-    private void updateCountInCDRecommendedFragment(){
+    private void updateCountInCDRecommendedFragment() {
         if (currentFragment instanceof CDRecommendedInstituteFragment) {
             ((CDRecommendedInstituteFragment) currentFragment).updateCount(this.mUndecidedInstitutesCount, this.mShortListInstituteCount, this.mFeaturedInstituteCount, this.mRecommendedInstituteCount);
         }
     }
+
+    /**
+     * This method is called when mDeviceProfile login with true sdk , facebook, phone number
+     * or skip option then mDeviceProfile response is parse and mDeviceProfile is created and saved in
+     * shared pref . and load mDeviceProfile status screens
+     * and resp
+     * @param response
+     */
+    private void mUserCreatedSuccessfully(String response) {
+        Map<String, Object> responseMap = null;
+        try {
+            responseMap = JSON.std.mapFrom(response);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (responseMap != null && responseMap.containsKey("verified")) {
+
+            if (currentFragment instanceof LoginFragment) {
+                ((LoginFragment) currentFragment).onInvalidOtp();
+            } else if (currentFragment instanceof PostAnonymousLoginFragment) {
+                ((PostAnonymousLoginFragment) currentFragment).onInvalidOtp();
+            }
+
+        } else {
+            //Remove the BroadcastReciever for SMS
+            ComponentName component = new ComponentName(this, OTPReceiver.class);
+
+            int status = this.getPackageManager().getComponentEnabledSetting(component);
+            if (status == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
+                Log.d("MainActivity", "receiver is enabled");
+                //Disable
+                this.getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+            }
+
+            // parse mDeviceProfile response and  create a mDeviceProfile
+            this.mParseProfileResponse(response);
+            // set token in network utill
+            mNetworkUtils.setToken(MainActivity.mProfile.getToken());
+            // set mDeviceProfile ids with apps flyer
+            this.setUserIdWithAllEvents();
+            // load mDeviceProfile status screeen
+            this.mLoadUserStatusScreen();
+
+            if (!IS_USER_CREATED) {
+                //Events
+                Map<String, Object> eventValue = new HashMap<>();
+                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
+                eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
+            }
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).apply();
+            IS_USER_CREATED = true;
+
+            HashMap<String, Object> eventValue = new HashMap<>();
+            eventValue.put(Constants.TAG_USER_LOGIN, Constants.TAG_PHONE_NUMBER_LOGIN);
+            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
+        }
+    }
+
 
     private void mUpdateAppliedInstituteWishlist(int i)
     {
@@ -3121,15 +3014,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mOnPsychometricTestCompleted(String streamId, String streamName, String response) {
-        try {
-            User userObj = JSON.std.beanFrom(User.class, response);
-            if (MainActivity.user != null) {
-                MainActivity.user.setStream_name(streamName);
-                MainActivity.user.setStream(streamId);
-                MainActivity.user.setLevel_name(userObj.getLevel_name());
-                MainActivity.user.setLevel(userObj.getLevel());
-                MainActivity.user.setUser_education(userObj.getUser_education());
-                MainActivity.user.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
+        /*try {
+            DeviceProfile userObj = JSON.std.beanFrom(DeviceProfile.class, response);
+            if (MainActivity.mDeviceProfile != null) {
+                MainActivity.mDeviceProfile.setStream_name(streamName);
+                MainActivity.mDeviceProfile.setStream(streamId);
+                MainActivity.mDeviceProfile.setLevel_name(userObj.getLevel_name());
+                MainActivity.mDeviceProfile.setLevel(userObj.getLevel());
+                MainActivity.mDeviceProfile.setUser_education(userObj.getUser_education());
+                MainActivity.mDeviceProfile.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
             }
 
         } catch (IOException e) {
@@ -3137,24 +3030,25 @@ public class MainActivity extends AppCompatActivity
         }
         if (!isUpdateStreams) {
             this.mClearBackStack();
-            this.mMakeJsonObjectNetworkCall(Constants.TAG_USER_EXAMS_SUBMISSION, Constants.BASE_URL + "user-exams/", null, 0);
+            this.mMakeJsonObjectNetworkCall(Constants.TAG_USER_EXAMS_SUBMISSION, Constants.BASE_URL + "mDeviceProfile-exams/", null, 0);
         } else {
-            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST, Constants.BASE_URL + "user-exams/", null, 0);
-        }
+            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST, Constants.BASE_URL + "mDeviceProfile-exams/", null, 0);
+        }*/
     }
 
     private void mUpdateExamDetail(String responseJson, boolean update) {
         try {
             ExamSummary examSummary = JSON.std.beanFrom(ExamSummary.class, responseJson);
             if (examSummary.getPreference_uri() != null) {
-                MainActivity.user.setResource_uri(examSummary.getPreference_uri());
-                String u = JSON.std.asString(MainActivity.user);
+
                 String dbSummary = DataBaseHelper.getInstance(this).getExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()));
                 if (dbSummary == null) {
                     DataBaseHelper.getInstance(this).addExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()), responseJson);
                 } else if (update) {
                     DataBaseHelper.getInstance(this).updateExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()), responseJson);
                 }
+
+                String u = JSON.std.asString(MainActivity.mProfile);
                 this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
             }
             this.currentFragment.updateExamSummary(examSummary);
@@ -3172,14 +3066,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     /**
      * This method is used to provide education level and
-     * user will select current education or he/she can skip,
-     * if user don't skip then ask for thestream .
+     * mDeviceProfile will select current education or he/she can skip,
+     * if mDeviceProfile don't skip then ask for thestream .
      * specialization , degrees
      */
-    private void mDisplayCurrentEducationFragment() {
+    private void mDisplayProfileBuildingFragment() {
         Fragment fragment = ProfileBuildingFragment.newInstance();
         this.mDisplayFragment(fragment, false,ProfileBuildingFragment.class.getSimpleName());
     }
@@ -3236,13 +3129,7 @@ public class MainActivity extends AppCompatActivity
 
             StepByStepResult sbsResult = JSON.std.beanFrom(StepByStepResult.class, response);
 
-            this.requestForProfile(null, Request.Method.GET);
-
-            //TODO:: delete it after preferences
-            MainActivity.user.setStream_name(sbsResult.getStream_name());
-            MainActivity.user.setStream(String.valueOf(sbsResult.getStream_id()));
-            String u = JSON.std.asString(MainActivity.user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+            this.requestForProfile(null);
 
             int count = 0;
             Map<String, String> filterKeywords = new HashMap<>();
@@ -3261,7 +3148,7 @@ public class MainActivity extends AppCompatActivity
             //move to profile
             this.onHomeItemSelected(Constants.WIDGET_INSTITUTES_SBS, Constants.BASE_URL + "personalize/institutes/",null);
 
-//            this.mLoadHomeScreen(null);
+//            this.mDisplayHomeFragment(null);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -3291,113 +3178,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void mStreamAndLevelUpdated(String response) {
-        User tempUser = MainActivity.user;
-        try {
-            tempUser = JSON.std.beanFrom(User.class, response);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        //save the preferences locally
-        if (tempUser != null) {
-            MainActivity.user.setPhone_no(tempUser.getPhone_no());
-            MainActivity.user.setName(tempUser.getName());
-        }
-        try {
-            String u = null;
-            u = JSON.std.asString(user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.USER_STREAM_NAME), MainActivity.user.getStream_name());
-
-        //Events
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_STREAM_UPDATED), eventValue, this);
-
-        eventValue.clear();
-        eventValue.put(getResourceString(R.string.USER_LEVEL_NAME), MainActivity.user.getLevel_name());
-
-        //Events
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_LEVEL_UPDATED), eventValue, this);
-    }
-
-
-
-    //Saved on DB, now save it in shared preferences.
-    private void mStreamAndLevelSelected(String response, String level, String stream, String streamName, boolean isUpdateStreams) {
-        //Retrieve token from pref to save it across the pref updates
-
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).apply();
-        User tempUser = MainActivity.user;
-        if (!isUpdateStreams) {
-
-            try {
-                MainActivity.user = JSON.std.beanFrom(User.class, response);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //save the preferences locally
-            if (tempUser != null) {
-                MainActivity.user.setToken(tempUser.getToken());
-                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
-                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
-                MainActivity.user.profileData = tempUser.profileData;
-            }
-
-            if (streamName != "" && streamName != null)
-                MainActivity.user.setStream_name(streamName);
-
-            try {
-                String user = "";
-                user = JSON.std.asString(MainActivity.user);
-                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), user).apply();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Map<String, Object> eventValue = new HashMap<>();
-            eventValue.put(getResourceString(R.string.USER_STREAM_NAME), MainActivity.user.getStream_name());
-
-            //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_STREAM_SELECTED), eventValue, this);
-
-            eventValue.clear();
-            eventValue.put(getResourceString(R.string.USER_LEVEL_NAME), MainActivity.user.getLevel_name());
-
-            //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_LEVEL_SELECTED), eventValue, this);
-
-            this.mClearBackStack();
-            this.mLoadHomeScreen(null);
-        } else {
-            try {
-                User user = JSON.std.beanFrom(User.class, response);
-                if (streamName != "" && streamName != null)
-                    MainActivity.user.setStream_name(streamName);
-                MainActivity.user.setPsychometric_given(user.getPsychometric_given());
-                MainActivity.user.setToken(tempUser.getToken());
-                MainActivity.user.setUser_education(user.getUser_education());
-                MainActivity.user.setCollegedekho_recommended_streams(user.getCollegedekho_recommended_streams());
-                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
-                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
-                MainActivity.user.profileData = tempUser.profileData;
-                String u = "";
-                u = JSON.std.asString(MainActivity.user);
-                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-                DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                onBackPressed();
-                onBackPressed();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
 
     private void updateQuestionLikeButton(String response, String extraTag, int like) {
 
@@ -3654,8 +3434,6 @@ public class MainActivity extends AppCompatActivity
                 return "Posting your question...";
             case Constants.TAG_LOAD_FILTERS:
                 return "Loading Filters...";
-            case Constants.TAG_LOAD_PSYCHOMETRIC_TEST:
-                return "Loading Questionnaire...";
             case Constants.TAG_LOAD_QNA_QUESTIONS:
                 return "Loading Questions...";
             case Constants.TAG_LOAD_MY_FB:
@@ -3791,7 +3569,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (!MainActivity.this.isFinishing()) {
-          mErrorDialog =  new AlertDialog.Builder(this)
+            mErrorDialog =  new AlertDialog.Builder(this)
                     .setMessage(response)
                     .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                         @Override
@@ -3853,7 +3631,7 @@ public class MainActivity extends AppCompatActivity
         hideErrorDialog();
         if (!MainActivity.this.isFinishing()) {
             //show dialog
-          mErrorDialog =  new AlertDialog.Builder(this)
+            mErrorDialog =  new AlertDialog.Builder(this)
                     .setMessage(response)
                     .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                         @Override
@@ -3869,82 +3647,6 @@ public class MainActivity extends AppCompatActivity
                         }
                     })
                     .show();
-        }
-    }
-
-
-    @Override
-    public void onStreamSelected(int streamId) {
-        String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-
-        HashMap<String, String> params = new HashMap<>();
-        params.put(getResourceString(R.string.preferred_stream_id), ""+streamId);
-        params.put(getResourceString(R.string.USER_DEVICE_ID), deviceId);
-        getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), true).apply();
-
-        this.requestForUserProfileUpdate(params, -1);
-
-        mClearBackStack();
-        this.mLoadHomeScreen(null);
-
-    }
-
-    @Override
-    public void onStreamSelected(final String stream, final String streamName) {
-//        new AlertDialog.Builder(this)
-//                .setTitle("Please select a level")
-//                .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-        MainActivity.this.mOnCourseLevelSelected(/*which*/0, stream, streamName);
-        MainActivity.mProfile.setPsychometric_given(1);
-//                        dialog.dismiss();
-//                    }
-//                })
-////                .setCancelable(false)
-//                .show();
-    }
-
-    @Override
-    public void onEditedStreamSelected(final String stream, final String streamName) {
-//        new AlertDialog.Builder(this)
-//                .setTitle("Please select a level")
-//                .setSingleChoiceItems(InstituteCourse.CourseLevel.getValues(), -1, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-        MainActivity.this.mOnCourseLevelSelected(/*which*/0, stream, streamName, true);
-        MainActivity.mProfile.setPsychometric_given(1);
-//                        dialog.dismiss();
-//                    }
-//                })
-////                .setCancelable(false)
-//                .show();
-    }
-
-    private void mOnCourseLevelSelected(int level, String streamURI, String streamName) {
-        this.mOnCourseLevelSelected(level, streamURI, streamName, false);
-    }
-
-    private void mOnCourseLevelSelected(int level, String streamURI, String streamName, boolean isEdited) {
-        //get device id
-        String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-
-        //send them to DB
-        HashMap<String, String> hashMap = new HashMap<>();
-//        hashMap.put("status", user.getPref().name().toLowerCase());
-        hashMap.put("user", user.getResource_uri());
-        hashMap.put(getResourceString(R.string.USER_STREAM), streamURI);
-//        hashMap.put(Constants.USER_LEVEL, Constants.BASE_URL + "level/" + (MainActivity.user.getLevel()) + "/");
-        hashMap.put(getResourceString(R.string.USER_STREAM_NAME), streamName);
-        hashMap.put(getResourceString(R.string.USER_DEVICE_ID), deviceId);
-        getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), true).apply();
-
-        if (streamName != null || streamName != "")
-            MainActivity.user.setStream_name(streamName);
-        if (!isEdited) {
-            this.mMakeNetworkCall(Constants.TAG_SUBMIT_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
-        } else {
-            this.mMakeNetworkCall(Constants.TAG_SUBMIT_EDITED_PREFRENCES + "#" + level + "#" + streamURI + "#" + streamName, MainActivity.user.getPreference_uri(), hashMap, Request.Method.PUT);
         }
     }
 
@@ -4037,7 +3739,7 @@ public class MainActivity extends AppCompatActivity
 
             //TODO:: Its Dangerous. Remove common tags for search, sbs and explore institute list in case of next. Each Tag should be made unique as far as possible. And when we are stable we should trim the possible cases to common tag.
         }
-       else if (listType == Constants.WISH_LIST_TYPE)
+        else if (listType == Constants.WISH_LIST_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_WISHLIST_INSTITUTE, next, null);
         else if (listType == Constants.NEWS_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_NEWS, next, null);
@@ -4122,7 +3824,7 @@ public class MainActivity extends AppCompatActivity
             progressDialog.setMessage(message);
         }
         if(!isFinishing())
-        progressDialog.show();
+            progressDialog.show();
         IS_NETWORK_TASK_RUNNING=true;
     }
 
@@ -4278,7 +3980,7 @@ public class MainActivity extends AppCompatActivity
         if (mInstituteList != null && mInstituteList.size() > position && position>=0) {
             Institute institute = this.mInstituteList.get(position);
             if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO) {
-                    mDisplayOtpVerificationFragment();
+                mDisplayOtpVerificationFragment();
                 this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
             } else
                 this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + position, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
@@ -4445,9 +4147,9 @@ public class MainActivity extends AppCompatActivity
 
             QnAQuestions question = this.mQnAQuestions.get(questionIndex);
             if(question == null)
-                    return;
+                return;
 
-                Map<String, Object> eventValue = new HashMap<>();
+            Map<String, Object> eventValue = new HashMap<>();
             if (voteType == Constants.LIKE_THING) {
                 eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(question.getResource_uri()));
                 eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.LIKE_THING);
@@ -4508,7 +4210,7 @@ public class MainActivity extends AppCompatActivity
 
             JSONObject ans = new JSONObject(response);
 
-            qnaAnswer.setUser(ans.getString("user"));
+            qnaAnswer.setUser(ans.getString("mDeviceProfile"));
             qnaAnswer.setDownvotes(ans.getInt("downvotes"));
             qnaAnswer.setUpvotes(ans.getInt("upvotes"));
             qnaAnswer.setCurrent_user_vote_type(ans.getInt("current_user_vote_type"));
@@ -4569,7 +4271,7 @@ public class MainActivity extends AppCompatActivity
 
             fbComment.setComment(comment.getString("comment"));
             fbComment.setAdded_on(comment.getString("added_on"));
-            fbComment.setUser(comment.getString("user"));
+            fbComment.setUser(comment.getString("mDeviceProfile"));
             fbComment.setToken(comment.getString("token"));
             fbComment.setIndex(index);
             fbComment.setFbIndex(fbIndex);
@@ -4598,7 +4300,7 @@ public class MainActivity extends AppCompatActivity
 
             JSONObject qns = new JSONObject(response);
 
-            qnaQuestion.setUser(qns.getString("user"));
+            qnaQuestion.setUser(qns.getString("mDeviceProfile"));
             qnaQuestion.setView_count(qns.getInt("view_count"));
             qnaQuestion.setTitle(qns.getString("title"));
             qnaQuestion.setDesc(qns.getString("desc"));
@@ -4617,7 +4319,7 @@ public class MainActivity extends AppCompatActivity
 
                 QnAAnswers qnaAnswer = new QnAAnswers();
 
-                qnaAnswer.setUser(ans.getString("user"));
+                qnaAnswer.setUser(ans.getString("mDeviceProfile"));
                 qnaAnswer.setDownvotes(ans.getInt("downvotes"));
                 qnaAnswer.setUpvotes(ans.getInt("upvotes"));
                 qnaAnswer.setCurrent_user_vote_type(ans.getInt("current_user_vote_type"));
@@ -4652,7 +4354,7 @@ public class MainActivity extends AppCompatActivity
                 this.mQnAQuestions = new ArrayList<>();
 
             this.mQnAQuestions.add(0, qnaQuestion);
-           if (currentFragment instanceof  QnAQuestionsListFragment){
+            if (currentFragment instanceof  QnAQuestionsListFragment){
                 (currentFragment).instituteQnAQuestionAdded(qnaQuestion);
             }
 
@@ -4687,7 +4389,7 @@ public class MainActivity extends AppCompatActivity
 
                 JSONObject qns = resultArray.getJSONObject(i);
 
-                qnaQuestion.setUser(qns.getString("user"));
+                qnaQuestion.setUser(qns.getString("mDeviceProfile"));
                 qnaQuestion.setView_count(qns.getInt("view_count"));
                 qnaQuestion.setTitle(qns.getString("title"));
                 qnaQuestion.setDesc(qns.getString("desc"));
@@ -4706,7 +4408,7 @@ public class MainActivity extends AppCompatActivity
 
                     QnAAnswers qnaAnswer = new QnAAnswers();
 
-                    qnaAnswer.setUser(ans.getString("user"));
+                    qnaAnswer.setUser(ans.getString("mDeviceProfile"));
                     qnaAnswer.setDownvotes(ans.getInt("downvotes"));
                     qnaAnswer.setUpvotes(ans.getInt("upvotes"));
                     qnaAnswer.setCurrent_user_vote_type(ans.getInt("current_user_vote_type"));
@@ -4740,7 +4442,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is called when user change anything in Institute List
+     * This method is called when mDeviceProfile change anything in Institute List
      * @param response server response
      */
     private void mUpdateInstituteList(String response) {
@@ -4752,22 +4454,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is called when user press device back button
+     * This method is called when mDeviceProfile press device back button
      * Do these task
      * 1- If navigation drawer is open then close it
      * 2- If last fragment clear back stack FragmentManager
-     * 3- If user wants to close app then show a message to press device back button again
+     * 3- If mDeviceProfile wants to close app then show a message to press device back button again
      */
     @Override
     public void onBackPressed() {
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        if (drawer.isDrawerOpen(GravityCompat.START)) {
-//            drawer.closeDrawer(GravityCompat.START);
-//        }
-        if (!isBackPressEnabled) {
+        // if navigation drawer layout is open then on back press
+        // it will close
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
-
         if(currentBottomItem != null){
             translateAnimation(null,currentBottomItem);
         }
@@ -4776,19 +4476,15 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment != null) {
             if (currentFragment instanceof SyllabusSubjectsListFragment) {
                 ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
-            } else if (currentFragment instanceof OTPVerificationFragment && MainActivity.user.getIs_otp_verified() == 0) {
-                if (MainActivity.user.getBlocking_otp() == 1) {
-                    return;
-                }
+            } else if (currentFragment instanceof OTPVerificationFragment && MainActivity.mProfile.getIs_verified() == 0) {
                 setupOtpRequest(false);
             }else if (currentFragment instanceof WebViewFragment){
                 boolean canGoBack = ((WebViewFragment) currentFragment).canGoBack();
-              if(canGoBack)
-                return;
+                if(canGoBack)
+                    return;
             }else if (currentFragment instanceof PostAnonymousLoginFragment){
                 mShowAppBarLayout();
             }
-
         }
 
         if (backStackCount == 0 && !Constants.READY_TO_CLOSE) {
@@ -4826,7 +4522,7 @@ public class MainActivity extends AppCompatActivity
 
 
     /**
-     * This method is called when user skip
+     * This method is called when mDeviceProfile skip
      *  registration or facebook login
      */
     @Override
@@ -4839,7 +4535,7 @@ public class MainActivity extends AppCompatActivity
      * @param params request data
      */
     public void onUserCommonLogin(HashMap<String, String> params , String TAG) {
-        this.mMakeNetworkCall(TAG, Constants.BASE_URL + "auth/common-login/", params);
+        this.mMakeNetworkCall(TAG, Constants.BASE_URL + "auth/new-common-login/", params);
 
         //Events
         HashMap<String, Object> eventValue = new HashMap<>();
@@ -4847,54 +4543,6 @@ public class MainActivity extends AppCompatActivity
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
     }
 
-    private void mUpdateUserPreferences(String jsonResponse)
-    {
-        User tempUser = MainActivity.user;
-        try {
-            MainActivity.user = JSON.std.beanFrom(User.class, jsonResponse);
-            this.mNetworkUtils.setToken(user.getToken());
-
-
-            this.requestForProfile(null, Request.Method.GET);
-            if (tempUser != null){
-                MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
-                MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
-                MainActivity.user.profileData = tempUser.profileData;
-            }
-            if(mProfile == null) {
-                mProfile = new Profile();
-                mProfile.setName(user.getName());
-                mProfile.setEmail(user.getEmail());
-                mProfile.setPhone_no(user.getPhone_no());
-                mProfile.setImage(user.getImage());
-                mProfile.setExams_set(user.getExams_set());
-                try {
-                    mProfile.setCurrent_level_id((Integer.parseInt(user.getLevel())));
-                    mProfile.setCurrent_sublevel_id(Integer.parseInt(user.getSublevel()));
-                    mProfile.setCurrent_stream_id(Integer.parseInt(user.getStream()));
-                }catch(Exception e){
-
-                }
-            }
-
-            setUserIdWithAllEvents();
-            String u = JSON.std.asString(this.user);
-            if(!IS_USER_CREATED){
-                //Events
-                Map<String, Object> eventValue = new HashMap<>();
-                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
-                eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
-            }
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).apply();
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-            IS_USER_CREATED = true;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-       // this.IS_HOME_LOADED = false;
-        this.mLoadUserStatusScreen();
-    }
 
     @Override
     public void onSuccesProfileShared(@NonNull TrueProfile trueProfile) {
@@ -4920,7 +4568,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if( trueProfile.email == null) {
-             trueProfile.email = MainActivity.user.getEmail();
+            trueProfile.email = MainActivity.mProfile.getEmail();
 
         }
         params.put(MainActivity.getResourceString(R.string.USER_NAME),trueProfile.firstName+" "+trueProfile.lastName);
@@ -4958,7 +4606,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to log out facebook account
-     * when user wants to login with different account
+     * when mDeviceProfile wants to login with different account
      * or  have not successfully login
      */
     private void disconnectFromFacebook() {
@@ -4974,56 +4622,21 @@ public class MainActivity extends AppCompatActivity
         }).executeAsync();
     }
 
-    /***
-     * This method is called when user sign Up successfully
-     * @param response response json send  by server
-     * @param msg MyFb comment message
-     */
-    public void onUserRegisteredResponse(String response, String msg) {
-        User tempUser = this.user;
-        try {
-            this.user = JSON.std.beanFrom(User.class, response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (tempUser != null) {
-            MainActivity.user.setStream(tempUser.getStream());
-            MainActivity.user.setLevel(tempUser.getLevel());
-            MainActivity.user.setStream_name(tempUser.getStream_name());
-            MainActivity.user.setLevel_name(tempUser.getLevel_name());
-            MainActivity.user.setToken(tempUser.getToken());
-            MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
-            MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
-            MainActivity.user.profileData = tempUser.profileData;
-        }
-        this.mNetworkUtils.setToken(user.getToken());
-        String u = null;
-        try {
-            u = JSON.std.asString(user);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-        showMyFbMessage(msg);
-    }
 
-    private void mOnUserExamsSelected(String response) {
-        this.mMakeNetworkCall(Constants.TAG_LOAD_USER_PREFERENCES, Constants.BASE_URL + "preferences/", null);
-        this.mClearBackStack();
-        mLoadHomeScreen(response);
-    }
+    /**
+     *  This method is called when mDeviceProfile's exams are edited
+     * @param responseJson
+     */
 
     private void onUserExamsEdited(String responseJson) {
-        isReloadProfile = true;
         try {
             DataBaseHelper.getInstance(this).deleteAllExamSummary();
-            //onUpdateUserExams(responseJson);
-            try {
-                MainActivity.mProfile = JSON.std.beanFrom(Profile.class,responseJson);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            mParseProfileResponse(responseJson);
             onBackPressed();
+
+            // if mDeviceProfile has removed all exams and when go back to tab
+            // screen has and make first tab selected because third tab
+            //  gives exam preparation details
             if(currentFragment instanceof  TabFragment){
                 ((TabFragment) currentFragment).setSelectedTab(3);
                 ((TabFragment) currentFragment).updateExamsList(mProfile.getYearly_exams());
@@ -5033,100 +4646,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void onUpdateUserPreferences(String responseJson) {
-
-        try {
-            JSONObject prefObject = new JSONObject(responseJson);
-            User userObj = JSON.std.beanFrom(User.class, prefObject.optJSONArray("results").get(0).toString());
-            MainActivity.user.setExams_set(userObj.getExams_set());
-            MainActivity.user.setUser_exams(userObj.getUser_exams());
-            MainActivity.user.setUser_education(userObj.getUser_education());
-            MainActivity.user.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
-            MainActivity.user.setLevel(userObj.getLevel());
-            MainActivity.user.setLevel_name(userObj.getLevel_name());
-            MainActivity.user.setEducation_set(userObj.getEducation_set());
-            MainActivity.user.setPsychometric_given(userObj.getPsychometric_given());
-            MainActivity.user.setStream_name(userObj.getStream_name());
-            MainActivity.user.setPhone_no(userObj.getPhone_no());
-            MainActivity.user.setIs_preparing(userObj.getIs_preparing());
-            MainActivity.user.setResource_uri(userObj.getResource_uri());
-            MainActivity.user.setIs_otp_verified(userObj.getIs_otp_verified());
-            MainActivity.user.setPartner_shortlist_count(userObj.getPartner_shortlist_count());
-            MainActivity.user.setBlocking_otp(user.getBlocking_otp());
-            MainActivity.user.setApp_version(userObj.getApp_version());
-            MainActivity.user.setGender(userObj.getGender());
-            MainActivity.user.setSocial_category(userObj.getSocial_category());
-            MainActivity.user.setYear_of_admission(userObj.getYear_of_admission());
-            MainActivity.user.setPreferred_mode(userObj.getPreferred_mode());
-
-            this.mUserExamsList=MainActivity.user.getUser_exams();
-            String u = JSON.std.asString(MainActivity.user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-
-            String currentVersionName = getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
-            if (currentVersionName!=null) {
-                currentVersionName = currentVersionName.replace(".", "");
-                int currentVersion = Integer.valueOf(currentVersionName);
-                String releasedVersionName = userObj.getApp_version();
-                releasedVersionName = releasedVersionName.replace(".", "");
-                int releasedVersion = Integer.parseInt(releasedVersionName);
-                if (releasedVersion > currentVersion) {
-                    Utils.updateAppAlertDialog(this);
-                }
-            }
-
-        }catch(IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }catch (PackageManager.NameNotFoundException e){
-            e.printStackTrace();
-        }catch (NumberFormatException e){
-            e.printStackTrace();
-        }
-    }
-
-
-    private void onUpdateUserExams(String response) throws IOException {
-        this.mUserExamsList = JSON.std.listOfFrom(ExamDetail.class, extractResults(response));
-        MainActivity.user.setUser_exams(new ArrayList<>(mUserExamsList));
-        MainActivity.user.setExams_set(1);
-        String u = JSON.std.asString(MainActivity.user);
-
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-        Map<String, Object> eventValue = new HashMap<String, Object>();
-
-
-        for (int n = 0; n < this.mUserExamsList.size(); n++) {
-            ExamDetail examDetail = this.mUserExamsList.get(n);
-
-            eventValue = new HashMap<>();
-            eventValue.put(getResourceString(R.string.USER_EXAM_SELECTED), examDetail.getExam_name() + "#" + examDetail.getExam_date());
-
-            //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_EXAM_SELECTED), (Map) eventValue, this);
-        }
-    }
-
-    private void mUserEducationStepCompleted(String responseJson) {
-        try {
-            User userObj = JSON.std.beanFrom(User.class, responseJson);
-            this.user.setLevel(userObj.getLevel());
-            this.user.setLevel_name(userObj.getLevel_name());
-            this.user.setEducation_set(userObj.getEducation_set());
-            this.user.setUser_exams(userObj.getUser_exams());
-            this.user.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
-            this.user.setPsychometric_given(userObj.getPsychometric_given());
-            this.user.setStream_name(userObj.getStream_name());
-            this.user.setPhone_no(userObj.getPhone_no());
-            this.user.setIs_preparing(userObj.getIs_preparing());
-            this.user.setExams_set(userObj.getExams_set());
-            String u = JSON.std.asString(this.user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void showMyFbMessage(String msg) {
         if (msg != null && !msg.isEmpty()) {
@@ -5151,7 +4670,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *  If user login with any social site like facebook and stream and level has conflict
+     *  If mDeviceProfile login with any social site like facebook and stream and level has conflict
      *  it shows a dialog to choose stream and level.
      * @param tag Tag
      * @param URL Api Url according to login
@@ -5169,35 +4688,35 @@ public class MainActivity extends AppCompatActivity
             final String level_id = jsonObj.getString(getResourceString(R.string.USER_LEVEL));
             String streamName = jsonObj.getString(getResourceString(R.string.USER_STREAM_NAME));
             String levelName = jsonObj.getString(getResourceString(R.string.USER_LEVEL_NAME));
-            if (user.getStream().equalsIgnoreCase(stream_id))
+            if (mProfile.getPreferred_stream_id()== Integer.parseInt(stream_id))
                 streamRadioGroup.setVisibility(View.GONE);
 
             ((RadioButton) dialog.findViewById(R.id.firstStream)).setText(streamName);
-            ((RadioButton) dialog.findViewById(R.id.secondStream)).setText(user.getStream_name());
+            ((RadioButton) dialog.findViewById(R.id.secondStream)).setText(mProfile.getPreferred_stream_short_name());
 
             ((RadioButton) dialog.findViewById(R.id.firstLevel)).setText(levelName);
-            ((RadioButton) dialog.findViewById(R.id.secondLevel)).setText(user.getLevel_name());
+            ((RadioButton) dialog.findViewById(R.id.secondLevel)).setText(mProfile.getPreferred_level_name());
 
             // if button is clicked, close the custom dialog
-            dialog.findViewById(R.id.ok_button).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                    if (((RadioButton) dialog.findViewById(R.id.firstStream)).isChecked())
-                        params.put(getResourceString(R.string.USER_STREAM), stream_id);
-                    if (((RadioButton) dialog.findViewById(R.id.secondStream)).isChecked())
-                        params.put(getResourceString(R.string.USER_STREAM), user.getStream());
-                    if (((RadioButton) dialog.findViewById(R.id.firstLevel)).isChecked())
-                        params.put(getResourceString(R.string.USER_LEVEL), level_id);
-                    if (((RadioButton) dialog.findViewById(R.id.secondLevel)).isChecked())
-                        params.put(getResourceString(R.string.USER_LEVEL), user.getLevel());
-                    mMakeNetworkCall(tag, URL, params);
-                }
-
-
-            });
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.show();
+//            dialog.findViewById(R.id.ok_button).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    dialog.dismiss();
+//                    if (((RadioButton) dialog.findViewById(R.id.firstStream)).isChecked())
+//                        params.put(getResourceString(R.string.USER_STREAM), stream_id);
+//                    if (((RadioButton) dialog.findViewById(R.id.secondStream)).isChecked())
+//                        params.put(getResourceString(R.string.USER_STREAM), mProfile.getPreferred_stream_id());
+//                    if (((RadioButton) dialog.findViewById(R.id.firstLevel)).isChecked())
+//                        params.put(getResourceString(R.string.USER_LEVEL), level_id);
+//                    if (((RadioButton) dialog.findViewById(R.id.secondLevel)).isChecked())
+//                        params.put(getResourceString(R.string.USER_LEVEL), mDeviceProfile.getLevel());
+//                    mMakeNetworkCall(tag, URL, params);
+//                }
+//
+//
+//            });
+//            dialog.setCanceledOnTouchOutside(false);
+//            dialog.show();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -5241,9 +4760,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (MainActivity.user == null)
-            MainActivity.user = new User();
-        user.processProfileData(cursor, this);
+        if (this.mDeviceProfile == null)
+            this.mDeviceProfile = new DeviceProfile();
+        this.mDeviceProfile.processProfileData(cursor, this);
     }
 
     @Override
@@ -5252,151 +4771,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is used to handle response having exams list
-     * after user education detail is submitted to server.
+     * This method is used to load home screen after profile building is done.
      */
-    private void mOnUserEducationResponse(String response) {
-        User userObj = null;
-        try {
-            userObj = JSON.std.beanFrom(User.class, response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void mDisplayHomeFragment() {
 
-        if (userObj != null && user != null) {
-            try {
-                UserEducation education = JSON.std.beanFrom(UserEducation.class, response);
-                this.user.setSublevel(userObj.getSublevel());
-                this.user.setStream(userObj.getStream());
-                this.user.setIs_preparing(userObj.getIs_preparing());
-                this.user.setUser_education(education);
-                String u = JSON.std.asString(this.user);
-                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-            } catch (Exception e) {
-
-            }
-        }
-        this.mMakeNetworkCall(Constants.TAG_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/", null);
-
-        //Appsflyer events
-        Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.USER_CURRENT_SUBLEVEL), user.getSublevel());
-
-        //Events
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED), eventValue, this);
-
-        eventValue.clear();
-        eventValue.put(getResourceString(R.string.USER_IS_PREPARING), user.getIs_preparing());
-
-        //Events
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_IS_PREPARING), eventValue, this);
-
-    }
-
-    private void onUserEducationEdited(String response) {
-        try {
-            UserEducation userEducation = JSON.std.beanFrom(UserEducation.class, response);
-            MainActivity.user.setUser_education(userEducation);
-            String u = JSON.std.asString(MainActivity.user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-            if (this.user.getIs_preparing().equals("0")) {
-                onBackPressed();
-            } else {
-                onRequestForUserExamsUpdate();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * This method is used to handle response having exams list
-     * after user education detail is submitted to server.
-     *
-     * @param responseJson
-     */
-    private void mOnExamsLoaded(String responseJson, boolean addToBackStack) {
-        try {
-            List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
-            this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList), false), addToBackStack, ExamsFragment.class.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void mOnEditExamsLoaded(String responseJson, boolean addToBackStack) {
-        try {
-            List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
-            if(mExamList.size() <= 0){
-                Utils.DisplayToast(getApplicationContext(),"No Exams Found for your preferences");
-                return;
-            }
-            this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList), true), addToBackStack, ExamsFragment.class.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    @Override
-    public void onExamsEdited(HashMap<String, String> params) {
-       // this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/", params, 1);
-        this.mMakeNetworkCall(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST, Constants.BASE_URL + "profile/", params, Request.Method.POST);
-
-    }
-
-    @Override
-    public void onCancelExamSubmission() {
-        this.mMakeNetworkCall(Constants.TAG_LOAD_USER_PREFERENCES_N_BACK, Constants.BASE_URL + "preferences/", null);
-    }
-
-    private void onNotPreparingEducationResponse(String response) {
-        this.mDisplayFragment(NotPreparingFragment.newInstance(), true, NotPreparingFragment.class.toString());
-
-        try {
-            UserEducation education = JSON.std.beanFrom(UserEducation.class, response);
-            MainActivity.user.setIs_preparing("0");
-            MainActivity.user.setEducation_set(1);
-            MainActivity.user.setSublevel(education.getSublevel());
-            MainActivity.user.setUser_education(education);
-            MainActivity.user.setStream(education.getStream());
-            String u = JSON.std.asString(user);
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-        } catch (Exception e) {
-
-        }
-
-        //Appsflyer events
-        Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.USER_CURRENT_SUBLEVEL), user.getSublevel());
-
-        //Events
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED), eventValue, this);
-
-        eventValue.clear();
-        eventValue.put(getResourceString(R.string.USER_IS_PREPARING), user.getIs_preparing());
-
-        //Events
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_IS_PREPARING), eventValue, this);
-    }
-
-    /**
-     * This method is load user profile after
-     */
-    private void mLoadHomeScreen(String responseJson) {
-
-        if (responseJson != null && !responseJson.isEmpty()) {
-            try {
-                onUpdateUserExams(responseJson);
-            } catch (IOException e) {
-            }
-        }
-
-        mUserExamsList = MainActivity.user.getUser_exams();
-        if (mUserExamsList == null)
-            mUserExamsList = new ArrayList<>();
         mClearBackStack();
-
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
         if (fragment == null)
             this.mDisplayFragment(HomeFragment.newInstance(), false, HomeFragment.class.toString());
@@ -5422,7 +4801,7 @@ public class MainActivity extends AppCompatActivity
         if (params == null)
             params = new HashMap<>();
 
-       params.put("tag_uris[" + (params.size()) + "]", examDetailObj.getExam_tag());
+        params.put("tag_uris[" + (params.size()) + "]", examDetailObj.getExam_tag());
 
         this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/" + id + "/summary/", params);
     }
@@ -5478,19 +4857,16 @@ public class MainActivity extends AppCompatActivity
         this.startStepByStep();
     }
 
-    @Override
-    public void onTabPsychometricTest() {
-        this.startPsychometricTest();
-    }
+
 
     @Override
     public void onTabPsychometricReport(){
         try {
-            String results = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString("psychometric_report", null);
+            String results = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getString("psychometric_report", null);
             if(results != null) {
                 List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
                 mClearBackStack();
-                this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams), true), true, Constants.TAG_FRAGMENT_STREAMS);
+                this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams)), true, Constants.TAG_FRAGMENT_STREAMS);
             }
         } catch (Exception e){
             Utils.DisplayToast(getApplicationContext(),"Cannot load psychometric results.");
@@ -5503,19 +4879,16 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @Override
-    public void onHomePsychometricTest() {
-        this.startPsychometricTest();
-    }
+
 
     @Override
     public void onHomePsychometricReport(){
         try {
-            String results = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString("psychometric_report", null);
+            String results = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getString("psychometric_report", null);
             if(results != null) {
                 List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
                 mClearBackStack();
-                this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams), true), true, Constants.TAG_FRAGMENT_STREAMS);
+                this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams)), true, Constants.TAG_FRAGMENT_STREAMS);
             }
         } catch (Exception e){
             Utils.DisplayToast(getApplicationContext(),"Cannot load psychometric results.");
@@ -5524,7 +4897,7 @@ public class MainActivity extends AppCompatActivity
 
 //    private Map<String,String> getAllExamTags(){
 //        Map<String,String> params = new HashMap<>();
-//        List<ExamDetail> list = user.getUser_exams();
+//        List<ExamDetail> list = mDeviceProfile.getUser_exams();
 //        if(list !=  null && !list.isEmpty()) {
 //            for (ExamDetail ed : list) {
 //                params.put("tag_uris[" + (params.size()) + "]", ed.getExam_tag());
@@ -5534,19 +4907,14 @@ public class MainActivity extends AppCompatActivity
 //        return params;
 //    }
 
-    @Override
-    public void onPsychometricTest() {
-        this.startPsychometricTest();
-    }
 
-    private void startPsychometricTest()
+    @Override
+    public void onPsychometricTestSelected()
     {
         this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_QUESTIONS, Constants.BASE_URL + "psychometric/", null);
-
+        //Events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), PsychometricTestQuestion.class.getSimpleName());
-
-        //Events
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
@@ -5561,22 +4929,41 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void onEditPsychometricTestResponse(String response) {
+    @Override
+    public void onSubmitPsychometricTest(JSONObject params) {
+        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM, Constants.BASE_URL + "star-psychometric/", params, 1);
+    }
+
+    private void mDisplayStreamsSelection(String response) {
         try {
             Map<String, Object> map = JSON.std.mapFrom(response);
-            String val = JSON.std.asString(map.get("questions"));
-            this.psychometricQuestionsList = JSON.std.listOfFrom(PsychometricTestQuestion.class, val);
-            this.mDisplayFragment(PsychometricTestParentFragment.newEditableInstance(new ArrayList(this.psychometricQuestionsList)), true, PsychometricTestParentFragment.class.toString());
+            String results = JSON.std.asString(map.get("results"));
+            getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString("psychometric_report", results).apply();
+            List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
+            this.mClearBackStack();
+            this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams)), true, Constants.TAG_FRAGMENT_STREAMS);
+            mDisplayOtpVerificationFragment();
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
     @Override
+    public void onStreamSelected(int streamId) {
+        String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put(getResourceString(R.string.preferred_stream_id), ""+streamId);
+        params.put(getResourceString(R.string.USER_DEVICE_ID), deviceId);
+
+        this.requestForProfile(params);
+        this.mDisplayHomeFragment();
+
+    }
+
+    @Override
     public void onStepByStep() {
-//        mClearBackStack();
         this.startStepByStep();
-//        isFromNotification = true;
     }
 
     private void startStepByStep()
@@ -5662,28 +5049,15 @@ public class MainActivity extends AppCompatActivity
     public void onSkipSelectedInProfileBuilding() {
         this.mDisplayFragment(NotPreparingFragment.newInstance(), true, NotPreparingFragment.class.toString());
     }
+
+    /**
+     * This method is used to get exams list based on preferred level
+     * and preferred stream if preferred stream is not available then we send
+     * current stream and
+     */
     @Override
     public void onRequestForUserExams() {
         // request for yearly exam based on preferred level
-        StringBuffer  examUrl = new StringBuffer(Constants.BASE_URL);
-           examUrl.append("stream-yearly-exams/?preferred_level="+mProfile.getPreferred_level());
-
-        int userPreferredStreamId = mProfile.getPreferred_stream_id();
-        if(userPreferredStreamId > 0){
-            examUrl.append("&preferred_stream="+userPreferredStreamId);
-        }else{
-            examUrl.append("&current_stream="+mProfile.getCurrent_stream_id());
-        }
-
-        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, examUrl.toString(), null, Request.Method.GET);
-    }
-    @Override
-    public void onRequestForUserExamsUpdate() {
-      /*  if(mProfile != null &&  mProfile.getPreferred_level() ==  0){
-            this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL +"stream-yearly-exams/?stream_id="+mProfile.getPreferred_stream_id(),null, Request.Method.GET);
-        }else {
-            this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, Constants.BASE_URL + "yearly-exams/", null);
-        }*/
         StringBuffer  examUrl = new StringBuffer(Constants.BASE_URL);
         examUrl.append("stream-yearly-exams/?preferred_level="+mProfile.getPreferred_level());
 
@@ -5694,9 +5068,9 @@ public class MainActivity extends AppCompatActivity
             examUrl.append("&current_stream="+mProfile.getCurrent_stream_id());
         }
 
-        this.mMakeNetworkCall(Constants.TAG_EDIT_EXAMS_LIST, examUrl.toString(), null, Request.Method.GET);
-
+        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, examUrl.toString(), null, Request.Method.GET);
     }
+
 
     @Override
     public void onRequestForLevelStreams(int levelId, int levelType) {
@@ -5705,29 +5079,12 @@ public class MainActivity extends AppCompatActivity
 
 
     private void mOnUserExamsSubmitted(String responseJson) {
-       /* if (responseJson != null && !responseJson.isEmpty()) {
-            try {
-                onUpdateUserExams(responseJson);
-            } catch (IOException e) {
+        // parse mDeviceProfile response
+        this.mParseProfileResponse(responseJson);
 
-            }
-        }*/
-        try {
-            MainActivity.mProfile = JSON.std.beanFrom(Profile.class,responseJson);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // update mDeviceProfile exam on profile building fragment
         if(currentFragment instanceof ProfileBuildingFragment)
             ((ProfileBuildingFragment)currentFragment).onExamSubmittedSuccessfully();
-    }
-
-    /*@Override
-    public void onUserExamSelected(JSONObject examJson) {
-        this.mMakeJsonObjectNetworkCall(Constants.TAG_USER_EXAMS_SUBMISSION, Constants.BASE_URL + "yearly-exams/", examJson, Request.Method.POST);
-    }*/
-    @Override
-    public void onUserExamSelected(HashMap<String, String> params) {
-        this.mMakeNetworkCall(Constants.TAG_USER_EXAMS_SUBMISSION, Constants.BASE_URL + "profile/", params, Request.Method.POST);
     }
 
     @Override
@@ -5739,23 +5096,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnTakeMeToDashBoard() {
-//        this.mMakeNetworkCall(Constants.TAG_LOAD_USER_PREFERENCES, Constants.BASE_URL + "preferences/", null);
         this.mClearBackStack();
-        mLoadHomeScreen(null);
+        mDisplayHomeFragment();
     }
 
     @Override
     public void OnTakeMeToProfile() {
         mClearBackStack();
-        this.mMakeNetworkCall(Constants.TAG_LOAD_USER_PREFERENCES, Constants.BASE_URL + "preferences/", null);
-
-//        this.mClearBackStack();
-//        mLoadProfileFragment(MainActivity.mProfile, false);
-//        getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_HOME_LOADED), true).apply();
-//        if(currentFragment instanceof ProfileBuildingFragment)
-//            ((ProfileBuildingFragment)currentFragment).hideNavigationIcon();
-//        mShowAppBarLayout();
-//        isFromNotification = true;
+        mDisplayProfileFragment(MainActivity.mProfile, false);
+        getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_HOME_LOADED), true).apply();
+        if(currentFragment instanceof ProfileBuildingFragment)
+            ((ProfileBuildingFragment)currentFragment).hideNavigationIcon();
+        mShowAppBarLayout();
+        isFromNotification = true;
 
     }
 
@@ -5767,22 +5120,22 @@ public class MainActivity extends AppCompatActivity
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
 
-            if(currentFragment instanceof ProfileBuildingFragment)
-                ((ProfileBuildingFragment)currentFragment).updateExamsList((ArrayList<Exam>) mExamList);
+            if(currentFragment instanceof ProfileBuildingFragment) {
+                ((ProfileBuildingFragment) currentFragment).updateExamsList((ArrayList<Exam>) mExamList);
+
+            }else{
+                if(mExamList.size() <= 0){
+                    Utils.DisplayToast(getApplicationContext(),"No Exams Found for your preferences");
+                    return;
+                }
+                this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)), true, ExamsFragment.class.toString());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
-    @Override
-    public void onSubmitPsychometricTest(JSONObject params,boolean fromEditProfile) {
-        if(fromEditProfile){
-            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM, Constants.BASE_URL + "star-psychometric/", params, 1);
-        }else {
-            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM, Constants.BASE_URL + "star-psychometric/", params, 1);
-        }
-    }
 
     public void onSubjectSelected(Subjects subject, int position) {
         this.mDisplaySubjectSyllabus(subject);
@@ -5930,8 +5283,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onNextBuzzList() {
-    if(next!=null)
-        this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES+"#next", next, null);
+        if(next!=null)
+            this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES+"#next", next, null);
     }
 
     @Override
@@ -5988,24 +5341,24 @@ public class MainActivity extends AppCompatActivity
         String email = mProfile.getEmail();
         String phone = mProfile.getPhone_no();
 
-        // get user name for apply course
+        // get mDeviceProfile name for apply course
         if (name == null || name.isEmpty() || name.equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER)))
         {
-            name = getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_name), "");
+            name = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_name), "");
         }
-        // get user email for apply course
+        // get mDeviceProfile email for apply course
         if (email == null || email.isEmpty() || email.contains("@anonymouscollegedekho.com")){
-            email = getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_email),"");
+            email = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_email),"");
 
             if(email.isEmpty())
                 email = Utils.getDeviceEmail(getApplicationContext());
         }
-        // get user email for apply course
+        // get mDeviceProfile email for apply course
         if (phone == null || phone.isEmpty()){
-            if(user != null && user.getPrimaryPhone() != null && !user.getPrimaryPhone().isEmpty())
-                phone = user.getPrimaryPhone();
+            if(mDeviceProfile != null && mDeviceProfile.getPrimaryPhone() != null && !mDeviceProfile.getPrimaryPhone().isEmpty())
+                phone = mDeviceProfile.getPrimaryPhone();
             else
-            phone = getSharedPreferences(Constants.PREFS, MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_phone),"");
+                phone = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_phone),"");
         }
 
         if ( name.isEmpty() || phone.length() < 10 || email.isEmpty()) {
@@ -6025,8 +5378,8 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onClick(View v) {
                     try {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -6054,9 +5407,9 @@ public class MainActivity extends AppCompatActivity
                         return;
                     }
 
-                    getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_name),name).apply();
-                    getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_email),email).apply();
-                    getSharedPreferences(Constants.PREFS, MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_phone),phone).apply();
+                    getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_name),name).apply();
+                    getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_email),email).apply();
+                    getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(mResources.getString(R.string.user_apply_course_phone),phone).apply();
                     apply.dismiss();
                     params.put(getResourceString(R.string.USER_NAME), name);
                     params.put(getResourceString(R.string.USER_EMAIL), email);
@@ -6065,7 +5418,7 @@ public class MainActivity extends AppCompatActivity
                     mMakeNetworkCall( TAG, Constants.BASE_URL + "lms/", params, Request.Method.POST);
 
 
-                    // update user profile  also with apply form data
+                    // update mDeviceProfile profile  also with apply form data
                     final HashMap<String, String> profileParams = new HashMap<>();
 
                     if(mProfile.getName().equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER)))
@@ -6077,7 +5430,7 @@ public class MainActivity extends AppCompatActivity
                     if(mProfile.getPhone_no() == null ||  mProfile.getPhone_no().length() < 10)
                         profileParams.put(getResourceString(R.string.USER_PHONE), phone);
 
-                      requestForProfile(profileParams, Request.Method.POST);
+                    requestForProfile(profileParams);
 
                     // remove top card from CD reco and shortlist after  successfully  applying for the institute
                     if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteFragment) {
@@ -6123,7 +5476,7 @@ public class MainActivity extends AppCompatActivity
 
             }
         }
- }
+    }
     @Override
     public void requestForCoursesUpdate(){
         if(mInstitute != null)
@@ -6232,12 +5585,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void requestForProfile(HashMap<String, String> params, int method) {
+
+    }
+
+
+    @Override
     public void onOtpReceived(String mobileNumber, String otp) {
         HashMap<String, String> params = new HashMap<>();
         params.put(getResourceString(R.string.USER_PHONE), mobileNumber);
         params.put(getResourceString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_PHONE_NUMBER);
         params.put(Constants.OTP_CODE, otp);
-        this.mMakeNetworkCall(Constants.TAG_PHONE_NUMBER_LOGIN, Constants.BASE_URL + "auth/common-login/", params);
+        this.onUserCommonLogin(params, Constants.TAG_PHONE_NUMBER_LOGIN);
     }
 
     @Override
@@ -6247,119 +5606,39 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(Constants.TAG_RESEND_OTP, Constants.BASE_URL + "send-otp/", params);
     }
 
-    private void onOTPVerifiedResponse(String response) {
-        if(currentFragment instanceof LoginFragment ||
-                currentFragment instanceof PostAnonymousLoginFragment){
-            try {
-                Map<String, Object> responseMap = JSON.std.mapFrom(response);
-                if(responseMap.containsKey("verified")){
-                    if(currentFragment instanceof LoginFragment){
-                        ((LoginFragment) currentFragment).onInvalidOtp();
-                    }else if (currentFragment instanceof PostAnonymousLoginFragment){
-                        ((PostAnonymousLoginFragment) currentFragment).onInvalidOtp();
-                    }
-                }else{
-                   // mUpdateUserPreferences(response);
-                    //Remove the BroadcastReciever for SMS
-                    ComponentName component = new ComponentName(this, OTPReceiver.class);
 
-                    int status = this.getPackageManager().getComponentEnabledSetting(component);
-                    if(status == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
-                        Log.d("MainActivity","receiver is enabled");
-                        //Disable
-                        this.getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_DISABLED , PackageManager.DONT_KILL_APP);
-                    }
-
-                    // TODO :: delete this code flow when new common logi api is ready
-
-                    try {
-                        User tempUser = MainActivity.user;
-                        MainActivity.user = JSON.std.beanFrom(User.class, response);
-                        this.mNetworkUtils.setToken(user.getToken());
-
-                        if (tempUser != null){
-                            MainActivity.user.setPrimaryEmail(tempUser.getPrimaryEmail());
-                            MainActivity.user.setPrimaryPhone(tempUser.getPrimaryPhone());
-                            MainActivity.user.profileData = tempUser.profileData;
-                        }
-                        if(mProfile == null) {
-                            mProfile = new Profile();
-                            mProfile.setName(user.getName());
-                            mProfile.setEmail(user.getEmail());
-                            mProfile.setPhone_no(user.getPhone_no());
-                            mProfile.setImage(user.getImage());
-                            mProfile.setExams_set(user.getExams_set());
-                            try {
-                                mProfile.setCurrent_level_id((Integer.parseInt(user.getLevel())));
-                                mProfile.setCurrent_sublevel_id(Integer.parseInt(user.getSublevel()));
-                                mProfile.setCurrent_stream_id(Integer.parseInt(user.getStream()));
-                            }catch(Exception e){
-
-                            }
-                        }
-
-                        setUserIdWithAllEvents();
-                        String u = JSON.std.asString(this.user);
-                        if(!IS_USER_CREATED){
-                            //Events
-                            Map<String, Object> eventValue = new HashMap<>();
-                            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
-                            eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
-                        }
-                        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).apply();
-                        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-                        IS_USER_CREATED = true;
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    mMakeNetworkCall(Constants.TEMPORARY_TAG_PROFILE_BUILD,Constants.BASE_URL+"profile/", null,  Request.Method.POST);
-
-                    HashMap<String, Object> eventValue = new HashMap<>();
-                    eventValue.put(Constants.TAG_USER_LOGIN, Constants.TAG_PHONE_NUMBER_LOGIN);
-                    AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
     private void onOTPVerified(String response) {
 
-            try {
-                JSONObject responseObject = new JSONObject(response);
-                if (responseObject.optBoolean("verified")) {
-                    displayMessage(R.string.otp_verified);
-                    MainActivity.user.setIs_otp_verified(1);
-                    MainActivity.mProfile.setIs_verified(1);
-                    String u = JSON.std.asString(MainActivity.user);
-                    this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
+        try {
+            JSONObject responseObject = new JSONObject(response);
+            if (responseObject.optBoolean("verified")) {
+                displayMessage(R.string.otp_verified);
+                MainActivity.mProfile.setIs_verified(1);
+                String u = JSON.std.asString(MainActivity.mProfile);
+                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
 
+                Map<String, Object> eventValue = new HashMap<>();
+                eventValue.put(getResourceString(R.string.ACTION_OTP_VERIFIED), "Success");
+
+                //Events
+                AnalyticsUtils.SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
+
+                if(currentFragment instanceof  OTPVerificationFragment)
+                    onBackPressed();
+            } else {
+                if (currentFragment != null && currentFragment instanceof OTPVerificationFragment) {
                     Map<String, Object> eventValue = new HashMap<>();
-                    eventValue.put(getResourceString(R.string.ACTION_OTP_VERIFIED), "Success");
+                    eventValue.put(getResourceString(R.string.ACTION_OTP_VERIFIED), "Failed");
 
                     //Events
                     AnalyticsUtils.SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
 
-                    if(currentFragment instanceof  OTPVerificationFragment)
-                    onBackPressed();
-                } else {
-                    if (currentFragment != null && currentFragment instanceof OTPVerificationFragment) {
-                        Map<String, Object> eventValue = new HashMap<>();
-                        eventValue.put(getResourceString(R.string.ACTION_OTP_VERIFIED), "Failed");
-
-                        //Events
-                        AnalyticsUtils.SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
-
-                        ((OTPVerificationFragment) currentFragment).onInvalidOtp();
-                    }
+                    ((OTPVerificationFragment) currentFragment).onInvalidOtp();
                 }
-            } catch (Exception e) {
-
             }
+        } catch (Exception e) {
+
+        }
     }
 
     private void onMobileNumberSubmitted() {
@@ -6438,11 +5717,11 @@ public class MainActivity extends AppCompatActivity
 
     private CursorLoader getProfileLoader() {
         return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
+                // Retrieve data rows for the device mDeviceProfile's 'profile' contact.
                 Uri.withAppendedPath(
                         ContactsContract.Profile.CONTENT_URI,
                         ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
-                User.ProfileQuery.PROJECTION,
+                DeviceProfile.ProfileQuery.PROJECTION,
 
                 // Select only email addresses.
                 ContactsContract.Contacts.Data.MIMETYPE + " = ? OR " + ContactsContract.Contacts.Data.MIMETYPE + " = ?",
@@ -6450,43 +5729,15 @@ public class MainActivity extends AppCompatActivity
                         ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE},
 
                 // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
+                // a primary email address if the mDeviceProfile hasn't specified one.
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
 
 
-    @Override
-    public void onNameUpdated(HashMap params, String msg) {
-        this.mMakeNetworkCall(Constants.TAG_NAME_UPDATED + "#" + msg, MainActivity.user.getPreference_uri(), params, Request.Method.PUT);
-    }
 
     private void onNameUpdatedResponse(String response, String msg) {
-        try {
-            User tempuser = JSON.std.beanFrom(User.class, response);
-
-            if (tempuser != null) {
-                user.setPrimaryEmail(tempuser.getPrimaryEmail());
-                user.setPrimaryPhone(tempuser.getPrimaryPhone());
-                String userName = tempuser.getName();
-                if (userName != null && !userName.trim().matches("") && !userName.equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER))) {
-                    user.setName(userName);
-                    user.profileData[0] = userName;
-                }
-                user.setResource_uri(tempuser.getResource_uri());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        String u = null;
-        try {
-            u = JSON.std.asString(user);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-
+        mParseProfileResponse(response);
         if (currentFragment instanceof MyFutureBuddiesFragment) {
             ((MyFutureBuddiesFragment) currentFragment).sendChatRequest(msg);
         }
@@ -6536,32 +5787,12 @@ public class MainActivity extends AppCompatActivity
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-//            if(postion == 1){
-//                mDisplayFragment(CollegeListFragment.newInstance(new ArrayList<>(mUserExamsList)), true, CollegeListFragment.class.toString());
-//            }
-//            if (postion == 3) {
-//                MainActivity.this.onHomeItemSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL + "personalize/forums", null);
-//                if(currentBottomItem != null){
-//                    currentBottomItem.animate().translationYBy(10f).setDuration(100).start();
-//                }
-//                currentBottomItem=null;
-//                return;
-//            }
-//            if (postion == 4) {
-//                MainActivity.this.mMakeNetworkCall(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", null);
-//                if(currentBottomItem != null){
-//                    currentBottomItem.animate().translationYBy(10f).setDuration(0).start();
-//                }
-//                currentBottomItem=null;
-//                return;
-//            }
-            mUpdateTabMenuItem(postion, 0);
+            mUpdateTabMenuItem(postion);
             onTabMenuSelected(postion);
         }
     };
 
-    public void mUpdateTabMenuItem(int tabPosition, int duration) {
+    public void mUpdateTabMenuItem(int tabPosition) {
         mCollegeTab.setSelected(false);
         mConnectTab.setSelected(false);
         mPrepareTab.setSelected(false);
@@ -6615,6 +5846,9 @@ public class MainActivity extends AppCompatActivity
             mHomeTabContainer.setVisibility(View.GONE);
             currentBottomItem = null;
         }
+        if(tabPosition > 0){
+            mNavigationView.getMenu().getItem(tabPosition-1).setChecked(true);
+        }
         translateAnimation(viewToMoveUp,viewToMoveDown);
     }
 
@@ -6622,6 +5856,7 @@ public class MainActivity extends AppCompatActivity
     public void translateAnimation(View viewToMoveUp, View viewToMoveDown) {
         Animation translateUp= AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_up);
         Animation translateDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_down);
+
 
         if(viewToMoveDown != viewToMoveUp) {
             if (viewToMoveUp != null) {
@@ -6638,36 +5873,29 @@ public class MainActivity extends AppCompatActivity
         //TODO::  remove this when future buddies tab are present
         if(mProfile != null) {
             ArrayList<ProfileExam> userExamList = mProfile.getYearly_exams();
-            //if (mUserExamsList == null) mUserExamsList = new ArrayList<>();
 
-            if (tabPosition == 3 && userExamList.size() < 1) {
-//            mDisplayCurrentEducationFragment(true);
+            if (tabPosition == 3 && userExamList != null &&
+                    userExamList.size() <= 0) {
                 fromTabFragment = true;
-                onRequestForUserExamsUpdate();
+                onRequestForUserExams();
                 mHomeTabContainer.setVisibility(View.GONE);
                 return;
             }
         }
 
-//        if (this.mUserExamsList.size() <= 0)
-//            mPrepareTab.setVisibility(View.GONE);
-//        else
-//            mPrepareTab.setVisibility(View.VISIBLE);
+        if (currentFragment instanceof TabFragment) {
 
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
+            ((TabFragment) currentFragment).updateTabFragment(tabPosition);
+        } else{
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
+            if (fragment == null) {
+                ArrayList<ProfileExam> list = new ArrayList<>();
+                if(mProfile != null && mProfile.getYearly_exams() != null) {
+                    list.addAll(mProfile.getYearly_exams());
+                }
 
-        if (fragment == null) {
-
-            ArrayList<ProfileExam> list = new ArrayList<>();
-            if(mProfile != null && mProfile.getYearly_exams() != null) {
-             list.addAll(mProfile.getYearly_exams());
-            }
-            this.mDisplayFragment(TabFragment.newInstance(tabPosition, list), true, TabFragment.class.getSimpleName());
-
-        }else {
-            if (currentFragment instanceof TabFragment) {
-                ((TabFragment) currentFragment).updateTabFragment(tabPosition);
-            } else{
+                this.mDisplayFragment(TabFragment.newInstance(tabPosition, list), true, TabFragment.class.getSimpleName());
+            }else {
                 this.mDisplayFragment(fragment, false, TabFragment.class.getSimpleName());
             }
 
@@ -6780,7 +6008,7 @@ public class MainActivity extends AppCompatActivity
 
             JSONObject qns = new JSONObject(response);
 
-            qnaQuestion.setUser(qns.getString("user"));
+            qnaQuestion.setUser(qns.getString("mDeviceProfile"));
             qnaQuestion.setView_count(qns.getInt("view_count"));
             qnaQuestion.setTitle(qns.getString("title"));
             qnaQuestion.setDesc(qns.getString("desc"));
@@ -6799,7 +6027,7 @@ public class MainActivity extends AppCompatActivity
 
                 QnAAnswers qnaAnswer = new QnAAnswers();
 
-                qnaAnswer.setUser(ans.getString("user"));
+                qnaAnswer.setUser(ans.getString("mDeviceProfile"));
                 qnaAnswer.setDownvotes(ans.getInt("downvotes"));
                 qnaAnswer.setUpvotes(ans.getInt("upvotes"));
                 qnaAnswer.setCurrent_user_vote_type(ans.getInt("current_user_vote_type"));
@@ -6921,12 +6149,12 @@ public class MainActivity extends AppCompatActivity
 
 
     private void startSearchProgress() {
-        searchProgress.setVisibility(View.VISIBLE);
+        mSearchProgress.setVisibility(View.VISIBLE);
         searchProgressRunnable = new Runnable() {
             @Override
             public void run() {
-                if(searchProgress.getProgress()<100) {
-                    searchProgress.setProgress(searchProgress.getProgress() + 10);
+                if(mSearchProgress.getProgress()<100) {
+                    mSearchProgress.setProgress(mSearchProgress.getProgress() + 10);
                     searchProgressHandler.postDelayed(searchProgressRunnable, 100);
                 }else {
                     stopSearchProgress();
@@ -6938,9 +6166,9 @@ public class MainActivity extends AppCompatActivity
 
     private void stopSearchProgress(){
         if (searchProgressRunnable != null) {
-            searchProgress.setProgress(0);
+            mSearchProgress.setProgress(0);
             searchProgressHandler.removeCallbacks(searchProgressRunnable);
-            searchProgress.setVisibility(View.GONE);
+            mSearchProgress.setVisibility(View.GONE);
         }
     }
 
@@ -7153,9 +6381,9 @@ public class MainActivity extends AppCompatActivity
                                 if (menu != null) {
                                     menu.setGroupVisible(R.id.search_menu_group, true);
                                 }
-                                searchView.onActionViewExpanded();
-                                searchView.setQuery(searchString, false);
-                                searchView.clearFocus();
+                                mSearchView.onActionViewExpanded();
+                                mSearchView.setQuery(searchString, false);
+                                mSearchView.clearFocus();
                             }
                         }
                         else if(link.lastIndexOf("search=")!=-1){
@@ -7172,9 +6400,9 @@ public class MainActivity extends AppCompatActivity
                                 if (menu != null) {
                                     menu.setGroupVisible(R.id.search_menu_group, true);
                                 }
-                                searchView.onActionViewExpanded();
-                                searchView.setQuery(searchString, false);
-                                searchView.clearFocus();
+                                mSearchView.onActionViewExpanded();
+                                mSearchView.setQuery(searchString, false);
+                                mSearchView.clearFocus();
                             }
                         }
                         else if(link.lastIndexOf("/colleges/")!=-1){

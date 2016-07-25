@@ -88,7 +88,7 @@ public class GCMDialogActivity extends AppCompatActivity implements View.OnClick
         layoutInflater = getLayoutInflater();
         txtQuestionText = (TextView) findViewById(R.id.gcm_question);
 
-        sharedPreferences = getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
         userResponseBundle = new Bundle();
         snackbar = Snackbar.make(findViewById(R.id.gcm_dialog_container),
                 "You are not connected to Internet", Snackbar.LENGTH_SHORT);

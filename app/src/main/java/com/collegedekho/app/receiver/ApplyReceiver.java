@@ -1,4 +1,4 @@
-package com.collegedekho.app.listener;
+package com.collegedekho.app.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.collegedekho.app.R;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.service.ApplyService;
 
@@ -25,7 +26,7 @@ public class ApplyReceiver extends BroadcastReceiver {
 
         if (activeNetwork != null && activeNetwork.isAvailable())
         {
-            SharedPreferences preferences = context.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
+            SharedPreferences preferences = context.getSharedPreferences(context.getString(R.string.PREFS), Context.MODE_PRIVATE);
             if(preferences.getInt(Constants.KEY_APPLY_STATUS,Constants.APPLY_COMPLETE)==Constants.APPLY_PENDING)
             {
                 Intent in = new Intent(context, ApplyService.class);

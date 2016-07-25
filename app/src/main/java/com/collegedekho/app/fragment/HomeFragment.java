@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +50,7 @@ public class HomeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        String psychometricResults = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getString("psychometric_report", null);
+        String psychometricResults = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getString("psychometric_report", null);
 
         if (MainActivity.mProfile.getPsychometric_given() == 1 && psychometricResults != null) {
             mRootView.findViewById(R.id.btn_home_psychometric_test).setVisibility(View.GONE);
@@ -62,7 +63,7 @@ public class HomeFragment extends BaseFragment {
 //        if (MainActivity.mProfile.getStep_by_step_given() == 1)
 //            mRootView.findViewById(R.id.btn_home_step_by_step).setVisibility(View.GONE);
 
-        this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Home Tute", false);
+        this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("Home Tute", false);
         if(!IS_TUTE_COMPLETED) {
             mRootView.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.VISIBLE);
@@ -105,18 +106,25 @@ public class HomeFragment extends BaseFragment {
         try {
             getActivity().invalidateOptionsMenu();
         } catch (Exception e) {
-
+           e.printStackTrace();
         }
+
         Constants.READY_TO_CLOSE = false;
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
-            mainActivity.currentFragment = this;
-            mainActivity.mUpdateTabMenuItem(-1, 0);
-        }
 
-        // update user info
+            // this will change back arrow to hamburger icon on toolbar
+            if(mainActivity.getSupportActionBar() != null && mainActivity.mDrawerToggle != null){
+                mainActivity.mDrawerToggle.setDrawerIndicatorEnabled(true);
+            }
+            mainActivity.currentFragment = this;
+            mainActivity.mUpdateTabMenuItem(-1);
+        }
+        // update mDeviceProfile info
         updateUserInfo();
     }
+
+
 
 
     public void updateUserInfo(){
@@ -134,7 +142,7 @@ public class HomeFragment extends BaseFragment {
         Profile profile = MainActivity.mProfile;
         String name = profile.getName();
         if (name == null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
-            mProfileName.setText("Name : Anonymous User");
+            mProfileName.setText("Name : Anonymous DeviceProfile");
         } else {
             String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
             mProfileName.setText("Name : "+userName);
@@ -198,7 +206,7 @@ public class HomeFragment extends BaseFragment {
                     getView().findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
                     getView().findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
                 }
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean("Home Tute", true).apply();
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean("Home Tute", true).apply();
                 getActivity().invalidateOptionsMenu();
                 break;
             case R.id.profile_image:
@@ -211,7 +219,7 @@ public class HomeFragment extends BaseFragment {
                     mListener.requestForProfileFragment();
                 break;
             case R.id.btn_home_psychometric_test:
-                mListener.onHomePsychometricTest();
+                mListener.onPsychometricTestSelected();
                 break;
             case R.id.btn_home_psychometric_report:
                 mListener.onHomePsychometricReport();
@@ -238,7 +246,7 @@ public class HomeFragment extends BaseFragment {
         void onHomeItemSelected(String requestType, String url, String examTag);
         void onHomeStepByStep();
         void requestForProfileFragment();
-        void onHomePsychometricTest();
+        void onPsychometricTestSelected();
         void onHomePsychometricReport();
     }
 

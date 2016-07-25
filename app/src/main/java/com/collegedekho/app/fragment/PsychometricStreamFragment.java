@@ -29,39 +29,26 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
     private ArrayList<Stream> streams;
 
     private OnStreamInteractionListener mListener;
-    private static boolean isStreamUpdate;
-    private boolean isEditMode;
     private SpiderWebChart spiderwebchart;
+
     public PsychometricStreamFragment() {
         // Required empty public constructor
     }
 
-    public static PsychometricStreamFragment newInstance(ArrayList<Stream> streams , boolean isForUpdate) {
+    public static PsychometricStreamFragment newInstance(ArrayList<Stream> streams ) {
         PsychometricStreamFragment streamFragment = new PsychometricStreamFragment();
         Bundle b = new Bundle();
         b.putParcelableArrayList(ARG_STREAMS, streams);
-        b.putBoolean(ARG_STREAM_UPDATE, isForUpdate);
         streamFragment.setArguments(b);
         return streamFragment;
     }
 
-    public static PsychometricStreamFragment newEditableInstance(ArrayList<Stream> streams , boolean isForUpdate) {
-        PsychometricStreamFragment streamFragment = new PsychometricStreamFragment();
-        Bundle b = new Bundle();
-        b.putParcelableArrayList(ARG_STREAMS, streams);
-        b.putBoolean(ARG_STREAM_UPDATE, isForUpdate);
-        b.putBoolean("is_edit_mode",true);
-        streamFragment.setArguments(b);
-        return streamFragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             streams = getArguments().getParcelableArrayList(ARG_STREAMS);
-            isStreamUpdate = getArguments().getBoolean(ARG_STREAM_UPDATE);
-            isEditMode=getArguments().getBoolean("is_edit_mode");
         }
     }
 
@@ -73,7 +60,7 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
         grid.setAdapter(new StreamAdapter(getActivity(), new ArrayList(streams.subList(0,2))));
         grid.setOnItemClickListener(this);
 
-        boolean isHomeLoaded = getActivity().getSharedPreferences(Constants.PREFS,Context.MODE_PRIVATE)
+        boolean isHomeLoaded = getActivity().getSharedPreferences(getString(R.string.PREFS),Context.MODE_PRIVATE)
                 .getBoolean(getString(R.string.USER_HOME_LOADED), false);
         if(isHomeLoaded){
             rootView.findViewById(R.id.user_education_top_layout).setVisibility(View.GONE);
@@ -91,14 +78,21 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
         initSpiderWebChart();
     }
 
-    public void onStreamSelected(String uri, String name) {
-        if (mListener != null) {
-            if (!isEditMode) {
-                mListener.onStreamSelected(uri, name);
-            }else {
-                mListener.onEditedStreamSelected(uri,name);
-            }
+    public void onStreamSelected(Stream streamObj) {
+        if (mListener == null || streamObj == null)
+            return;
+        String resourceUri = streamObj.getResourceUri();
+        String resourceUriTags[] = resourceUri.split("/");
+        int streamId = -1;
+        try {
+            streamId = Integer.parseInt(resourceUriTags[resourceUriTags.length-1]);
+        }catch (Exception e){
+            e.printStackTrace();
         }
+        if(streamId == -1)
+            return;
+        MainActivity.mProfile.setPsychometric_given(1);
+        mListener.onStreamSelected(streamId);
     }
 
     @Override
@@ -130,8 +124,7 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
             getView().findViewById(R.id.user_education_top_layout).setVisibility(View.GONE);
         }
 
-        Stream streamObj =  streams.get(position);
-        onStreamSelected(streamObj.getResourceUri(),streamObj.getName());
+        onStreamSelected( streams.get(position));
     }
 
     @Override
@@ -144,11 +137,6 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
 
     }
 
-
-    public interface OnStreamInteractionListener {
-        void onStreamSelected(String stream, String streamName);
-        void onEditedStreamSelected(String stream, String streamName);
-    }
 
     @Override
     public void onResume() {
@@ -164,7 +152,6 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(ARG_STREAMS, streams);
-        outState.putBoolean(ARG_STREAM_UPDATE, this.isStreamUpdate);
     }
     private void initSpiderWebChart() {
 //        spiderwebchart.setDisplayBorder(false);
@@ -178,5 +165,11 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
         spiderwebchart.setLatitudeNum(data1.size());
         spiderwebchart.setLongitudeNum(data1.size());
         spiderwebchart.setData(data);
+    }
+
+
+
+    public interface OnStreamInteractionListener {
+        void onStreamSelected(int streamId);
     }
 }

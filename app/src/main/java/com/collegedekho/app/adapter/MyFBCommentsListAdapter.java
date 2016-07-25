@@ -123,7 +123,7 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         //set comment
         qnaAnswerHolder.commentText.setText(myFBComment.getComment());
 
-        if ((myFBComment.getToken()).equals(MainActivity.user.getToken()))
+        if ((myFBComment.getToken()).equals(MainActivity.mProfile.getToken()))
         {
 
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

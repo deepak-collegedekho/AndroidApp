@@ -171,7 +171,7 @@ public final class VideosFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RECOVERY_DIALOG_REQUEST) {
-            // Recreate the activity if user performed a recovery action
+            // Recreate the activity if mDeviceProfile performed a recovery action
 //      recreate();
         }
     }

@@ -33,7 +33,6 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
     private int numPages = 1;
     private ArrayList<PsychometricTestQuestion> mQuestionsList;
     private OnPsychometricTestSubmitListener mListener;
-    private boolean isEditMode;
     int preState = -1;
     View appBar;
 
@@ -46,15 +45,6 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
         return fragment;
     }
 
-    public static PsychometricTestParentFragment newEditableInstance(ArrayList<PsychometricTestQuestion> questionsList) {
-
-        Bundle args = new Bundle();
-        args.putParcelableArrayList("questions_list", questionsList);
-        args.putBoolean("is_edit_mode",true);
-        PsychometricTestParentFragment fragment = new PsychometricTestParentFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,7 +52,6 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
         Bundle bundle = getArguments();
         if (bundle != null) {
             mQuestionsList = bundle.getParcelableArrayList("questions_list");
-            isEditMode = bundle.getBoolean("is_edit_mode");
         }
         appBar=getActivity().findViewById(R.id.app_bar_layout);
         if(appBar!=null) {
@@ -139,13 +128,12 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
     @Override
     public void onResume() {
         super.onResume();
-
         MainActivity mainActivity = (MainActivity) getActivity();
-
         if (mainActivity != null)
             mainActivity.currentFragment = this;
-
     }
+
+
     @Override
     public void gotoNext() {
         if (mPager.getCurrentItem() != (numPages-1)) {
@@ -166,15 +154,10 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
         try {
             mapArrayList.add(questionResponse);
             object.putOpt("questions",new JSONArray(mapArrayList));
-            mListener.onSubmitPsychometricTest(object, isEditMode);
+            mListener.onSubmitPsychometricTest(object);
         }catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-    public interface OnPsychometricTestSubmitListener {
-        void onSubmitPsychometricTest(JSONObject object,boolean isFromEditProfile);
-
     }
 
     @Override
@@ -195,4 +178,11 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
                 break;
         }
     }
+
+
+    public interface OnPsychometricTestSubmitListener {
+        void onSubmitPsychometricTest(JSONObject object);
+
+    }
+
 }

@@ -137,7 +137,7 @@ public class QnAQuestionDetailFragment extends BaseFragment{
                 AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
                 alert.setTitle("Enter your answer");
 
-                // Set an EditText view to get user input
+                // Set an EditText view to get mDeviceProfile input
                 final EditText input = (EditText) LayoutInflater.from(getActivity()).inflate(R.layout.layout_qna_answer, null);
                 alert.setView(input);
 

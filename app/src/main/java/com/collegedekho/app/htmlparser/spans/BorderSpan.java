@@ -11,7 +11,7 @@ import com.collegedekho.app.htmlparser.style.StyleValue;
 
 /**
  * Created with IntelliJ IDEA.
- * User: alex
+ * DeviceProfile: alex
  * Date: 6/23/13
  * Time: 3:35 PM
  * To change this template use File | Settings | File Templates.

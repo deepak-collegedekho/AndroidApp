@@ -176,7 +176,7 @@ public class HtmlSpanner {
 
     /**
      * Switch to specify if the colours from CSS
-     * should override user-specified colours.
+     * should override mDeviceProfile-specified colours.
      *
      * @param value
      */

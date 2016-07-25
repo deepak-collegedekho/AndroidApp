@@ -113,7 +113,7 @@ public class WishlistFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_wishlist, container, false);
 
-        this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
+        this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
         if(!IS_TUTE_COMPLETED) {
             rootView.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.VISIBLE);
@@ -162,7 +162,7 @@ public class WishlistFragment extends BaseFragment {
                     getView().findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
                     getView().findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
                 }
-                getActivity().getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE).edit().putBoolean("Wishlist tute", true).apply();
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean("Wishlist tute", true).apply();
                 getActivity().invalidateOptionsMenu();
                 break;
         }

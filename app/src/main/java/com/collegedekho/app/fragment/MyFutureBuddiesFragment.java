@@ -20,7 +20,6 @@ import com.collegedekho.app.adapter.MyFBCommentsListAdapter;
 import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.Profile;
-import com.collegedekho.app.entities.User;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
@@ -94,18 +93,10 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                     mListener.displayMessage(R.string.ENTER_YOUR_MESSAGE);
                 else {
                     Profile profile = MainActivity.mProfile;
-                    if (profile == null || profile.getName() == null || profile.getName().isEmpty() || profile.getName().equalsIgnoreCase("Anonymous user")) {
+                    if (profile == null || profile.getName() == null || profile.getName().isEmpty() || profile.getName().equalsIgnoreCase(getString(R.string.ANONYMOUS_USER))) {
 
                         mChatText.setText("");
-                         // get name from my profile me
-                        if(profile.getName() != null){
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), profile.getName());
-                            mListener.onNameUpdated(hashMap, value.trim());
-                            return;
-                        }
-
-                       // show dialog for name if user name is not present
+                        // show dialog for name if mDeviceProfile name is not present
                         final Dialog dialog = new Dialog(getActivity());
                         dialog.setContentView(R.layout.name_dailog);
                         dialog.setCanceledOnTouchOutside(true);
@@ -170,7 +161,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         MyFutureBuddyComment fbComment = new MyFutureBuddyComment();
 
         fbComment.setComment(value);
-        fbComment.setToken(MainActivity.user.getToken());
+        fbComment.setToken(MainActivity.mProfile.getToken());
         fbComment.setIndex(this.mMyFBCommentsSet.size());
         fbComment.setFbIndex(this.mMyFutureBuddies.getIndex());
         fbComment.setCommentSent(false);

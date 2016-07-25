@@ -57,8 +57,7 @@ public class NetworkUtils {
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
-        if (activeNetwork != null
-                && activeNetwork.isAvailable()
+        if (activeNetwork != null && activeNetwork.isAvailable()
                 && activeNetwork.isConnected()) {
 
             if(activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
@@ -66,6 +65,15 @@ public class NetworkUtils {
 
             if(activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
                 return Constants.TYPE_MOBILE;
+
+            if(activeNetwork.getType() == ConnectivityManager.TYPE_VPN)
+                return Constants.TYPE_VPN;
+
+            if(activeNetwork.getType() == ConnectivityManager.TYPE_BLUETOOTH)
+                return Constants.TYPE_BLUETOOTH;
+
+            if(activeNetwork.getType() == ConnectivityManager.TYPE_ETHERNET)
+                return Constants.TYPE_ETHERNET;
         }
 
         return Constants.TYPE_NOT_CONNECTED;
@@ -433,7 +441,7 @@ public class NetworkUtils {
     private void saveToSharedPref(Map<String , String> params)
     {
 
-        SharedPreferences preferences = mContext.getSharedPreferences(Constants.PREFS, Context.MODE_PRIVATE);
+        SharedPreferences preferences = mContext.getSharedPreferences(mContext.getString(R.string.PREFS), Context.MODE_PRIVATE);
         String instituteId  = params.get(MainActivity.getResourceString(R.string.APPLY_INSTITUTE));
 
         Set<String> idList = preferences.getStringSet(instituteId, new HashSet<String>());

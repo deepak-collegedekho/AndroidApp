@@ -84,7 +84,7 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
         }
         qnaAnswerHolder.answerText.setText(answerText);
         qnaAnswerHolder.answerVotes.setText(String.valueOf(qnaAnswer.getUpvotes() - qnaAnswer.getDownvotes()));
-        if (qnaAnswer.getUser() != MainActivity.user.getUsername())
+        if (qnaAnswer.getUser() != MainActivity.mProfile.getName())
         {
             qnaAnswerHolder.userName.setText(qnaAnswer.getUser());
             qnaAnswerHolder.answerCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
