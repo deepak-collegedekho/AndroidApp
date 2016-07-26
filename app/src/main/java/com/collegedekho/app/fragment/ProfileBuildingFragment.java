@@ -838,7 +838,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                             streamOj.setSelected(false);
                     }
                 }
-
             }
             if (mStreamAdapter == null) {
                 mStreamAdapter = new ExamStreamAdapter(getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);

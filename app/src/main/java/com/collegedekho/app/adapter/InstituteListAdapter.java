@@ -223,7 +223,6 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         public void updateInstituteLogoImage(String image){
             instiLogo.setDefaultImageResId(R.drawable.ic_cd);
             instiLogo.setErrorImageResId(R.drawable.ic_cd);
-
             if (image != null && !image.isEmpty())
                 instiLogo.setImageUrl(image, mImageLoader);
         }
@@ -242,6 +241,8 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
                 int i;
                 for (i = 0; i < 2; i++) {
                     NetworkImageView imgView = (NetworkImageView) instiFaciltyList.getChildAt(i);
+                    imgView.setDefaultImageResId(R.drawable.ic_cd);
+                    imgView.setErrorImageResId(R.drawable.ic_cd);
                     imgView.setImageUrl(facilities.get(i).image_new, mImageLoader);
                     imgView.setVisibility(View.VISIBLE);
                 }

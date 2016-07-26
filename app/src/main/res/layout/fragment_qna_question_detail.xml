@@ -1,99 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="1"
-    >
-    <View
-        style="@style/AppTheme.Divider1"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp" />
+    android:layout_height="match_parent" >
+
     <LinearLayout
-        android:id="@+id/qna_question_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
-        android:textColor="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:weightSum="1"
         >
+        <View
+            style="@style/AppTheme.Divider1"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp" />
         <LinearLayout
-            android:id="@+id/qna_title_container"
+            android:id="@+id/qna_question_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:textSize="14sp"
+            android:orientation="vertical"
             android:textColor="@color/white"
             android:weightSum="1"
             >
             <LinearLayout
-                android:id="@+id/qna_question_vote_container"
-                android:layout_width="0dp"
+                android:id="@+id/qna_title_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight=".17"
-                android:gravity="center"
+                android:orientation="horizontal"
+                android:textSize="14sp"
+                android:textColor="@color/white"
                 android:weightSum="1"
-                android:orientation="vertical"
-                android:padding="10dp"
-                android:background="@drawable/bg_right_border"
                 >
-                <ImageView
-                    android:id="@+id/qna_button_upvote"
-                    android:layout_width="@dimen/m33dp"
-                    android:layout_height="@dimen/m33dp"
-                    android:padding="@dimen/m6dp"
-                    app:srcCompat="@drawable/ic_arrow_up"
-                    android:background="@drawable/bg_upvote_layer"
-                    />
-                <TextView
-                    android:id="@+id/qna_votes_Count"
+                <LinearLayout
+                    android:id="@+id/qna_question_vote_container"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:maxLines="@integer/int1"
+                    android:layout_weight=".17"
                     android:gravity="center"
-                    android:layout_gravity="center"
-                    android:text="..."
-                    android:textSize="20sp"
-                    android:textColor="@color/text_lightest_grey"
-                    android:layout_marginTop="@dimen/m10dp"
-                    android:layout_marginBottom="@dimen/m10dp"
-                    android:elevation="@dimen/m5dp"
-                    />
-                <ImageView
-                    android:id="@+id/qna_button_downvote"
-                    android:layout_width="@dimen/m33dp"
-                    android:layout_height="@dimen/m33dp"
-                    android:padding="@dimen/m6dp"
-                    app:srcCompat="@drawable/ic_arrow_down"
-                    android:background="@drawable/bg_downvote_layer"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/qna_title_info_container"
-                android:layout_width="0dp"
-                android:layout_weight=".83"
-                android:layout_height="wrap_content"
-                android:weightSum="@integer/int1"
-                android:orientation="vertical"
-                >
-                <TextView
-                    android:id="@+id/qna_title"
+                    android:weightSum="1"
+                    android:orientation="vertical"
+                    android:padding="10dp"
+                    android:background="@drawable/bg_right_border"
+                    >
+                    <ImageView
+                        android:id="@+id/qna_button_upvote"
+                        android:layout_width="@dimen/m33dp"
+                        android:layout_height="@dimen/m33dp"
+                        android:padding="@dimen/m6dp"
+                        app:srcCompat="@drawable/ic_arrow_up"
+                        android:background="@drawable/bg_upvote_layer"
+                        />
+                    <TextView
+                        android:id="@+id/qna_votes_Count"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:maxLines="@integer/int1"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:text="..."
+                        android:textSize="20sp"
+                        android:textColor="@color/text_lightest_grey"
+                        android:layout_marginTop="@dimen/m10dp"
+                        android:layout_marginBottom="@dimen/m10dp"
+                        android:elevation="@dimen/m5dp"
+                        />
+                    <ImageView
+                        android:id="@+id/qna_button_downvote"
+                        android:layout_width="@dimen/m33dp"
+                        android:layout_height="@dimen/m33dp"
+                        android:padding="@dimen/m6dp"
+                        app:srcCompat="@drawable/ic_arrow_down"
+                        android:background="@drawable/bg_downvote_layer"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/qna_title_info_container"
+                    android:layout_width="0dp"
+                    android:layout_weight=".83"
                     android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:gravity="center_vertical"
-                    android:text="Question Title"
-                    android:textStyle="bold"
-                    android:scrollbars="vertical"
-                    android:textSize="16sp"
-                    android:paddingLeft="@dimen/m12dp"
-                    android:paddingTop="@dimen/m12dp"
-                    android:paddingBottom="@dimen/m12dp"
-                    android:paddingRight="@dimen/m5dp"
-                    android:textColor="@color/primary_color"
-                    />
+                    android:weightSum="@integer/int1"
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:id="@+id/qna_title"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="Question Title"
+                        android:textStyle="bold"
+                        android:scrollbars="vertical"
+                        android:textSize="16sp"
+                        android:paddingLeft="@dimen/m12dp"
+                        android:paddingTop="@dimen/m12dp"
+                        android:paddingBottom="@dimen/m12dp"
+                        android:paddingRight="@dimen/m5dp"
+                        android:textColor="@color/primary_color"
+                        />
 
                     <HorizontalScrollView
                         android:layout_height="wrap_content"
@@ -112,129 +118,141 @@
 
                         </LinearLayout>
                     </HorizontalScrollView>
+                </LinearLayout>
             </LinearLayout>
+            <View
+                style="@style/AppTheme.Divider1"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp" />
+            <TextView
+                android:id="@+id/qna_description"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Question Decription"
+                android:textSize="15sp"
+                android:paddingBottom="@dimen/m10dp"
+                android:paddingTop="@dimen/m10dp"
+                android:paddingLeft="@dimen/m16dp"
+                android:paddingRight="@dimen/m16dp"
+                android:textColor="@color/black"
+                android:elevation="2dp"
+                />
+            <View
+                style="@style/AppTheme.Divider1"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/m55dp"
+                android:paddingBottom="@dimen/m5dp"
+                android:paddingTop="@dimen/m5dp"
+                android:paddingLeft="@dimen/m10dp"
+                android:paddingRight="@dimen/m10dp"
+                android:gravity="center_vertical"
+                android:layout_gravity="center"
+                >
+                <TextView
+                    android:id="@+id/question_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="question_user"
+                    android:textColor="@color/primary_color"
+                    android:textStyle="bold"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:textSize="12sp"
+                    />
+                <TextView
+                    android:id="@+id/answers_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:textStyle="normal"
+                    android:textSize="12sp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginRight="@dimen/m3dp"
+                    android:gravity="bottom"
+                    />
+                <TextView
+                    android:id="@+id/answers_count_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Answers"
+                    android:textSize="12sp"
+                    android:layout_toRightOf="@+id/answers_count"
+                    android:layout_alignParentBottom="true"
+                    />
+                <TextView
+                    android:id="@+id/question_time_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Asked on:"
+                    android:textSize="12sp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    />
+                <TextView
+                    android:id="@+id/question_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:textSize="12sp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    />
+            </RelativeLayout>
         </LinearLayout>
         <View
             style="@style/AppTheme.Divider1"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp" />
-        <TextView
-            android:id="@+id/qna_description"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:text="Question Decription"
-            android:textSize="15sp"
-            android:paddingBottom="@dimen/m10dp"
-            android:paddingTop="@dimen/m10dp"
-            android:paddingLeft="@dimen/m16dp"
-            android:paddingRight="@dimen/m16dp"
-            android:textColor="@color/black"
-            android:elevation="2dp"
-            />
-        <View
-            style="@style/AppTheme.Divider1"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp" />
         <RelativeLayout
+            android:id="@+id/qna_answers_container"
+            android:layout_marginTop="@dimen/m5dp"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/m55dp"
-            android:paddingBottom="@dimen/m5dp"
-            android:paddingTop="@dimen/m5dp"
-            android:paddingLeft="@dimen/m10dp"
-            android:paddingRight="@dimen/m10dp"
-            android:gravity="center_vertical"
-            android:layout_gravity="center"
+            android:layout_height="match_parent"
             >
             <TextView
-                android:id="@+id/question_user"
+                android:id="@android:id/empty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:gravity="center"
-                android:text="question_user"
-                android:textColor="@color/primary_color"
-                android:textStyle="bold"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:textSize="12sp"
+                android:textSize="16dp"
                 />
-            <TextView
-                android:id="@+id/answers_count"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/qna_answers_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/m16dp"
+                android:paddingRight="@dimen/m16dp"
+                />
+            <com.melnykov.fab.FloatingActionButton
+                android:id="@+id/answer_reply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="..."
-                android:textStyle="normal"
-                android:textSize="12sp"
-                android:layout_alignParentLeft="true"
+                android:src="@drawable/ic_edit"
                 android:layout_alignParentBottom="true"
-                android:layout_marginRight="@dimen/m3dp"
-                android:gravity="bottom"
-                />
-            <TextView
-                android:id="@+id/answers_count_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Answers"
-                android:textSize="12sp"
-                android:layout_toRightOf="@+id/answers_count"
-                android:layout_alignParentBottom="true"
-                />
-            <TextView
-                android:id="@+id/question_time_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Asked on:"
-                android:textSize="12sp"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                />
-            <TextView
-                android:id="@+id/question_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="..."
-                android:textSize="12sp"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
+                fab:fab_type="normal"
+                android:layout_marginBottom="@dimen/m15dp"
+                android:layout_marginRight="@dimen/m15dp"
+                fab:fab_colorNormal="@color/primary_orange"
+                fab:fab_colorPressed="@color/primaryColorDark"
                 />
         </RelativeLayout>
     </LinearLayout>
-    <View
-        style="@style/AppTheme.Divider1"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp" />
-    <RelativeLayout
-        android:id="@+id/qna_answers_container"
-        android:layout_marginTop="@dimen/m5dp"
+
+    <include layout="@layout/layout_qna_answer_question"
+        android:id="@+id/qna_answer_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-        <TextView
-            android:id="@android:id/empty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:gravity="center"
-            android:textSize="16dp"
-            />
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/qna_answers_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="@dimen/m16dp"
-            android:paddingRight="@dimen/m16dp"
-            />
-        <com.melnykov.fab.FloatingActionButton
-            android:id="@+id/answer_reply"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_edit"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            fab:fab_type="normal"
-            android:layout_marginBottom="@dimen/m15dp"
-            android:layout_marginRight="@dimen/m15dp"
-            fab:fab_colorNormal="@color/primary_orange"
-            fab:fab_colorPressed="@color/primaryColorDark"
-            />
-    </RelativeLayout>
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:visibility="gone"
+        android:layout_marginLeft="@dimen/m25dp"
+        android:layout_marginRight="@dimen/m25dp"
+        />
+
+</FrameLayout>

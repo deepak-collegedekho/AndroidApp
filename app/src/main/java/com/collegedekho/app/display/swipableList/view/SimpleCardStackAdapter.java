@@ -601,6 +601,8 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
         @Override
         public void onBindViewHolder(final FacilitiesAdapter.FacilitiesViewHolder holder, int position) {
+            holder.image.setDefaultImageResId(R.drawable.ic_cd);
+            holder.image.setErrorImageResId(R.drawable.ic_cd);
             holder.image.setImageUrl(facilitiesList.get(holder.getAdapterPosition()).image_new, imageLoader);
             holder.image.setTag(facilitiesList.get(holder.getAdapterPosition()).tag);
             holder.image.setOnClickListener(new View.OnClickListener() {

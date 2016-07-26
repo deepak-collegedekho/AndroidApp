@@ -140,6 +140,8 @@ public class InstituteOverviewFragment extends BaseFragment {
 
         for (Facility f : facilities) {
             NetworkImageView imageView = (NetworkImageView) inflater.inflate(R.layout.item_facility_38dp, facilityLayout, false);
+            imageView.setDefaultImageResId(R.drawable.ic_cd);
+            imageView.setErrorImageResId(R.drawable.ic_cd);
             imageView.setImageUrl(f.image_new, imageLoader);
             facilityLayout.addView(imageView);
         }

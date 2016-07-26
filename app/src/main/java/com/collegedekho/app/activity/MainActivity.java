@@ -2059,7 +2059,7 @@ public class MainActivity extends AppCompatActivity
 
                 comment = commentsSet.getJSONObject(i);
 
-                myFBComment.setUser(comment.getString("mDeviceProfile"));
+                myFBComment.setUser(comment.getString("user"));
                 myFBComment.setComment(comment.getString("comment"));
                 myFBComment.setAdded_on(comment.getString("added_on"));
                 myFBComment.setToken(comment.getString("token"));
@@ -4210,7 +4210,7 @@ public class MainActivity extends AppCompatActivity
 
             JSONObject ans = new JSONObject(response);
 
-            qnaAnswer.setUser(ans.getString("mDeviceProfile"));
+            qnaAnswer.setUser(ans.getString("user"));
             qnaAnswer.setDownvotes(ans.getInt("downvotes"));
             qnaAnswer.setUpvotes(ans.getInt("upvotes"));
             qnaAnswer.setCurrent_user_vote_type(ans.getInt("current_user_vote_type"));
@@ -4271,7 +4271,7 @@ public class MainActivity extends AppCompatActivity
 
             fbComment.setComment(comment.getString("comment"));
             fbComment.setAdded_on(comment.getString("added_on"));
-            fbComment.setUser(comment.getString("mDeviceProfile"));
+            fbComment.setUser(comment.getString("user"));
             fbComment.setToken(comment.getString("token"));
             fbComment.setIndex(index);
             fbComment.setFbIndex(fbIndex);
@@ -4300,7 +4300,7 @@ public class MainActivity extends AppCompatActivity
 
             JSONObject qns = new JSONObject(response);
 
-            qnaQuestion.setUser(qns.getString("mDeviceProfile"));
+            qnaQuestion.setUser(qns.getString("user"));
             qnaQuestion.setView_count(qns.getInt("view_count"));
             qnaQuestion.setTitle(qns.getString("title"));
             qnaQuestion.setDesc(qns.getString("desc"));
@@ -4319,7 +4319,7 @@ public class MainActivity extends AppCompatActivity
 
                 QnAAnswers qnaAnswer = new QnAAnswers();
 
-                qnaAnswer.setUser(ans.getString("mDeviceProfile"));
+                qnaAnswer.setUser(ans.getString("user"));
                 qnaAnswer.setDownvotes(ans.getInt("downvotes"));
                 qnaAnswer.setUpvotes(ans.getInt("upvotes"));
                 qnaAnswer.setCurrent_user_vote_type(ans.getInt("current_user_vote_type"));
@@ -4389,7 +4389,7 @@ public class MainActivity extends AppCompatActivity
 
                 JSONObject qns = resultArray.getJSONObject(i);
 
-                qnaQuestion.setUser(qns.getString("mDeviceProfile"));
+                qnaQuestion.setUser(qns.getString("user"));
                 qnaQuestion.setView_count(qns.getInt("view_count"));
                 qnaQuestion.setTitle(qns.getString("title"));
                 qnaQuestion.setDesc(qns.getString("desc"));
@@ -4408,7 +4408,7 @@ public class MainActivity extends AppCompatActivity
 
                     QnAAnswers qnaAnswer = new QnAAnswers();
 
-                    qnaAnswer.setUser(ans.getString("mDeviceProfile"));
+                    qnaAnswer.setUser(ans.getString("user"));
                     qnaAnswer.setDownvotes(ans.getInt("downvotes"));
                     qnaAnswer.setUpvotes(ans.getInt("upvotes"));
                     qnaAnswer.setCurrent_user_vote_type(ans.getInt("current_user_vote_type"));
@@ -6008,7 +6008,7 @@ public class MainActivity extends AppCompatActivity
 
             JSONObject qns = new JSONObject(response);
 
-            qnaQuestion.setUser(qns.getString("mDeviceProfile"));
+            qnaQuestion.setUser(qns.getString("user"));
             qnaQuestion.setView_count(qns.getInt("view_count"));
             qnaQuestion.setTitle(qns.getString("title"));
             qnaQuestion.setDesc(qns.getString("desc"));
@@ -6027,7 +6027,7 @@ public class MainActivity extends AppCompatActivity
 
                 QnAAnswers qnaAnswer = new QnAAnswers();
 
-                qnaAnswer.setUser(ans.getString("mDeviceProfile"));
+                qnaAnswer.setUser(ans.getString("user"));
                 qnaAnswer.setDownvotes(ans.getInt("downvotes"));
                 qnaAnswer.setUpvotes(ans.getInt("upvotes"));
                 qnaAnswer.setCurrent_user_vote_type(ans.getInt("current_user_vote_type"));

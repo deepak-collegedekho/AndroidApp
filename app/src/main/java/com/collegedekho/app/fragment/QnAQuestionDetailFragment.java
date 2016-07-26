@@ -5,12 +5,14 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,7 +34,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class QnAQuestionDetailFragment extends BaseFragment{
+public class QnAQuestionDetailFragment extends BaseFragment implements View.OnClickListener {
     private static final String ARG_PARAM1 = "param1";
     private final String TAG = "Question Detail Fragment";
     private QnAQuestions mQnAQuestion;
@@ -45,6 +47,8 @@ public class QnAQuestionDetailFragment extends BaseFragment{
     private RecyclerView mAnswersListView;
     private TextView mEmptyTextView;
     private volatile SimpleDateFormat mSDF;
+    private View mAnswerQuestionFAB;
+    private EditText mAnswerETV;
 
     public static QnAQuestionDetailFragment newInstance(QnAQuestions qnaQuestionAnswers) {
         QnAQuestionDetailFragment fragment = new QnAQuestionDetailFragment();
@@ -130,43 +134,49 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         this.mUpVoteButton.setSelected(this.mQnAQuestion.getCurrent_user_vote_type() == Constants.LIKE_THING);
         this.mDownVoteButton.setSelected(this.mQnAQuestion.getCurrent_user_vote_type() == Constants.DISLIKE_THING);
 
-        (rootView.findViewById(R.id.answer_reply)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//        (rootView.findViewById(R.id.answer_reply)).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+//                alert.setTitle("Enter your answer");
+//
+//                // Set an EditText view to get mDeviceProfile input
+//                final EditText input = (EditText) LayoutInflater.from(getActivity()).inflate(R.layout.layout_qna_answer, null);
+//                alert.setView(input);
+//
+//                alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int whichButton) {
+//
+//                        int connectivityStatus = new NetworkUtils(getActivity().getApplicationContext(), null).getConnectivityStatus();
+//                        if (connectivityStatus == Constants.TYPE_NOT_CONNECTED) {
+//                            mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
+//                            return;
+//                        }
+//                        String value = input.getText().toString();
+//                        if (value.trim().equals("")) {
+//                            mListener.displayMessage(R.string.ENTER_YOUR_ANSWER);
+//                        } else {
+//                            mListener.onQnAAnswerSubmitted(mQnAQuestion.getResource_uri(), input.getText().toString().trim(), mQnAQuestion.getIndex(), mQnAAnswersSet.size());
+//                            input.setText("");
+//                        }
+//                    }
+//                });
+//
+//                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int whichButton) {
+//                        // Canceled.
+//                    }
+//                });
+//                alert.show();
+//            }
+//        });
 
-                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                alert.setTitle("Enter your answer");
-
-                // Set an EditText view to get mDeviceProfile input
-                final EditText input = (EditText) LayoutInflater.from(getActivity()).inflate(R.layout.layout_qna_answer, null);
-                alert.setView(input);
-
-                alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        int connectivityStatus = new NetworkUtils(getActivity().getApplicationContext(), null).getConnectivityStatus();
-                        if (connectivityStatus == Constants.TYPE_NOT_CONNECTED) {
-                            mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
-                            return;
-                        }
-                        String value = input.getText().toString();
-                        if (value.trim().equals("")) {
-                            mListener.displayMessage(R.string.ENTER_YOUR_ANSWER);
-                        } else {
-                            mListener.onQnAAnswerSubmitted(mQnAQuestion.getResource_uri(), input.getText().toString().trim(), mQnAQuestion.getIndex(), mQnAAnswersSet.size());
-                            input.setText("");
-                        }
-                    }
-                });
-
-                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Canceled.
-                    }
-                });
-                alert.show();
-            }
-        });
+        mAnswerQuestionFAB = rootView.findViewById(R.id.answer_reply);
+        mAnswerQuestionFAB.setOnClickListener(this);
+        mAnswerETV = ((EditText) rootView.findViewById(R.id.qna_answer_edittext));
+        (rootView.findViewById(R.id.answer_question_cross)).setOnClickListener(this);
+        (rootView.findViewById(R.id.qna_answer_submit_button)).setOnClickListener(this);
 
         this.mUpVoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,6 +232,68 @@ public class QnAQuestionDetailFragment extends BaseFragment{
         //mAnswersListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
         return rootView;
+    }
+
+    @Override
+    public void onClick(View view){
+        View rootView = getView();
+        if(view.getId() == R.id.answer_reply){
+            if(rootView != null) {
+                if ((rootView.findViewById(R.id.qna_answer_layout)).getVisibility() == View.GONE) {
+                    (rootView.findViewById(R.id.qna_answer_layout)).setVisibility(View.VISIBLE);
+                    this.mToggleAnswerButtonVisibility(View.GONE,View.GONE);
+                }
+            }
+        } else if (view.getId() == R.id.answer_question_cross){
+            if(rootView != null)  {
+                (rootView.findViewById(R.id.qna_answer_layout)).setVisibility(View.GONE);
+                this.mToggleAnswerButtonVisibility(View.VISIBLE,View.VISIBLE);
+            }
+        } else if (view.getId() == R.id.qna_answer_submit_button){
+            int connectivityStatus = new NetworkUtils(getActivity().getApplicationContext(), null).getConnectivityStatus();
+            if (connectivityStatus == Constants.TYPE_NOT_CONNECTED) {
+                mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
+                return;
+            }
+            String value = mAnswerETV.getText().toString();
+            if (value.trim().equals("")) {
+                mListener.displayMessage(R.string.ENTER_YOUR_ANSWER);
+            } else {
+                (rootView.findViewById(R.id.qna_answer_layout)).setVisibility(View.GONE);
+                this.mToggleAnswerButtonVisibility(View.VISIBLE,View.VISIBLE);
+                mListener.onQnAAnswerSubmitted(mQnAQuestion.getResource_uri(), mAnswerETV.getText().toString().trim(), mQnAQuestion.getIndex(), mQnAAnswersSet.size());
+                mAnswerETV.setText("");
+            }
+        }
+    }
+
+    private void mToggleAnswerButtonVisibility(int askQuesButtonVisibility, int toolbarVisibility)
+    {
+        //Putting whole thing in try/catch for I am not putting MainActivity null check and
+        // hide and show methods are showing NPE warning
+        try {
+            if (askQuesButtonVisibility == View.GONE) {
+                this.mAnswerQuestionFAB.animate().translationY(this.mAnswerQuestionFAB.getHeight());
+                this.mAnswerETV.requestFocus();
+
+                //showing soft keyboard on ask button click
+                InputMethodManager inputMethodManager=(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            }
+            else if (askQuesButtonVisibility == View.VISIBLE)
+                this.mAnswerQuestionFAB.animate().translationY(0);
+
+            if (toolbarVisibility == View.GONE)
+                ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+            else if (toolbarVisibility == View.VISIBLE)
+                ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+
+            this.mAnswerQuestionFAB.setVisibility(askQuesButtonVisibility);
+        }
+        catch(Exception e)
+        {
+
+        }
     }
 
     @Override

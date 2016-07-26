@@ -78,6 +78,8 @@ public class InstituteInfrastructureFragment extends BaseFragment {
         for (Facility f : facilities) {
             View view =  inflater.inflate(R.layout.item_facility_layout, facilityLayout, false);
             NetworkImageView imageView = (NetworkImageView)view.findViewById(R.id.item_facility_icon);
+            imageView.setDefaultImageResId(R.drawable.ic_cd);
+            imageView.setErrorImageResId(R.drawable.ic_cd);
             imageView.setImageUrl(f.image_new, imageLoader);
 
             TextView facilityName = (TextView)view.findViewById(R.id.item_facility_name);
