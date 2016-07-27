@@ -1165,6 +1165,7 @@ public class MainActivity extends AppCompatActivity
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -5849,6 +5850,10 @@ public class MainActivity extends AppCompatActivity
         }
         if(tabPosition > 0){
             mNavigationView.getMenu().getItem(tabPosition-1).setChecked(true);
+        } else {
+            int size = mNavigationView.getMenu().size();
+            for(int i = 0 ; i < size ; i++)
+                mNavigationView.getMenu().getItem(i).setChecked(false);
         }
         translateAnimation(viewToMoveUp,viewToMoveDown);
     }
