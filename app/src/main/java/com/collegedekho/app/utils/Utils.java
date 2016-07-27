@@ -129,24 +129,6 @@ public class Utils {
         toast.show();
     }
 
-    public static Typeface getTypeFace(Context ctx, TypeFaceTypes mTypeFaceTypes){
-        Typeface mTypeface = null;
-        switch (mTypeFaceTypes) {
-
-            case DROID_SERIF_BOLD:
-                mTypeface = Typeface.createFromAsset(ctx.getAssets(),"fonts/DROID_SERIF_BOLD.ttf");
-                break;
-            case PROXIMA_NOVA_REGULAR:
-                mTypeface = Typeface.createFromAsset(ctx.getAssets(),"proxima_nova_regular.ttf");
-                break;
-            case GOTHAM_BOOK:
-                mTypeface = Typeface.createFromAsset(ctx.getAssets(),"gotham-book.ttf");
-                break;
-            default:
-                break;
-        }
-        return mTypeface;
-    }
 
     public static int getPadding(Context context, int value)
     {

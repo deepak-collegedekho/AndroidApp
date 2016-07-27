@@ -623,7 +623,7 @@ public class MainActivity extends AppCompatActivity
 
                 //AppsFlyer: collecting your GCM project ID by setGCMProjectID allows you to track uninstall data in your dashboard
 
-                AppsFlyerLib.getInstance().setGCMProjectID(MainActivity.this,Constants.GCM_KEY_APPS_FLYER);
+                AppsFlyerLib.getInstance().setGCMProjectNumber(Constants.GCM_KEY_APPS_FLYER);
                 // Set the Currency
                 AppsFlyerLib.getInstance().setCurrencyCode("INR");
                 AppsFlyerLib.getInstance().setDebugLog(true);
@@ -1466,7 +1466,6 @@ public class MainActivity extends AppCompatActivity
             mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
         }
     }
-
 
     public void onRefreshProfile(){
         this.mMakeNetworkCall(Constants.TAG_REFRESH_PROFILE, Constants.BASE_URL + "profile/", null);
@@ -3718,6 +3717,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void OnWishlistInstituteRemoved(Institute institute, int position) {
         this.mInstitute = institute;
+
         if (institute != null) {
             this.mMakeNetworkCall(Constants.CARD_DELETE_SHORTLISTED_INSTITUTE + "#" + position , institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
         }
@@ -4391,6 +4391,7 @@ public class MainActivity extends AppCompatActivity
 
                 qnaQuestion.setUser(qns.getString("user"));
                 qnaQuestion.setView_count(qns.getInt("view_count"));
+                qnaQuestion.setUser(qns.getString("mDeviceProfile"));
                 qnaQuestion.setTitle(qns.getString("title"));
                 qnaQuestion.setDesc(qns.getString("desc"));
                 qnaQuestion.setDownvotes(qns.getInt("downvotes"));
