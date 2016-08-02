@@ -27,8 +27,12 @@ Thumbs.db
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
+/.idea/misc.xml
+/.idea/gradle.xml
+/.idea/vcs.xml
 /build
 /captures
 .idea
 /.idea
+*.iml
 tarAndMoveMainToHome.sh
