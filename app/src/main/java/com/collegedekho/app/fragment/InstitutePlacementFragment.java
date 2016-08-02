@@ -65,27 +65,33 @@ public class InstitutePlacementFragment extends BaseFragment {
             ((TextView) rootView.findViewById(R.id.about_placement)).setText(Html.fromHtml(mPlacement.about));
         else
             ((TextView) rootView.findViewById(R.id.about_placement)).setText("No Placement Data Available");
-        if (mPlacement.placementPercentage != null && !mPlacement.placementPercentage.isEmpty())
+        if (mPlacement.placementPercentage != null && !mPlacement.placementPercentage.isEmpty()) {
             ((TextView) rootView.findViewById(R.id.text_placement_perc)).setText(mPlacement.placementPercentage);
-        else {
+            rootView.findViewById(R.id.placement_container).setContentDescription("Placement " + mPlacement.placementPercentage + " percent");
+        } else {
             rootView.findViewById(R.id.text_placement_perc).setVisibility(View.GONE);
             rootView.findViewById(R.id.subhead_placement).setVisibility(View.GONE);
+            rootView.findViewById(R.id.placement_container).setVisibility(View.GONE);
         }
 
         if (mPlacement.highestSalary != null && mPlacement.highestSalary > 0) {
             double salary = mPlacement.highestSalary / 100000;
             ((TextView) rootView.findViewById(R.id.text_highest_package)).setText("" + salary+" Lac");
+            rootView.findViewById(R.id.highest_package_container).setContentDescription("Highest Package offered " + salary + " Lac");
         }else {
             rootView.findViewById(R.id.text_highest_package).setVisibility(View.GONE);
             rootView.findViewById(R.id.subhead_highest_package).setVisibility(View.GONE);
+            rootView.findViewById(R.id.highest_package_container).setVisibility(View.GONE);
         }
 
         if (mPlacement.averageSalary != null && mPlacement.averageSalary > 0) {
             double avgSalary = mPlacement.averageSalary / 100000;
             ((TextView) rootView.findViewById(R.id.text_average_package)).setText("" + avgSalary + " Lac");
+            rootView.findViewById(R.id.average_package_container).setContentDescription("Average Package offered " + avgSalary + " Lac");
         } else {
             rootView.findViewById(R.id.text_average_package).setVisibility(View.GONE);
             rootView.findViewById(R.id.subhead_average_package).setVisibility(View.GONE);
+            rootView.findViewById(R.id.average_package_container).setVisibility(View.GONE);
         }
 
         NetworkImageView imageView = ((NetworkImageView) rootView.findViewById(R.id.placement_image));
@@ -94,6 +100,18 @@ public class InstitutePlacementFragment extends BaseFragment {
         if (this.mInstitute.getImages().get("Primary") != null) {
             ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
             imageView.setImageUrl(this.mInstitute.getImages().get("Primary"), imageLoader);
+        }
+
+        if(mInstitute != null && mInstitute.getShort_name() != null && !mInstitute.getShort_name().equalsIgnoreCase("null") ) {
+            imageView.setContentDescription(mInstitute.getShort_name() + " Placement Image");
+        } else if (mInstitute != null && mInstitute.getName() != null && !mInstitute.getName().equalsIgnoreCase("null")){
+            String description =  mInstitute.getName();
+            if(mInstitute.getCity_name() != null && !mInstitute.getCity_name().equalsIgnoreCase("null")){
+                description = description + " " + mInstitute.getCity_name();
+            } else if(mInstitute.getState_name() != null && !mInstitute.getState_name().equalsIgnoreCase("null")){
+                description = description + " " + mInstitute.getState_name();
+            }
+            imageView.setContentDescription(description + " Placement Image");
         }
 
         /*GridLayout gl = (GridLayout) rootView.findViewById(R.id.company_logo_grid);

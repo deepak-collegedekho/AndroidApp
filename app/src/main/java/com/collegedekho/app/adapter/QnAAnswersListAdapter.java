@@ -62,6 +62,7 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
         QnAAnswers qnaAnswer = mQnAQuestionAnswers.get(position);
         QnAAnswerHolder qnaAnswerHolder = (QnAAnswerHolder) holder;
         String simpleDate = "";
+        String description = "";
         try {
             mSDF.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
             Date date = mSDF.parse(qnaAnswer.getAdded_on());
@@ -82,23 +83,30 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
             }
             answerText = result.toString();
         }
+        description= description+answerText;
         qnaAnswerHolder.answerText.setText(answerText);
         qnaAnswerHolder.answerVotes.setText(String.valueOf(qnaAnswer.getUpvotes() - qnaAnswer.getDownvotes()));
         if (qnaAnswer.getUser() != MainActivity.mProfile.getName())
         {
             qnaAnswerHolder.userName.setText(qnaAnswer.getUser());
             qnaAnswerHolder.answerCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
+            description = qnaAnswer.getUser() + " answered " + description;
         }
         else
         {
             qnaAnswerHolder.answerCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.self_comment_card_background));
             qnaAnswerHolder.userName.setText("Me");
+            description = "you answered " + description;
         }
+
+        qnaAnswerHolder.mContainer.setContentDescription(description);
 
         qnaAnswerHolder.dateAddedOn.setText(simpleDate);
 
         qnaAnswerHolder.answerUpvoteButton.setSelected(qnaAnswer.getCurrent_user_vote_type() == Constants.LIKE_THING);
         qnaAnswerHolder.answerDownvoteButton.setSelected(qnaAnswer.getCurrent_user_vote_type() == Constants.DISLIKE_THING);
+
+
     }
 
     @Override
@@ -116,6 +124,7 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
         ImageButton answerDownvoteButton;
         CardView answerCard;
         QnAQuestionDetailFragment.OnQnAAnswerInteractionListener mListener;
+        View mContainer;
 
         public QnAAnswerHolder(View itemView, QnAQuestionDetailFragment.OnQnAAnswerInteractionListener listener) {
             super(itemView);
@@ -127,6 +136,7 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
             dateAddedOn = (TextView) itemView.findViewById(R.id.qna_answer_date_added_on);
             answerUpvoteButton = (ImageButton) itemView.findViewById(R.id.qna_answer_button_upvote);
             answerDownvoteButton = (ImageButton) itemView.findViewById(R.id.qna_answer_button_downvote);
+            mContainer = itemView;
 
             mListener = listener;
 

@@ -28,12 +28,13 @@
             android:layout_weight=".5"
             android:tag="1"
             android:background="@drawable/rounded_box_dark_blue_20px"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:contentDescription="Click here to check out colleges." >
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center" >
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/college_list"
@@ -67,7 +68,8 @@
             android:tag="2"
             android:layout_marginLeft="@dimen/m5dp"
             android:background="@drawable/rounded_box_dark_blue_20px"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:contentDescription="Click here to interact with your prospective classmates and ask questions." >
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -115,7 +117,8 @@
             android:layout_weight=".5"
             android:tag="4"
             android:background="@drawable/rounded_box_dark_blue_20px"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:contentDescription="Click here to check news and updates related to colleges.">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -154,7 +157,8 @@
             android:tag="3"
             android:layout_marginLeft="@dimen/m5dp"
             android:background="@drawable/rounded_box_dark_blue_20px"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:contentDescription="Click here to see important dates and syllabus related to exams">
 
             <RelativeLayout
                 android:layout_width="match_parent"

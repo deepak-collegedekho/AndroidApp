@@ -45,6 +45,8 @@ public class SyllabusSubjectListAdapter extends RecyclerView.Adapter {
         subjectHolder.mSubjectName.setText(subjects.getSubject_name());
         subjectHolder.mProgressBar.setProgress(subjects.getSubject_done_percent());
         subjectHolder.examPercent.setText(String.valueOf(subjects.getSubject_done_percent()));
+        subjectHolder.mSubjectRootView.setContentDescription(subjects.getSubject_name() + " "
+                +subjects.getSubject_done_percent()+ " percent completed" + " Click to view details");
     }
 
     @Override
@@ -61,6 +63,7 @@ public class SyllabusSubjectListAdapter extends RecyclerView.Adapter {
         TextView mSubjectName;
         ProgressBar mProgressBar;
         TextView examPercent;
+        View mSubjectRootView;
 
         SyllabusSubjectsListFragment.OnSubjectSelectedListener mListener;
 
@@ -70,7 +73,7 @@ public class SyllabusSubjectListAdapter extends RecyclerView.Adapter {
             mProgressBar = ((ProgressBar) itemView.findViewById(R.id.syllabus_subject_progress_bar));
             examPercent=(TextView)itemView.findViewById(R.id.exam_percentage);
             mListener = listener;
-
+            mSubjectRootView = itemView;
             itemView.setOnClickListener(this);
 /*
             mSubjectName.setOnClickListener(this);

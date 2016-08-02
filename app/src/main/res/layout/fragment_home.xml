@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
 
 
     <LinearLayout
@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                >
+                android:contentDescription="Click to edit your profile">
 
                 <include layout="@layout/layout_profile_image"
                     android:id="@+id/include_image_layout"
@@ -77,7 +77,7 @@
                         android:gravity="center"
                         android:layout_gravity="end"
                         android:layout_marginRight="@dimen/m4dp"
-                        >
+                        android:contentDescription="Click to give detailed psychometric test to analyse your preferences">
 
                         <ImageView
                             android:layout_width="@dimen/m20dp"
@@ -108,7 +108,7 @@
                         android:gravity="center"
                         android:layout_gravity="end"
                         android:layout_marginRight="@dimen/m4dp"
-                        >
+                        android:contentDescription="Click to see your detailed test report" >
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -131,7 +131,8 @@
                         android:orientation="horizontal"
                         android:gravity="center"
                         android:layout_gravity="end"
-                        >
+                        android:contentDescription="Click to search colleges step by step">
+
                         <ImageView
                             android:layout_width="@dimen/m20dp"
                             android:layout_height="match_parent"

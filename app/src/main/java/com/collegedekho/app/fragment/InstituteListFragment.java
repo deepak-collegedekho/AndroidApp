@@ -135,6 +135,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 
         fab = (FrameLayout) rootView.findViewById(R.id.myfab_main);
         fabBtn = (ImageButton) rootView.findViewById(R.id.button_filter);
+        fabBtn.setContentDescription("Click to Apply Filters");
         //fabShadow = rootView.findViewById(R.id.myfab_shadow);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

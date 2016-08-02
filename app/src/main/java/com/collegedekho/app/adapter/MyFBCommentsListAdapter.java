@@ -50,6 +50,10 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
     }
 
+    public void setmMyFBCommentList(ArrayList<MyFutureBuddyComment> myFBCommentList){
+        this.mMyFBCommentList = myFBCommentList;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rootView = LayoutInflater.from(mContext).inflate(R.layout.my_fb_comment_card, parent, false);
@@ -68,7 +72,7 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         String simpleDate = "";
         String shortDate = "";
         String time = "";
-
+        String description = "";
         //set date
         try
         {
@@ -92,23 +96,18 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
                 this.mSDF.applyLocalizedPattern("yyyy-MM-dd");
                 shortDate = this.mSDF.format(date);
 
-                if(position == 0)
-                {
+                if(position == 0) {
                     qnaAnswerHolder.date.setVisibility(View.VISIBLE);
                     qnaAnswerHolder.date.setText(String.valueOf(shortDate));
                 }
-                if(position >0 )
-                {
+                if(position >0 ) {
                     Date prevDate = this.mSDF.parse(mMyFBCommentList.get(position -1).getAdded_on());
                     String prevShortDate = this.mSDF.format(prevDate);
 
-                    if(!prevShortDate.equalsIgnoreCase(shortDate))
-                    {
+                    if(!prevShortDate.equalsIgnoreCase(shortDate)) {
                         qnaAnswerHolder.date.setVisibility(View.VISIBLE);
                         qnaAnswerHolder.date.setText(String.valueOf(shortDate));
-                    }
-                    else
-                    {
+                    } else {
                         qnaAnswerHolder.date.setVisibility(View.GONE);
                     }
                 }
@@ -123,16 +122,18 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         //set comment
         qnaAnswerHolder.commentText.setText(myFBComment.getComment());
 
-        if ((myFBComment.getToken()).equals(MainActivity.mProfile.getToken()))
-        {
+        description = myFBComment.getComment();
+
+        if ((myFBComment.getToken()).equals(MainActivity.mProfile.getToken())) {
+
+            description = "You said " + description;
 
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 qnaAnswerHolder.myFbCard.setBackgroundResource(R.drawable.ic_chat_inline);
-            }
-            else{
+            } else {
                 qnaAnswerHolder.myFbCard.setCardBackgroundColor(this.mContext.getResources().getColor(R.color.self_comment_card_background));
-
             }
+
             qnaAnswerHolder.myFbCardLayout.setGravity(Gravity.RIGHT);
             int left = Utils.getPadding(mContext,10);
             int right = Utils.getPadding(mContext,10);
@@ -153,15 +154,13 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
 
             updateUserImage(myFBComment.getUser_image(), qnaAnswerHolder.mUserImageSelf);
             qnaAnswerHolder.mUserImageOther.setPadding(left,0,right,0);
-        }
-        else
-        {
+        } else {
+
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 qnaAnswerHolder.myFbCard.setBackgroundResource(R.drawable.ic_chat_inline_others);
-            }
-            else{
+            } else {
                 qnaAnswerHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
-           }
+            }
             int left = Utils.getPadding(mContext,10);
             int right = Utils.getPadding(mContext,10);
             int top = Utils.getPadding(mContext,20);
@@ -171,12 +170,17 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
             qnaAnswerHolder.time.setTextColor(mContext.getResources().getColor(R.color.chat_time_gray));
             qnaAnswerHolder.userName.setText(myFBComment.getUser());
 
+            description = myFBComment.getUser() + " " + description;
+
             qnaAnswerHolder.mUserImageSelf.setVisibility(View.GONE);
             qnaAnswerHolder.mUserImageOther.setVisibility(View.VISIBLE);
 
             updateUserImage(myFBComment.getUser_image(), qnaAnswerHolder.mUserImageOther);
             qnaAnswerHolder.mUserImageOther.setPadding(left,top,right,0);
         }
+
+        qnaAnswerHolder.mContainer.setContentDescription(description);
+
     }
 
     public void updateUserImage(String image, CircularImageView imageView){
@@ -203,6 +207,7 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         ImageView mSentNotifier;
         CircularImageView mUserImageOther;
         CircularImageView mUserImageSelf;
+        View mContainer;
 
         MyFutureBuddiesFragment.OnMyFBInteractionListener mListener;
 
@@ -219,6 +224,7 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
             this.date = (TextView) itemView.findViewById(R.id.my_fb_comment_date);
             this.mUserImageOther = (CircularImageView) itemView.findViewById(R.id.my_fb_comment_user_image);
             this.mUserImageSelf = (CircularImageView) itemView.findViewById(R.id.my_fb_comment_user_image_self);
+            this.mContainer = itemView;
 
             this.mListener = listener;
         }

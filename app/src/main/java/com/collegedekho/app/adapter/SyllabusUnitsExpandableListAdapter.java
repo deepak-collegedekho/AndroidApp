@@ -108,6 +108,8 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
         ((TextView) convertView.findViewById(R.id.indicator))
                 .setText(isExpanded ? Constants.EXPANDED_INDICATOR : Constants.COLAPSED_INDICATOR);
 
+        convertView.setContentDescription(g.getUnit_name() + " " + g.getUnit_done_percent() + " percent completed click to expand and view units.");
+
         return convertView;
     }
 
@@ -131,6 +133,13 @@ public class SyllabusUnitsExpandableListAdapter extends BaseExpandableListAdapte
         childViewHolder.childChapterLabel.setText(chapters.getName());
         childViewHolder.childChapterCheckBox.setChecked(chapters.getIs_done() == Constants.BOOLEAN_TRUE);
 
+        String chapterDescription = chapters.getName();
+        if(chapters.getIs_done() == Constants.BOOLEAN_TRUE){
+            chapterDescription = chapterDescription + " marked complete. Click to unmark" ;
+        } else {
+            chapterDescription = chapterDescription + " marked incomplete. Click to mark complete";
+        }
+        convertView.setContentDescription(chapterDescription);
 
         /*
 		 * You have to set the onCheckChangedListener to null

@@ -7,7 +7,8 @@
     android:layout_height="40dp"
     android:gravity="center"
     android:layout_gravity="center"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:importantForAccessibility="yes">
 
      <TextView
         android:id="@+id/card_item_like_count"
@@ -18,7 +19,9 @@
         android:layout_marginTop="3dp"
         android:textColor="@color/arrow_color"
         android:gravity="center"
-        android:textSize="9sp"/>
+        android:textSize="9sp"
+        android:importantForAccessibility="no" />
+
     <ImageView
         android:id="@+id/card_item_button_like"
         android:layout_width="@dimen/m25dp"
@@ -26,7 +29,8 @@
         android:layout_gravity="center"
         app:srcCompat="@drawable/ic_like"
         android:visibility="visible"
-        android:tint="@color/subheading_color"/>
+        android:tint="@color/subheading_color"
+        android:importantForAccessibility="yes"/>
     <ProgressBar
         android:id="@+id/card_item_like_progressBar"
         android:layout_width="wrap_content"

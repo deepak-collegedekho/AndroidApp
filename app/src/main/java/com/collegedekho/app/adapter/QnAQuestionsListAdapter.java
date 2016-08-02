@@ -67,13 +67,18 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         QnAQuestions qnaQuestion = mQnAQuestions.get(position);
+        String description = "";
 
         QnAQuestionHolder qnAQuestionHolder = (QnAQuestionHolder) holder;
         qnAQuestionHolder.questionHeading.setText(qnaQuestion.getTitle());
-        if(qnaQuestion.getUser().equalsIgnoreCase("Anonymous mDeviceProfile"))
+        description = description + qnaQuestion.getTitle();
+        if (qnaQuestion.getUser().equalsIgnoreCase("Anonymous user")){
             qnAQuestionHolder.userName.setText("");
-        else
+        } else {
             qnAQuestionHolder.userName.setText(qnaQuestion.getUser());
+            description = qnaQuestion.getUser() + " asked " + description + " click to see detail";
+        }
+        qnAQuestionHolder.mContainer.setContentDescription(description);
 
         qnAQuestionHolder.questionVotes.setText(String.valueOf(qnaQuestion.getUpvotes()));
         qnAQuestionHolder.answerCount.setText(String.valueOf(qnaQuestion.getAnswers_count()) + "\n" + "Answer");
@@ -83,10 +88,15 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         qnAQuestionHolder.likeButton.setVisibility(View.VISIBLE);
         qnAQuestionHolder.likeProgressBar.setVisibility(View.GONE);
 
-        if (qnAQuestionHolder.likeButton.isSelected())
+        if (qnAQuestionHolder.likeButton.isSelected()) {
             qnAQuestionHolder.likeButton.setColorFilter(ContextCompat.getColor(this.mContext, R.color.like_green_selected));
-        else
+            qnAQuestionHolder.likeContainer.setContentDescription("Already upvoted Question");
+            qnAQuestionHolder.likeButton.setContentDescription("Already upvoted Question");
+        } else {
             qnAQuestionHolder.likeButton.setColorFilter(ContextCompat.getColor(this.mContext, R.color.subheading_color));
+            qnAQuestionHolder.likeContainer.setContentDescription("upvote this question");
+            qnAQuestionHolder.likeButton.setContentDescription("upvote this question");
+        }
 
         if (qnaQuestion.getAdded_on() != null) {
             Date date = null;
@@ -191,6 +201,8 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         ProgressBar likeProgressBar;
         QnAQuestionsListFragment.OnQnAQuestionSelectedListener mListener;
         CardView container;
+        View likeContainer;
+        View mContainer;
 
         public QnAQuestionHolder(View itemView, QnAQuestionsListFragment.OnQnAQuestionSelectedListener listener) {
             super(itemView);
@@ -213,9 +225,12 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
 
             container.setOnClickListener(this);
 
+            likeContainer = itemView.findViewById(R.id.card_item_like_layout);
+
             itemView.findViewById(R.id.card_item_like_layout).setOnClickListener(this);
             itemView.findViewById(R.id.layout_item_expand).setOnClickListener(this);
             itemView.setOnClickListener(this);
+            mContainer = itemView;
         }
 
         @Override

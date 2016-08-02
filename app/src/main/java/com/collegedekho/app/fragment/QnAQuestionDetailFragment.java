@@ -174,6 +174,8 @@ public class QnAQuestionDetailFragment extends BaseFragment implements View.OnCl
 
         mAnswerQuestionFAB = rootView.findViewById(R.id.answer_reply);
         mAnswerQuestionFAB.setOnClickListener(this);
+        mAnswerQuestionFAB.setContentDescription("Answer this question");
+
         mAnswerETV = ((EditText) rootView.findViewById(R.id.qna_answer_edittext));
         (rootView.findViewById(R.id.answer_question_cross)).setOnClickListener(this);
         (rootView.findViewById(R.id.qna_answer_submit_button)).setOnClickListener(this);

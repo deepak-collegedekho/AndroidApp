@@ -53,7 +53,7 @@
                         android:padding="@dimen/m6dp"
                         app:srcCompat="@drawable/ic_arrow_up"
                         android:background="@drawable/bg_upvote_layer"
-                        />
+                        android:contentDescription="upvote"/>
                     <TextView
                         android:id="@+id/qna_votes_Count"
                         android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
                         android:padding="@dimen/m6dp"
                         app:srcCompat="@drawable/ic_arrow_down"
                         android:background="@drawable/bg_downvote_layer"
-                        />
+                        android:contentDescription="downvote button"/>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/qna_title_info_container"

@@ -127,6 +127,7 @@ public class Constants
     public static final String QTYPE_INPUT = "input";
     public static final String QTYPE_RANGE = "range";
     public static final String TAG_LOAD_MY_FB = "load_my_fb";
+    public static final String TAG_LOAD_MORE_FB_COMMENT = "load_more_fb_comments";
     public static final String TAG_REFRESH_MY_FB = "refresh_my_fb";
     public static final String TAG_UPDATE_USER_PROFILE = "update_user_profile";
     public static final String TAG_UPDATE_PROFILE_EXAMS = "update_profile_exams";

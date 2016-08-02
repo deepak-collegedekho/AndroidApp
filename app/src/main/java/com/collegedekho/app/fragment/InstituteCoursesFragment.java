@@ -93,6 +93,18 @@ public class InstituteCoursesFragment extends BaseFragment {
             imageView.setImageUrl(this.mInstitute.getImages().get("Student"), imageLoader);
         }
 
+        if(mInstitute != null && mInstitute.getShort_name() != null && !mInstitute.getShort_name().equalsIgnoreCase("null") ) {
+            imageView.setContentDescription(mInstitute.getShort_name() + " courses Image");
+        } else if (mInstitute != null && mInstitute.getName() != null && !mInstitute.getName().equalsIgnoreCase("null")){
+            String description =  mInstitute.getName();
+            if(mInstitute.getCity_name() != null && !mInstitute.getCity_name().equalsIgnoreCase("null")){
+                description = description + " " + mInstitute.getCity_name();
+            } else if(mInstitute.getState_name() != null && !mInstitute.getState_name().equalsIgnoreCase("null")){
+                description = description + " " + mInstitute.getState_name();
+            }
+            imageView.setContentDescription(description + " courses Image");
+        }
+
         if (mCourseCount < 1) {
             ((TextView) rootView.findViewById(R.id.course_tab_title)).setText("Loading Course...");
         } else {

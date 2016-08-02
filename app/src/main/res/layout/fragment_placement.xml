@@ -15,66 +15,80 @@
             android:scaleType="centerCrop"
             android:src="@drawable/default_banner"
             />
-        <TextView
-            android:id="@+id/subhead_highest_package"
-            style="@style/AppTheme.TextView.SubHead"
-            android:text="Highest Package Offered: "
-            android:layout_below="@+id/placement_image"/>
 
-        <TextView
-            android:id="@+id/subhead_average_package"
-            style="@style/AppTheme.TextView.SubHead"
-            android:layout_below="@id/subhead_highest_package"
-            android:text="Average Package Offered: " />
+        <LinearLayout android:id="@+id/highest_package_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/placement_image"
+            android:importantForAccessibility="yes">
+            <TextView
+                android:id="@+id/subhead_highest_package"
+                style="@style/AppTheme.TextView.SubHead"
+                android:text="Highest Package Offered: "
+                android:importantForAccessibility="no"    />
+            <TextView
+                android:id="@+id/text_highest_package"
+                style="@style/AppTheme.TextView.style1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50%"
+                android:importantForAccessibility="no"/>
+        </LinearLayout>
 
+        <LinearLayout android:id="@+id/average_package_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/highest_package_container"
+            android:importantForAccessibility="yes">
+            <TextView
+                android:id="@+id/subhead_average_package"
+                style="@style/AppTheme.TextView.SubHead"
+                android:text="Average Package Offered: "
+                android:importantForAccessibility="no"/>
+            <TextView
+                android:id="@+id/text_average_package"
+                style="@style/AppTheme.TextView.style1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50%"
+                android:importantForAccessibility="no"/>
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/subhead_placement"
-            style="@style/AppTheme.TextView.SubHead"
-            android:layout_below="@id/subhead_average_package"
-            android:text="Placement:" />
+        <LinearLayout android:id="@+id/placement_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/average_package_container"
+            android:importantForAccessibility="yes">
+            <TextView
+                android:id="@+id/subhead_placement"
+                style="@style/AppTheme.TextView.SubHead"
+                android:text="Placement:"
+                android:importantForAccessibility="no"/>
+            <TextView
+                android:id="@+id/text_placement_perc"
+                style="@style/AppTheme.TextView.style1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50%"
+                android:importantForAccessibility="no"/>
+        </LinearLayout>
 
         <GridLayout
             android:id="@+id/company_logo_grid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/subhead_placement"
+            android:layout_below="@id/placement_container"
             android:layout_centerHorizontal="true"
             android:columnCount="3"
             android:padding="@dimen/activity_horizontal_margin" />
 
         <TextView
-            android:id="@+id/text_highest_package"
-            style="@style/AppTheme.TextView.style1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/subhead_highest_package"
-            android:layout_below="@+id/placement_image"
-            android:text="50%" />
-
-        <TextView
-            android:id="@+id/text_average_package"
-            style="@style/AppTheme.TextView.style1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/subhead_highest_package"
-            android:layout_toRightOf="@id/subhead_average_package"
-            android:text="50%" />
-
-        <TextView
-            android:id="@+id/text_placement_perc"
-            style="@style/AppTheme.TextView.style1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/subhead_average_package"
-            android:layout_toRightOf="@id/subhead_placement"
-            android:text="50%" />
-
-        <TextView
             android:id="@+id/about_placement"
             style="@style/AppTheme.TextView.AboutTextView"
             android:layout_below="@id/company_logo_grid" />
-
 
     </RelativeLayout>
 </ScrollView>

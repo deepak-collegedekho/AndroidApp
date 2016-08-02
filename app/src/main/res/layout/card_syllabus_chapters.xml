@@ -24,7 +24,7 @@
         android:weightSum="1"
         android:padding="@dimen/m15dp"
         android:layout_gravity="center"
-        >
+        android:importantForAccessibility="yes">
         <TextView
             android:id="@+id/syllabus_chapters_name"
             android:layout_width="0dp"
@@ -36,7 +36,7 @@
             android:text="MATHSsss"
             android:textColor="@color/text_lightest_grey"
             android:textSize="20sp"
-            />
+            android:importantForAccessibility="no"/>
         <CheckBox
             android:id="@+id/syllabus_chapters_checkbox"
             android:gravity="center_vertical"
@@ -45,11 +45,11 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             style="@style/Widget.AppCompat.CompoundButton.CheckBox"
-            />
+            android:importantForAccessibility="no"/>
         <TextView android:id="@+id/count_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            />
+            android:importantForAccessibility="no"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>

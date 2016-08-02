@@ -65,6 +65,18 @@ public class InstituteInfrastructureFragment extends BaseFragment {
             imageView.setImageUrl(this.mInstitute.getImages().get("Infra"), imageLoader);
         }
 
+        if(mInstitute != null && mInstitute.getShort_name() != null && !mInstitute.getShort_name().equalsIgnoreCase("null") ) {
+            imageView.setContentDescription(mInstitute.getShort_name() + " infrastructure Image");
+        } else if (mInstitute != null && mInstitute.getName() != null && !mInstitute.getName().equalsIgnoreCase("null")){
+            String description =  mInstitute.getName();
+            if(mInstitute.getCity_name() != null && !mInstitute.getCity_name().equalsIgnoreCase("null")){
+                description = description + " " + mInstitute.getCity_name();
+            } else if(mInstitute.getState_name() != null && !mInstitute.getState_name().equalsIgnoreCase("null")){
+                description = description + " " + mInstitute.getState_name();
+            }
+            imageView.setContentDescription(description + " infrastructure Image");
+        }
+
         ((TextView) rootView.findViewById(R.id.infra_about)).setText(this.mInstitute.getInfra_snap());
 
         GridLayout layout = (GridLayout) rootView.findViewById(R.id.infrastructure_college_facility_list);
@@ -77,6 +89,7 @@ public class InstituteInfrastructureFragment extends BaseFragment {
         ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
         for (Facility f : facilities) {
             View view =  inflater.inflate(R.layout.item_facility_layout, facilityLayout, false);
+            view.setContentDescription(f.tag);
             NetworkImageView imageView = (NetworkImageView)view.findViewById(R.id.item_facility_icon);
             imageView.setDefaultImageResId(R.drawable.ic_cd);
             imageView.setErrorImageResId(R.drawable.ic_cd);

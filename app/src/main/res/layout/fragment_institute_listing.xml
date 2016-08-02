@@ -38,11 +38,12 @@
         android:paddingRight="@dimen/m2dp"
         android:visibility="gone"
         android:orientation="horizontal"
-        >
+        android:importantForAccessibility="no">
         <ScrollView
             android:id="@+id/institute_listing_filter_tags_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:importantForAccessibility="no"
             >
             <com.collegedekho.app.widget.tag.textview.ContactsCompletionView
                 android:id="@+id/searchView"
@@ -56,7 +57,7 @@
                 android:textSize="19sp"
                 android:inputType="none"
                 android:focusableInTouchMode="true"
-                />
+                android:importantForAccessibility="yes"/>
         </ScrollView>
     </LinearLayout>
 

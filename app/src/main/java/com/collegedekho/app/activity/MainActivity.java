@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -57,6 +58,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -204,6 +207,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -341,6 +345,7 @@ public class MainActivity extends AppCompatActivity
     private static Context mContext;
     public static TrueClient mTrueClient;
     private Resources mResources ;
+    private TextToSpeech mTextToSpeech;
     /*** ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
@@ -439,6 +444,16 @@ public class MainActivity extends AppCompatActivity
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         mSearchProgress = (ProgressBar) findViewById(R.id.resource_progress_bar);
+
+        mTextToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    mTextToSpeech.setLanguage(Locale.UK);
+                }
+            }
+        });
+
     }
 
     /**
@@ -2026,11 +2041,12 @@ public class MainActivity extends AppCompatActivity
             this.mFB = this.mParseAndPopulateMyFB(response, index);
 
             //if number of comments have increased
+//            this.speakMessageForAccessibility("You have "+String.valueOf(this.mFB.getComments_count()-oldCount)+" Comments");
             if (this.mFB.getComments_count() > oldCount) {
                 ArrayList<MyFutureBuddyComment> myFbComments = this.mFB.getFutureBuddiesCommentsSet();
 
                 if (currentFragment instanceof MyFutureBuddiesFragment)
-                    ((MyFutureBuddiesFragment) currentFragment).updateChatPings(myFbComments);
+                    ((MyFutureBuddiesFragment) currentFragment).updateChatPings(myFbComments,this.mFB.getComments_count());
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -2050,7 +2066,9 @@ public class MainActivity extends AppCompatActivity
             myFB.setResource_uri(fb.getString("resource_uri"));
             myFB.setInstitute_name(fb.getString("institute_name"));
             myFB.setIndex(index);
-
+            myFB.setNext(fb.getString("next"));
+            myFB.setCity_name(fb.getString("city_name"));
+            myFB.setState_name(fb.getString("state_name"));
             JSONArray commentsSet = fb.getJSONArray("instituteforumcomment_set");
 
             for (int i = 0; i < commentsSet.length(); i++) {
@@ -2606,6 +2624,9 @@ public class MainActivity extends AppCompatActivity
 
                     this.mShowMyFB(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
                 }
+                break;
+            case Constants.TAG_LOAD_MORE_FB_COMMENT:
+                this.mLoadPreviousComments(response);
                 break;
             case Constants.TAG_REFRESH_MY_FB:
                 if (tags.length > 1) {
@@ -4264,6 +4285,22 @@ public class MainActivity extends AppCompatActivity
             ((MyFutureBuddiesEnumerationFragment) currentFragment).updateEnumerationList(commentsSize, myFbIndex);
     }
 
+    @Override
+    public void onScrolledToTop(String next){
+        this.mMakeNetworkCall(Constants.TAG_LOAD_MORE_FB_COMMENT,next, null, Request.Method.GET);
+    }
+
+    private void mLoadPreviousComments(String response){
+        try {
+            MyFutureBuddy mFb = this.mParseAndPopulateMyFB(response, 0);
+            if(currentFragment instanceof MyFutureBuddiesFragment){
+                ((MyFutureBuddiesFragment) currentFragment).mDisplayPreviousComments(mFb);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
     private void mOnMyFBCommentAdded(String response, int fbIndex, int index) {
         try {
             JSONObject comment = new JSONObject(response);
@@ -4392,7 +4429,7 @@ public class MainActivity extends AppCompatActivity
 
                 qnaQuestion.setUser(qns.getString("user"));
                 qnaQuestion.setView_count(qns.getInt("view_count"));
-                qnaQuestion.setUser(qns.getString("mDeviceProfile"));
+//                qnaQuestion.setUser(qns.getString("mDeviceProfile"));
                 qnaQuestion.setTitle(qns.getString("title"));
                 qnaQuestion.setDesc(qns.getString("desc"));
                 qnaQuestion.setDownvotes(qns.getInt("downvotes"));
@@ -6476,5 +6513,27 @@ public class MainActivity extends AppCompatActivity
 
     public void setCurrentInstitute(Institute mInstitute) {
         this.mInstitute = mInstitute;
+    }
+
+    public void speakMessageForAccessibility(String message) {
+        if (message != null){
+            AccessibilityManager am = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
+            if(am != null){
+                boolean isAccessibilityEnabled = am.isEnabled();
+                boolean isExploreByTouchEnabled = am.isTouchExplorationEnabled();
+                if (isAccessibilityEnabled && isExploreByTouchEnabled) {
+                    mTextToSpeech.speak(message, TextToSpeech.QUEUE_FLUSH, null);
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
+        if(currentFragment instanceof SplashFragment){
+            return super.dispatchPopulateAccessibilityEvent(event);
+        }else {
+            return true;
+        }
     }
 }

@@ -15,7 +15,7 @@
                     android:id="@+id/college_detail_pager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    >
+                    android:importantForAccessibility="no">
                     <android.support.v4.view.PagerTabStrip
                         android:id="@+id/pager_header"
                         android:layout_width="match_parent"
@@ -26,7 +26,7 @@
                         android:scrollbars="none"
                         app:layout_scrollFlags="scroll|enterAlways"
                         app:tabMode="scrollable"
-                        />
+                        android:importantForAccessibility="no" />
                 </com.collegedekho.app.display.CustomViewPager>
     </LinearLayout>
     <com.github.clans.fab.FloatingActionMenu

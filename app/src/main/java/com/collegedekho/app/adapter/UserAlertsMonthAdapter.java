@@ -92,13 +92,13 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
         }
         String day_key = year + "-" + mth + "-" + dy;
 
-        if(day==1 && !isCurrentMonth){
-            isCurrentMonth=true;
-        }else if (day==1){
-            isCurrentMonth=false;
-            isActiveCell =false;
+        if (day == 1 && !isCurrentMonth) {
+            isCurrentMonth = true;
+        } else if (day == 1) {
+            isCurrentMonth = false;
+            isActiveCell = false;
         }
-        if(isCurrentMonth) {
+        if (isCurrentMonth) {
             if (month != mCalendar.get(Calendar.MONTH) || year != mCalendar.get(Calendar.YEAR)) {
                 if (day == 1 && !isActiveCell) {
                     isActiveCell = true;
@@ -150,7 +150,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
             count = keys.get(day_key);
             holder.dateView.setTag(day_key);
             if (!isNotified) {
-                selectedPosition=position;
+                selectedPosition = position;
                 isNotified = true;
             }
         }
@@ -165,19 +165,38 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
                 dot.setBackgroundDrawable(mDrawable);
                 holder.dotView.addView(dot);
                 holder.dotView.setVisibility(View.VISIBLE);
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
         }
-        if (position==selectedPosition){
+        if (position == selectedPosition) {
             holder.view.setCardBackgroundColor(0xffcccccc);
             mListener.onItemSelect(position, startCellPosition, endCellPosition, day_key);
-        }else {
+        } else {
             holder.view.setCardBackgroundColor(0xffffffff);
         }
         holder.dateView.setTag(day_key);
-        String dateString=String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
+        String dateString = String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
         holder.dateView.setText(dateString);
+
+        String description = String.valueOf(cal.get(Calendar.DAY_OF_MONTH)
+                + " " + monthNames[cal.get(Calendar.MONTH)] + " " + cal.get(Calendar.YEAR));
+        if(isActiveCell) {
+            if (position != selectedPosition) {
+                if (count > 0) {
+                    description = description + " has " + count + " events click to see details of events.";
+                } else {
+                    description = "No event on " + description;
+                }
+            } else {
+                description = "selected date " + description;
+            }
+            holder.mDateContainerView.setContentDescription(description);
+        } else {
+            holder.mDateContainerView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+
+
     }
 
     @Override
@@ -191,6 +210,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
         public TextView monthView;
         public TextView dateView;
         public CardView view;
+        public View mDateContainerView;
 
         public AlertItemViewHolder(View itemView) {
             super(itemView);
@@ -199,6 +219,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
             dateView = (TextView) itemView.findViewById(R.id.txt_date);
             view=(CardView) itemView.findViewById(R.id.calendar_card_view);
             itemView.setOnClickListener(this);
+            mDateContainerView = itemView;
         }
 
         @Override

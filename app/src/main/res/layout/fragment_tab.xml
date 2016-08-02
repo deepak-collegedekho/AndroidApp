@@ -35,7 +35,7 @@
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_marginTop="10dp"
-                    />
+                    android:contentDescription="Click to edit your profile" />
                 <TextView
                     android:id="@+id/user_name"
                     android:layout_width="wrap_content"
@@ -81,7 +81,7 @@
                         android:orientation="horizontal"
                         android:gravity="center"
                         android:layout_gravity="end"
-                        >
+                        android:contentDescription="Click to give detailed psychometric test to analyse your preferences">
 
                         <ImageView
                             android:layout_width="@dimen/m20dp"
@@ -112,7 +112,7 @@
                         android:visibility="visible"
                         android:gravity="center"
                         android:layout_gravity="end"
-                        >
+                        android:contentDescription="Click to see your detailed test report" >
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -135,7 +135,7 @@
                         android:orientation="horizontal"
                         android:gravity="center"
                         android:layout_gravity="end"
-                        >
+                        android:contentDescription="Click to search colleges step by step" >
                         <ImageView
                             android:layout_width="@dimen/m20dp"
                             android:layout_height="match_parent"

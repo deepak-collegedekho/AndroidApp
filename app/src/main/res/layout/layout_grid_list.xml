@@ -10,31 +10,39 @@
         android:id="@+id/view_into_grid"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:importantForAccessibility="yes"
+        android:contentDescription="Tap to view as grid">
     <ImageView
         android:id="@+id/view_into_grid_image"
         style="@style/AppTheme.ImageView"
-        app:srcCompat="@drawable/ic_view_grid" />
+        app:srcCompat="@drawable/ic_view_grid"
+        android:importantForAccessibility="no"/>
 
     <TextView
         style="@style/AppTheme.TextView.Head2"
-        android:text="GRID"/>
+        android:text="GRID"
+        android:importantForAccessibility="no"/>
 </LinearLayout>
     <LinearLayout
         android:id="@+id/view_into_list"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:importantForAccessibility="yes"
+        android:contentDescription="Tap to view as list">
 
     <ImageView
         android:id="@+id/view_into_list_image"
         style="@style/AppTheme.ImageView"
         android:paddingLeft="@dimen/m10dp"
-        app:srcCompat="@drawable/ic_view_list" />
+        app:srcCompat="@drawable/ic_view_list"
+        android:importantForAccessibility="no" />
 
     <TextView
         style="@style/AppTheme.TextView.Head2"
-        android:text="LIST"/>
+        android:text="LIST"
+        android:importantForAccessibility="no"/>
         </LinearLayout>
 
 

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -122,6 +123,7 @@ public class HomeFragment extends BaseFragment {
         }
         // update mDeviceProfile info
         updateUserInfo();
+        mainActivity.speakMessageForAccessibility("Welcome To your Dashboard.");
     }
 
 

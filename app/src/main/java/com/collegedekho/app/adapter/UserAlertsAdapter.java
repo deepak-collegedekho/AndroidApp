@@ -44,6 +44,8 @@ public class UserAlertsAdapter extends RecyclerView.Adapter<UserAlertsAdapter.Us
         MyAlertDate myAlertDate = itemList.get(position);
         holder.nameTextView.setText(monthNames[myAlertDate.getMonth()] + " " + myAlertDate.getYear());
         holder.countTextView.setText(String.valueOf(myAlertDate.getCount())+" "+getEvent(myAlertDate.getCount()));
+        holder.mAlertContainer.setContentDescription(String.valueOf(myAlertDate.getCount())+" "+getEvent(myAlertDate.getCount())
+                + " on " +monthNames[myAlertDate.getMonth()] + " " + myAlertDate.getYear()+" . Click to see details");
     }
 
     @Override
@@ -55,6 +57,7 @@ public class UserAlertsAdapter extends RecyclerView.Adapter<UserAlertsAdapter.Us
     public class UserAlertsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView nameTextView;
         public TextView countTextView;
+        public View mAlertContainer;
 
         public UserAlertsViewHolder(View itemView) {
             super(itemView);
@@ -63,6 +66,7 @@ public class UserAlertsAdapter extends RecyclerView.Adapter<UserAlertsAdapter.Us
             countTextView.setVisibility(View.VISIBLE);
             itemView.findViewById(R.id.syllabus_chapters_checkbox).setVisibility(View.GONE);
             itemView.setOnClickListener(this);
+            mAlertContainer = itemView;
         }
 
         @Override

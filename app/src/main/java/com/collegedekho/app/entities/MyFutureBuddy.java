@@ -23,10 +23,13 @@ public class MyFutureBuddy implements Parcelable {
 
     private String resource_uri;
     private String institute_name;
+    private String city_name;
+    private String state_name;
     private int comments_count;
     private int members_count;
     private int index;
     private ArrayList<MyFutureBuddyComment> futureBuddiesCommentsSet;
+    private String next;
 
     public MyFutureBuddy() {
     }
@@ -34,6 +37,8 @@ public class MyFutureBuddy implements Parcelable {
     public MyFutureBuddy(Parcel source) {
         resource_uri = source.readString();
         institute_name = source.readString();
+        city_name = source.readString();
+        state_name = source.readString();
         comments_count = source.readInt();
         members_count = source.readInt();
         index = source.readInt();
@@ -41,6 +46,7 @@ public class MyFutureBuddy implements Parcelable {
         if(futureBuddiesCommentsSet == null)
             futureBuddiesCommentsSet=new ArrayList<>();
         source.readTypedList(futureBuddiesCommentsSet, MyFutureBuddyComment.CREATOR);
+        next = source.readString();
     }
 
     @Override
@@ -52,11 +58,37 @@ public class MyFutureBuddy implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(resource_uri);
         dest.writeString(institute_name);
+        dest.writeString(city_name);
+        dest.writeString(state_name);
         dest.writeInt(comments_count);
         dest.writeInt(members_count);
         dest.writeInt(index);
-
         dest.writeTypedList(futureBuddiesCommentsSet);
+        dest.writeString(next);
+    }
+
+    public String getCity_name() {
+        return city_name;
+    }
+
+    public void setCity_name(String city_name) {
+        this.city_name = city_name;
+    }
+
+    public String getState_name() {
+        return state_name;
+    }
+
+    public void setState_name(String state_name) {
+        this.state_name = state_name;
+    }
+
+    public String getNext() {
+        return next;
+    }
+
+    public void setNext(String next) {
+        this.next = next;
     }
 
     public String getResource_uri() {

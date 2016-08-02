@@ -97,44 +97,30 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
 
     public abstract void hide();
 
-    protected void updateViewTypeIcon(View view, int type)
-    {
+    protected void updateViewTypeIcon(View view, int type) {
         if(view == null)return;
         if(type == Constants.VIEW_INTO_GRID) {
             ((ImageView) view.findViewById(R.id.view_into_grid_image)).setColorFilter(getResources().getColor(R.color.primaryColor));
             ((ImageView) view.findViewById(R.id.view_into_list_image)).setColorFilter(getResources().getColor(R.color.bg_category_item_unselected));
-        }
-        else
-        {
+        } else {
             ((ImageView) view.findViewById(R.id.view_into_grid_image)).setColorFilter(getResources().getColor(R.color.bg_category_item_unselected));
             ((ImageView) view.findViewById(R.id.view_into_list_image)).setColorFilter(getResources().getColor(R.color.primary_color));
         }
     }
 
     @Override
-    public void onClick(View v) {
-    }
+    public void onClick(View v) {}
 
     public void updateNews(News news) {}
     public void updateArticle(Articles article) {}
     public void updateLikeButtons(int position) {}
     public void instituteQnAQuestionAdded(QnAQuestions q){}
-
-    public void updateExamSummary(ExamSummary examSummary) {
-
-    }
-
-
-
+    public void updateExamSummary(ExamSummary examSummary) {}
 
     public interface BaseListener{
         void onEndReached(String next, int type);
-
         void onFilterButtonClicked();
-
         void onFilterApplied();
-
         void onInstituteLikedDisliked(int position, int liked);
     }
-
 }

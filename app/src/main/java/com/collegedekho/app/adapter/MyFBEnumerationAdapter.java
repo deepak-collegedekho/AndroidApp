@@ -61,29 +61,35 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
         MyFutureBuddiesEnumeration myFBEnumeration = mMyFBEnumeration.get(position);
 
         MyFBEnumerationHolder myFBEnumerationHolder = (MyFBEnumerationHolder) holder;
-
+        String description = "";
         String text = "";
-        if (myFBEnumeration.getCity_name() != null)
+        if (myFBEnumeration.getCity_name() != null) {
             text += myFBEnumeration.getCity_name() + ", ";
-        if (myFBEnumeration.getState_name() != null)
+            description = description + " " + myFBEnumeration.getCity_name();
+        }
+        if (myFBEnumeration.getState_name() != null) {
             text += myFBEnumeration.getState_name();
-        if(myFBEnumeration.getUnread_count() > 0)
-        {
+            description = description + " " + myFBEnumeration.getState_name();
+        }
+        if(myFBEnumeration.getUnread_count() > 0) {
             myFBEnumerationHolder.unreadCountLayout.setVisibility(View.VISIBLE);
             myFBEnumerationHolder.unreadCount.setVisibility(View.VISIBLE);
             myFBEnumerationHolder.unreadCount.setText(""+myFBEnumeration.getUnread_count());
-        }
-        else{
+        } else{
             myFBEnumerationHolder.unreadCountLayout.setVisibility(View.GONE);
             myFBEnumerationHolder.unreadCount.setVisibility(View.GONE);
         }
 
         myFBEnumerationHolder.instituteName.setText(myFBEnumeration.getInstitute_name());
+
+        description = myFBEnumeration.getInstitute_name() + description;
+
         myFBEnumerationHolder.instituteLocation.setText(text);
         //myFBEnumerationHolder.commentsCount.setText(String.valueOf(myFBEnumeration.getComments_count()) + " chats");
         myFBEnumerationHolder.membersCount.setText(String.valueOf(myFBEnumeration.getMembers_count()));
         updateInstituteLogoImage(myFBEnumeration.getInstitute_logo(), myFBEnumerationHolder.instituteLogo);
 
+        myFBEnumerationHolder.mContainer.setContentDescription("Click to see chatroom of " + description);
         this.setAnimation(myFBEnumerationHolder.container, position);
     }
 
@@ -130,6 +136,7 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
         TextView unreadCount;
         CardView container;
         CircularImageView instituteLogo;
+        View mContainer;
 
         MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener mListener;
 
@@ -145,6 +152,7 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
             this.container = (CardView) itemView.findViewById(R.id.card_fb_enumeration_container);
             this.instituteLogo = (CircularImageView) itemView.findViewById(R.id.fb_member_institute_logo);
             this.mListener = listener;
+            this.mContainer = itemView;
 
             itemView.setOnClickListener(this);
         }

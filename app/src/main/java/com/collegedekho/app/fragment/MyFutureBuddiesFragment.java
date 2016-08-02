@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.android.volley.Request;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.MyFBCommentsListAdapter;
+import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
 import com.collegedekho.app.entities.MyFutureBuddy;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.entities.Profile;
@@ -41,9 +43,11 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     private MyFBCommentsListAdapter mMyFBCommentsListAdapter;
     private EditText mChatText;
     private RecyclerView mCommentsListView;
+    private LinearLayoutManager mLayoutManager;
     private TextView mEmptyTextView;
     private Timer mMyFbRefreshTimer;
     private MainActivity mMainActivity;
+    public int lastItemPosition;
     private volatile boolean mSubmittingState = false;
     private static final Object mSubmitLock = new Object();
     private int mInitialCount;
@@ -80,7 +84,14 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_my_fb, container, false);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
-        ((TextView) rootView.findViewById(R.id.fb_title)).setText(this.mMyFutureBuddies.getInstitute_name());
+        String instiFullName = mMyFutureBuddies.getInstitute_name();
+        if(mMyFutureBuddies.getCity_name() != null && !mMyFutureBuddies.getCity_name().equalsIgnoreCase("null")){
+            instiFullName = instiFullName + " | " + mMyFutureBuddies.getCity_name().trim();
+        } else if (mMyFutureBuddies.getState_name() != null && !mMyFutureBuddies.getState_name().equalsIgnoreCase("null")){
+            instiFullName = instiFullName + " | " + mMyFutureBuddies.getState_name().trim();
+        }
+
+        ((TextView) rootView.findViewById(R.id.fb_title)).setText(instiFullName);
         this.mChatText = (EditText) rootView.findViewById(R.id.fb_chat_input);
 
         (rootView.findViewById(R.id.fb_push_chat)).setOnClickListener(new View.OnClickListener() {
@@ -88,53 +99,55 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             public void onClick(View v) {
                 int connectivityStatus= NetworkUtils.getConnectivityStatus();
                 if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
-                final String value = mChatText.getText().toString();
-                if (value.trim().equals(""))
-                    mListener.displayMessage(R.string.ENTER_YOUR_MESSAGE);
-                else {
-                    Profile profile = MainActivity.mProfile;
-                    if (profile == null || profile.getName() == null || profile.getName().isEmpty() || profile.getName().equalsIgnoreCase(getString(R.string.ANONYMOUS_USER))) {
+                    final String value = mChatText.getText().toString();
+                    if (value.trim().equals("")) {
+                        mListener.displayMessage(R.string.ENTER_YOUR_MESSAGE);
+                    } else {
+                        Profile profile = MainActivity.mProfile;
+                        if (profile == null || profile.getName() == null || profile.getName().isEmpty() || profile.getName().equalsIgnoreCase(getString(R.string.ANONYMOUS_USER))) {
 
-                        mChatText.setText("");
-                        // show dialog for name if mDeviceProfile name is not present
-                        final Dialog dialog = new Dialog(getActivity());
-                        dialog.setContentView(R.layout.name_dailog);
-                        dialog.setCanceledOnTouchOutside(true);
-                        TextView submit = (TextView)dialog.findViewById(R.id.name_submit);
-                        dialog.show();
+                            mChatText.setText("");
+                            // show dialog for name if mDeviceProfile name is not present
+                            final Dialog dialog = new Dialog(getActivity());
+                            dialog.setContentView(R.layout.name_dailog);
+                            dialog.setCanceledOnTouchOutside(true);
+                            TextView submit = (TextView)dialog.findViewById(R.id.name_submit);
+                            dialog.show();
 
-                        submit.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+                            submit.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
 
-                                String name =   ((EditText) dialog.findViewById(R.id.user_name)).getText().toString();
-                                if(name == null || name.length() <= 0)
-                                {
-                                   mListener.displayMessage(R.string.NAME_EMPTY);
-                                    return;
+                                    String name =   ((EditText) dialog.findViewById(R.id.user_name)).getText().toString();
+                                    if(name == null || name.length() <= 0)
+                                    {
+                                       mListener.displayMessage(R.string.NAME_EMPTY);
+                                        return;
+                                    }
+                                    else if(!Utils.isValidName(name)){
+                                        mListener.displayMessage(R.string.NAME_INVALID);
+                                        return;
+                                    }
+
+                                    dialog.dismiss();
+                                    HashMap<String, String> hashMap = new HashMap<>();
+                                    hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), name);
+                                    mListener.onNameUpdated(hashMap, value);
                                 }
-                                else if(!Utils.isValidName(name)){
-                                    mListener.displayMessage(R.string.NAME_INVALID);
-                                    return;
-                                }
+                            });
 
-                                dialog.dismiss();
-                                HashMap<String, String> hashMap = new HashMap<>();
-                                hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), name);
-                                mListener.onNameUpdated(hashMap, value);
-                            }
-                        });
-
-                        return;
+                            return;
+                        }
+                        mSubmittedChat(value);
                     }
-                    mSubmittedChat(value);
-                }
 
-            }else {
-                    mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
+                } else {
+                        mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
                 }
             }
         });
+
+        (rootView.findViewById(R.id.fb_push_chat)).setContentDescription("Click to send your message.");
 
         if (this.mMyFBCommentsSet.size() == 0)
             (this.mEmptyTextView).setText("Say Hi to your Future Buddies");
@@ -142,9 +155,30 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         this.mMyFBCommentsListAdapter = new MyFBCommentsListAdapter(getActivity(), this.mMyFBCommentsSet);
 
         this.mCommentsListView = (RecyclerView) rootView.findViewById(R.id.my_fb_add_comment_list);
-        this.mCommentsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        this.mLayoutManager = new LinearLayoutManager(getActivity());
+        this.mCommentsListView.setLayoutManager(this.mLayoutManager);
         this.mCommentsListView.setAdapter(this.mMyFBCommentsListAdapter);
         this.mCommentsListView.setItemAnimator(new DefaultItemAnimator());
+
+        this.mCommentsListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
+            {
+                if( dy < 0){
+                    int topVisiblePosition = MyFutureBuddiesFragment.this.mLayoutManager.findFirstCompletelyVisibleItemPosition();
+                    if(topVisiblePosition == 0){
+                        if(MyFutureBuddiesFragment.this.mListener != null){
+                            if(mMyFutureBuddies != null && mMyFutureBuddies.getNext() != null && !mMyFutureBuddies.getNext().equalsIgnoreCase("null")){
+                                MyFutureBuddiesFragment.this.lastItemPosition = MyFutureBuddiesFragment.this.mLayoutManager.findLastVisibleItemPosition();
+                                String next = mMyFutureBuddies.getNext();
+                                mMyFutureBuddies.setNext(null);
+                                mListener.onScrolledToTop(next);
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         //mCommentsListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
@@ -227,13 +261,14 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         //Declare the timer
         this.mMyFbRefreshTimer = new Timer();
         //Set the schedule function and rate
-        this.mMyFbRefreshTimer.scheduleAtFixedRate(new TimerTask() {
+        this.mMyFbRefreshTimer.scheduleAtFixedRate(
+                new TimerTask() {
                                                        @Override
                                                        public void run() {
                                                            //Called each time when 1000 milliseconds (1 second) (the period parameter)
                                                            //update the comment list here after checking the internet connection
                                                            if (Constants.IS_CONNECTED_TO_INTERNET)
-                                                               mMainActivity.mNetworkUtils.networkData(Constants.TAG_REFRESH_MY_FB + "#" + String.valueOf(mMyFutureBuddies.getIndex()) + "#" + String.valueOf(mMyFBCommentsSet.size()), mMyFutureBuddies.getResource_uri(), null, Request.Method.GET);
+                                                               mMainActivity.mNetworkUtils.networkData(Constants.TAG_REFRESH_MY_FB + "#" + String.valueOf(mMyFutureBuddies.getIndex()) + "#" + String.valueOf(MyFutureBuddiesFragment.this.mInitialCount)  /*String.valueOf(mMyFBCommentsSet.size())*/, mMyFutureBuddies.getResource_uri(), null, Request.Method.GET);
                                                            //else
                                                            //Toast.makeText(mMainActivity, "Please connect to internet to receive messages..", Toast.LENGTH_SHORT).show();
                                                        }
@@ -306,7 +341,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         this.mSubmittedChat(value);
     }
 
-    public void updateChatPings(List<MyFutureBuddyComment> chatPings)
+    public void updateChatPings(List<MyFutureBuddyComment> chatPings, int newCommentCount)
     {
         if (this.mSubmittingState)
             return;
@@ -318,6 +353,13 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
         this.mMyFBCommentsSet.addAll(chatPings);
         this.mMyFBCommentsListAdapter.notifyDataSetChanged();
+
+        int netNewComments = newCommentCount - mInitialCount;
+        this.mInitialCount = newCommentCount;
+
+        if(mMainActivity != null){
+            mMainActivity.speakMessageForAccessibility("You have "+String.valueOf(netNewComments)+" new Comments");
+        }
     }
 
     public void setmSubmittingState(boolean val) {
@@ -326,6 +368,20 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         }
     }
 
+    public void mDisplayPreviousComments(MyFutureBuddy myFB){
+        if(myFB != null) {
+            ArrayList<MyFutureBuddyComment> previousCommentsList = myFB.getFutureBuddiesCommentsSet();
+            if(previousCommentsList != null && !previousCommentsList.isEmpty()) {
+                int lastCommentPosition = previousCommentsList.size() + this.lastItemPosition;
+                previousCommentsList.addAll(this.mMyFBCommentsSet);
+                this.mMyFBCommentsSet = previousCommentsList;
+                this.mMyFutureBuddies.setNext(myFB.getNext());
+                this.mMyFBCommentsListAdapter.setmMyFBCommentList(mMyFBCommentsSet);
+                this.mMyFBCommentsListAdapter.notifyDataSetChanged();
+                this.mCommentsListView.scrollToPosition(lastCommentPosition);
+            }
+        }
+    }
 
     @Override
     public void show() {
@@ -342,5 +398,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         void onMyFBUpdated(int commentsSize, int myFbIndex);
         void onNameUpdated(HashMap params, String msg);
         void displayMessage(int messageId);
+        void onScrolledToTop(String next);
     }
 }
