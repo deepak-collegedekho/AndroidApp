@@ -82,7 +82,7 @@
                                 android:visibility="visible"
                                 android:padding="@dimen/m10dp"
                                 android:layout_gravity="right|top"
-                                app:srcCompat="@drawable/ic_edit_vector"/>
+                                app:srcCompat="@drawable/ic_edit"/>
 
                             <LinearLayout
                                 android:id="@+id/profile_info_layout"
@@ -337,7 +337,7 @@
                                 android:visibility="visible"
                                 android:padding="@dimen/m10dp"
                                 android:layout_gravity="right|top"
-                                app:srcCompat="@drawable/ic_edit_vector"/>
+                                app:srcCompat="@drawable/ic_edit"/>
                             >
                             <LinearLayout
                                 android:id="@+id/profile_education_layout"
@@ -603,7 +603,7 @@
                                 android:visibility="visible"
                                 android:padding="@dimen/m10dp"
                                 android:layout_gravity="right|top"
-                                app:srcCompat="@drawable/ic_edit_vector"/>
+                                app:srcCompat="@drawable/ic_edit"/>
 
                             <LinearLayout
                                 android:id="@+id/profile_preferred_layout"
@@ -884,7 +884,7 @@
                                 android:visibility="visible"
                                 android:padding="@dimen/m10dp"
                                 android:layout_gravity="right|top"
-                                app:srcCompat="@drawable/ic_edit_vector"/>
+                                app:srcCompat="@drawable/ic_edit"/>
 
                             <LinearLayout
                                 android:id="@+id/profile_exams_layout"
@@ -968,7 +968,7 @@
                                 android:visibility="visible"
                                 android:padding="@dimen/m10dp"
                                 android:layout_gravity="right|top"
-                                app:srcCompat="@drawable/ic_edit_vector"/>
+                                app:srcCompat="@drawable/ic_edit"/>
 
                             <LinearLayout
                                 android:id="@+id/profile_other_info_layout"

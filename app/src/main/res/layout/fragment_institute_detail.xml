@@ -29,7 +29,7 @@
                         android:importantForAccessibility="no" />
                 </com.collegedekho.app.display.CustomViewPager>
     </LinearLayout>
-    <com.github.clans.fab.FloatingActionMenu
+    <com.collegedekho.app.widget.fab.FloatingActionMenu
         android:id="@+id/fab_menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -54,35 +54,35 @@
         android:visibility="gone"
         >
 
-        <com.github.clans.fab.FloatingActionButton
+        <com.collegedekho.app.widget.fab.FloatingActionButton
             android:id="@+id/remove_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_delete_forever_white_24dp"
+            android:src="@drawable/ic_delete"
             app:fab_size="mini"
             app:fab_colorNormal="@color/primary_color"
             app:fab_colorPressed="@color/primaryColorDark"
             app:fab_label="@string/ACTION_REMOVE_COLLEGE"
             />
-        <com.github.clans.fab.FloatingActionButton
+        <com.collegedekho.app.widget.fab.FloatingActionButton
             android:id="@+id/apply_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/apply"
+            android:src="@drawable/ic_apply"
             app:fab_size="mini"
             app:fab_colorNormal="@color/primary_color"
             app:fab_label="@string/ACTION_APPLY_COLLEGE"
             android:visibility="gone"
             />
-        <com.github.clans.fab.FloatingActionButton
+        <com.collegedekho.app.widget.fab.FloatingActionButton
             android:id="@+id/call_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_phone_in_talk_white_24dp"
+            android:src="@drawable/ic_call"
             app:fab_size="mini"
             app:fab_colorNormal="@color/primary_color"
             app:fab_label="@string/ACTION_CALL_COLLEGE"
             android:visibility="gone"
             />
-    </com.github.clans.fab.FloatingActionMenu>
+    </com.collegedekho.app.widget.fab.FloatingActionMenu>
 </RelativeLayout>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -90,16 +89,15 @@
             android:focusable="true"
             android:background="@android:color/transparent"
             />
-        <com.melnykov.fab.FloatingActionButton
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/fb_push_chat"
-            android:layout_width="3dp"
-            android:layout_height="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="2dp"
-            android:src="@drawable/ic_send"
-            fab:fab_type="normal"
-            fab:fab_colorNormal="@color/primaryColor"
-            fab:fab_colorPressed="@color/primaryColorDark"
+            app:srcCompat="@drawable/ic_send"
+            app:backgroundTint="@color/primaryColor"
+
             />
         </LinearLayout>
 </LinearLayout>

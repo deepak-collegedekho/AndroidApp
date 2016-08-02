@@ -4,13 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,7 +25,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -74,7 +72,7 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private RecyclerView recyclerView;
     private View instituteView;
     private FrameLayout fab;
-    private ImageButton fabBtn;
+    private FloatingActionButton fabBtn;
     private int fabMargin;
     int filtersApplied = 0;
     public InstituteListFragment() {
@@ -134,8 +132,12 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
         //mainContainer = (LinearLayout) getActivity().findViewById(R.id.main_container);
 
         fab = (FrameLayout) rootView.findViewById(R.id.myfab_main);
+<<<<<<< Updated upstream
         fabBtn = (ImageButton) rootView.findViewById(R.id.button_filter);
         fabBtn.setContentDescription("Click to Apply Filters");
+=======
+        fabBtn = (FloatingActionButton) rootView.findViewById(R.id.button_filter);
+>>>>>>> Stashed changes
         //fabShadow = rootView.findViewById(R.id.myfab_shadow);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -434,11 +436,11 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
 //            }
 //            else {
                 getView().findViewById(R.id.filter_tokenLL).setVisibility(View.VISIBLE);
-                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter_vector), this.getActivity().getResources().getColor(R.color.primary_orange)));
+                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter), this.getActivity().getResources().getColor(R.color.primary_orange)));
 //            }
             if(filtersApplied == 0){
                 v.findViewById(R.id.filter_tokenLL).setVisibility(View.GONE);
-                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter_vector), this.getActivity().getResources().getColor(R.color.white)));
+                ((ImageView) v.findViewById(R.id.button_filter)).setImageDrawable(Utils.ApplyThemeToDrawable(this.getActivity().getResources().getDrawable(R.drawable.ic_filter), this.getActivity().getResources().getColor(R.color.white)));
             }
         }
     }

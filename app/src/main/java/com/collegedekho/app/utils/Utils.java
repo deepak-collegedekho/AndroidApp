@@ -1,5 +1,6 @@
 package com.collegedekho.app.utils;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.animation.TypeEvaluator;
@@ -12,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -22,6 +24,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -38,8 +41,6 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.htmlparser.HtmlSpanner;
 import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.resource.TypeFaceTypes;
-import com.google.android.gms.auth.GoogleAuthUtil;
 
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
@@ -53,6 +54,22 @@ import java.util.regex.Pattern;
  * Created by sureshsaini on 12/10/15.
  */
 public class Utils {
+
+
+
+    public static int dpToPx(Context context, float dp) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return Math.round(dp * scale);
+    }
+
+    public static boolean hasJellyBean() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    }
+
+    public static boolean hasLollipop() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
 
     private static BroadcastReceiver mPowerKeyReceiver;
     private static boolean screenGotOff;
@@ -120,20 +137,20 @@ public class Utils {
         return context.getResources().getDrawable(id);
     }
 
-    public static void DisplayToast(Context context, String text){
+    public static void DisplayToast(Context context, String text) {
         Toast.makeText(context, text, Toast.LENGTH_LONG).show();
     }
-    public static void DisplayToastShort(Context context, String text){
-       Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 30);
+
+    public static void DisplayToastShort(Context context, String text) {
+        Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 30);
         toast.show();
     }
 
 
-    public static int getPadding(Context context, int value)
-    {
+    public static int getPadding(Context context, int value) {
         float density = context.getResources().getDisplayMetrics().density;
-        return (int)(value * density);
+        return (int) (value * density);
     }
 
     /**
@@ -155,10 +172,10 @@ public class Utils {
      * @return
      */
     public static boolean isValidPhone(String target) {
-        if(target == null || target.length() <= 6)
+        if (target == null || target.length() <= 6)
             return false;
 
-        target = target.replace(" ","");
+        target = target.replace(" ", "");
         return target != null && Patterns.PHONE.matcher(target).matches();
     }
 
@@ -168,7 +185,7 @@ public class Utils {
      * @return
      */
     public static boolean isValidName(CharSequence target) {
-        if(target == null || target.length() < 3)
+        if (target == null || target.length() < 3)
             return false;
 
         Pattern ps = Pattern.compile("^[a-zA-Z ]+$");
@@ -181,45 +198,29 @@ public class Utils {
      * which is used  by the google account
      * @return
      */
-    public static String getDeviceEmail(Context context){
-        Pattern emailPattern = Patterns.EMAIL_ADDRESS;
-        Account[] accounts = AccountManager.get(context).getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-        for (Account account : accounts) {
-            if (emailPattern.matcher(account.name).matches()) {
-                return account.name.replaceAll("\"","");
+    public static String getDeviceEmail(Context context) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
+
+            Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+            Account[] accounts = AccountManager.get(context).getAccountsByType("com.google");
+            for (Account account : accounts) {
+                if (emailPattern.matcher(account.name).matches()) {
+                    return account.name.replaceAll("\"","");
+                }
             }
         }
         return null;
     }
 
-    /**
-     * Method is used to get device phone number
-     * if it is enable in phone setting
-     * @return
-     */
-    private String getDevicePhone(Context context){
-        Pattern phonePattern = Patterns.PHONE;
-        Account[] accounts = AccountManager.get(context).getAccounts();
-        for (Account account : accounts) {
-            if (phonePattern.matcher(account.name).matches()) {
-                return account.name;
-            }
-        }
-        return null;
+
+
+    public static int GetCurrentYear(){
+        return Calendar.getInstance().get(Calendar.YEAR);
     }
 
-    public static int GetCurrentYear()
-    {
-        int year = Calendar.getInstance().get(Calendar.YEAR);
+    public static int GetCurrentMonth(){
+        return Calendar.getInstance().get(Calendar.MONTH);
 
-        return year;
-    }
-
-    public static int GetCurrentMonth()
-    {
-        int month = Calendar.getInstance().get(Calendar.MONTH);
-
-        return month;
     }
 
 
@@ -918,4 +919,5 @@ public class Utils {
 
         return (sentBitmap);
     }
+
 }

@@ -38,7 +38,7 @@ public class ContactsCompletionView extends TokenCompleteTextView<String> {
         LinearLayout view = (LinearLayout)l.inflate(R.layout.contact_token, (ViewGroup)ContactsCompletionView.this.getParent(), false);
         TextView tv  =((TextView) view.findViewById(R.id.name));
         tv.setText(text);
-        tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_delete, 0);
+        tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_cross, 0);
 
         return view;
     }

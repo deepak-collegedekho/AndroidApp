@@ -2,7 +2,7 @@ package com.collegedekho.app.fragment.stepByStepTest;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.HapticFeedbackConstants;
@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -21,7 +20,6 @@ import com.collegedekho.app.entities.StepByStepQuestion;
 import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.listener.PsychometricAnalysisPageListener;
 import com.collegedekho.app.resource.Constants;
-import com.melnykov.fab.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;

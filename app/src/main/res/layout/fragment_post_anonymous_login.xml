@@ -46,7 +46,6 @@
 
         <RelativeLayout
             android:id="@+id/fb_login"
-            style="@style/AppTheme.FacebookButton"
             android:layout_width="250dp"
             android:layout_height="45dp"
             android:visibility="gone"

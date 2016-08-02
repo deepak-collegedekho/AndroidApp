@@ -170,7 +170,7 @@
             android:visibility="visible"
             android:padding="@dimen/m8dp"
             android:layout_gravity="right|top"
-            app:srcCompat="@drawable/ic_edit_vector"/>
+            app:srcCompat="@drawable/ic_edit"/>
 
         </LinearLayout>
 
@@ -214,7 +214,7 @@
             android:visibility="visible"
             android:padding="@dimen/m8dp"
             android:layout_gravity="right|top"
-            app:srcCompat="@drawable/ic_edit_vector"/>
+            app:srcCompat="@drawable/ic_edit"/>
 
     </LinearLayout>
 
@@ -258,7 +258,7 @@
             android:visibility="visible"
             android:padding="@dimen/m8dp"
             android:layout_gravity="right|top"
-            app:srcCompat="@drawable/ic_edit_vector"/>
+            app:srcCompat="@drawable/ic_edit"/>
     </LinearLayout>
 
 
@@ -430,7 +430,7 @@
             android:layout_height="match_parent"
             android:padding="@dimen/m15dp"
             android:layout_alignParentRight="true"
-            app:srcCompat="@drawable/ic_arrow_forward_vector"
+            app:srcCompat="@drawable/ic_arrow_forward"
             android:background="@color/primary_orange"
             android:visibility="visible"
             android:alpha="0"/>

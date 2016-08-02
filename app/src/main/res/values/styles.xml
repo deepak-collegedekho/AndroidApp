@@ -435,20 +435,6 @@
 
 
 
-    <style name="AppTheme.FacebookButton">
-        <item name="android:layout_height">45dp</item>
-        <item name="android:layout_width">328dp</item>
-        <item name="android:paddingLeft">@dimen/m10dp</item>
-        <item name="android:paddingRight">@dimen/m8dp</item>
-        <item name="android:paddingTop">@dimen/m8dp</item>
-        <item name="android:paddingBottom">@dimen/m8dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:icon">@drawable/com_facebook_button_icon</item>
-        <item name="android:background">@drawable/rounded_box_blue_20px</item>
-    </style>
-
     <style name="AppTheme.EditText">
         <item name="android:layout_height">@dimen/m45dp</item>
         <item name="android:layout_width">match_parent</item>

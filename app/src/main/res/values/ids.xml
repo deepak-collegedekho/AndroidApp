@@ -5,6 +5,7 @@
     <item name="navigation_cd_icon" type="id" />
     <item name="empty" type="id" />
 
+    <item name="fab_label" type="id" />
 
     <!--profile ids -->
     <item name="user_name" type="id" />

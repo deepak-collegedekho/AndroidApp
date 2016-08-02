@@ -22,11 +22,9 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
-import com.facebook.login.LoginManager;
 import com.truecaller.android.sdk.TrueButton;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Created by sureshsaini on 20/11/15.
@@ -160,7 +158,7 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
         }
         switch (view.getId()) {
             case R.id.fb_login:
-                LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends", "email", "user_likes", "user_education_history"));
+                //LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends", "email", "user_likes", "user_education_history"));
                 break;
             case R.id.login_phone_submit_button:
                 mPhoneNumberSubmitted();

@@ -162,17 +162,6 @@ import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
 import com.collegedekho.app.widget.GifView;
 import com.crashlytics.android.Crashlytics;
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
-import com.facebook.appevents.AppEventsLogger;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -199,8 +188,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -211,7 +198,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import bolts.AppLinks;
 import io.connecto.android.sdk.Connecto;
 import io.connecto.android.sdk.Properties;
 import io.connecto.android.sdk.Traits;
@@ -311,7 +297,6 @@ public class MainActivity extends AppCompatActivity
     private Institute mInstitute;
     private String mLastScreenName = "";
     private List<Widget> mWidgets;
-    public  CallbackManager callbackManager;
     private Date mTimeScreenClicked = new Date();
     public boolean fromTabFragment = false;
     private String mGTMContainerId = "www.collegedekho.com";
@@ -396,10 +381,10 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        Uri targetUrl = AppLinks.getTargetUrlFromInboundIntent(this, getIntent());
+        /*Uri targetUrl = AppLinks.getTargetUrlFromInboundIntent(this, getIntent());
         if (targetUrl != null) {
             Log.i(TAG, "App Link Target URL: " + targetUrl.toString());
-        }
+        }*/
 
         this.setContentView(R.layout.activity_main);
 
@@ -419,7 +404,7 @@ public class MainActivity extends AppCompatActivity
         this.mRegistrationAppsFlyer();
 
         // register with facebook Sdk
-        this.mRegistrationFacebookSdk();
+        //this.mRegistrationFacebookSdk();
 
         // register with GA tracker
         this.mRegistrationGATracker();
@@ -561,7 +546,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * This method is used to register and initialize facebook sdk
      */
-    private void mRegistrationFacebookSdk()
+   /* private void mRegistrationFacebookSdk()
     {
         new Thread(new Runnable() {
             @Override
@@ -611,7 +596,7 @@ public class MainActivity extends AppCompatActivity
             }
         }).start();
 
-    }
+    }*/
 
     /**
      * This method is used to register Fabric Crashlytics
@@ -690,11 +675,11 @@ public class MainActivity extends AppCompatActivity
             if (IS_USER_CREATED) {
                 // if mDeviceProfile is anonymous  then logout from facebook
                 if (mProfile != null && (mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER))
-                    disconnectFromFacebook();
+                  //  disconnectFromFacebook();
 
                 this.mLoadUserStatusScreen();
             } else {
-                disconnectFromFacebook();
+               // disconnectFromFacebook();
                 MainActivity.this.mDisplayLoginFragment();
             }
         } else {
@@ -997,8 +982,10 @@ public class MainActivity extends AppCompatActivity
         this.mHandleNotifications(true);
     }
 
-
-
+    /**
+     * This is facebook login
+     */
+/*
     public void RequestData(final AccessToken accessToken) {
         GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
             @Override
@@ -1041,7 +1028,7 @@ public class MainActivity extends AppCompatActivity
         parameters.putString("fields", "first_name,last_name,verified,name,locale,gender,updated_time,link,id,timezone,email,picture");
         request.setParameters(parameters);
         request.executeAsync();
-    }
+    }*/
 
     private void mSetupGTM() {
         TagManager tagManager = TagManager.getInstance(this);
@@ -1097,7 +1084,7 @@ public class MainActivity extends AppCompatActivity
         }
         adjustFontScale(getResources().getConfiguration());
         // Logs 'install' and 'app activate' App Events.
-        AppEventsLogger.activateApp(this);
+       // AppEventsLogger.activateApp(this);
         IntentFilter linkFilter=new IntentFilter(Constants.CONTENT_LINK_FILTER);
         linkFilter.addAction(Constants.NOTIFICATION_FILTER);
         LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver,linkFilter);
@@ -1119,7 +1106,7 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
         IN_FOREGROUND=false;
         // Logs 'app deactivate' App Event.
-        AppEventsLogger.deactivateApp(this);
+       // AppEventsLogger.deactivateApp(this);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         System.gc();
     }
@@ -2167,10 +2154,10 @@ public class MainActivity extends AppCompatActivity
         else if(mTrueClient.onActivityResult(requestCode,resultCode,data)) {
             return;
         }
-        else  if(callbackManager.onActivityResult(requestCode, resultCode, data))
+        /*else  if(callbackManager.onActivityResult(requestCode, resultCode, data))
         {
             return;
-        }else if(requestCode==Constants.GCM_RESULT_DATA_KEY && resultCode==RESULT_OK){
+        }*/else if(requestCode==Constants.GCM_RESULT_DATA_KEY && resultCode==RESULT_OK){
             HashMap<String, String> params = null;
             try {
                 params = (HashMap<String, String>) data.getSerializableExtra(Constants.DIALOG_DATA);
@@ -4648,7 +4635,7 @@ public class MainActivity extends AppCompatActivity
      * when mDeviceProfile wants to login with different account
      * or  have not successfully login
      */
-    private void disconnectFromFacebook() {
+   /* private void disconnectFromFacebook() {
         if (AccessToken.getCurrentAccessToken() == null) {
             return; // already logged out
         }
@@ -4659,7 +4646,7 @@ public class MainActivity extends AppCompatActivity
                 LoginManager.getInstance().logOut();
             }
         }).executeAsync();
-    }
+    }*/
 
 
     /**

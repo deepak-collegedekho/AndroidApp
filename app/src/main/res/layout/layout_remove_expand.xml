@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_alignParentTop="true"
-        app:srcCompat="@drawable/ic_delete"
+        app:srcCompat="@drawable/ic_cross"
         android:tint="@color/arrow_color"
         android:fadingEdge="horizontal"
         android:visibility="gone"
