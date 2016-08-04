@@ -32,7 +32,9 @@
         android:gravity="center"
         android:paddingTop="@dimen/m2dp"
         android:paddingRight="@dimen/m3dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:importantForAccessibility="yes"
+        android:contentDescription="Click to check out undecided colleges">
 
         <TextView
             android:id="@+id/badge_counter"
@@ -43,7 +45,7 @@
             android:text="0"
             android:layout_marginRight="@dimen/m2dp"
             android:textColor="@color/primary_color"
-            />
+            android:importantForAccessibility="no" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -51,7 +53,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/m8sp"
             android:text="Undecided"
-            />
+            android:importantForAccessibility="no" />
     </LinearLayout>
 
 
@@ -215,12 +217,15 @@
             android:layout_marginBottom="@dimen/m4dp"
             android:layout_weight="1"
             android:layout_gravity="bottom"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Click to check out featured colleges" >
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:background="@drawable/wishlist_tab_orange_bg">
+                android:background="@drawable/wishlist_tab_orange_bg"
+                android:importantForAccessibility="no">
 
                 <ImageView
                     android:id="@+id/img_cd"
@@ -229,7 +234,7 @@
                     android:layout_marginLeft="@dimen/m4dp"
                     android:layout_marginTop="@dimen/m4dp"
                     app:srcCompat="@drawable/ic_cd"
-                    />
+                    android:importantForAccessibility="no" />
 
 
                 <TextView
@@ -241,7 +246,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/m10sp"
                     android:textStyle="bold"
-                    />
+                    android:importantForAccessibility="no" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -251,7 +256,8 @@
                     android:layout_marginRight="@dimen/m4dp"
                     android:text="COLLEGES"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/m10sp"/>
+                    android:textSize="@dimen/m10sp"
+                    android:importantForAccessibility="no" />
 
                 <TextView
                     android:id="@+id/buzz_list_txt"
@@ -263,7 +269,8 @@
                     android:text="FEATURED"
                     android:textColor="@color/white"
                     android:textSize="10sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:importantForAccessibility="no" />
 
                 <ImageView
                     android:id="@+id/img_institute_buzzlist"
@@ -273,7 +280,8 @@
                     android:layout_marginLeft="@dimen/m1dp"
                     android:layout_marginTop="@dimen/m10dp"
                     android:layout_toRightOf="@id/img_cd"
-                    app:srcCompat="@drawable/ic_institute"/>
+                    app:srcCompat="@drawable/ic_institute"
+                    android:importantForAccessibility="no" />
             </RelativeLayout>
 
             <View
@@ -282,7 +290,8 @@
                 android:layout_marginTop="1dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
-                android:background="@drawable/wishlist_tab_base_orange_drawable"/>
+                android:background="@drawable/wishlist_tab_base_orange_drawable"
+                android:importantForAccessibility="no" />
 
             <View
                 android:layout_width="match_parent"
@@ -290,7 +299,8 @@
                 android:layout_marginTop="1dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:background="@drawable/wishlist_tab_base_orange_drawable"/>
+                android:background="@drawable/wishlist_tab_base_orange_drawable"
+                android:importantForAccessibility="no" />
 
         </LinearLayout>
 
@@ -302,12 +312,15 @@
             android:layout_marginBottom="@dimen/m4dp"
             android:layout_weight="1"
             android:layout_gravity="bottom"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Click to check out recommended colleges">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:background="@drawable/wishlist_tab_purple_bg">
+                android:background="@drawable/wishlist_tab_purple_bg"
+                android:importantForAccessibility="no" >
 
                 <TextView
                     android:id="@+id/cd_reco_recommended_count"
@@ -318,7 +331,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/m10sp"
                     android:textStyle="bold"
-                    />
+                    android:importantForAccessibility="no" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -328,7 +341,8 @@
                     android:layout_marginRight="@dimen/m4dp"
                     android:text="COLLEGES"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/m10sp"/>
+                    android:textSize="@dimen/m10sp"
+                    android:importantForAccessibility="no" />
 
                 <TextView
                     android:id="@+id/recommended_text"
@@ -340,7 +354,8 @@
                     android:text="RECOMMENDED"
                     android:textColor="@color/white"
                     android:textSize="@dimen/m10sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:importantForAccessibility="no" />
 
                 <ImageView
                     android:id="@+id/img_institute_recommended"
@@ -349,7 +364,8 @@
                     android:layout_above="@id/recommended_text"
                     android:layout_marginLeft="@dimen/m8dp"
                     android:layout_marginTop="@dimen/m10dp"
-                    app:srcCompat="@drawable/ic_institute"/>
+                    app:srcCompat="@drawable/ic_institute"
+                    android:importantForAccessibility="no" />
 
                 <ImageView
                     android:layout_width="16dp"
@@ -358,7 +374,8 @@
                     android:layout_marginLeft="-6dp"
                     android:layout_marginTop="-12dp"
                     android:layout_toRightOf="@id/img_institute_recommended"
-                    app:srcCompat="@drawable/ic_rounded_check"/>
+                    app:srcCompat="@drawable/ic_rounded_check"
+                    android:importantForAccessibility="no" />
             </RelativeLayout>
 
             <View
@@ -367,7 +384,8 @@
                 android:layout_marginTop="1dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
-                android:background="@drawable/wishlist_tab_base_purple_drawable"/>
+                android:background="@drawable/wishlist_tab_base_purple_drawable"
+                android:importantForAccessibility="no" />
 
             <View
                 android:layout_width="match_parent"
@@ -375,7 +393,8 @@
                 android:layout_marginTop="1dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:background="@drawable/wishlist_tab_base_purple_drawable"/>
+                android:background="@drawable/wishlist_tab_base_purple_drawable"
+                android:importantForAccessibility="no" />
 
         </LinearLayout>
 
@@ -387,12 +406,15 @@
             android:layout_marginBottom="@dimen/m4dp"
             android:layout_weight="1"
             android:layout_gravity="bottom"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Click to check out shortlisted colleges">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:background="@drawable/wishlist_tab_blue_bg">
+                android:background="@drawable/wishlist_tab_blue_bg"
+                android:importantForAccessibility="no" >
 
                 <TextView
                     android:id="@+id/cd_reco_wishlist_count"
@@ -403,7 +425,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/m10sp"
                     android:textStyle="bold"
-                    />
+                    android:importantForAccessibility="no" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -413,7 +435,8 @@
                     android:layout_marginRight="@dimen/m4dp"
                     android:text="COLLEGES"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/m10sp"/>
+                    android:textSize="@dimen/m10sp"
+                    android:importantForAccessibility="no" />
 
                 <TextView
                     android:id="@+id/wish_list_txt"
@@ -425,7 +448,8 @@
                     android:text="SHORTLIST"
                     android:textColor="@color/white"
                     android:textSize="@dimen/m10sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:importantForAccessibility="no" />
 
                 <ImageView
                     android:id="@+id/img_institute"
@@ -434,7 +458,8 @@
                     android:layout_above="@id/wish_list_txt"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="@dimen/m8dp"
-                    app:srcCompat="@drawable/ic_wishlist_colleges"/>
+                    app:srcCompat="@drawable/ic_wishlist_colleges"
+                    android:importantForAccessibility="no" />
             </RelativeLayout>
 
             <View
@@ -443,7 +468,8 @@
                 android:layout_marginTop="1dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
-                android:background="@drawable/wishlist_tab_base_blue_drawable"/>
+                android:background="@drawable/wishlist_tab_base_blue_drawable"
+                android:importantForAccessibility="no" />
 
             <View
                 android:layout_width="match_parent"
@@ -451,7 +477,8 @@
                 android:layout_marginTop="1dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:background="@drawable/wishlist_tab_base_blue_drawable"/>
+                android:background="@drawable/wishlist_tab_base_blue_drawable"
+                android:importantForAccessibility="no" />
 
         </LinearLayout>
     </LinearLayout>

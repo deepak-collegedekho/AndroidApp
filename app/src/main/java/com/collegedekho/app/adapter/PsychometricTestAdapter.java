@@ -42,6 +42,7 @@ public class PsychometricTestAdapter extends RecyclerView.Adapter<PsychometricTe
         holder.txt_serial_no.setText(question.getId()+") ");
         holder.txt_question_text.setText(question.getQuestion());
         holder.radioGroup.check(question.getCheckedId());
+        holder.mContainer.setContentDescription(question.getQuestion() + " Select Always or sometimes or never from options just below");
 
 //        ((RadioButton)holder.radioGroup.getChildAt(0)).setText("Text One");
 //        ((RadioButton)holder.radioGroup.getChildAt(1)).setText("Text Two");
@@ -59,12 +60,14 @@ public class PsychometricTestAdapter extends RecyclerView.Adapter<PsychometricTe
         TextView txt_serial_no;
         TextView txt_question_text;
         RadioGroup radioGroup;
+        View mContainer;
 
         public PsychometricTestViewHolder(View itemView) {
             super(itemView);
             txt_serial_no = (TextView) itemView.findViewById(R.id.question_sno);
             txt_question_text = (TextView) itemView.findViewById(R.id.question_text);
             radioGroup = (RadioGroup) itemView.findViewById(R.id.answer_options);
+            this.mContainer = itemView;
             radioGroup.setOnCheckedChangeListener(this);
         }
 

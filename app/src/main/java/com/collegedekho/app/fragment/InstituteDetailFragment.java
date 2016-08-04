@@ -33,6 +33,7 @@ import com.collegedekho.app.widget.fab.FloatingActionButton;
 import com.collegedekho.app.widget.fab.FloatingActionMenu;
 import com.fasterxml.jackson.jr.ob.JSON;
 
+import org.apache.tools.ant.Main;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -213,9 +214,18 @@ public class InstituteDetailFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
 
-        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_INSTITUTE_LIST  + "/institutes/" + this.mInstitute.getId());
+        Uri appUrl = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_INSTITUTE_LIST  + "/institutes/" + this.mInstitute.getId());
+        Uri webUrl = appUrl;
+//        Uri webUrl = Uri.parse(Constants.IP + "/colleges/" + this.mInstitute.getUri_slug());
+        AnalyticsUtils.AppIndexingView("CollegeDekho - Colleges - " + this.mInstitute.getUri_slug(), webUrl, appUrl, (MainActivity) this.getActivity(), true);
 
-        AnalyticsUtils.AppIndexingView("CollegeDekho - Colleges - " + this.mInstitute.getUri_slug(), val, val, (MainActivity) this.getActivity(), true);
+//        if(getActivity() != null && getActivity() instanceof MainActivity) {
+//            MainActivity mainActivity = (MainActivity) getActivity();
+//            mainActivity.mIndexingUrl = "/colleges/" + mInstitute.getUri_slug();
+//            mainActivity.mIndexingTitle = mInstitute.getName();
+//            mainActivity.mIndexingDescription = mInstitute.getName() + " " + mInstitute.getAcronym() + " " + mInstitute.getShort_name();
+//            mainActivity.appIndexingTask();
+//        }
     }
 
     @Override

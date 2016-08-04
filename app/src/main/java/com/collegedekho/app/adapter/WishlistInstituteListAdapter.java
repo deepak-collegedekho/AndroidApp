@@ -325,6 +325,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
         }*/
 
         instituteHolder.instituteCard.setTag("set");
+        instituteHolder.mContainer.setContentDescription("click to see details of " + text);
     }
 
     @Override
@@ -342,6 +343,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
         View instituteCard;
         TextView instituteShortName;
         FadeInImageView instituteLogo;
+        View mContainer;
 
         public InstituteHolder(View itemView) {
             super(itemView);
@@ -351,6 +353,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
             this.instituteLogo = (FadeInImageView) itemView.findViewById(R.id.wishlist_institute_logo);
             this.instituteLogo.setDefaultImageResId(R.drawable.ic_default_image);
             this.instituteLogo.setErrorImageResId(R.drawable.ic_default_image);
+            this.mContainer = itemView;
         }
     }
 

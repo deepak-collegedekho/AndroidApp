@@ -67,7 +67,7 @@ public class RangeQuestionFragment extends StepByStepFragment {
         View rootView = inflater.inflate(R.layout.fragment_range_question, container, false);
 
         ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setText(pQuestion.getText());
-
+        ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setContentDescription(pQuestion.getText() + ". Please select a range below and then click on the lower right corner to move ahead");
         this.mChoiceHashMap = this.pQuestion.getChoices();
 /*
         Collection c = this.mChoiceHashMap.keySet();
@@ -98,7 +98,7 @@ public class RangeQuestionFragment extends StepByStepFragment {
         seekBar.setMax(this.mMax);
         seekBar.setProgress(100000);
         seekBarValue.setText(String.valueOf(100000));
-
+        seekBar.setContentDescription("currently selected "+100000);
         this.mProgress = 100000;
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -109,14 +109,10 @@ public class RangeQuestionFragment extends StepByStepFragment {
                 int calculatedProgress = 0;
                 mAnswered = true;
 
-                //setting progress
-                seekBar.setProgress(progress);
-
                 /*--------------this logic is here to make the mDeviceProfile see only the interval figures in lakhs--------------*/
 
                 //if progress is less than a lakh, show 0
-                if (progress < 100000)
-                {
+                if (progress < 100000) {
                     seekBarValue.setText(calculatedProgress + "");
                 }
                 //if progress is more than or equal to a lakh,
@@ -136,7 +132,9 @@ public class RangeQuestionFragment extends StepByStepFragment {
                         seekBarValue.setText(calculatedProgress + "");
                     }
                 }
-
+                //setting progress
+                seekBar.setContentDescription("currently selected "+calculatedProgress);
+                seekBar.setProgress(progress);
                 mProgress = calculatedProgress;
             }
 

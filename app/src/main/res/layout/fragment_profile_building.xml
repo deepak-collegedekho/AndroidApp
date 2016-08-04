@@ -57,20 +57,24 @@
             <LinearLayout
                 android:id="@+id/user_education_name_layout"
                 style="@style/AppTheme.profileInfoTLayout"
-                android:layout_marginTop="@dimen/m15dp">
+                android:layout_marginTop="@dimen/m15dp"
+                android:contentDescription="your name is Anonymous user">
 
                 <TextView
                     style="@style/AppTheme.profileTextViewTitle"
                     android:textColor="@color/black"
-                    android:text="Name"/>
+                    android:text="Name"
+                    android:importantForAccessibility="no"/>
                 <TextView
                     style="@style/AppTheme.profileTextViewColon"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:id="@id/user_name"
                     android:textColor="@color/black"
-                    style="@style/AppTheme.profileInfoTextView"/>
+                    style="@style/AppTheme.profileInfoTextView"
+                    android:importantForAccessibility="no"/>
 
             </LinearLayout>
 
@@ -79,7 +83,8 @@
                 android:layout_width="match_parent"
                 android:visibility="gone"
                 android:layout_marginTop="@dimen/m2dp"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no">
 
                 <EditText
                     android:id="@+id/user_education_name_edit_text"
@@ -90,26 +95,31 @@
                     android:textSize="@dimen/m15sp"
                     android:digits=" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
                     android:inputType="textCapWords"
-                    android:maxLength="35" />
+                    android:maxLength="35"
+                    android:contentDescription="Enter Your Name"/>
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
                 android:id="@+id/user_education_phone_layout"
                 style="@style/AppTheme.profileInfoTLayout"
-                android:layout_marginTop="@dimen/m10dp">
+                android:layout_marginTop="@dimen/m10dp"
+                android:contentDescription="No phone number added">
 
                 <TextView
                     style="@style/AppTheme.profileTextViewTitle"
                     android:textColor="@color/black"
-                    android:text="Phone"/>
+                    android:text="Phone"
+                    android:importantForAccessibility="no"/>
                 <TextView
-                style="@style/AppTheme.profileTextViewColon"
-                android:textColor="@color/black" />
+                    style="@style/AppTheme.profileTextViewColon"
+                    android:textColor="@color/black"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:id="@id/user_phone"
                     android:textColor="@color/black"
-                    style="@style/AppTheme.profileInfoTextView"/>
+                    style="@style/AppTheme.profileInfoTextView"
+                    android:importantForAccessibility="no"/>
 
             </LinearLayout>
 
@@ -117,7 +127,8 @@
                 android:id="@+id/user_education_edit_phone_til"
                 android:layout_width="match_parent"
                 android:visibility="gone"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no">
 
                 <EditText
                     android:id="@+id/user_education_phone_edit_text"
@@ -128,7 +139,8 @@
                     android:inputType="phone"
                     android:digits="1234567890"
                     android:textSize="@dimen/m15sp"
-                    android:maxLength="10" />
+                    android:maxLength="10"
+                    android:contentDescription="Enter your phone number"/>
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
     </LinearLayout>
@@ -153,13 +165,15 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="@dimen/m18sp"
-            android:text="Education  :"/>
+            android:text="Education  :"
+            android:importantForAccessibility="no"/>
 
         <TextView
             android:id="@+id/user_education_level"
             android:layout_width="0dp"
             android:layout_weight=".51"
-            style="@style/AppTheme.profileTextViewTitle"/>
+            style="@style/AppTheme.profileTextViewTitle"
+            android:importantForAccessibility="no"/>
 
         <ImageView
             android:id="@+id/user_education_level_edit_btn"
@@ -171,6 +185,7 @@
             android:padding="@dimen/m8dp"
             android:layout_gravity="right|top"
             app:srcCompat="@drawable/ic_edit"/>
+            android:contentDescription="click to edit your current education level"/>
 
         </LinearLayout>
 
@@ -197,13 +212,15 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="@dimen/m18sp"
-            android:text="Streams    :"/>
+            android:text="Streams    :"
+            android:importantForAccessibility="no"/>
 
         <TextView
             android:id="@+id/user_education_stream"
             android:layout_width="0dp"
             android:layout_weight=".51"
-            style="@style/AppTheme.profileTextViewTitle"/>
+            style="@style/AppTheme.profileTextViewTitle"
+            android:importantForAccessibility="no"/>
 
         <ImageView
             android:id="@+id/user_education_stream_edit_btn"
@@ -215,6 +232,7 @@
             android:padding="@dimen/m8dp"
             android:layout_gravity="right|top"
             app:srcCompat="@drawable/ic_edit"/>
+            android:contentDescription="click to edit your current stream"/>
 
     </LinearLayout>
 
@@ -241,13 +259,15 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="@dimen/m18sp"
-            android:text="Exams       :"/>
+            android:text="Exams       :"
+            android:importantForAccessibility="no"/>
 
         <TextView
             android:id="@+id/user_education_exams"
             android:layout_width="0dp"
             android:layout_weight=".51"
-            style="@style/AppTheme.profileTextViewTitle"/>
+            style="@style/AppTheme.profileTextViewTitle"
+            android:importantForAccessibility="no"/>
 
         <ImageView
             android:id="@+id/user_education_exams_edit_btn"
@@ -259,6 +279,7 @@
             android:padding="@dimen/m8dp"
             android:layout_gravity="right|top"
             app:srcCompat="@drawable/ic_edit"/>
+            android:contentDescription="click to edit the exams you are preparing for"/>
     </LinearLayout>
 
 
@@ -387,7 +408,8 @@
             app:queryHint="Search Exam"
             app:iconifiedByDefault="true"
             android:layout_height="40dp"
-            android:tag="1" />
+            android:tag="1"
+            android:contentDescription="click to search exams that you may be preparing for"/>
     </RelativeLayout>
 
     <RelativeLayout

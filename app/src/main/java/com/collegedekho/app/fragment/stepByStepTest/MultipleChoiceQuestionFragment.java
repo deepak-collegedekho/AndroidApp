@@ -83,6 +83,7 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
         View rootView = inflater.inflate(R.layout.fragment_multiple_choice_question, container, false);
 
         ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setText(pQuestion.getText());
+        ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setContentDescription(pQuestion.getText() + ". Please select a choice from below and then click on the lower right corner to move ahead");
         ListView choiceList = (ListView) rootView.findViewById(R.id.multiple_choice_list);
         choiceList.setOnItemClickListener(this);
         //choiceList.setItemsCanFocus(true);

@@ -66,7 +66,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     private static String TAG ="Profile Fragment";
     private static String PARAM1  = "param1";
-    private static String PARAM2  = "param2";
     public static Profile mProfile ;
     private UserProfileListener mListener;
     private TextView mProfileName;
@@ -90,12 +89,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         return fragment;
     }
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
-        if(args != null){
+        if(args != null) {
             this.mProfile = args.getParcelable(PARAM1);
         }
     }
@@ -117,7 +115,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             mPlusDrawable = VectorDrawableCompat.create(getActivity().getResources(), R.drawable.ic_add_inline_vector23dp, null);
             mMinusDrawable = VectorDrawableCompat.create(getActivity().getResources(), R.drawable.ic_minus_inline, null);
-        }else {
+        } else {
             mPlusDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_add_inline_vector23dp);
             mMinusDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_minus_inline);
         }
@@ -145,6 +143,25 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         mRootView.findViewById(R.id.profile_other_info_save_btn).setOnClickListener(this);
         mRootView.findViewById(R.id.profile_to_dashboard).setOnClickListener(this);
         mRootView.findViewById(R.id.profile_to_recommended).setOnClickListener(this);
+
+        mRootView.findViewById(R.id.profile_login_button).setContentDescription("click to login");
+        mRootView.findViewById(R.id.user_profile_image_update).setContentDescription("click to change your profile picture");
+        mRootView.findViewById(R.id.profile_info_edit_btn).setContentDescription("Click to edit your general profile information");
+        mRootView.findViewById(R.id.profile_education_edit_btn).setContentDescription("Click to edit your current education information");
+        mRootView.findViewById(R.id.profile_preferred_edit_btn).setContentDescription("Click to edit your profile preferences");
+        mRootView.findViewById(R.id.profile_exams_edit_btn).setContentDescription("Click to edit the exam you are interested in");
+        mRootView.findViewById(R.id.profile_other_info_edit_btn).setContentDescription("Click to edit miscellaneous profile information");
+        mRootView.findViewById(R.id.profile_expand_info_btn).setContentDescription("Click to expand your general profile information");
+        mRootView.findViewById(R.id.profile_expand_education_btn).setContentDescription("Click to expand your current education information");
+        mRootView.findViewById(R.id.profile_expand_preferred_btn).setContentDescription("Click to expand your profile preferences");
+        mRootView.findViewById(R.id.profile_expand_exams_btn).setContentDescription("Click to expand the exam you are interested in");
+        mRootView.findViewById(R.id.profile_expand_other_info_btn).setContentDescription("Click to expand miscellaneous profile information");
+        mRootView.findViewById(R.id.profile_info_save_btn).setContentDescription("Save info you entered");
+        mRootView.findViewById(R.id.profile_education_save_btn).setContentDescription("Save info you entered");
+        mRootView.findViewById(R.id.profile_preferred_save_btn).setContentDescription("Save info you entered");
+        mRootView.findViewById(R.id.profile_other_info_save_btn).setContentDescription("Save info you entered");
+        mRootView.findViewById(R.id.profile_to_dashboard).setContentDescription("Click to go to your Dashboard");
+        mRootView.findViewById(R.id.profile_to_recommended).setContentDescription("Click to see recommended colleges");
 
         return mRootView;
     }
@@ -247,15 +264,14 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
             MainActivity.mProfile.setPreferred_year_of_admission(Utils.GetCurrentYear());
 
-
             MainActivity.mProfile.setCurrent_passing_year(Utils.GetCurrentYear());
         }
 
         // set DeviceProfile Stream Name in Current Education
         String currentStream = mProfile.getCurrent_stream_name();
-        if (currentStream != null && !currentStream.isEmpty()){
+        if (currentStream != null && !currentStream.isEmpty()) {
             ((TextView)mRootView.findViewById(R.id.profile_education_stream)).setText(currentStream);
-        }else{
+        } else {
             ((TextView)mRootView.findViewById(R.id.profile_education_stream)).setText("NA");
         }
 
@@ -263,16 +279,15 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         // level is school else show his/her specialization
         userCurrentStreamId = mProfile.getCurrent_stream_id();
         if(userCurrentStreamId == 33 ||userCurrentStreamId == 34 || userCurrentStreamId == 35  || userCurrentStreamId == 36
-                || userCurrentStreamId == 37 ||userCurrentStreamId == 38 || userCurrentStreamId == 39){
+                || userCurrentStreamId == 37 ||userCurrentStreamId == 38 || userCurrentStreamId == 39) {
             mRootView.findViewById(R.id.profile_education_specialization_layout).setVisibility(View.GONE);
-        }
-        else{
+        } else {
             mRootView.findViewById(R.id.profile_education_specialization_layout).setVisibility(View.GONE);
 
             String currentSpecialization = mProfile.getCurrent_specialization_name();
-            if (currentSpecialization != null && !currentSpecialization.isEmpty()){
+            if (currentSpecialization != null && !currentSpecialization.isEmpty()) {
                 ((TextView)mRootView.findViewById(R.id.profile_education_specialization)).setText(currentSpecialization);
-            }else{
+            } else {
                 ((TextView)mRootView.findViewById(R.id.profile_education_specialization)).setText("NA");
             }
         }
@@ -280,9 +295,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         // set mDeviceProfile's current score which he/she achieved in last degree or in school
         int currentScore = mProfile.getCurrent_score();
         int scoreType = mProfile.getCurrent_score_type();
-        if (scoreType <=  0){
+        if (scoreType <=  0) {
             ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(""+currentScore);
-        }else{
+        } else {
             ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(currentScore +" "+  ProfileMacro.getCurrentScoreTypeName(scoreType));
         }
 
@@ -304,24 +319,24 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
         //  set DeviceProfile Others Info
         String fatherName = mProfile.getFathers_name();
-        if (fatherName != null && !fatherName.isEmpty()){
+        if (fatherName != null && !fatherName.isEmpty()) {
             ((TextView)mRootView.findViewById(R.id.profile_father_name)).setText(fatherName);
-        }else{
+        } else {
             ((TextView)mRootView.findViewById(R.id.profile_father_name)).setText("NA");
         }
 
 
         String motherName = mProfile.getMothers_name();
-        if (motherName != null && !motherName.isEmpty()){
+        if (motherName != null && !motherName.isEmpty()) {
             ((TextView)mRootView.findViewById(R.id.profile_mother_name)).setText(motherName);
-        }else{
+        } else {
             ((TextView)mRootView.findViewById(R.id.profile_mother_name)).setText("NA");
         }
 
         String coachingName = mProfile.getCoaching_institute();
-        if (coachingName != null && !coachingName.isEmpty()){
+        if (coachingName != null && !coachingName.isEmpty()) {
             ((TextView)mRootView.findViewById(R.id.profile_coaching_institute_name)).setText(coachingName);
-        }else{
+        } else {
             ((TextView)mRootView.findViewById(R.id.profile_coaching_institute_name)).setText("NA");
         }
         setProfileProgressStatus(mRootView.findViewById(R.id.profile_other_progress), mProfile.getOthers_progress());
@@ -558,9 +573,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 if(view.getVisibility()== View.VISIBLE) {
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_info_btn)).setImageDrawable(mPlusDrawable);
                     view.setVisibility(View.GONE);
+                    mRootView.findViewById(R.id.profile_expand_info_btn).setContentDescription("Click to collapse your general profile information");
                 }else {
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_info_btn)).setImageDrawable(mMinusDrawable);
                     view.setVisibility(View.VISIBLE);
+                    mRootView.findViewById(R.id.profile_expand_info_btn).setContentDescription("Click to expand your general profile information");
                 }
                 break;
             case R.id.profile_expand_education_btn:
@@ -568,9 +585,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 if(view.getVisibility()== View.VISIBLE) {
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_education_btn)).setImageDrawable(mPlusDrawable);
                     view.setVisibility(View.GONE);
+                    mRootView.findViewById(R.id.profile_expand_education_btn).setContentDescription("Click to collapse your current education information");
                 }else {
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_education_btn)).setImageDrawable(mMinusDrawable);
                     view.setVisibility(View.VISIBLE);
+                    mRootView.findViewById(R.id.profile_expand_education_btn).setContentDescription("Click to expand your current education information");
                 }
                 break;
             case R.id.profile_expand_preferred_btn:
@@ -579,10 +598,12 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_preferred_btn)).setImageDrawable(mPlusDrawable);
                     setPreferredEducationInfo(false);
                     view.setVisibility(View.GONE);
-                } else {
+                    mRootView.findViewById(R.id.profile_expand_preferred_btn).setContentDescription("Click to collapse your profile preferences");
+                   } else {
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_preferred_btn)).setImageDrawable(mMinusDrawable);
                     view.setVisibility(View.VISIBLE);
                     setPreferredEducationInfo(true);
+                    mRootView.findViewById(R.id.profile_expand_preferred_btn).setContentDescription("Click to expand your profile preferences");
                 }
                 break;
 
@@ -590,9 +611,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 if(mRootView.findViewById(R.id.profile_exams_name).isSelected() == true) {
                     // ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mPlusDrawable);
                     mExpandUserExamsLayout(false);
+                    mRootView.findViewById(R.id.profile_expand_exams_btn).setContentDescription("Click to collapse the exam you are interested in");
                 }else{
                     // ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mMinusDrawable);
                     mExpandUserExamsLayout(true);
+                    mRootView.findViewById(R.id.profile_expand_exams_btn).setContentDescription("Click to expand the exam you are interested in");
                 }
                 break;
 
@@ -602,10 +625,12 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_other_info_btn)).setImageDrawable(mPlusDrawable);
                     view.setVisibility(View.GONE);
                     v.setScaleY(1f);
+                    mRootView.findViewById(R.id.profile_expand_other_info_btn).setContentDescription("Click to collapse miscellaneous profile information");
                 }else {
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_other_info_btn)).setImageDrawable(mMinusDrawable);
                     view.setVisibility(View.VISIBLE);
                     v.setScaleY(-1f);
+                    mRootView.findViewById(R.id.profile_expand_other_info_btn).setContentDescription("Click to expand miscellaneous profile information");
                 }break;
             case R.id.profile_info_edit_btn:
                 ((ImageView)mRootView.findViewById(R.id.profile_expand_info_btn)).setImageDrawable(mPlusDrawable);
@@ -616,11 +641,13 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     mRootView.findViewById(R.id.profile_expand_info_btn).setVisibility(View.GONE);
                     mRootView.findViewById(R.id.profile_info_edit_layout).setVisibility(View.VISIBLE);
                     loadUserInfoEditLayout();
+                    mRootView.findViewById(R.id.profile_info_edit_btn).setContentDescription("Click to stop editing your general profile information");
                 }else{
                     mRootView.findViewById(R.id.profile_info_layout).setVisibility(View.VISIBLE);
                     mRootView.findViewById(R.id.profile_expanded_info_layout).setVisibility(View.GONE);
                     mRootView.findViewById(R.id.profile_expand_info_btn).setVisibility(View.VISIBLE);
                     mRootView.findViewById(R.id.profile_info_edit_layout).setVisibility(View.GONE);
+                    mRootView.findViewById(R.id.profile_info_edit_btn).setContentDescription("Click to edit your general profile information");
                 }
                 break;
             case R.id.profile_education_edit_btn:
@@ -632,11 +659,13 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     mRootView.findViewById(R.id.profile_expand_education_btn).setVisibility(View.GONE);
                     mRootView.findViewById(R.id.profile_education_edit_layout).setVisibility(View.VISIBLE);
                     loadUserCurrentEducationEditLayout();
+                    mRootView.findViewById(R.id.profile_education_edit_btn).setContentDescription("Click to stop editing your current education information");
                 }else{
                     mRootView.findViewById(R.id.profile_education_layout).setVisibility(View.VISIBLE);
                     mRootView.findViewById(R.id.profile_expanded_education_layout).setVisibility(View.GONE);
                     mRootView.findViewById(R.id.profile_expand_education_btn).setVisibility(View.VISIBLE);
                     mRootView.findViewById(R.id.profile_education_edit_layout).setVisibility(View.GONE);
+                    mRootView.findViewById(R.id.profile_education_edit_btn).setContentDescription("Click to edit your current education information");
                 }
                 break;
             case R.id.profile_preferred_edit_btn:
@@ -648,11 +677,13 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     mRootView.findViewById(R.id.profile_expand_preferred_btn).setVisibility(View.GONE);
                     mRootView.findViewById(R.id.profile_preferred_edit_layout).setVisibility(View.VISIBLE);
                     loadUserPreferredInfoEditLayout();
+                    mRootView.findViewById(R.id.profile_preferred_edit_btn).setContentDescription("Click to stop editing your profile preferences");
                 }else{
                     mRootView.findViewById(R.id.profile_preferred_layout).setVisibility(View.VISIBLE);
                     mRootView.findViewById(R.id.profile_expanded_preferred_layout).setVisibility(View.GONE);
                     mRootView.findViewById(R.id.profile_expand_preferred_btn).setVisibility(View.VISIBLE);
                     mRootView.findViewById(R.id.profile_preferred_edit_layout).setVisibility(View.GONE);
+                    mRootView.findViewById(R.id.profile_preferred_edit_btn).setContentDescription("Click to edit your profile preferences");
                 }
                 break;
             case R.id.profile_exams_edit_btn:
@@ -666,11 +697,13 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     mRootView.findViewById(R.id.profile_expanded_other_info_layout).setVisibility(View.GONE);
                     mRootView.findViewById(R.id.profile_expand_other_info_btn).setVisibility(View.GONE);
                     mRootView.findViewById(R.id.profile_other_info_edit_layout).setVisibility(View.VISIBLE);
+                    mRootView.findViewById(R.id.profile_other_info_edit_btn).setContentDescription("Click to stop editing miscellaneous profile information");
                 }else{
                     mRootView.findViewById(R.id.profile_other_info_layout).setVisibility(View.VISIBLE);
                     mRootView.findViewById(R.id.profile_expanded_other_info_layout).setVisibility(View.GONE);
                     mRootView.findViewById(R.id.profile_expand_other_info_btn).setVisibility(View.VISIBLE);
                     mRootView.findViewById(R.id.profile_other_info_edit_layout).setVisibility(View.GONE);
+                    mRootView.findViewById(R.id.profile_other_info_edit_btn).setContentDescription("Click to edit miscellaneous profile information");
                 }
                 loadUserOtherInfoEditLayout();
                 break;

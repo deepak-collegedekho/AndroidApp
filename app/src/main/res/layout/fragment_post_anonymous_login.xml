@@ -15,7 +15,8 @@
     <ImageView
         android:layout_height="100dp"
         android:layout_width="wrap_content"
-        android:src="@drawable/college_logo" />
+        android:src="@drawable/college_logo"
+        android:importantForAccessibility="no"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -24,7 +25,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:text="@string/personalize_your_app"
-        />
+        android:importantForAccessibility="no"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,7 +34,7 @@
         android:gravity="center"
         android:fontFamily="serif"
         android:text="@string/perfect_set_of_recommended"
-        />
+        android:importantForAccessibility="no"/>
 
     <LinearLayout
         android:id="@+id/login_layout"
@@ -80,7 +81,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:trueButtonText="signIn"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="Click to login with true caller"/>
 
         <include layout="@layout/layout_or_line"
            android:id="@+id/login_or_line_layout" />
@@ -96,7 +98,7 @@
                 android:digits="1234567890"
                 android:inputType="phone"
                 android:maxLength="10"
-                />
+                android:contentDescription="Enter your 10 digit mobile number"/>
         </android.support.design.widget.TextInputLayout>
 
         <Button
@@ -108,7 +110,8 @@
             android:text="NEXT"
             android:visibility="gone"
             android:textSize="17sp"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:contentDescription="submit your phone number"/>
 
         <RelativeLayout
             android:id="@+id/login_otp_layout"
@@ -125,7 +128,8 @@
                 android:gravity="center"
                 android:textSize="14sp"
                 android:fontFamily="sans-serif-light"
-                android:text="Sit back &amp; Relax! while we verify \n your mobile number"/>
+                android:text="Sit back &amp; Relax! while we verify \n your mobile number"
+                android:importantForAccessibility="no"/>
 
             <TextView
                 android:id="@+id/login_tv_otp_detect"
@@ -136,7 +140,8 @@
                 android:gravity="center"
                 android:textSize="14sp"
                 android:fontFamily="sans-serif-light"
-                android:text="(Enter the OTP below in case if we fail to detect the SMS automatically)"/>
+                android:text="(Enter the OTP below in case if we fail to detect the SMS automatically)"
+                android:importantForAccessibility="no"/>
 
 
             <LinearLayout
@@ -163,7 +168,7 @@
                         android:gravity="center"
                         android:maxLength="6"
                         android:textSize="18sp"
-                        />
+                        android:contentDescription="Enter the 6 digit otp which you received on your mobile number"/>
                 </android.support.design.widget.TextInputLayout>
 
 
@@ -176,7 +181,8 @@
                     android:textColor="@color/primaryColor"
                     android:gravity="center"
                     android:background="@drawable/border_bottom"
-                    android:text="@string/resend_otp"/>
+                    android:text="@string/resend_otp"
+                    android:contentDescription="click to resend otp"/>
 
             </LinearLayout>
 
@@ -189,7 +195,8 @@
                 style="@style/AppTheme.OrangeButton"
                 android:text="@string/verify_your_phone"
                 android:textSize="17sp"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:contentDescription="click to verify your phone"/>
         </RelativeLayout>
 
 

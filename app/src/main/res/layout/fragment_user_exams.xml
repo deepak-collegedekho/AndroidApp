@@ -16,7 +16,8 @@
         android:paddingRight="@dimen/m40dp"
         android:paddingLeft="@dimen/m40dp"
         android:paddingBottom="@dimen/m10dp"
-        android:text="@string/which_exams_are_you_preparing"/>
+        android:text="@string/which_exams_are_you_preparing"
+        android:contentDescription="select the exams you have given or are preparing for. After selecting click on the bottom to submit the exams."/>
 
     <RelativeLayout
         android:id="@+id/user_exam_search_container"
@@ -33,7 +34,7 @@
             android:text="Select Exam"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/m40dp"
-            />
+            android:contentDescription="click to search exams"/>
 
         <android.support.v7.widget.SearchView
             android:id="@+id/user_exam_search_view"
@@ -41,7 +42,8 @@
             android:layout_width="match_parent"
             app:queryHint="Search Exam"
             android:layout_height="40dp"
-            android:tag="1" />
+            android:tag="1"
+            android:contentDescription="click to search exams"/>
     </RelativeLayout>
 
 
@@ -56,7 +58,8 @@
             android:paddingBottom="@dimen/m9dp"
             android:paddingTop="@dimen/m9dp"
             android:foregroundGravity="center"
-            android:text="SUBMIT"/>
+            android:text="SUBMIT"
+            android:contentDescription="click here to submit your exams"/>
 
 
        <android.support.v7.widget.RecyclerView
@@ -74,7 +77,8 @@
            />
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/exam_tour_guide_image"

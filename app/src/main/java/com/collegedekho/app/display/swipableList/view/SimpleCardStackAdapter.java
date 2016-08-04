@@ -91,6 +91,11 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
     }
 
     public void addAll(ArrayList<CardModel> item) {
+        if(item.size() >= 2){
+            item.get(0).importantForAccessibility = true;
+        } else if (item.size() == 1) {
+            item.get(0).importantForAccessibility = true;
+        }
         mData.addAll(item);
         notifyDataSetChanged();
     }
@@ -110,6 +115,8 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         convertView.setTag(position);
 
         setVectorDrawable(convertView);
+
+
 
         this.mFacilityText = (TextView) (convertView.findViewById(R.id.facility_toast));
 
@@ -190,7 +197,11 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         final FadeInImageView fadeInImageView;
         ImageLoader.ImageListener imageListener;
         final Institute institute = model.getInstitute();
+        boolean importantForAccessibility = model.importantForAccessibility;
         // set institute name
+        String salaryDescription = "";
+        String placementDescription = "";
+        String feesDescription = "";
 
         try {
             String instituteName= new String(institute.getName().getBytes("ISO-8859-1"),"UTF-8");
@@ -237,18 +248,11 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             int markerMargin = 0;
             int markerHeight = 0;
             float deviceDensity = getContext().getResources().getDimension(R.dimen.m50dp);
-            try {
-                averageSal = institute.getAvg_salary();
-                avgSalary.setText(Utils.rupeeFormatter(averageSal));
-            } catch (NumberFormatException ne) {
-
-            } catch (Exception e) {
-
-            }
 
             try {
                 maxSal = institute.getMax_salary();
                 maxSalary.setText(Utils.rupeeFormatter(maxSal));
+                salaryDescription = "Maximum salary offered is " + maxSal + " lac " + salaryDescription ;
             } catch (NumberFormatException ne) {
 
             } catch (Exception e) {
@@ -258,11 +262,24 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             try {
                 minSal = institute.getMin_salary();
                 minSalary.setText(Utils.rupeeFormatter(minSal));
+                salaryDescription = salaryDescription +  " minimum salary offered is " + minSal + " lac ";
             } catch (NumberFormatException ne) {
 
             } catch (Exception e) {
 
             }
+
+            try {
+                averageSal = institute.getAvg_salary();
+                avgSalary.setText(Utils.rupeeFormatter(averageSal));
+                salaryDescription = salaryDescription + " Average pakage offered is " + averageSal + " lac ";
+            } catch (NumberFormatException ne) {
+
+            } catch (Exception e) {
+
+            }
+
+
             if(maxSal==0&&minSal==0&&averageSal==0){
                 convertView.findViewById(R.id.salary_layout).setVisibility(View.GONE);
             }else {
@@ -291,11 +308,13 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         }
         if (institute.getPlacement_percentage() != null && !institute.getPlacement_percentage().isEmpty()) {
             placementPercent.setText("" + institute.getPlacement_percentage() + "%");
+            placementDescription = "placement percent is " + institute.getPlacement_percentage() + " percent";
         }else {
             convertView.findViewById(R.id.placement_layout).setVisibility(View.GONE);
 //                placementPercent.setText("---");
         }
         ((TextView)convertView.findViewById(R.id.applied_count)).setText(""+(institute.getUpvotes()+institute.getShortlist_count()));
+        convertView.findViewById(R.id.heart_layout).setContentDescription((institute.getUpvotes()+institute.getShortlist_count())+" applied to this institute");
         final RecyclerView facilitiesRecycler = (RecyclerView) convertView.findViewById(R.id.facilities_recycler);
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 7, LinearLayoutManager.VERTICAL, false);
         applicationStatus.setText(institute.getApplication_status());
@@ -303,7 +322,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         View seeAllButton = convertView.findViewById(R.id.see_all_layout);
         final ArrayList<Facility> facilityArrayList = institute.getFacilities();
         if (facilityArrayList != null && !facilityArrayList.isEmpty()) {
-            facilitiesRecycler.setAdapter(new FacilitiesAdapter(facilityArrayList, this.mFacilityText));
+            facilitiesRecycler.setAdapter(new FacilitiesAdapter(facilityArrayList, this.mFacilityText,importantForAccessibility));
             if (facilityArrayList.size() > 7) {
                 seeAllButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -313,7 +332,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
                         int marginLeft = (int) getContext().getResources().getDimension(R.dimen.m10dp);
                         int marginTop = (int) getContext().getResources().getDimension(R.dimen.m4dp);
                         ViewGroup facilitiesView = (ViewGroup) convertView.findViewById(R.id.institute_card_layout);
-                        if (layoutParams != null && layoutParams.height == height) {
+                        if (layoutParams != null && layoutParams.height >= height-4 && layoutParams.height<= height+4) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                                 TransitionManager.beginDelayedTransition(facilitiesView);
                                 RelativeLayout.LayoutParams lParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -345,6 +364,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
                                 facilitiesRecycler.startAnimation(animation);
                             }
                             ((TextView) convertView.findViewById(R.id.see_all_text)).setText("SEE FEWER\nFACILITIES");
+                            convertView.findViewById(R.id.see_all_layout).setContentDescription("see fewer facilities");
                         } else {
                             final RelativeLayout.LayoutParams lParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, height);
                             lParams.addRule(RelativeLayout.BELOW, R.id.facilities_text);
@@ -377,6 +397,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
                             }
                             (convertView.findViewById(R.id.see_all_image)).setScaleY(1f);
                             ((TextView) convertView.findViewById(R.id.see_all_text)).setText("SEE ALL\nFACILITIES");
+                            convertView.findViewById(R.id.see_all_layout).setContentDescription("see all facilities");
                         }
                     }
                 });
@@ -390,6 +411,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
         if (institute.getFees() != null && !institute.getFees().isEmpty()) {
             feesText.setText("" + institute.getFees());
+            feesDescription =  "Fee range is " + institute.getFees();
         }else {
             convertView.findViewById(R.id.salaries_layout).setVisibility(View.GONE);
         }
@@ -417,11 +439,14 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             }
             if(examsStr!=null && !examsStr.trim().isEmpty()) {
                 examsTv.setText("Exam: " + examsStr);
+                examsTv.setContentDescription("Entrance Exam for this institute is " + examsStr);
             }else {
                 examsTv.setText("Exam: Not Available");
+                examsTv.setContentDescription("Entrance exam info not available");
             }
         }else{
             examsTv.setText("Exam: Not Available");
+            examsTv.setContentDescription("Entrance exam info not available");
         }
 
         if(institute.getApplication_end_date()!=null && !institute.getApplication_end_date().trim().isEmpty()){
@@ -482,12 +507,48 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
                 if(convertView.findViewById(R.id.overlay_layout).getVisibility()==View.VISIBLE){
                     convertView.findViewById(R.id.overlay_layout).setVisibility(View.GONE);
                     ((ImageView)convertView.findViewById(R.id.btn_details)).setImageResource(R.drawable.ic_wishlist_information);
+                    convertView.findViewById(R.id.btn_details).setContentDescription("Click to see application status");
                 }else{
                     convertView.findViewById(R.id.overlay_layout).setVisibility(View.VISIBLE);
                     ((ImageView)convertView.findViewById(R.id.btn_details)).setImageResource(R.drawable.ic_wish_list_close_info);
+                    convertView.findViewById(R.id.btn_details).setContentDescription("Click to close application status");
                 }
             }
         });
+
+        convertView.findViewById(R.id.salary_layout).setContentDescription(salaryDescription);
+        convertView.findViewById(R.id.placement_layout).setContentDescription(placementDescription);
+        convertView.findViewById(R.id.salaries_layout).setContentDescription(feesDescription);
+
+        if(importantForAccessibility){
+            convertView.findViewById(R.id.salary_layout).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            convertView.findViewById(R.id.placement_layout).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            convertView.findViewById(R.id.salaries_layout).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            convertView.findViewById(R.id.btn_details).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            convertView.findViewById(R.id.see_all_layout).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            convertView.findViewById(R.id.btn_call_now).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            convertView.findViewById(R.id.btn_apply_now).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            convertView.findViewById(R.id.facilities_text).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            convertView.findViewById(R.id.title).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            convertView.findViewById(R.id.description).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            convertView.findViewById(R.id.header_view).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            convertView.findViewById(R.id.heart_layout).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            examsTv.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+        } else {
+            convertView.findViewById(R.id.salary_layout).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            convertView.findViewById(R.id.placement_layout).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            convertView.findViewById(R.id.salaries_layout).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            convertView.findViewById(R.id.btn_details).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            convertView.findViewById(R.id.see_all_layout).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            convertView.findViewById(R.id.btn_call_now).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            convertView.findViewById(R.id.btn_apply_now).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            convertView.findViewById(R.id.facilities_text).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            convertView.findViewById(R.id.title).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            convertView.findViewById(R.id.description).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            convertView.findViewById(R.id.header_view).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            convertView.findViewById(R.id.heart_layout).setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            examsTv.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
     }
 
 
@@ -578,13 +639,14 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         ArrayList<Facility> facilitiesList;
         ImageLoader imageLoader;
         TextView facilityText;
+        boolean importantForAccessibility;
         //AnimationSet mAnimationSet = new AnimationSet(false);
 
-        FacilitiesAdapter(ArrayList<Facility> facilities, TextView tempFacilityText) {
+        FacilitiesAdapter(ArrayList<Facility> facilities, TextView tempFacilityText, boolean importantForAccessibility) {
             facilitiesList = facilities;
             facilityText = tempFacilityText;
             imageLoader = MySingleton.getInstance(getContext()).getImageLoader();
-
+            this.importantForAccessibility = importantForAccessibility;
             /*Animation fadeInAnimation = AnimationUtils.loadAnimation(SimpleCardStackAdapter.this.mContext, R.anim.fade_in);
             Animation fadeOutAnimation = AnimationUtils.loadAnimation(SimpleCardStackAdapter.this.mContext, R.anim.fade_out);
             mAnimationSet.addAnimation(fadeInAnimation);
@@ -604,6 +666,7 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             holder.image.setErrorImageResId(R.drawable.ic_cd);
             holder.image.setImageUrl(facilitiesList.get(holder.getAdapterPosition()).image_new, imageLoader);
             holder.image.setTag(facilitiesList.get(holder.getAdapterPosition()).tag);
+            holder.image.setContentDescription(facilitiesList.get(holder.getAdapterPosition()).tag);
             holder.image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -616,6 +679,11 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
                     animateView(facilityText);
                 }
             });
+            if(importantForAccessibility){
+                holder.image.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            } else {
+                holder.image.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            }
         }
 
         @Override

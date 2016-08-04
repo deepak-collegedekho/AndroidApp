@@ -34,6 +34,7 @@ public class CardModel {
 	private Drawable cardDislikeImageDrawable;
 	private Institute institute;
 	private int mTag;
+	public boolean importantForAccessibility;
 
     private OnCardDismissedListener mOnCardDismissedListener = null;
     private OnClickListener mOnClickListener = null;

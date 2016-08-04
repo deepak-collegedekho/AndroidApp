@@ -6,7 +6,6 @@
     android:id="@+id/cd_reco_card_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:elevation="@dimen/m1dp"
     android:orientation="vertical"
     android:background="@color/alpha_component_transparent"
@@ -197,7 +196,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"/>
+                        android:layout_centerVertical="true"
+                        android:contentDescription="click to see application status"/>
 
                     <LinearLayout
                         android:id="@+id/heart_layout"
@@ -208,7 +208,8 @@
                         android:layout_marginTop="@dimen/m10dp"
                         android:gravity="center_horizontal"
                         android:orientation="vertical"
-                        android:paddingTop="6dp">
+                        android:paddingTop="6dp"
+                        android:importantForAccessibility="no">
 
                         <TextView
                             android:id="@+id/applied_count"
@@ -217,7 +218,7 @@
                             android:text="235"
                             android:textColor="@color/primary_color"
                             android:textStyle="bold"
-                            />
+                            android:importantForAccessibility="no"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -226,7 +227,7 @@
                             android:text="STUDENTS\nAPPLIED"
                             android:textColor="@color/primary_color"
                             android:textSize="6sp"
-                            />
+                            android:importantForAccessibility="no"/>
                     </LinearLayout>
 
                     <TextView
@@ -335,7 +336,9 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_alignTop="@id/facilities_text"
-                            android:layout_marginRight="@dimen/m10dp">
+                            android:layout_marginRight="@dimen/m10dp"
+                            android:importantForAccessibility="yes"
+                            android:contentDescription="Click to see all facilities">
 
                             <TextView
                                 android:id="@+id/see_all_text"
@@ -345,7 +348,8 @@
                                 android:text="SEE ALL\nFACILITIES"
                                 android:textColor="@color/primary_color"
                                 android:textSize="6sp"
-                                android:visibility="gone"/>
+                                android:visibility="gone"
+                                android:importantForAccessibility="no" />
 
                             <ImageView
                                 android:id="@+id/see_all_image"
@@ -353,7 +357,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/see_all_text"
                                 android:layout_centerHorizontal="true"
-                                android:layout_marginTop="@dimen/m1dp" />
+                                android:layout_marginTop="@dimen/m1dp"
+                                android:importantForAccessibility="no" />
                         </RelativeLayout>
 
                         <View
@@ -385,7 +390,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center|bottom"
                                 android:layout_weight="1"
-                                android:gravity="center">
+                                android:gravity="center"
+                                android:importantForAccessibility="yes">
 
                                 <ImageView
                                     android:id="@+id/placement_image"
@@ -393,7 +399,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerHorizontal="true"
                                     app:srcCompat="@drawable/ic_wishlist_placement"
-                                    />
+                                    android:importantForAccessibility="no" />
 
                                 <TextView
                                     android:id="@+id/placement_percentage"
@@ -406,7 +412,7 @@
                                     android:layout_marginTop="@dimen/m5dp"
                                     android:textSize="@dimen/m13sp"
                                     android:textStyle="bold"
-                                    />
+                                    android:importantForAccessibility="no" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -415,7 +421,8 @@
                                     android:layout_centerHorizontal="true"
                                     android:text="Placement"
                                     android:textColor="@color/black"
-                                    android:textSize="@dimen/m11sp"/>
+                                    android:textSize="@dimen/m11sp"
+                                    android:importantForAccessibility="no" />
                             </RelativeLayout>
 
                             <RelativeLayout
@@ -423,13 +430,15 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:layout_weight="1">
+                                android:layout_weight="1"
+                                android:importantForAccessibility="yes">
 
                                     <ImageView
                                         android:id="@+id/fees_range_image"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_centerHorizontal="true"/>
+                                        android:layout_centerHorizontal="true"
+                                        android:importantForAccessibility="no" />
 
                                     <TextView
                                         android:id="@+id/fees_range_text"
@@ -441,7 +450,8 @@
                                         android:textColor="@color/black"
                                         android:layout_marginTop="@dimen/m5dp"
                                         android:textSize="@dimen/m13sp"
-                                        android:textStyle="bold"/>
+                                        android:textStyle="bold"
+                                        android:importantForAccessibility="no" />
 
                                     <TextView
                                         android:layout_width="wrap_content"
@@ -450,7 +460,8 @@
                                         android:layout_centerHorizontal="true"
                                         android:text="Fees Range"
                                         android:textColor="@color/black"
-                                        android:textSize="@dimen/m11sp"/>
+                                        android:textSize="@dimen/m11sp"
+                                        android:importantForAccessibility="no" />
                             </RelativeLayout>
                         </LinearLayout>
 
@@ -460,7 +471,8 @@
                                 android:layout_weight="2"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:layout_marginBottom="@dimen/m1dp">
+                                android:layout_marginBottom="@dimen/m1dp"
+                                android:importantForAccessibility="yes">
 
                                 <TextView
                                     android:id="@+id/salary_text"
@@ -470,12 +482,14 @@
                                     android:gravity="center"
                                     android:text="SALARIES"
                                     android:textColor="@color/primary_color"
-                                    android:textSize="12sp"/>
+                                    android:textSize="12sp"
+                                    android:importantForAccessibility="no" />
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:layout_below="@id/salary_text">
+                                    android:layout_below="@id/salary_text"
+                                    android:importantForAccessibility="no" >
 
                                 <TextView
                                     android:id="@+id/max_sal_txt"
@@ -484,7 +498,8 @@
                                     android:layout_marginLeft="@dimen/m10dp"
                                     android:text="Max"
                                     android:textColor="@color/black"
-                                    android:textSize="10sp"/>
+                                    android:textSize="10sp"
+                                    android:importantForAccessibility="no" />
 
                                 <TextView
                                     android:id="@+id/max_sal_val"
@@ -496,7 +511,7 @@
                                     android:textColor="@color/primary_color"
                                     android:textSize="11sp"
                                     android:textStyle="bold"
-                                    />
+                                    android:importantForAccessibility="no" />
 
                                 <View
                                     android:id="@+id/max_sal_bar"
@@ -505,7 +520,8 @@
                                     android:layout_alignParentBottom="true"
                                     android:layout_marginLeft="@dimen/m10dp"
                                     android:layout_toRightOf="@id/max_sal_val"
-                                    android:background="@color/primary_color"/>
+                                    android:background="@color/primary_color"
+                                    android:importantForAccessibility="no" />
 
                                 <View
                                     android:id="@+id/min_sal_bar"
@@ -514,7 +530,8 @@
                                     android:layout_alignParentBottom="true"
                                     android:layout_marginLeft="@dimen/m4dp"
                                     android:layout_toRightOf="@id/max_sal_bar"
-                                    android:background="@color/light_blue"/>
+                                    android:background="@color/light_blue"
+                                    android:importantForAccessibility="no" />
 
                                 <View
                                     android:id="@+id/avg_sal_mark"
@@ -524,17 +541,19 @@
                                     android:layout_alignParentBottom="true"
                                     android:layout_marginBottom="@dimen/m25dp"
                                     android:layout_marginLeft="-4dp"
-                                    android:background="@color/primary_orange"/>
+                                    android:background="@color/primary_orange"
+                                    android:importantForAccessibility="no" />
 
                                 <TextView
                                     android:id="@+id/avg_sal_txt"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                     android:layout_marginLeft="@dimen/m10dp"
+                                    android:layout_marginLeft="@dimen/m10dp"
                                     android:layout_toRightOf="@id/min_sal_bar"
                                     android:text="Avg"
                                     android:textColor="@color/black"
-                                    android:textSize="10sp"/>
+                                    android:textSize="10sp"
+                                    android:importantForAccessibility="no" />
 
                                 <TextView
                                     android:id="@+id/avg_sal_val"
@@ -547,7 +566,7 @@
                                     android:textColor="@color/primary_color"
                                     android:textSize="11sp"
                                     android:textStyle="bold"
-                                    />
+                                    android:importantForAccessibility="no" />
 
                                 <TextView
                                     android:id="@+id/min_sal_txt"
@@ -559,7 +578,8 @@
                                     android:layout_toRightOf="@id/min_sal_bar"
                                     android:text="Min"
                                     android:textColor="@color/black"
-                                    android:textSize="10sp"/>
+                                    android:textSize="10sp"
+                                    android:importantForAccessibility="no" />
 
                                 <TextView
                                     android:id="@+id/min_sal_val"
@@ -572,7 +592,7 @@
                                     android:textColor="@color/primary_color"
                                     android:textSize="11sp"
                                     android:textStyle="bold"
-                                    />
+                                    android:importantForAccessibility="no" />
                                     </RelativeLayout>
                             </RelativeLayout>
                     </LinearLayout>
@@ -590,7 +610,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/m10dp"
                         android:layout_marginRight="@dimen/m10dp"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:importantForAccessibility="no">
 
                         <TextView
                             android:id="@+id/recommended_streams"
@@ -605,7 +626,8 @@
                             android:paddingLeft="@dimen/m5dp"
                             android:text="streams"
                             android:textColor="@color/primary_color"
-                            android:textSize="13sp"/>
+                            android:textSize="13sp"
+                            android:importantForAccessibility="no" />
 
                         <TextView
                             android:id="@+id/recommended_exams"
@@ -648,7 +670,9 @@
                         android:drawableLeft="@drawable/ic_call"
                         android:layout_marginRight="@dimen/m8dp"
                         android:textSize="@dimen/m13sp"
-                        android:textColor="@color/white"/>
+                        android:textColor="@color/white"
+                        android:importantForAccessibility="no"
+                        android:contentDescription="Click here to make a call to the institute"/>
 
                     <TextView
                         android:id="@+id/btn_apply_now"
@@ -663,7 +687,9 @@
                         android:gravity="center"
                         android:textSize="@dimen/m13sp"
                         android:layout_marginLeft="@dimen/m8dp"
-                        android:textColor="@color/white"/>
+                        android:textColor="@color/white"
+                        android:importantForAccessibility="no"
+                        android:contentDescription="Click here to apply in the institute"/>
 
                     </LinearLayout>
                     </RelativeLayout>

@@ -159,6 +159,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 view.findViewById(R.id.user_education_edit_name_til).setVisibility(View.GONE);
                 view.findViewById(R.id.user_education_name_layout).setVisibility(View.VISIBLE);
                 ((TextView)view.findViewById(R.id.user_name)).setText(userName);
+                    mRootView.findViewById(R.id.user_education_name_layout).setContentDescription("Your name is " + userName);
             }else {
                 view.findViewById(R.id.user_education_edit_name_til).setVisibility(View.VISIBLE);
                 view.findViewById(R.id.user_education_name_layout).setVisibility(View.GONE);
@@ -170,6 +171,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 view.findViewById(R.id.user_education_edit_phone_til).setVisibility(View.GONE);
                 view.findViewById(R.id.user_education_phone_layout).setVisibility(View.VISIBLE);
                 ((TextView)view.findViewById(R.id.user_phone)).setText(userPhoneNumber);
+                mRootView.findViewById(R.id.user_education_phone_layout).setContentDescription("your phone number is " + userPhoneNumber);
             }else {
                 view.findViewById(R.id.user_education_edit_phone_til).setVisibility(View.VISIBLE);
                 view.findViewById(R.id.user_education_phone_layout).setVisibility(View.GONE);
@@ -198,6 +200,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         view.findViewById(R.id.go_to_dash_board).setOnClickListener(this);
         view.findViewById(R.id.go_to_profile).setOnClickListener(this);
         view.findViewById(R.id.user_exam_search_container).setOnClickListener(this);
+
+        view.findViewById(R.id.user_profile_image_update).setContentDescription("click to upload your photograph");
+
         mExamSearchView.setOnSearchClickListener(this);
     }
 
@@ -1205,6 +1210,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
                 // hide name EditText
                 ((TextView) mRootView.findViewById(R.id.user_name)).setText(userName);
+                mRootView.findViewById(R.id.user_education_name_layout).setContentDescription("Your name is " + userName);
                 mRootView.findViewById(R.id.user_education_name_layout).setVisibility(View.VISIBLE);
                 nameView.setVisibility(View.GONE);
                 if(MainActivity.mProfile != null)
@@ -1225,6 +1231,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 }
                 profileParams.put(getString(R.string.USER_PHONE),userPhoneNumber);
                 ((TextView) mRootView.findViewById(R.id.user_phone)).setText(userPhoneNumber);
+                mRootView.findViewById(R.id.user_education_phone_layout).setContentDescription("your phone number is " + userPhoneNumber);
                 mRootView.findViewById(R.id.user_education_phone_layout).setVisibility(View.VISIBLE);
                 phoneView.setVisibility(View.GONE);
                 if(MainActivity.mProfile != null)
@@ -1477,6 +1484,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
         if (name != null && !name.isEmpty() && !name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())){
             ((TextView) mRootView.findViewById(R.id.user_name)).setText(name);
+            mRootView.findViewById(R.id.user_education_name_layout).setContentDescription("Your name is " + name);
             mRootView.findViewById(R.id.user_education_name_layout).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.user_education_edit_name_til).setVisibility(View.GONE);
         }
@@ -1484,6 +1492,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         String phone = profile.getPhone_no();
         if (phone != null && !phone.isEmpty() && !phone.equalsIgnoreCase("null")) {
             ((TextView) mRootView.findViewById(R.id.user_phone)).setText(phone);
+            mRootView.findViewById(R.id.user_education_phone_layout).setContentDescription("your phone number is " + phone);
             mRootView.findViewById(R.id.user_education_phone_layout).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.user_education_edit_phone_til).setVisibility(View.GONE);
         }

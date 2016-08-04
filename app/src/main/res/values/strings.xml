@@ -460,7 +460,7 @@
 
     <!--ACCESSIBILITY DESCRIPTION-->
     <string name="fb_login_description">Login with facebook</string>
-    <string name="sign_up_skip_description">Continue without Logging in to facebook</string>
+    <string name="sign_up_skip_description">Continue without Logging in</string>
     <string name="profile_image_description">your image</string>
     <string name="recommended_colleges_description">Colleges recommended to you by College Dekho</string>
     <string name="profile_tute_description">Tutorial: select to vanish</string>

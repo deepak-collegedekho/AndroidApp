@@ -119,7 +119,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
         /**
          * Get the Tutorial Status. Show tute layout if tute has not been performed.
-        * */
+         * */
         this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), false);
         if(!IS_TUTE_COMPLETED) {
             rootView.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);

@@ -178,6 +178,10 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                     if (!isRequired || isSkippable) {
                         //skipBy = ((mStepByStepQuestions.get(currentIndex)).getSecondary()).size() + 1;
                         carryOnToNext = true;
+                    } else {
+                        try{
+                            ((MainActivity) StepByStepFragment.this.getActivity()).speakMessageForAccessibility("This is a necessary question. Please answer it and then click next on the lower right corner");
+                        } catch (Exception e){}
                     }
                 }
 
@@ -194,6 +198,8 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                             //StepByStepFragment.this.mNextButton.setText("Finish");
                             StepByStepFragment.this.mIsFinished = true;
                             StepByStepFragment.this.mNextButton.setImageDrawable(StepByStepFragment.this.getContext().getResources().getDrawable(R.drawable.ic_checked));
+                            StepByStepFragment.this.mNextButton.setContentDescription("Click to submit test");
+
                         }
 
                         // if not on the last question yet for the set
@@ -230,6 +236,7 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                             //StepByStepFragment.this.mNextButton.setText("Finish");
                             StepByStepFragment.this.mIsFinished = true;
                             StepByStepFragment.this.mNextButton.setImageDrawable(StepByStepFragment.this.getContext().getResources().getDrawable(R.drawable.ic_checked));
+                            StepByStepFragment.this.mNextButton.setContentDescription("Click to submit and move to next question");
                         }
 
                         // if not on the last question yet for the set

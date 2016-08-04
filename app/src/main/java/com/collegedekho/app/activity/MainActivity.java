@@ -151,6 +151,7 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.AnalyticsUtils;
+import com.collegedekho.app.utils.FirebaseUtils;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
@@ -164,6 +165,8 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -240,8 +243,7 @@ public class MainActivity extends AppCompatActivity
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
         UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteFragment.OnCDRecommendedInstituteListener,
-        InstituteVideosFragment.OnTitleUpdateListener,OTPVerificationFragment.OTPVerificationListener, ITrueCallback, WishlistFragment.WishlistInstituteInteractionListener
-{
+        InstituteVideosFragment.OnTitleUpdateListener,OTPVerificationFragment.OTPVerificationListener, ITrueCallback, WishlistFragment.WishlistInstituteInteractionListener {
 
     static {
 
@@ -3415,62 +3417,62 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_STREAM:
             case Constants.TAG_UPDATE_STREAM:
             case Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM:
-                return "Loading Streams...";
+                return "Loading Streams";
             case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
-                return "Loading Exams...";
+                return "Loading Exams";
             case Constants.TAG_EXAM_SUMMARY:
             case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
             case Constants.WIDGET_SYLLABUS:
             case Constants.CARD_BUZZLIST_INSTITUTES:
-                return "Loading....";
+                return "Loading";
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
-                return "Loading Profile...";
+                return "Loading Profile";
             case Constants.TAG_UPDATE_INSTITUTES:
-                return "Updating Institutes...";
+                return "Updating Institutes";
             case Constants.TAG_UPDATE_USER_PROFILE:
-                return "Updating Profile...";
+                return "Updating Profile";
             case Constants.WIDGET_INSTITUTES:
             case Constants.WIDGET_INSTITUTES_SBS:
             case Constants.WIDGET_TRENDING_INSTITUTES:
             case Constants.WIDGET_SHORTLIST_INSTITUTES:
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
             case Constants.WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE:
-                return "Loading Institutes...";
+                return "Loading Institutes";
             case Constants.WIDGET_NEWS:
-                return "Loading News...";
+                return "Loading News";
             case Constants.WIDGET_ARTICES:
-                return "Loading Articles...";
+                return "Loading Articles";
             case Constants.WIDGET_COURSES:
-                return "Loading Courses...";
+                return "Loading Courses";
             case Constants.TAG_POST_QUESTION:
-                return "Posting your question...";
+                return "Posting your question";
             case Constants.TAG_LOAD_FILTERS:
-                return "Loading Filters...";
+                return "Loading Filters";
             case Constants.TAG_LOAD_QNA_QUESTIONS:
-                return "Loading Questions...";
+                return "Loading Questions";
             case Constants.TAG_LOAD_MY_FB:
-                return "Loading your Forums chat...";
+                return "Loading your Forums chat";
             /*case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
                 return "Submitting Comment...";*/
             case Constants.ACTION_QNA_ANSWER_SUBMITTED:
-                return "Submitting Answer...";
+                return "Submitting Answer";
             case Constants.ACTION_VOTE_QNA_QUESTION_ENTITY:
             case Constants.ACTION_VOTE_QNA_ANSWER_ENTITY:
-                return "Processing Vote...";
+                return "Processing Vote";
             case Constants.WIDGET_FORUMS:
-                return "Loading Forums...";
+                return "Loading Forums";
             case Constants.SEARCHED_INSTITUTES:
-                return "Loading...";
+                return "Loading";
             case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
-                return "Loading ....";
+                return "Loading";
             case Constants.WIDGET_TEST_CALENDAR:
-                return "Loading your plan...";
+                return "Loading your plan";
             case Constants.TAG_MY_ALERTS:
-                return "Loading important events...";
+                return "Loading important events";
             case Constants.TAG_VERIFY_USER_PHONE:
-                return "Verifying OTP...";
+                return "Verifying OTP";
             case Constants.TAG_USER_PHONE_ADDED:
-                return "Requesting OTP...";
+                return "Requesting OTP";
             case Constants.PROFILE_IMAGE_UPLOADING:
                 return "Uploading Image";
             case Constants.TAG_NEXT_ARTICLES:
@@ -3501,9 +3503,9 @@ public class MainActivity extends AppCompatActivity
             case "":
                 return null;
             case Constants.TAG_SUBMIT_SBS_EXAM:
-                return "Getting institutes for your prefrences...";
+                return "Getting institutes for your prefrences";
             default:
-                return "Loading...";
+                return "Loading";
         }
 //        return null;
     }
@@ -3832,6 +3834,7 @@ public class MainActivity extends AppCompatActivity
             progressDialog.setCancelable(false);
             progressDialog.setMessage(message);
             progressDialog.setIndeterminate(true);
+
         } else {
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
@@ -6540,4 +6543,6 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
     }
+
+
 }

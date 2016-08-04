@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:contentDescription="Fill this one time form to apply">
 
     <TextView
         android:layout_width="match_parent"
@@ -20,7 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/m15dp"
-        android:layout_marginRight="@dimen/m15dp">
+        android:layout_marginRight="@dimen/m15dp"
+        android:importantForAccessibility="no">
 
     <EditText android:id="@+id/apply_name"
         android:layout_width="match_parent"
@@ -31,7 +33,8 @@
         android:paddingTop="2dp"
         android:textSize="16sp"
         android:inputType="textPersonName"
-        android:textColor="@color/textSecondary"/>
+        android:textColor="@color/textSecondary"
+        android:contentDescription="Enter your name"/>
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -39,7 +42,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/m15dp"
-        android:layout_marginRight="@dimen/m15dp">
+        android:layout_marginRight="@dimen/m15dp"
+        android:importantForAccessibility="no">
 
     <EditText android:id="@+id/apply_email"
         android:layout_width="match_parent"
@@ -49,7 +53,8 @@
         android:paddingTop="2dp"
         android:textSize="16sp"
         android:inputType="textEmailAddress"
-        android:textColor="@color/textSecondary"/>
+        android:textColor="@color/textSecondary"
+        android:contentDescription="Enter your email address"/>
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -57,7 +62,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/m15dp"
-        android:layout_marginRight="@dimen/m15dp">
+        android:layout_marginRight="@dimen/m15dp"
+        android:importantForAccessibility="no">
     <EditText android:id="@+id/apply_phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -68,7 +74,8 @@
         android:digits="1234567890"
         android:maxLength="10"
         android:hint="Phone No."
-        android:inputType="phone"/>
+        android:inputType="phone"
+        android:contentDescription="Enter your phone"/>
     </android.support.design.widget.TextInputLayout>
 
         <TextView
@@ -79,7 +86,8 @@
             android:paddingLeft="3dp"
             android:layout_marginLeft="@dimen/m15dp"
             android:layout_marginRight="@dimen/m15dp"
-            android:textColor="?attr/colorControlNormal"/>
+            android:textColor="?attr/colorControlNormal"
+            android:contentDescription="Choose year of admission from below"/>
     <Spinner android:id="@+id/apply_year"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -87,7 +95,7 @@
         android:layout_marginLeft="@dimen/m15dp"
         android:layout_marginRight="@dimen/m15dp"
         android:textColor="@color/textSecondary"
-        android:contentDescription="Year of Admission"/>
+        android:contentDescription="Year of Admission" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -99,17 +107,17 @@
             style="@style/AppTheme.BlueButton"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="1dp"
             android:text="Cancel"
-            android:layout_weight="1"/>
-
-        <Button android:id="@+id/submit_button"
+            android:layout_weight="1"
+            android:contentDescription="Cancel"/>
+        <Button android:id="@+id/cancel_button"
             style="@style/AppTheme.BlueButton"
             android:layout_width="0dp"
             android:layout_height="40dp"
+            android:layout_marginLeft="1dp"
             android:text="Submit"
-            android:layout_weight="1"/>
-
+            android:layout_weight="1"
+            android:contentDescription="Submit"/>
 
     </LinearLayout>
 </LinearLayout>
