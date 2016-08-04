@@ -97,7 +97,7 @@ public class CalendarItemDetailsAdapter extends RecyclerView.Adapter<CalendarIte
         mListener=listener;
     }
     public interface OnItemStateChangeListener{
-        public void OnStateChanged(boolean state);
+        void OnStateChanged(boolean state);
     }
 
 }

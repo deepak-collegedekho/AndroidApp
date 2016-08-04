@@ -191,7 +191,7 @@ public final class VideosFragment extends BaseFragment {
 //  }
 
     /**
-     * Sets up the layout programatically for the three different states. Portrait, landscape or
+     * Sets up the layout programmatically for the three different states. Portrait, landscape or
      * fullscreen+landscape. This has to be done programmatically because we handle the orientation
      * changes ourselves in order to get fluent fullscreen transitions, so the xml layout resources
      * do not get reloaded.
@@ -585,6 +585,6 @@ public final class VideosFragment extends BaseFragment {
     }
 
     public interface OnTitleUpdateListener {
-        public void onUpdate(List<VideoEntry> videoList,String url,VideoListFragment fragment);
+        void onUpdate(List<VideoEntry> videoList,String url,VideoListFragment fragment);
     }
 }

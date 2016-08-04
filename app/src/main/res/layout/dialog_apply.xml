@@ -94,12 +94,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:weightSum="2">
-        <Button android:id="@+id/submit_button"
-            style="@style/AppTheme.BlueButton"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:text="Submit"
-            android:layout_weight="1"/>
+
         <Button android:id="@+id/cancel_button"
             style="@style/AppTheme.BlueButton"
             android:layout_width="0dp"
@@ -107,5 +102,14 @@
             android:layout_marginLeft="1dp"
             android:text="Cancel"
             android:layout_weight="1"/>
+
+        <Button android:id="@+id/submit_button"
+            style="@style/AppTheme.BlueButton"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:text="Submit"
+            android:layout_weight="1"/>
+
+
     </LinearLayout>
 </LinearLayout>

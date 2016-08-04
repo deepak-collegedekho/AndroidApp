@@ -168,10 +168,6 @@ public class InstituteListAdapter extends RecyclerView.Adapter {
         this.notifyDataSetChanged();
     }
 
-    public void updatelist(ArrayList<Institute> instituteList)
-    {
-
-    }
 
     class InstituteHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView instiName;

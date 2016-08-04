@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -13,9 +14,12 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.listener.DataLoadListener;
@@ -27,6 +31,11 @@ import com.crashlytics.android.Crashlytics;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,6 +53,7 @@ public class NetworkUtils {
     private DataLoadListener mListener;
     private String mtoken;
     private static Context mContext;
+    private HashMap<String, String> mHeaders;
 
     public NetworkUtils(Context context, DataLoadListener listener) {
         mQueue = MySingleton.getInstance(context.getApplicationContext()).getRequestQueue();
@@ -83,9 +93,7 @@ public class NetworkUtils {
         this.mtoken = token;
     }
 
-    public void getData(@Nullable final String tag, final String url) {
-        getOrDeleteData(tag, url, Request.Method.GET);
-    }
+
 
     public void getOrDeleteData(@Nullable final String tag, final String url, final int method)
     {
@@ -103,43 +111,17 @@ public class NetworkUtils {
                 new Response.ErrorListener()
                 {
                     @Override
-                    public void onErrorResponse(VolleyError error)
+                    public void onErrorResponse(VolleyError volleyError)
                     {
                         Utils.logApiResponseTime(calendar,tag+" "+url);
-                        Crashlytics.logException(error);
-
-                        String json = null;
-                        NetworkResponse response = error.networkResponse;
-                        if (response != null && response.data != null)
-                        {
-                            json = new String(response.data);
-                            json = trimMessage(json, "detail");
-                        }
-                        if (json != null) {
-                            mListener.onError(tag, Constants.SERVER_FAULT, getResponseCode(response) , url, null, method);
-                        } else {
-                            int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-                            if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
-                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT,getResponseCode(response) , url, null, method);
-                            } else {
-                                mListener.onError(tag, Constants.UNKNOWN_ERROR,getResponseCode(response) , url, null, method);
-                            }
-                        }
+                        Crashlytics.logException(volleyError);
+                        mHandleErrorResponse(volleyError, tag, url, null, method);
                     }
                 })
         {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                if (mtoken != null)
-                {
-                    Map<String, String> params = new HashMap<>();
-
-                    params.put("Authorization", "Token " + mtoken);
-                    params.put("Accept", "application/json");
-
-                    return params;
-                }
-                return super.getHeaders();
+                return (mHeaders != null)? mHeaders :NetworkUtils.this.getHeaders();
             }
         };
         request.setRetryPolicy(new DefaultRetryPolicy(
@@ -164,35 +146,15 @@ public class NetworkUtils {
                     @Override
                     public void onResponse(String response) {
                         Utils.logApiResponseTime(calendar, tag + " " + url);
-                        mListener.onDataLoaded(tag, response);
-                        ((MainActivity)mContext).hideProgressDialog();
+                        mHandleSuccessResponse(tag, response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
+                    public void onErrorResponse(VolleyError volleyError) {
                         Utils.logApiResponseTime(calendar, tag + " " + url);
-                        Crashlytics.logException(error);
-                        try {
-                            String json = null;
-                            NetworkResponse response = error.networkResponse;
-                            if (response != null && response.data != null) {
-                                json = new String(response.data);
-                                json = trimMessage(json, "detail");
-                            }
-                            if (json != null) {
-                                mListener.onError(tag, Constants.SERVER_FAULT,getResponseCode(response) , url, null, method);
-                            } else {
-                                int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-                                if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
-                                    mListener.onError(tag, Constants.NO_CONNECTION_FAULT,getResponseCode(response) , url, null, method);
-                                } else {
-                                    mListener.onError(tag, Constants.UNKNOWN_ERROR,getResponseCode(response) , url, null, method);
-                                }
-                            }
-                        } catch (Exception e) {
-
-                        }
+                        Crashlytics.logException(volleyError);
+                        mHandleErrorResponse(volleyError, tag, url, null , method);
                     }
                 }) {
         };
@@ -205,6 +167,10 @@ public class NetworkUtils {
             request.setTag(tag);
         mQueue.add(request);
     }
+    public void getData(@Nullable final String tag, final String url) {
+        getOrDeleteData(tag, url, Request.Method.GET);
+    }
+
     public void postData(final String tag, final String url, final Map<String, String> params) {
         postOrPutData(tag, url, params, Request.Method.POST);
     }
@@ -229,56 +195,18 @@ public class NetworkUtils {
                     public void onResponse(String response)
                     {
                         Utils.logApiResponseTime(calendar, tag + " " + url);
-                        mListener.onDataLoaded(tag, response);
+                        mHandleSuccessResponse(tag, response);
                     }
                 },
                 new Response.ErrorListener()
                 {
                     @Override
-                    public void onErrorResponse(VolleyError error)
+                    public void onErrorResponse(VolleyError volleyError)
                     {
                         Utils.logApiResponseTime(calendar, tag + " " + url);
-                        Crashlytics.logException(error);
+                        Crashlytics.logException(volleyError);
 
-                        String json = null;
-                        NetworkResponse response = error.networkResponse;
-                        if (response != null && response.data != null)
-                        {
-                            json = new String(response.data);
-                        }
-                        String[] tags = tag.split("#");
-                        if(tags[0].equalsIgnoreCase(Constants.TAG_TRUE_SDK_LOGIN) || tags[0].equalsIgnoreCase(Constants.TAG_FACEBOOK_LOGIN) )
-                        {
-                            if(json != null) {
-                                try {
-                                    JSONObject jsonObj = new JSONObject(json);
-                                    String code = jsonObj.getString("Code");
-                                    if(Integer.parseInt(code) == ErrorCode.LOGIN_PREFERENCE_CONFLICT) {
-                                        mListener.showDialogForStreamLevel(tag, url, jsonObj, params);
-                                        return;
-                                    }
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                        else if(tags[0].equalsIgnoreCase(Constants.TAG_APPLIED_COURSE))
-                        {
-                            saveToSharedPref(params);
-                        }
-
-                        json = trimMessage(json, "detail");
-                        if (json != null) {
-                            mListener.onError(tag, Constants.SERVER_FAULT,getResponseCode(response), url, params, method);
-                        } else {
-                            int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-                            if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
-                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT,getResponseCode(response) , url, params, method);
-                            } else {
-                                mListener.onError(tag, Constants.UNKNOWN_ERROR, getResponseCode(response) ,url, params, method);
-                            }
-                        }
+                        mHandleErrorResponse(volleyError, tag, url, params, method);
                     }
                 })
         {
@@ -289,17 +217,8 @@ public class NetworkUtils {
             }
 
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError
-            {
-                Map<String, String> params = new HashMap<>();
-
-                if (mtoken != null)
-                    params.put("Authorization", "Token " + mtoken);
-
-                params.put("Content-Type", "application/form-data");
-                params.put("Accept", "application/json");
-
-                return params;
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return (mHeaders != null) ? mHeaders :NetworkUtils.this.getHeaders();
             }
         };
 
@@ -325,61 +244,42 @@ public class NetworkUtils {
                     public void onResponse(JSONObject response)
                     {
                         Utils.logApiResponseTime(calendar,tag+" "+url);
-                        mListener.onDataLoaded(tag, response.toString());
+                        mHandleSuccessResponse(tag, response.toString());
                     }
                 },
                 new Response.ErrorListener()
                 {
                     @Override
-                    public void onErrorResponse(VolleyError error)
+                    public void onErrorResponse(VolleyError volleyError)
                     {
                         Utils.logApiResponseTime(calendar,tag+" "+url);
-                        Crashlytics.logException(error);
+                        Crashlytics.logException(volleyError);
 
                         String json = null;
-                        NetworkResponse response = error.networkResponse;
+                        NetworkResponse response = volleyError.networkResponse;
                         if (response != null && response.data != null)
                         {
                             json = new String(response.data);
 
                         }
                         json = trimMessage(json, "detail");
-                        if (json != null) {
-                            int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-                            if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
-
-                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT, getResponseCode(response),url, null, method);
-                            } else {
+                        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
+                        if (json != null  && amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
                                 mListener.onJsonObjectRequestError(tag, Constants.SERVER_FAULT, url, params, method);
-                            }
                         }else
                         {
-                            int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-                            if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
-
-                                mListener.onError(tag, Constants.NO_CONNECTION_FAULT, getResponseCode(response),url, null, method);
-                            } else {
-                                mListener.onError(tag, Constants.UNKNOWN_ERROR, getResponseCode(response),url, null, method);
-                            }
+                            mHandleErrorResponse(volleyError, tag, url, null, method);
                         }
                     }
                 })
         {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError
-            {
-                Map<String, String> params = new HashMap<>();
-                if (mtoken != null)
-                    params.put("Authorization", "Token " + mtoken);
-
-                params.put("Content-Type", "application/form-data");
-                params.put("Accept", "application/json");
-                return params;
+            public Map<String, String> getHeaders() throws AuthFailureError{
+                return (mHeaders != null) ? mHeaders :NetworkUtils.this.getHeaders();
             }
         };
 
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                MY_SOCKET_TIMEOUT_MS,
+        request.setRetryPolicy(new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         request.setShouldCache(true);
@@ -388,6 +288,112 @@ public class NetworkUtils {
             request.setTag(tag);
 
         mQueue.add(request);
+    }
+
+    /**
+     *  This method is used to set headers to request on server
+     * @return
+     */
+
+    private HashMap<String, String > getHeaders(){
+
+        mHeaders = new HashMap<>();
+        // set user'token if user token is not set
+        if((mtoken == null || mtoken.isEmpty()) && MainActivity.mProfile != null)
+            mtoken = MainActivity.mProfile.getToken();
+
+        if(mtoken != null)
+            mHeaders.put("Authorization", "Token " + mtoken);
+
+        mHeaders.put("Content-Type", "application/form-data");
+        mHeaders.put("Accept", "application/json");
+       return  mHeaders;
+    }
+
+
+    private final String twoHyphens = "--";
+    private final String lineEnd = "\r\n";
+    private final String boundary = "androidclient-" + System.currentTimeMillis();
+    private final String mimeType = "multipart/form-data; boundary=" + boundary;
+    private byte[] multipartBody;
+
+    public void postMultiPartRequest(final String TAG, String url, byte fileData[]){
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+        try {
+            // file added
+            buildPart(dos, fileData,"ic_"+MainActivity.mProfile.getId()+"_profile.png");
+            // send multipart form data necessary after file data
+            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+            // pass to multipart body
+            multipartBody = bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+       RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+       MultipartRequest multipartRequest = new MultipartRequest(url, mimeType, multipartBody, new Response.Listener<NetworkResponse>() {
+           @Override
+            public void onResponse(NetworkResponse response) {
+                try {
+                    String responseJson = new String(response.data,
+                            HttpHeaderParser.parseCharset(response.headers));
+                    mListener.onDataLoaded(TAG, responseJson);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                    //String responseJson = new String(error.networkResponse.data,
+                           // HttpHeaderParser.parseCharset(error.networkResponse.headers));
+                    Toast.makeText(mContext, "Upload failed!  ", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        multipartRequest.setRetryPolicy(new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        requestQueue.add(multipartRequest);
+    }
+
+
+    /**
+     * This method is used to write to MutliPart request file in data output stream
+     * @param dataOutputStream
+     * @param fileData
+     * @param fileName
+     * @throws IOException
+     */
+    private void buildPart(DataOutputStream dataOutputStream, byte[] fileData, String fileName) throws IOException {
+        dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
+        dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"image\"; filename=\"" + fileName + "\"" + lineEnd);
+       // dataOutputStream.writeBytes("Content-Type: image/jpeg" + lineEnd);
+        dataOutputStream.writeBytes(lineEnd);
+
+        ByteArrayInputStream fileInputStream = new ByteArrayInputStream(fileData);
+        int bytesAvailable = fileInputStream.available();
+
+        int maxBufferSize = 1024 * 1024;
+        int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+        byte[] buffer = new byte[bufferSize];
+
+        // read file and write it into form...
+        int bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+        while (bytesRead > 0) {
+            dataOutputStream.write(buffer, 0, bufferSize);
+            bytesAvailable = fileInputStream.available();
+            bufferSize = Math.min(bytesAvailable, maxBufferSize);
+            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+        }
+
+        dataOutputStream.writeBytes(lineEnd);
     }
 
 
@@ -418,10 +424,7 @@ public class NetworkUtils {
                 break;
         }
     }
-    public void imageUpload(String tag, String url, Map<String, String> params, int method) {
 
-        this.postOrPutData(tag, url, params, method);
-    }
 
     public void networkDataWithObjectParam(String tag, String url, JSONObject params, int method)
     {
@@ -454,12 +457,75 @@ public class NetworkUtils {
         Toast.makeText(mContext, "Failed to apply the course, will retry after sometime.", Toast.LENGTH_LONG).show();
 
     }
+    /**
+     * This method is used to handle success response  when volly
+     *  request an api
+     * @param tag
+     * @param response
+     */
+    private void mHandleSuccessResponse(String tag, String response) {
+        if(mListener != null) {
+            mListener.onDataLoaded(tag, response);
+        }
+    }
 
-    private int getResponseCode(NetworkResponse response){
+    /**
+     * This method is used to handle error response  when volly
+     *  request an api
+     * @param volleyError
+     * @param tag
+     * @param url
+     * @param method
+     */
+    private void mHandleErrorResponse(VolleyError volleyError, String tag, String url, Map<String, String> params, int method){
+        //Crashlytics.logException(error);
+
+        String json = null;
         int responseCode = -1;
-        if(response !=  null)
+        NetworkResponse response = volleyError.networkResponse;
+        if (response != null && response.data != null)
+        {
             responseCode = response.statusCode;
-        return  responseCode;
+            json = new String(response.data);
+        }
+
+        String[] tags = tag.split("#");
+        if(tags[0].equalsIgnoreCase(Constants.TAG_TRUE_SDK_LOGIN) || tags[0].equalsIgnoreCase(Constants.TAG_FACEBOOK_LOGIN) )
+        {
+            try {
+                JSONObject jsonObj = new JSONObject(json);
+                if(json != null) {
+                    String code = jsonObj.getString("Code");
+                    if (Integer.parseInt(code) == ErrorCode.LOGIN_PREFERENCE_CONFLICT) {
+                        mListener.showDialogForStreamLevel(tag, url, jsonObj, params);
+                        return;
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        else if(tags[0].equalsIgnoreCase(Constants.TAG_APPLIED_COURSE))
+        {
+            saveToSharedPref(params);
+        }
+
+        json = trimMessage(json, "detail");
+
+        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
+        if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
+            mListener.onError(tag, mContext.getString(R.string.no_internet_please_try_again), responseCode,url, params, method);
+
+        }else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
+            mListener.onError(tag, mContext.getString(R.string.server_timeout_error), responseCode, url, params, method);
+        }
+        else  if(json != null) {
+            mListener.onError(tag,mContext.getString(R.string.server_fault), responseCode,  url, params, method);
+
+        }else {
+            mListener.onError(tag,mContext.getString(R.string.unknown_server_error), responseCode, url, params, method);
+        }
     }
 
 

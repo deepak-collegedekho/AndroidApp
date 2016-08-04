@@ -459,7 +459,7 @@ public class TabFragment extends  BaseFragment{
             LinearLayout ll2 = (LinearLayout)view.findViewById(R.id.home_widget_second_layout);
             ll2.setLayoutParams(lp);
 
-            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) ((RelativeLayout) getView().findViewById(R.id.home_widget_third)).getLayoutParams();;
+            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) (getView().findViewById(R.id.home_widget_third)).getLayoutParams();;
             int marginLeftInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40 , getResources().getDisplayMetrics());
             int marginRightInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15 , getResources().getDisplayMetrics());
             lp2.setMargins(marginLeftInDp,0,marginRightInDp,0);
@@ -538,7 +538,7 @@ public class TabFragment extends  BaseFragment{
 
             LinearLayout ll2 = (LinearLayout)view.findViewById(R.id.home_widget_second_layout);
 
-            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) ((RelativeLayout) getView().findViewById(R.id.home_widget_third)).getLayoutParams();;
+            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) (getView().findViewById(R.id.home_widget_third)).getLayoutParams();;
             int marginInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45 , getResources().getDisplayMetrics());
             lp2.setMargins(marginInDp,0,marginInDp,0);
             getView().findViewById(R.id.home_widget_third).setLayoutParams(lp2);
@@ -802,6 +802,6 @@ public class TabFragment extends  BaseFragment{
         void requestForProfileFragment();
         void onTabStepByStep();
         void onPsychometricTestSelected();
-        public void onTabPsychometricReport();
+        void onTabPsychometricReport();
     }
 }

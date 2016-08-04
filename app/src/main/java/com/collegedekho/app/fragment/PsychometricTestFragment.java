@@ -111,6 +111,6 @@ private static PsychometricTestFragment.OnNextPageListener mNextListener;
     }
 
     public interface OnNextPageListener{
-        public void gotoNext();
+        void gotoNext();
     }
 }

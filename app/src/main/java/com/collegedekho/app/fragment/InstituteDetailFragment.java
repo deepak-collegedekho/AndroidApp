@@ -12,7 +12,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -195,7 +194,7 @@ public class InstituteDetailFragment extends BaseFragment {
             }
         });
 
-        ((ViewPager.LayoutParams) ((PagerTabStrip) rootView.findViewById(R.id.pager_header)).getLayoutParams()).isDecor = true;
+        ((ViewPager.LayoutParams) (rootView.findViewById(R.id.pager_header)).getLayoutParams()).isDecor = true;
 
         return rootView;
     }

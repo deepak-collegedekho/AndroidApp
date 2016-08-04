@@ -77,7 +77,7 @@ public class UserAlertsAdapter extends RecyclerView.Adapter<UserAlertsAdapter.Us
     }
 
     public interface OnUserAlertItemSelectListener {
-        public void onItemSelect(int position);
+        void onItemSelect(int position);
     }
     private String getEvent(int count){
         if(count>1){

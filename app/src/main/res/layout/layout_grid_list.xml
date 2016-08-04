@@ -4,7 +4,8 @@
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="@color/app_background"
-    android:paddingLeft="@dimen/m15dp">
+    android:paddingLeft="@dimen/m16dp"
+    android:paddingRight="@dimen/m16dp">
 
     <LinearLayout
         android:id="@+id/view_into_grid"

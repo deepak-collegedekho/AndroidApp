@@ -11,7 +11,7 @@ import android.util.Log;
  */
 public class StyleValue {
 
-    public static enum Unit { PX, EM, PERCENTAGE };
+    public enum Unit { PX, EM, PERCENTAGE }
 
     private Integer intValue;
     private Float floatValue;

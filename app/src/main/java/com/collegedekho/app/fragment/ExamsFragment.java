@@ -29,7 +29,6 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
 
     private final String TAG = "ExamsFragment";
     private static String PARAM1 = "param1";
-;
     private OnExamsSelectListener mListener;
     private ExamsAdapter mExamAdapter;
     private SearchView mExamSearchView;

@@ -1,12 +1,9 @@
 package com.collegedekho.app.listener;
 
-import android.os.Handler;
 import android.support.v7.widget.SearchView;
 import android.view.View;
 
-import com.collegedekho.app.adapter.ExamsAdapter;
 import com.collegedekho.app.entities.Exam;
-import com.collegedekho.app.fragment.BaseFragment;
 
 import java.util.ArrayList;
 

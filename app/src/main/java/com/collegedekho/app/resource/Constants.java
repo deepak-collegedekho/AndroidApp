@@ -2,7 +2,6 @@ package com.collegedekho.app.resource;
 
 import android.net.Uri;
 
-import com.collegedekho.app.R;
 
 import java.util.HashMap;
 
@@ -166,6 +165,7 @@ public class Constants
     public static final String SEARCH_ARTICLES = "search_articles";
     public static final String SEARCH_NEWS = "search_news";
     public static final String SEARCH_QNA = "search_qna";
+    public static final String PROFILE_IMAGE_UPLOADING = "profile_image_uploading";
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;

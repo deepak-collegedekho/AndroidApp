@@ -166,7 +166,7 @@ public class SpiderWebChart extends RoundChart {
                 }
 
                 if (pt.y > position.y) {
-                    realy = pt.y + bounds.height();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ;
+                    realy = pt.y + bounds.height();
                 } else if (pt.y < position.y) {
                     realy = pt.y - 4;
                 } else {

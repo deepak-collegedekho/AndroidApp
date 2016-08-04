@@ -23,7 +23,6 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.truecaller.android.sdk.TrueButton;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**

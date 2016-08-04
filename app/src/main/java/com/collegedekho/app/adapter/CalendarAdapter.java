@@ -29,8 +29,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
     private Context mContext;
     private ArrayList<Date> itemList;
-    private int startCellPosition =0;
-    private int endCellPosition =0;
     private boolean isActiveCell;
     private boolean isCurrentMonth =false;
     LayoutInflater inflater;
@@ -98,26 +96,18 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             if (month != mCalendar.get(Calendar.MONTH) || year != mCalendar.get(Calendar.YEAR)) {
                 if (day == 1 && !isActiveCell) {
                     isActiveCell = true;
-                    startCellPosition = position;
-                    if(selectedPosition==-1){
-                        selectedPosition=position;
-                    }
+
                     mListener.onItemSelect(day_key);
                 } else if (day == 1 && isActiveCell) {
                     isActiveCell = false;
-                    endCellPosition = position - 1;
                 }
             } else if (month == mCalendar.get(Calendar.MONTH) && year == mCalendar.get(Calendar.YEAR)) {
                 if (day == mCalendar.get(Calendar.DAY_OF_MONTH) && !isActiveCell) {
                     isActiveCell = true;
-                    startCellPosition = position;
-                    if(selectedPosition==-1){
-                        selectedPosition=position;
-                    }
+
                     mListener.onItemSelect(day_key);
                 } else if (day == 1 && isActiveCell) {
                     isActiveCell = false;
-                    endCellPosition = position - 1;
                 }
             }
         }
@@ -224,6 +214,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     }
 
     public interface OnCalendarItemSelectListener {
-        public void onItemSelect(String itemKey);
+        void onItemSelect(String itemKey);
     }
 }

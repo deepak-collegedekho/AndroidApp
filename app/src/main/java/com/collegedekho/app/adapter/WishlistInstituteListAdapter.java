@@ -38,8 +38,6 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
     private Activity mContext;
     // Allows to remember the last item shown on screen
     public int lastPosition = -1;
-    private int mViewType;
-    private int mPeekPopViewType;
     private PeekAndPop mPeekAndPop;
     private View mPeekView;
     private WishlistCardAdapter mPeekViewAdapter;
@@ -55,7 +53,6 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
         this.mInstitutes = institutes;
         this.mContext = context;
         this.mListener = (WishlistFragment.WishlistInstituteInteractionListener) context;
-        this.mPeekPopViewType = type;
         this.mPeekAndPop = peekAndPop;
         this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
         this.mPeekViewAdapter = new WishlistCardAdapter(context);

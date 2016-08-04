@@ -26,8 +26,6 @@ import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.Utils;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

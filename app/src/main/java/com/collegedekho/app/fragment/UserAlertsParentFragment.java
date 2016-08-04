@@ -51,7 +51,7 @@ public class UserAlertsParentFragment extends BaseFragment implements ViewPager.
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.calendar_parent_fragment_layout, container, false);
-        ((ViewPager.LayoutParams) ((PagerTabStrip) rootView.findViewById(R.id.calendar_pager_header)).getLayoutParams()).isDecor = true;
+        ((ViewPager.LayoutParams) (rootView.findViewById(R.id.calendar_pager_header)).getLayoutParams()).isDecor = true;
         return rootView;
     }
 

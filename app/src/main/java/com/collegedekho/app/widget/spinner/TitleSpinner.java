@@ -25,7 +25,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -215,7 +214,7 @@ public class TitleSpinner extends LinearLayout {
                     }else if(tagId == 2) {
                         fragmentListener.onDismissStatePopUpWindow();
                     }else if(tagId ==3){
-                        fragmentListener.onDismissCityPopUpWindow();;
+                        fragmentListener.onDismissCityPopUpWindow();
                     }
             }
         });

@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -27,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.collegedekho.app.R;
@@ -45,11 +46,8 @@ import com.collegedekho.app.widget.CircularProgressBar;
 import com.collegedekho.app.widget.CustomSwipeRefreshLayout;
 import com.collegedekho.app.widget.spinner.MaterialSpinner;
 import com.fasterxml.jackson.jr.ob.JSON;
-import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.ProgressCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -159,6 +157,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     }
 
     public void updateUserProfile() {
+        mProfile = MainActivity.mProfile;
         if (mProfile == null)
             return;
 
@@ -213,7 +212,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             ((TextView) mRootView.findViewById(R.id.profile_info_category)).setText("NA");
         }
         // set basic info progress
-        setProfileProgressStatus((ProgressBar) mRootView.findViewById(R.id.profile_info_progress), mProfile.getBasic_progress());
+        setProfileProgressStatus(mRootView.findViewById(R.id.profile_info_progress), mProfile.getBasic_progress());
 
         //  set degree name school if mDeviceProfile is currently in school and does not have any degree
         //  else set mDeviceProfile's current holding degree name in current education
@@ -293,7 +292,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             ((TextView) mRootView.findViewById(R.id.profile_education_mode)).setText(ProfileMacro.getEducationModeName(currentMode));
         }
 
-        setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_education_progress), mProfile.getCurrent_education_progress());
+        setProfileProgressStatus(mRootView.findViewById(R.id.profile_education_progress), mProfile.getCurrent_education_progress());
 
         // set mDeviceProfile preferred info
         setPreferredEducationInfo(false);
@@ -692,12 +691,13 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 break;
         }
     }
+
+
     /**
      * This method is used to set mDeviceProfile profile info on
      * profile info  page and mDeviceProfile can edit his/her basic info
      *  on this page like name, phone, city, state.
      */
-
     private void loadUserInfoEditLayout(){
         if (mProfile == null || mRootView == null)
             return;
@@ -1102,7 +1102,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             }
             catch(Exception e)
             {
-
+                e.printStackTrace();
             }
         }
     }
@@ -1261,7 +1261,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     int count = mPreferredDegreesList.size();
                     for(int i =0 ; i < count ; i++){
                         ProfileSpinnerItem obj = mPreferredDegreesList.get(i);
-                        if(obj == null)continue;;
+                        if(obj == null)continue;
                         if( obj.getId() == id){
                             mPreferredDegreesList.add(0,mPreferredDegreesList.remove(i));
                             obj.setSelected(true);
@@ -1293,7 +1293,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     int count = mPreferredStatesList.size();
                     for(int i =0 ; i < count ; i++){
                         ProfileSpinnerItem obj = mPreferredStatesList.get(i);
-                        if(obj == null)continue;;
+                        if(obj == null)continue;
                         if( obj.getId() == id){
                             mPreferredStatesList.add(0,mPreferredStatesList.remove(i));
                             obj.setSelected(true);
@@ -1381,7 +1381,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             }
             catch (Exception e)
             {
-
+              e.printStackTrace();
             }
         }
 
@@ -1482,7 +1482,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     }
 
 
-    public void updateUserProfileImage(){
+    private void updateUserProfileImage(){
         View view = getView();
         if (mProfile == null || view == null)
             return;
@@ -2023,9 +2023,50 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         if(MainActivity.mProfile == null)
             return;
 
-        final File imageFile = new File(mImageCaptureUri.getPath());
-        final boolean  processCount[] = new boolean[1];
+        File imageFile = new File(mImageCaptureUri.getPath());
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(imageFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
+        Bitmap bm = BitmapFactory.decodeStream(fis);
+
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = 720;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = 1080;
+            width = (int) (height * bitmapRatio);
+        }
+
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bm, width, height, true);
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , byteArrayOutputStream);
+
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+
+        // set bitmap to profile image
+
+        Bitmap bitmap2 = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
+        ((ImageView)mRootView.findViewById(R.id.profile_image)).setImageBitmap(bitmap2);
+
+        // request to upload profile image file
+        if(mListener != null)
+            mListener.requestToUploadProfileImage(byteArray);
+
+        // delete exist file
+       /* if (imageFile.exists())
+            imageFile.delete();*/
+
+
+       /* final boolean  processCount[] = new boolean[1];
         Ion.with(getActivity().getApplicationContext())
                 .load("PUT",Constants.BASE_URL+"upload-image/")
                 .uploadProgressHandler(new ProgressCallback() {
@@ -2068,23 +2109,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
 
                     }
-                });
-    }
-
-    public void updateUserName(){
-        if(MainActivity.mProfile == null)
-            return;
-       /* String name = MainActivity.mProfile.getName();
-        if(name != null && !name.isEmpty()
-                &&  !name.equalsIgnoreCase(getResources().getString(R.string.ANONYMOUS_USER))){
-            ((TextView)mRootView.findViewById(R.id.profile_edit_name)).setText(name);
-        }*/
-        updateUserProfile();
-
-        String image = MainActivity.mProfile.getImage();
-        if (image != null && ! image.isEmpty())
-            mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-
+                });*/
     }
 
     public void profileUpdatedSuccessfully(int viewPosition){
@@ -2248,7 +2273,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     int count = userDegreesList.size();
                     for(int i =0 ; i < count ; i++){
                         ProfileSpinnerItem obj = userDegreesList.get(i);
-                        if(obj == null)continue;;
+                        if(obj == null)continue;
                         if( obj.getId() == id){
                             selectedCount++;
                             userDegreesList.add(0,userDegreesList.remove(i));
@@ -2272,7 +2297,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     public interface  UserProfileListener{
         void onUserProfileEdited(HashMap<String, String> params, int ViewPosition);
         void displayMessage(int messageId);
-        void onProfileImageUploaded();
+        void requestToUploadProfileImage(byte[] fileByteArray);
         void onPostAnonymousLogin();
         void onRequestForUserExams();
         void requestForSpecialization(int streamId, String requestType);

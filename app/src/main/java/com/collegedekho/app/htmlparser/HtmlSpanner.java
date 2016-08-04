@@ -467,7 +467,7 @@ public class HtmlSpanner {
 
     }
 
-    public static interface CancellationCallback {
+    public interface CancellationCallback {
         boolean isCancelled();
     }
 

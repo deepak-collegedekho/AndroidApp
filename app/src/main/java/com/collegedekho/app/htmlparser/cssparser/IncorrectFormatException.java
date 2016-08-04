@@ -77,7 +77,7 @@ public class IncorrectFormatException extends Exception {
 		/**
 		 * When the parse the value a colon : was found.
 		 */
-		FOUND_COLON_WHILE_READING_VALUE;
+		FOUND_COLON_WHILE_READING_VALUE
 
 	}
 

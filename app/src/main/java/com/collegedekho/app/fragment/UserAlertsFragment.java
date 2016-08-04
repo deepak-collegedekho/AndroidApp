@@ -104,7 +104,7 @@ public class UserAlertsFragment extends BaseFragment implements UserAlertsAdapte
     }
 
     public interface OnAlertItemSelectListener {
-        public void onItemSelected(int position);
+        void onItemSelected(int position);
     }
 
 }

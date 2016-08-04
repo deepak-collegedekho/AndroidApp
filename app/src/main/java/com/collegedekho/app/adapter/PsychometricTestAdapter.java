@@ -103,6 +103,6 @@ public class PsychometricTestAdapter extends RecyclerView.Adapter<PsychometricTe
     }
 
     public interface OnItemClickListener{
-        public void onItemClicked(int position);
+        void onItemClicked(int position);
     }
 }

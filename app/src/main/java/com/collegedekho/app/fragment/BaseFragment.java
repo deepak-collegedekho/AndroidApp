@@ -10,16 +10,11 @@ import android.widget.LinearLayout;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Articles;
-import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamSummary;
-import com.collegedekho.app.entities.MyFutureBuddiesEnumeration;
 import com.collegedekho.app.entities.News;
-import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by root on 16/9/15.

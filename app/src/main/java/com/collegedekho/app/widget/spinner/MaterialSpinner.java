@@ -179,7 +179,7 @@ public class MaterialSpinner extends TextView {
         }else if(tagId == 2) {
             fragmentListener.onDismissStatePopUpWindow();
         }else if(tagId ==3){
-          fragmentListener.onDismissCityPopUpWindow();;
+          fragmentListener.onDismissCityPopUpWindow();
         }
       }
     });

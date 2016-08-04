@@ -480,7 +480,14 @@
     <string name="article_image_transaction">ArticleImageTransaction</string>
     <string name="dialog_title">Share more, Gain more.\nAnd open the door of possibilities for you!</string>
     <string name="GCM_DIALOG_SELECTION_ERROR">Nothing selected</string>
+
+   <!--   internet  and server errors-->
     <string name="internet_not_available">Internet is not available</string>
+    <string name="no_internet">You are not connected to Internet</string>
+    <string name="no_internet_please_try_again">You are not connected to internet. Please connect and try again.</string>
+    <string name="server_fault">The servers made a boo boo. Try again later.</string>
+    <string name="server_timeout_error">Timeout! Either our servers made a boo boo or the internet connectivity is slow.</string>
+    <string name="unknown_server_error">Something went wrong. Please try again later.</string>
 
     <string name="fee_range_one_lac">&lt; 1Lac</string>
     <string name="fee_range_two_lac">&lt; 2Lac</string>
@@ -511,8 +518,8 @@
     <string name="please_select_sub_level_year">And you are currently in!</string>
     <string name="please_enter_your_current_marks">How much did you score in your last year\'s exam</string>
     <string name="please_enter_your_marks">"Please enter your marks"</string>
-    <string name="show_more">Show More...</string>
-    <string name="show_less">Show Less...</string>
+    <string name="show_more">Show More#8230</string>
+    <string name="show_less">Show Less#8230</string>
     <string name="TAG_FROM_PROFILE_BUILDING">from_profile_building</string>
 
     <!-- user profile tags-->

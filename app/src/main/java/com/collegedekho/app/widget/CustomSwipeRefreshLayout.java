@@ -1144,6 +1144,6 @@ public class CustomSwipeRefreshLayout extends ViewGroup implements NestedScrolli
      * triggers a refresh should implement this interface.
      */
     public interface OnRefreshListener {
-        public void onRefresh();
+        void onRefresh();
     }
 }

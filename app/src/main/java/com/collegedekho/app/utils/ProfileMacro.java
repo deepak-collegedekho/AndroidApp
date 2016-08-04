@@ -1,7 +1,6 @@
 package com.collegedekho.app.utils;
 
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
 
 import java.util.ArrayList;

@@ -235,6 +235,6 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
     }
 
     public interface OnCalendarItemSelectListener {
-        public void onItemSelect(int position, int startPosition, int endPosition, String itemKey);
+        void onItemSelect(int position, int startPosition, int endPosition, String itemKey);
     }
 }

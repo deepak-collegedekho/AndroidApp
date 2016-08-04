@@ -2,7 +2,6 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,7 +27,6 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
 
-import org.apache.tools.ant.Main;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -814,12 +812,12 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 } else if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.FEATURED.ordinal()) {
                     if(this.mBuzzListCount > 0) {
                         ((MainActivity) getActivity()).decreaseFeaturedCount();
-                        this.mBuzzListCount =((MainActivity) getActivity()).getFeaturedInstituteCount();;
+                        this.mBuzzListCount =((MainActivity) getActivity()).getFeaturedInstituteCount();
                     }
                 } else if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.UNDECIDED.ordinal()){
                     if(this.mUndecidedCount > 0) {
                         ((MainActivity) getActivity()).decreaseUndecidedCount();
-                        this.mUndecidedCount=((MainActivity) getActivity()).getUndecidedInstituteCount();;
+                        this.mUndecidedCount=((MainActivity) getActivity()).getUndecidedInstituteCount();
                     }
                 }
                 this.mShortListCount = ((MainActivity) getActivity()).getShortlistInstituteCount();

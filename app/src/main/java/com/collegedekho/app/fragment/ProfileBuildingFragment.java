@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,9 +21,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.text.InputFilter;
-import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,13 +28,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamStreamAdapter;
@@ -57,18 +55,11 @@ import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
-import com.collegedekho.app.widget.GridSpacingItemDecoration;
 import com.collegedekho.app.widget.NumberPicker;
 import com.fasterxml.jackson.jr.ob.JSON;
-import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.ProgressCallback;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -1345,7 +1336,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         mImageCaptureUri = Uri.fromFile(uploadTempImageFile);
 
         // Camera.
-        List<Intent> cameraIntents = new ArrayList<Intent>();
+        List<Intent> cameraIntents = new ArrayList<>();
         Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         PackageManager packageManager = getActivity().getPackageManager();
         List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
@@ -1454,56 +1445,31 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         if(MainActivity.mProfile == null)
             return;
 
-        final File imageFile = new File(mImageCaptureUri.getPath());
-        final boolean  processCount[] = new boolean[1];
+        File imageFile = new File(mImageCaptureUri.getPath());
 
-        Ion.with(getActivity().getApplicationContext())
-                .load("PUT",Constants.BASE_URL+"upload-image/")
-                .uploadProgressHandler(new ProgressCallback() {
-                    @Override
-                    public void onProgress(long uploaded, long total) {
-                        // Displays the progress bar for the first time.
-                        System.out.println("UPLOADED " + uploaded + "TOTAL `" + total);
-                        MainActivity activity = (MainActivity) getActivity();
-                        if(activity != null && !processCount[0] ){
-                            processCount[0] =true;
-                            activity.showProgressDialog("Uploading Image");
-                        }
-                    }
-                })
-                .setTimeout(60 * 60 * 1000)
-                .setHeader("Authorization","Token "+MainActivity.mProfile.getToken())
-                .setMultipartFile("image", "application/json", imageFile)
-                .asJsonObject()
-                // run a callback on completion
-                .setCallback(new FutureCallback<JsonObject>() {
-                    @Override
-                    public void onCompleted(Exception e, JsonObject result) {
-                        // When the loop is finished, updates the notification
-                        if (e != null) {
-                            Toast.makeText(getActivity().getApplicationContext(), "Error uploading file", Toast.LENGTH_LONG).show();
-                            return;
-                        }
-                        else if(mListener != null){
-                            mListener.onProfileImageUploaded();
-                        }
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(imageFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
-                        MainActivity activity = (MainActivity) getActivity();
-                        if(activity != null){
-                            activity.hideProgressDialog();
-                        }
+        Bitmap bm = BitmapFactory.decodeStream(fis);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100 , baos);
+        byte[] byteArray = baos.toByteArray();
 
-                        if (imageFile.exists()) imageFile.delete();
+        if(mListener != null)
+            mListener.requestToUploadProfileImage(byteArray);
 
-                        System.out.println("UPLOAD RESULT" + result.toString());
+        ((ImageView)mRootView.findViewById(R.id.profile_image)).setImageBitmap(bm);
+        if(imageFile.exists())
+            imageFile.delete();
 
 
-                    }
-                });
     }
 
-
-    public void profileImageUploadedSuccesfully(){
+    public void profileImageUploadedSuccessfully(){
         if( mRootView == null || MainActivity.mProfile == null)
             return;
         Profile profile = MainActivity.mProfile;
@@ -1705,7 +1671,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         void OnTakeMeToRecommended();
         void OnTakeMeToDashBoard();
         void OnTakeMeToProfile();
-        void onProfileImageUploaded();
+        void requestToUploadProfileImage(byte[] fileByteArray);
     }
 
 }

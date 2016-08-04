@@ -42,33 +42,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Interpolator;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.Transformation;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
-import android.graphics.Path;
-import android.graphics.PixelFormat;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Animatable;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
-import android.util.DisplayMetrics;
-import android.view.View;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
 
 /**
  * Fancy progress indicator for Material theme.
@@ -331,22 +304,22 @@ class MaterialProgressDrawable extends Drawable implements Animatable {
 
     // Adapted from ArgbEvaluator.java
     private int evaluateColorChange(float fraction, int startValue, int endValue) {
-        int startInt = (Integer) startValue;
+        int startInt = startValue;
         int startA = (startInt >> 24) & 0xff;
         int startR = (startInt >> 16) & 0xff;
         int startG = (startInt >> 8) & 0xff;
         int startB = startInt & 0xff;
 
-        int endInt = (Integer) endValue;
+        int endInt = endValue;
         int endA = (endInt >> 24) & 0xff;
         int endR = (endInt >> 16) & 0xff;
         int endG = (endInt >> 8) & 0xff;
         int endB = endInt & 0xff;
 
-        return (int)((startA + (int)(fraction * (endA - startA))) << 24) |
-                (int)((startR + (int)(fraction * (endR - startR))) << 16) |
-                (int)((startG + (int)(fraction * (endG - startG))) << 8) |
-                (int)((startB + (int)(fraction * (endB - startB))));
+        return ((startA + (int)(fraction * (endA - startA))) << 24) |
+                ((startR + (int)(fraction * (endR - startR))) << 16) |
+                ((startG + (int)(fraction * (endG - startG))) << 8) |
+                (startB + (int)(fraction * (endB - startB)));
     }
 
     /**

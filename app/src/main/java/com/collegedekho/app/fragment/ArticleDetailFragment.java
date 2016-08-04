@@ -52,7 +52,6 @@ public class ArticleDetailFragment extends BaseFragment {
 
     private Articles mArticle;
     private ArrayList<Articles> mArticlesList;
-    private ArticleListAdapter mAdapter;
     private View rootView;
     LinearLayoutManager layoutManager;
 
@@ -176,7 +175,7 @@ public class ArticleDetailFragment extends BaseFragment {
 
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.related_article_list);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-            mAdapter = new ArticleListAdapter(getActivity(), similarArticle, Constants.VIEW_INTO_GRID);
+             ArticleListAdapter mAdapter = new ArticleListAdapter(getActivity(), similarArticle, Constants.VIEW_INTO_GRID);
             recyclerView.setAdapter(mAdapter);
             recyclerView.setHasFixedSize(true);
             recyclerView.setItemAnimator(new DefaultItemAnimator());

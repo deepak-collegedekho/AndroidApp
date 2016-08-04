@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Created by Bashir on 10/2/16.
+ * Created by Suresh Kumar on 10/2/16.
  */
 public class VideoStats implements Parcelable {
     private int viewCount;

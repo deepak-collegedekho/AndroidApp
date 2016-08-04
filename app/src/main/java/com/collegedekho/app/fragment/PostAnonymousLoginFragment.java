@@ -5,13 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +22,6 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.truecaller.android.sdk.TrueButton;
 
-import java.util.Arrays;
 
 /**
  * Created by sureshsaini on 20/11/15.
@@ -208,7 +205,7 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
     }
 
     public void mSkipLogin(){
-        ((MainActivity) getActivity()).onBackPressed();
+        (getActivity()).onBackPressed();
     }
 
     public void onInvalidOtp() {

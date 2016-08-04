@@ -20,7 +20,6 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -54,7 +53,6 @@ import java.util.regex.Pattern;
  * Created by sureshsaini on 12/10/15.
  */
 public class Utils {
-
 
 
     public static int dpToPx(Context context, float dp) {
@@ -445,7 +443,7 @@ public class Utils {
                 Log.e("API_PROFILE", log);
                 FileLogger.writeLog(log);
             }catch (Exception e){
-
+                 e.printStackTrace();
             }
         }
     }

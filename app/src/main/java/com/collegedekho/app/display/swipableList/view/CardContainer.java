@@ -37,7 +37,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
     public static final int INVALID_POINTER_ID = -1;
     private int mActivePointerId = INVALID_POINTER_ID;
     private static final double DISORDERED_MAX_ROTATION_RADIANS = Math.PI / 64;
-    private int mNumberOfCards = -1;
 //    private ImageView mLikeImageView;
 //    private ImageView mDislikeImageView;
 //    private ImageView mUndecidedImageView;
@@ -81,7 +80,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
     public CardContainer(Context context) {
         super(context);
         mContext = context;
-        //setOrientation(Orientations.OrientationType.Disordered);
         setGravity(Gravity.CENTER);
         init();
     }
@@ -143,7 +141,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
             mTopCard = getChildAt(getChildCount() - 1);
             mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
         }*/
-        mNumberOfCards = getAdapter().getCount();
         requestLayout();
     }
 

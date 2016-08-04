@@ -16,12 +16,11 @@ import com.collegedekho.app.resource.Constants;
  * Created by Bashir on 15/3/16.
  */
 public class AppLinkMovementMethod extends LinkMovementMethod {
-    private static Context movementContext;
 
     private static AppLinkMovementMethod linkMovementMethod = new AppLinkMovementMethod();
 
     public boolean onTouchEvent(android.widget.TextView widget, android.text.Spannable buffer, android.view.MotionEvent event) {
-        movementContext=widget.getContext();
+       Context movementContext=widget.getContext();
         int action = event.getAction();
         if (action == MotionEvent.ACTION_UP) {
             int x = (int) event.getX();

@@ -11,9 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -48,7 +46,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -83,7 +80,6 @@ import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Chapters;
 import com.collegedekho.app.entities.DeviceProfile;
 import com.collegedekho.app.entities.Exam;
-import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.entities.Facet;
 import com.collegedekho.app.entities.Folder;
@@ -1422,10 +1418,15 @@ public class MainActivity extends AppCompatActivity
             mDisplayProfileBuildingFragment();
         }
     }
+    public void onProfileImageUploaded(String responseJson) {
+        try {
+            Profile profile = JSON.std.beanFrom(Profile.class, responseJson);
+            if(mProfile != null && profile != null)
+                mProfile.setImage(profile.getImage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-    @Override
-    public void onProfileImageUploaded() {
-        this.requestForProfile(null);
     }
 
     // TODO :: EDIT THIS TO MAKE POST ANONYOUS LOGIN
@@ -1650,10 +1651,10 @@ public class MainActivity extends AppCompatActivity
                 } else if (TAG[0].equalsIgnoreCase(Constants.TAG_UPDATE_PROFILE_EXAMS)) {
                     ((ProfileFragment) currentFragment).profileUpdatedSuccessfully(3);
                 } else {
-                    ((ProfileFragment) currentFragment).updateUserName();
+                    ((ProfileFragment) currentFragment).updateUserProfile();;
                 }
             }else if(currentFragment instanceof ProfileBuildingFragment){
-                ((ProfileBuildingFragment) currentFragment).profileImageUploadedSuccesfully();
+                ((ProfileBuildingFragment) currentFragment).profileImageUploadedSuccessfully();
             }
             else if(currentFragment instanceof  HomeFragment){
 
@@ -2390,6 +2391,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_REFRESH_PROFILE:
                 this.mParseAndRefreshProfileResponse(response);
+                break;
+            case Constants.PROFILE_IMAGE_UPLOADING:
+                onProfileImageUploaded(response);
                 break;
             case Constants.TAG_EXAM_SUMMARY:
                 this.mUpdateExamDetail(response, true);
@@ -3467,6 +3471,8 @@ public class MainActivity extends AppCompatActivity
                 return "Verifying OTP...";
             case Constants.TAG_USER_PHONE_ADDED:
                 return "Requesting OTP...";
+            case Constants.PROFILE_IMAGE_UPLOADING:
+                return "Uploading Image";
             case Constants.TAG_NEXT_ARTICLES:
             case Constants.TAG_NEXT_FORUMS_LIST:
             case Constants.TAG_NEXT_INSTITUTE:
@@ -4000,6 +4006,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void displayMessage(int messageId) {
         displaySnackBar(messageId);
+    }
+
+    @Override
+    public void requestToUploadProfileImage(byte[] fileByteArray) {
+        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
+        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+            this.showProgress(Constants.PROFILE_IMAGE_UPLOADING);
+            this.mNetworkUtils.postMultiPartRequest(Constants.PROFILE_IMAGE_UPLOADING,Constants.BASE_URL+"upload-image/",fileByteArray);
+        } else {
+            displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+        }
     }
 
 

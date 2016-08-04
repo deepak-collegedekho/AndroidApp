@@ -2,7 +2,6 @@ package com.collegedekho.app.display.swipableList.view;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
