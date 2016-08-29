@@ -71,11 +71,21 @@
                 <!-- ATTENTION: This data URL was auto-generated. We recommend that you use the HTTP scheme.
                   TODO: Change the host or pathPrefix as necessary. -->
                 <data
-                    android:host="www.collegedekho.com"
-                    android:scheme="https" />
+                    android:host="m.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- ATTENTION: This data URL was auto-generated. We recommend that you use the HTTP scheme.
+                  TODO: Change the host or pathPrefix as necessary. -->
                 <data
-                    android:host="www.m.collegedekho.com"
-                    android:scheme="https" />
+                    android:host="www.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/"/>
             </intent-filter>
 
         </activity>

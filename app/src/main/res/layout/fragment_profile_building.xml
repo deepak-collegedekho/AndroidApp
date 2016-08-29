@@ -412,15 +412,41 @@
             android:contentDescription="click to search exams that you may be preparing for"/>
     </RelativeLayout>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/user_education_recycler_view"
+        android:paddingLeft="@dimen/m4dp"
+        android:paddingRight="@dimen/m4dp"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_below="@id/user_exam_search_container"
+        android:layout_above="@+id/user_education_next_button_layout"
+        android:layout_width="match_parent"/>
+
+    <TextView
+        android:id="@id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_below="@id/user_exam_search_container"
+        android:layout_above="@+id/user_education_next_button_layout"
+        android:textSize="@dimen/m17dp"
+        android:text="@string/no_exam_found"
+        android:textStyle="italic"/>
+
     <RelativeLayout
         android:id="@+id/user_education_next_button_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/m55dp"
-        android:layout_alignParentBottom="true"
         android:paddingLeft="@dimen/m20dp"
         android:paddingRight="@dimen/m20dp"
         android:paddingTop="@dimen/m6dp"
-        android:paddingBottom="@dimen/m8dp">
+        android:paddingBottom="@dimen/m8dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/user_exam_search_container"
+        android:layout_toEndOf="@+id/user_exam_search_container"
+        android:layout_marginLeft="6dp"
+        android:layout_marginStart="6dp">
 
         <LinearLayout
             android:id="@+id/user_education_skip_button"
@@ -440,7 +466,8 @@
                 android:textStyle="bold"
                 android:textColor="@color/skip_btn_color"
                 android:background="@drawable/border_bottom"
-                android:textSize="17sp" />
+                android:textSize="17sp"
+                android:contentDescription="Click to skip and move to next page"/>
 
         </LinearLayout>
 
@@ -455,32 +482,10 @@
             app:srcCompat="@drawable/ic_arrow_forward"
             android:background="@color/primary_orange"
             android:visibility="visible"
-            android:alpha="0"/>
+            android:alpha="0"
+            android:contentDescription="Click to save content and move to next page"/>
 
     </RelativeLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/user_education_recycler_view"
-        android:paddingLeft="@dimen/m4dp"
-        android:paddingRight="@dimen/m4dp"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:layout_below="@id/user_exam_search_container"
-        android:layout_above="@id/user_education_next_button_layout"
-        android:layout_width="match_parent"/>
-
-    <TextView
-        android:id="@id/empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:visibility="gone"
-        android:layout_below="@id/user_exam_search_container"
-        android:layout_above="@id/user_education_next_button_layout"
-        android:textSize="@dimen/m17dp"
-        android:text="@string/no_exam_found"
-        android:textStyle="italic"/>
-
 
 
 </RelativeLayout>

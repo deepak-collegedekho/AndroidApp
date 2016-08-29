@@ -259,16 +259,12 @@ public class QnAQuestionsListFragment extends BaseFragment {
         }
     }
 
-    public QnAQuestions validateData()
-    {
-
+    public QnAQuestions validateData() {
         String title =  this.mQuestionTitle.getText().toString();
         if (title == null || title.trim().length() <= 0) {
             mListener.displayMessage(R.string.QUESTION_TITLE_EMPTY);
             return null;
-        }
-        else
-        {
+        } else {
             String[] words=title.split("\\s+");
 
             if (words.length == 1){
@@ -300,7 +296,6 @@ public class QnAQuestionsListFragment extends BaseFragment {
         QnAQuestions q = new QnAQuestions();
         q.setTitle(title);
         q.setDesc(desc);
-
         return q;
     }
 
