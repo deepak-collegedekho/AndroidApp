@@ -676,9 +676,9 @@ public class TabFragment extends  BaseFragment{
             }
         } else if(selectedTabPosition == 2){
             if(selectedSubMenuPosition == 1){
-                this.mHomeWidgetSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL + "personalize/forums", null);
+                this.mHomeWidgetSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL + "personalize/forums/", null);
             }else if(selectedSubMenuPosition == 2){
-                this.mHomeWidgetSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna", null);
+                this.mHomeWidgetSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna/", null);
             }
         } else if (selectedTabPosition == 3){
             if(selectedSubMenuPosition == 1){

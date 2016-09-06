@@ -443,8 +443,6 @@
         android:paddingTop="@dimen/m6dp"
         android:paddingBottom="@dimen/m8dp"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/user_exam_search_container"
-        android:layout_toEndOf="@+id/user_exam_search_container"
         android:layout_marginLeft="6dp"
         android:layout_marginStart="6dp">
 

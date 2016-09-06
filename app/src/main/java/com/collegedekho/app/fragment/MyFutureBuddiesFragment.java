@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +52,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     private static final Object mSubmitLock = new Object();
     private int mInitialCount;
     private int mIncrement;
-
+    private String mOtherAppSharedMessage;
 
     public static MyFutureBuddiesFragment newInstance(MyFutureBuddy myFutureBuddies, int commentsCount) {
         MyFutureBuddiesFragment fragment = new MyFutureBuddiesFragment();
@@ -73,6 +75,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             this.mMyFutureBuddies = this.getArguments().getParcelable(ARG_PARAM1);
             this.mInitialCount = this.getArguments().getInt(ARG_PARAM2);
             this.mMyFBCommentsSet = this.mMyFutureBuddies.getFutureBuddiesCommentsSet();
+            this.mOtherAppSharedMessage = null;
         }
     }
 
@@ -165,7 +168,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                 if( dy < 0){
                     int topVisiblePosition = MyFutureBuddiesFragment.this.mLayoutManager.findFirstCompletelyVisibleItemPosition();
                     if(topVisiblePosition == 0){
-                        if(MyFutureBuddiesFragment.this.mListener != null){
+                        if(MyFutureBuddiesFragment.this.mListener != null && MyFutureBuddiesFragment.this.mLayoutManager != null){
                             if(mMyFutureBuddies != null && mMyFutureBuddies.getNext() != null && !mMyFutureBuddies.getNext().equalsIgnoreCase("null")){
                                 MyFutureBuddiesFragment.this.lastItemPosition = MyFutureBuddiesFragment.this.mLayoutManager.findLastVisibleItemPosition();
                                 String next = mMyFutureBuddies.getNext();
@@ -177,14 +180,62 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                 }
             }
         });
-
         //mCommentsListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-
         return rootView;
     }
 
-    private void mSubmittedChat(String value)
-    {
+    private void mHandleOtherAppMessage(){
+        int connectivityStatus= NetworkUtils.getConnectivityStatus();
+        if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
+
+            final String value = this.mOtherAppSharedMessage;
+            Log.e("chat_text :: ",value);
+            if (value.trim().equals("")) {
+                mListener.displayMessage(R.string.ENTER_YOUR_MESSAGE);
+            } else {
+                Profile profile = MainActivity.mProfile;
+                if (profile == null || profile.getName() == null || profile.getName().isEmpty() || profile.getName().equalsIgnoreCase(getString(R.string.ANONYMOUS_USER))) {
+
+                    mChatText.setText("");
+                    // show dialog for name if mDeviceProfile name is not present
+                    final Dialog dialog = new Dialog(getActivity());
+                    dialog.setContentView(R.layout.name_dailog);
+                    dialog.setCanceledOnTouchOutside(true);
+                    TextView submit = (TextView)dialog.findViewById(R.id.name_submit);
+                    dialog.show();
+
+                    submit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            String name =   ((EditText) dialog.findViewById(R.id.user_name)).getText().toString();
+                            if(name == null || name.length() <= 0)
+                            {
+                                mListener.displayMessage(R.string.NAME_EMPTY);
+                                return;
+                            }
+                            else if(!Utils.isValidName(name)){
+                                mListener.displayMessage(R.string.NAME_INVALID);
+                                return;
+                            }
+
+                            dialog.dismiss();
+                            HashMap<String, String> hashMap = new HashMap<>();
+                            hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), name);
+                            mListener.onNameUpdated(hashMap, value);
+                        }
+                    });
+
+                    return;
+                }
+                mSubmittedChat(value);
+            }
+        } else {
+            mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
+        }
+    }
+
+    private void mSubmittedChat(String value) {
         this.setmSubmittingState(true);
 
         if (this.mEmptyTextView.getVisibility() == View.VISIBLE)
@@ -253,8 +304,17 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
         this.mMainActivity = (MainActivity) this.getActivity();
 
-        if (this.mMainActivity != null)
+        if (this.mMainActivity != null) {
             this.mMainActivity.currentFragment = this;
+            this.mOtherAppSharedMessage = mMainActivity.getOtherAppSharedMessage();
+        }
+
+        if(mOtherAppSharedMessage != null){
+            mHandleOtherAppMessage();
+            mOtherAppSharedMessage = null;
+            mMainActivity.setOtherAppSharedMessage(null);
+//            mMainActivity.setIsSharedOtherApp(false);
+        }
 
         //Declare the timer
         this.mMyFbRefreshTimer = new Timer();

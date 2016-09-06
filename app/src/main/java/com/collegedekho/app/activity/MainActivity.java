@@ -317,6 +317,7 @@ public class MainActivity extends AppCompatActivity
     private boolean isFromNotification;
     private boolean isFromDeepLinking;
     private String mDeepLinkingURI;
+    private String mOtherAppSharedMessage;
     private String mExamTag;
     private int mUndecidedInstitutesCount;
     private int mShortListInstituteCount;
@@ -361,12 +362,20 @@ public class MainActivity extends AppCompatActivity
         Intent intent =  this.getIntent();
         String action = intent.getAction();
         String data = intent.getDataString();
+        String intentType = intent.getType();
 
         if (Intent.ACTION_VIEW.equals(action) && data != null) {
             if (data.contains("collegedekho.com"))
             {
                 this.mDeepLinkingURI = data;
                 Log.e(TAG, " DeepLinking URL is  : "+ mDeepLinkingURI);
+            }
+        }
+        else if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(intentType)) {
+                this.mOtherAppSharedMessage = intent.getStringExtra(Intent.EXTRA_TEXT);
+            } else if (intentType.startsWith("image/")) {
+                // Handle single image being sent
             }
         }
         else if (intent.getExtras() != null)
@@ -980,6 +989,14 @@ public class MainActivity extends AppCompatActivity
         this.mHandleNotifications(true);
     }
 
+    private void mHandleOtherAppSharedMessage(String message) {
+
+        String resourceURI = "personalize/forums/";
+        MainActivity.resource_uri = Constants.BASE_URL + resourceURI;
+        MainActivity.type = Constants.TAG_FRAGMENT_MY_FB_ENUMERATION;
+        this.mHandleNotifications(true);
+    }
+
     /**
      * This is facebook login
      */
@@ -1402,6 +1419,10 @@ public class MainActivity extends AppCompatActivity
         if (MainActivity.type != null && !MainActivity.type.matches("")) {
             this.isFromNotification = true;
             this.mHandleNotifications(true);
+
+        } else if (this.mOtherAppSharedMessage != null && !this.mOtherAppSharedMessage.isEmpty()) {
+
+            this.mHandleOtherAppSharedMessage(this.mOtherAppSharedMessage);
 
         } else if (this.mDeepLinkingURI != null && !this.mDeepLinkingURI.isEmpty()) {
             Log.e("MA: DL URL ", MainActivity.this.mDeepLinkingURI);
@@ -4891,6 +4912,11 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(requestType, url, null);
             return;
         }
+        if (requestType.equals(Constants.WIDGET_FORUMS) || requestType.equals(Constants.TAG_LOAD_QNA_QUESTIONS)) {
+            this.mMakeNetworkCall(requestType, url, null);
+            return;
+        }
+
         Map<String, String> params = new HashMap<>();
         if (tag != null && !tag.isEmpty())
             params.put("tag_uris[" + (0) + "]", tag);
@@ -6544,5 +6570,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public String getOtherAppSharedMessage(){
+        return  this.mOtherAppSharedMessage;
+    }
 
+    public void setOtherAppSharedMessage(String message){
+        this.mOtherAppSharedMessage = message;
+    }
 }
