@@ -63,7 +63,6 @@ public class LoginFragment extends  BaseFragment {
             rootView.findViewById(R.id.login_or_line_layout).setVisibility(View.GONE);
         }
 
-
         mPhoneNumberET = (EditText) rootView.findViewById(R.id.login_phone_edit_text);
         mOtpET = (EditText) rootView.findViewById(R.id.login_otp_edit_text);
         mPhoneNumberET.addTextChangedListener(mobileNumberWatcher);
@@ -214,6 +213,7 @@ public class LoginFragment extends  BaseFragment {
             mListener.onSkipUserLogin(params);
         }
     }
+
     TextWatcher mobileNumberWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -250,7 +250,5 @@ public class LoginFragment extends  BaseFragment {
         void onSubmitPhoneNumber(String phoneNumber);
         void onOtpReceived(String phoneNumber, String otp);
         void displayMessage(int messageId);
-
     }
-
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:gravity="center_vertical"
+    android:layout_gravity="left"
+    android:id="@id/notif_layout"
+    android:background="#fff"
+    android:layout_width="fill_parent"
+    android:layout_height="64dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/notification_image"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_margin="11dp"
+        android:src="@mipmap/ic_launcher"
+        android:scaleType="centerInside"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" />
+    <TextView
+        android:gravity="center_vertical"
+        android:id="@+id/notification_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:text="11:23 AM"
+        android:textSize="12sp"
+        android:textColor="@color/text_light_grey"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        />
+    <TextView
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical"
+        android:id="@+id/notification_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:text="Example Title"
+        android:maxLines="2"
+        android:textColor="@color/text_light_grey"
+        android:textSize="16sp"
+        android:layout_toLeftOf="@id/notification_time"
+        android:layout_toRightOf="@id/notification_image"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>

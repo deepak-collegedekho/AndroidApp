@@ -19,6 +19,11 @@
     </style>
 
 
+    <style name="NotificationExpandedTitle" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">@dimen/notification_title_text_size</item>
+        <item name="android:textColor">#ffffffff</item>
+    </style>
+
 
     <!--<style name="myToolbarNavigationButtonStyle" parent="@style/Widget.AppCompat.Toolbar.Button.Navigation">-->
         <!--<item name="android:minWidth">0dp</item>-->

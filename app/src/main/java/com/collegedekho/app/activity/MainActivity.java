@@ -197,9 +197,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+/*
 import io.connecto.android.sdk.Connecto;
 import io.connecto.android.sdk.Properties;
 import io.connecto.android.sdk.Traits;
+*/
 import io.fabric.sdk.android.Fabric;
 
 /*
@@ -298,7 +300,7 @@ public class MainActivity extends AppCompatActivity
     private Date mTimeScreenClicked = new Date();
     public boolean fromTabFragment = false;
     private String mGTMContainerId = "www.collegedekho.com";
-    public static Connecto connecto = null;
+    //public static Connecto connecto = null;
     public DeviceProfile mDeviceProfile;
     public static Profile mProfile;
     static String type = "";
@@ -348,6 +350,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        this.IS_HOME_LOADED = this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getBoolean(getResourceString(R.string.USER_HOME_LOADED), false);
+
         Log.e(TAG, " onCreate  enter time"+ System.currentTimeMillis());
         try {
             super.onCreate(savedInstanceState);
@@ -378,13 +382,18 @@ public class MainActivity extends AppCompatActivity
                 // Handle single image being sent
             }
         }
-        else if (intent.getExtras() != null)
+        //TODO: changed else if to if, watch out for consequences
+        if (intent.getExtras() != null)
         {
+            Log.e(TAG, "Extras are not null");
+
             Bundle extras = intent.getExtras();
             if (extras.containsKey("screen") && extras.containsKey("resource_uri"))
             {
                 MainActivity.type = extras.getString("screen");
                 MainActivity.resource_uri = extras.getString("resource_uri");
+
+                Log.e(TAG, " There is data  type is : "+ MainActivity.type +  " Resource uri is " + MainActivity.resource_uri);
             }
         }
 
@@ -402,7 +411,7 @@ public class MainActivity extends AppCompatActivity
         this.mRegistrationTrueSdk();
 
         // register with Connecto
-        this.mRegistrationConnecto();
+        //this.mRegistrationConnecto();
 
         // register with fabric Crashlytics
         this.mRegistrationFabricCrashlytics();
@@ -423,6 +432,21 @@ public class MainActivity extends AppCompatActivity
 
         // load splash screen
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
+
+        //if app is already started then don't do init process again
+        /*if (this.IS_HOME_LOADED)
+        {
+            Log.e(TAG, "Home is loaded already, skiping init");
+
+            this.loadInItData();
+        }
+        else
+        {
+            Log.e(TAG, "Home is not yet loaded, starting init");
+
+            // load splash screen
+            this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
+        }*/
 
         // TODO: Move this to where you establish a user session
         logUser();
@@ -445,7 +469,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-
     }
 
     /**
@@ -454,7 +477,6 @@ public class MainActivity extends AppCompatActivity
     public void init() {
         // set resource context
         this.mResources = getResources();
-        //this.getBitMapResources();
 
         // set snackbar to show msg in snackbar display
         this.mSnackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
@@ -496,7 +518,6 @@ public class MainActivity extends AppCompatActivity
         finally {
             this.IS_USER_CREATED = sp.getBoolean(getResourceString(R.string.USER_CREATED), false);
             this.IS_HOME_LOADED = sp.getBoolean(getResourceString(R.string.USER_HOME_LOADED), false);
-
         }
     }
 
@@ -511,7 +532,7 @@ public class MainActivity extends AppCompatActivity
      * This method is used  with connecto sdk
      */
     private void mRegistrationConnecto() {
-        new Thread(new Runnable() {
+        /*new Thread(new Runnable() {
             @Override
             public void run() {
                 connecto = Connecto.with(MainActivity.this);
@@ -520,8 +541,7 @@ public class MainActivity extends AppCompatActivity
                 //this.connecto.track("Session Started", new Properties().putValue("value", 800));
                 connecto.registerWithGCM(MainActivity.this, Constants.SENDER_ID);
             }
-        }).start();
-
+        }).start();*/
     }
 
     /**
@@ -692,6 +712,13 @@ public class MainActivity extends AppCompatActivity
         } else {
             getUserPermissions();
         }
+/*
+        HashMap hashMap = new HashMap<>();
+        hashMap.put(getResourceString(R.string.USER_FIRST_NAME), "Harsh");
+        hashMap.put(getResourceString(R.string.USER_LAST_NAME), "Vardhan");
+        hashMap.put(getResourceString(R.string.USER_VERIFIED), "YesYes");
+        //hashMap.clear();
+        this.mMakeNetworkCall(TAG, "http://www.launch.collegedekho.com/api/1/send-otp/", hashMap);*/
     }
 
     @Override
@@ -751,7 +778,7 @@ public class MainActivity extends AppCompatActivity
                 super.onDrawerOpened(drawerView);
 
                 // set user profile image on navigation drawer layout
-                CircularImageView mProfileImage = (CircularImageView)drawerView. findViewById(R.id.profile_image);
+                CircularImageView mProfileImage = (CircularImageView) drawerView. findViewById(R.id.profile_image);
                 mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
                 mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
                 String profileImage = MainActivity.mProfile.getImage();
@@ -1169,7 +1196,7 @@ public class MainActivity extends AppCompatActivity
     }
     @Override
     protected void onDestroy() {
-        this.connecto.track("Session Ended", new Properties().putValue("session_end_datetime", new Date().toString()));
+        //this.connecto.track("Session Ended", new Properties().putValue("session_end_datetime", new Date().toString()));
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         super.onDestroy();
@@ -1380,10 +1407,10 @@ public class MainActivity extends AppCompatActivity
 
         MainActivity.AppsflyerTrackerEvent(this,getResourceString(R.string.SESSION_STARTED),eventValue);
         // register mDeviceProfile id with GA tracker
-        this.tracker.setClientId(MainActivity.mProfile.getId());
+        MainActivity.tracker.setClientId(MainActivity.mProfile.getId());
         // register mDeviceProfile id with connecto
-        this.connecto.identify(MainActivity.mProfile.getId(), new Traits().putValue(getResourceString(R.string.USER_NAME), MainActivity.mProfile.getName()));
-        this.connecto.track(getResourceString(R.string.SESSION_STARTED),  new Properties().putValue(getResourceString(R.string.SESSION_STARTED_DATE_TIME), new Date().toString()));
+        //this.connecto.identify(MainActivity.mProfile.getId(), new Traits().putValue(getResourceString(R.string.USER_NAME), MainActivity.mProfile.getName()));
+        //this.connecto.track(getResourceString(R.string.SESSION_STARTED),  new Properties().putValue(getResourceString(R.string.SESSION_STARTED_DATE_TIME), new Date().toString()));
 
     }
 
@@ -2998,7 +3025,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     private void mUpdateAppliedInstituteWishlist(int i)
     {
         this.mInstitute.setIs_applied(true);
@@ -4584,10 +4610,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
-
-
-
     /**
      * This method is called when mDeviceProfile skip
      *  registration or facebook login
@@ -4603,13 +4625,11 @@ public class MainActivity extends AppCompatActivity
      */
     public void onUserCommonLogin(HashMap<String, String> params , String TAG) {
         this.mMakeNetworkCall(TAG, Constants.BASE_URL + "auth/new-common-login/", params);
-
         //Events
         HashMap<String, Object> eventValue = new HashMap<>();
         eventValue.put(Constants.TAG_USER_LOGIN, TAG);
         AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
     }
-
 
     @Override
     public void onSuccesProfileShared(@NonNull TrueProfile trueProfile) {
@@ -5489,7 +5509,6 @@ public class MainActivity extends AppCompatActivity
                     params.put(getResourceString(R.string.APPLY_YEAR), mYear);
                     mMakeNetworkCall( TAG, Constants.BASE_URL + "lms/", params, Request.Method.POST);
 
-
                     // update mDeviceProfile profile  also with apply form data
                     final HashMap<String, String> profileParams = new HashMap<>();
 
@@ -5680,7 +5699,6 @@ public class MainActivity extends AppCompatActivity
 
 
     private void onOTPVerified(String response) {
-
         try {
             JSONObject responseObject = new JSONObject(response);
             if (responseObject.optBoolean("verified")) {
@@ -5746,7 +5764,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override
         public void onContainerAvailable(ContainerHolder containerHolder, String containerVersion) {
@@ -5805,9 +5822,6 @@ public class MainActivity extends AppCompatActivity
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
-
-
-
     private void onNameUpdatedResponse(String response, String msg) {
         mParseProfileResponse(response);
         if (currentFragment instanceof MyFutureBuddiesFragment) {
@@ -5834,7 +5848,6 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
-
 
     @Override
     public void onSubmitCalendarData(JSONObject object,String url) {

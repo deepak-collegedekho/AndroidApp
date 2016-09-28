@@ -1,1 +1,59 @@
-{"project_info":{"project_id":"collegedekho-45f0b","project_number":"964145422487","name":"CollegeDekho"},"client":[{"client_info":{"mobilesdk_app_id":"1:964145422487:android:b21e295059be8d4f","client_id":"android:com.collegedekho.app","client_type":1,"android_client_info":{"package_name":"com.collegedekho.app"}},"oauth_client":[{"client_id":"964145422487-7e8gfma9a0tu3r9c49squ8c3ro4j1jl0.apps.googleusercontent.com","client_type":1,"android_info":{"package_name":"com.collegedekho.app","certificate_hash":"b9e9676f3cc608f63e0f31314c8c31d60e55fb9a"}}],"api_key":[],"services":{"analytics_service":{"status":1},"cloud_messaging_service":{"status":1,"apns_config":[]},"appinvite_service":{"status":1,"other_platform_oauth_client":[]},"google_signin_service":{"status":2},"ads_service":{"status":1}}}],"client_info":[],"ARTIFACT_VERSION":"1"}
+{
+  "project_info": {
+    "project_number": "864760274938",
+    "firebase_url": "https://collegedekho-808b6.firebaseio.com",
+    "project_id": "collegedekho-808b6",
+    "storage_bucket": "collegedekho-808b6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:864760274938:android:b21e295059be8d4f",
+        "android_client_info": {
+          "package_name": "com.collegedekho.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "864760274938-5n0gv26obg26efl7e4eotln70ulo42a4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.collegedekho.app",
+            "certificate_hash": "FC55B1B2DEA36BE2C5AB9BA4DC659CC83FA46684"
+          }
+        },
+        {
+          "client_id": "864760274938-80na41tuh7t0b5u2g9avurp5s6cnb2i7.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "864760274938-8n652fsa4tujhnsh5373m4vk70nvrem4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTlbJPeELN_lYmuSFuARSEWbAQzGaNdXQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "864760274938-80na41tuh7t0b5u2g9avurp5s6cnb2i7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

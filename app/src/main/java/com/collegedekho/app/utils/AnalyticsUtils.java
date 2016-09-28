@@ -14,7 +14,7 @@ import com.google.android.gms.tagmanager.TagManager;
 
 import java.util.Map;
 
-import io.connecto.android.sdk.Properties;
+//import io.connecto.android.sdk.Properties;
 
 /**
  * Utility class.
@@ -60,14 +60,14 @@ public class AnalyticsUtils {
         if (MainActivity.mProfile != null && MainActivity.mProfile.getId() != null)
             eventParams.put(context.getString(R.string.KEY_USER), MainActivity.mProfile.getId());
 
-        Properties properties = new Properties();
+        //Properties properties = new Properties();
         String[] labels = new String[eventParams.size()];
         int index = 0;
 
         for (Map.Entry<String,Object> entry : eventParams.entrySet())
         {
             if(entry == null || entry.getValue() == null)continue;
-            properties.putValue(entry.getKey(), entry.getValue());
+            //properties.putValue(entry.getKey(), entry.getValue());
             labels[index] = entry.getKey() + " : " + entry.getValue().toString();
             index++;
         }
@@ -88,7 +88,7 @@ public class AnalyticsUtils {
         AppsFlyerLib.getInstance().trackEvent(context, eventName, eventParams);
 
         //Connecto Events
-        if(MainActivity.connecto != null)
-            MainActivity.connecto.track(eventName, properties);
+        /*if(MainActivity.connecto != null)
+            MainActivity.connecto.track(eventName, properties);*/
     }
 }

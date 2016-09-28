@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/notif_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/news_image"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:src="@drawable/placeholder"
+        android:scaleType="centerCrop" />
+    <ImageView
+        android:background="@drawable/author_time_bg"
+        android:visibility="visible"
+        android:layout_width="fill_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentBottom="true" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:paddingBottom="6dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="11dp"
+        android:layout_marginRight="11dp"
+        android:layout_marginBottom="0dp"
+        android:layout_alignParentBottom="true">
+        <TextView
+            android:textAppearance="@style/NotificationExpandedTitle"
+            android:textSize="17dp"
+            android:textColor="#fff"
+            android:ellipsize="end"
+            android:gravity="bottom"
+            android:layout_gravity="left"
+            android:id="@+id/expanded_notification_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="11dp"
+            android:text="Example Title1\nTitle2"
+            android:maxLines="3"
+            android:layout_weight="1.0" />
+        <TextView
+            android:textColor="#fff"
+            android:gravity="bottom"
+            android:layout_gravity="right"
+            android:id="@+id/notification_time"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="11:23 AM" />
+    </LinearLayout>
+</RelativeLayout>
