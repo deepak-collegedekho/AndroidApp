@@ -414,8 +414,7 @@ public class TabFragment extends  BaseFragment{
         }
     }
 
-    private void mHomeWidgetSelected(String requestType, String url, String tag)
-    {
+    private void mHomeWidgetSelected(String requestType, String url, String tag){
         if(mListener != null)
             mListener.onHomeItemSelected(requestType, url,tag);
     }
@@ -681,20 +680,14 @@ public class TabFragment extends  BaseFragment{
                 this.mHomeWidgetSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna/", null);
             }
         } else if (selectedTabPosition == 3){
-            if(selectedSubMenuPosition == 1){
-                if (this.mExamDetail != null) {
+            if(mExamDetail != null) {
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, "" + mExamDetail.getId()).commit();
+                if (selectedSubMenuPosition == 1) {
                     this.mHomeWidgetSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/calendar/", null);
-                    getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, ""+mExamDetail.getId()).apply();
-                }
-            } else if(selectedSubMenuPosition == 2) {
-                if (this.mExamDetail != null) {
-                    this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS , Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/syllabus/", null);
-                    getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID,  ""+mExamDetail.getId()).commit();
-                }
-            } else if(selectedSubMenuPosition == 3) {
-                if (this.mExamDetail != null) {
+                } else if (selectedSubMenuPosition == 2) {
+                    this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/syllabus/", null);
+                } else if (selectedSubMenuPosition == 3) {
                     this.mHomeWidgetSelected(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", this.mExamDetail.getExam_tag());
-                    getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, ""+mExamDetail.getId()).commit();
                 }
             }
         } else if (selectedTabPosition == 4){

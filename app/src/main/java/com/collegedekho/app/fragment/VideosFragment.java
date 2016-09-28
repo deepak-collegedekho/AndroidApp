@@ -91,7 +91,7 @@ public final class VideosFragment extends BaseFragment {
     private ArrayList<String> mVideoList;
     private ArrayList<VideoEntry> mVideoEntryList;
     private boolean isFullscreen;
-    String url;
+    private String url;
 
     public static VideosFragment newInstance(ArrayList<String> mVideoEntryList) {
 
@@ -387,8 +387,8 @@ public final class VideosFragment extends BaseFragment {
         public PageAdapter(Context context, List<VideoEntry> entries) {
             this.entries = entries;
 
-            entryViews = new ArrayList<View>();
-            thumbnailViewToLoaderMap = new HashMap<YouTubeThumbnailView, YouTubeThumbnailLoader>();
+            entryViews = new ArrayList<>();
+            thumbnailViewToLoaderMap = new HashMap<>();
             inflater = LayoutInflater.from(context);
             thumbnailListener = new ThumbnailListener();
 

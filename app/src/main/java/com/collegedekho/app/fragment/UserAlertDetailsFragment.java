@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.adapter.CalendarAdapter;
 import com.collegedekho.app.adapter.UserAlertItemDescriptionAdapter;
 import com.collegedekho.app.adapter.UserAlertsMonthAdapter;
 import com.collegedekho.app.entities.MyAlertDateDescription;
@@ -19,7 +18,6 @@ import com.collegedekho.app.entities.MyAlertDateDescription;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedHashMap;
 
 /**
  * Created by Bashir on 22/12/15.
@@ -30,21 +28,11 @@ public class UserAlertDetailsFragment extends BaseFragment implements UserAlerts
     private RecyclerView detailsRecyclerView;
     // how many days to show, defaults to six weeks, 42 days
     private static int DAYS_COUNT = 42;
-
-    // default date format
-    private static final String DATE_FORMAT = "MMM yyyy";
-
-    // date format
-    private String dateFormat;
-    int offSet = 0;
-
     // current displayed month
     private Calendar currentDate;
     private LinearLayout.LayoutParams params;
     private GridLayoutManager calendarLayoutManager;
     private LinearLayoutManager detailsLayoutManager;
-    LinkedHashMap<String, String> yearCalendar;
-    private static CalendarAdapter.OnCalendarItemSelectListener mListener;
     private ArrayList<MyAlertDateDescription> dates;
     int month;
     int year;
@@ -76,7 +64,7 @@ public class UserAlertDetailsFragment extends BaseFragment implements UserAlerts
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootViewGroup = (ViewGroup) inflater.inflate(R.layout.calendar_view_layout, container, false);
+        ViewGroup rootViewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_calendar_view, container, false);
         return rootViewGroup;
     }
 

@@ -6,20 +6,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.ProfileExam;
 
-import java.util.ArrayList;
 
 /**
- * Created by sureshsaini on 14/12/15.
+ * Created by {sureshsaini} on {14/12/15}.
  */
 public class ExamDetailFragment extends BaseFragment{
 
     private final String TAG = "Exam Detail Fragment";
     private static String PARAM1 = "param1";
     private static final String EXAM_LIST = "user_education_list";
-    private ArrayList<ExamDetail> mExamDetailList;
+//    private ArrayList<ExamDetail> mExamDetailList;
 
 
     public ExamDetailFragment() {
@@ -37,9 +35,9 @@ public class ExamDetailFragment extends BaseFragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+       /* if (getArguments() != null) {
             this.mExamDetailList = getArguments().getParcelableArrayList(EXAM_LIST);
-        }
+        }*/
     }
 
     @Override

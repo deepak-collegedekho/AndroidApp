@@ -3,7 +3,6 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,14 +16,9 @@ import com.collegedekho.app.resource.Constants;
 
 import java.util.ArrayList;
 
-/**
- * Created by Bashir on 14/12/15.
- */
+
 public class UserAlertsParentFragment extends BaseFragment implements ViewPager.OnPageChangeListener {
-    private UserAlertsPagerAdapter mPagerAdapter;
-    private ViewPager viewPager;
-    private int numPages = 1;
-    int currentPosition;
+    private int currentPosition;
     private ArrayList<MyAlertDate> alertDatesList;
 
     public static UserAlertsParentFragment newInstance(int currentPosition,ArrayList<MyAlertDate> alertDatesList) {
@@ -50,7 +44,7 @@ public class UserAlertsParentFragment extends BaseFragment implements ViewPager.
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.calendar_parent_fragment_layout, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_calendar_parent, container, false);
         ((ViewPager.LayoutParams) (rootView.findViewById(R.id.calendar_pager_header)).getLayoutParams()).isDecor = true;
         return rootView;
     }
@@ -59,8 +53,9 @@ public class UserAlertsParentFragment extends BaseFragment implements ViewPager.
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         (view.findViewById(R.id.btn_submit_calendar)).setVisibility(View.GONE);
-        viewPager = (ViewPager) view.findViewById(R.id.pager);
-        mPagerAdapter = new UserAlertsPagerAdapter(getChildFragmentManager(), numPages,alertDatesList);
+        ViewPager viewPager = (ViewPager) view.findViewById(R.id.pager);
+        int numPages = 1;
+        UserAlertsPagerAdapter mPagerAdapter = new UserAlertsPagerAdapter(getChildFragmentManager(),numPages ,alertDatesList);
         viewPager.setAdapter(mPagerAdapter);
         viewPager.addOnPageChangeListener(this);
         viewPager.setCurrentItem(currentPosition);

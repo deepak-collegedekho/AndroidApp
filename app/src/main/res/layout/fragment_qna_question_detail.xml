@@ -16,6 +16,7 @@
             style="@style/AppTheme.Divider1"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp" />
+
         <LinearLayout
             android:id="@+id/qna_question_container"
             android:layout_width="match_parent"

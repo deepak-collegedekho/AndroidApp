@@ -11,14 +11,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.fragment.QnAQuestionDetailFragment;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.DetectHtml;
+import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.widget.CircularImageView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,12 +41,14 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
     private ArrayList<QnAAnswers> mQnAQuestionAnswers;
     private Context mContext;
     private volatile SimpleDateFormat mSDF;
+    private ImageLoader mImageLoader;
 
     public QnAAnswersListAdapter(Context context, ArrayList<QnAAnswers> qnaQuestionAnswers) {
         mQnAQuestionAnswers = qnaQuestionAnswers;
         mContext = context;
         mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
         mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
+        mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
     }
 
     @Override
@@ -86,27 +92,36 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
         description= description+answerText;
         qnaAnswerHolder.answerText.setText(answerText);
         qnaAnswerHolder.answerVotes.setText(String.valueOf(qnaAnswer.getUpvotes() - qnaAnswer.getDownvotes()));
-        if (qnaAnswer.getUser() != MainActivity.mProfile.getName())
-        {
-            qnaAnswerHolder.userName.setText(qnaAnswer.getUser());
-            qnaAnswerHolder.answerCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
-            description = qnaAnswer.getUser() + " answered " + description;
-        }
-        else
+        String userId = qnaAnswer.getUser_id();
+        if (userId != null && userId.equalsIgnoreCase(MainActivity.mProfile.getId()))
         {
             qnaAnswerHolder.answerCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.self_comment_card_background));
             qnaAnswerHolder.userName.setText("Me");
             description = "you answered " + description;
+        } else  {
+            qnaAnswerHolder.userName.setText(qnaAnswer.getUser());
+            qnaAnswerHolder.answerCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
+            description = qnaAnswer.getUser() + " answered " + description;
         }
 
         qnaAnswerHolder.mContainer.setContentDescription(description);
-
         qnaAnswerHolder.dateAddedOn.setText(simpleDate);
-
+        qnaAnswerHolder.answerUpvoteButton.setClickable(true);
+        qnaAnswerHolder.answerDownvoteButton.setClickable(true);
         qnaAnswerHolder.answerUpvoteButton.setSelected(qnaAnswer.getCurrent_user_vote_type() == Constants.LIKE_THING);
         qnaAnswerHolder.answerDownvoteButton.setSelected(qnaAnswer.getCurrent_user_vote_type() == Constants.DISLIKE_THING);
+        updateUserImage(qnaAnswer.getUser_image(), qnaAnswerHolder.userImage);
+    }
 
+    private void updateUserImage(String image, CircularImageView imageView){
+        imageView.setDefaultImageResId(R.drawable.ic_profile_default);
+        imageView.setErrorImageResId(R.drawable.ic_profile_default);
 
+        if (image != null && !image.isEmpty()) {
+            imageView.setImageUrl(image, mImageLoader);
+        }else{
+            imageView.setImageUrl(null,mImageLoader);
+        }
     }
 
     @Override
@@ -125,6 +140,7 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
         CardView answerCard;
         QnAQuestionDetailFragment.OnQnAAnswerInteractionListener mListener;
         View mContainer;
+        CircularImageView userImage;
 
         public QnAAnswerHolder(View itemView, QnAQuestionDetailFragment.OnQnAAnswerInteractionListener listener) {
             super(itemView);
@@ -136,6 +152,7 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
             dateAddedOn = (TextView) itemView.findViewById(R.id.qna_answer_date_added_on);
             answerUpvoteButton = (ImageButton) itemView.findViewById(R.id.qna_answer_button_upvote);
             answerDownvoteButton = (ImageButton) itemView.findViewById(R.id.qna_answer_button_downvote);
+            userImage = (CircularImageView) itemView.findViewById(R.id.user_image);
             mContainer = itemView;
 
             mListener = listener;
@@ -153,14 +170,18 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
             {
                 case R.id.qna_answer_button_downvote:
                     if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
-                        if (v.isSelected()) {
-                            mListener.displayMessage(R.string.ALREADY_DOWN_VOTED);
-                        } else {
-                            if (mQnAQuestionAnswers.get(getAdapterPosition()).getCurrent_user_vote_type() == Constants.LIKE_THING) {
-                                mQnAQuestionAnswers.get(getAdapterPosition()).setDownvotes(mQnAQuestionAnswers.get(getAdapterPosition()).getDownvotes() + 1);
-                                mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri() + "downvote/", Constants.NOT_INTERESTED_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
-                            } else {
-                                mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri(), Constants.DISLIKE_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
+                        int position = getAdapterPosition();
+                        if(position < mQnAQuestionAnswers.size()) {
+                            QnAAnswers qnAAnswer = mQnAQuestionAnswers.get(position);
+                            if (qnAAnswer.getCurrent_user_vote_type() == Constants.DISLIKE_THING) {
+                                Toast.makeText(mContext, "You can't downvote the downvoted", Toast.LENGTH_SHORT).show();
+                            }else{
+                                answerDownvoteButton.setClickable(false);
+                                if(qnAAnswer.getCurrent_user_vote_type() == Constants.LIKE_THING) {
+                                    mListener.onQnAAnswerVote( Constants.NOT_INTERESTED_THING, position, qnAAnswer.getQuestionIndex());
+                                }else{
+                                    mListener.onQnAAnswerVote( Constants.DISLIKE_THING, position, qnAAnswer.getQuestionIndex());
+                                }
                             }
                         }
                     }else {
@@ -170,14 +191,21 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
 
                 case R.id.qna_answer_button_upvote:
                     if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
-                        if (v.isSelected()) {
-                            mListener.displayMessage(R.string.ALREADY_UP_VOTED);
-                        } else {
-                            if (mQnAQuestionAnswers.get(getAdapterPosition()).getCurrent_user_vote_type() == Constants.DISLIKE_THING) {
-                                mQnAQuestionAnswers.get(getAdapterPosition()).setUpvotes(mQnAQuestionAnswers.get(getAdapterPosition()).getUpvotes() + 1);
-                                mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri() + "upvote/", Constants.NOT_INTERESTED_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
+
+                        int position = getAdapterPosition();
+                        if(position < mQnAQuestionAnswers.size()) {
+
+                            QnAAnswers qnAAnswer = mQnAQuestionAnswers.get(position);
+                            if (qnAAnswer.getCurrent_user_vote_type() == Constants.LIKE_THING) {
+                                Toast.makeText(mContext, "You can't upvote the upvoted", Toast.LENGTH_SHORT).show();
                             } else {
-                                mListener.onQnAAnswerVote(mQnAQuestionAnswers.get(getAdapterPosition()).getResource_uri(), Constants.LIKE_THING, getAdapterPosition(), mQnAQuestionAnswers.get(getAdapterPosition()).getQuestionIndex());
+                                answerUpvoteButton.setClickable(false);
+                                if (qnAAnswer.getCurrent_user_vote_type() == Constants.DISLIKE_THING) {
+                                    mListener.onQnAAnswerVote(Constants.NOT_INTERESTED_THING, position, qnAAnswer.getQuestionIndex());
+
+                                } else {
+                                    mListener.onQnAAnswerVote(Constants.LIKE_THING, position, qnAAnswer.getQuestionIndex());
+                                }
                             }
                         }
                     }else {

@@ -38,6 +38,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamStreamAdapter;
 import com.collegedekho.app.adapter.ExamsAdapter;
+import com.collegedekho.app.crop.Crop;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.Profile;
@@ -1355,105 +1356,41 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
             cameraIntents.add(intent);
         }
-
         // Filesystem.
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
         // Chooser of filesystem options.
         Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
-
         // Add the camera options.
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
-
-        getActivity().startActivityForResult(chooserIntent, Constants.REQUEST_PICK_IMAGE);
+        getActivity().startActivityForResult(chooserIntent, Crop.REQUEST_PICK);
     }
 
     @Override
-    public void requestForCropProfileImage(Intent data) {
-
-        if (data != null) {
-            // Get the Image from data
-            Uri filePath = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
-
-            // Get the cursor
-            Cursor cursor = getActivity().getContentResolver().query(filePath,
-                    filePathColumn, null, null, null);
-            // Move to first row
-            cursor.moveToFirst();
-
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String imgDecodableString = cursor.getString(columnIndex);
-            cursor.close();
-
-            File sourceFile =  new File(imgDecodableString);
-            FileChannel source = null;
-            FileChannel destination = null;
-            try {
-                source = new FileInputStream(sourceFile).getChannel();
-                destination = new FileOutputStream(uploadTempImageFile).getChannel();
-                if (destination != null && source != null) {
-                    try {
-                        destination.transferFrom(source, 0, source.size());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (source != null) {
-                    try {
-                        source.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (destination != null) {
-                    try {
-                        destination.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            mImageCaptureUri = Uri.fromFile(uploadTempImageFile);
+    public void requestForCropProfileImage(Intent result) {
+        Uri source;
+        if(result != null){
+            source = result.getData();
+        }else{
+            source = mImageCaptureUri;
         }
-
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setType("image/*");
-        List<ResolveInfo> list = getActivity().getPackageManager().queryIntentActivities(intent, 0);
-        int size = list.size();
-
-        if (size <= 0) {
-            uploadUserProfileImage();
-        } else {
-            intent.setData(mImageCaptureUri);
-
-            intent.putExtra("outputX", 200);
-            intent.putExtra("outputY", 200);
-            intent.putExtra("aspectX", 1);
-            intent.putExtra("aspectY", 1);
-            intent.putExtra("scale", true);
-            intent.putExtra("return-data", true);
-
-            Intent i = new Intent(intent);
-            ResolveInfo res = list.get(0);
-            i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            getActivity().startActivityForResult(i, Constants.REQUEST_CROP_IMAGE);
-        }
+        Uri destination = Uri.fromFile(new File(getActivity().getCacheDir(), "cropped"));
+        Crop.of(source, destination).asSquare().start(getActivity());
     }
 
 
-
     @Override
-    public void uploadUserProfileImage() {
+    public void uploadUserProfileImage(Uri uri) {
 
-        if(MainActivity.mProfile == null)
+        if(uri == null)
             return;
+        // set bitmap to profile image
+        if(getView() != null) {
+            CircularImageView profileImage   = (CircularImageView) getView().findViewById(R.id.profile_image);
+            profileImage.setImageURI(uri);
+        }
 
-        File imageFile = new File(mImageCaptureUri.getPath());
-
+        File imageFile = new File(uri.getPath());
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(imageFile);
@@ -1462,18 +1399,37 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         }
 
         Bitmap bm = BitmapFactory.decodeStream(fis);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 100 , baos);
-        byte[] byteArray = baos.toByteArray();
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = 700;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = 600;
+            width = (int) (height * bitmapRatio);
+        }
 
-        if(mListener != null)
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bm, width, height, true);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        // delete  temp created profile image
+        deleteTempImageFile();
+        // request to upload profile image file
+        if(mListener != null) {
             mListener.requestToUploadProfileImage(byteArray);
+        }
+    }
 
-        ((ImageView)mRootView.findViewById(R.id.profile_image)).setImageBitmap(bm);
-        if(imageFile.exists())
-            imageFile.delete();
-
-
+    @Override
+    public void deleteTempImageFile() {
+        if(mImageCaptureUri != null) {
+            File imageFile = new File(mImageCaptureUri.getPath());
+            if(imageFile != null && imageFile.exists()){
+                imageFile.delete();
+            }
+        }
     }
 
     public void profileImageUploadedSuccessfully(){

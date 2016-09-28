@@ -172,7 +172,7 @@
                     android:id="@+id/card_institute_shortlist"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight=".5"
+                    android:layout_weight=".52"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:weightSum="1">
@@ -181,6 +181,8 @@
                         style="@style/AppTheme.BlueButton"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/m30dp"
+                        android:paddingRight="@dimen/m3dp"
+                        android:paddingLeft="@dimen/m3dp"
                         android:textSize="9sp"
                         android:text="Shortlist"
                         />
@@ -197,7 +199,7 @@
                 android:id="@+id/card_institute_controls"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight=".4"
+                android:layout_weight=".38"
                 android:orientation="vertical"
                 android:weightSum="1"
                 >

@@ -157,7 +157,7 @@ public class UserAlertsMonthAdapter extends RecyclerView.Adapter<UserAlertsMonth
         holder.dotView.removeAllViews();
         for (int j = 0; j < count; j++) {
             try {
-                View dot = inflater.inflate(R.layout.dot_view, holder.dotView, false);
+                View dot = inflater.inflate(R.layout.layout_dot_view, holder.dotView, false);
 
                 Drawable mDrawable = mContext.getResources().getDrawable(R.drawable.bg_button_blue);
                 mDrawable.setColorFilter(new

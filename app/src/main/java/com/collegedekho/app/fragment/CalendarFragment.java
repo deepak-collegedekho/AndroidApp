@@ -86,7 +86,7 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootViewGroup = (ViewGroup) inflater.inflate(R.layout.calendar_view_layout, container, false);
+        ViewGroup rootViewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_calendar_view, container, false);
         return rootViewGroup;
     }
 

@@ -248,49 +248,6 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
 
             }
         }
-//        for (Subjects subjectObj:mSubjects) {
-//            for (Subjects subject :mSubjectsLastStatus){
-//                if(subject.getSubject_id() != subjectObj.getSubject_id())continue;
-//
-//                ArrayList<Units> originalUnitsList = subjectObj.getUnits();
-//                ArrayList<Units> unitList = subject.getUnits();
-//
-//                 if (originalUnitsList != null || !originalUnitsList.isEmpty()
-//                     ||unitList != null || !unitList.isEmpty()) {
-//
-//                     for (Units unitObj : originalUnitsList) {
-//                         for (Units unit : unitList) {
-//                             if (unitObj.getUnit_id() != unit.getUnit_id()) continue;
-//
-//                             ArrayList<Chapters> originalChapterList = unitObj.getChapters();
-//                             ArrayList<Chapters> chapterList = unit.getChapters();
-//
-//                             if (originalChapterList != null || !originalChapterList.isEmpty()
-//                                     || chapterList != null || !chapterList.isEmpty()) {
-//
-//                                 for (Chapters chapterObj : originalChapterList) {
-//                                     for (Chapters chapter : chapterList) {
-//                                         if (chapterObj.getId() != chapter.getId()) continue;
-//
-//                                         try {
-//                                             if (chapterObj.getIs_done() != chapter.getIs_done()) {
-//                                                 subjetIdsMap.put("" + unit.getSubject_id(), "" + chapter.getId());
-//                                             }
-//                                             if (chapterObj.getIs_done() == 1)
-//                                                 chapterJsonArray.put(chapter.getId());
-//                                         }catch (Exception e){
-//                                             e.printStackTrace();
-//                                         }
-//
-//                                     }
-//                                 }
-//                             }
-//
-//                         }
-//                     }
-//                 }
-//            }
-//        }
 
         if(subjetIdsMap.size()>0) {
             Iterator it = subjetIdsMap.entrySet().iterator();
@@ -349,7 +306,6 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
 
     public interface OnSubjectSelectedListener {
         void onSubjectSelected(Subjects subject, int position);
-        void onSubjectCheckboxSelected(Subjects subject, int position);
         void onSyllabusChanged(JSONObject jsonObject);
     }
 }

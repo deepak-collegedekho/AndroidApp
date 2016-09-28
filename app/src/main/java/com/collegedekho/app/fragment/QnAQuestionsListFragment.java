@@ -286,8 +286,8 @@ public class QnAQuestionsListFragment extends BaseFragment {
             }
         }
 
-        String desc =  this.mQuestionDesc.getText().toString();
-        if (desc == null || desc.trim().length() <= 0) {
+        String desc =  this.mQuestionDesc.getText().toString().trim();
+        if (desc.trim().length() <= 0) {
             QnAQuestionsListFragment.this.mQuestionTitle.setError(MainActivity.getResourceString(R.string.QUESTION_TEXT_EMPTY));
             QnAQuestionsListFragment.this.mQuestionDesc.requestFocus();
             return null;

@@ -12,6 +12,7 @@ public interface DataLoadListener {
 
     void onDataLoaded(String tag, String response);
 
+    void onProfileImageUploadFailed();
 
     void onError(String tag, String response, int responseCode, String url, Map<String, String> params, int method);
 

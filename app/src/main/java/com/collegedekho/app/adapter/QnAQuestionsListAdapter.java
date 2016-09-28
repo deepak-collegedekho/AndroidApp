@@ -79,27 +79,32 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
             description = qnaQuestion.getUser() + " asked " + description + " click to see detail";
         }
         qnAQuestionHolder.mContainer.setContentDescription(description);
-
-        qnAQuestionHolder.questionVotes.setText(String.valueOf(qnaQuestion.getUpvotes()));
+        qnAQuestionHolder.questionVotes.setText(String.valueOf(qnaQuestion.getUpvotes()-qnaQuestion.getDownvotes()));
         qnAQuestionHolder.answerCount.setText(String.valueOf(qnaQuestion.getAnswers_count()) + "\n" + "Answer");
 
         qnAQuestionHolder.likeButton.setSelected(qnaQuestion.getCurrent_user_vote_type() == 0);
         qnAQuestionHolder.likeButton.setClickable(true);
+        qnAQuestionHolder.likeContainer.setClickable(true);
         qnAQuestionHolder.likeButton.setVisibility(View.VISIBLE);
         qnAQuestionHolder.likeProgressBar.setVisibility(View.GONE);
-
-        if (qnAQuestionHolder.likeButton.isSelected()) {
+        if (qnaQuestion.getCurrent_user_vote_type() == Constants.LIKE_THING) {
             qnAQuestionHolder.likeButton.setColorFilter(ContextCompat.getColor(this.mContext, R.color.like_green_selected));
-            qnAQuestionHolder.likeContainer.setContentDescription("Already upvoted Question");
-            qnAQuestionHolder.likeButton.setContentDescription("Already upvoted Question");
-        } else {
+            qnAQuestionHolder.likeContainer.setContentDescription("Already up voted Question");
+            qnAQuestionHolder.likeButton.setContentDescription("Already up voted Question");
+
+        } else if(qnaQuestion.getCurrent_user_vote_type() == Constants.DISLIKE_THING) {
+            qnAQuestionHolder.likeButton.setColorFilter(ContextCompat.getColor(this.mContext, R.color.dislike_red_selected));
+            qnAQuestionHolder.likeContainer.setContentDescription("Already down voted this question");
+            qnAQuestionHolder.likeButton.setContentDescription("Already down voted this question");
+
+        } else{
             qnAQuestionHolder.likeButton.setColorFilter(ContextCompat.getColor(this.mContext, R.color.subheading_color));
-            qnAQuestionHolder.likeContainer.setContentDescription("upvote this question");
-            qnAQuestionHolder.likeButton.setContentDescription("upvote this question");
+            qnAQuestionHolder.likeContainer.setContentDescription("up vote this question");
+            qnAQuestionHolder.likeButton.setContentDescription("up vote this question");
         }
 
         if (qnaQuestion.getAdded_on() != null) {
-            Date date = null;
+            Date date ;
             String simpleDate;
             String time;
             try {
@@ -121,18 +126,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
                 e.printStackTrace();
             }
         }
-        ArrayList<String> tags = qnaQuestion.getTags();
-
-        /*if(tags != null)
-            for(int i = 0; i < tags.size(); i++)
-            {
-                TextView tv = (TextView) LayoutInflater.from(mContext).inflate(R.layout.item_tag, null);
-
-                tv.setText(tags.get(i));
-
-                qnAQuestionHolder.tagsContainer.addView(tv);
-            }*/
-         this.mSetAnimation(qnAQuestionHolder.container, position);
+        this.mSetAnimation(qnAQuestionHolder.container, position);
     }
 
     @Override
@@ -159,27 +153,20 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
     private void mSetAnimation(View viewToAnimate, int position)
     {
         // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition)
-        {
-            if (this.mViewType == Constants.VIEW_INTO_GRID)
-            {
+        if (position > lastPosition) {
+            if (this.mViewType == Constants.VIEW_INTO_GRID){
                 if (position % 2 == 0)
                 {
                     Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_left);
                     viewToAnimate.startAnimation(animation);
-                }
-                else
-                {
+                }else {
                     Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_right);
                     viewToAnimate.startAnimation(animation);
                 }
-            }
-            else
-            {
+            } else {
                 Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_left);
                 viewToAnimate.startAnimation(animation);
             }
-
             lastPosition = position;
         }
     }
@@ -204,53 +191,59 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         View likeContainer;
         View mContainer;
 
-        public QnAQuestionHolder(View itemView, QnAQuestionsListFragment.OnQnAQuestionSelectedListener listener) {
+        QnAQuestionHolder(View itemView, QnAQuestionsListFragment.OnQnAQuestionSelectedListener listener) {
             super(itemView);
-            this.userProfileImage = (CircularImageView) itemView.findViewById(R.id.card_qna_profile_image);
-            this.questionHeading = (TextView) itemView.findViewById(R.id.card_qna_question_heading);
-            this.userName = (TextView) itemView.findViewById(R.id.card_qna_user_name);
-            this.questionVotes = (TextView) itemView.findViewById(R.id.card_item_like_count);
-            this.answerCount = (TextView) itemView.findViewById(R.id.card_qna_answer_count);
-            this.addedOn = (TextView) itemView.findViewById(R.id.card_qna_added_on);
-
-            this.likeButton = (ImageView) itemView.findViewById(R.id.card_item_button_like);
-            this.likeProgressBar = (ProgressBar) itemView.findViewById(R.id.card_item_like_progressBar);
-            this.likeButton.setOnClickListener(this);
-            this.mListener = listener;
-
+            this.userProfileImage   = (CircularImageView) itemView.findViewById(R.id.card_qna_profile_image);
+            this.questionHeading    = (TextView) itemView.findViewById(R.id.card_qna_question_heading);
+            this.userName           = (TextView) itemView.findViewById(R.id.card_qna_user_name);
+            this.questionVotes      = (TextView) itemView.findViewById(R.id.card_item_like_count);
+            this.answerCount        = (TextView) itemView.findViewById(R.id.card_qna_answer_count);
+            this.addedOn            = (TextView) itemView.findViewById(R.id.card_qna_added_on);
+            this.likeButton         = (ImageView) itemView.findViewById(R.id.card_item_button_like);
+            this.likeContainer      = itemView.findViewById(R.id.card_item_like_layout);
+            this.likeProgressBar    = (ProgressBar) itemView.findViewById(R.id.card_item_like_progressBar);
             if (mViewType == Constants.VIEW_INTO_LIST)
                 this.container = (CardView) itemView.findViewById(R.id.qna_card_list_view);
             else
                 this.container = (CardView) itemView.findViewById(R.id.qna_card_grid_view);
 
-            container.setOnClickListener(this);
-
-            likeContainer = itemView.findViewById(R.id.card_item_like_layout);
-
-            itemView.findViewById(R.id.card_item_like_layout).setOnClickListener(this);
-            itemView.findViewById(R.id.layout_item_expand).setOnClickListener(this);
+            this.mListener = listener;
+            this.container.setOnClickListener(this);
+            this.likeButton.setOnClickListener(this);
+            this.likeContainer.setOnClickListener(this);
             itemView.setOnClickListener(this);
+            itemView.findViewById(R.id.layout_item_expand).setOnClickListener(this);
             mContainer = itemView;
         }
 
         @Override
         public void onClick(View v) {
-            int connectivityStatus=new NetworkUtils(v.getContext(), null).getConnectivityStatus();
             switch(v.getId()) {
                 case R.id.card_item_button_like:
                 case R.id.card_item_like_layout:
-                    if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
-                        if (!v.isSelected()) {
-                            likeButton.setVisibility(View.GONE);
-                            likeProgressBar.setVisibility(View.VISIBLE);
-                            likeButton.setClickable(false);
-                            mListener.onQnAQuestionVote(getAdapterPosition(), Constants.LIKE_THING);
+                    if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+                        int position = getAdapterPosition();
+                        if(position < mQnAQuestions.size()) {
+                            QnAQuestions qnAQuestion = mQnAQuestions.get(position);
 
-                        } else {
                             likeButton.setVisibility(View.GONE);
                             likeProgressBar.setVisibility(View.VISIBLE);
                             likeButton.setClickable(false);
-                            mListener.onQnAQuestionVote(getAdapterPosition(), Constants.DISLIKE_THING);
+                            likeContainer.setClickable(false);
+
+                            if(qnAQuestion.getCurrent_user_vote_type() == Constants.LIKE_THING){
+                                mListener.onQnAQuestionVote(position, Constants.NOT_INTERESTED_THING);
+
+                            }else if(qnAQuestion.getCurrent_user_vote_type() == Constants.DISLIKE_THING){
+                                mListener.onQnAQuestionVote(position, Constants.NOT_INTERESTED_THING);
+                            }else{
+                                if (!v.isSelected()) {
+                                    mListener.onQnAQuestionVote(position, Constants.LIKE_THING);
+
+                                } else {
+                                    mListener.onQnAQuestionVote(position, Constants.DISLIKE_THING);
+                                }
+                            }
                         }
                     }else {
                         this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);

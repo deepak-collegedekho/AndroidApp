@@ -2,6 +2,7 @@ package com.collegedekho.app.utils;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import com.appsflyer.AppsFlyerLib;
 import com.collegedekho.app.R;
@@ -20,6 +21,8 @@ import java.util.Map;
  * Utility class.
  */
 public class AnalyticsUtils {
+
+    private static final String TAG = "AnalyticsUtils";
     private AnalyticsUtils() {
         // private constructor.
     }
@@ -86,9 +89,5 @@ public class AnalyticsUtils {
 
         //AppsFlyer Events
         AppsFlyerLib.getInstance().trackEvent(context, eventName, eventParams);
-
-        //Connecto Events
-        /*if(MainActivity.connecto != null)
-            MainActivity.connecto.track(eventName, properties);*/
     }
 }

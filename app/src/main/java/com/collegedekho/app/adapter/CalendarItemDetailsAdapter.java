@@ -32,7 +32,7 @@ public class CalendarItemDetailsAdapter extends RecyclerView.Adapter<CalendarIte
     public CalendarItemDetailView onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
                 from(parent.getContext()).
-                inflate(R.layout.calendar_item_detail_card_view, parent, false);
+                inflate(R.layout.card_view_calendar_detail, parent, false);
         return new CalendarItemDetailView(itemView);
     }
 

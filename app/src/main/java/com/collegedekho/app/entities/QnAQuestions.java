@@ -22,6 +22,7 @@ public class QnAQuestions implements Parcelable {
     };
 
     private String resource_uri;
+    private String uri;
     private int answers_count = 0;
     private ArrayList<String> tags;
     private String title;
@@ -49,6 +50,7 @@ public class QnAQuestions implements Parcelable {
 
     public QnAQuestions(Parcel source) {
         resource_uri = source.readString();
+        uri = source.readString();
         answers_count = source.readInt();
         title = source.readString();
         desc = source.readString();
@@ -82,6 +84,7 @@ public class QnAQuestions implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(resource_uri);
+        dest.writeString(uri);
         dest.writeInt(answers_count);
         dest.writeString(title);
         dest.writeString(desc);
@@ -110,6 +113,14 @@ public class QnAQuestions implements Parcelable {
 
     public void setResource_uri(String resource_uri) {
         this.resource_uri = resource_uri;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     public int getAnswers_count() {

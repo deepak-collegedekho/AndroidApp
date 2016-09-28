@@ -56,7 +56,7 @@
             android:visibility="gone"
             android:layout_marginBottom="@dimen/m12dp"
             android:layout_marginTop="@dimen/m10dp"
-            android:gravity="left"
+            android:gravity="start"
             android:contentDescription="@string/fb_login_description"
             >
 
@@ -102,6 +102,8 @@
                 android:digits="1234567890"
                 android:inputType="phone"
                 android:maxLength="10"
+                android:maxLines="@integer/int1"
+                android:imeOptions="actionDone"
                 android:contentDescription="Enter your 10 digit mobile number"/>
         </android.support.design.widget.TextInputLayout>
 
@@ -171,7 +173,9 @@
                         android:layout_height="35dp"
                         android:gravity="center"
                         android:maxLength="6"
+                        android:imeOptions="actionDone"
                         android:textSize="18sp"
+                        android:maxLines="@integer/int1"
                         android:contentDescription="Enter the 6 digit otp which you received on your mobile number"/>
                 </android.support.design.widget.TextInputLayout>
 
@@ -210,7 +214,7 @@
         android:id="@+id/sign_up_skip_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center|right"
+        android:layout_gravity="center|end"
         android:padding="@dimen/m8dp"
         android:orientation="vertical"
         android:contentDescription="@string/sign_up_skip_description"

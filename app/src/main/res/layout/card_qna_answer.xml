@@ -33,16 +33,26 @@
                 android:layout_height="wrap_content"
                 android:layout_weight=".19"
                 android:gravity="center"
-                android:weightSum="1"
                 android:orientation="vertical"
                 android:padding="10dp"
                 >
+                <com.collegedekho.app.widget.CircularImageView
+                    android:id="@+id/user_image"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"
+                    app:srcCompat="@drawable/ic_profile_default"
+                    android:visibility="visible"/>
+
                 <ImageButton
                     android:id="@+id/qna_answer_button_upvote"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/ic_arrow_up"
-                    android:background="@drawable/bg_upvote"
+                    android:padding="@dimen/m5dp"
+                    android:background="@drawable/bg_upvote_layer"
                     />
                 <TextView
                     android:id="@+id/qna_answer_votes"
@@ -63,7 +73,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/ic_arrow_down"
-                    android:background="@drawable/bg_downvote"
+                    android:padding="@dimen/m5dp"
+                    android:background="@drawable/bg_downvote_layer"
                     />
             </LinearLayout>
             <TextView

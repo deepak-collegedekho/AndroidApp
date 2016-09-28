@@ -143,7 +143,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             String[] keyArray=key.split(",");
             holder.dotView.removeAllViews();
             for (String keyval:keyArray){
-                View dot=inflater.inflate(R.layout.dot_view,holder.dotView,false);
+                View dot=inflater.inflate(R.layout.layout_dot_view,holder.dotView,false);
 
                 Drawable  mDrawable = mContext.getResources().getDrawable(R.drawable.bg_button_blue);
                 mDrawable.setColorFilter(new
