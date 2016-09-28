@@ -99,7 +99,6 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
     @Override
     public void onResume() {
         super.onResume();
-
        MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null)
             mainActivity.currentFragment = this;

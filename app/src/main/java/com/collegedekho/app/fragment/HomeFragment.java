@@ -23,7 +23,7 @@ import com.collegedekho.app.widget.CircularProgressBar;
  */
 public class HomeFragment extends BaseFragment {
 
-    private final String TAG = "profile Frgament";
+    private final String TAG = "Home Fragment";
     private OnTabSelectListener mListener;
     private View mRootView;
     private boolean IS_TUTE_COMPLETED = true;
@@ -49,16 +49,20 @@ public class HomeFragment extends BaseFragment {
 
         String psychometricResults = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getString("psychometric_report", null);
 
-        if (MainActivity.mProfile.getPsychometric_given() == 1 && psychometricResults != null) {
+        if (MainActivity.mProfile == null ) {
+            mRootView.findViewById(R.id.btn_home_psychometric_test).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.btn_home_psychometric_report).setVisibility(View.GONE);
+
+        }else if (psychometricResults != null &&
+                    MainActivity.mProfile.getPsychometric_given() == 1) {
             mRootView.findViewById(R.id.btn_home_psychometric_test).setVisibility(View.GONE);
             mRootView.findViewById(R.id.btn_home_psychometric_report).setVisibility(View.VISIBLE);
+
         } else {
             mRootView.findViewById(R.id.btn_home_psychometric_test).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.btn_home_psychometric_report).setVisibility(View.GONE);
         }
 
-//        if (MainActivity.mProfile.getStep_by_step_given() == 1)
-//            mRootView.findViewById(R.id.btn_home_step_by_step).setVisibility(View.GONE);
 
         this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("Home Tute", false);
         if(!IS_TUTE_COMPLETED) {
@@ -209,7 +213,7 @@ public class HomeFragment extends BaseFragment {
                 break;
             case R.id.profile_image:
             case R.id.profile_image_edit_button:
-                if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+                if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
                     ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
                     return;
                 }

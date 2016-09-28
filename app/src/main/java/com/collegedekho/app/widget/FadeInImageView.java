@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.collegedekho.app.utils.BlurBuilder;
 import com.collegedekho.app.utils.Utils;
 
 public class FadeInImageView extends NetworkImageView {
@@ -21,7 +22,7 @@ public class FadeInImageView extends NetworkImageView {
         this.mShowLocal = true;
 
         if (shoudlBlur)
-            this.mLocalBitmap = Utils.FastBlur(bitmap, FadeInImageView.BITMAP_SCALE, 1);
+            this.mLocalBitmap = BlurBuilder.FastBlur(bitmap, FadeInImageView.BITMAP_SCALE, 1);
         else
             this.mLocalBitmap = bitmap;
 

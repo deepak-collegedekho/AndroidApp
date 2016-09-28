@@ -175,7 +175,7 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
 
             qnaAnswerHolder.mUserImageSelf.setVisibility(View.GONE);
             qnaAnswerHolder.mUserImageOther.setVisibility(View.VISIBLE);
-
+            qnaAnswerHolder.mSentNotifier.setVisibility(View.GONE);
             updateUserImage(myFBComment.getUser_image(), qnaAnswerHolder.mUserImageOther);
             qnaAnswerHolder.mUserImageOther.setPadding(left,top,right,0);
         }
@@ -184,12 +184,15 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
 
     }
 
-    public void updateUserImage(String image, CircularImageView imageView){
+    private void updateUserImage(String image, CircularImageView imageView){
         imageView.setDefaultImageResId(R.drawable.ic_profile_default);
         imageView.setErrorImageResId(R.drawable.ic_profile_default);
 
-        if (image != null && !image.isEmpty())
+        if (image != null && !image.isEmpty()) {
             imageView.setImageUrl(image, mImageLoader);
+        }else{
+            imageView.setImageUrl(null, mImageLoader);
+        }
     }
 
     @Override

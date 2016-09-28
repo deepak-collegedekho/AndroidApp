@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 /**
  * @author Mayank Gautam
- *         Created: 29/06/15
+ * Created: 29/06/15
  */
 public class Constants
 {
@@ -17,8 +17,6 @@ public class Constants
     public static final int RC_HANDLE_SMS_PERM=4;
     public static final int RC_QUIT_VIDEO_PLAYER=5;
     public static final int GCM_RESULT_DATA_KEY=201;
-    public static final int REQUEST_PICK_IMAGE = 2 ;
-    public static final int REQUEST_CROP_IMAGE = 3 ;
 
     public static final String KEY_USER = "user_id";
     public static final String ANONYMOUS_USER = "Anonymous mDeviceProfile";
@@ -157,7 +155,6 @@ public class Constants
     public static final String TAG_EXAM_SUMMARY = "exam_summary";
     public static final String TAG_NAME_UPDATED = "name_updated";
     public static final String SUBMITTED_CHAPTER_STATUS = "chapter_submitted";
-    public static final String TAG_PSYCHOMETRIC_TEXT_COMPLETED = "psychometric_text_completed";
     public static final String TAG_LOAD_INSTITUTE_NEWS = "institute_news";
     public static final String TAG_LOAD_INSTITUTE_ARTICLE = "institute_article";
     public static final String SELECTED_EXAM_ID = "selected_exam_id";

@@ -10,7 +10,6 @@ import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -46,7 +45,7 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
     private int currentPos;
     private RecyclerView mFilterRecyclerView;
     private RecyclerView mFilterTypeRecyclerView;
-    private LinearLayout mCategoryListContainer;
+    //private LinearLayout mCategoryListContainer;
 
     private TextView mCategoryButtonCourseAndSpeciality;
     private TextView mCategoryButtonLocation;
@@ -104,7 +103,7 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
 
         this.mCategoryButtonCourseAndSpeciality.setSelected(true);
 
-        this.mCategoryListContainer = (LinearLayout) rootView.findViewById(R.id.filter_category_list);
+       // this.mCategoryListContainer = (LinearLayout) rootView.findViewById(R.id.filter_category_list);
 
         this.mFilterTypeAdapter = new FilterTypeAdapter(getActivity(), this.mCurrentFolders);
 

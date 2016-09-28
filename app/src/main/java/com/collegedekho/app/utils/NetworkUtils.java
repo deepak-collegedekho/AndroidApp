@@ -105,7 +105,7 @@ public class NetworkUtils {
                     public void onResponse(String response)
                     {
                         Utils.logApiResponseTime(calendar,tag+" "+url);
-                        mListener.onDataLoaded(tag, response);
+                        mHandleSuccessResponse(tag, response);
                     }
                 },
                 new Response.ErrorListener()
@@ -114,14 +114,13 @@ public class NetworkUtils {
                     public void onErrorResponse(VolleyError volleyError)
                     {
                         Utils.logApiResponseTime(calendar,tag+" "+url);
-                        Crashlytics.logException(volleyError);
                         mHandleErrorResponse(volleyError, tag, url, null, method);
                     }
                 })
         {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                return (mHeaders != null)? mHeaders :NetworkUtils.this.getHeaders();
+                return (mHeaders != null && mHeaders.size() >3)? mHeaders :NetworkUtils.this.getHeaders();
             }
         };
         request.setRetryPolicy(new DefaultRetryPolicy(
@@ -153,7 +152,6 @@ public class NetworkUtils {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         Utils.logApiResponseTime(calendar, tag + " " + url);
-                        Crashlytics.logException(volleyError);
                         mHandleErrorResponse(volleyError, tag, url, null , method);
                     }
                 }) {
@@ -204,8 +202,6 @@ public class NetworkUtils {
                     public void onErrorResponse(VolleyError volleyError)
                     {
                         Utils.logApiResponseTime(calendar, tag + " " + url);
-                        Crashlytics.logException(volleyError);
-
                         mHandleErrorResponse(volleyError, tag, url, params, method);
                     }
                 })
@@ -218,7 +214,7 @@ public class NetworkUtils {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                return (mHeaders != null) ? mHeaders :NetworkUtils.this.getHeaders();
+                return (mHeaders != null && mHeaders.size() >3) ? mHeaders :NetworkUtils.this.getHeaders();
             }
         };
 
@@ -253,7 +249,6 @@ public class NetworkUtils {
                     public void onErrorResponse(VolleyError volleyError)
                     {
                         Utils.logApiResponseTime(calendar,tag+" "+url);
-                        Crashlytics.logException(volleyError);
 
                         String json = null;
                         NetworkResponse response = volleyError.networkResponse;
@@ -265,6 +260,8 @@ public class NetworkUtils {
                         json = trimMessage(json, "detail");
                         int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
                         if (json != null  && amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+
+                            Crashlytics.logException(volleyError);
                                 mListener.onJsonObjectRequestError(tag, Constants.SERVER_FAULT, url, params, method);
                         }else
                         {
@@ -275,7 +272,7 @@ public class NetworkUtils {
         {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError{
-                return (mHeaders != null) ? mHeaders :NetworkUtils.this.getHeaders();
+                return (mHeaders != null && mHeaders.size() >3) ? mHeaders :NetworkUtils.this.getHeaders();
             }
         };
 
@@ -323,7 +320,7 @@ public class NetworkUtils {
         DataOutputStream dos = new DataOutputStream(bos);
         try {
             // file added
-            buildPart(dos, fileData,"ic_"+MainActivity.mProfile.getId()+"_profile.png");
+            buildPart(dos, fileData,"ic_"+System.currentTimeMillis()+"_profile.png");
             // send multipart form data necessary after file data
             dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
             // pass to multipart body
@@ -349,9 +346,7 @@ public class NetworkUtils {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                    //String responseJson = new String(error.networkResponse.data,
-                           // HttpHeaderParser.parseCharset(error.networkResponse.headers));
-                    Toast.makeText(mContext, "Upload failed!  ", Toast.LENGTH_SHORT).show();
+                   mListener.onProfileImageUploadFailed();
 
             }
         });
@@ -478,7 +473,9 @@ public class NetworkUtils {
      * @param method
      */
     private void mHandleErrorResponse(VolleyError volleyError, String tag, String url, Map<String, String> params, int method){
-        //Crashlytics.logException(error);
+
+        // set volly error on crashlytics;
+        Crashlytics.logException(volleyError);
 
         String json = null;
         int responseCode = -1;

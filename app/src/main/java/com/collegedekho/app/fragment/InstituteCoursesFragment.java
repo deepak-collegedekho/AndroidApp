@@ -2,7 +2,6 @@ package com.collegedekho.app.fragment;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -29,14 +28,11 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class InstituteCoursesFragment extends BaseFragment {
-    private static final String ARG_COURSES = "courses";
     private static final String ARG_INSTITUTE = "institute";
-    private static final String ARG_COURSE_COUNT = "course_count";
 
     private ArrayList<ArrayList<InstituteCourse>> mCourses;
     private CoursePagerAdapter mAdapter;
     private int mCourseCount;
-    private static TabLayout mTabLayout;
     private Institute mInstitute;
     private CustomViewPager mPager;
 
@@ -163,7 +159,7 @@ public class InstituteCoursesFragment extends BaseFragment {
                 });
             } else if (courseCount < 1) {
                 (rootView.findViewById(R.id.course_tab_title)).setVisibility(View.VISIBLE);
-                ((TextView) rootView.findViewById(R.id.course_tab_title)).setText("Courses info not available");
+                ((TextView) rootView.findViewById(R.id.course_tab_title)).setText(getString(R.string.courses_info_not_available));
             }
         }
     }
@@ -173,13 +169,6 @@ public class InstituteCoursesFragment extends BaseFragment {
         Log.e("CI-ICF", "updateAdapter :: position is : " + this.mPager.getCurrentItem());
         this.mAdapter.updateAdapter(this.mPager.getCurrentItem());
     }
-
-/*
-    public static int getTabposition()
-    {
-        return mTabLayout.getSelectedTabPosition();
-    }
-*/
 
     @Override
     public void show() {

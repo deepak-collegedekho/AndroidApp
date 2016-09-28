@@ -75,6 +75,7 @@ import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
 import com.appsflyer.DebugLogQueue;
 import com.collegedekho.app.R;
+import com.collegedekho.app.crop.Crop;
 import com.collegedekho.app.database.DataBaseHelper;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.Chapters;
@@ -202,6 +203,8 @@ import io.connecto.android.sdk.Properties;
 import io.connecto.android.sdk.Traits;
 import io.fabric.sdk.android.Fabric;
 
+import static com.collegedekho.app.utils.AnalyticsUtils.*;
+
 /*
 The MIT License (MIT)
 
@@ -277,7 +280,6 @@ public class MainActivity extends AppCompatActivity
     private List<Institute> mInstituteList;
     private List<Chapters> chaptersList;
     private List<PsychometricTestQuestion> psychometricQuestionsList;
-    private List<Institute> mShortlistedInstituteList;
     private int currentInstitute;
     private ProgressDialog progressDialog;
     private AlertDialog mErrorDialog;
@@ -294,11 +296,10 @@ public class MainActivity extends AppCompatActivity
     private List<Articles> mArticlesList;
     private Institute mInstitute;
     private String mLastScreenName = "";
-    private List<Widget> mWidgets;
     private Date mTimeScreenClicked = new Date();
     public boolean fromTabFragment = false;
     private String mGTMContainerId = "www.collegedekho.com";
-    public static Connecto connecto = null;
+    public Connecto connecto = null;
     public DeviceProfile mDeviceProfile;
     public static Profile mProfile;
     static String type = "";
@@ -795,10 +796,7 @@ public class MainActivity extends AppCompatActivity
                 invalidateOptionsMenu();
             }
         });*/
-
-
     }
-
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -831,25 +829,6 @@ public class MainActivity extends AppCompatActivity
         mDrawerLayout.closeDrawer(GravityCompat.START);
         // mDrawerToggle.syncState();
         return true;
-    }
-
-    public View getToolbarLogoIcon(Toolbar toolbar){
-        //check if contentDescription previously was set
-        boolean hadContentDescription = android.text.TextUtils.isEmpty(toolbar.getLogoDescription());
-        String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
-        toolbar.setLogoDescription(contentDescription);
-        ArrayList<View> potentialViews = new ArrayList<View>();
-        //find the view based on it's content description, set programatically or with android:contentDescription
-        toolbar.findViewsWithText(potentialViews,contentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
-        //Nav icon is always instantiated at this point because calling setLogoDescription ensures its existence
-        View logoIcon = null;
-        if(potentialViews.size() > 0){
-            logoIcon = potentialViews.get(0);
-        }
-        //Clear content description if not previously present
-        if(hadContentDescription)
-            toolbar.setLogoDescription(null);
-        return logoIcon;
     }
 
     private void logUser() {
@@ -1446,6 +1425,12 @@ public class MainActivity extends AppCompatActivity
             Profile profile = JSON.std.beanFrom(Profile.class, responseJson);
             if(mProfile != null && profile != null)
                 mProfile.setImage(profile.getImage());
+            String u = JSON.std.asString(mProfile);
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
+
+            if(currentFragment instanceof ProfileFragment ){//||currentFragment instanceof ProfileFragment){
+               ((ProfileFragment) currentFragment).updateProfileImage();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1472,9 +1457,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is mDeviceProfile to load profile fragment
-     * @param profile
-     * @param backStack
+     * This method is used to load user's profile fragment
+     * @param profile user profile object which contains user info
+     * @param backStack fragment will add in back stack or not
      */
     private void mDisplayProfileFragment(Profile profile, boolean backStack){
         if(profile == null)
@@ -1514,9 +1499,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void requestForProfile(HashMap<String, String> params){
-
-        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-        if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED)
+        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED)
             return;
 
         if(params != null && mProfile != null) {
@@ -1564,14 +1547,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is called when mDeviceProfile select exmas while profile building
-     * @param params
+     * This method is called when user select exams while profile building
+     * and send a request to set user's exams
+     * @param params HashMap of user selected exams with yearly_exams as key and value as exam ids
      */
     @Override
     public void onUserExamSelected(HashMap<String, String> params) {
         this.requestForUserProfileUpdate(Constants.TAG_USER_EXAMS_SUBMISSION, params);
     }
 
+    /**
+     * This method is called when user select exams while profile editing
+     * and send a request to update user's exams
+     * @param params HashMap of user selected exams with yearly_exams as key and value as exam ids
+     */
     @Override
     public void onUserExamsEdited(HashMap<String, String> params) {
         this.requestForUserProfileUpdate(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST, params);
@@ -1614,19 +1603,16 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void requestForSpecialization(int streamId, String requestType) {
-        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
             this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_SPECIALIZATION + "#" + requestType, Constants.BASE_URL + "specializations/?stream=" + streamId, null, Request.Method.GET);
-        }else{
-            //  Utils.DisplayToast(getApplicationContext(), "Check Your Internet ");
         }
     }
 
     /**
      * This method is used to request for Degrees list based on
      * level which is selected by the mDeviceProfile while updating his/her profile
-     * @param levelId
-     * @param requestType
+     * @param levelId levelID
+     * @param requestType request Type
      */
     @Override
     public void requestForDegrees(int levelId, String requestType) {
@@ -1649,8 +1635,8 @@ public class MainActivity extends AppCompatActivity
     /**
      *  This method is used to update mDeviceProfile profile info
      *  on Profile page after successfully updating any thing in profile
-     * @param tag
-     * @param responseJson
+     * @param tag tag
+     * @param responseJson responseJson
      */
 
     private void profileSuccessfullyUpdated(String tag, String responseJson) {
@@ -1674,7 +1660,7 @@ public class MainActivity extends AppCompatActivity
                 } else if (TAG[0].equalsIgnoreCase(Constants.TAG_UPDATE_PROFILE_EXAMS)) {
                     ((ProfileFragment) currentFragment).profileUpdatedSuccessfully(3);
                 } else {
-                    ((ProfileFragment) currentFragment).updateUserProfile();;
+                    ((ProfileFragment) currentFragment).updateUserProfile();
                 }
             }else if(currentFragment instanceof ProfileBuildingFragment){
                 ((ProfileBuildingFragment) currentFragment).profileImageUploadedSuccessfully();
@@ -1717,13 +1703,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     /**
      * This method is used to split response json
      * with result , filter and next tags
-     *
-     * @param response
-     * @return
+     * @param response responseJson
+     * @return string
      */
     public String extractResults(String response) {
         try {
@@ -1759,7 +1743,7 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayStreams(String response, boolean addToBackstack) {
         try {
             List<Stream> streams = JSON.std.listOfFrom(Stream.class, extractResults(response));
-            this.mDisplayFragment(StreamFragment.newInstance(new ArrayList(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
+            this.mDisplayFragment(StreamFragment.newInstance(new ArrayList<>(streams), addToBackstack), addToBackstack, Constants.TAG_FRAGMENT_STREAMS);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -1767,7 +1751,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to update institutes list of next page
-     * @param response
+     * @param response responseJson
      */
     private void updateNextInstituteList(String response, int listType) {
         try {
@@ -1796,7 +1780,7 @@ public class MainActivity extends AppCompatActivity
     }
     /**
      * This method is used to update institutes list of next page
-     * @param response
+     * @param response server response to parse qna next list
      */
     private void updateLastInstituteList(String response) {
         try {
@@ -1810,25 +1794,10 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
-    /**
-     * This method is used to update shorlist institutes list of next page
-     * @param response
-     *//*
-    private void updateNextShortListedInstitutes(String response) {
-        try {
-            List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
-            this.mShortlistedInstituteList.addAll(institutes);
 
-          *//*  if (currentFragment instanceof InstituteShortlistFragment) {
-                ((InstituteShortlistFragment) currentFragment).updateList(institutes, next);
-            }*//*
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }*/
     /**
      * This method is used to update news list of next page
-     * @param response
+     * @param response server response to parse news next list
      */
     private void updateNextNewsList(String response) {
         try {
@@ -1849,7 +1818,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to update articles list of next page
-     * @param response
+     * @param response server response to parse article next list
      */
     private void updateNextArticlesList(String response) {
         try {
@@ -1871,7 +1840,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to update qna list of next page
-     * @param response
+     * @param response server response to parse qna next list
      */
     private void updateNextQnaList(String response) {
         ArrayList<QnAQuestions> qnaQuestionsList = parseAndReturnQnAList(response);
@@ -1882,8 +1851,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is used to update qna list of next page
-     * @param response
+     * This method is used to update institute forums list of next page
+     * @param response server response to parse institute forums list
      */
     private void updateNextForumsList(String response) {
         try {
@@ -1930,7 +1899,8 @@ public class MainActivity extends AppCompatActivity
 
                 if (fragment == null) {
                     this.mDisplayFragment(CDRecommendedInstituteFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next,
-                            this.mRecommendedInstituteCount, this.mShortListInstituteCount, this.mFeaturedInstituteCount, this.mUndecidedInstitutesCount,cdRecommendedInstituteType.ordinal()), !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
+                            this.mRecommendedInstituteCount, this.mShortListInstituteCount, this.mFeaturedInstituteCount, this.mUndecidedInstitutesCount,cdRecommendedInstituteType.ordinal()),
+                            !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
                 } else {
                     if (fragment instanceof CDRecommendedInstituteFragment) {
                         if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED) {
@@ -2006,12 +1976,12 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayFragment(WishlistFragment.newInstance(new ArrayList<>(this.mInstituteList), this.mCurrentTitle, next, filterAllowed), !isFromNotification, Constants.TAG_FRAGMENT_WISHLIST_INSTITUTE_LIST);
             }
 
-            if(listType==Constants.WISH_LIST_TYPE){
+            /*if(listType==Constants.WISH_LIST_TYPE){
                 //TODO::
-                /*if(MainActivity.mDeviceProfile.getPartner_shortlist_count()>0) {
+                if(MainActivity.mDeviceProfile.getPartner_shortlist_count()>0) {
                     mDisplayOtpVerificationFragment();
-                }*/
-            }
+                }
+            }*/
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -2032,7 +2002,6 @@ public class MainActivity extends AppCompatActivity
                 this.mFbEnumeration = JSON.std.listOfFrom(MyFutureBuddiesEnumeration.class, this.extractResults(response));
                 ((MyFutureBuddiesEnumerationFragment) currentFragment).refreshChatRoom(new ArrayList<>(this.mFbEnumeration));
             }
-
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -2108,14 +2077,6 @@ public class MainActivity extends AppCompatActivity
         return myFB;
     }
 
-    private void mDisplaySubjectSyllabus(Subjects subject) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentByTag(SyllabusUnitListFragment.class.getSimpleName());
-        if (fragment == null)
-            this.mDisplayFragment(SyllabusUnitListFragment.newInstance(subject.getUnits()), true, SyllabusUnitListFragment.class.getSimpleName());
-        else
-            this.mDisplayFragment(fragment, false, SyllabusUnitListFragment.class.getSimpleName());
-    }
 
     @Override
     public void onInstituteSelected(int position) {
@@ -2150,24 +2111,27 @@ public class MainActivity extends AppCompatActivity
         eventValue.put(Constants.INSTITUTE_ID, String.valueOf(id));
 
         //Events
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SELECTED), eventValue, this);
+        SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SELECTED), eventValue, this);
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if(requestCode == Constants.REQUEST_PICK_IMAGE && resultCode == RESULT_OK ) {
-
-            if (currentFragment instanceof ProfileFragment
-                    ||  currentFragment instanceof ProfileBuildingFragment)
+        if(requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK ) {
+            if (currentFragment instanceof ProfileFragment) {
                 ((ProfileFragmentListener) currentFragment).requestForCropProfileImage(data);
+            }
 
-        }else  if(requestCode == Constants.REQUEST_CROP_IMAGE && resultCode == RESULT_OK){
+        }else  if(requestCode == Crop.REQUEST_CROP){
 
-            if (currentFragment instanceof ProfileFragment
-                    ||  currentFragment instanceof ProfileBuildingFragment)
-                ((ProfileFragmentListener) currentFragment).uploadUserProfileImage();
+            if (currentFragment instanceof ProfileFragment) {
+                if(resultCode == RESULT_OK)
+                    ((ProfileFragmentListener) currentFragment).uploadUserProfileImage(Crop.getOutput(data));
+                else if(resultCode == RESULT_CANCELED)
+                    ((ProfileFragmentListener) currentFragment).deleteTempImageFile();
+
+            }
 
         }else if (requestCode == Constants.RC_QUIT_VIDEO_PLAYER) {
             if (currentFragment instanceof SplashFragment) {
@@ -2200,12 +2164,9 @@ public class MainActivity extends AppCompatActivity
         PostAnonymousLoginFragment fragment = PostAnonymousLoginFragment.newInstance(mProfile.getPhone_no());
         currentFragment = fragment;
         try {
-
             this.currentFragment = fragment;
-
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
             fragmentTransaction.replace(R.id.container, fragment, getResourceString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
             fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
@@ -2217,34 +2178,25 @@ public class MainActivity extends AppCompatActivity
         } finally {
             //Send GA Session
             MainActivity.GAScreenEvent(getResourceString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
-
-            HashMap<String, Object> eventValue = new HashMap<String, Object>();
-
+            HashMap<String, Object> eventValue = new HashMap<>();
             eventValue.put(getResourceString(R.string.SCREEN_NAME), getResourceString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN));
             eventValue.put(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
             eventValue.put(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
-
             this.mTimeScreenClicked = new Date();
-
             this.mLastScreenName = getResourceString(R.string.TAG_FRAGMENT_POST_ANONYMOUS_LOGIN);
-
             //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
+            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
         }
     }
 
     private void mDisplayLoginFragment() {
         LoginFragment fragment = LoginFragment.newInstance();
         try {
-
-            this.currentFragment = fragment;
-
+            currentFragment = fragment;
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
             fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
             fragmentTransaction.replace(R.id.container, fragment, getResourceString(R.string.TAG_FRAGMENT_LOGIN));
-
             fragmentTransaction.commitAllowingStateLoss();
 
         } catch (Exception e) {
@@ -2252,19 +2204,16 @@ public class MainActivity extends AppCompatActivity
         } finally {
             //Send GA Session
             MainActivity.GAScreenEvent(getResourceString(R.string.TAG_FRAGMENT_LOGIN));
-
-            HashMap<String, Object> eventValue = new HashMap<String, Object>();
-
+            HashMap<String, Object> eventValue = new HashMap<>();
             eventValue.put(getResourceString(R.string.SCREEN_NAME), getResourceString(R.string.TAG_FRAGMENT_LOGIN));
             eventValue.put(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
             eventValue.put(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
 
             this.mTimeScreenClicked = new Date();
-
             this.mLastScreenName = getResourceString(R.string.TAG_FRAGMENT_LOGIN);
 
             //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
+            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
         }
     }
 
@@ -2304,9 +2253,7 @@ public class MainActivity extends AppCompatActivity
         } finally {
             //Send GA Session
             MainActivity.GAScreenEvent(tag);
-
-            HashMap<String, Object> eventValue = new HashMap<String, Object>();
-
+            HashMap<String, Object> eventValue = new HashMap<>();
             eventValue.put(getResourceString(R.string.SCREEN_NAME), tag);
             eventValue.put(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
             eventValue.put(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
@@ -2314,7 +2261,7 @@ public class MainActivity extends AppCompatActivity
             this.mTimeScreenClicked = new Date();
 
             //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
+            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
 
             this.mLastScreenName = tag;
         }
@@ -2329,10 +2276,11 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayHomeAsUpEnabled(){
 
         // it will change hamburger icon into a back arrow on toolbar
-        if (this.currentFragment instanceof HomeFragment)
+        if (currentFragment instanceof HomeFragment)
             mDrawerToggle.setDrawerIndicatorEnabled(true);
         else
-           mDrawerToggle.setDrawerIndicatorEnabled(false);
+            mDrawerToggle.setDrawerIndicatorEnabled(false);
+
 
         // set all menu items unchecked when tab fragment is not selected
         if(!(currentFragment instanceof TabFragment)){
@@ -2348,14 +2296,12 @@ public class MainActivity extends AppCompatActivity
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.main_container).getLayoutParams();
         params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
         findViewById(R.id.main_container).setLayoutParams(params);
-
+        if(getSupportActionBar() != null)
         getSupportActionBar().show();
 
         if (findViewById(R.id.app_bar_layout).getVisibility() != View.VISIBLE)
             findViewById(R.id.app_bar_layout).setVisibility(View.VISIBLE);
 
-        /*if(mToolbar.getVisibility() != View.VISIBLE)
-            mToolbar.setVisibility(View.VISIBLE);*/
     }
 
     private void mHideAppBarLayout(){
@@ -2364,22 +2310,18 @@ public class MainActivity extends AppCompatActivity
         params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
         findViewById(R.id.main_container).setLayoutParams(params);
 
+        if(getSupportActionBar() != null)
         getSupportActionBar().hide();
-//        if (findViewById(R.id.app_bar_layout).getVisibility() == View.VISIBLE)
-//            findViewById(R.id.app_bar_layout).setVisibility(View.GONE);
-
-        /*if(mToolbar.getVisibility() != View.VISIBLE)
-            mToolbar.setVisibility(View.VISIBLE);*/
     }
 
     @Override
     public void onDataLoaded(String tag, String response) {
         String extraTag = null;
-        String childIndex = null;
-        String parentIndex = null;
+        String childIndex ;
+        String parentIndex ;
         String like = null;
         String[] tags = tag.split("#");
-        int voteType = 0;
+        int voteType ;
         boolean hideProgressDialog=true;
         switch (tags[0]) {
             case Constants.TAG_SKIP_LOGIN:
@@ -2564,7 +2506,7 @@ public class MainActivity extends AppCompatActivity
                 this.mUpdateAppliedCourses(response);
                 break;
             case Constants.TAG_WISH_LIST_APPLIED_COURSE:
-                Utils.DisplayToastShort(this.mContext, getResourceString(R.string.applied_successfully));
+                Utils.DisplayToastShort(MainActivity.mContext, getResourceString(R.string.applied_successfully));
                 if (tags.length > 1)
                     this.mUpdateAppliedInstituteWishlist(Integer.parseInt(tags[1]));
                 break;
@@ -2604,20 +2546,16 @@ public class MainActivity extends AppCompatActivity
                 this.updateLikeButton(response, extraTag, Integer.parseInt(like));
                 break;
             case Constants.TAG_QUESTION_LIKE_DISLIKE:
-                if (tags.length == 2)
-                    extraTag = tags[1];
                 if (tags.length == 3) {
                     extraTag = tags[1];
                     like = tags[2];
+                    this.updateQuestionLikeButton(Integer.parseInt(extraTag), Integer.parseInt(like));
                 }
-                this.updateQuestionLikeButton(response, extraTag, Integer.parseInt(like));
                 break;
 
             case Constants.ACTION_VOTE_QNA_QUESTION_ENTITY:
                 if (tags.length == 3) {
-                    parentIndex = tags[1];
-                    voteType = Integer.parseInt(tags[2]);
-                    this.mQnAQuestionVoteUpdated(Integer.parseInt(parentIndex), voteType);
+                    this.mQnAQuestionVoteUpdated(Integer.parseInt(tags[1]),  Integer.parseInt(tags[2]));
                 }
                 break;
             case Constants.ACTION_VOTE_QNA_ANSWER_ENTITY:
@@ -2715,33 +2653,15 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
                 this.mDisplayStreamsSelection(response);
                 break;
-            case Constants.TAG_PSYCHOMETRIC_TEXT_COMPLETED:
-                if (tags.length > 2) {
-                    parentIndex = tags[1];
-                    childIndex = tags[2];
-                    this.mOnPsychometricTestCompleted(parentIndex, childIndex, response);
-                }
-                break;
             case Constants.TAG_LOAD_STEP_BY_STEP:
-                /*if (tags.length > 1) {
-                    parentIndex = tags[1];
-                    childIndex = tags[2];
-                    this.mDisplayStepByStepQuestion(response, parentIndex, childIndex);
-                }*/
-                this.mDisplayStepByStepQuestion(response);//, parentIndex, childIndex);
+                this.mDisplayStepByStepQuestion(response);
                 break;
             case Constants.TAG_LOAD_STEP_BY_STEP_FROM_PROFILE_BUILDING:
-                /*if (tags.length > 1) {
-                    parentIndex = tags[1];
-                    childIndex = tags[2];
-                    this.mDisplayStepByStepQuestion(response, parentIndex, childIndex);
-                }*/
-                this.mDisplayStepByStepQuestion(response);//, parentIndex, childIndex);
+                this.mDisplayStepByStepQuestion(response);
                 break;
             case Constants.TAG_SUBMIT_SBS_EXAM:
                 this.mStepByStepDone(response);
                 break;
-
             case Constants.TAG_MY_ALERTS:
                 this.onMyAlertsLoaded(response);
                 break;
@@ -2843,16 +2763,20 @@ public class MainActivity extends AppCompatActivity
                 }
                 hideProgressDialog = false;
                 parentIndex = tags[2];
-                if (parentIndex.equals(Constants.TAG_CD_RECOMMENDED)) {
-                    this.OnCDRecommendedLoadNext();
-                } else if (parentIndex.equals(Constants.TAG_CD_FEATURED)) {
-                    this.OnCDRecommendedLoadMoreBuzzlist();
-                } else if (parentIndex.equals(Constants.TAG_CD_UNDECIDED)) {
-                    if (tags[3] != null && !tags[3].equalsIgnoreCase("null")) {
-                        this.OnCDRecommendedLoadUndecidedInstitutes(tags[3]);
-                    } else {
-                        this.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/?action=3");
-                    }
+                switch (parentIndex) {
+                    case Constants.TAG_CD_RECOMMENDED:
+                        this.OnCDRecommendedLoadNext();
+                        break;
+                    case Constants.TAG_CD_FEATURED:
+                        this.OnCDRecommendedLoadMoreBuzzlist();
+                        break;
+                    case Constants.TAG_CD_UNDECIDED:
+                        if (tags[3] != null && !tags[3].equalsIgnoreCase("null")) {
+                            this.OnCDRecommendedLoadUndecidedInstitutes(tags[3]);
+                        } else {
+                            this.OnCDRecommendedLoadUndecidedInstitutes(Constants.BASE_URL + "personalize/shortlistedinstitutes/?action=3");
+                        }
+                        break;
                 }
             }
         }
@@ -2860,45 +2784,61 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void refreshCountOnShortlist(String tag){
-        if (tag.equals(Constants.TAG_CD_RECOMMENDED)) {
-            mRecommendedInstituteCount--;
-        } else if (tag.equals(Constants.TAG_CD_FEATURED)) {
-            mFeaturedInstituteCount--;
-        } else if (tag.equals(Constants.TAG_CD_UNDECIDED)) {
-            this.mUndecidedInstitutesCount--;
+        switch (tag) {
+            case Constants.TAG_CD_RECOMMENDED:
+                mRecommendedInstituteCount--;
+                break;
+            case Constants.TAG_CD_FEATURED:
+                mFeaturedInstituteCount--;
+                break;
+            case Constants.TAG_CD_UNDECIDED:
+                this.mUndecidedInstitutesCount--;
+                break;
         }
         mShortListInstituteCount++;
     }
 
     private void refreshCountOnNotInterested(String tag){
-        if (tag.equals(Constants.TAG_CD_RECOMMENDED)) {
-            mRecommendedInstituteCount--;
-        } else if (tag.equals(Constants.TAG_CD_FEATURED)) {
-            mFeaturedInstituteCount--;
-        } else if (tag.equals(Constants.TAG_CD_UNDECIDED)) {
-            this.mUndecidedInstitutesCount--;
+        switch (tag) {
+            case Constants.TAG_CD_RECOMMENDED:
+                mRecommendedInstituteCount--;
+                break;
+            case Constants.TAG_CD_FEATURED:
+                mFeaturedInstituteCount--;
+                break;
+            case Constants.TAG_CD_UNDECIDED:
+                this.mUndecidedInstitutesCount--;
+                break;
         }
     }
 
     private void refreshCountOnDecideLater(String tag){
-        if (tag.equals(Constants.TAG_CD_RECOMMENDED)) {
-            mRecommendedInstituteCount--;
-            this.mUndecidedInstitutesCount++;
-        } else if (tag.equals(Constants.TAG_CD_FEATURED)) {
-            mFeaturedInstituteCount--;
-            this.mUndecidedInstitutesCount++;
-        } else if (tag.equals(Constants.TAG_CD_UNDECIDED)) {
+        switch (tag) {
+            case Constants.TAG_CD_RECOMMENDED:
+                mRecommendedInstituteCount--;
+                this.mUndecidedInstitutesCount++;
+                break;
+            case Constants.TAG_CD_FEATURED:
+                mFeaturedInstituteCount--;
+                this.mUndecidedInstitutesCount++;
+                break;
+           /* case Constants.TAG_CD_UNDECIDED:
 
+                break;*/
         }
     }
 
     private void refreshCountOnApplied(String tag){
-        if (tag.equals(Constants.TAG_CD_RECOMMENDED)) {
-            mRecommendedInstituteCount--;
-        } else if (tag.equals(Constants.TAG_CD_FEATURED)) {
-            mFeaturedInstituteCount--;
-        } else if (tag.equals(Constants.TAG_CD_UNDECIDED)) {
-            mUndecidedInstitutesCount--;
+        switch (tag) {
+            case Constants.TAG_CD_RECOMMENDED:
+                mRecommendedInstituteCount--;
+                break;
+            case Constants.TAG_CD_FEATURED:
+                mFeaturedInstituteCount--;
+                break;
+            case Constants.TAG_CD_UNDECIDED:
+                mUndecidedInstitutesCount--;
+                break;
         }
         if(!tag.equals(Constants.TAG_CD_SHORTLIST)) {
             mShortListInstituteCount++;
@@ -2914,9 +2854,9 @@ public class MainActivity extends AppCompatActivity
     public void decreaseFeaturedCount(){
         this.mFeaturedInstituteCount--;
     }
-    public void decreaseShortlistCount(){
+   /* public void decreaseShortlistCount(){
         this.mShortListInstituteCount--;
-    }
+    }*/
 
     public int getmRecommendedInstituteCount(){
         return mRecommendedInstituteCount;
@@ -2945,7 +2885,7 @@ public class MainActivity extends AppCompatActivity
      * or skip option then mDeviceProfile response is parse and mDeviceProfile is created and saved in
      * shared pref . and load mDeviceProfile status screens
      * and resp
-     * @param response
+     * @param response response
      */
     private void mUserCreatedSuccessfully(String response) {
         Map<String, Object> responseMap = null;
@@ -2986,7 +2926,7 @@ public class MainActivity extends AppCompatActivity
             if (!IS_USER_CREATED) {
                 //Events
                 Map<String, Object> eventValue = new HashMap<>();
-                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
+                SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
                 eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
             }
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).apply();
@@ -2994,7 +2934,7 @@ public class MainActivity extends AppCompatActivity
 
             HashMap<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_USER_LOGIN, Constants.TAG_PHONE_NUMBER_LOGIN);
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
+            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
         }
     }
 
@@ -3045,30 +2985,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         //Events
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), eventValue, this);
-    }
-
-    private void mOnPsychometricTestCompleted(String streamId, String streamName, String response) {
-        /*try {
-            DeviceProfile userObj = JSON.std.beanFrom(DeviceProfile.class, response);
-            if (MainActivity.mDeviceProfile != null) {
-                MainActivity.mDeviceProfile.setStream_name(streamName);
-                MainActivity.mDeviceProfile.setStream(streamId);
-                MainActivity.mDeviceProfile.setLevel_name(userObj.getLevel_name());
-                MainActivity.mDeviceProfile.setLevel(userObj.getLevel());
-                MainActivity.mDeviceProfile.setUser_education(userObj.getUser_education());
-                MainActivity.mDeviceProfile.setCollegedekho_recommended_streams(userObj.getCollegedekho_recommended_streams());
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (!isUpdateStreams) {
-            this.mClearBackStack();
-            this.mMakeJsonObjectNetworkCall(Constants.TAG_USER_EXAMS_SUBMISSION, Constants.BASE_URL + "mDeviceProfile-exams/", null, 0);
-        } else {
-            this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_EDITED_EXAMS_LIST, Constants.BASE_URL + "mDeviceProfile-exams/", null, 0);
-        }*/
+        SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), eventValue, this);
     }
 
     private void mUpdateExamDetail(String responseJson, boolean update) {
@@ -3086,7 +3003,7 @@ public class MainActivity extends AppCompatActivity
                 String u = JSON.std.asString(MainActivity.mProfile);
                 this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
             }
-            this.currentFragment.updateExamSummary(examSummary);
+            currentFragment.updateExamSummary(examSummary);
             if(update){
                 if(currentFragment instanceof  TabFragment)
                     ((TabFragment) currentFragment).updateCollegeCountFromVolley(update);
@@ -3096,8 +3013,9 @@ public class MainActivity extends AppCompatActivity
             }
         } catch (IOException e) {
             e.printStackTrace();
+            Log.e(TAG, e.toString());
         } catch (Exception e) {
-
+            Log.e(TAG, e.toString());
         }
     }
 
@@ -3115,9 +3033,9 @@ public class MainActivity extends AppCompatActivity
     /**
      * This method is used to display step by step questions
      *
-     * @param response
+     * @param response server response  to display
      */
-    private void mDisplayStepByStepQuestion(String response){//, String currentLevel, String questionSetCount) {
+    private void mDisplayStepByStepQuestion(String response){
         try {
             //set current level
             int currentLevel = mProfile.getCurrent_level_id();
@@ -3132,9 +3050,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             response = response.substring(13, response.length() - 1);
-
             ArrayList<StepByStepQuestion> stepByStepQuestions = (ArrayList<StepByStepQuestion>) JSON.std.listOfFrom(StepByStepQuestion.class, response);
-
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(StepByStepFragment.class.getSimpleName());
 
             if (fragment == null) {
@@ -3155,7 +3071,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * This method is used to display step by step results
      *
-     * @param response
+     * @param response server response to parse Step by Step result
      */
     private void mStepByStepDone(String response) {
         try {
@@ -3193,7 +3109,7 @@ public class MainActivity extends AppCompatActivity
      * This method is used to display the syllabus
      * with the context of an exam
      *
-     * @param response
+     * @param response responseJson
      */
     private void mDisplayExamSyllabusFragment(String response) {
 
@@ -3214,52 +3130,58 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void updateQuestionLikeButton(String response, String extraTag, int like) {
+    private void updateQuestionLikeButton(int position , int voteType) {
 
         if (this.mQnAQuestions == null) return;
-        QnAQuestions qnaQuestion = this.mQnAQuestions.get(Integer.parseInt(extraTag));
-        if (like == Constants.NEITHER_LIKE_NOR_DISLIKE) {
-            qnaQuestion.setCurrent_user_vote_type(Constants.NEITHER_LIKE_NOR_DISLIKE);
-            qnaQuestion.setUpvotes(qnaQuestion.getUpvotes() - 1);
+        QnAQuestions qnaQuestion = this.mQnAQuestions.get(position);
+        if (voteType == Constants.LIKE_THING) {
+            qnaQuestion.setUpvotes(qnaQuestion.getUpvotes() + 1);
 
             Map<String,Object> eventValue = new HashMap<>();
-            eventValue.put(Constants.TAG_QUESTION_LIKE_DISLIKE, Constants.NEITHER_LIKE_NOR_DISLIKE);
-            eventValue.put(qnaQuestion.getTitle(), Constants.NEITHER_LIKE_NOR_DISLIKE);
+            eventValue.put(Constants.TAG_QUESTION_LIKE_DISLIKE, Constants.LIKE_THING);
+            eventValue.put(qnaQuestion.getTitle(), Constants.LIKE_THING);
             eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
             //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
+            SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
 
-        } else {
-            if (like != Constants.NEITHER_LIKE_NOR_DISLIKE) {
+        } else  if(voteType == Constants.DISLIKE_THING) {
+                qnaQuestion.setUpvotes(qnaQuestion.getDownvotes() - 1);
 
-                qnaQuestion.setCurrent_user_vote_type(like);
-                if (like == Constants.LIKE_THING) {
-                    qnaQuestion.setUpvotes(qnaQuestion.getUpvotes() + 1);
+                Map<String,Object> eventValue = new HashMap<>();
+                eventValue.put(Constants.TAG_QUESTION_LIKE_DISLIKE, Constants.DISLIKE_THING);
+                eventValue.put(qnaQuestion.getTitle(), Constants.DISLIKE_THING);
+                eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
+                //Events
+                SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
+
+        }else{
+            if (qnaQuestion.getCurrent_user_vote_type() == Constants.LIKE_THING) {
+                     qnaQuestion.setUpvotes(qnaQuestion.getUpvotes() - 1);
                     Map<String,Object> eventValue = new HashMap<>();
-                    eventValue.put(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), Constants.LIKE_THING);
-                    eventValue.put(qnaQuestion.getTitle(), Constants.LIKE_THING);
+                    eventValue.put(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), Constants.NOT_INTERESTED_THING);
+                    eventValue.put(qnaQuestion.getTitle(), Constants.NOT_INTERESTED_THING);
                     eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
                     //Events
-                    AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
+                    SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
 
-                } else if (like == Constants.DISLIKE_THING) {
-                    qnaQuestion.setUpvotes(qnaQuestion.getUpvotes() - 1);
+                } else {
 
+                    qnaQuestion.setDownvotes(qnaQuestion.getDownvotes() - 1);
                     Map<String,Object> eventValue = new HashMap<>();
-                    eventValue.put(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_DOWNVOTED), Constants.DISLIKE_THING);
-                    eventValue.put(qnaQuestion.getTitle(), Constants.DISLIKE_THING);
+                    eventValue.put(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_DOWNVOTED), Constants.NOT_INTERESTED_THING);
+                    eventValue.put(qnaQuestion.getTitle(), Constants.NOT_INTERESTED_THING);
                     eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
                     //Events
-                    AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
+                    SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
                 }
-            }
         }
+        qnaQuestion.setCurrent_user_vote_type(voteType);
         if (currentFragment instanceof QnAQuestionsListFragment)
-            currentFragment.updateLikeButtons(Integer.parseInt(extraTag));
+            currentFragment.updateLikeButtons(position);
     }
 
     private void updateLikeButton(String response, String extraTag, int like) {
@@ -3280,7 +3202,7 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, String.valueOf(Constants.NEITHER_LIKE_NOR_DISLIKE));
 
             //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_LIKING_UNBIASED), eventValue, this);
+            SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_LIKING_UNBIASED), eventValue, this);
         } else {
             try {
                 institute.setCurrent_user_vote_type(like);
@@ -3294,7 +3216,7 @@ public class MainActivity extends AppCompatActivity
                     eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, String.valueOf(Constants.LIKE_THING));
 
                     //Events
-                    AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_LIKED), eventValue, this);
+                    SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_LIKED), eventValue, this);
                 } else if (like == Constants.DISLIKE_THING) {
                     Map<String, Object> eventValue = new HashMap<>();
                     eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
@@ -3302,7 +3224,7 @@ public class MainActivity extends AppCompatActivity
                     eventValue.put(Constants.TAG_INSTITUTE_LIKE_DISLIKE, String.valueOf(Constants.DISLIKE_THING));
 
                     //Events
-                    AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_DISLIKED), eventValue, this);
+                    SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_DISLIKED), eventValue, this);
                 }
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
@@ -3319,12 +3241,9 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         Institute institute = this.mInstituteList.get(index);
-        String message = null;
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
         if (response == null) {
             institute.setIs_shortlisted(Constants.SHORTLISTED_NO);
-            message = " removed from your shortlist";
-
             Map<String, Object> eventValue = new HashMap<String, Object>();
             eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
             eventValue.put(Constants.TAG_SHORTLIST_INSTITUTE, Constants.SHORTLISTED_NO);
@@ -3332,20 +3251,18 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
 
             //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED_REMOVED), eventValue, this);
+            SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED_REMOVED), eventValue, this);
         } else {
             try {
                 institute.setIs_shortlisted(Constants.SHORTLISTED_YES);
-                message = " added to your shortlist";
-
-                Map<String, Object> eventValue = new HashMap<String, Object>();
+                Map<String, Object> eventValue = new HashMap<>();
                 eventValue.put(Constants.TAG_RESOURCE_URI, institute.getResource_uri());
                 eventValue.put(Constants.TAG_SHORTLIST_INSTITUTE, Constants.SHORTLISTED_YES);
                 eventValue.put(getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), Constants.SHORTLISTED_YES);
                 eventValue.put(getResourceString(R.string.INSTITUTE_RESOURCE_URI), institute.getResource_uri());
 
                 //Events
-                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), eventValue, this);
+                SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_INSTITUTE_SHORTLISTED), eventValue, this);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -3382,7 +3299,7 @@ public class MainActivity extends AppCompatActivity
             String tempId = news.getSimilar_news();
             if (tempId == null) continue;
             tempId = tempId.replaceAll("L", "");
-            ArrayList<String> similarNewsIds = new ArrayList<String>();
+            ArrayList<String> similarNewsIds = new ArrayList<>();
             try {
 
                 JSONArray strArray = new JSONArray(tempId);
@@ -3417,7 +3334,7 @@ public class MainActivity extends AppCompatActivity
             Articles article = (Articles) articleList.get(i);
             String tempId = article.getSimilar_articles();
             tempId = tempId.replaceAll("L", "");
-            ArrayList<String> similarArticlesIds = new ArrayList<String>();
+            ArrayList<String> similarArticlesIds = new ArrayList<>();
             try {
                 JSONArray strArray = new JSONArray(tempId);
                 for (int j = 0; j < strArray.length(); j++) {
@@ -3524,11 +3441,10 @@ public class MainActivity extends AppCompatActivity
             case "":
                 return null;
             case Constants.TAG_SUBMIT_SBS_EXAM:
-                return "Getting institutes for your prefrences";
+                return "Getting institutes for your preferences";
             default:
                 return "Loading";
         }
-//        return null;
     }
 
     private void mShowQnAQuestions(String response) {
@@ -3549,7 +3465,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to update institute articles
-     * @param response
+     * @param response responseJson
      */
     private void mUpdateInstituteArticle(String response) {
         try {
@@ -3558,7 +3474,7 @@ public class MainActivity extends AppCompatActivity
             this.mParseSimilarArticle(this.mArticlesList);
 
             if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
-                ((InstituteDetailFragment) currentFragment).updateInstituteArticle((ArrayList) this.mArticlesList, next);
+                ((InstituteDetailFragment) currentFragment).updateInstituteArticle((ArrayList<Articles>) this.mArticlesList, next);
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -3566,7 +3482,7 @@ public class MainActivity extends AppCompatActivity
     }
     /**
      * This method is used to update institute news
-     * @param response
+     * @param response responseJson
      */
     private void mUpdateInstituteNews(String response) {
         try {
@@ -3575,7 +3491,7 @@ public class MainActivity extends AppCompatActivity
             this.mParseSimilarNews(this.mNewsList);
 
             if (currentFragment != null && currentFragment instanceof InstituteDetailFragment) {
-                ((InstituteDetailFragment) currentFragment).updateInstituteNews((ArrayList) this.mNewsList, next);
+                ((InstituteDetailFragment) currentFragment).updateInstituteNews((ArrayList<News>) this.mNewsList, next);
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -3634,7 +3550,6 @@ public class MainActivity extends AppCompatActivity
 
     private void mHandleErrorResponse(String tag) {
         String extraTag = null;
-        String extraTag2 = null;
         String[] tags = tag.split("#");
 
         switch (tags[0]) {
@@ -3716,7 +3631,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFilterButtonClicked() {
-        if (this.mFilters != "") {
+        if (!this.mFilters.equals("")) {
             updateFilterList(this.mFilters);
 
             FragmentManager fragmentManager = this.getSupportFragmentManager();
@@ -3746,7 +3661,7 @@ public class MainActivity extends AppCompatActivity
             if(mInstitute != null) {
                 Map<String, Object> eventValue = new HashMap<>();
                 eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_RECO), mInstitute.getResource_uri());
-                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
+                SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
             }
         }
 
@@ -3775,7 +3690,8 @@ public class MainActivity extends AppCompatActivity
 
             this.mMakeNetworkCall(Constants.TAG_NEXT_INSTITUTE, next, params);
 
-            //TODO:: Its Dangerous. Remove common tags for search, sbs and explore institute list in case of next. Each Tag should be made unique as far as possible. And when we are stable we should trim the possible cases to common tag.
+            //TODO:: Its Dangerous. Remove common tags for search, sbs and explore institute list in
+            // TODO ::case of next. Each Tag should be made unique as far as possible. And when we are stable we should trim the possible cases to common tag.
         }
         else if (listType == Constants.WISH_LIST_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_WISHLIST_INSTITUTE, next, null);
@@ -3791,24 +3707,6 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_NEXT_INSTITUTE, next, null);
     }
 
-    @Override
-    public void onQnAQuestionVote(int position, int voteType) {
-
-        QnAQuestions qnaQuestion = this.mQnAQuestions.get(position);
-        if (qnaQuestion.getCurrent_user_vote_type() == Constants.NEITHER_LIKE_NOR_DISLIKE) {
-            //neither liked nor disliked case
-            if (voteType == Constants.LIKE_THING)
-                this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + voteType, qnaQuestion.getResource_uri() + "upvote/", null, Request.Method.POST);
-            else
-                this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + voteType, qnaQuestion.getResource_uri() + "downvote/", null, Request.Method.POST);
-        } else if (qnaQuestion.getCurrent_user_vote_type() != Constants.NEITHER_LIKE_NOR_DISLIKE && voteType != Constants.NEITHER_LIKE_NOR_DISLIKE) {
-            //neither liked nor disliked case
-            if (voteType == Constants.LIKE_THING)
-                this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, qnaQuestion.getResource_uri() + "upvote/", null, Request.Method.POST);
-            else
-                this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + Constants.NEITHER_LIKE_NOR_DISLIKE, qnaQuestion.getResource_uri() + "downvote/", null, Request.Method.POST);
-        }
-    }
 
     public void updateFilterList(String response) {
         mFolderList = new ArrayList<>();
@@ -3824,14 +3722,14 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method returns
-     * @return
+     * @return map
      */
     private Map mGetTheFilters() {
         Map<String, String> map = new HashMap<>();
         SharedPreferences sp = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE);
         String value = sp.getString(Constants.SELECTED_FILTERS, null);
 
-        if (value != null && value != "") {
+        if (value != null && !value.equals("") ){
             //split the string to create key-value pairs
             String[] keyValuePairs = value.replaceAll("\\{", "").replaceAll("\\}", "").split(",");
 
@@ -3932,7 +3830,7 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(getResourceString(R.string.ACTION_NEWS_SELECTED), news.getId());
 
             //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_NEWS), getResourceString(R.string.ACTION_NEWS_SELECTED), eventValue, this);
+            SendAppEvent(getResourceString(R.string.CATEGORY_NEWS), getResourceString(R.string.ACTION_NEWS_SELECTED), eventValue, this);
         }
     }
 
@@ -3970,7 +3868,7 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(getResourceString(R.string.ACTION_ARTICLE_SELECTED), article.getId());
 
             //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_ARTICLE), getResourceString(R.string.ACTION_ARTICLE_SELECTED), eventValue, this);
+            SendAppEvent(getResourceString(R.string.CATEGORY_ARTICLE), getResourceString(R.string.ACTION_ARTICLE_SELECTED), eventValue, this);
         }
 
     }
@@ -4005,12 +3903,12 @@ public class MainActivity extends AppCompatActivity
         //save preferences.
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).apply();
 
-        Map<String, Object> eventValue = new HashMap<String, Object>();
+        Map<String, Object> eventValue = new HashMap<>();
         for (String key : this.mFilterKeywords.keySet()) {
             eventValue.put(Constants.SELECTED_FILTERS, this.mFilterKeywords.get(key));
 
             //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_FILTER_APPLIED), eventValue, this);
+            SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_FILTER_APPLIED), eventValue, this);
         }
     }
 
@@ -4040,6 +3938,16 @@ public class MainActivity extends AppCompatActivity
             this.mNetworkUtils.postMultiPartRequest(Constants.PROFILE_IMAGE_UPLOADING,Constants.BASE_URL+"upload-image/",fileByteArray);
         } else {
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+        }
+    }
+    @Override
+    public void onProfileImageUploadFailed() {
+
+        Utils.DisplayToast(getApplicationContext(), "Upload failed! ");
+        if(currentFragment instanceof  ProfileFragment){
+            ((ProfileFragment) currentFragment).deleteTempImageFile();
+            ((ProfileFragment) currentFragment).updateProfileImage();
+
         }
     }
 
@@ -4108,40 +4016,27 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params, int method) {
-        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(tag);
-            this.mNetworkUtils.networkData(tag, url, params, method);
+            MainActivity.mNetworkUtils.networkData(tag, url, params, method);
         } else {
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
         }
     }
 
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params) {
-        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(tag);
-            this.mNetworkUtils.networkData(tag, url, params);
-        } else {
-            displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
-        }
-    }
-
-    private void mMakePreferenceNetworkCall(String tag, String url, Map<String, String> params) {
-        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
-            this.showProgress(tag);
-            this.mNetworkUtils.putData(tag, url, params);
+            MainActivity.mNetworkUtils.networkData(tag, url, params);
         } else {
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
         }
     }
 
     private void mMakeJsonObjectNetworkCall(String tag, String url, JSONObject params, int method) {
-        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(tag);
-            this.mNetworkUtils.networkDataWithObjectParam(tag, url, params, method);
+            MainActivity.mNetworkUtils.networkDataWithObjectParam(tag, url, params, method);
         } else {
             displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
         }
@@ -4149,7 +4044,6 @@ public class MainActivity extends AppCompatActivity
 
     private void showProgress(String tag) {
         String[] tags = tag.split("#");
-
         String message = MainActivity.GetPersonalizedMessage(tags[0]);
         if (message != null && !(this.currentFragment instanceof SplashFragment))
             showProgressDialog(message);
@@ -4157,29 +4051,69 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onQnAQuestionSelected(QnAQuestions qnaQuestion) {
-        this.mDisplayFragment(new QnAQuestionDetailFragment().newInstance(qnaQuestion), true, getResourceString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
+        this.mDisplayFragment(QnAQuestionDetailFragment.newInstance(qnaQuestion), true, getResourceString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
     }
 
     @Override
-    public void onQnAQuestionVote(String resourceURI, int voteType, int position) {
-        displayMessage(R.string.THANKS_FOR_VOTE);
-        if (voteType == Constants.LIKE_THING) {
-            this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
-        } else if (voteType == Constants.DISLIKE_THING) {
-            this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
+    public void onQnAAnswerVote(int voteType, int answerPosition, int questionPosition) {
+        QnAAnswers qnaAnswer = mQnAQuestions.get(questionPosition).getAnswer_set().get(answerPosition);
+        int userVotType = qnaAnswer.getCurrent_user_vote_type();
+        String resourceURI = qnaAnswer.getUri();
+        if (userVotType != Constants.NOT_INTERESTED_THING) {
+            if (userVotType == Constants.LIKE_THING)
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
+                        resourceURI + "downvote/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
+                        resourceURI + "upvote/", null, Request.Method.POST);
+
         } else {
-            this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI, null, Request.Method.POST);
+            if (voteType == Constants.LIKE_THING)
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
+                        resourceURI + "upvote/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType),
+                        resourceURI + "downvote/", null, Request.Method.POST);
         }
     }
 
     @Override
-    public void onQnAAnswerVote(String resourceURI, int voteType, int answerPosition, int questionPosition) {
-        if (voteType == Constants.LIKE_THING) {
-            this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
-        } else if (voteType == Constants.DISLIKE_THING) {
-            this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
+    public void onQnAQuestionVoteFromDetail(int voteType, int position) {
+        displayMessage(R.string.THANKS_FOR_VOTE);
+        QnAQuestions qnaQuestion = this.mQnAQuestions.get(position);
+        int userVotType = qnaQuestion.getCurrent_user_vote_type();
+        String resourceURI = qnaQuestion.getUri();
+        if (userVotType != Constants.NOT_INTERESTED_THING) {
+            if (userVotType == Constants.LIKE_THING)
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
         } else {
-            this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_ANSWER_ENTITY + "#" + String.valueOf(questionPosition) + "#" + String.valueOf(answerPosition) + "#" + String.valueOf(voteType), resourceURI, null, Request.Method.POST);
+            if (voteType == Constants.LIKE_THING)
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "upvote/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY + "#" + String.valueOf(position) + "#" + String.valueOf(voteType), resourceURI + "downvote/", null, Request.Method.POST);
+        }
+    }
+
+    @Override
+    public void onQnAQuestionVote(int position, int voteType) {
+
+        QnAQuestions qnaQuestion = this.mQnAQuestions.get(position);
+        //neither liked nor disliked case
+        int userVotType = qnaQuestion.getCurrent_user_vote_type();
+        if (userVotType != Constants.NOT_INTERESTED_THING) {
+            if (userVotType == Constants.LIKE_THING)
+                this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + voteType, qnaQuestion.getUri() + "downvote/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + voteType, qnaQuestion.getUri() + "upvote/", null, Request.Method.POST);
+
+        } else {
+            if (voteType == Constants.LIKE_THING)
+                this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + voteType, qnaQuestion.getUri() + "upvote/", null, Request.Method.POST);
+            else
+                this.mMakeNetworkCall(Constants.TAG_QUESTION_LIKE_DISLIKE + "#" + position + "#" + voteType, qnaQuestion.getUri() + "downvote/", null, Request.Method.POST);
+
         }
     }
 
@@ -4195,28 +4129,28 @@ public class MainActivity extends AppCompatActivity
             if (currentFragment instanceof QnAQuestionDetailFragment)
                 ((QnAQuestionDetailFragment) currentFragment).onVotingFeedback(questionIndex, -1, voteType);
 
-            QnAQuestions question = this.mQnAQuestions.get(questionIndex);
-            if(question == null)
+            QnAQuestions qnaQuestion = this.mQnAQuestions.get(questionIndex);
+            if(qnaQuestion == null)
                 return;
 
             Map<String, Object> eventValue = new HashMap<>();
             if (voteType == Constants.LIKE_THING) {
-                eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(question.getResource_uri()));
+                eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(qnaQuestion.getResource_uri()));
                 eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.LIKE_THING);
-                eventValue.put(question.getResource_uri(), Constants.LIKE_THING);
+                eventValue.put(qnaQuestion.getResource_uri(), Constants.LIKE_THING);
                 eventValue.put(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.LIKE_THING);
 
                 //Events
-                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), eventValue, this);
+                SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), eventValue, this);
 
             } else if (voteType == Constants.DISLIKE_THING) {
-                eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(question.getResource_uri()));
+                eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(qnaQuestion.getResource_uri()));
                 eventValue.put(getResourceString(R.string.VOTE_TYPE), Constants.DISLIKE_THING);
-                eventValue.put(question.getResource_uri(), Constants.DISLIKE_THING);
+                eventValue.put(qnaQuestion.getResource_uri(), Constants.DISLIKE_THING);
                 eventValue.put(Constants.ACTION_VOTE_QNA_QUESTION_ENTITY, Constants.DISLIKE_THING);
 
                 //Events
-                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), eventValue, this);
+                SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), eventValue, this);
             }
 
 
@@ -4228,7 +4162,7 @@ public class MainActivity extends AppCompatActivity
     private void mQnAAnswerVoteUpdated(int questionIndex, int answerIndex, int voteType) {
         ((QnAQuestionDetailFragment) currentFragment).onVotingFeedback(questionIndex, answerIndex, voteType);
         try {
-            Map<String, Object> eventValue = new HashMap<String, Object>();
+            Map<String, Object> eventValue = new HashMap<>();
             QnAAnswers answer = this.mQnAQuestions.get(questionIndex).getAnswer_set().get(answerIndex);
 
             if (voteType == Constants.LIKE_THING) {
@@ -4238,7 +4172,7 @@ public class MainActivity extends AppCompatActivity
                 eventValue.put(answer.getResource_uri(), Constants.LIKE_THING);
 
                 //Events
-                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_UPVOTED), eventValue, this);
+                SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_UPVOTED), eventValue, this);
 
             } else if (voteType == Constants.DISLIKE_THING) {
                 eventValue.put(Constants.TAG_RESOURCE_URI, answer.getResource_uri());
@@ -4247,7 +4181,7 @@ public class MainActivity extends AppCompatActivity
                 eventValue.put(answer.getResource_uri(), Constants.DISLIKE_THING);
 
                 //Events
-                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_DOWNVOTED), eventValue, this);
+                SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_ANSWER_DOWNVOTED), eventValue, this);
             }
         } catch (Exception e) {
             Log.e("QnA answer voting", e.getMessage());
@@ -4269,6 +4203,9 @@ public class MainActivity extends AppCompatActivity
             qnaAnswer.setId(ans.getLong("id"));
             qnaAnswer.setQuestion(ans.getString("question"));
             qnaAnswer.setResource_uri(ans.getString("resource_uri"));
+            qnaAnswer.setUri(ans.getString("uri"));
+            qnaAnswer.setUser_image(ans.getString("user_image"));
+            qnaAnswer.setUser_id(ans.getString("user_id"));
             qnaAnswer.setIndex(index);
             qnaAnswer.setQuestionIndex(questionIndex);
 
@@ -4284,7 +4221,7 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(getResourceString(R.string.QNA_ANSWER_RESOURCE_URI), qnaAnswer.getResource_uri());
 
             //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_QNA_ANSWER_SUBMITTED), eventValue, this);
+            SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_QNA_ANSWER_SUBMITTED), eventValue, this);
         }
     }
 
@@ -4292,11 +4229,11 @@ public class MainActivity extends AppCompatActivity
     public void onMyFBSelected(MyFutureBuddiesEnumeration myFutureBuddiesEnumeration, int position, int commentsCount) {
         this.mMakeNetworkCall(Constants.TAG_LOAD_MY_FB + "#" + String.valueOf(position) + "#" + String.valueOf(commentsCount), myFutureBuddiesEnumeration.getResource_uri(), null, Request.Method.GET);
 
-        Map<String, Object> eventValue = new HashMap<String, Object>();
+        Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(Constants.TAG_RESOURCE_URI, myFutureBuddiesEnumeration.getResource_uri());
 
         //Events
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getResourceString(R.string.ACTION_MY_FB_SELECTED), eventValue, this);
+        SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getResourceString(R.string.ACTION_MY_FB_SELECTED), eventValue, this);
     }
 
     @Override
@@ -4346,12 +4283,12 @@ public class MainActivity extends AppCompatActivity
             if (currentFragment instanceof MyFutureBuddiesFragment)
                 ((MyFutureBuddiesFragment) currentFragment).commentAdded(fbComment);
 
-            Map<String, Object> eventValue = new HashMap<String, Object>();
+            Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_RESOURCE_URI, this.mFbEnumeration.get(fbIndex).getResource_uri());
             eventValue.put(getResourceString(R.string.MY_FB_URI), this.mFbEnumeration.get(fbIndex).getResource_uri());
 
             //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getResourceString(R.string.ACTION_MY_FB_COMMENT_SUBMITTED), eventValue, this);
+            SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getResourceString(R.string.ACTION_MY_FB_COMMENT_SUBMITTED), eventValue, this);
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -4374,6 +4311,7 @@ public class MainActivity extends AppCompatActivity
             qnaQuestion.setUpvotes(qns.getInt("upvotes"));
             qnaQuestion.setCurrent_user_vote_type(qns.getInt("current_user_vote_type"));
             qnaQuestion.setResource_uri(qns.getString("resource_uri"));
+            qnaQuestion.setUri(qns.getString("uri"));
             qnaQuestion.setAdded_on(qns.getString("added_on"));
             qnaQuestion.setAnswers_count(qns.getInt("answers_count"));
             //qnaQuestion.setIndex(this.mQnAQuestions.size());
@@ -4414,7 +4352,7 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
             //Events
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_QNA_QUESTION_ASKED), eventValue, this);
+            SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_QNA_QUESTION_ASKED), eventValue, this);
 
             if(this.mQnAQuestions == null)
                 this.mQnAQuestions = new ArrayList<>();
@@ -4457,13 +4395,13 @@ public class MainActivity extends AppCompatActivity
 
                 qnaQuestion.setUser(qns.getString("user"));
                 qnaQuestion.setView_count(qns.getInt("view_count"));
-//                qnaQuestion.setUser(qns.getString("mDeviceProfile"));
                 qnaQuestion.setTitle(qns.getString("title"));
                 qnaQuestion.setDesc(qns.getString("desc"));
                 qnaQuestion.setDownvotes(qns.getInt("downvotes"));
                 qnaQuestion.setUpvotes(qns.getInt("upvotes"));
                 qnaQuestion.setCurrent_user_vote_type(qns.getInt("current_user_vote_type"));
                 qnaQuestion.setResource_uri(qns.getString("resource_uri"));
+                qnaQuestion.setUri(qns.getString("uri"));
                 qnaQuestion.setAdded_on(qns.getString("added_on"));
                 qnaQuestion.setAnswers_count(qns.getInt("answers_count"));
                 qnaQuestion.setIndex(i);
@@ -4484,6 +4422,9 @@ public class MainActivity extends AppCompatActivity
                     qnaAnswer.setId(ans.getLong("id"));
                     qnaAnswer.setQuestion(ans.getString("question"));
                     qnaAnswer.setResource_uri(ans.getString("resource_uri"));
+                    qnaAnswer.setUri(ans.getString("uri"));
+                    qnaAnswer.setUser_image(ans.getString("user_image"));
+                    qnaAnswer.setUser_id(ans.getString("user_id"));
                     qnaAnswer.setIndex(j);
                     qnaAnswer.setQuestionIndex(i);
 
@@ -4607,14 +4548,14 @@ public class MainActivity extends AppCompatActivity
         //Events
         HashMap<String, Object> eventValue = new HashMap<>();
         eventValue.put(Constants.TAG_USER_LOGIN, TAG);
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
+        SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
     }
 
 
     @Override
     public void onSuccesProfileShared(@NonNull TrueProfile trueProfile) {
 
-        HashMap params = new HashMap<>();
+        HashMap<String , String> params = new HashMap<>();
 
         if( trueProfile.zipcode == null)
             trueProfile.zipcode ="";
@@ -4692,9 +4633,8 @@ public class MainActivity extends AppCompatActivity
 
     /**
      *  This method is called when mDeviceProfile's exams are edited
-     * @param responseJson
+     * @param responseJson user profile json
      */
-
     private void onUserExamsEdited(String responseJson) {
         try {
             DataBaseHelper.getInstance(this).deleteAllExamSummary();
@@ -4710,19 +4650,6 @@ public class MainActivity extends AppCompatActivity
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-
-    private void showMyFbMessage(String msg) {
-        if (msg != null && !msg.isEmpty()) {
-            getSupportFragmentManager().popBackStack();
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_MY_FB);
-            if (fragment != null) {
-                ((MyFutureBuddiesFragment) fragment).sendChatRequest(msg);
-            }
-        } else {
-            this.mClearBackStack();
         }
     }
 
@@ -4790,7 +4717,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public ArrayList<Folder> getFilterList() {
-        if (this.mFilters != "") {
+        if (!this.mFilters.equals("")) {
             updateFilterList(this.mFilters);
         }
         return this.mFolderList;
@@ -4895,9 +4822,6 @@ public class MainActivity extends AppCompatActivity
                 params.put("tag_uris[" + (params.size()) + "]",tag);
                 this.mExamTag = tag;
             }
-//            else {
-//                params = this.getAllExamTags();
-//            }
             this.mMakeNetworkCall(requestType, url, params);
             return;
         } else if (requestType.equals(Constants.WIDGET_TEST_CALENDAR)) {
@@ -4960,25 +4884,12 @@ public class MainActivity extends AppCompatActivity
             if(results != null) {
                 List<Stream> streams = JSON.std.listOfFrom(Stream.class, results);
                 mClearBackStack();
-                this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams)), true, Constants.TAG_FRAGMENT_STREAMS);
+                this.mDisplayFragment(PsychometricStreamFragment.newInstance((ArrayList<Stream>)(streams)), true, Constants.TAG_FRAGMENT_STREAMS);
             }
         } catch (Exception e){
             Utils.DisplayToast(getApplicationContext(),"Cannot load psychometric results.");
         }
     }
-
-//    private Map<String,String> getAllExamTags(){
-//        Map<String,String> params = new HashMap<>();
-//        List<ExamDetail> list = mDeviceProfile.getUser_exams();
-//        if(list !=  null && !list.isEmpty()) {
-//            for (ExamDetail ed : list) {
-//                params.put("tag_uris[" + (params.size()) + "]", ed.getExam_tag());
-//                Log.e("EXAM TAG", ed.getExam_tag());
-//            }
-//        }
-//        return params;
-//    }
-
 
     @Override
     public void onPsychometricTestSelected()
@@ -4987,7 +4898,7 @@ public class MainActivity extends AppCompatActivity
         //Events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), PsychometricTestQuestion.class.getSimpleName());
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
+        SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
     private void onPsychometricTestResponse(String response) {
@@ -4995,7 +4906,7 @@ public class MainActivity extends AppCompatActivity
             Map<String, Object> map = JSON.std.mapFrom(response);
             String val = JSON.std.asString(map.get("questions"));
             this.psychometricQuestionsList = JSON.std.listOfFrom(PsychometricTestQuestion.class, val);
-            this.mDisplayFragment(PsychometricTestParentFragment.newInstance(new ArrayList(this.psychometricQuestionsList)), true, PsychometricTestParentFragment.class.toString());
+            this.mDisplayFragment(PsychometricTestParentFragment.newInstance(new ArrayList<>(this.psychometricQuestionsList)), true, PsychometricTestParentFragment.class.toString());
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -5040,21 +4951,16 @@ public class MainActivity extends AppCompatActivity
 
     private void startStepByStep()
     {
-        boolean streamSet;
         String urlPart = "";
         int streamID = MainActivity.mProfile.getCurrent_stream_id();
-
         String startWithQuestionNumber = "one";
-
         if (streamID > 0)
         {
             urlPart = streamID + "/";
-            streamSet = true;
             startWithQuestionNumber = "two";
         }
 
         int currentLevel = mProfile.getCurrent_level_id();
-
         if(currentLevel == ProfileMacro.LEVEL_TWELFTH || currentLevel == ProfileMacro.LEVEL_TENTH) {
             MainActivity.this.mMakeNetworkCall(Constants.TAG_LOAD_STEP_BY_STEP, Constants.BASE_URL + "step-by-step/" + urlPart + "ug-ques-" + startWithQuestionNumber + "/", null);
         }else if(currentLevel == ProfileMacro.LEVEL_POST_GRADUATE || currentLevel == ProfileMacro.LEVEL_UNDER_GRADUATE ){
@@ -5067,7 +4973,6 @@ public class MainActivity extends AppCompatActivity
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    boolean streamSet;
                                     String urlPart = "";
                                     int streamID = MainActivity.mProfile.getCurrent_stream_id();
 
@@ -5076,7 +4981,6 @@ public class MainActivity extends AppCompatActivity
                                     if (streamID > 0)
                                     {
                                         urlPart = streamID + "/";
-                                        streamSet = true;
                                         startWithQuestionNumber = "two";
                                     }
 
@@ -5104,7 +5008,7 @@ public class MainActivity extends AppCompatActivity
         //Events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), StepByStepFragment.class.getSimpleName());
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
+        SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
     @Override
@@ -5114,7 +5018,7 @@ public class MainActivity extends AppCompatActivity
         //Events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), "I_KNOW_WHAT_I_WANT");
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
+        SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
     }
 
     @Override
@@ -5186,16 +5090,16 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to handle response having exams
-     * @param responseJson
+     * @param responseJson server response which contains exams list json
      */
     private void onResponseUserExamsList(String responseJson) {
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
-
             if(currentFragment instanceof ProfileBuildingFragment) {
-                ((ProfileBuildingFragment) currentFragment).updateExamsList((ArrayList<Exam>) mExamList);
 
+                ((ProfileBuildingFragment) currentFragment).updateExamsList((ArrayList<Exam>) mExamList);
             }else{
+               // mHomeTabContainer.setVisibility(View.VISIBLE);
                 if(mExamList.size() <= 0){
                     Utils.DisplayToast(getApplicationContext(),"No Exams Found for your preferences");
                     return;
@@ -5208,13 +5112,14 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
+   @Override
     public void onSubjectSelected(Subjects subject, int position) {
-        this.mDisplaySubjectSyllabus(subject);
-    }
-
-    @Override
-    public void onSubjectCheckboxSelected(Subjects subject, int position) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(SyllabusUnitListFragment.class.getSimpleName());
+        if (fragment == null)
+            this.mDisplayFragment(SyllabusUnitListFragment.newInstance(subject.getUnits()), true, SyllabusUnitListFragment.class.getSimpleName());
+        else
+            this.mDisplayFragment(fragment, false, SyllabusUnitListFragment.class.getSimpleName());
 
     }
 
@@ -5333,7 +5238,7 @@ public class MainActivity extends AppCompatActivity
 
         if(this.mInstitute != null) {
             eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_WISHLIST), this.mInstitute.getResource_uri());
-            AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
+            SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
         }
 //        Log.e("DEBUG_APPLIED",institute.getName());
     }
@@ -5396,7 +5301,7 @@ public class MainActivity extends AppCompatActivity
         eventValue.put(getResourceString(R.string.APPLY_COURSE_ID), String.valueOf(instituteCourse.getId()));
 
         //Events
-        AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, this);
+        SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, this);
 
     }
 
@@ -5406,7 +5311,7 @@ public class MainActivity extends AppCompatActivity
             return;
 
         if (mInstitute != null) {
-            params.put("institute", "" + mInstitute.getId());
+            params.put("institute", String.valueOf(mInstitute.getId()));
         }
 
         String name = mProfile.getName();
@@ -5456,22 +5361,22 @@ public class MainActivity extends AppCompatActivity
                     catch (Exception e) {
                         e.printStackTrace();
                     }
-                    String name = ((TextView) view.findViewById(R.id.apply_name)).getText().toString();
-                    String email = ((TextView) view.findViewById(R.id.apply_email)).getText().toString();
-                    String phone = ((TextView) view.findViewById(R.id.apply_phone)).getText().toString();
-                    if (name == null || name.isEmpty()) {
+                    String name = ((TextView) view.findViewById(R.id.apply_name)).getText().toString().trim();
+                    String email = ((TextView) view.findViewById(R.id.apply_email)).getText().toString().trim();
+                    String phone = ((TextView) view.findViewById(R.id.apply_phone)).getText().toString().trim();
+                    if (name.isEmpty()) {
                         displayMessage(R.string.NAME_EMPTY);
                         return;
                     } else if (!Utils.isValidName(name)) {
                         displayMessage(R.string.NAME_INVALID);
                         return;
-                    }  else if (email == null || email.isEmpty()) {
+                    }  else if (email.isEmpty()) {
                         displayMessage(R.string.EMAIL_EMPTY);
                         return;
                     } else if (!Utils.isValidEmail(email)) {
                         displayMessage(R.string.EMAIL_INVALID);
                         return;
-                    }else if (phone == null || phone.isEmpty()) {
+                    }else if (phone.isEmpty()) {
                         displayMessage(R.string.PHONE_EMPTY);
                         return;
                     } else if (phone.length() <= 9 || phone.length() > 12 || !Utils.isValidPhone(phone)) {
@@ -5568,7 +5473,7 @@ public class MainActivity extends AppCompatActivity
             if(this.mInstitute != null) {
                 Map<String, Object> eventValue = new HashMap<>();
                 eventValue.put(getResourceString(R.string.APPLY_INSTITUTE_FROM_WISHLIST), mInstitute.getResource_uri());
-                AnalyticsUtils.SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
+                SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_COURSE_APPLIED), eventValue, MainActivity.this);
             }
         }
     }
@@ -5599,8 +5504,7 @@ public class MainActivity extends AppCompatActivity
         videosFragment = fragment;
         if (videoList != null && !videoList.isEmpty()) {
             this.videoList = videoList;
-            int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-            if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+            if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
                 mNetworkUtils.simpleGetData(Constants.TAG_UPDATE_VIDEO_TITLE, url);
             } else {
                 displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
@@ -5693,7 +5597,7 @@ public class MainActivity extends AppCompatActivity
                 eventValue.put(getResourceString(R.string.ACTION_OTP_VERIFIED), "Success");
 
                 //Events
-                AnalyticsUtils.SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
+                SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
 
                 if(currentFragment instanceof  OTPVerificationFragment)
                     onBackPressed();
@@ -5703,13 +5607,13 @@ public class MainActivity extends AppCompatActivity
                     eventValue.put(getResourceString(R.string.ACTION_OTP_VERIFIED), "Failed");
 
                     //Events
-                    AnalyticsUtils.SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
+                    SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
 
                     ((OTPVerificationFragment) currentFragment).onInvalidOtp();
                 }
             }
         } catch (Exception e) {
-
+            Log.e(TAG, e.toString());
         }
     }
 
@@ -5736,9 +5640,7 @@ public class MainActivity extends AppCompatActivity
         String oldDate = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getString(getResourceString(R.string.CAN_ASK_OTP_TODAY), null);
         if (oldDate != null && oldDate.equals(today)) {
             return false;
-        }
-        //TODO: Merge if with else
-        else {
+        }else {
             if (!canRequest) {
                 this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.CAN_ASK_OTP_TODAY), today).apply();
             }
@@ -5822,10 +5724,10 @@ public class MainActivity extends AppCompatActivity
 
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(CalendarParentFragment.class.getSimpleName() );
             if(fragment == null)
-                this.mDisplayFragment(CalendarParentFragment.newInstance(new ArrayList(this.chaptersList)), !isFromNotification, CalendarParentFragment.class.getSimpleName());
+                this.mDisplayFragment(CalendarParentFragment.newInstance(new ArrayList<>(this.chaptersList)), !isFromNotification, CalendarParentFragment.class.getSimpleName());
             else {
                 if (currentFragment instanceof CalendarParentFragment)
-                    ((CalendarParentFragment) currentFragment).updateCalander(new ArrayList(this.chaptersList));
+                    ((CalendarParentFragment) currentFragment).updateCalander(new ArrayList<>(this.chaptersList));
 
                 this.mDisplayFragment(fragment, false, CalendarParentFragment.class.getSimpleName());
 
@@ -5983,7 +5885,7 @@ public class MainActivity extends AppCompatActivity
             Map<String, Object> map = JSON.std.mapFrom(response);
             String result = JSON.std.asString(map.get("results"));
             this.myAlertsList = JSON.std.listOfFrom(MyAlertDate.class, result);
-            this.displayAlerts(new ArrayList(this.myAlertsList));
+            this.displayAlerts(new ArrayList<>(this.myAlertsList));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -6112,6 +6014,9 @@ public class MainActivity extends AppCompatActivity
                 qnaAnswer.setId(ans.getLong("id"));
                 qnaAnswer.setQuestion(ans.getString("question"));
                 qnaAnswer.setResource_uri(ans.getString("resource_uri"));
+                qnaAnswer.setUri(ans.getString("uri"));
+                qnaAnswer.setUser_image(ans.getString("user_image"));
+                qnaAnswer.setUser_id(ans.getString("user_id"));
                 qnaAnswer.setIndex(j);
                 qnaAnswer.setQuestionIndex(0);
 
@@ -6126,7 +6031,7 @@ public class MainActivity extends AppCompatActivity
 
             qnaQuestion.setAnswer_set(qnaAnswers);
             qnaQuestion.setTags(tagArrayList);
-            this.mDisplayFragment(new QnAQuestionDetailFragment().newInstance(qnaQuestion), false, getResourceString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
+            this.mDisplayFragment(QnAQuestionDetailFragment.newInstance(qnaQuestion), false, getResourceString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
         } catch (Exception e) {
             e.printStackTrace();
             isFromNotification = false;
@@ -6328,7 +6233,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         switch (requestCode) {
             case Constants.RC_HANDLE_ALL_PERM:
@@ -6525,6 +6430,7 @@ public class MainActivity extends AppCompatActivity
         else {
             mDisplayFragment(WebViewFragment.newInstance(url), !isFromNotification, Constants.ACTION_OPEN_WEB_URL);
         }
+
     }
 
     @Override

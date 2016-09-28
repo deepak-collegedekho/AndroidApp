@@ -15,18 +15,21 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.utils.Utils;
 import com.truecaller.android.sdk.TrueButton;
 
 import java.util.HashMap;
 
 /**
- * Created by sureshsaini on 20/11/15.
+ *Created by ${sureshsaini} on ${20/11/15}.
  */
 public class LoginFragment extends  BaseFragment {
 
@@ -63,31 +66,37 @@ public class LoginFragment extends  BaseFragment {
             rootView.findViewById(R.id.login_or_line_layout).setVisibility(View.GONE);
         }
 
-
         mPhoneNumberET = (EditText) rootView.findViewById(R.id.login_phone_edit_text);
         mOtpET = (EditText) rootView.findViewById(R.id.login_otp_edit_text);
         mPhoneNumberET.addTextChangedListener(mobileNumberWatcher);
         mOtpET.addTextChangedListener(otpWatcher);
 
-        mPhoneNumberET.setOnKeyListener(new View.OnKeyListener(){
+        mPhoneNumberET.setOnEditorActionListener(
+                new TextView.OnEditorActionListener() {
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if(keyCode == event.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    Utils.hideKeyboard(getActivity());
                     mPhoneNumberSubmitted();
+                    return  true;
+                }
                 return false;
             }
-
         });
-
-        mOtpET.setOnKeyListener(new View.OnKeyListener(){
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if(keyCode == event.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)
-                    mRequestForOtpVerification(mOtpET.getText().toString());
-                return false;
-            }
-
-        });
+        mOtpET.setOnEditorActionListener(
+                new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            Utils.hideKeyboard(getActivity());
+                            mRequestForOtpVerification();
+                            return  true;
+                        }
+                        return false;
+                    }
+                }
+        );
 
         rootView.findViewById(R.id.sign_up_skip_layout).setOnClickListener(this);
         (rootView.findViewById(R.id.fb_login)).setOnClickListener(this);
@@ -132,7 +141,7 @@ public class LoginFragment extends  BaseFragment {
 
     @Override
     public void onClick(View view) {
-        if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
@@ -147,7 +156,7 @@ public class LoginFragment extends  BaseFragment {
                 mPhoneNumberSubmitted();
                 break;
             case R.id.login_verify_phone_button:
-                mRequestForOtpVerification(mOtpET.getText().toString());
+                mRequestForOtpVerification();
                 break;
             case R.id.login_resend_otp:
                 mRequestForOtp();
@@ -166,8 +175,8 @@ public class LoginFragment extends  BaseFragment {
         if(mListener == null)
             return false;
         mOtpET.setText("");
-        String phoneNumber = mPhoneNumberET.getText().toString();
-        if (phoneNumber == null || phoneNumber.trim().equals("") ||
+        String phoneNumber = mPhoneNumberET.getText().toString().trim();
+        if (phoneNumber.trim().equals("") ||
                 phoneNumber.trim().length() < 10 || !TextUtils.isDigitsOnly(phoneNumber)) {
             mPhoneNumberET.setError("Enter Valid Mobile Number");
             return false;
@@ -177,8 +186,9 @@ public class LoginFragment extends  BaseFragment {
         return true;
     }
 
-    private void mRequestForOtpVerification(String otp){
-        if (otp != null && !otp.trim().equals("") && otp.trim().length() == 6){
+    private void mRequestForOtpVerification(){
+        String otp = mOtpET.getText().toString().trim();
+        if (!otp.trim().equals("") && otp.trim().length() == 6){
             if (mListener != null) {
                 mListener.onOtpReceived(mPhoneNumberET.getText().toString(), otp);
             }
@@ -199,7 +209,7 @@ public class LoginFragment extends  BaseFragment {
         public void onReceive(Context context, Intent intent) {
             String otp = intent.getStringExtra(Constants.USER_OTP);
             mOtpET.setText(otp);
-            mRequestForOtpVerification(otp);
+            mRequestForOtpVerification();
         }
     };
 

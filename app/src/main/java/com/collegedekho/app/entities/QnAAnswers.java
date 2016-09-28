@@ -1,11 +1,7 @@
 package com.collegedekho.app.entities;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by harshvardhan on 12/08/15.
- */
 public class QnAAnswers implements Parcelable {
     public static final Creator<QnAAnswers> CREATOR = new Creator<QnAAnswers>() {
         @Override
@@ -19,18 +15,19 @@ public class QnAAnswers implements Parcelable {
         }
     };
 
-    public long id;
-    public String resource_uri;
-    public String question;
-    public String answer_text;
-    public int status;
-    //public boolean is_spam;
-    public int upvotes;
-    public int current_user_vote_type;
-    public int downvotes;
-    //public boolean best_answer;
-    public String added_on;
-    public String user;
+    private long id;
+    private String resource_uri;
+    private String uri;
+    private String question;
+    private String answer_text;
+    private int status;
+    private int upvotes;
+    private int current_user_vote_type;
+    private int downvotes;
+    private String added_on;
+    private String user;
+    private String user_id;
+    private String user_image;
     private int index;
     private int questionIndex;
 
@@ -40,15 +37,16 @@ public class QnAAnswers implements Parcelable {
     public QnAAnswers(Parcel source) {
         id = source.readLong();
         resource_uri = source.readString();
+        uri = source.readString();
         question = source.readString();
         answer_text = source.readString();
         status = source.readInt();
-        //is_spam = source.readString() == "true";
         upvotes = source.readInt();
         downvotes = source.readInt();
-        //best_answer = source.readString() == "true";
         added_on = source.readString();
         user = source.readString();
+        user_id = source.readString();
+        user_image = source.readString();
     }
 
     @Override
@@ -60,16 +58,17 @@ public class QnAAnswers implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(resource_uri);
+        dest.writeString(uri);
         dest.writeString(question);
         dest.writeString(answer_text);
         dest.writeInt(status);
-        //dest.writeInt(is_spam ? 1 : 0);
         dest.writeInt(upvotes);
         dest.writeInt(current_user_vote_type);
         dest.writeInt(downvotes);
-        //dest.writeInt(best_answer ? 1 : 0);
         dest.writeString(added_on);
         dest.writeString(user);
+        dest.writeString(user_id);
+        dest.writeString(user_image);
         dest.writeInt(index);
         dest.writeInt(questionIndex);
     }
@@ -80,6 +79,14 @@ public class QnAAnswers implements Parcelable {
 
     public String getResource_uri() {
         return resource_uri;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     public String getQuestion() {
@@ -169,5 +176,21 @@ public class QnAAnswers implements Parcelable {
 
     public void setCurrent_user_vote_type(int current_user_vote_type) {
         this.current_user_vote_type = current_user_vote_type;
+    }
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+    public String getUser_image() {
+        return user_image;
+    }
+
+    public void setUser_image(String user_image) {
+        this.user_image = user_image;
     }
 }

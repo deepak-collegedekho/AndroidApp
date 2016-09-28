@@ -93,7 +93,7 @@ public class NewsFragment extends BaseFragment  {
             layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
             rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
             int padd = Utils.getPadding(getContext(), 60);
-            progressBarLL.setGravity(Gravity.RIGHT);
+            progressBarLL.setGravity(Gravity.END);
             progressBarLL.setPadding(0, 0, 0, padd);
         }
         else {
@@ -279,8 +279,8 @@ public class NewsFragment extends BaseFragment  {
 
     /**
      * This method is used to display detail of News
-     * @param view
-     * @param news
+     * @param view view
+     * @param news news
      */
     private void mUpdateNewsDetail(View view, News news)
     {

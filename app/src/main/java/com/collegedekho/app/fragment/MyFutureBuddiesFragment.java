@@ -321,16 +321,18 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         //Set the schedule function and rate
         this.mMyFbRefreshTimer.scheduleAtFixedRate(
                 new TimerTask() {
-                                                       @Override
-                                                       public void run() {
-                                                           //Called each time when 1000 milliseconds (1 second) (the period parameter)
-                                                           //update the comment list here after checking the internet connection
-                                                           if (Constants.IS_CONNECTED_TO_INTERNET)
-                                                               mMainActivity.mNetworkUtils.networkData(Constants.TAG_REFRESH_MY_FB + "#" + String.valueOf(mMyFutureBuddies.getIndex()) + "#" + String.valueOf(MyFutureBuddiesFragment.this.mInitialCount)  /*String.valueOf(mMyFBCommentsSet.size())*/, mMyFutureBuddies.getResource_uri(), null, Request.Method.GET);
-                                                           //else
-                                                           //Toast.makeText(mMainActivity, "Please connect to internet to receive messages..", Toast.LENGTH_SHORT).show();
-                                                       }
-                                                   },
+                    @Override
+                    public void run() {
+                        //Called each time when 1000 milliseconds (1 second) (the period parameter)
+                        //update the comment list here after checking the internet connection
+                        if (Constants.IS_CONNECTED_TO_INTERNET)
+                            mMainActivity.mNetworkUtils.networkData(Constants.TAG_REFRESH_MY_FB + "#"
+                                    + String.valueOf(mMyFutureBuddies.getIndex()) + "#" + String.valueOf(MyFutureBuddiesFragment.this.mInitialCount)
+                                    /*String.valueOf(mMyFBCommentsSet.size())*/, mMyFutureBuddies.getResource_uri(), null, Request.Method.GET);
+                        //else
+                        //Toast.makeText(mMainActivity, "Please connect to internet to receive messages..", Toast.LENGTH_SHORT).show();
+                    }
+                },
                 //Set how long before to start calling the TimerTask (in milliseconds)
                 0,
                 //Set the amount of time between each execution (in milliseconds)
