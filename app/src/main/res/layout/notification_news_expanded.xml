@@ -10,7 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:src="@drawable/placeholder"
-        android:scaleType="centerCrop" />
+        android:scaleType="fitCenter" />
     <ImageView
         android:background="@drawable/author_time_bg"
         android:visibility="visible"

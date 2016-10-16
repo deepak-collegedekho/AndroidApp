@@ -103,7 +103,6 @@ import com.collegedekho.app.entities.StepByStepResult;
 import com.collegedekho.app.entities.Stream;
 import com.collegedekho.app.entities.Subjects;
 import com.collegedekho.app.entities.VideoEntry;
-import com.collegedekho.app.entities.Widget;
 import com.collegedekho.app.entities.YoutubeVideoDetails;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
@@ -151,8 +150,6 @@ import com.collegedekho.app.receiver.OTPReceiver;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.AnalyticsUtils;
-import com.collegedekho.app.utils.FirebaseUtils;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
@@ -166,8 +163,6 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -349,6 +344,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.mContext = this;
 
         this.IS_HOME_LOADED = this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getBoolean(getResourceString(R.string.USER_HOME_LOADED), false);
 
@@ -361,7 +357,6 @@ public class MainActivity extends AppCompatActivity
             reStartApplication();
         }
 
-        this.mContext = this;
 
         Intent intent =  this.getIntent();
         String action = intent.getAction();
@@ -2955,12 +2950,28 @@ public class MainActivity extends AppCompatActivity
                 SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
                 eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
             }
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_CREATED), true).apply();
+
+            SharedPreferences sharedPreferences = this.getSharedPreferences("sharedprefs", MODE_PRIVATE);
+
+            sharedPreferences.edit().putBoolean(getResourceString(R.string.USER_CREATED), true).apply();
+
+            String token = sharedPreferences.getString("fcmToken", "");
+
             IS_USER_CREATED = true;
 
             HashMap<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_USER_LOGIN, Constants.TAG_PHONE_NUMBER_LOGIN);
             SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
+
+            String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+            HashMap<String, String> params = new HashMap<>();
+
+            params.put("device_id", deviceId);
+            params.put("registration_id", token);
+            params.put("app_type", String.valueOf(Constants.SOURCE_COLLEGE_DEKHO_APP));
+
+            this.mMakeNetworkCall(Constants.TAG_FCM_TOKEN_SYNC, Constants.BASE_URL+ "register-device/", params, Request.Method.POST);
         }
     }
 
@@ -3026,7 +3037,7 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 String u = JSON.std.asString(MainActivity.mProfile);
-                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).commit();
+                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
             }
             currentFragment.updateExamSummary(examSummary);
             if(update){
@@ -3151,9 +3162,7 @@ public class MainActivity extends AppCompatActivity
             Log.v(TAG, e.getMessage());
             e.printStackTrace();
         }
-
     }
-
 
     private void updateQuestionLikeButton(int position , int voteType) {
 

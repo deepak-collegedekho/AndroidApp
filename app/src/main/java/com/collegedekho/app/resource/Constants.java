@@ -67,8 +67,8 @@ public class Constants
     public static final String REFRESH_CHATROOM = "refresh_chatroom";
     public static final String TAG_LOAD_QNA_QUESTIONS = "qna";
     //public static final String IP = "http://10.0.3.2";
-    //public static final String IP = "http://www.launch.collegedekho.com";
-    public static final String IP = "https://www.collegedekho.com";
+    public static final String IP = "http://www.launch.collegedekho.com";
+    //public static final String IP = "https://www.collegedekho.com";
     //public static final String IP = "http://192.168.8.101";
     //public static final String IP = "http://192.168.56.1";
     //public static final String BASE_URL = IP + ":8000/api/1/";
@@ -133,6 +133,8 @@ public class Constants
     public static final String TAG_REQUEST_FOR_DEGREES = "request_for_degrees";
     public static final String TAG_REQUEST_FOR_EXAMS = "request_for_exams";
     public static final String TAG_UPDATE_INSTITUTES = "update_institutes";
+    public static final String TAG_FCM_TOKEN_SYNC = "fcm_token_sync";
+
     public static final String TAG_FRAGMENT_FILTER_LIST = "fragment_filter_list";
     public static final String TAG_FRAGMENT_QNA_QUESTION_LIST = "fragment_qna_questions_list";
     public static final String TAG_FRAGMENT_NEWS_LIST = "fragment_news_list";
@@ -305,4 +307,10 @@ public class Constants
     public static final int TYPE_HOLD_AND_RELEASE = 3;
     public static final int TYPE_EXAMPLE = 4;
 
+    public static final int CODE_FAILED = -1;
+    public static final int CODE_SUCCESS = 0;
+
+    public static final int SOURCE_COLLEGE_DEKHO_APP = 1;
+    public static final int SOURCE_COLLEGE_APP_SDK = 2;
+    public static final int SOURCE_EXAM_APP_SDK = 3;
 }

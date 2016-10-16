@@ -2,7 +2,6 @@
 <RelativeLayout
     android:gravity="center_vertical"
     android:layout_gravity="left"
-    android:id="@id/notif_layout"
     android:background="#fff"
     android:layout_width="fill_parent"
     android:layout_height="64dp"

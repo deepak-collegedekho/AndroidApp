@@ -31,11 +31,19 @@ import com.crashlytics.android.Crashlytics;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,11 +62,18 @@ public class NetworkUtils {
     private String mtoken;
     private static Context mContext;
     private HashMap<String, String> mHeaders;
+    private HttpURLConnection con;
+    private static String response = null;
 
     public NetworkUtils(Context context, DataLoadListener listener) {
         mQueue = MySingleton.getInstance(context.getApplicationContext()).getRequestQueue();
         mListener = listener;
         mContext = context;
+    }
+
+    public NetworkUtils(String mCDToken)
+    {
+        this.mtoken = mCDToken;
     }
 
     public static int getConnectivityStatus()
@@ -525,5 +540,77 @@ public class NetworkUtils {
         }
     }
 
+    public String postData(String url, String data){
+        try {
+            URL u = new URL(url);
+            //Crashlytics.setString("last_url", url);
+            con = (HttpURLConnection) u.openConnection();
+            //    con.setConnectTimeout(30000);
+            //    con.setReadTimeout(30000);
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Accept", "application/json");
+            con.setRequestProperty("Authorization", "Token " + mtoken);
+            if (Thread.interrupted())
+                return null;
+            try {
+                con.setRequestMethod("POST");
+                con.setDoOutput(true);
+                con.setDoInput(true);
+                con.setUseCaches(false);
+                OutputStream out = new BufferedOutputStream(con.getOutputStream());
+                writeStream(out, data);
+                out.flush();
+                InputStream in = new BufferedInputStream(con.getInputStream());
+                response = readStream(in);
+            } catch (IOException e1) {
+                InputStream in = new BufferedInputStream(con.getErrorStream());
+                response = readStream(in);
+                switch (con.getResponseCode()) {
+                    case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                        response = "ERROR 500: Server Error";
+                        break;
+                    case HttpURLConnection.HTTP_NOT_FOUND:
+                        response = "ERROR 404: Link does not Exist";
+                        break;
+                    case HttpURLConnection.HTTP_BAD_REQUEST:
+                        response = "ERROR::" + response;
+                        break;
+                }
+            } finally {
+                con.disconnect();
+            }
+
+        } catch (UnsupportedEncodingException e) {
+            //Utils.logException(TAG,e);
+//            Utils.sendException(mTracker, TAG, "UnsupportedEncodingException", url + ":" + e.getMessage());
+            return "ERROR";
+        } catch (IOException e) {
+            //Utils.logException(TAG,e);
+//            Utils.sendException(mTracker, TAG, "IOException", url + ":" + e.getMessage());
+            return "ERROR";
+        } catch (Exception e) {
+            //Utils.logException(TAG,e);
+//            Utils.sendException(mTracker, TAG, "Exception", url + ":" + e.getMessage());
+            return "ERROR";
+        }
+        return response;
+    }
+
+    public void writeStream(OutputStream out, String data) throws IOException {
+        BufferedWriter printWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+        printWriter.write(data);
+        printWriter.flush();
+    }
+
+    public String readStream(InputStream in) throws IOException {
+        String response = "";
+        byte[] buffer = new byte[8192];
+        int read = in.read(buffer);
+        while (read != -1 && !Thread.interrupted()) {
+            response += new String(buffer, 0, read);
+            read = in.read(buffer);
+        }
+        return response;
+    }
 
 }

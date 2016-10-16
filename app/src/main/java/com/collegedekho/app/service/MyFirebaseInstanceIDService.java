@@ -16,10 +16,17 @@
 
 package com.collegedekho.app.service;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.provider.Settings;
 import android.util.Log;
 
+import com.collegedekho.app.entities.Profile;
+import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+
+import java.io.IOException;
 
 
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
@@ -54,7 +61,39 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
-        // TODO: Implement this method to send token to your app server.
         Log.d(TAG, "Firebase token: " + token);
+        Context appContext = getApplicationContext();
+
+        if (appContext != null)
+        {
+            SharedPreferences sharedPreferences = this.getSharedPreferences("sharedprefs", MODE_PRIVATE);
+
+            if (sharedPreferences != null)
+            {
+                sharedPreferences.edit().putString("fcmToken", token).apply();
+
+                try {
+                    String userJsonString = sharedPreferences.getString("user_id", null);
+
+                    if (userJsonString != null && !userJsonString.isEmpty())
+                    {
+                        Profile profile = JSON.std.beanFrom(Profile.class, userJsonString);
+
+                        if (profile != null && !profile.getId().isEmpty())
+                        {
+                            String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+                            if (deviceId != null && !deviceId.isEmpty())
+                            {
+                                DeviceFcmRegistrationTask applyTask = new DeviceFcmRegistrationTask(token, profile.getToken(), deviceId);
+                                applyTask.execute();
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
