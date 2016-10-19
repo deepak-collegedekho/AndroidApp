@@ -38,12 +38,6 @@
     <string name="videolist_activity">Videos</string>
     <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="videos_title">Videos</string>
-    <string name="qna_title">QnA</string>
-    <string name="news_title">News</string>
-    <string name="article_title">Articles</string>
-
     <string name="ok">OK</string>
     <string name="cancel">CANCEL</string>
     <string name="skip">SKIP</string>
@@ -142,6 +136,15 @@
     <string name="WIDGET_ARTICES">articles</string>
     <string name="WIDGET_FORUMS">forums</string>
     <string name="TAG_LOAD_QNA_QUESTIONS">qna</string>
+
+    <string name="videos_title">Videos</string>
+    <string name="qna_title">QnA</string>
+    <string name="news_title">News</string>
+    <string name="article_title">Articles</string>
+    <string name="syllabus_title">Syllabus</string>
+    <string name="test_calendar_title">Test Calendar</string>
+    <string name="important_dates">Important Dates</string>
+
 
     <!--<string name="IP">http://10.0.3.2</string>-->
     <!--<string name="IP">http://www.launch.collegedekho.com</string>-->

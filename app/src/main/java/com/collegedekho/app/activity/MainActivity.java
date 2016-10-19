@@ -853,6 +853,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(sendIntent);
         }
         if(position != -1) {
+            mClearBackStackWithoutAnimation();
             mUpdateTabMenuItem(position);
             onTabMenuSelected(position);
         }
@@ -981,7 +982,6 @@ public class MainActivity extends AppCompatActivity
     private void mHandleDeepLinking(String uri) {
         String[] uriArray = uri.split("/");
         String resourceURI = "";
-
         if (uriArray.length > 3)
         {
             MainActivity.type = uriArray[3];
@@ -989,12 +989,10 @@ public class MainActivity extends AppCompatActivity
                 if (!uriArray[i].isEmpty())
                     resourceURI += uriArray[i] + "/";
             }
-
             MainActivity.resource_uri = Constants.BASE_URL + resourceURI;
         }
         else
             MainActivity.type = "";
-
         this.mHandleNotifications(true);
     }
 
@@ -4700,6 +4698,25 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
+     * This method is used to clear back stack of FragmentManager
+     * It will remove all fragments present in stack. and now stack
+     * will be empty
+     */
+    private  void mClearBackStackWithoutAnimation() {
+        try {
+            Constants.DISABLE_FRAGMENT_ANIMATION = true;
+            int count = getSupportFragmentManager().getBackStackEntryCount()-1;
+            for (int i = 0; i < count; i++)
+                getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            Constants.DISABLE_FRAGMENT_ANIMATION = false;
+        }catch (Exception error)  {
+            Log.e(TAG, error.getMessage());
+        }
+
+
+    }
+
+    /**
      * This method is called when user skip
      *  registration or facebook login
      */
@@ -6081,7 +6098,7 @@ public class MainActivity extends AppCompatActivity
             this.mNewsList = JSON.std.listOfFrom(News.class, "[" + response + "]");
             this.mParseSimilarNews(this.mNewsList);
             if (this.mNewsList != null && !this.mNewsList.isEmpty()) {
-                this.mDisplayFragment(NewsDetailFragment.newInstance(this.mNewsList.get(0), new ArrayList<>(this.mNewsList)), false, Constants.PNS_NEWS);
+                this.mDisplayFragment(NewsDetailFragment.newInstance(this.mNewsList.get(0), new ArrayList<>(this.mNewsList)), false, Constants.TAG_FRAGMENT_NEWS_DETAIL);
             } else {
                 isFromNotification = false;
                 mLoadUserStatusScreen();

@@ -34,17 +34,15 @@
             android:gravity="center"
             >
 
-            <TextView
+            <Button
                 android:id="@+id/question_ask_button"
-                style="@style/AppTheme.OrangeButton"
-                android:background="@color/primary_orange"
+                style="@style/MaterialButton"
+                android:textAllCaps="false"
                 android:layout_width="match_parent"
+                android:layout_height="60dp"
                 android:layout_alignParentBottom="true"
-                android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/m9dp"
-                android:paddingTop="@dimen/m9dp"
                 android:textSize="21sp"
-                android:foregroundGravity="center"
+                android:textColor="@color/white"
                 android:text="Ask a Question"
                 android:visibility="gone"
                 />

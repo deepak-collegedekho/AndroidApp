@@ -5,6 +5,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -118,4 +119,16 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         void onFilterApplied();
         void onInstituteLikedDisliked(int position, int liked);
     }
+
+
+    @Override
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        if (Constants.DISABLE_FRAGMENT_ANIMATION) {
+            Animation a = new Animation() {};
+            a.setDuration(0);
+            return a;
+        }
+        return super.onCreateAnimation(transit, enter, nextAnim);
+    }
+
 }

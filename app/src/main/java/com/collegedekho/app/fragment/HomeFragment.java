@@ -21,14 +21,13 @@ import com.collegedekho.app.widget.CircularProgressBar;
 
 
 /**
- * Created by {sureshsaini} on {27/11/15}.
+ * Created by {Suresh} on {#27/11/15}.
  */
 public class HomeFragment extends BaseFragment {
 
-    private final String TAG = "Home Fragment";
+    private final static String TAG = "Home Fragment";
     private OnTabSelectListener mListener;
     private View mRootView;
-
 
     public HomeFragment() {
         // Required empty public constructor
@@ -80,7 +79,6 @@ public class HomeFragment extends BaseFragment {
             mRootView.findViewById(R.id.btn_home_psychometric_report).setVisibility(View.GONE);
         }
 
-
         mRootView.findViewById(R.id.profile_image_edit_button).setOnClickListener(this);
         mRootView.findViewById(R.id.btn_home_psychometric_test).setOnClickListener(this);
         mRootView.findViewById(R.id.btn_home_psychometric_report).setOnClickListener(this);
@@ -88,7 +86,6 @@ public class HomeFragment extends BaseFragment {
         mRootView.findViewById(R.id.profile_image).setOnClickListener(this);
         mRootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
         mRootView.findViewById(R.id.recommended_tute_frame).setOnClickListener(this);
-
         return mRootView;
     }
 
@@ -124,14 +121,11 @@ public class HomeFragment extends BaseFragment {
             }
             mainActivity.currentFragment = this;
             mainActivity.mUpdateTabMenuItem(-1);
+            mainActivity.speakMessageForAccessibility("Welcome To your Dashboard.");
         }
         // update user info
         updateUserInfo();
-        mainActivity.speakMessageForAccessibility("Welcome To your Dashboard.");
     }
-
-
-
 
     public void updateUserInfo(){
 

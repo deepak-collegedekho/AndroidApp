@@ -30,8 +30,10 @@ import com.collegedekho.app.widget.CircularProgressBar;
 
 import java.util.ArrayList;
 
+
+
 /**
- * Created by sureshsaini on 6/12/15.
+ * Created by {sureshsaini} on {6/12/15}.
  */
 public class TabFragment extends  BaseFragment{
     private final String TAG ="Tab Fragment";
@@ -54,10 +56,10 @@ public class TabFragment extends  BaseFragment{
     private int examId;
     private View mExamsTabLayout;
 
-    TextView mRecommendedCountTV;
-    TextView mTrendingCountTV;
-    TextView mShortlistCountTV;
-    TextView mExploreCountTV;
+    private TextView mRecommendedCountTV;
+    private TextView mTrendingCountTV;
+    private TextView mShortlistCountTV;
+    private TextView mExploreCountTV;
 
     public static TabFragment newInstance(int tabPosoition,ArrayList<ProfileExam> examList) {
         TabFragment fragment = new TabFragment();
@@ -94,9 +96,9 @@ public class TabFragment extends  BaseFragment{
         mPagerHeader            =   (PagerTabStrip) rootView.findViewById(R.id.exam_pager_header);
         mExamTabPager           =   (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
         mExamsTabLayout         =   rootView.findViewById(R.id.exams_tab_layout);
-        TextView mProfileName   =   (TextView) rootView.findViewById(R.id.user_name);
-        TextView mProfileNumber =   (TextView) rootView.findViewById(R.id.user_phone);
         CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
+        mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
+        mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
         IS_COLLEGE_TUTE_COMPLETED = sharedPreferences.getBoolean(getString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
@@ -129,7 +131,7 @@ public class TabFragment extends  BaseFragment{
                     } else {
                         v.setVisibility(View.GONE);
                         IS_COLLEGE_TUTE_COMPLETED = true;
-                        getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
+                        getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
                         View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                         bottomMenu.animate().translationY(0);
                         bottomMenu.setVisibility(View.VISIBLE);
@@ -147,45 +149,19 @@ public class TabFragment extends  BaseFragment{
             }
         });
 
-        mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
-        mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
 
        if(MainActivity.mProfile != null) {
 
-            String name = MainActivity.mProfile.getName();
-            if (name == null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
-                mProfileName.setText("Name : Anonymous DeviceProfile");
-                mProfileName.setVisibility(View.VISIBLE);
-            } else {
-                String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
-                mProfileName.setText("Name : "+userName);
-                mProfileName.setVisibility(View.VISIBLE);
-            }
-
-            String phone = MainActivity.mProfile.getPhone_no();
-            if (phone == null || phone.isEmpty() || phone == "null") {
-                mProfileNumber.setText("Phone : Not Set");
-                mProfileNumber.setVisibility(View.VISIBLE);
-            } else {
-                mProfileNumber.setText("Phone : " + phone);
-                mProfileNumber.setVisibility(View.VISIBLE);
-            }
-
+           updateUserProfile(rootView, MainActivity.mProfile);
             String image = MainActivity.mProfile.getImage();
             if (image != null && ! image.isEmpty()) {
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
                 mProfileImage.setVisibility(View.VISIBLE);
             }
-            CircularProgressBar profileCompleted =  (CircularProgressBar) rootView.findViewById(R.id.user_profile_progress);
-            profileCompleted.setProgress(0);
-            profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
-        }
-
-        if(mExamDetailList == null || mExamDetailList.isEmpty()){
-            if(MainActivity.mProfile != null)
-                mExamDetailList = MainActivity.mProfile.getYearly_exams();
-        }
-
+           if(mExamDetailList == null || mExamDetailList.isEmpty()){
+               mExamDetailList = MainActivity.mProfile.getYearly_exams();
+           }
+       }
         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
             this.mExamTabPager.setVisibility(View.VISIBLE);
             this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
@@ -200,7 +176,7 @@ public class TabFragment extends  BaseFragment{
 
                 @Override
                 public void onPageSelected(int position) {
-                    TabFragment.this.EXAM_TAB_POSITION = position;
+                    TabFragment.EXAM_TAB_POSITION = position;
                     TabFragment.this.mExamTabSelected(position);
 
                 }
@@ -219,7 +195,7 @@ public class TabFragment extends  BaseFragment{
                 int currentPosition = this.mExamTabPager.getCurrentItem();
                 this.mExamTabSelected(currentPosition);
             }
-            this.mExamTabPager.setCurrentItem(this.EXAM_TAB_POSITION);
+            this.mExamTabPager.setCurrentItem(TabFragment.EXAM_TAB_POSITION);
         }else{
 
             if(this.mListener != null)
@@ -298,7 +274,7 @@ public class TabFragment extends  BaseFragment{
                 }
                 if (mPagerHeader != null)
                     ((ViewPager.LayoutParams) mPagerHeader.getLayoutParams()).isDecor = true;
-                if (selectedTabPosition < mExamDetailList.size())
+                if (mExamDetailList != null && selectedTabPosition < mExamDetailList.size())
                     mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
             } else {
                 if (selectedTabPosition == 3)
@@ -371,15 +347,13 @@ public class TabFragment extends  BaseFragment{
     public void onClick(View view) {
         super.onClick(view);
         if(view.getId() == R.id.profile_image || view.getId() == R.id.profile_image_edit_button) {
-            if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+            if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
                 ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
                 return;
             }
             if(mListener != null)
                 mListener.requestForProfileFragment();
-
         }
-
         if (view.getId() == R.id.btn_tab_psychometric_test)
             mListener.onPsychometricTestSelected();
         if (view.getId() == R.id.btn_tab_step_by_step)
@@ -423,7 +397,7 @@ public class TabFragment extends  BaseFragment{
         ImageView fourthSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_fourth);
 
         if(this.selectedTabPosition == 1){
-            IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+            IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
             View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
             if(!IS_COLLEGE_TUTE_COMPLETED) {
                 getActivity().invalidateOptionsMenu();
@@ -444,7 +418,7 @@ public class TabFragment extends  BaseFragment{
             LinearLayout ll2 = (LinearLayout)view.findViewById(R.id.home_widget_second_layout);
             ll2.setLayoutParams(lp);
 
-            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) (getView().findViewById(R.id.home_widget_third)).getLayoutParams();;
+            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) (getView().findViewById(R.id.home_widget_third)).getLayoutParams();
             int marginLeftInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40 , getResources().getDisplayMetrics());
             int marginRightInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15 , getResources().getDisplayMetrics());
             lp2.setMargins(marginLeftInDp,0,marginRightInDp,0);
@@ -455,13 +429,13 @@ public class TabFragment extends  BaseFragment{
             thirdSubMenuIV.setImageResource(R.drawable.ic_trending);
             fourthSubMenuIV.setImageResource(R.drawable.ic_search_college_widget);
 
-            firstSubMenuTV.setText(MainActivity.getResourceString(R.string.TAG_TAB_RECOMMENDED_COLLEGS));
+            firstSubMenuTV.setText(getString(R.string.TAG_TAB_RECOMMENDED_COLLEGS));
             firstSubMenuTV.setContentDescription("Click to Explore recommended Institutes");
-            secondSubMenuTV.setText(MainActivity.getResourceString(R.string.TAG_TAB_SHORTLISTED_COLLEGS));
+            secondSubMenuTV.setText(getString(R.string.TAG_TAB_SHORTLISTED_COLLEGS));
             secondSubMenuTV.setContentDescription("Click to Explore shortlisted Institutes");
-            thirdSubMenuTV.setText(MainActivity.getResourceString(R.string.TAG_TAB_FEATURED_COLLEGS));
+            thirdSubMenuTV.setText(getString(R.string.TAG_TAB_FEATURED_COLLEGS));
             thirdSubMenuTV.setContentDescription("Click to Explore popular Institutes");
-            fourthSubMenuTV.setText(MainActivity.getResourceString(R.string.TAG_TAB_EXPLORE_COLLEGS));
+            fourthSubMenuTV.setText(getString(R.string.TAG_TAB_EXPLORE_COLLEGS));
             fourthSubMenuTV.setContentDescription("Click to Explore all Institutes");
 
             ll2.getChildAt(0).setVisibility(View.VISIBLE);
@@ -470,14 +444,11 @@ public class TabFragment extends  BaseFragment{
             this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
 
         }else if(this.selectedTabPosition == 2){
-            if(view != null ){
-                view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
-                view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.GONE);
-                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-                bottomMenu.animate().translationY(0);
-                bottomMenu.setVisibility(View.VISIBLE);
-            }
-
+            view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+            view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.GONE);
+            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+            bottomMenu.animate().translationY(0);
+            bottomMenu.setVisibility(View.VISIBLE);
 
             LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -502,18 +473,16 @@ public class TabFragment extends  BaseFragment{
 
         }else  if(this.selectedTabPosition == 3){
             IS_PREPARE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("prepare_tute", false);
-            if(view != null ){
-                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-                if(!IS_PREPARE_TUTE_COMPLETED) {
-                    getActivity().invalidateOptionsMenu();
-                    view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.VISIBLE);
-                    bottomMenu.animate().translationY(bottomMenu.getHeight());
-                    bottomMenu.setVisibility(View.GONE);
-                } else {
-                    view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.GONE);
-                    bottomMenu.animate().translationY(0);
-                    bottomMenu.setVisibility(View.VISIBLE);
-                }
+            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+            if(!IS_PREPARE_TUTE_COMPLETED) {
+                getActivity().invalidateOptionsMenu();
+                view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.VISIBLE);
+                bottomMenu.animate().translationY(bottomMenu.getHeight());
+                bottomMenu.setVisibility(View.GONE);
+            } else {
+                view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.GONE);
+                bottomMenu.animate().translationY(0);
+                bottomMenu.setVisibility(View.VISIBLE);
             }
 
             LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
@@ -523,7 +492,7 @@ public class TabFragment extends  BaseFragment{
 
             LinearLayout ll2 = (LinearLayout)view.findViewById(R.id.home_widget_second_layout);
 
-            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) (getView().findViewById(R.id.home_widget_third)).getLayoutParams();;
+            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) (getView().findViewById(R.id.home_widget_third)).getLayoutParams();
             int marginInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45 , getResources().getDisplayMetrics());
             lp2.setMargins(marginInDp,0,marginInDp,0);
             getView().findViewById(R.id.home_widget_third).setLayoutParams(lp2);
@@ -532,11 +501,11 @@ public class TabFragment extends  BaseFragment{
             secondSubMenuIV.setImageResource(R.drawable.ic_syllabus);
             thirdSubMenuIV.setImageResource(R.drawable.ic_important_dates);
 
-            firstSubMenuTV.setText("Test Calendar");
+            firstSubMenuTV.setText(getString(R.string.test_calendar_title));
             firstSubMenuTV.setContentDescription("Click to see test preparation calendar");
-            secondSubMenuTV.setText("Syllabus");
+            secondSubMenuTV.setText(getString(R.string.syllabus_title));
             secondSubMenuTV.setContentDescription("Click to see syllabus for exam");
-            thirdSubMenuTV.setText("Important Dates");
+            thirdSubMenuTV.setText(getString(R.string.important_dates));
             thirdSubMenuTV.setContentDescription("Click to see Important Dates for exam");
 
             ll2.getChildAt(0).setVisibility(View.VISIBLE);
@@ -547,13 +516,11 @@ public class TabFragment extends  BaseFragment{
 
         }else  if(this.selectedTabPosition == 4){
 
-            if(view != null ){
-                view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
-                view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.GONE);
-                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-                bottomMenu.animate().translationY(0);
-                bottomMenu.setVisibility(View.VISIBLE);
-            }
+            view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+            view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.GONE);
+            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+            bottomMenu.animate().translationY(0);
+            bottomMenu.setVisibility(View.VISIBLE);
 
             LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -566,9 +533,9 @@ public class TabFragment extends  BaseFragment{
             firstSubMenuIV.setImageResource(R.drawable.ic_news);
             secondSubMenuIV.setImageResource(R.drawable.ic_article);
 
-            firstSubMenuTV.setText("News");
+            firstSubMenuTV.setText(getString(R.string.news_title));
             firstSubMenuTV.setContentDescription("Click to read news");
-            secondSubMenuTV.setText("Articles");
+            secondSubMenuTV.setText(getString(R.string.article_title));
             secondSubMenuTV.setContentDescription("Click to read articles");
 
             ll2.getChildAt(0).setVisibility(View.VISIBLE);
@@ -685,33 +652,6 @@ public class TabFragment extends  BaseFragment{
         }
     }
 
-    public int getSelectedTab(){
-        return selectedTabPosition;
-    }
-
-    public void setSelectedTab(int selectedTabPosition){
-        this.selectedTabPosition = selectedTabPosition;
-    }
-
-    public void updateTabFragment(int tabPosition){
-        this.selectedTabPosition = tabPosition;
-        mUpdateSubMenuItem();
-    }
-
-    public void updateExamSummary(ExamSummary examSummary) {
-        View view = getView();
-        this.mExamSummary = examSummary;
-        if(view == null || examSummary == null)
-            return;
-    }
-
-    public void updateCollegeCountFromVolley(boolean update){
-        int updateId = Integer.parseInt(mExamSummary.getYearly_exam_id());
-        if(examId == updateId && update){
-                updateCollegeCount(selectedTabPosition);
-        }
-    }
-
     OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {
         @Override
         public void onSwipeLeft() {
@@ -730,16 +670,42 @@ public class TabFragment extends  BaseFragment{
         }
     };
 
-    public void updateUserInfo() {
+    public int getSelectedTab(){
+        return selectedTabPosition;
+    }
 
-        View view = getView();
-        if (view == null || MainActivity.mProfile == null)
+    public void setSelectedTab(int selectedTabPosition){
+        this.selectedTabPosition = selectedTabPosition;
+    }
+
+    public void updateTabFragment(int tabPosition){
+        this.selectedTabPosition = tabPosition;
+        mUpdateSubMenuItem();
+    }
+
+    public void updateExamSummary(ExamSummary examSummary) {
+        this.mExamSummary = examSummary;
+    }
+
+    public void updateCollegeCountFromVolley(boolean update){
+        int updateId = Integer.parseInt(mExamSummary.getYearly_exam_id());
+        if(examId == updateId && update){
+            updateCollegeCount(selectedTabPosition);
+        }
+    }
+
+    public void updateUserInfo() {
+        updateUserProfile(getView(), MainActivity.mProfile);
+    }
+    private void updateUserProfile(View view, Profile profile){
+        if (view == null || profile == null)
             return;
 
         TextView mProfileName = (TextView) view.findViewById(R.id.user_name);
         TextView mProfileNumber = (TextView) view.findViewById(R.id.user_phone);
+        mProfileName.setVisibility(View.VISIBLE);
+        mProfileNumber.setVisibility(View.VISIBLE);
 
-        Profile profile = MainActivity.mProfile;
         String name = profile.getName();
         if (name == null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
             mProfileName.setText("Name : Anonymous User");
@@ -771,9 +737,6 @@ public class TabFragment extends  BaseFragment{
          * "http://developer.android.com/training/basics/fragments/communicating.html"
          * >Communicating with Other Fragments</a> for more information.
          */
-    public int getSelectedTabPosition(){
-        return selectedTabPosition;
-    }
     public  interface OnHomeItemSelectListener {
 
         void onExamTabSelected(ProfileExam tabPosition);

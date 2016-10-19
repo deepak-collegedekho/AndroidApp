@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:color="@color/dark_light_blue"
-    tools:targetApi="lollipop"> <!-- ripple effect color -->
-    <item android:id="@android:id/background">
-        <shape android:shape="rectangle">
-            <corners android:radius="20px"/>
-            <solid android:color="@color/dark_blue" /> <!-- background color -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape>
+            <solid android:color="#FF337AFF" />
+            <corners android:radius="18px" />
+            <padding
+                android:left="10dp"
+                android:top="10dp"
+                android:right="10dp"
+                android:bottom="10dp" />
         </shape>
     </item>
-</ripple>
+    <item>
+        <shape>
+            <solid android:color="@color/dark_blue"/>
+            <corners android:radius="20px" />
+            <padding
+                android:left="10dp"
+                android:top="10dp"
+                android:right="10dp"
+                android:bottom="10dp" />
+        </shape>
+    </item>
+</selector>
