@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity
     public static Tracker tracker;
 
     public static NetworkUtils mNetworkUtils;
-    public  volatile BaseFragment currentFragment;
+    public static volatile BaseFragment currentFragment;
     private List<Institute> mInstituteList;
     private List<Chapters> chaptersList;
     private List<PsychometricTestQuestion> psychometricQuestionsList;
@@ -305,8 +305,9 @@ public class MainActivity extends AppCompatActivity
     private String mGTMContainerId = "www.collegedekho.com";
     public DeviceProfile mDeviceProfile;
     public static Profile mProfile;
-    static String type = "";
-    static String resource_uri = "";
+    private static String type = "";
+    private static String resource_uri = "";
+    private static String resource_uri_with_notification_id = "";
     private Menu menu;
     private String mYear;
 
@@ -389,10 +390,10 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, "Extras are not null");
 
             Bundle extras = intent.getExtras();
-            if (extras.containsKey("screen") && extras.containsKey("resource_uri"))
-            {
+            if (extras.containsKey("screen") && extras.containsKey("resource_uri") && extras.containsKey("notification_id")) {
                 MainActivity.type = extras.getString("screen");
                 MainActivity.resource_uri = extras.getString("resource_uri");
+                MainActivity.resource_uri_with_notification_id = MainActivity.resource_uri + "?notification_id=" + extras.getString("notification_id");
 
                 Log.e(TAG, " There is data  type is : "+ MainActivity.type +  " Resource uri is " + MainActivity.resource_uri);
             }
@@ -884,9 +885,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_FRAGMENT_INSTITUTE_LIST: {
                 this.mCurrentTitle = "Institute List";
                 if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
-                    this.mMakeNetworkCall(Constants.PNS_INSTITUTES, MainActivity.resource_uri, null);
+                    this.mMakeNetworkCall(Constants.PNS_INSTITUTES, MainActivity.resource_uri_with_notification_id, null);
                 } else {
-                    this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, MainActivity.resource_uri, null);
+                    this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, MainActivity.resource_uri_with_notification_id, null);
                 }
                 break;
             }
@@ -894,9 +895,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_FRAGMENT_NEWS_LIST: {
                 this.mCurrentTitle = "News";
                 if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
-                    this.mMakeNetworkCall(Constants.PNS_NEWS, MainActivity.resource_uri, null);
+                    this.mMakeNetworkCall(Constants.PNS_NEWS, MainActivity.resource_uri_with_notification_id, null);
                 } else {
-                    this.mMakeNetworkCall(Constants.WIDGET_NEWS, MainActivity.resource_uri, null);
+                    this.mMakeNetworkCall(Constants.WIDGET_NEWS, MainActivity.resource_uri_with_notification_id, null);
                 }
                 break;
             }
@@ -904,25 +905,25 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_FRAGMENT_ARTICLES_LIST: {
                 this.mCurrentTitle = "Articles";
                 if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
-                    this.mMakeNetworkCall(Constants.PNS_ARTICLES, MainActivity.resource_uri, null);
+                    this.mMakeNetworkCall(Constants.PNS_ARTICLES, MainActivity.resource_uri_with_notification_id, null);
                 } else {
-                    this.mMakeNetworkCall(Constants.WIDGET_ARTICES, MainActivity.resource_uri, null);
+                    this.mMakeNetworkCall(Constants.WIDGET_ARTICES, MainActivity.resource_uri_with_notification_id, null);
                 }
                 break;
             }
 
             case Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE: {
                 this.mCurrentTitle = "My Shortlist";
-                this.mMakeNetworkCall(Constants.WIDGET_SHORTLIST_INSTITUTES, MainActivity.resource_uri, null);
+                this.mMakeNetworkCall(Constants.WIDGET_SHORTLIST_INSTITUTES, MainActivity.resource_uri_with_notification_id, null);
                 break;
             }
 
             case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST: {
                 this.mCurrentTitle = "QnA";
                 if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
-                    this.mMakeNetworkCall(Constants.PNS_QNA, MainActivity.resource_uri, null);
+                    this.mMakeNetworkCall(Constants.PNS_QNA, MainActivity.resource_uri_with_notification_id, null);
                 } else {
-                    this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, MainActivity.resource_uri, null);
+                    this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, MainActivity.resource_uri_with_notification_id, null);
                 }
                 break;
             }
@@ -930,23 +931,23 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_FRAGMENT_MY_FB_ENUMERATION: {
                 this.mCurrentTitle = "My Future Buddies";
                 if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
-                    this.mMakeNetworkCall(Constants.PNS_FORUM, MainActivity.resource_uri, null);
+                    this.mMakeNetworkCall(Constants.PNS_FORUM, MainActivity.resource_uri_with_notification_id, null);
                 } else {
-                    this.mMakeNetworkCall(Constants.WIDGET_FORUMS, MainActivity.resource_uri, null);
+                    this.mMakeNetworkCall(Constants.WIDGET_FORUMS, MainActivity.resource_uri_with_notification_id, null);
                 }
                 break;
             }
 
             case Constants.WIDGET_TEST_CALENDAR:
-                this.mMakeNetworkCall(Constants.WIDGET_TEST_CALENDAR, MainActivity.resource_uri, null);
+                this.mMakeNetworkCall(Constants.WIDGET_TEST_CALENDAR, MainActivity.resource_uri_with_notification_id, null);
                 break;
 
             case Constants.TAG_MY_ALERTS:
-                MainActivity.this.mMakeNetworkCall(Constants.TAG_MY_ALERTS, MainActivity.resource_uri, null);
+                MainActivity.this.mMakeNetworkCall(Constants.TAG_MY_ALERTS, MainActivity.resource_uri_with_notification_id, null);
                 break;
 
             case Constants.WIDGET_SYLLABUS:
-                this.mMakeNetworkCall(Constants.WIDGET_SYLLABUS, MainActivity.resource_uri, null);
+                this.mMakeNetworkCall(Constants.WIDGET_SYLLABUS, MainActivity.resource_uri_with_notification_id, null);
                 break;
 
             case Constants.PLAY_VIDEO_NOTIFICATION:
@@ -958,8 +959,8 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.ACTION_OPEN_WEB_URL:
                 if (MainActivity.mProfile != null)
-                    MainActivity.resource_uri = MainActivity.resource_uri + "/?user_id=" + MainActivity.mProfile.getId();
-                onDisplayWebFragment(MainActivity.resource_uri);
+                    MainActivity.resource_uri_with_notification_id +=  "&&user_id=" + MainActivity.mProfile.getId();
+                onDisplayWebFragment(MainActivity.resource_uri_with_notification_id);
                 break;
 
             default:
@@ -967,6 +968,7 @@ public class MainActivity extends AppCompatActivity
                 this.isFromDeepLinking = false;
                 MainActivity.type = "";
                 MainActivity.resource_uri = "";
+                MainActivity.resource_uri_with_notification_id = "";
                 this.mDeepLinkingURI = "";
                 this.mLoadUserStatusScreen();
                 break;
@@ -974,6 +976,7 @@ public class MainActivity extends AppCompatActivity
 
         MainActivity.type = "";
         MainActivity.resource_uri = "";
+        MainActivity.resource_uri_with_notification_id = "";
         this.mDeepLinkingURI = "";
         getIntent().putExtra("screen","");
         getIntent().putExtra("resource_uri","");
@@ -3077,11 +3080,11 @@ public class MainActivity extends AppCompatActivity
 
             String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
-            HashMap<String, String> params = new HashMap<>();
+            HashMap<String, String> params = (HashMap<String, String>) Utils.GetDeviceInfo(this);
 
-            params.put("device_id", deviceId);
-            params.put("registration_id", token);
-            params.put("app_type", String.valueOf(Constants.SOURCE_COLLEGE_DEKHO_APP));
+            params.put(getApplicationContext().getString(R.string.USER_DEVICE_ID), deviceId);
+            params.put(getApplicationContext().getString(R.string.USER_FCM_REGISTRATION_ID), token);
+            params.put(getApplicationContext().getString(R.string.USER_APP_SOURCE), String.valueOf(Constants.SOURCE_COLLEGE_DEKHO_APP));
 
             this.mMakeNetworkCall(Constants.TAG_FCM_TOKEN_SYNC, Constants.BASE_URL+ "register-device/", params, Request.Method.POST);
         }
@@ -4773,8 +4776,8 @@ public class MainActivity extends AppCompatActivity
         params.put(MainActivity.getResourceString(R.string.USER_COUNTRY_CODE), trueProfile.countryCode);
         params.put(MainActivity.getResourceString(R.string.USER_FACEBOOK_ID), trueProfile.facebookId);
 
-        String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        params.put(MainActivity.getResourceString(R.string.USER_DEVICE_ID), deviceId);
+        //String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        //params.put(MainActivity.getResourceString(R.string.USER_DEVICE_ID), deviceId);
         params.put(MainActivity.getResourceString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_TRUECALLER);
 
         DataBaseHelper.getInstance(this).deleteAllExamSummary();
@@ -4814,7 +4817,6 @@ public class MainActivity extends AppCompatActivity
             }
         }).executeAsync();
     }*/
-
 
     /**
      *  This method is called when user's exams are edited
@@ -6622,10 +6624,11 @@ public class MainActivity extends AppCompatActivity
         super.onNewIntent(intent);
         Bundle bundle=intent.getExtras();
         if(bundle!=null) {
-            if (bundle.containsKey("screen") && bundle.containsKey("resource_uri")) {
+            if (bundle.containsKey("screen") && bundle.containsKey("resource_uri") && bundle.containsKey("notification_id")) {
                 MainActivity.type = bundle.getString("screen");
                 MainActivity.resource_uri = bundle.getString("resource_uri");
-                mHandleNotifications(true); // hange to true by suresh
+                MainActivity.resource_uri_with_notification_id = MainActivity.resource_uri + "?notification_id=" + bundle.getString("notification_id");
+                mHandleNotifications(true);  // change to true by suresh
             }
         }
     }

@@ -281,6 +281,11 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
 
     }

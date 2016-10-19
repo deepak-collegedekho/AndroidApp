@@ -134,6 +134,11 @@ public class InstituteVideosFragment extends BaseFragment {
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
 
     }

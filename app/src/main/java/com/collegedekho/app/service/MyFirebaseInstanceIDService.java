@@ -21,12 +21,16 @@ import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.Utils;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
 import java.io.IOException;
+import java.util.Map;
 
 
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
@@ -85,7 +89,13 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
                             if (deviceId != null && !deviceId.isEmpty())
                             {
-                                DeviceFcmRegistrationTask applyTask = new DeviceFcmRegistrationTask(token, profile.getToken(), deviceId);
+                                Map<String, String> params = Utils.GetDeviceInfo(getApplicationContext());
+
+                                params.put(getApplicationContext().getString(R.string.USER_DEVICE_ID), deviceId);
+                                params.put(getApplicationContext().getString(R.string.USER_FCM_REGISTRATION_ID), profile.getToken());
+                                params.put(getApplicationContext().getString(R.string.USER_APP_SOURCE), String.valueOf(Constants.SOURCE_COLLEGE_DEKHO_APP));
+
+                                DeviceFcmRegistrationTask applyTask = new DeviceFcmRegistrationTask(params, profile.getToken());
                                 applyTask.execute();
                             }
                         }

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.NotificationPayload;
 import com.collegedekho.app.resource.Constants;
 import com.fasterxml.jackson.jr.ob.JSON;
@@ -32,13 +33,27 @@ import java.util.Map;
 public class NotificationFactory {
 
     private static final String TAG = "NotificationFactory";
-    private RemoteViews contentBigView;
-    private Notification notification;
+    private Notification mNotification;
     private NotificationPayload mNotificationPayload;
     private Context mContext;
     private CollegeDekhoNotifications mCollegeDekhoNotifications;
 
     public void renderNotification(Map<String, String> messageDataMap, Context context) {
+        //the current enitity on screen matches the current notification payload, then return
+        if(MainActivity.currentFragment != null)
+        {
+            String entityID = MainActivity.currentFragment.getEntity();
+
+            if (entityID != null && !entityID.isEmpty())
+            {
+                if (messageDataMap.containsKey("entity_id") && messageDataMap.get("entity_id") != null)
+                {
+                    if (messageDataMap.get("entity_id").equals(entityID))
+                        return;
+                }
+            }
+        }
+
         this.mContext = context;
 
         try {
@@ -67,13 +82,14 @@ public class NotificationFactory {
             }
 
             this.mCollegeDekhoNotifications.process(messageDataMap, context);
-            this.notification = this.mCollegeDekhoNotifications.getNotification();
 
-            if (this.notification != null)
+            this.mNotification = this.mCollegeDekhoNotifications.getNotification();
+
+            if (this.mNotification != null)
             {
                 if (this.mCollegeDekhoNotifications.bigImageURLViewID >= 0)
                     new NotificationImageAsyncTask(this.mCollegeDekhoNotifications.contentBigView,
-                            this.mCollegeDekhoNotifications.bigImageURLViewID, this.notification,
+                            this.mCollegeDekhoNotifications.bigImageURLViewID, this.mNotification,
                             this.mContext,
                             Integer.parseInt(this.mNotificationPayload.getNotification_id()))
                             .execute(this.mCollegeDekhoNotifications.mNotificationPayload.getBig_image());
@@ -82,7 +98,7 @@ public class NotificationFactory {
                 {
                     NotificationManager notificationManager = (NotificationManager) this.mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
-                    notificationManager.notify(Integer.parseInt(this.mNotificationPayload.getNotification_id()), notification);
+                    notificationManager.notify(Integer.parseInt(this.mNotificationPayload.getNotification_id()), mNotification);
                 }
             }
         } catch (Exception e) {

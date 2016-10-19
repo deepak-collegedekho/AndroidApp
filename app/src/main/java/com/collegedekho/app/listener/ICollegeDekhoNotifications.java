@@ -3,8 +3,6 @@ package com.collegedekho.app.listener;
 import android.app.Notification;
 import android.content.Context;
 
-import org.json.JSONObject;
-
 import java.util.Map;
 
 /**

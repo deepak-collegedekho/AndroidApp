@@ -1,13 +1,9 @@
 package com.collegedekho.app.notifications;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -22,15 +18,13 @@ import com.fasterxml.jackson.jr.ob.JSON;
 
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+
+import static android.support.v4.app.NotificationCompat.DEFAULT_ALL;
 
 
 /**
@@ -82,16 +76,15 @@ public class CollegeDekhoNotifications implements ICollegeDekhoNotifications{
 
             this.builder = new NotificationCompat.Builder(this.mContext.getApplicationContext());
 
-            this.builder.setSmallIcon(R.drawable.ic_notification_lollipop)
-                    .setDefaults(5)
+            this.builder.setSmallIcon(this.getNotificationIcon())
+                    .setDefaults(DEFAULT_ALL)
                     .setContentIntent(this.pendingIntent)
                     .setOngoing(false)
                     .setWhen(currentTimeMillis)
+                    .setOnlyAlertOnce(true)
                     .setAutoCancel(true);
 
-            this.builder.setOnlyAlertOnce(true);
-
-            if (Build.VERSION.SDK_INT >= 21)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                 this.builder.setVisibility(View.INVISIBLE);
 
             this.notification = this.builder.build();
@@ -109,5 +102,10 @@ public class CollegeDekhoNotifications implements ICollegeDekhoNotifications{
     @Override
     public Notification getNotification() {
         return this.notification;
+    }
+
+    public int getNotificationIcon() {
+        boolean useWhiteIcon = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
+        return useWhiteIcon ? R.drawable.ic_notification_lollipop : R.drawable.ic_notification_icon;
     }
 }

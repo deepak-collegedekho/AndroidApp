@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.utils.BlurBuilder;
-import com.collegedekho.app.utils.Utils;
 
 public class FadeInImageView extends NetworkImageView {
 

@@ -27,7 +27,6 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -693,6 +692,11 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     @Override
     public void show() {
 
+    }
+
+    @Override
+    public String getEntity() {
+        return null;
     }
 
     @Override

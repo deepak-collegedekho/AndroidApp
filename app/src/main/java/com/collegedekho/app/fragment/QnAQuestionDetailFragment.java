@@ -379,6 +379,11 @@ public class QnAQuestionDetailFragment extends BaseFragment implements View.OnCl
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
 
     }

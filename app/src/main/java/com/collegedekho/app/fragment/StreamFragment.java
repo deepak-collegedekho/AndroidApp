@@ -121,6 +121,11 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
 
     }

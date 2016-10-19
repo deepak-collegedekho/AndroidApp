@@ -5,7 +5,7 @@
     android:layout_gravity="left"
     android:background="#fff"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
+    android:layout_height="70dp"
     >
     <ImageView
         android:id="@+id/notification_fb_icon"
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/m8dp"
         android:layout_marginEnd="@dimen/m8dp"
-        android:text="Example Title"
+        android:text="Example Title Example Title Example Title Example Title Example Title Example Title Example Title "
         android:maxLines="2"
         android:textColor="@color/textPrimary"
         android:textSize="@dimen/m16sp"
@@ -61,10 +61,12 @@
         android:textColor="@color/textSecondary"
         android:textSize="@dimen/m14sp"
         android:layout_marginTop="@dimen/activity_vertical_margin_tiny"
+        android:layout_marginBottom="@dimen/activity_vertical_margin_tiny"
         android:layout_toRightOf="@id/notification_fb_icon"
         android:layout_toEndOf="@id/notification_fb_icon"
         android:layout_toLeftOf="@id/notification_fb_time"
         android:layout_toStartOf="@id/notification_fb_time"
         android:layout_below="@id/notification_fb_title"
+
         />
 </RelativeLayout>

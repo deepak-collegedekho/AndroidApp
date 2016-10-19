@@ -28,6 +28,8 @@ public class NotificationPayload implements Parcelable{
     private String screen = "";
     //this is required for stuff n ol
     private String notification_id = "";
+    //this is also required for stuff n ol
+    private String entity_id = "";
 
     public NotificationPayload(){
         // required empty contructor
@@ -38,6 +40,7 @@ public class NotificationPayload implements Parcelable{
         body = in.readString();
         resource_uri = in.readString();
         notification_id = in.readString();
+        entity_id = in.readString();
         big_title = in.readString();
         big_body = in.readString();
         big_image = in.readString();
@@ -51,6 +54,7 @@ public class NotificationPayload implements Parcelable{
         dest.writeString(body);
         dest.writeString(resource_uri);
         dest.writeString(notification_id);
+        dest.writeString(entity_id);
         dest.writeString(big_title);
         dest.writeString(big_body);
         dest.writeString(big_image);
@@ -145,5 +149,13 @@ public class NotificationPayload implements Parcelable{
 
     public void setBig_body(String big_body) {
         this.big_body = big_body;
+    }
+
+    public String getEntity_id() {
+        return entity_id;
+    }
+
+    public void setEntity_id(String entity_id) {
+        this.entity_id = entity_id;
     }
 }

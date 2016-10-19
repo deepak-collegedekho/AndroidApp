@@ -27,7 +27,6 @@ import android.view.animation.Animation;
 import android.widget.TextView;
 
 import com.collegedekho.app.utils.Utils;
-import com.collegedekho.app.widget.fab.FloatingActionButton;
 
 public class Label extends TextView {
 

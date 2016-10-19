@@ -135,6 +135,11 @@ public class LoginFragment extends  BaseFragment {
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
 
     }
@@ -218,7 +223,7 @@ public class LoginFragment extends  BaseFragment {
         if(mListener != null) {
             HashMap<String, String> params = new HashMap<>();
             String deviceId = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
-            params.put(MainActivity.getResourceString(R.string.USER_DEVICE_ID), deviceId);
+            //params.put(MainActivity.getResourceString(R.string.USER_DEVICE_ID), deviceId);
             params.put(MainActivity.getResourceString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
 
             mListener.onSkipUserLogin(params);

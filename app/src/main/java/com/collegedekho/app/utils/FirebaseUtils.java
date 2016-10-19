@@ -1,7 +1,5 @@
 package com.collegedekho.app.utils;
 
-import com.collegedekho.app.resource.Constants;
-
 /**
  * Created by root on 3/8/16.
  */

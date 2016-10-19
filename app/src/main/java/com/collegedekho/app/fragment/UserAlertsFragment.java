@@ -97,6 +97,11 @@ public class UserAlertsFragment extends BaseFragment implements UserAlertsAdapte
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
 
     }

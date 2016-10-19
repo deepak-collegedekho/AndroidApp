@@ -123,6 +123,11 @@ public class UserAlertDetailsFragment extends BaseFragment implements UserAlerts
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
 
     }

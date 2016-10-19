@@ -23,7 +23,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
-
 import com.collegedekho.app.R;
 import com.collegedekho.app.display.peekandpop.model.HoldAndReleaseView;
 import com.collegedekho.app.display.peekandpop.model.LongHoldView;

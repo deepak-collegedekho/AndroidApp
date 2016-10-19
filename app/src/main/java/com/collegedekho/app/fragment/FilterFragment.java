@@ -182,6 +182,11 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
 
     }

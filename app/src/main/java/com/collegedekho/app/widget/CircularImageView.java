@@ -34,6 +34,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
+
 import com.android.volley.toolbox.NetworkImageView;
 import com.collegedekho.app.R;
 

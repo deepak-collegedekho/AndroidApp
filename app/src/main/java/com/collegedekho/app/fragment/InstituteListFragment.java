@@ -534,6 +534,11 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
         Log.e("InstituteListFragment", "Hide");
         fab.animate().translationY(fab.getHeight() + fabMargin).setInterpolator(new AccelerateInterpolator(3)).start();

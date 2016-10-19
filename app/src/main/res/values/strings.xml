@@ -292,6 +292,8 @@
     <string name="USER_FACEBOOK_ID">facebook_id</string>
     <string name="USER_EXPIRE_AT">expires_at</string>
     <string name="USER_DEVICE_ID">device_id</string>
+    <string name="USER_FCM_REGISTRATION_ID">registration_id</string>
+    <string name="USER_APP_SOURCE">app_type</string>
 
     <string name="EXAM_ID">exam_id</string>
     <string name="STATUS">status</string>
@@ -552,4 +554,16 @@
     <string name="country_no">+91-</string>
 
     <!-- user profile tags-->
+
+    <string name="app_version">app_version</string>
+    <string name="os_name">os_name</string>
+    <string name="os_version">os_version</string>
+    <string name="screen_density">screen_density</string>
+    <string name="screen_width">screen_width</string>
+    <string name="screen_height">screen_height</string>
+    <string name="device_manufacturer">device_manufacturer</string>
+    <string name="device_model">device_model</string>
+    <string name="device_name">device_name</string>
+    <string name="network_carrier">network_carrier</string>
+
 </resources>

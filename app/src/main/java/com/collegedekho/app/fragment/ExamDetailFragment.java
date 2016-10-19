@@ -40,6 +40,11 @@ public class ExamDetailFragment extends BaseFragment{
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
 
     }

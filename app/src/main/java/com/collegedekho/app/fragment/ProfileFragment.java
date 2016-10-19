@@ -510,6 +510,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
     }
 

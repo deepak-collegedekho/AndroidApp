@@ -448,6 +448,17 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     }
 
     @Override
+    public String getEntity() {
+        if (this.mMyFutureBuddies != null)
+        {
+            String[] resourceURISplit = this.mMyFutureBuddies.getResource_uri().split("/");
+            return resourceURISplit[resourceURISplit.length - 1];
+        }
+        else
+            return null;
+    }
+
+    @Override
     public void hide() {
 
     }

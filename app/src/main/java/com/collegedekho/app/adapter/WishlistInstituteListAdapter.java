@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.display.peekandpop.PeekAndPop;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.fragment.WishlistFragment;

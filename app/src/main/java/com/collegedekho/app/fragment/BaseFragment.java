@@ -91,6 +91,8 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
 
     public abstract void show();
 
+    public abstract String getEntity();
+
     public abstract void hide();
 
     protected void updateViewTypeIcon(View view, int type) {
@@ -120,7 +122,6 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         void onInstituteLikedDisliked(int position, int liked);
     }
 
-
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
         if (Constants.DISABLE_FRAGMENT_ANIMATION) {
@@ -130,5 +131,4 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         }
         return super.onCreateAnimation(transit, enter, nextAnim);
     }
-
 }

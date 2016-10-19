@@ -105,6 +105,11 @@ public class NewsDetailFragment extends BaseFragment {
 
     }
 
+    @Override
+    public String getEntity() {
+        return null;
+    }
+
     public void updateNews(News news) {
         this.mNews = news;
         showNewsUpdate();

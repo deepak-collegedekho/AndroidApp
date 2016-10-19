@@ -9,6 +9,8 @@ import com.collegedekho.app.R;
 
 import java.util.Map;
 
+import static android.support.v4.app.NotificationCompat.DEFAULT_ALL;
+
 /**
  * Created by harshvardhan on 05/10/16.
  */
@@ -21,6 +23,18 @@ public class MyFutureBuddyNotification extends CollegeDekhoNotifications {
     public void process(Map<String, String> messageDataMap, Context context) {
 
         super.process(messageDataMap, context);
+
+        long currentTimeMillis = System.currentTimeMillis();
+
+        super.builder.setSmallIcon(this.getNotificationIcon())
+                .setDefaults(DEFAULT_ALL)
+                .setContentIntent(this.pendingIntent)
+                .setOngoing(true)
+                .setWhen(currentTimeMillis)
+                .setOnlyAlertOnce(true)
+                .setAutoCancel(true);
+
+        super.notification = super.builder.build();
 
         String title = "";
         String body = "";
@@ -52,7 +66,6 @@ public class MyFutureBuddyNotification extends CollegeDekhoNotifications {
                 super.contentView.setTextViewText(R.id.notification_fb_desc, bodySequence);
             }
 
-            long currentTimeMillis = System.currentTimeMillis();
             CharSequence timeSequence = this.getTimeFromMS(currentTimeMillis);
             super.contentView.setTextViewText(R.id.notification_fb_time, timeSequence);
 
@@ -68,7 +81,7 @@ public class MyFutureBuddyNotification extends CollegeDekhoNotifications {
                 if (bigTitle != null && !bigTitle.isEmpty())
                 {
                     //if bit_title is there, show UI
-                    CharSequence bigTitleSequence = bigTitle.subSequence(0, bigTitle.length() -1);
+                    CharSequence bigTitleSequence = bigTitle.subSequence(0, bigTitle.length());
 
                     super.contentBigView.setTextViewText(R.id.notification_fb_title_expanded, bigTitleSequence);
                 }
@@ -78,7 +91,7 @@ public class MyFutureBuddyNotification extends CollegeDekhoNotifications {
 
                 if (bigBody != null && !bigBody.isEmpty())
                 {
-                    CharSequence bigBodySequence = bigBody.subSequence(0, bigBody.length() -1);
+                    CharSequence bigBodySequence = bigBody.subSequence(0, bigBody.length());
 
                     super.contentBigView.setTextViewText(R.id.notification_fb_desc_expanded, bigBodySequence);
                 }

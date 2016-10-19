@@ -390,6 +390,11 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
     }
 

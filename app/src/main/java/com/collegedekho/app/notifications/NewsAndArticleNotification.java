@@ -1,7 +1,6 @@
 package com.collegedekho.app.notifications;
 
 
-import android.app.Notification;
 import android.content.Context;
 import android.os.Build;
 import android.view.View;

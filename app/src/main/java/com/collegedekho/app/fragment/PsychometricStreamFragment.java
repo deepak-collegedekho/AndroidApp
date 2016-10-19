@@ -133,6 +133,11 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
 
     }

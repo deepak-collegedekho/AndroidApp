@@ -160,6 +160,11 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment implements 
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
 
     }

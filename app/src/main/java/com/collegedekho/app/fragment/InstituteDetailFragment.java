@@ -241,6 +241,11 @@ public class InstituteDetailFragment extends BaseFragment {
     }
 
     @Override
+    public String getEntity() {
+        return null;
+    }
+
+    @Override
     public void hide() {
         if (this.mFloatingMenu != null)
             this.mFloatingMenu.animate().translationY(this.mFloatingMenu.getHeight() + this.fabMargin).setInterpolator(new AccelerateInterpolator(3)).start();

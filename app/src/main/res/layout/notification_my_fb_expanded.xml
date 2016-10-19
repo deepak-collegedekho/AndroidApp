@@ -5,7 +5,7 @@
     android:layout_gravity="left"
     android:background="#fff"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     >
     <TextView
         android:id="@+id/notification_fb_time_expanded"
@@ -15,12 +15,12 @@
         android:layout_marginEnd="@dimen/m8dp"
         android:layout_marginTop="@dimen/m11dp"
         android:text="11:23 AM"
-        android:gravity="center_vertical|top"
+        android:gravity="top"
         android:textSize="@dimen/m12sp"
         android:textColor="@color/textPrimary"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
+
         />
     <ImageView
         android:id="@+id/notification_fb_icon_expanded"
@@ -40,7 +40,7 @@
         android:layout_marginRight="@dimen/m8dp"
         android:layout_marginEnd="@dimen/m8dp"
         android:text="Example Title"
-        android:maxLines="2"
+        android:maxLines="4"
         android:textColor="@color/textPrimary"
         android:textSize="@dimen/m16sp"
         android:layout_toRightOf="@id/notification_fb_icon_expanded"
@@ -54,18 +54,17 @@
     <TextView
         android:id="@+id/notification_fb_desc_expanded"
         android:ellipsize="end"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/m8dp"
-        android:layout_marginEnd="@dimen/m8dp"
         android:text="The outermost statements in a Python file, or module, do its one-time setup — those statements run from top to bottom the first time the module is imported somewhere, setting up its variables and functions. A Python module can be run directly — as above python hello.py Bob — or it can be imported and used by some other module. When a Python file is run directly, the special variable __name__ is set to __main__. Therefore, it's common to have the boilerplate if __name__ ==... shown above to call a main() function when the module is run directly, but not when the module is imported by some other module."
         android:textColor="@color/textSecondary"
         android:textSize="@dimen/m14sp"
         android:layout_marginTop="@dimen/activity_vertical_margin_tiny"
+        android:layout_marginBottom="@dimen/activity_vertical_margin_tiny"
         android:layout_toRightOf="@id/notification_fb_icon_expanded"
-        android:layout_toEndOf="@id/notification_fb_icon_expanded"
-        android:layout_toLeftOf="@id/notification_fb_time_expanded"
         android:layout_toStartOf="@id/notification_fb_time_expanded"
+        android:layout_toLeftOf="@id/notification_fb_time_expanded"
         android:layout_below="@id/notification_fb_title_expanded"
-        />
+        android:layout_alignRight="@+id/notification_fb_time_expanded"
+        android:layout_alignEnd="@+id/notification_fb_time_expanded" />
 </RelativeLayout>

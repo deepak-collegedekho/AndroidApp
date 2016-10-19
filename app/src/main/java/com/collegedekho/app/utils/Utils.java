@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
@@ -47,7 +48,9 @@ import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -702,4 +705,47 @@ public class Utils {
         }
     }
 
+    public static Map<String, String> GetDeviceInfo(Context context)
+    {
+        Map<String, String> params = new HashMap<>();
+
+        try
+        {
+            params.put(context.getString(R.string.app_version), BuildConfig.VERSION_NAME);
+            params.put(context.getString(R.string.os_name), System.getProperty("os.name"));
+            params.put(context.getString(R.string.os_version), System.getProperty("os.version"));
+            params.put(context.getString(R.string.device_manufacturer), Build.MANUFACTURER);
+            params.put(context.getString(R.string.device_model), Build.MODEL);
+            params.put(context.getString(R.string.device_name), Build.MODEL);
+
+            try
+            {
+                DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+
+                String screenDensity = String.valueOf(metrics.density);
+                String screenWidth = String.valueOf(metrics.widthPixels);
+                String screenHeight = String.valueOf(metrics.heightPixels);
+
+                params.put(context.getString(R.string.screen_density), screenDensity);
+                params.put(context.getString(R.string.screen_width), screenWidth);
+                params.put(context.getString(R.string.screen_height), screenHeight);
+
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            TelephonyManager telephonyManager = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE));
+            String operatorName = telephonyManager.getNetworkOperatorName();
+            params.put(context.getString(R.string.network_carrier), operatorName);
+
+        }
+        catch (Exception e)
+        {
+
+        }
+
+        return params;
+    }
 }
