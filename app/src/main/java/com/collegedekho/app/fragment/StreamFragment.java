@@ -24,7 +24,7 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
     private ArrayList<Stream> streams;
 
     private OnStreamInteractionListener mListener;
-    private static boolean isStreamUpdate;
+    private boolean isStreamUpdate;
 
     public StreamFragment() {
         // Required empty public constructor
@@ -102,7 +102,7 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
 
 
     public void onStreamSelected(int streamId) {
-        if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
@@ -139,7 +139,7 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(ARG_STREAMS, streams);
-        outState.putBoolean(ARG_STREAM_UPDATE, this.isStreamUpdate);
+        outState.putBoolean(ARG_STREAM_UPDATE, isStreamUpdate);
     }
 
 

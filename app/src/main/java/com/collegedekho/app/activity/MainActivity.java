@@ -18,11 +18,13 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.provider.Telephony;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -46,6 +48,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.transition.Fade;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -101,6 +104,7 @@ import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.entities.StepByStepQuestion;
 import com.collegedekho.app.entities.StepByStepResult;
 import com.collegedekho.app.entities.Stream;
+import com.collegedekho.app.entities.SubLevel;
 import com.collegedekho.app.entities.Subjects;
 import com.collegedekho.app.entities.VideoEntry;
 import com.collegedekho.app.entities.YoutubeVideoDetails;
@@ -117,8 +121,6 @@ import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
 import com.collegedekho.app.fragment.InstituteVideosFragment;
-import com.collegedekho.app.fragment.PostAnonymousLoginFragment;
-import com.collegedekho.app.fragment.ProfileBuildingFragment;
 import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
@@ -126,6 +128,8 @@ import com.collegedekho.app.fragment.NewsDetailFragment;
 import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.NotPreparingFragment;
 import com.collegedekho.app.fragment.OTPVerificationFragment;
+import com.collegedekho.app.fragment.PostAnonymousLoginFragment;
+import com.collegedekho.app.fragment.ProfileBuildingFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.PsychometricStreamFragment;
 import com.collegedekho.app.fragment.PsychometricTestParentFragment;
@@ -149,6 +153,7 @@ import com.collegedekho.app.listener.ProfileFragmentListener;
 import com.collegedekho.app.receiver.OTPReceiver;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
+import com.collegedekho.app.resource.DetailsTransition;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
@@ -193,14 +198,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import io.fabric.sdk.android.Fabric;
+
+import static com.collegedekho.app.utils.AnalyticsUtils.SendAppEvent;
+
 /*
 import io.connecto.android.sdk.Connecto;
 import io.connecto.android.sdk.Properties;
 import io.connecto.android.sdk.Traits;
 */
-import io.fabric.sdk.android.Fabric;
-
-import static com.collegedekho.app.utils.AnalyticsUtils.*;
 
 /*
 The MIT License (MIT)
@@ -273,12 +279,13 @@ public class MainActivity extends AppCompatActivity
     public static Tracker tracker;
 
     public static NetworkUtils mNetworkUtils;
-    public static volatile BaseFragment currentFragment;
+    public  volatile BaseFragment currentFragment;
     private List<Institute> mInstituteList;
     private List<Chapters> chaptersList;
     private List<PsychometricTestQuestion> psychometricQuestionsList;
     private int currentInstitute;
     private ProgressDialog progressDialog;
+    private ProgressDialog mTransparentProgressDialog;
     private AlertDialog mErrorDialog;
     private String mCurrentTitle;
     private String next;
@@ -341,14 +348,14 @@ public class MainActivity extends AppCompatActivity
     private NavigationView mNavigationView ;
     private DrawerLayout mDrawerLayout ;
     public ActionBarDrawerToggle mDrawerToggle;
+    private OTPReceiver mOtpReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.mContext = this;
+        Log.e(TAG, " onCreate()  enter time"+ System.currentTimeMillis());
+        this.IS_HOME_LOADED = this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).getBoolean(getString(R.string.USER_HOME_LOADED), false);
 
-        this.IS_HOME_LOADED = this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getBoolean(getResourceString(R.string.USER_HOME_LOADED), false);
-
-        Log.e(TAG, " onCreate  enter time"+ System.currentTimeMillis());
         try {
             super.onCreate(savedInstanceState);
         }catch (RuntimeException e){
@@ -356,7 +363,6 @@ public class MainActivity extends AppCompatActivity
             finish();
             reStartApplication();
         }
-
 
         Intent intent =  this.getIntent();
         String action = intent.getAction();
@@ -464,6 +470,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+        Log.e(TAG, " onCreate()  end time"+ System.currentTimeMillis());
     }
 
     /**
@@ -500,11 +507,11 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences sp = this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE);
         try {
             if (sp.contains(getResourceString(R.string.KEY_USER))) {
-                // load profile mDeviceProfile
+                // load profile user
                 mProfile = JSON.std.beanFrom(Profile.class, sp.getString(getResourceString(R.string.KEY_USER), null));
                 mNetworkUtils.setToken(MainActivity.mProfile.getToken());
 
-                // mDeviceProfile id register
+                // user id register
                 setUserIdWithAllEvents();
             }
         } catch (Exception e) {
@@ -691,17 +698,17 @@ public class MainActivity extends AppCompatActivity
             // start curser loader
             getSupportLoaderManager().initLoader(0, null, this);
 
-            // register GCM dialog to ask mDeviceProfile'profile data
+            // register GCM dialog to ask user'profile data
             mRegisterGcmDialog();
 
             if (IS_USER_CREATED) {
-                // if mDeviceProfile is anonymous  then logout from facebook
+                // if user is anonymous  then logout from facebook
                 if (mProfile != null && (mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER))
-                  //  disconnectFromFacebook();
+                    //  disconnectFromFacebook();
 
-                this.mLoadUserStatusScreen();
+                    this.mLoadUserStatusScreen();
             } else {
-               // disconnectFromFacebook();
+                // disconnectFromFacebook();
                 MainActivity.this.mDisplayLoginFragment();
             }
         } else {
@@ -745,7 +752,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run() {
                 if (currentFragment instanceof SplashFragment)
-                    ((SplashFragment) currentFragment).isInternetAvailable();
+                    ((SplashFragment) currentFragment).onSplashGifCompleted();
             }
         }, 10);
     }
@@ -755,9 +762,11 @@ public class MainActivity extends AppCompatActivity
         // replace default action bar with Tool bar
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        //getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
@@ -1091,6 +1100,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        Log.e(TAG, " onResume  enter time"+ System.currentTimeMillis());
         IN_FOREGROUND=true;
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -1099,11 +1109,12 @@ public class MainActivity extends AppCompatActivity
         }
         adjustFontScale(getResources().getConfiguration());
         // Logs 'install' and 'app activate' App Events.
-       // AppEventsLogger.activateApp(this);
+        // AppEventsLogger.activateApp(this);
         IntentFilter linkFilter=new IntentFilter(Constants.CONTENT_LINK_FILTER);
         linkFilter.addAction(Constants.NOTIFICATION_FILTER);
         LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver,linkFilter);
         System.gc();
+        Log.e(TAG, " onResume  end time"+ System.currentTimeMillis());
     }
 
     @Override
@@ -1121,7 +1132,7 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
         IN_FOREGROUND=false;
         // Logs 'app deactivate' App Event.
-       // AppEventsLogger.deactivateApp(this);
+        // AppEventsLogger.deactivateApp(this);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         System.gc();
     }
@@ -1129,6 +1140,23 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+        // register OTP broadcast receiver if user's phone number
+        // is not verified
+        if(mProfile == null || mProfile.getIs_verified() != Constants.PHONE_VERIFIED) {
+            if (mOtpReceiver == null)
+                mOtpReceiver = new OTPReceiver();
+
+            IntentFilter filter ;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                filter = new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION);
+            }else{
+                filter = new IntentFilter();
+                filter.addAction("android.provider.Telephony.SMS_RECEIVED");
+            }
+            this.registerReceiver(mOtpReceiver, filter);
+        }
+
+        Log.e(TAG, " onStart()  enter time"+ System.currentTimeMillis());
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
@@ -1145,11 +1173,17 @@ public class MainActivity extends AppCompatActivity
                 Uri.parse(Constants.BASE_APP_URI.toString())
         );
         AppIndex.AppIndexApi.start(client, viewAction);
+        Log.e(TAG, " onStart()  end time"+ System.currentTimeMillis());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        // unregister Otp broadcast receiver
+        if(mOtpReceiver != null) {
+            unregisterReceiver(mOtpReceiver);
+            mOtpReceiver = null;
+        }
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         Action viewAction = Action.newAction(
@@ -1170,7 +1204,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         //this.connecto.track("Session Ended", new Properties().putValue("session_end_datetime", new Date().toString()));
-
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         super.onDestroy();
     }
@@ -1178,7 +1211,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
@@ -1196,6 +1228,7 @@ public class MainActivity extends AppCompatActivity
                     mDrawerLayout.openDrawer(GravityCompat.START);
 
                 }else if(getSupportFragmentManager().getBackStackEntryCount() >= 1) {
+                    // remove a fragment from back stack if count is greater then zero
                     getSupportFragmentManager().popBackStack();
                 }
                 return true;
@@ -1248,8 +1281,7 @@ public class MainActivity extends AppCompatActivity
             mSearchView.setOnSearchClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-                    if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
+                    if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
                         displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
                         mSearchView.onActionViewCollapsed();
                     }
@@ -1273,59 +1305,48 @@ public class MainActivity extends AppCompatActivity
                 menu.getItem(0).setVisible(true);
         }
         setSearchAvailable(menu);
-//        if (!getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), false)) {
+        SharedPreferences sharedPreferences = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE);
+        boolean isTuteComplete  = false ;
         if(currentFragment instanceof TabFragment){
             if(((TabFragment) currentFragment).getSelectedTab() == 1){
-                boolean tute_complete = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
-                if(!tute_complete){
-                    menu.setGroupVisible(R.id.search_menu_group, false);
-                    menu.setGroupVisible(R.id.main_menu_group, false);
-                }
+                isTuteComplete = sharedPreferences.getBoolean(getString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+                showMenuGroupVIsibility(menu, isTuteComplete);
             } else if(((TabFragment) currentFragment).getSelectedTab() == 3){
-                boolean tute_complete = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("prepare_tute", false);
-                if(!tute_complete){
-                    menu.setGroupVisible(R.id.search_menu_group, false);
-                    menu.setGroupVisible(R.id.main_menu_group, false);
-                }
+                isTuteComplete = sharedPreferences.getBoolean("prepare_tute", false);
+                showMenuGroupVIsibility(menu, isTuteComplete);
             }
-        }
-
-        if(currentFragment instanceof WishlistFragment){
-            boolean tute_complete = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
-            if(!tute_complete){
-                menu.setGroupVisible(R.id.search_menu_group, false);
-                menu.setGroupVisible(R.id.main_menu_group, false);
-            }
-        }
-
-        if(currentFragment instanceof CDRecommendedInstituteFragment){
+        }else if(currentFragment instanceof WishlistFragment){
+            isTuteComplete = sharedPreferences.getBoolean("Wishlist tute", false);
+            showMenuGroupVIsibility(menu, isTuteComplete);
+        }else  if(currentFragment instanceof CDRecommendedInstituteFragment){
             int tab = ((CDRecommendedInstituteFragment) currentFragment).currentTabId;
             if(tab == 1){
-                boolean tute_complete = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), false);
-                if(!tute_complete){
-                    menu.setGroupVisible(R.id.search_menu_group, false);
-                    menu.setGroupVisible(R.id.main_menu_group, false);
-                }
+                isTuteComplete = sharedPreferences.getBoolean(getString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), false);
+                showMenuGroupVIsibility(menu, isTuteComplete);
             } else if (tab == 2){
-                boolean tute_complete = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
-                if(!tute_complete){
-                    menu.setGroupVisible(R.id.search_menu_group, false);
-                    menu.setGroupVisible(R.id.main_menu_group, false);
-                }
+                isTuteComplete = sharedPreferences.getBoolean("Wishlist tute", false);
+                showMenuGroupVIsibility(menu, isTuteComplete);
             }
-        }
-
-        if(currentFragment instanceof  HomeFragment){
-            boolean tuteCompleted = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("Home Tute", false);
-            if(!tuteCompleted){
-                menu.setGroupVisible(R.id.search_menu_group, false);
-                menu.setGroupVisible(R.id.main_menu_group, false);
-            }else {
-                menu.setGroupVisible(R.id.main_menu_group, true);
-                menu.setGroupVisible(R.id.search_menu_group, true);
-            }
+        } else if(currentFragment instanceof  HomeFragment){
+            isTuteComplete = sharedPreferences.getBoolean("Home Tute", false);
+            showMenuGroupVIsibility(menu, isTuteComplete);
         }
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * It will show nad hide toolbar items
+     * @param menu inflated menu layout
+     * @param flag menu items will show and hide based on this flag
+     */
+    private void showMenuGroupVIsibility(Menu menu, boolean flag){
+        if(!flag){
+            menu.setGroupVisible(R.id.search_menu_group, false);
+            menu.setGroupVisible(R.id.main_menu_group, false);
+        }else {
+            menu.setGroupVisible(R.id.main_menu_group, true);
+            menu.setGroupVisible(R.id.search_menu_group, true);
+        }
     }
 
     private void setSearchAvailable(Menu menu) {
@@ -1369,7 +1390,7 @@ public class MainActivity extends AppCompatActivity
      * and GA Tracker
      */
     private void setUserIdWithAllEvents(){
-        // register mDeviceProfile id with apps flyer
+        // register user id with apps flyer
         AppsFlyerLib.getInstance().setCustomerUserId(MainActivity.mProfile.getId());
         //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
@@ -1379,9 +1400,9 @@ public class MainActivity extends AppCompatActivity
         eventValue.put(getResourceString(R.string.USER_PHONE), mProfile.getPhone_no());
 
         MainActivity.AppsflyerTrackerEvent(this,getResourceString(R.string.SESSION_STARTED),eventValue);
-        // register mDeviceProfile id with GA tracker
+        // register user id with GA tracker
         MainActivity.tracker.setClientId(MainActivity.mProfile.getId());
-        // register mDeviceProfile id with connecto
+        // register user id with connecto
         //this.connecto.identify(MainActivity.mProfile.getId(), new Traits().putValue(getResourceString(R.string.USER_NAME), MainActivity.mProfile.getName()));
         //this.connecto.track(getResourceString(R.string.SESSION_STARTED),  new Properties().putValue(getResourceString(R.string.SESSION_STARTED_DATE_TIME), new Date().toString()));
 
@@ -1410,7 +1431,7 @@ public class MainActivity extends AppCompatActivity
         gcmDialogHandler.postDelayed(gcmDialogRunnable,90000);
     }
     /**
-     * This method is used to load screens according to mDeviceProfile status
+     * This method is used to load screens according to user status
      * if education and exam is selected then load profile screen
      * if education is selected but exam is not selected then load exams screen
      * if both are not selected then load education screen
@@ -1433,7 +1454,7 @@ public class MainActivity extends AppCompatActivity
                 == ProfileMacro.EXAMS_SELECTED) || IS_HOME_LOADED){
             // show App bar layout
             mShowAppBarLayout();
-            // load mDeviceProfile home screen
+            // load user home screen
             mDisplayHomeFragment();
             // request to update profile info if anything is change on server
             requestForProfile(null);
@@ -1449,8 +1470,11 @@ public class MainActivity extends AppCompatActivity
             String u = JSON.std.asString(mProfile);
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
 
-            if(currentFragment instanceof ProfileFragment ){//||currentFragment instanceof ProfileFragment){
-               ((ProfileFragment) currentFragment).updateProfileImage();
+            if(currentFragment instanceof ProfileFragment ){
+                ((ProfileFragment) currentFragment).updateProfileImage();
+            }
+            if(currentFragment instanceof ProfileBuildingFragment ){
+                ((ProfileBuildingFragment) currentFragment).updateProfileImage();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -1485,9 +1509,14 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayProfileFragment(Profile profile, boolean backStack){
         if(profile == null)
             return;
+        View sharedView = null;
+        if(currentFragment instanceof HomeFragment){
+            sharedView  =  (currentFragment).getView().findViewById(R.id.profile_image);
+        }
+
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
         if (fragment == null) {
-            mDisplayFragment(ProfileFragment.getInstance(profile), backStack, ProfileFragment.class.getSimpleName());
+            mDisplayFragment(ProfileFragment.getInstance(profile),sharedView,"shared_profile_image", backStack, ProfileFragment.class.getSimpleName());
         } else{
             try {
                 int count = getSupportFragmentManager().getBackStackEntryCount();
@@ -1496,7 +1525,7 @@ public class MainActivity extends AppCompatActivity
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
-            mDisplayFragment(fragment, false, ProfileFragment.class.getSimpleName());
+            mDisplayFragment(fragment, sharedView,"shared_profile_image",false, ProfileFragment.class.getSimpleName());
         }
     }
 
@@ -1515,7 +1544,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is used to request for post and get mDeviceProfile's profile data
+     * This method is used to request for post and get user's profile data
      * @param params
      */
     @Override
@@ -1524,7 +1553,7 @@ public class MainActivity extends AppCompatActivity
             return;
 
         if(params != null && mProfile != null) {
-            // if mDeviceProfile's name is not available or name is anonymous and mDeviceProfile has saved his/her
+            // if user's name is not available or name is anonymous and user has saved his/her
             // name in me profile contacts then fetch name and save it on server
             String name = mProfile.getName();
             if(name == null || name.isEmpty()
@@ -1534,14 +1563,14 @@ public class MainActivity extends AppCompatActivity
                     params.put(getString(R.string.USER_NAME), mDeviceProfile.profileData[0]);
                 }
             }
-            // if mDeviceProfile's email id is anonymous and device play store email id does not
+            // if user's email id is anonymous and device play store email id does not
             // exist in our server database then sever will allow to replace it with mDeviceProfile's email id
             if (mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER) {
                 String email = Utils.getDeviceEmail(getApplicationContext());
                 if(email != null && !email.isEmpty())
                     params.put(getString(R.string.USER_EMAIL), email);
             }
-            // if mDeviceProfile's phone number is not available and it is saved in me profile contacts
+            // if user's phone number is not available and it is saved in me profile contacts
             // then fetch it  and save it on mDeviceProfile's profile
             if (mProfile.getPhone_no() == null || mProfile.getPhone_no().length() < 10) {
                 if (mDeviceProfile != null && mDeviceProfile.getPrimaryPhone() != null && !mDeviceProfile.getPrimaryPhone().isEmpty())
@@ -1552,11 +1581,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is used to update mDeviceProfile profile whenever mDeviceProfile update
+     * This method is used to update user profile whenever mDeviceProfile update
      *  his/her information about basic info , current education, preferred education details,
      *  interested exams details and other basic info
-     * @param params
-     * @param TAG
+     * @param params params
+     * @param TAG tag
      */
     public void requestForUserProfileUpdate( String TAG, HashMap<String, String> params) {
 
@@ -1592,8 +1621,8 @@ public class MainActivity extends AppCompatActivity
         this.requestForUserProfileUpdate(Constants.TAG_UPDATE_USER_PROFILE+"#"+viewPosition, params);
     }
     /**
-     * This method used to request to show mDeviceProfile's profile screen  and update profile data ,
-     * if profile data is not available then send a request to load mDeviceProfile's profile
+     * This method used to request to show user's profile screen  and update profile data ,
+     * if profile data is not available then send a request to load user's profile
      */
     @Override
     public void requestForProfileFragment() {
@@ -1606,7 +1635,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is used to update mDeviceProfile name when mDeviceProfile does not have a name and wants to
+     * This method is used to update user name when user does not have a name and wants to
      * chat or asks  a queation and give answer
      * @param params
      * @param msg
@@ -1618,7 +1647,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to request for specialization list based on
-     * stream which is selected by the mDeviceProfile while updating his/her profile
+     * stream which is selected by the user while updating his/her profile
      * @param streamId
      * @param requestType
      */
@@ -1631,7 +1660,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to request for Degrees list based on
-     * level which is selected by the mDeviceProfile while updating his/her profile
+     * level which is selected by the user while updating his/her profile
      * @param levelId levelID
      * @param requestType request Type
      */
@@ -1654,7 +1683,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *  This method is used to update mDeviceProfile profile info
+     *  This method is used to update user profile info
      *  on Profile page after successfully updating any thing in profile
      * @param tag tag
      * @param responseJson responseJson
@@ -1666,7 +1695,7 @@ public class MainActivity extends AppCompatActivity
             Profile profile = JSON.std.beanFrom(Profile.class, responseJson);
             if(profile == null)
                 return;
-            ProfileFragment.mProfile= profile;
+            // ProfileFragment.mProfile= profile;
             MainActivity.mProfile = profile;
 
             if(currentFragment instanceof ProfileFragment) {
@@ -1684,7 +1713,7 @@ public class MainActivity extends AppCompatActivity
                     ((ProfileFragment) currentFragment).updateUserProfile();
                 }
             }else if(currentFragment instanceof ProfileBuildingFragment){
-                ((ProfileBuildingFragment) currentFragment).profileImageUploadedSuccessfully();
+                ((ProfileBuildingFragment) currentFragment).profileUpdatedSuccessfully();
             }
             else if(currentFragment instanceof  HomeFragment){
 
@@ -1823,6 +1852,9 @@ public class MainActivity extends AppCompatActivity
     private void updateNextNewsList(String response) {
         try {
             List<News> news = JSON.std.listOfFrom(News.class, extractResults(response));
+            if(this.mNewsList ==  null)
+                this.mNewsList = new ArrayList<>();
+
             this.mNewsList.addAll(news);
             this.mParseSimilarNews(this.mNewsList);
 
@@ -2140,13 +2172,15 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if(requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK ) {
-            if (currentFragment instanceof ProfileFragment) {
+            if (currentFragment instanceof ProfileFragment
+                    || currentFragment instanceof  ProfileBuildingFragment) {
                 ((ProfileFragmentListener) currentFragment).requestForCropProfileImage(data);
             }
 
         }else  if(requestCode == Crop.REQUEST_CROP){
 
-            if (currentFragment instanceof ProfileFragment) {
+            if (currentFragment instanceof ProfileFragment
+                    || currentFragment instanceof  ProfileBuildingFragment) {
                 if(resultCode == RESULT_OK)
                     ((ProfileFragmentListener) currentFragment).uploadUserProfileImage(Crop.getOutput(data));
                 else if(resultCode == RESULT_CANCELED)
@@ -2283,7 +2317,58 @@ public class MainActivity extends AppCompatActivity
 
             //Events
             SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
+            this.mLastScreenName = tag;
+        }
+        if(!(fragment instanceof InstituteListFragment))
+            invalidateOptionsMenu();
+    }
 
+    private void mDisplayFragment(Fragment fragment, View sharedView, String sharedViewname, boolean addToBackstack, String tag) {
+        try {
+
+            this.currentFragment = (BaseFragment) fragment;
+            if (!(currentFragment instanceof OTPVerificationFragment)) {
+                if (this.getCurrentFocus() != null && this.getCurrentFocus() instanceof EditText) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+           /* if(currentFragment instanceof SplashFragment || currentFragment instanceof HomeFragment){
+                fragmentTransaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
+            }else {
+                fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+            }*/
+
+            if(sharedView != null) {
+                fragmentTransaction.addSharedElement(sharedView, sharedViewname);
+            }
+            fragmentTransaction.replace(R.id.container, fragment, tag);
+            if (addToBackstack) {
+                fragmentTransaction.addToBackStack(fragment.toString());
+            }
+            fragmentTransaction.commitAllowingStateLoss();
+            if (this.currentFragment instanceof HomeFragment) {
+                mShowAppBarLayout();
+                View bottomMenu = findViewById(R.id.bottom_tab_layout);
+                bottomMenu.animate().translationY(0);
+                bottomMenu.setVisibility(View.VISIBLE);
+            }
+            mDisplayHomeAsUpEnabled();
+        } catch (Exception e) {
+            Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
+        } finally {
+            //Send GA Session
+            MainActivity.GAScreenEvent(tag);
+            HashMap<String, Object> eventValue = new HashMap<>();
+            eventValue.put(getResourceString(R.string.SCREEN_NAME), tag);
+            eventValue.put(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
+            eventValue.put(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
+
+            this.mTimeScreenClicked = new Date();
+
+            //Events
+            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
             this.mLastScreenName = tag;
         }
         if(!(fragment instanceof InstituteListFragment))
@@ -2301,8 +2386,6 @@ public class MainActivity extends AppCompatActivity
             mDrawerToggle.setDrawerIndicatorEnabled(true);
         else
             mDrawerToggle.setDrawerIndicatorEnabled(false);
-
-
         // set all menu items unchecked when tab fragment is not selected
         if(!(currentFragment instanceof TabFragment)){
             int size = mNavigationView.getMenu().size();
@@ -2318,7 +2401,7 @@ public class MainActivity extends AppCompatActivity
         params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
         findViewById(R.id.main_container).setLayoutParams(params);
         if(getSupportActionBar() != null)
-        getSupportActionBar().show();
+            getSupportActionBar().show();
 
         if (findViewById(R.id.app_bar_layout).getVisibility() != View.VISIBLE)
             findViewById(R.id.app_bar_layout).setVisibility(View.VISIBLE);
@@ -2332,7 +2415,7 @@ public class MainActivity extends AppCompatActivity
         findViewById(R.id.main_container).setLayoutParams(params);
 
         if(getSupportActionBar() != null)
-        getSupportActionBar().hide();
+            getSupportActionBar().hide();
     }
 
     @Override
@@ -2349,7 +2432,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_TRUE_SDK_LOGIN:
             case Constants.TAG_FACEBOOK_LOGIN:
             case Constants.TAG_PHONE_NUMBER_LOGIN:
-                //Deleting exam summary on login, since old mDeviceProfile's and new mDeviceProfile's are merged. And profile is taken from latest mDeviceProfile.
+                //Deleting exam summary on login, since old user's and new user's are merged. And profile is taken from latest user.
                 // So old mDeviceProfile's exam summary gets obsolete. We need to reset the cache
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 this.mUserCreatedSuccessfully(response);
@@ -2359,6 +2442,12 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.TAG_VERIFY_USER_PHONE:
                 this.onOTPVerified(response);
+                break;
+            case Constants.TAG_LOAD_SUB_LEVELS:
+                parseSubLevels(response);
+                break;
+            case Constants.TAG_LOAD_LEVEL_STREAMS:
+                parseLevelStreams(response);
                 break;
             case Constants.TAG_USER_EXAMS_SUBMISSION:
                 this.mOnUserExamsSubmitted(response);
@@ -2771,6 +2860,31 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void parseLevelStreams(String responseJson) {
+        String resultJson = extractResults(responseJson);
+        try {
+            ArrayList<ProfileSpinnerItem> streamList = (ArrayList)JSON.std.listOfFrom(ProfileSpinnerItem.class, resultJson);
+            if(currentFragment instanceof  ProfileBuildingFragment){
+                ((ProfileBuildingFragment) currentFragment).mLevelStreamResponseCompleted(streamList);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void parseSubLevels(String responseJson) {
+
+        String resultJson = extractResults(responseJson);
+        try {
+            ArrayList<SubLevel> subLevelList = (ArrayList)JSON.std.listOfFrom(SubLevel.class, resultJson);
+            if(currentFragment instanceof  ProfileBuildingFragment){
+                ((ProfileBuildingFragment) currentFragment).mSubLevelsResponseCompleted(subLevelList);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private boolean updateCDRecommendedFragment(String[] tags){
         String parentIndex;
         boolean hideProgressDialog = true;
@@ -2902,9 +3016,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is called when mDeviceProfile login with true sdk , facebook, phone number
-     * or skip option then mDeviceProfile response is parse and mDeviceProfile is created and saved in
-     * shared pref . and load mDeviceProfile status screens
+     * This method is called when user login with true sdk , facebook, phone number
+     * or skip option then user response is parse and user is created and saved in
+     * shared pref . and load user status screens
      * and resp
      * @param response response
      */
@@ -2935,13 +3049,13 @@ public class MainActivity extends AppCompatActivity
                 this.getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
             }
 
-            // parse mDeviceProfile response and  create a mDeviceProfile
+            // parse user response and  create a user
             this.mParseProfileResponse(response);
             // set token in network utill
             mNetworkUtils.setToken(MainActivity.mProfile.getToken());
-            // set mDeviceProfile ids with apps flyer
+            // set user ids with apps flyer
             this.setUserIdWithAllEvents();
-            // load mDeviceProfile status screeen
+            // load user status screeen
             this.mLoadUserStatusScreen();
 
             if (!IS_USER_CREATED) {
@@ -2953,7 +3067,7 @@ public class MainActivity extends AppCompatActivity
 
             SharedPreferences sharedPreferences = this.getSharedPreferences("sharedprefs", MODE_PRIVATE);
 
-            sharedPreferences.edit().putBoolean(getResourceString(R.string.USER_CREATED), true).apply();
+            sharedPreferences.edit().putBoolean(getString(R.string.USER_CREATED), true).apply();
 
             String token = sharedPreferences.getString("fcmToken", "");
 
@@ -3057,8 +3171,8 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to provide education level and
-     * mDeviceProfile will select current education or he/she can skip,
-     * if mDeviceProfile don't skip then ask for thestream .
+     * user will select current education or he/she can skip,
+     * if user don't skip then ask for thestream .
      * specialization , degrees
      */
     private void mDisplayProfileBuildingFragment() {
@@ -3180,38 +3294,38 @@ public class MainActivity extends AppCompatActivity
             SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
 
         } else  if(voteType == Constants.DISLIKE_THING) {
-                qnaQuestion.setUpvotes(qnaQuestion.getDownvotes() - 1);
+            qnaQuestion.setUpvotes(qnaQuestion.getDownvotes() - 1);
 
+            Map<String,Object> eventValue = new HashMap<>();
+            eventValue.put(Constants.TAG_QUESTION_LIKE_DISLIKE, Constants.DISLIKE_THING);
+            eventValue.put(qnaQuestion.getTitle(), Constants.DISLIKE_THING);
+            eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
+
+            //Events
+            SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
+
+        }else{
+            if (qnaQuestion.getCurrent_user_vote_type() == Constants.LIKE_THING) {
+                qnaQuestion.setUpvotes(qnaQuestion.getUpvotes() - 1);
                 Map<String,Object> eventValue = new HashMap<>();
-                eventValue.put(Constants.TAG_QUESTION_LIKE_DISLIKE, Constants.DISLIKE_THING);
-                eventValue.put(qnaQuestion.getTitle(), Constants.DISLIKE_THING);
+                eventValue.put(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), Constants.NOT_INTERESTED_THING);
+                eventValue.put(qnaQuestion.getTitle(), Constants.NOT_INTERESTED_THING);
                 eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
                 //Events
                 SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
 
-        }else{
-            if (qnaQuestion.getCurrent_user_vote_type() == Constants.LIKE_THING) {
-                     qnaQuestion.setUpvotes(qnaQuestion.getUpvotes() - 1);
-                    Map<String,Object> eventValue = new HashMap<>();
-                    eventValue.put(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_UPVOTED), Constants.NOT_INTERESTED_THING);
-                    eventValue.put(qnaQuestion.getTitle(), Constants.NOT_INTERESTED_THING);
-                    eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
+            } else {
 
-                    //Events
-                    SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
+                qnaQuestion.setDownvotes(qnaQuestion.getDownvotes() - 1);
+                Map<String,Object> eventValue = new HashMap<>();
+                eventValue.put(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_DOWNVOTED), Constants.NOT_INTERESTED_THING);
+                eventValue.put(qnaQuestion.getTitle(), Constants.NOT_INTERESTED_THING);
+                eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
 
-                } else {
-
-                    qnaQuestion.setDownvotes(qnaQuestion.getDownvotes() - 1);
-                    Map<String,Object> eventValue = new HashMap<>();
-                    eventValue.put(getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_DOWNVOTED), Constants.NOT_INTERESTED_THING);
-                    eventValue.put(qnaQuestion.getTitle(), Constants.NOT_INTERESTED_THING);
-                    eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
-
-                    //Events
-                    SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
-                }
+                //Events
+                SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_VOTE_QNA_QUESTION_ENTITY), eventValue, this);
+            }
         }
         qnaQuestion.setCurrent_user_vote_type(voteType);
         if (currentFragment instanceof QnAQuestionsListFragment)
@@ -3382,105 +3496,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public static String GetPersonalizedMessage(String tag) {
-        switch (tag) {
-            case Constants.TAG_WISH_LIST_APPLIED_COURSE:
-                return "Applying to institute";
-            case Constants.TAG_LOAD_STREAM:
-            case Constants.TAG_UPDATE_STREAM:
-            case Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM:
-                return "Loading Streams";
-            case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
-                return "Loading Exams";
-            case Constants.TAG_EXAM_SUMMARY:
-            case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
-            case Constants.WIDGET_SYLLABUS:
-            case Constants.CARD_BUZZLIST_INSTITUTES:
-                return "Loading";
-            case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
-                return "Loading Profile";
-            case Constants.TAG_UPDATE_INSTITUTES:
-                return "Updating Institutes";
-            case Constants.TAG_UPDATE_USER_PROFILE:
-                return "Updating Profile";
-            case Constants.WIDGET_INSTITUTES:
-            case Constants.WIDGET_INSTITUTES_SBS:
-            case Constants.WIDGET_TRENDING_INSTITUTES:
-            case Constants.WIDGET_SHORTLIST_INSTITUTES:
-            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
-            case Constants.WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE:
-                return "Loading Institutes";
-            case Constants.WIDGET_NEWS:
-                return "Loading News";
-            case Constants.WIDGET_ARTICES:
-                return "Loading Articles";
-            case Constants.WIDGET_COURSES:
-                return "Loading Courses";
-            case Constants.TAG_POST_QUESTION:
-                return "Posting your question";
-            case Constants.TAG_LOAD_FILTERS:
-                return "Loading Filters";
-            case Constants.TAG_LOAD_QNA_QUESTIONS:
-                return "Loading Questions";
-            case Constants.TAG_LOAD_MY_FB:
-                return "Loading your Forums chat";
-            /*case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
-                return "Submitting Comment...";*/
-            case Constants.ACTION_QNA_ANSWER_SUBMITTED:
-                return "Submitting Answer";
-            case Constants.ACTION_VOTE_QNA_QUESTION_ENTITY:
-            case Constants.ACTION_VOTE_QNA_ANSWER_ENTITY:
-                return "Processing Vote";
-            case Constants.WIDGET_FORUMS:
-                return "Loading Forums";
-            case Constants.SEARCHED_INSTITUTES:
-                return "Loading";
-            case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
-                return "Loading";
-            case Constants.WIDGET_TEST_CALENDAR:
-                return "Loading your plan";
-            case Constants.TAG_MY_ALERTS:
-                return "Loading important events";
-            case Constants.TAG_VERIFY_USER_PHONE:
-                return "Verifying OTP";
-            case Constants.TAG_USER_PHONE_ADDED:
-                return "Requesting OTP";
-            case Constants.PROFILE_IMAGE_UPLOADING:
-                return "Uploading Image";
-            case Constants.TAG_NEXT_ARTICLES:
-            case Constants.TAG_NEXT_FORUMS_LIST:
-            case Constants.TAG_NEXT_INSTITUTE:
-            case Constants.TAG_NEXT_NEWS:
-            case Constants.TAG_NEXT_QNA_LIST:
-            case Constants.TAG_NEXT_WISHLIST_INSTITUTE:
-            case Constants.TAG_INSTITUTE_LIKE_DISLIKE:
-            case Constants.TAG_QUESTION_LIKE_DISLIKE:
-            case Constants.ACTION_INSTITUTE_DISLIKED:
-            case Constants.TAG_APPLIED_COURSE:
-            case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
-            case Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE:
-            case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
-            case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
-            case Constants.TAG_SHORTLIST_INSTITUTE:
-            case Constants.TAG_DELETESHORTLIST_INSTITUTE:
-            case Constants.TAG_LOAD_COURSES:
-            case Constants.TAG_REQUEST_FOR_SPECIALIZATION:
-            case Constants.TAG_REQUEST_FOR_DEGREES:
-            case Constants.TAG_UPDATE_PROFILE_OBJECT:
-            case Constants.TAG_UPDATE_PROFILE_EXAMS:
-            case Constants.TAG_REQUEST_FOR_EXAMS:
-            case Constants.REFRESH_CHATROOM:
-            case Constants.TAG_REFRESH_PROFILE:
-                return null;
-            case "":
-                return null;
-            case Constants.TAG_SUBMIT_SBS_EXAM:
-                return "Getting institutes for your preferences";
-            default:
-                return "Loading";
-        }
-    }
-
     private void mShowQnAQuestions(String response) {
         ArrayList<QnAQuestions> qnaQuestionList = parseAndReturnQnAList(response);
         this.mDisplayFragment(QnAQuestionsListFragment.newInstance(new ArrayList<>(qnaQuestionList), next), !isFromNotification, Constants.TAG_FRAGMENT_QNA_QUESTION_LIST);
@@ -3511,7 +3526,7 @@ public class MainActivity extends AppCompatActivity
                 ((InstituteDetailFragment) currentFragment).updateInstituteArticle((ArrayList<Articles>) this.mArticlesList, next);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "exception while parsing response json for articles list"+e.getMessage());
         }
     }
     /**
@@ -3780,28 +3795,38 @@ public class MainActivity extends AppCompatActivity
         return map;
     }
 
-    public void showProgressDialog(String message) {
-        Log.e("MainActivity", "Message to show is : " + message);
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setCancelable(false);
-            progressDialog.setMessage(message);
-            progressDialog.setIndeterminate(true);
+    public void showProgressDialog(String message, int theme) {
+        if (isFinishing())
+            return;
+        if(theme == Constants.THEME_TRANSPARENT){
+            if (mTransparentProgressDialog == null) {
+                mTransparentProgressDialog = new ProgressDialog(MainActivity.this, R.style.TransparentDialog);
+                mTransparentProgressDialog.setCancelable(false);
+                mTransparentProgressDialog.setIndeterminate(true);
+            }
 
-        } else {
-            if (progressDialog.isShowing()) {
-                progressDialog.dismiss();
+            if (!MainActivity.this.isFinishing())
+                mTransparentProgressDialog.show();
+        }else {
+
+            if (progressDialog == null) {
+                progressDialog = new ProgressDialog(MainActivity.this);
+                progressDialog.setCancelable(false);
+                progressDialog.setIndeterminate(true);
             }
             progressDialog.setMessage(message);
+
+            if (!MainActivity.this.isFinishing())
+                progressDialog.show();
         }
-        if(!isFinishing())
-            progressDialog.show();
         IS_NETWORK_TASK_RUNNING=true;
     }
 
     public void hideProgressDialog() {
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
+        if(mTransparentProgressDialog != null && mTransparentProgressDialog.isShowing())
+            mTransparentProgressDialog.dismiss();
         IS_NETWORK_TASK_RUNNING=false;
     }
 
@@ -3834,76 +3859,72 @@ public class MainActivity extends AppCompatActivity
         if (!addToBackStack) {
             this.currentFragment.updateNews(news);
         }
+        else if (currentFragment instanceof NewsDetailFragment) {
+            (currentFragment).updateNews(news);
+        }
         else {
-            if (currentFragment instanceof NewsDetailFragment) {
-                (currentFragment).updateNews(news);
-            }else {
-/*
-                     Fragment fragment = NewsDetailFragment.newInstance(news, this.mNewsList);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        fragment.setSharedElementEnterTransition(new DetailsTransition());
-                        fragment.setEnterTransition(new Fade());
-                        fragment.setExitTransition(new Fade());
-                        fragment.setSharedElementReturnTransition(new DetailsTransition());
-                    }
-
-                    FragmentTransaction fragmentTransaction  = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.addSharedElement(view, getResources().getString(R.string.news_image_transaction));
-                    fragmentTransaction.replace(R.id.container, fragment);//, Constants.TAG_FRAGMENT_NEWS_DETAIL);
-
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-                    fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
-
-                    fragmentTransaction.addToBackStack(fragment.toString());
-                    fragmentTransaction.commit();*/
-                this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
+            Fragment fragment = NewsDetailFragment.newInstance(news, this.mNewsList);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                fragment.setSharedElementEnterTransition(new DetailsTransition());
+                fragment.setEnterTransition(new Fade());
+                fragment.setExitTransition(new Fade());
+                fragment.setSharedElementReturnTransition(new DetailsTransition());
             }
 
-            Map<String, Object> eventValue = new HashMap<>();
-            eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(news.getId()));
-            eventValue.put(getResourceString(R.string.ACTION_NEWS_SELECTED), news.getId());
+            FragmentTransaction fragmentTransaction  = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.addSharedElement(view, getResources().getString(R.string.news_image_transaction));
+            fragmentTransaction.replace(R.id.container, fragment);//, Constants.TAG_FRAGMENT_NEWS_DETAIL);
 
-            //Events
-            SendAppEvent(getResourceString(R.string.CATEGORY_NEWS), getResourceString(R.string.ACTION_NEWS_SELECTED), eventValue, this);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+                fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+
+            fragmentTransaction.addToBackStack(fragment.toString());
+            fragmentTransaction.commit();
+            // this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
         }
+
+        // send news selected Events
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(news.getId()));
+        eventValue.put(getResourceString(R.string.ACTION_NEWS_SELECTED), news.getId());
+        SendAppEvent(getResourceString(R.string.CATEGORY_NEWS), getResourceString(R.string.ACTION_NEWS_SELECTED), eventValue, this);
+
     }
 
     @Override
     public void onArticleSelected(Articles article, boolean addToBackstack, View view) {
-        if (article == null) return;
         if (!addToBackstack) {
             this.currentFragment.updateArticle(article);
+        } else if (currentFragment instanceof ArticleDetailFragment) {
+            (currentFragment).updateArticle(article);
         } else {
-            if (currentFragment instanceof ArticleDetailFragment) {
-                (currentFragment).updateArticle(article);
-            }else {
 
-               /* Fragment fragment = ArticleDetailFragment.newInstance(article, this.mArticlesList);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    fragment.setSharedElementEnterTransition(new DetailsTransition());
-                    fragment.setEnterTransition(new Fade());
-                    fragment.setExitTransition(new Fade());
-                    fragment.setSharedElementReturnTransition(new DetailsTransition());
-                }
-
-                FragmentTransaction fragmentTransaction  = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.addSharedElement(view, getResources().getString(R.string.article_image_transaction));
-                fragmentTransaction.replace(R.id.container, fragment);//, Constants.TAG_FRAGMENT_NEWS_DETAIL);
-
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-                    fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
-
-                fragmentTransaction.addToBackStack(fragment.toString());
-                fragmentTransaction.commit();*/
-                this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
+            Fragment fragment = ArticleDetailFragment.newInstance(article, this.mArticlesList);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                fragment.setSharedElementEnterTransition(new DetailsTransition());
+                fragment.setEnterTransition(new Fade());
+                fragment.setExitTransition(new Fade());
+                fragment.setSharedElementReturnTransition(new DetailsTransition());
             }
-            Map<String, Object> eventValue = new HashMap<>();
-            eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(article.getId()));
-            eventValue.put(getResourceString(R.string.ACTION_ARTICLE_SELECTED), article.getId());
 
-            //Events
-            SendAppEvent(getResourceString(R.string.CATEGORY_ARTICLE), getResourceString(R.string.ACTION_ARTICLE_SELECTED), eventValue, this);
+            FragmentTransaction fragmentTransaction  = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.addSharedElement(view, getResources().getString(R.string.article_image_transaction));
+            fragmentTransaction.replace(R.id.container, fragment);//, Constants.TAG_FRAGMENT_NEWS_DETAIL);
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+                fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+
+            fragmentTransaction.addToBackStack(fragment.toString());
+            fragmentTransaction.commit();
+            //this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
         }
+
+        // sens article select Events
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(article.getId()));
+        eventValue.put(getResourceString(R.string.ACTION_ARTICLE_SELECTED), article.getId());
+        SendAppEvent(getResourceString(R.string.CATEGORY_ARTICLE), getResourceString(R.string.ACTION_ARTICLE_SELECTED), eventValue, this);
+
 
     }
 
@@ -3966,8 +3987,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void requestToUploadProfileImage(byte[] fileByteArray) {
-        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(Constants.PROFILE_IMAGE_UPLOADING);
             this.mNetworkUtils.postMultiPartRequest(Constants.PROFILE_IMAGE_UPLOADING,Constants.BASE_URL+"upload-image/",fileByteArray);
         } else {
@@ -4041,11 +4061,11 @@ public class MainActivity extends AppCompatActivity
         try {
             Institute institute = this.mInstituteList.get(this.currentInstitute);
             if (institute.getIs_shortlisted() == Constants.SHORTLISTED_NO)
-                this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + this.currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
+                this.mMakeNetworkCall(Constants.TAG_SHORTLIST_INSTITUTE + "#" + currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.POST);
             else
                 this.mMakeNetworkCall(Constants.TAG_DELETESHORTLIST_INSTITUTE + "#" + currentInstitute, institute.getResource_uri() + "shortlist/", null, Request.Method.DELETE);
         }catch(Exception e){
-
+            Log.e(TAG, "Exception while accessing  institute from institute list");
         }
     }
 
@@ -4076,11 +4096,123 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public static String GetPersonalizedMessage(String tag) {
+        switch (tag) {
+            case Constants.TAG_WISH_LIST_APPLIED_COURSE:
+                return "Applying to institute";
+            case Constants.TAG_LOAD_STREAM:
+            case Constants.TAG_UPDATE_STREAM:
+            case Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM:
+                return "Loading Streams";
+            case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
+                return "Loading Exams";
+            case Constants.TAG_EXAM_SUMMARY:
+            case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
+            case Constants.WIDGET_SYLLABUS:
+            case Constants.CARD_BUZZLIST_INSTITUTES:
+                return "Loading";
+            case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
+                return "Loading Profile";
+            case Constants.TAG_UPDATE_INSTITUTES:
+                return "Updating Institutes";
+            case Constants.TAG_UPDATE_USER_PROFILE:
+                return "Updating Profile";
+            case Constants.WIDGET_INSTITUTES:
+            case Constants.WIDGET_INSTITUTES_SBS:
+            case Constants.WIDGET_TRENDING_INSTITUTES:
+            case Constants.WIDGET_SHORTLIST_INSTITUTES:
+            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
+            case Constants.WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE:
+                return "Loading Institutes";
+            case Constants.WIDGET_NEWS:
+                return "Loading News";
+            case Constants.WIDGET_ARTICES:
+                return "Loading Articles";
+            case Constants.WIDGET_COURSES:
+                return "Loading Courses";
+            case Constants.TAG_POST_QUESTION:
+                return "Posting your question";
+            case Constants.TAG_LOAD_FILTERS:
+                return "Loading Filters";
+            case Constants.TAG_LOAD_QNA_QUESTIONS:
+                return "Loading Questions";
+            case Constants.TAG_LOAD_MY_FB:
+                return "Loading your Forums chat";
+            /*case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
+                return "Submitting Comment...";*/
+            case Constants.ACTION_QNA_ANSWER_SUBMITTED:
+                return "Submitting Answer";
+            case Constants.ACTION_VOTE_QNA_QUESTION_ENTITY:
+            case Constants.ACTION_VOTE_QNA_ANSWER_ENTITY:
+                return "Processing Vote";
+            case Constants.WIDGET_FORUMS:
+                return "Loading Forums";
+            case Constants.SEARCHED_INSTITUTES:
+                return "Loading";
+            case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
+                return "Loading";
+            case Constants.WIDGET_TEST_CALENDAR:
+                return "Loading your plan";
+            case Constants.TAG_MY_ALERTS:
+                return "Loading important events";
+            case Constants.TAG_VERIFY_USER_PHONE:
+                return "Verifying OTP";
+            case Constants.TAG_USER_PHONE_ADDED:
+                return "Requesting OTP";
+            case Constants.PROFILE_IMAGE_UPLOADING:
+                return "Uploading Image";
+            case Constants.TAG_NEXT_ARTICLES:
+            case Constants.TAG_NEXT_FORUMS_LIST:
+            case Constants.TAG_NEXT_INSTITUTE:
+            case Constants.TAG_NEXT_NEWS:
+            case Constants.TAG_NEXT_QNA_LIST:
+            case Constants.TAG_NEXT_WISHLIST_INSTITUTE:
+            case Constants.TAG_INSTITUTE_LIKE_DISLIKE:
+            case Constants.TAG_QUESTION_LIKE_DISLIKE:
+            case Constants.ACTION_INSTITUTE_DISLIKED:
+            case Constants.TAG_APPLIED_COURSE:
+            case Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE:
+            case Constants.TAG_RECOMMENDED_APPLIED_SHORTLIST_INSTITUTE:
+            case Constants.TAG_RECOMMENDED_NOT_INTEREST_INSTITUTE:
+            case Constants.TAG_RECOMMENDED_DECIDE_LATER_INSTITUTE:
+            case Constants.TAG_SHORTLIST_INSTITUTE:
+            case Constants.TAG_DELETESHORTLIST_INSTITUTE:
+            case Constants.TAG_LOAD_COURSES:
+            case Constants.TAG_REQUEST_FOR_SPECIALIZATION:
+            case Constants.TAG_REQUEST_FOR_DEGREES:
+            case Constants.TAG_UPDATE_PROFILE_OBJECT:
+            case Constants.TAG_UPDATE_PROFILE_EXAMS:
+            case Constants.TAG_REQUEST_FOR_EXAMS:
+            case Constants.REFRESH_CHATROOM:
+            case Constants.TAG_REFRESH_PROFILE:
+                return null;
+            case "":
+                return null;
+            case Constants.TAG_SUBMIT_SBS_EXAM:
+                return "Getting institutes for your preferences";
+            default:
+                return "Loading";
+        }
+    }
+
+    private int getProcessDialogTheme(String tag) {
+        switch (tag) {
+            case Constants.TAG_LOAD_SUB_LEVELS:
+            case Constants.TAG_LOAD_LEVEL_STREAMS:
+                return Constants.THEME_TRANSPARENT;
+        }
+        return Constants.THEME_BACKGROUND;
+    }
+
     private void showProgress(String tag) {
         String[] tags = tag.split("#");
         String message = MainActivity.GetPersonalizedMessage(tags[0]);
-        if (message != null && !(this.currentFragment instanceof SplashFragment))
-            showProgressDialog(message);
+        int dialogTheme = getProcessDialogTheme(tags[0]);
+        if (dialogTheme == Constants.THEME_TRANSPARENT) {
+            showProgressDialog("", dialogTheme);
+        } else if (message != null) {
+            showProgressDialog(message, dialogTheme);
+        }
     }
 
     @Override
@@ -4250,7 +4382,7 @@ public class MainActivity extends AppCompatActivity
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage());
         } finally {
-            Map<String, Object> eventValue = new HashMap<String, Object>();
+            Map<String, Object> eventValue = new HashMap<>();
             eventValue.put(Constants.TAG_RESOURCE_URI, qnaAnswer.getResource_uri());
             eventValue.put(getResourceString(R.string.QNA_ANSWER_RESOURCE_URI), qnaAnswer.getResource_uri());
 
@@ -4484,7 +4616,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is called when mDeviceProfile change anything in Institute List
+     * This method is called when user change anything in Institute List
      * @param response server response
      */
     private void mUpdateInstituteList(String response) {
@@ -4496,11 +4628,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is called when mDeviceProfile press device back button
+     * This method is called when user press device back button
      * Do these task
      * 1- If navigation drawer is open then close it
      * 2- If last fragment clear back stack FragmentManager
-     * 3- If mDeviceProfile wants to close app then show a message to press device back button again
+     * 3- If user wants to close app then show a message to press device back button again
      */
     @Override
     public void onBackPressed() {
@@ -4514,7 +4646,6 @@ public class MainActivity extends AppCompatActivity
             translateAnimation(null,currentBottomItem);
         }
 
-        int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
         if (currentFragment != null) {
             if (currentFragment instanceof SyllabusSubjectsListFragment) {
                 ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
@@ -4529,15 +4660,24 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        if (backStackCount == 0 && !Constants.READY_TO_CLOSE) {
+        int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+        if (backStackCount == 0){
             if (isFromNotification) {
                 isFromNotification = false;
                 mLoadUserStatusScreen();
                 return;
+            }else if(!Constants.READY_TO_CLOSE){
+                Constants.READY_TO_CLOSE = true;
+                Utils.DisplayToast(getApplicationContext(), "Press again to close CollegeDekho");
+               new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Constants.READY_TO_CLOSE = false;
+                    }
+                },3000);
+            }else{
+                super.onBackPressed();
             }
-            Constants.READY_TO_CLOSE = true;
-            Utils.DisplayToast(getApplicationContext(), "Press again to close CollegeDekho");
-            baskpressHandler.postDelayed(backpressRunnable, 1500);
         } else {
             super.onBackPressed();
         }
@@ -4560,7 +4700,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is called when mDeviceProfile skip
+     * This method is called when user skip
      *  registration or facebook login
      */
     @Override
@@ -4642,7 +4782,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to log out facebook account
-     * when mDeviceProfile wants to login with different account
+     * when user wants to login with different account
      * or  have not successfully login
      */
    /* private void disconnectFromFacebook() {
@@ -4660,7 +4800,7 @@ public class MainActivity extends AppCompatActivity
 
 
     /**
-     *  This method is called when mDeviceProfile's exams are edited
+     *  This method is called when user's exams are edited
      * @param responseJson user profile json
      */
     private void onUserExamsEdited(String responseJson) {
@@ -4669,7 +4809,7 @@ public class MainActivity extends AppCompatActivity
             mParseProfileResponse(responseJson);
             onBackPressed();
 
-            // if mDeviceProfile has removed all exams and when go back to tab
+            // if user has removed all exams and when go back to tab
             // screen has and make first tab selected because third tab
             //  gives exam preparation details
             if(currentFragment instanceof  TabFragment){
@@ -4692,7 +4832,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *  If mDeviceProfile login with any social site like facebook and stream and level has conflict
+     *  If user login with any social site like facebook and stream and level has conflict
      *  it shows a dialog to choose stream and level.
      * @param tag Tag
      * @param URL Api Url according to login
@@ -5050,6 +5190,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onRequestForSubLevels(int level){
+        mMakeNetworkCall(Constants.TAG_LOAD_SUB_LEVELS,Constants.BASE_URL+"sublevels/?level="+level, null);
+    }
+
+    @Override
+    public void onRequestForLevelStreams(int level){
+        mMakeNetworkCall(Constants.TAG_LOAD_LEVEL_STREAMS,Constants.BASE_URL+"streams/?is_extra="+level, null);
+    }
+
+    @Override
     public void onSkipSelectedInProfileBuilding() {
         this.mDisplayFragment(NotPreparingFragment.newInstance(), true, NotPreparingFragment.class.toString());
     }
@@ -5076,17 +5226,11 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @Override
-    public void onRequestForLevelStreams(int levelId, int levelType) {
-
-    }
-
-
     private void mOnUserExamsSubmitted(String responseJson) {
-        // parse mDeviceProfile response
+        // parse user response
         this.mParseProfileResponse(responseJson);
 
-        // update mDeviceProfile exam on profile building fragment
+        // update user exam on profile building fragment
         if(currentFragment instanceof ProfileBuildingFragment)
             ((ProfileBuildingFragment)currentFragment).onExamSubmittedSuccessfully();
     }
@@ -5124,15 +5268,19 @@ public class MainActivity extends AppCompatActivity
         try {
             List<Exam> mExamList = JSON.std.listOfFrom(Exam.class, extractResults(responseJson));
             if(currentFragment instanceof ProfileBuildingFragment) {
-
                 ((ProfileBuildingFragment) currentFragment).updateExamsList((ArrayList<Exam>) mExamList);
-            }else{
-               // mHomeTabContainer.setVisibility(View.VISIBLE);
-                if(mExamList.size() <= 0){
-                    Utils.DisplayToast(getApplicationContext(),"No Exams Found for your preferences");
+            }else {
+                // mHomeTabContainer.setVisibility(View.VISIBLE);
+                if (mExamList.size() <= 0) {
+                    Utils.DisplayToast(getApplicationContext(), "No Exams Found for your preferences");
                     return;
                 }
-                this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)), true, ExamsFragment.class.toString());
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag(ExamsFragment.class.getSimpleName());
+                if (fragment == null) {
+                    this.mDisplayFragment(ExamsFragment.newInstance(new ArrayList<>(mExamList)), true, ExamsFragment.class.getSimpleName());
+                }else{
+
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -5140,7 +5288,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-   @Override
+    @Override
     public void onSubjectSelected(Subjects subject, int position) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(SyllabusUnitListFragment.class.getSimpleName());
@@ -5346,19 +5494,19 @@ public class MainActivity extends AppCompatActivity
         String email = mProfile.getEmail();
         String phone = mProfile.getPhone_no();
 
-        // get mDeviceProfile name for apply course
+        // get user name for apply course
         if (name == null || name.isEmpty() || name.equalsIgnoreCase(getResourceString(R.string.ANONYMOUS_USER)))
         {
             name = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_name), "");
         }
-        // get mDeviceProfile email for apply course
+        // get user email for apply course
         if (email == null || email.isEmpty() || email.contains("@anonymouscollegedekho.com")){
             email = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_email),"");
 
             if(email.isEmpty())
                 email = Utils.getDeviceEmail(getApplicationContext());
         }
-        // get mDeviceProfile email for apply course
+        // get user email for apply course
         if (phone == null || phone.isEmpty()){
             if(mDeviceProfile != null && mDeviceProfile.getPrimaryPhone() != null && !mDeviceProfile.getPrimaryPhone().isEmpty())
                 phone = mDeviceProfile.getPrimaryPhone();
@@ -5366,7 +5514,7 @@ public class MainActivity extends AppCompatActivity
                 phone = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getString(mResources.getString(R.string.user_apply_course_phone),"");
         }
 
-        if ( name.isEmpty() || phone.length() < 10 || email.isEmpty()) {
+        if ( name.isEmpty() || phone.length() < 10 || email == null || email.isEmpty()) {
             final View view = getLayoutInflater().inflate(R.layout.dialog_apply, null, false);
             ((TextView) view.findViewById(R.id.apply_name)).setText(name);
             ((TextView) view.findViewById(R.id.apply_email)).setText(email);
@@ -5614,6 +5762,11 @@ public class MainActivity extends AppCompatActivity
         try {
             JSONObject responseObject = new JSONObject(response);
             if (responseObject.optBoolean("verified")) {
+                // unregister OTP broadcast receiver when phone is verified
+                if(mOtpReceiver != null) {
+                    unregisterReceiver(mOtpReceiver);
+                    mOtpReceiver = null;
+                }
                 displayMessage(R.string.otp_verified);
                 MainActivity.mProfile.setIs_verified(1);
                 String u = JSON.std.asString(MainActivity.mProfile);
@@ -5716,7 +5869,7 @@ public class MainActivity extends AppCompatActivity
 
     private CursorLoader getProfileLoader() {
         return new CursorLoader(this,
-                // Retrieve data rows for the device mDeviceProfile's 'profile' contact.
+                // Retrieve data rows for the device user's 'profile' contact.
                 Uri.withAppendedPath(
                         ContactsContract.Profile.CONTENT_URI,
                         ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
@@ -5728,7 +5881,7 @@ public class MainActivity extends AppCompatActivity
                         ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE},
 
                 // Show primary email addresses first. Note that there won't be
-                // a primary email address if the mDeviceProfile hasn't specified one.
+                // a primary email address if the user hasn't specified one.
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
@@ -5765,13 +5918,6 @@ public class MainActivity extends AppCompatActivity
         this.mMakeJsonObjectNetworkCall(Constants.TAG_PSYCHOMETRIC_RESPONSE+"#"+examId,Constants.BASE_URL+url,object,1);
     }
 
-    Handler baskpressHandler=new Handler();
-    Runnable backpressRunnable = new Runnable() {
-        @Override
-        public void run() {
-            Constants.READY_TO_CLOSE = false;
-        }
-    };
 
     public View.OnClickListener mClickListener = new View.OnClickListener() {
         @Override
@@ -6462,7 +6608,7 @@ public class MainActivity extends AppCompatActivity
             if (bundle.containsKey("screen") && bundle.containsKey("resource_uri")) {
                 MainActivity.type = bundle.getString("screen");
                 MainActivity.resource_uri = bundle.getString("resource_uri");
-                mHandleNotifications(false);
+                mHandleNotifications(true); // hange to true by suresh
             }
         }
     }
@@ -6505,3 +6651,5 @@ public class MainActivity extends AppCompatActivity
         this.mOtherAppSharedMessage = message;
     }
 }
+
+

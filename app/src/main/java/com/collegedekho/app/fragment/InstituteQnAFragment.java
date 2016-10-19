@@ -35,8 +35,6 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
     private ArrayList<QnAQuestions> mQnAQuestions;
     private TextView mEmptyTextView;
     private TextView mAskExpertButton;
-    private TextView mAskExpertCancelButton;
-    private TextView mAskExpertSubmitButton;
     private LinearLayout mInstituteQnAAskContainer;
     private LinearLayout mInstituteQnAQuestionListContainer;
     private QnAQuestionsListAdapter mQnAQuestionsListAdapter;
@@ -86,14 +84,12 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
         this.mInstituteQnAAskContainer = (LinearLayout) rootView.findViewById(R.id.institute_qna_ask_question_container);
         this.mInstituteQnAQuestionListContainer = (LinearLayout) rootView.findViewById(R.id.institute_qna_question_recycle_view_container);
         this.mAskExpertButton = (TextView) rootView.findViewById(R.id.institute_qna_button_ask_expert);
-        this.mAskExpertCancelButton= (TextView) rootView.findViewById(R.id.institute_qna_button_ask_cancel);
-        this.mAskExpertSubmitButton= (TextView) rootView.findViewById(R.id.institute_qna_button_ask_submit);
+        TextView mAskExpertCancelButton= (TextView) rootView.findViewById(R.id.institute_qna_button_ask_cancel);
+        TextView mAskExpertSubmitButton= (TextView) rootView.findViewById(R.id.institute_qna_button_ask_submit);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
 
         this.mQnAQuestionsListAdapter = new QnAQuestionsListAdapter(getActivity(), this.mQnAQuestions, Constants.VIEW_INTO_LIST);
-
         this.mQuestionsListView = (RecyclerView) rootView.findViewById(R.id.institute_qna_question_recycle_view);
-
         this.mQuestionsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         this.mQuestionsListView.setAdapter(this.mQnAQuestionsListAdapter);
         this.mQuestionsListView.setItemAnimator(new DefaultItemAnimator());
@@ -105,14 +101,14 @@ public class InstituteQnAFragment extends BaseFragment implements TextWatcher, A
             }
         });
 
-        this.mAskExpertCancelButton.setOnClickListener(new View.OnClickListener() {
+        mAskExpertCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onAskExpertCancelButtonPressed();
             }
         });
 
-        this.mAskExpertSubmitButton.setOnClickListener(new View.OnClickListener() {
+        mAskExpertSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onAskExpertSubmitButtonPressed();

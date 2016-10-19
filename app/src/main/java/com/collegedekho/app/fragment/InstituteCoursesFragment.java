@@ -142,6 +142,7 @@ public class InstituteCoursesFragment extends BaseFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         for (int i = 0; i < InstituteCourse.CourseLevel.values().length; i++) {
+            if(mCourses != null && mCourses.size() > i)
             outState.putParcelableArrayList(InstituteCourse.CourseLevel.values()[i].name(), mCourses.get(i));
         }
     }

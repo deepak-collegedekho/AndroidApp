@@ -530,21 +530,10 @@
     <style name="AppTheme.LinearLayout.Horizontal" parent="AppTheme.Layout">
         <item name="android:orientation">horizontal</item>
     </style>
-    <style name="AppTheme.LinearLayout.Vertical.Rounded" parent="AppTheme.LinearLayout.Vertical">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:background">@drawable/rounded_box_light_blue_40px</item>
-        <item name="android:gravity">center</item>
-    </style>
     <style name="AppTheme.RelativeLayout" >
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:gravity">top|center_horizontal</item>
-    </style>
-    <style name="AppTheme.RelativeLayout.Rounded" >
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">@dimen/m40dp</item>
-        <item name="android:layout_marginRight">@dimen/m40dp</item>
-        <item name="android:background">@drawable/rounded_box_light_blue</item>
     </style>
 
     <style name="AppTheme.RecyclerView">
@@ -689,5 +678,28 @@
     <style name="Crop.ActionButtonText.Cancel">
         <item name="android:drawableLeft">@drawable/crop__ic_cancel</item>
         <item name="android:text">Cancel</item>
+    </style>
+
+    <style name="TransparentDialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="MaterialButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:theme">@style/Theme.MaterialButton</item>
+    </style>
+
+
+    <style name="Theme.MaterialButton" parent="AppTheme">
+        <item name="colorAccent">@color/primary_orange</item>
+        <item name="colorButtonNormal">@color/primary_orange_opacity</item>
     </style>
 </resources>

@@ -55,9 +55,10 @@ public class RangeQuestionFragment extends StepByStepFragment {
         if (getArguments() != null) {
             pQuestion = getArguments().getParcelable(ARG_QUESTION);
             if(pQuestion!=null) {
+                pQuestion = new StepByStepQuestion();
+            }
                 mIsRequired = pQuestion.isRequired();
                 mIsSkippable = pQuestion.is_skippable();
-            }
         }
     }
 
@@ -67,8 +68,10 @@ public class RangeQuestionFragment extends StepByStepFragment {
         View rootView = inflater.inflate(R.layout.fragment_range_question, container, false);
 
         ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setText(pQuestion.getText());
-        ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setContentDescription(pQuestion.getText() + ". Please select a range below and then click on the lower right corner to move ahead");
+        rootView.findViewById(R.id.institute_qna_question_title).setContentDescription(pQuestion.getText() + ". Please select a range below and then click on the lower right corner to move ahead");
         this.mChoiceHashMap = this.pQuestion.getChoices();
+
+
 /*
         Collection c = this.mChoiceHashMap.keySet();
         ArrayList<Integer> valList = new ArrayList<>();
@@ -77,8 +80,10 @@ public class RangeQuestionFragment extends StepByStepFragment {
             valList.add(Integer.parseInt(str.toString()));
 */
 
-        this.mMin = Integer.parseInt(this.mChoiceHashMap.get(0).getName());
-        this.mMax = Integer.parseInt(this.mChoiceHashMap.get(1).getName());
+        if(mChoiceHashMap != null && mChoiceHashMap.size() > 1) {
+            this.mMin = Integer.parseInt(this.mChoiceHashMap.get(0).getName());
+            this.mMax = Integer.parseInt(this.mChoiceHashMap.get(1).getName());
+        }
 
         if (this.mMax < this.mMin)
         {

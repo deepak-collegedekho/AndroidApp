@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -160,7 +159,6 @@ public class NewsListAdapter extends RecyclerView.Adapter {
         TextView newsContent;
         NetworkImageView newsImage;
         OnNewsSelectListener mListener;
-        RelativeLayout container;
         TextView streamTypeHeader;
 
         public NewsHolder(View itemView, OnNewsSelectListener listener) {
@@ -170,14 +168,13 @@ public class NewsListAdapter extends RecyclerView.Adapter {
                 newsPubDate = (TextView) itemView.findViewById(R.id.textview_news_pubdate);
                 newsContent = (TextView) itemView.findViewById(R.id.textview_news_content);
                 streamTypeHeader = (TextView) itemView.findViewById(R.id.card_news_heading);
-                container = (RelativeLayout) itemView.findViewById(R.id.card_news_container);
             }
             newsTitle = (TextView) itemView.findViewById(R.id.textview_news_title);
             newsImage = (NetworkImageView) itemView.findViewById(R.id.image_news_collapsed);
             newsImage.setDefaultImageResId(R.drawable.ic_default_image);
             newsImage.setErrorImageResId(R.drawable.ic_default_image);
             mListener = listener;
-            itemView.setOnClickListener(this);
+            itemView.findViewById(R.id.card_news_container).setOnClickListener(this);
         }
 
         @Override

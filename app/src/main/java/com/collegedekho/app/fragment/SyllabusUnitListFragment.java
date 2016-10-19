@@ -11,7 +11,6 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.SyllabusUnitsExpandableListAdapter;
 import com.collegedekho.app.entities.Units;
 
@@ -27,11 +26,6 @@ public class SyllabusUnitListFragment extends BaseFragment {
     public static final String TITLE = "SyllabusUnitListFragment";
     private static final String ARG_UNIT_LIST = "unitList";
     private ArrayList<Units> mUnits;
-    private String mTitle;
-    private SyllabusUnitsExpandableListAdapter mAdapter;
-    private MainActivity mMainActivity;
-    private TextView mEmptyTextView;
-    private Button btnSubmit;
     private static int prev = -1;
 
     public SyllabusUnitListFragment() {
@@ -64,12 +58,10 @@ public class SyllabusUnitListFragment extends BaseFragment {
 
     public void setUp(View view){
         final ExpandableListView elv = (ExpandableListView) view.findViewById(R.id.units_expandable_list);
-        btnSubmit=(Button)view.findViewById(R.id.btn_submit_units);
+        Button btnSubmit=(Button)view.findViewById(R.id.btn_submit_units);
         btnSubmit.setOnClickListener(this);
-//        btnSubmit.setVisibility(View.GONE);
         if(elv != null) {
-            mAdapter = new SyllabusUnitsExpandableListAdapter(this.getActivity(), this.mUnits);
-
+           SyllabusUnitsExpandableListAdapter mAdapter = new SyllabusUnitsExpandableListAdapter(this.getActivity(), this.mUnits);
             elv.setAdapter(mAdapter);
             elv.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
                 @Override

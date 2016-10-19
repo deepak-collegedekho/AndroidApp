@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -24,26 +23,27 @@ import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamStreamAdapter;
 import com.collegedekho.app.adapter.ExamsAdapter;
+import com.collegedekho.app.adapter.SubLevelAdapter;
+import com.collegedekho.app.animation.AnimationLoader;
 import com.collegedekho.app.crop.Crop;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
+import com.collegedekho.app.entities.SubLevel;
 import com.collegedekho.app.listener.ExamFragmentListener;
 import com.collegedekho.app.listener.ExamOnQueryListener;
 import com.collegedekho.app.listener.ExamSearchCloseListener;
@@ -59,14 +59,11 @@ import com.collegedekho.app.widget.CircularProgressBar;
 import com.collegedekho.app.widget.NumberPicker;
 import com.fasterxml.jackson.jr.ob.JSON;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -86,6 +83,8 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     private OnUserEducationInteractionListener mListener;
     private RecyclerView mStreamRecyclerView;
     private View mRootView ;
+    private SubLevelAdapter subLevelAdapter ;
+    private AlertDialog subLevelDialog ;
     private List<ProfileSpinnerItem> mStreamList = null;
     private ExamStreamAdapter mStreamAdapter;
     private ExamsAdapter mExamAdapter;
@@ -96,7 +95,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     private boolean  isStreamSelected;
     private Animation animationFromTop;
     private Animation animationFromBottom;
-    private File uploadTempImageFile;
     private Uri mImageCaptureUri;
     private int mUserSubLevelID = 0;
     private int mUserCurrentMarks = 0;
@@ -104,9 +102,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     private String mEventCategory = "";
     private String mEventAction = "";
     private static HashMap<String, Object> mEventValue;
-
     final String[] marks_arrays = {"30-40%", "40-50%","50-60%","60-70%", "70-80%", "80-90%", "90-100%",};
-
 
     public ProfileBuildingFragment() {
         // Required empty public constructor
@@ -115,12 +111,11 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
      * @return A new instance of fragment ProfileBuildingFragment.
      */
     public static ProfileBuildingFragment newInstance() {
         ProfileBuildingFragment fragment = new ProfileBuildingFragment();
-        ProfileBuildingFragment.mEventValue = new HashMap<String, Object>();
+        ProfileBuildingFragment.mEventValue = new HashMap<>();
         return fragment;
     }
 
@@ -236,11 +231,11 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             currentLevelTxtView.setVisibility(View.VISIBLE);
             int currentLevelId = MainActivity.mProfile.getCurrent_level_id();
             if (currentLevelId == ProfileMacro.LEVEL_TWELFTH || currentLevelId == ProfileMacro.LEVEL_TENTH) {
-                currentLevelTxtView.setText(" School");
+                currentLevelTxtView.setText(getString(R.string.school));
             } else if (currentLevelId == ProfileMacro.LEVEL_UNDER_GRADUATE) {
-                currentLevelTxtView.setText(" College");
+                currentLevelTxtView.setText(getString(R.string.college));
             } else {
-                currentLevelTxtView.setText(" PG College");
+                currentLevelTxtView.setText(getString(R.string.pg_college));
             }
 
             if(profile.getCurrent_stream_id() >= 1){
@@ -288,7 +283,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 emptyText.setVisibility(View.VISIBLE);
                 emptyText.setText(getString(R.string.loading_exams));
                 mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
-                ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText("Not Preparing");
+                ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText(getString(R.string.not_preparing));
 
             }else {
 
@@ -352,7 +347,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 }
 
 
-                ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText("Skip");
+                ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText(getString(R.string.Skip));
                 if (mStreamAdapter == null) {
                     mStreamAdapter = new ExamStreamAdapter(getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
                     mStreamRecyclerView.setAdapter(mStreamAdapter);
@@ -362,46 +357,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 }
             }
         }
-
     }
-    /*private void onShowAllExamsClecked(View view){
-        if(view == null )
-            return;
-        if(!view.isSelected()){
-
-            // add all stream Exam on the top
-            mStreamExamList.clear();
-            mStreamExamList.addAll(mAllExamList);
-            mExamAdapter.setShowAllExams(true);
-            mExamAdapter.updateExamsList(mStreamExamList);
-            view.setSelected(true);
-            ((TextView)view).setText(getString(R.string.show_less));
-        }else{
-            if(mExamAdapter != null){
-                // add all stream Exam on the top
-                mStreamExamList.clear();
-                int examCount = mAllExamList.size();
-                for (int i = 0; i < examCount; i++) {
-                    Exam exam = mAllExamList.get(i);
-                    if(exam == null || exam.getExam_type() == ProfileMacro.OTHER_EXAM)continue;
-                    mStreamExamList.add(exam);
-                }
-                mExamAdapter.setShowAllExams(false);
-                mExamAdapter.updateExamsList(mStreamExamList);
-            }
-            view.setSelected(false);
-            ((TextView)view).setText(getString(R.string.show_more));
-        }
-        if(mStreamExamList != null && mStreamExamList.size() >0){
-            mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
-            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.VISIBLE);
-        }else{
-            TextView emptyText = (TextView) mRootView.findViewById(R.id.empty) ;
-            emptyText.setVisibility(View.VISIBLE);
-            emptyText.setText(getString(R.string.no_exam_found));
-            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
-        }
-    }*/
 
     @Override
     public void onAttach(Context context) {
@@ -423,9 +379,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     @Override
     public void onResume() {
         super.onResume();
-
         this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
-
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null)
             mainActivity.currentFragment = this;
@@ -472,13 +426,16 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 mSelectedNextButton();
                 break;
             case R.id.user_education_radio_button_school:
-                mAskForUserSubLevel(ProfileMacro.SUB_LEVEL_SCHOOL, ProfileMacro.LEVEL_TWELFTH);
+                mRequestForSubLevels(ProfileMacro.LEVEL_TWELFTH);
+               // mAskForUserSubLevel(ProfileMacro.SUB_LEVEL_SCHOOL, ProfileMacro.LEVEL_TWELFTH);
                 break;
             case R.id.user_education_radio_button_college:
-                mAskForUserSubLevel(ProfileMacro.SUB_LEVEL_COLLEGE,  ProfileMacro.LEVEL_UNDER_GRADUATE);
+                mRequestForSubLevels(ProfileMacro.LEVEL_UNDER_GRADUATE);
+                //mAskForUserSubLevel(ProfileMacro.SUB_LEVEL_COLLEGE,  ProfileMacro.LEVEL_UNDER_GRADUATE);
                 break;
             case R.id.user_education_radio_button_pg:
-                mAskForUserSubLevel(ProfileMacro.SUB_LEVEL_PG,  ProfileMacro.LEVEL_POST_GRADUATE);
+                mRequestForSubLevels(ProfileMacro.LEVEL_POST_GRADUATE);
+               // mAskForUserSubLevel(ProfileMacro.SUB_LEVEL_PG,  ProfileMacro.LEVEL_POST_GRADUATE);
                 break;
             case R.id.user_education_level_edit_btn:
                 this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_PROFILE_EDIT);
@@ -528,26 +485,45 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         }
     }
 
+    private void mRequestForSubLevels(int level) {
+        if(NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED){
+            Utils.DisplayToast(getContext(), getString(R.string.no_internet));
+            return;
+        }
+        mListener.onRequestForSubLevels(level);
+    }
 
-    private void mAskForUserSubLevel(CharSequence subLevel[], final int userLevel) {
+    private void mAskForUserSubLevel(ArrayList<SubLevel> subLevels) {
 
-        new AlertDialog.Builder(getActivity())
+        subLevelAdapter = new SubLevelAdapter(getActivity(),this,subLevels);
+        subLevelDialog =  new AlertDialog.Builder(getActivity())
                 .setTitle(getString(R.string.please_select_sub_level_year))
                 .setCancelable(false)
-                .setSingleChoiceItems(subLevel, -1,
+                .setSingleChoiceItems(subLevelAdapter, -1,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // set mDeviceProfile's sub level base
-                                mUserSubLevelID = ProfileMacro.getSubLevel(which, userLevel);
-                                // Now show Next Button
-                                mAnimateFooterButtons();
-                                // dismiss dialog
-                                dialog.dismiss();
-                                mShowDialogForMarks();
+                              onSubLevelSelected(which);
                             }
                         }).show();
-
+    }
+    public void onSubLevelSelected(int position){
+        // set mDeviceProfile's sub level base
+        mUserSubLevelID = (int)subLevelAdapter.getItemId(position);
+        //mUserSubLevelID = ProfileMacro.getSubLevel(which, userLevel);
+        // Now show Next Button
+        mAnimateFooterButtons();
+        // dismiss dialog
+        if(subLevelDialog != null && subLevelDialog.isShowing())
+        subLevelDialog.dismiss();
+        // check if fragment is added to activity then show dialog to ask marks
+        // otherwise set default marks and request for streams
+        if(isAdded()) {
+            mShowDialogForMarks();
+        }else{
+            mUserCurrentMarks = mGetMarks(-1);
+            mSelectedNextButton();
+        }
     }
 
     private void mShowDialogForMarks() {
@@ -590,54 +566,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         });
         marksDialog.show();
 
-
-      /*  final EditText input = new EditText(getActivity());
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        input.setInputType(InputType.TYPE_CLASS_NUMBER);
-        input.setSingleLine();
-        input.setHint("Your Marks");
-        input.setLayoutParams(lp);
-        InputFilter[] FilterArray = new InputFilter[1];
-        FilterArray[0] = new InputFilter.LengthFilter(4);
-        input.setFilters(FilterArray);
-
-       AlertDialog marksDialog = new AlertDialog.Builder(getActivity())
-                .setTitle(getString(R.string.please_enter_your_current_marks))
-                .setCancelable(false)
-                .setView(input)
-                .setPositiveButton("Done", null)
-               .create();
-
-        marksDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-
-            @Override
-            public void onShow(final DialogInterface dialog) {
-
-                Button b = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                b.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-                        String marks = input.getText().toString();
-                        if(marks == null || marks.isEmpty()){
-                            Utils.DisplayToast(getContext(),getString(R.string.please_enter_your_marks));
-                            return;
-                        }
-                        try {
-                            mUserCurrentMarks =Integer.parseInt(marks);
-                            mSelectedNextButton();
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                        dialog.dismiss();
-
-                    }
-                });
-            }
-        });
-        marksDialog.show();*/
+       marksDialogView.startAnimation(AnimationLoader.getInAnimation(getActivity()));
 
     }
     private int mGetMarks(int position){
@@ -656,7 +585,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         }else if(position == 6 ){
             return 95;
         }
-        return 45;
+        return 50;
     }
 
     private void mAnimateFooterButtons()
@@ -681,7 +610,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     }
 
     private void mUserEducationSkip() {
-        if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
@@ -698,95 +627,109 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
         this.mListener.onSkipSelectedInProfileBuilding();
 
-        if (!this.mEventAction.isEmpty() && this.mEventAction != "")
+        if (!this.mEventAction.isEmpty() && !this.mEventAction.equals(""))
         {
             //Events
-            AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
+            AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, mEventValue, this.getActivity());
             this.mResetEventVariables();
         }
     }
 
     private void mSelectedNextButton() {
-        if(this.mListener ==  null)
-            return;
-
         // check internet connection
-        if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
-
         // check which layout is visible to do action
-        View radioGroupEducation = mRootView.findViewById(R.id.user_education_radio_group);
-        if(!isStreamSelected && radioGroupEducation.getVisibility() == View.VISIBLE) {
-            isStreamSelected = false;
-            int selectedRadioButton = ((RadioGroup) radioGroupEducation).getCheckedRadioButtonId();
+        View educationLevelView = mRootView.findViewById(R.id.user_education_radio_group);
+        if(!isStreamSelected  && educationLevelView.getVisibility() == View.VISIBLE) {
+            setUserEducationLevel();
 
-            if(selectedRadioButton <= 1){
-                mListener.displayMessage(R.string.please_select_your_level);
-                return;
-            }
-            // setting default  current education level school
-            int currentLevelID = ProfileMacro.LEVEL_TWELFTH;
-            try {
-                currentLevelID = Integer.parseInt(mRootView.findViewById(selectedRadioButton).getTag().toString());
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
+        }else if( !isStreamSelected && mStreamRecyclerView.getVisibility() == View.VISIBLE){
+            setUserEducationStream();
 
-            // setting default preferred level college
-            int preferredLevelId = ProfileMacro.LEVEL_UNDER_GRADUATE;
+        }else{
+            setUserEducationExams();
+        }
+    }
 
-            if (currentLevelID == ProfileMacro.LEVEL_UNDER_GRADUATE) {
-                preferredLevelId = ProfileMacro.LEVEL_POST_GRADUATE;
-            } else if (currentLevelID == ProfileMacro.LEVEL_POST_GRADUATE) {
-                preferredLevelId = ProfileMacro.LEVEL_PHD;
-            }
+    private void setUserEducationLevel() {
+        isStreamSelected = false;
+        RadioGroup radioGroupEducation = (RadioGroup)mRootView.findViewById(R.id.user_education_radio_group);
+        int selectedRadioButton = radioGroupEducation.getCheckedRadioButtonId();
 
-            // set mDeviceProfile' current  and preferred level locally
-            if (MainActivity.mProfile != null) {
-                mLastSelectedCurrentLevelID = MainActivity.mProfile.getCurrent_level_id();
-                MainActivity.mProfile.setCurrent_sublevel_id(mUserSubLevelID);
-                MainActivity.mProfile.setCurrent_level_id(currentLevelID);
-                MainActivity.mProfile.setPreferred_level(preferredLevelId);
-            }
+        if(selectedRadioButton <= 1){
+            mListener.displayMessage(R.string.please_select_your_level);
+            return;
+        }
+        // setting default  current education level school
+        int currentLevelID = ProfileMacro.LEVEL_TWELFTH;
+        int streamType = 1 ; //  0 for college and 1 for school
+        int checkedRadioGroupIndex = radioGroupEducation.indexOfChild(mRootView.findViewById(selectedRadioButton));
+        if(checkedRadioGroupIndex  == 1){
+            streamType = 0;
+            currentLevelID =  ProfileMacro.LEVEL_UNDER_GRADUATE;
+        }else if(checkedRadioGroupIndex == 2){
+            streamType = 0;
+            currentLevelID =  ProfileMacro.LEVEL_POST_GRADUATE;
+        }
+        // request for streams
+        this.mListener.onRequestForLevelStreams(streamType);
+
+        // setting default preferred level college
+        int preferredLevelId = ProfileMacro.LEVEL_UNDER_GRADUATE;
+        if (currentLevelID == ProfileMacro.LEVEL_UNDER_GRADUATE) {
+            preferredLevelId = ProfileMacro.LEVEL_POST_GRADUATE;
+        } else if (currentLevelID == ProfileMacro.LEVEL_POST_GRADUATE) {
+            preferredLevelId = ProfileMacro.LEVEL_PHD;
+        }
+
+        // set mDeviceProfile' current  and preferred level locally
+        if (MainActivity.mProfile != null) {
+            mLastSelectedCurrentLevelID = MainActivity.mProfile.getCurrent_level_id();
+            MainActivity.mProfile.setCurrent_sublevel_id(mUserSubLevelID);
+            MainActivity.mProfile.setCurrent_level_id(currentLevelID);
+            MainActivity.mProfile.setPreferred_level(preferredLevelId);
+        }
 
 
-            HashMap<String, String> params = new HashMap<>();
-            params.put("current_level_id", "" + currentLevelID);
-            params.put("current_sublevel_id", "" + mUserSubLevelID);
-            params.put("preferred_level", "" + preferredLevelId);
-            params.put("current_score", "" + mUserCurrentMarks);
-            params.put("current_score_type", "" + ProfileMacro.PERCENTAGE);
+        HashMap<String, String> params = new HashMap<>();
+        params.put("current_level_id", "" + currentLevelID);
+        params.put("current_sublevel_id", "" + mUserSubLevelID);
+        params.put("preferred_level", "" + preferredLevelId);
+        params.put("current_score", "" + mUserCurrentMarks);
+        params.put("current_score_type", "" + ProfileMacro.PERCENTAGE);
 
-            // check mDeviceProfile's name and phone Number
-            if(!getUserNameAndPhone(params)){
-                return;
-            }
+        // check mDeviceProfile's name and phone Number
+        if(!getUserNameAndPhone(params)){
+            return;
+        }
 
-            // save mDeviceProfile profile data on server
-            this.mListener.requestForProfile(params);
+        // save mDeviceProfile profile data on server
+        this.mListener.requestForProfile(params);
 
 
-            this.mEventAction = MainActivity.getResourceString(R.string.ACTION_CURRENT_LEVEL_SELECTED);
+        this.mEventAction = MainActivity.getResourceString(R.string.ACTION_CURRENT_LEVEL_SELECTED);
+        String name = MainActivity.mProfile.getName();
+        if (name != null && !name.isEmpty())
+            ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_NAME), name);
+       String phone = MainActivity.mProfile.getPhone_no();
+        if (phone != null && !phone.isEmpty())
+            ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_PHONE),phone);
 
-            if (MainActivity.mProfile.getName() != "")
-                ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_NAME), MainActivity.mProfile.getName());
-            if (MainActivity.mProfile.getPhone_no() != "")
-                ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_PHONE), MainActivity.mProfile.getPhone_no());
+        ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_CURRENT_LEVEL_ID), currentLevelID);
+        ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_CURRENT_SUBLEVEL), mUserSubLevelID);
+        ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_PREFERRED_LEVEL_ID), preferredLevelId);
 
-            ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_CURRENT_LEVEL_ID), currentLevelID);
-            ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_CURRENT_SUBLEVEL), mUserSubLevelID);
-            ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_PREFERRED_LEVEL_ID), preferredLevelId);
+        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
 
-            this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
+        //Events
+        AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, mEventValue, this.getActivity());
 
-            //Events
-            AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
+        this.mResetEventVariables();
 
-            this.mResetEventVariables();
-
-            //  show next layout to select current stream
+            /*//  show next layout to select current stream
             // set heading to acco. current stream screen
             ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
 
@@ -842,139 +785,226 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             } else {
                 mStreamRecyclerView.setAdapter(mStreamAdapter);
                 mStreamAdapter.updateStreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
-            }
-        }else if( !isStreamSelected && mStreamRecyclerView.getVisibility() == View.VISIBLE){
+            }*/
+    }
 
-            HashMap<String, String> params = new HashMap<>();
-            // check mDeviceProfile's name and phone Number
-            if(!getUserNameAndPhone(params)){
-                return;
-            }
 
-            int currentStreamId  = 0;
-            String currentStreamName ="";
-            int count = mStreamList.size();
-            for (int i = 0; i < count; i++) {
-                ProfileSpinnerItem objItem = mStreamList.get(i);
-                if(!objItem.isSelected()) continue;
-                currentStreamId = objItem.getId();
-                currentStreamName = objItem.getName();
-                isStreamSelected = true;
-                break;
-            }
+    private void setUserEducationStream() {
+        HashMap<String, String> params = new HashMap<>();
+        // check mDeviceProfile's name and phone Number
+        if(!getUserNameAndPhone(params)){
+            return;
+        }
 
-            // check mDeviceProfile has selected current  stream
-            if(!isStreamSelected){
-                mListener.displayMessage(R.string.please_select_your_stream);
-                return;
-            }
+        // check user has been selected a stream
+        int currentStreamId  = 0;
+        String currentStreamName ="";
+        int count = mStreamList.size();
+        for (int i = 0; i < count; i++) {
+            ProfileSpinnerItem objItem = mStreamList.get(i);
+            if(!objItem.isSelected()) continue;
+            currentStreamId = objItem.getId();
+            currentStreamName = objItem.getName();
+            isStreamSelected = true;
+            break;
+        }
+        if(!isStreamSelected){
+            mListener.displayMessage(R.string.please_select_your_stream);
+            return;
+        }
 
-            // clear old exam list if preferred level
-            // and stream are not same
-            if(MainActivity.mProfile != null && mStreamExamList != null && !mStreamExamList.isEmpty()){
+        // clear old exam list if preferred level
+        // and stream are not same
+        if(MainActivity.mProfile != null && mStreamExamList != null && !mStreamExamList.isEmpty()){
 
-                if(mLastSelectedCurrentLevelID != MainActivity.mProfile.getCurrent_level_id() ||
-                        currentStreamId != MainActivity.mProfile.getCurrent_stream_id()){
-                    // clear last exam list
-                    if (mStreamExamList != null)
-                        mStreamExamList.clear();
-
-                    MainActivity.mProfile.setCurrent_stream_id(currentStreamId);
-                    MainActivity.mProfile.setCurrent_stream_name(currentStreamName);
-                    // request for exams based on preferred level nad current stream
-                    this.mListener.onRequestForUserExams();
-                }else{
-                    MainActivity.mProfile.setCurrent_stream_id(currentStreamId);
-                    MainActivity.mProfile.setCurrent_stream_name(currentStreamName);
-                }
-
-            }else {
+            if(mLastSelectedCurrentLevelID != MainActivity.mProfile.getCurrent_level_id() ||
+                    currentStreamId != MainActivity.mProfile.getCurrent_stream_id()){
                 // clear last exam list
                 if (mStreamExamList != null)
                     mStreamExamList.clear();
 
-                // save in profile data in locally
                 MainActivity.mProfile.setCurrent_stream_id(currentStreamId);
                 MainActivity.mProfile.setCurrent_stream_name(currentStreamName);
-
                 // request for exams based on preferred level nad current stream
                 this.mListener.onRequestForUserExams();
+            }else{
+                MainActivity.mProfile.setCurrent_stream_id(currentStreamId);
+                MainActivity.mProfile.setCurrent_stream_name(currentStreamName);
             }
 
-            // set mDeviceProfile'current stream locally
-            if(MainActivity.mProfile != null){
-                // save this id in local to check last selected level was same
-                mLastSelectedCurrentLevelID = MainActivity.mProfile.getCurrent_level_id();
-            }
+        }else {
+            // clear last exam list
+            if (mStreamExamList != null)
+                mStreamExamList.clear();
 
-            // save mDeviceProfile's current stream id on server
-            params.put("current_stream_id",""+currentStreamId);
-            this.mListener.requestForProfile(params);
+            // save in profile data in locally
+            MainActivity.mProfile.setCurrent_stream_id(currentStreamId);
+            MainActivity.mProfile.setCurrent_stream_name(currentStreamName);
+
+            // request for exams based on preferred level nad current stream
+            this.mListener.onRequestForUserExams();
+        }
+
+        // set mDeviceProfile'current stream locally
+        if(MainActivity.mProfile != null){
+            // save this id in local to check last selected level was same
+            mLastSelectedCurrentLevelID = MainActivity.mProfile.getCurrent_level_id();
+        }
+
+        // save mDeviceProfile's current stream id on server
+        params.put("current_stream_id",""+currentStreamId);
+        this.mListener.requestForProfile(params);
 
 
 
-            // show mDeviceProfile' current stream Layout
-            mRootView.findViewById(R.id.user_education_stream_layout).setVisibility(View.VISIBLE);
-            mRootView.findViewById(R.id.user_education_stream_layout).startAnimation(animationFromTop);
+        // show mDeviceProfile' current stream Layout
+        mRootView.findViewById(R.id.user_education_stream_layout).setVisibility(View.VISIBLE);
+        mRootView.findViewById(R.id.user_education_stream_layout).startAnimation(animationFromTop);
 
-            // set mDeviceProfile's current stream
-            TextView  currentStreamTxtView = (TextView)mRootView.findViewById(R.id.user_education_stream);
-            currentStreamTxtView.setVisibility(View.VISIBLE);
-            currentStreamTxtView.setText(currentStreamName);
+        // set mDeviceProfile's current stream
+        TextView  currentStreamTxtView = (TextView)mRootView.findViewById(R.id.user_education_stream);
+        currentStreamTxtView.setVisibility(View.VISIBLE);
+        currentStreamTxtView.setText(currentStreamName);
 
-            // change heading for mDeviceProfile exams selection
-            ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.which_exams_are_you_preparing));
+        // change heading for mDeviceProfile exams selection
+        ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.which_exams_are_you_preparing));
+        mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.VISIBLE);
+
+
+        cExamQueryListener = new ExamOnQueryListener(mStreamExamList,this,mRootView.findViewById(R.id.user_education_next_button_layout));
+        mExamSearchView.setOnQueryTextListener(cExamQueryListener);
+        mExamSearchView.setQuery("", false);
+        mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(null,mRootView.findViewById(R.id.user_education_next_button_layout)));
+
+        ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText(getString(R.string.not_preparing));
+
+        if(mExamAdapter == null) {
+            mExamAdapter = new ExamsAdapter(getActivity(), mStreamExamList);
+            mStreamRecyclerView.setAdapter(mExamAdapter);
+        }else{
+            mStreamRecyclerView.setAdapter(mExamAdapter);
+            mExamAdapter.updateExamsList(mStreamExamList);
+        }
+
+        if(mStreamExamList != null && mStreamExamList.size() >0){
+            mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.VISIBLE);
+        }else{
+            mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
+            TextView emptyText = (TextView) mRootView.findViewById(R.id.empty) ;
+            emptyText.setVisibility(View.VISIBLE);
+            emptyText.setText(getString(R.string.loading_exams));
+            mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
+        }
 
+        this.mEventAction = MainActivity.getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED);
+        String name = MainActivity.mProfile.getName();
+        if (name != null && !name.isEmpty())
+            ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_NAME), name);
+        String phone = MainActivity.mProfile.getPhone_no();
+        if (phone != null && !phone.isEmpty())
+            ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_PHONE), name);
 
-            cExamQueryListener = new ExamOnQueryListener(mStreamExamList,this,mRootView.findViewById(R.id.user_education_next_button_layout));
-            mExamSearchView.setOnQueryTextListener(cExamQueryListener);
-            mExamSearchView.setQuery("", false);
-            mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(null,mRootView.findViewById(R.id.user_education_next_button_layout)));
+        ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_CURRENT_STREAM_ID), String.valueOf(currentStreamId));
 
-            ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText("Not Preparing");
+        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
+        //Events
+        AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, mEventValue, this.getActivity());
 
-            if(mExamAdapter == null) {
-                mExamAdapter = new ExamsAdapter(getActivity(), mStreamExamList);
-                mStreamRecyclerView.setAdapter(mExamAdapter);
-            }else{
-                mStreamRecyclerView.setAdapter(mExamAdapter);
-                mExamAdapter.updateExamsList(mStreamExamList);
+        this.mResetEventVariables();
+    }
+
+    private void setUserEducationExams() {
+
+        if(this.mListener == null || this.mExamAdapter == null)
+            return;
+
+        // if mDeviceProfile does not have any exam and want to further proceed
+        // then next button works like "Not Preparing Button"
+        if(this.mAllExamList != null && this.mAllExamList.size() <=0){
+            mUserEducationSkip();
+            return;
+        }
+
+        boolean isExamSelected = false;
+        StringBuilder selectedExamsBuffer = new StringBuilder();
+        selectedExamsBuffer.append("[");
+        int firstTime =0;
+        if(mAllExamList != null && !mAllExamList.isEmpty()) {
+            for (Exam exam:mAllExamList) {
+                if(exam == null || !exam.isSelected())continue;
+
+                ArrayList<ExamDetail> detailList = exam.getExam_details();
+                if(detailList == null || detailList.isEmpty()) continue;
+
+                for (ExamDetail examDetailObj:detailList) {
+                    if(examDetailObj == null || !examDetailObj.isSelected())continue;
+
+                    if(firstTime != 0)
+                        selectedExamsBuffer.append(",");
+                    firstTime++;
+
+                    selectedExamsBuffer.append("{\"id\":").append(examDetailObj.getId())
+                            .append(",").append("\"score\":").append(examDetailObj.getScore());
+
+                    if(examDetailObj.isResult_out()){
+                        //TODO :: set  to exam status as given or preparing base on
+                        // TODO::  result out date  and exam's date
+                        //String date = examDetailObj.getExam_date();
+                        selectedExamsBuffer.append(",").append("\"status\":").append(1);
+                    }else{
+                        selectedExamsBuffer.append(",").append("\"status\":").append(2);
+                    }
+                    selectedExamsBuffer.append("}");
+
+                    isExamSelected = true;
+
+                }
             }
+        }
+        selectedExamsBuffer.append("]");
 
-            if(mStreamExamList != null && mStreamExamList.size() >0){
-                mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
-                mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.VISIBLE);
-                mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.VISIBLE);
-                mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.VISIBLE);
-            }else{
-                mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.GONE);
-                mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
-                TextView emptyText = (TextView) mRootView.findViewById(R.id.empty) ;
-                emptyText.setVisibility(View.VISIBLE);
-                emptyText.setText(getString(R.string.loading_exams));
-                mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
-            }
+        // check mDeviceProfile's name and phone Number
+        HashMap<String, String> userParams = new HashMap<>();
+        if(!getUserNameAndPhone(userParams)){
+            return;
+        }
 
-            this.mEventAction = MainActivity.getResourceString(R.string.ACTION_CURRENT_STREAM_SELECTED);
+        if(!isExamSelected){
+            mListener.displayMessage(R.string.SELECT_ONE_EXAM);
+            return;
+        }
 
-            if (MainActivity.mProfile.getName() != "")
-                ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_NAME), MainActivity.mProfile.getName());
-            if (MainActivity.mProfile.getPhone_no() != "")
-                ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_PHONE), MainActivity.mProfile.getPhone_no());
+        userParams.put("yearly_exams", selectedExamsBuffer.toString());
+        this.mListener.onUserExamSelected(userParams);
 
-            ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_CURRENT_STREAM_ID), String.valueOf(currentStreamId));
+        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
 
-            this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
+        this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_EXAM_SELECTED);
+
+        // for (int n = 0; n < parentArray.length(); n++) {
+        try
+        {
+            // JSONObject examDetail = (JSONObject) parentArray.get(n);
+            ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_EXAM_SELECTED), selectedExamsBuffer.toString());//examDetail.get(MainActivity.getResourceString(R.string.EXAM_ID)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.SCORE)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.STATUS)));
+
             //Events
             AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
 
-            this.mResetEventVariables();
-
-        }else{
-            onUserExamsSelected();
+            ProfileBuildingFragment.mEventValue.clear();
         }
+        catch(Exception e)
+        {
+
+        }
+        // }
+
+        this.mResetEventVariables();
     }
+
 
     /**
      *
@@ -1187,12 +1217,15 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             return;
 
         if(MainActivity.mProfile != null) {
-            int size = MainActivity.mProfile.getYearly_exams().size();
-            if(size >= 1) {
-                HashMap<String, String> userParams = new HashMap<>();
-                userParams.put("yearly_exams", "[]");
-                this.mListener.requestForProfile(userParams);
-                MainActivity.mProfile.setYearly_exams(new ArrayList<ProfileExam>());
+            ArrayList<ProfileExam> userExamList = MainActivity.mProfile.getYearly_exams();
+            if(userExamList != null) {
+                int size =userExamList.size();
+                if (size >= 1) {
+                    HashMap<String, String> userParams = new HashMap<>();
+                    userParams.put("yearly_exams", "[]");
+                    this.mListener.requestForProfile(userParams);
+                    MainActivity.mProfile.setYearly_exams(new ArrayList<ProfileExam>());
+                }
             }
         }
     }
@@ -1201,8 +1234,8 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
         View nameView = mRootView.findViewById(R.id.user_education_edit_name_til);
         if(nameView.getVisibility() == View.VISIBLE){
-            String userName = ((EditText) mRootView.findViewById(R.id.user_education_name_edit_text)).getText().toString();
-            if(userName != null && !userName.isEmpty()) {
+            String userName = ((EditText) mRootView.findViewById(R.id.user_education_name_edit_text)).getText().toString().trim();
+            if(!userName.isEmpty()) {
                 if (!Utils.isValidName(userName)) {
                     mListener.displayMessage(R.string.NAME_INVALID);
                     return false;
@@ -1224,8 +1257,8 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
         View phoneView = mRootView.findViewById(R.id.user_education_edit_phone_til);
         if(phoneView.getVisibility() == View.VISIBLE){
-            String userPhoneNumber = ((EditText) mRootView.findViewById(R.id.user_education_phone_edit_text)).getText().toString();
-            if (userPhoneNumber != null && !userPhoneNumber.trim().isEmpty()) {
+            String userPhoneNumber = ((EditText) mRootView.findViewById(R.id.user_education_phone_edit_text)).getText().toString().trim();
+            if (!userPhoneNumber.trim().isEmpty()) {
                 if (userPhoneNumber.length() <= 9 || !Utils.isValidPhone(userPhoneNumber)) {
                     mListener.displayMessage(R.string.PHONE_INVALID);
                     return false;
@@ -1246,102 +1279,13 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     }
 
 
-    private void onUserExamsSelected() {
-
-        if(this.mListener == null || this.mExamAdapter == null)
-            return;
-
-        // if mDeviceProfile does not have any exam and want to further proceed
-        // then next button works like "Not Preparing Button"
-        if(this.mAllExamList != null && this.mAllExamList.size() <=0){
-            mUserEducationSkip();
-            return;
-        }
-
-        boolean isExamSelected = false;
-        StringBuffer selectedExamsBuffer = new StringBuffer();
-        selectedExamsBuffer.append("[");
-        int firstTime =0;
-        if(mAllExamList != null && !mAllExamList.isEmpty()) {
-            for (Exam exam:mAllExamList) {
-                if(exam == null || !exam.isSelected())continue;
-
-                ArrayList<ExamDetail> detailList = exam.getExam_details();
-                if(detailList == null && detailList.isEmpty()) continue;
-
-                for (ExamDetail examDetailObj:detailList) {
-                    if(examDetailObj == null || !examDetailObj.isSelected())continue;
-
-                        if(firstTime != 0)
-                            selectedExamsBuffer.append(",");
-                        firstTime++;
-
-                        selectedExamsBuffer.append("{\"id\":").append(examDetailObj.getId())
-                                .append(",").append("\"score\":").append(examDetailObj.getScore());
-
-                        if(examDetailObj.isResult_out()){
-                           //TODO :: set  to exam status as given or preparing base on
-                            // TODO::  result out date  and exam's date
-                            String date = examDetailObj.getExam_date();
-                            selectedExamsBuffer.append(",").append("\"status\":").append(1);
-                        }else{
-                            selectedExamsBuffer.append(",").append("\"status\":").append(2);
-                        }
-                        selectedExamsBuffer.append("}");
-
-                         isExamSelected = true;
-
-                }
-            }
-        }
-        selectedExamsBuffer.append("]");
-
-        // check mDeviceProfile's name and phone Number
-        HashMap<String, String> userParams = new HashMap<>();
-        if(!getUserNameAndPhone(userParams)){
-            return;
-        }
-
-        if(!isExamSelected){
-            mListener.displayMessage(R.string.SELECT_ONE_EXAM);
-            return;
-        }
-
-        userParams.put("yearly_exams", selectedExamsBuffer.toString());
-        this.mListener.onUserExamSelected(userParams);
-
-        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
-
-        this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_EXAM_SELECTED);
-
-       // for (int n = 0; n < parentArray.length(); n++) {
-            try
-            {
-               // JSONObject examDetail = (JSONObject) parentArray.get(n);
-                ProfileBuildingFragment.mEventValue.put(MainActivity.getResourceString(R.string.USER_EXAM_SELECTED), selectedExamsBuffer.toString());//examDetail.get(MainActivity.getResourceString(R.string.EXAM_ID)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.SCORE)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.STATUS)));
-
-                //Events
-                AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
-
-                ProfileBuildingFragment.mEventValue.clear();
-            }
-            catch(Exception e)
-            {
-
-            }
-       // }
-
-        this.mResetEventVariables();
-    }
-
 
     private void mRequestForImageCapture() {
 
         // Determine Uri of camera image to save.
-
-        uploadTempImageFile = new File(Environment.getExternalStorageDirectory(),
+       File imageFile = new File(Environment.getExternalStorageDirectory(),
                 "tmp_avatar_" + String.valueOf(System.currentTimeMillis()) + ".jpg");
-        mImageCaptureUri = Uri.fromFile(uploadTempImageFile);
+        mImageCaptureUri = Uri.fromFile(imageFile);
 
         // Camera.
         List<Intent> cameraIntents = new ArrayList<>();
@@ -1426,13 +1370,31 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     public void deleteTempImageFile() {
         if(mImageCaptureUri != null) {
             File imageFile = new File(mImageCaptureUri.getPath());
-            if(imageFile != null && imageFile.exists()){
+            if(imageFile.exists()){
                 imageFile.delete();
             }
         }
     }
 
-    public void profileImageUploadedSuccessfully(){
+
+    public void updateProfileImage(){
+        if(mRootView != null && MainActivity.mProfile != null) {
+            // set profile error image
+           CircularImageView mProfileImage = (CircularImageView) mRootView.findViewById(R.id.profile_image);
+            mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
+            mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
+
+            String image = MainActivity.mProfile.getImage();
+            mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
+
+            CircularProgressBar profileCompleted =  (CircularProgressBar) mRootView.findViewById(R.id.user_profile_progress);
+            profileCompleted.setProgress(0);
+            profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
+
+        }
+    }
+
+    public void profileUpdatedSuccessfully(){
         if( mRootView == null || MainActivity.mProfile == null)
             return;
         Profile profile = MainActivity.mProfile;
@@ -1453,10 +1415,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             mRootView.findViewById(R.id.user_education_edit_phone_til).setVisibility(View.GONE);
         }
 
-        String image = profile.getImage();
-        if (image != null && ! image.isEmpty())
-            ((CircularImageView) mRootView.findViewById(R.id.profile_image)).setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-
         CircularProgressBar profileCompleted =  (CircularProgressBar) mRootView.findViewById(R.id.user_profile_progress);
         profileCompleted.setProgress(0);
         profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
@@ -1470,7 +1428,10 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             this.mAllExamList.clear();
 
         this.mAllExamList.addAll(examList);
-        updateExamsLayouts(mAllExamList);
+
+        if(isAdded()) {
+            updateExamsLayouts(mAllExamList);
+        }
     }
 
     private void updateExamsLayouts(ArrayList<Exam> mAllExamList){
@@ -1544,7 +1505,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
 
     private void mTakeMeToRecommended(){
-        if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
@@ -1566,7 +1527,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     }
 
     private void mTakeMeToDashBoard(){
-        if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
@@ -1588,7 +1549,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     }
 
     private void mTakeMeToProfile(){
-        if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
@@ -1615,6 +1576,71 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         ProfileBuildingFragment.mEventValue.clear();
     }
 
+    public void mSubLevelsResponseCompleted(ArrayList<SubLevel> subLevelsList){
+        mAskForUserSubLevel(subLevelsList);
+    }
+
+    public void mLevelStreamResponseCompleted(ArrayList<ProfileSpinnerItem> streamList) {
+        //  show next layout to select current stream
+        // set heading to acco. current stream screen
+        ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
+
+        // hide current level radio groups
+        mRootView.findViewById(R.id.user_education_radio_group).setVisibility(View.GONE);
+
+        // show current education layout
+        mRootView.findViewById(R.id.user_education_education_layout).setVisibility(View.VISIBLE);
+        mRootView.findViewById(R.id.user_education_education_layout).startAnimation(animationFromTop);
+
+        // set current level education
+        TextView  currentLevelTxtView = (TextView) mRootView.findViewById(R.id.user_education_level);
+        currentLevelTxtView.setVisibility(View.VISIBLE);
+        int currentLevelId = MainActivity.mProfile.getCurrent_level_id();
+        if (currentLevelId == ProfileMacro.LEVEL_TWELFTH
+                ||  currentLevelId == ProfileMacro.LEVEL_TENTH) {
+            currentLevelTxtView.setText(getString(R.string.school));
+        } else if (currentLevelId == ProfileMacro.LEVEL_UNDER_GRADUATE) {
+            currentLevelTxtView.setText(getString(R.string.college));
+        } else {
+            currentLevelTxtView.setText(getString(R.string.pg_college));
+        }
+
+
+        ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText(getString(R.string.Skip));
+        // show streams for current level
+        mStreamRecyclerView.setVisibility(View.VISIBLE);
+        mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.VISIBLE);
+      /*  try {
+            mStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class,
+                    ProfileMacro.getStreamJson(currentLevelID));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+        this.mStreamList = streamList;
+        if(MainActivity.mProfile != null){
+
+            int userStreamId = MainActivity.mProfile.getCurrent_stream_id();
+            if(mStreamList != null){
+                int count = mStreamList.size();
+                for (int i = 0; i <  count; i++) {
+                    ProfileSpinnerItem streamOj = mStreamList.get(i);
+                    if(streamOj == null )continue;
+                    if(streamOj.getId() == userStreamId)
+                        streamOj.setSelected(true);
+                    else
+                        streamOj.setSelected(false);
+                }
+            }
+        }
+        if (mStreamAdapter == null) {
+            mStreamAdapter = new ExamStreamAdapter(getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
+            mStreamRecyclerView.setAdapter(mStreamAdapter);
+        } else {
+            mStreamRecyclerView.setAdapter(mStreamAdapter);
+            mStreamAdapter.updateStreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
+        }
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -1627,12 +1653,13 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnUserEducationInteractionListener {
+        void onRequestForSubLevels(int level);
+        void onRequestForLevelStreams(int level);
         void onSkipSelectedInProfileBuilding();
         void onUserExamSelected(HashMap<String, String> examJson);
         void displayMessage(int messageId);
         void requestForProfile(HashMap<String, String> params);
         void onRequestForUserExams();
-        void  onRequestForLevelStreams(int levelId, int levelType);
         void OnTakeMeToRecommended();
         void OnTakeMeToDashBoard();
         void OnTakeMeToProfile();

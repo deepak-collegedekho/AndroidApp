@@ -61,10 +61,11 @@ public class SingleChoiceQuestionFragment extends StepByStepFragment implements 
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             pQuestion = getArguments().getParcelable(ARG_QUESTION);
-            if(pQuestion!=null) {
-                mIsRequired = pQuestion.isRequired();
-                mIsSkippable = pQuestion.is_skippable();
+            if(pQuestion == null) {
+                pQuestion = new StepByStepQuestion();
             }
+            mIsRequired = pQuestion.isRequired();
+            mIsSkippable = pQuestion.is_skippable();
         }
     }
 
@@ -73,15 +74,17 @@ public class SingleChoiceQuestionFragment extends StepByStepFragment implements 
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_single_choice_question, container, false);
         ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setText(pQuestion.getText());
-        ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setContentDescription(pQuestion.getText() + ". Please select a choice from below and then click on the lower right corner to move ahead");
+        rootView.findViewById(R.id.institute_qna_question_title).setContentDescription(pQuestion.getText() + ". Please select a choice from below and then click on the lower right corner to move ahead");
         ListView choiceList = (ListView) rootView.findViewById(R.id.single_choice_list);
         choiceList.setOnItemClickListener(this);
         choiceList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         this.mChoiceHashMap = pQuestion.getChoices();
+        if(this.mChoiceHashMap == null)
+            this.mChoiceHashMap = new ArrayList<>();
         this.mChoiceHashMap.addAll(pQuestion.getOther_choices());
 
-        this.mChoiceListAdapter = new ChoiceListAdapter( getActivity(), this.mChoiceHashMap );
+        this.mChoiceListAdapter = new ChoiceListAdapter(getActivity(), this.mChoiceHashMap );
         choiceList.setAdapter(this.mChoiceListAdapter);
 
         return rootView;

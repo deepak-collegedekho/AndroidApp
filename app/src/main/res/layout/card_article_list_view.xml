@@ -5,14 +5,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/m1dp"
+    android:layout_margin="@dimen/m5dp"
     android:orientation="vertical"
-    android:elevation="@dimen/m1dp"
+    android:elevation="@dimen/m4dp"
     app:cardCornerRadius="@dimen/corner_radius"
-    app:cardElevation="@dimen/m1dp"
+    app:cardElevation="@dimen/m2dp"
     app:cardUseCompatPadding="true">
     <RelativeLayout
         android:id="@+id/card_article_container"
+        android:clickable="true"
+        android:background="@drawable/ripple_white"
         android:layout_width="match_parent"
         android:padding="@dimen/m5dp"
         android:layout_height="wrap_content">
@@ -27,10 +29,9 @@
             />
         <com.collegedekho.app.widget.FadeInImageView
             android:id="@+id/image_article_collapsed"
-            style="@style/AppTheme.ImageView.FadeInImage"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:contentDescription="@string/news_image"
+            android:contentDescription="@string/article_image"
             android:layout_below="@+id/card_article_heading"
             android:paddingTop="@dimen/activity_vertical_margin"
             android:paddingBottom="@dimen/activity_vertical_margin"

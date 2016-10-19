@@ -94,7 +94,7 @@ public class InstituteNewsFragment extends BaseFragment  {
             layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
             rootView.findViewById(R.id.news_detail_scrollView).setVisibility(View.VISIBLE);
             int padd = Utils.getPadding(getContext(), 60);
-            progressBarLL.setGravity(Gravity.RIGHT);
+            progressBarLL.setGravity(Gravity.END);
             progressBarLL.setPadding(0, 0, 0, padd);
 
         }
@@ -171,7 +171,7 @@ public class InstituteNewsFragment extends BaseFragment  {
                     recyclerView.setAdapter(this.mAdapter);
                     recyclerView.setHasFixedSize(true);
                     int padd = Utils.getPadding(getContext(), 60);
-                    progressBarLL.setGravity(Gravity.RIGHT);
+                    progressBarLL.setGravity(Gravity.END);
                     progressBarLL.setPadding(0, 0, 0, padd);
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
                     this.mUpdateNewsDetail(rootView, this.mNewsList.get(0));
@@ -261,8 +261,8 @@ public class InstituteNewsFragment extends BaseFragment  {
 
     /**
      * This method is used to display detail of News
-     * @param view
-     * @param news
+     * @param view rootView of this fragment
+     * @param news news object which information will reflect on UI
      */
     private void mUpdateNewsDetail(View view, News news)
     {

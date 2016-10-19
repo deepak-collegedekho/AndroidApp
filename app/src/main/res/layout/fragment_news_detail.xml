@@ -65,8 +65,17 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/related_news_list"
                 android:scrollbars="none"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="140dp" />
 
+<!--
+        <StackView
+            android:id="@+id/similar_news_stack"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="140dp"/>-->
+
     </LinearLayout>
    </ScrollView>
+

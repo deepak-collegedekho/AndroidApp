@@ -1,6 +1,7 @@
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
@@ -11,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -87,32 +87,26 @@ public class TabFragment extends  BaseFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
-
-        mRecommendedCountTV =  (TextView)rootView.findViewById(R.id.recommended_count);
-        mTrendingCountTV = (TextView)rootView.findViewById(R.id.trending_count);
-        mShortlistCountTV = (TextView)rootView.findViewById(R.id.shortlist_count);
-        mExploreCountTV = (TextView)rootView.findViewById(R.id.explore_count);
-        mPagerHeader    = (PagerTabStrip) rootView.findViewById(R.id.exam_pager_header);
-        mExamTabPager       = (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
-        mExamsTabLayout     =rootView.findViewById(R.id.exams_tab_layout);
-        TextView mProfileName = (TextView) rootView.findViewById(R.id.user_name);
-        TextView mProfileNumber = (TextView) rootView.findViewById(R.id.user_phone);
+        mRecommendedCountTV     =   (TextView)rootView.findViewById(R.id.recommended_count);
+        mTrendingCountTV        =   (TextView)rootView.findViewById(R.id.trending_count);
+        mShortlistCountTV       =   (TextView)rootView.findViewById(R.id.shortlist_count);
+        mExploreCountTV         =   (TextView)rootView.findViewById(R.id.explore_count);
+        mPagerHeader            =   (PagerTabStrip) rootView.findViewById(R.id.exam_pager_header);
+        mExamTabPager           =   (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
+        mExamsTabLayout         =   rootView.findViewById(R.id.exams_tab_layout);
+        TextView mProfileName   =   (TextView) rootView.findViewById(R.id.user_name);
+        TextView mProfileNumber =   (TextView) rootView.findViewById(R.id.user_phone);
         CircularImageView mProfileImage = (CircularImageView)rootView.findViewById(R.id.profile_image);
 
-        IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
-        IS_PREPARE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("prepare_tute", false);
-//        if(IS_COLLEGE_TUTE_COMPLETED){
-//            getActivity().invalidateOptionsMenu();
-//        } else {
-//            getActivity().invalidateOptionsMenu();
-//        }
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
+        IS_COLLEGE_TUTE_COMPLETED = sharedPreferences.getBoolean(getString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
+        IS_PREPARE_TUTE_COMPLETED = sharedPreferences.getBoolean("prepare_tute", false);
 
         rootView.findViewById(R.id.prepare_tour_guide_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 view.setVisibility(View.GONE);
                 IS_PREPARE_TUTE_COMPLETED = true;
-//                        getActivity().invalidateOptionsMenu();
                 getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean("prepare_tute", true).apply();
                 View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                 bottomMenu.animate().translationY(0);
@@ -128,14 +122,13 @@ public class TabFragment extends  BaseFragment{
                 if(!IS_COLLEGE_TUTE_COMPLETED){
                     if(i ==0){
                         i++;
-                        v.setBackgroundResource(R.drawable.ic_profile_tute2);
+                        v.setBackgroundResource(R.drawable.ic_home_tute2);
                     } else if(i ==1) {
                         i++;
-                        v.setBackgroundResource(R.drawable.ic_profile_tute3);
+                        v.setBackgroundResource(R.drawable.ic_home_tute3);
                     } else {
                         v.setVisibility(View.GONE);
                         IS_COLLEGE_TUTE_COMPLETED = true;
-//                        getActivity().invalidateOptionsMenu();
                         getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
                         View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                         bottomMenu.animate().translationY(0);
@@ -157,8 +150,7 @@ public class TabFragment extends  BaseFragment{
         mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
 
-        IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
-        if(MainActivity.mProfile != null) {
+       if(MainActivity.mProfile != null) {
 
             String name = MainActivity.mProfile.getName();
             if (name == null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
@@ -236,7 +228,6 @@ public class TabFragment extends  BaseFragment{
                 this.mExamDetail.setId(0);
             }
         }
-//        rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_first).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_second).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_third).setOnClickListener(this);
@@ -244,7 +235,7 @@ public class TabFragment extends  BaseFragment{
         rootView.findViewById(R.id.profile_image).setOnClickListener(this);
         rootView.findViewById(R.id.include_image_layout).findViewById(R.id.profile_image_edit_button).setOnClickListener(this);
 
-        String psychometricResults = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getString("psychometric_report", null);
+        String psychometricResults = sharedPreferences.getString("psychometric_report", null);
 
         if (MainActivity.mProfile != null && MainActivity.mProfile.getPsychometric_given() == 1 && psychometricResults != null) {
             rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.GONE);
@@ -318,20 +309,17 @@ public class TabFragment extends  BaseFragment{
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
             mainActivity.mUpdateTabMenuItem(this.selectedTabPosition);
-
+            // call this method to redraw tool bar items
+            mainActivity.invalidateOptionsMenu();
         }
 
         if(this.mExamDetailList != null && !this.mExamDetailList.isEmpty()) {
-            if (this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
-                this.mExamDetail = this.mExamDetailList.get(mExamTabPager.getCurrentItem());
-            }
+            int pagerPosition = mExamTabPager.getCurrentItem();
+            if(this.mExamDetailList.size() > pagerPosition)
+                this.mExamDetail = this.mExamDetailList.get(pagerPosition);
         }else{
-
-            if(this.mListener != null)
-            {
                 this.mExamDetail = new ProfileExam();
                 this.mExamDetail.setId(0);
-            }
         }
         this.mUpdateSubMenuItem();
     }
@@ -436,18 +424,16 @@ public class TabFragment extends  BaseFragment{
 
         if(this.selectedTabPosition == 1){
             IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
-            if(view != null ){
-                View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-                if(!IS_COLLEGE_TUTE_COMPLETED) {
-                    getActivity().invalidateOptionsMenu();
-                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
-                    bottomMenu.animate().translationY(bottomMenu.getHeight());
-                    bottomMenu.setVisibility(View.GONE);
-                } else {
-                    view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
-                    bottomMenu.animate().translationY(0);
-                    bottomMenu.setVisibility(View.VISIBLE);
-                }
+            View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+            if(!IS_COLLEGE_TUTE_COMPLETED) {
+                getActivity().invalidateOptionsMenu();
+                view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
+                bottomMenu.animate().translationY(bottomMenu.getHeight());
+                bottomMenu.setVisibility(View.GONE);
+            } else {
+                view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+                bottomMenu.animate().translationY(0);
+                bottomMenu.setVisibility(View.VISIBLE);
             }
 
             LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
@@ -669,7 +655,7 @@ public class TabFragment extends  BaseFragment{
                     this.mHomeWidgetSelected(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2",null);
             } else if(selectedSubMenuPosition == 4) {
                 if(this.mExamDetail != null)
-                    this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mExamDetail.getExam_tag());//this.mExamDetail.getExam_tag());
+                    this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mExamDetail.getExam_tag());
                 else
                     this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/",null);
             }
@@ -681,7 +667,7 @@ public class TabFragment extends  BaseFragment{
             }
         } else if (selectedTabPosition == 3){
             if(mExamDetail != null) {
-                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, "" + mExamDetail.getId()).commit();
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, "" + mExamDetail.getId()).apply();
                 if (selectedSubMenuPosition == 1) {
                     this.mHomeWidgetSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + mExamDetail.getId() + "/calendar/", null);
                 } else if (selectedSubMenuPosition == 2) {
@@ -756,7 +742,7 @@ public class TabFragment extends  BaseFragment{
         Profile profile = MainActivity.mProfile;
         String name = profile.getName();
         if (name == null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
-            mProfileName.setText("Name : Anonymous DeviceProfile");
+            mProfileName.setText("Name : Anonymous User");
         } else {
             String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
             mProfileName.setText("Name : " + userName);

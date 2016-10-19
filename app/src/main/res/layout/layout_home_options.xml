@@ -23,18 +23,15 @@
 
         <RelativeLayout
             android:id="@+id/college_list_layout_RL"
-            android:orientation="vertical"
+            android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight=".5"
             android:tag="1"
-            android:background="@drawable/rounded_box_dark_blue_20px"
-            android:layout_height="match_parent"
+            android:clickable="true"
+            android:background="@drawable/ripple_blue"
+            android:gravity="center"
             android:contentDescription="Click here to check out colleges." >
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
 
                 <TextView
                     android:id="@+id/college_list"
@@ -55,26 +52,21 @@
                     android:importantForAccessibility="no"
                     android:scaleType="fitCenter"
                     app:srcCompat="@drawable/ic_cd_white"/>
-            </RelativeLayout>
-
 
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/connect_layout_RL"
-            android:orientation="vertical"
+            android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight=".5"
             android:tag="2"
             android:layout_marginLeft="@dimen/m5dp"
-            android:background="@drawable/rounded_box_dark_blue_20px"
-            android:layout_height="match_parent"
+            android:clickable="true"
+            android:background="@drawable/ripple_blue"
+            android:gravity="center"
             android:contentDescription="Click here to interact with your prospective classmates and ask questions." >
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
 
                 <TextView
                     android:id="@+id/connect_text"
@@ -95,7 +87,6 @@
                     android:importantForAccessibility="no"
                     android:scaleType="fitCenter"
                     app:srcCompat="@drawable/ic_connect"/>
-            </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>
 
@@ -111,59 +102,16 @@
         android:weightSum="1">
 
         <RelativeLayout
-            android:id="@+id/updates_layout_RL"
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_weight=".5"
-            android:tag="4"
-            android:background="@drawable/rounded_box_dark_blue_20px"
-            android:layout_height="match_parent"
-            android:contentDescription="Click here to check news and updates related to colleges.">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/update_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:text="@string/TAG_HOME_NEWS_AND_UPDATES"
-                    android:importantForAccessibility="no"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="@dimen/m4dp"
-                    android:textColor="@color/white"
-                    android:layout_below="@+id/updates_image"/>
-                <ImageView
-                    android:id="@+id/updates_image"
-                    android:layout_width="30dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_height="30dp"
-                    android:scaleType="fitCenter"
-                    android:importantForAccessibility="no"
-                    app:srcCompat="@drawable/ic_read"/>
-            </RelativeLayout>
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
             android:id="@+id/prepare_layout_RL"
-            android:orientation="vertical"
+            android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight=".5"
             android:tag="3"
-            android:layout_marginLeft="@dimen/m5dp"
-            android:background="@drawable/rounded_box_dark_blue_20px"
-            android:layout_height="match_parent"
+            android:gravity="center"
+            android:clickable="true"
+            android:background="@drawable/ripple_blue"
             android:contentDescription="Click here to see important dates and syllabus related to exams">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
 
                 <TextView
                     android:id="@+id/prepare_text"
@@ -184,7 +132,39 @@
                     android:importantForAccessibility="no"
                     android:scaleType="fitCenter"
                     app:srcCompat="@drawable/ic_prepare"/>
-            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/updates_layout_RL"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:tag="4"
+            android:gravity="center"
+            android:layout_marginLeft="@dimen/m5dp"
+            android:clickable="true"
+            android:background="@drawable/ripple_blue"
+            android:contentDescription="Click here to check news and updates related to colleges.">
+
+                <TextView
+                    android:id="@+id/update_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/TAG_HOME_NEWS_AND_UPDATES"
+                    android:importantForAccessibility="no"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="@dimen/m4dp"
+                    android:textColor="@color/white"
+                    android:layout_below="@+id/updates_image"/>
+                <ImageView
+                    android:id="@+id/updates_image"
+                    android:layout_width="30dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_height="30dp"
+                    android:scaleType="fitCenter"
+                    android:importantForAccessibility="no"
+                    app:srcCompat="@drawable/ic_read"/>
         </RelativeLayout>
     </LinearLayout>
 

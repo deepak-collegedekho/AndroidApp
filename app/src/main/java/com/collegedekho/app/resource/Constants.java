@@ -2,7 +2,6 @@ package com.collegedekho.app.resource;
 
 import android.net.Uri;
 
-
 import java.util.HashMap;
 
 /**
@@ -19,7 +18,7 @@ public class Constants
     public static final int GCM_RESULT_DATA_KEY=201;
 
     public static final String KEY_USER = "user_id";
-    public static final String ANONYMOUS_USER = "Anonymous mDeviceProfile";
+    public static final String ANONYMOUS_USER = "Anonymous User";
     public static final String TAG_FACEBOOK_LOGIN = "user_facebook_login";
     public static final String TAG_TRUE_SDK_LOGIN = "true_sdk_login";
     public static final String TAG_SKIP_LOGIN = "skip_login";
@@ -67,8 +66,8 @@ public class Constants
     public static final String REFRESH_CHATROOM = "refresh_chatroom";
     public static final String TAG_LOAD_QNA_QUESTIONS = "qna";
     //public static final String IP = "http://10.0.3.2";
-    public static final String IP = "http://www.launch.collegedekho.com";
-    //public static final String IP = "https://www.collegedekho.com";
+    //public static final String IP = "http://www.launch.collegedekho.com";
+    public static final String IP = "https://www.collegedekho.com";
     //public static final String IP = "http://192.168.8.101";
     //public static final String IP = "http://192.168.56.1";
     //public static final String BASE_URL = IP + ":8000/api/1/";
@@ -113,7 +112,6 @@ public class Constants
     public static final String TAG_DELETESHORTLIST_INSTITUTE = "delete";
     public static final String CARD_DELETE_SHORTLISTED_INSTITUTE = "card_shortlisted_delete";
     public static final int NEITHER_LIKE_NOR_DISLIKE = -1;
-    public static final String TAG_LOAD_PSYCHOMETRIC_TEST = "load_psychometric_test";
     public static final String TAG_MY_ALERTS = "my_alerts";
     public static final String TAG_LOAD_INSTITUTE_QNA_QUESTIONS = "institute_qna";
     public static final String TAG_FRAGMENT_INSTITUTE_LIST = "fragment_institute_list";
@@ -165,6 +163,8 @@ public class Constants
     public static final String SEARCH_NEWS = "search_news";
     public static final String SEARCH_QNA = "search_qna";
     public static final String PROFILE_IMAGE_UPLOADING = "profile_image_uploading";
+    public static final String TAG_LOAD_SUB_LEVELS = "tag_load_sub_levels";
+    public static final String TAG_LOAD_LEVEL_STREAMS = "tag_load_level_streams";
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;
@@ -178,8 +178,6 @@ public class Constants
 
     public static final int TYPE_NOT_CONNECTED = 0;
     public static final String SERVER_FAULT = "The servers made a boo boo. Try again later";
-    public static final String NO_CONNECTION_FAULT = "You are not connected to internet. Please connect and try again.";
-    public static final String UNKNOWN_ERROR = "Something went wrong. Please try again later";
     public static final int FILTER_CATEGORY_COURSE_AND_SPECIALIZATION = 0;
     public static final int FILTER_CATEGORY_LOCATION = 1;
     public static final int FILTER_CATEGORY_TYPE_AND_SUPPORT_SERVICES = 2;
@@ -191,6 +189,9 @@ public class Constants
 
     public static final int VIEW_INTO_GRID  = 1;
     public static final int VIEW_INTO_LIST  = 2;
+
+    public static final int THEME_TRANSPARENT  = 1;
+    public static final int THEME_BACKGROUND   = 2;
 
     public static final int ID_CITY = 1;
     public static final int ID_EXAM = 11;
@@ -232,8 +233,8 @@ public class Constants
     public static final String TAG_RESEND_OTP = "resend_otp";
     public static final String TAG_VERIFY_USER_PHONE = "action_user_login";
     public static final String USER_OTP = "user_otp";
-    public static final String OTP_INTENT_FILTER = "com.cld.mDeviceProfile.otp.filter";
-    public static final String OTP_BODY = "Dear DeviceProfile,\nYour OTP for college app verification is-";
+    public static final String OTP_INTENT_FILTER = "com.cld.user.otp.filter";
+    public static final String OTP_BODY = "Dear User,\nYour OTP for college app verification is-";
     public static final String OTP_CODE = "code";
     public static final String OTP_NUMBER = "CLDAPP";
     public static final String OTP_VERIFICATION = "otp_verification";
@@ -309,6 +310,8 @@ public class Constants
 
     public static final int CODE_FAILED = -1;
     public static final int CODE_SUCCESS = 0;
+
+    public static int PHONE_VERIFIED = 1;
 
     public static final int SOURCE_COLLEGE_DEKHO_APP = 1;
     public static final int SOURCE_COLLEGE_APP_SDK = 2;

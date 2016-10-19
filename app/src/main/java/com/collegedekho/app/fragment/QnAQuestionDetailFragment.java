@@ -20,11 +20,13 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.QnAAnswersListAdapter;
+import com.collegedekho.app.animation.AnimationUtil;
 import com.collegedekho.app.entities.QnAAnswers;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.utils.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -192,16 +194,18 @@ public class QnAQuestionDetailFragment extends BaseFragment implements View.OnCl
         switch (view.getId()) {
             case R.id.answer_reply:
                 if (rootView != null) {
-                    if ((rootView.findViewById(R.id.qna_answer_layout)).getVisibility() == View.GONE) {
-                        (rootView.findViewById(R.id.qna_answer_layout)).setVisibility(View.VISIBLE);
+                    View answerLayout = rootView.findViewById(R.id.qna_answer_layout);
+                    if ( answerLayout.getVisibility()== View.INVISIBLE) {
+                        AnimationUtil.circularReveal(answerLayout,true);
                         this.mToggleAnswerButtonVisibility(View.GONE, View.GONE);
                     }
                 }
                 break;
             case R.id.answer_question_cross:
                 if (rootView != null) {
-                    (rootView.findViewById(R.id.qna_answer_layout)).setVisibility(View.GONE);
+                    Utils.hideKeyboard(getActivity());
                     this.mToggleAnswerButtonVisibility(View.VISIBLE, View.VISIBLE);
+                    AnimationUtil.circularReveal(rootView.findViewById(R.id.qna_answer_layout), false);
                 }
                 break;
             case R.id.qna_answer_submit_button: {
@@ -214,7 +218,7 @@ public class QnAQuestionDetailFragment extends BaseFragment implements View.OnCl
                     mListener.displayMessage(R.string.ENTER_YOUR_ANSWER);
                 } else {
                     if(rootView != null)
-                        (rootView.findViewById(R.id.qna_answer_layout)).setVisibility(View.GONE);
+                        (rootView.findViewById(R.id.qna_answer_layout)).setVisibility(View.INVISIBLE);
 
                     this.mToggleAnswerButtonVisibility(View.VISIBLE, View.VISIBLE);
                     mListener.onQnAAnswerSubmitted(mQnAQuestion.getResource_uri(), mAnswerETV.getText().toString().trim(), mQnAQuestion.getIndex(), mQnAAnswersSet.size());

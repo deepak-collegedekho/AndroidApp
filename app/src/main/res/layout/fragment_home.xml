@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
-
     <LinearLayout
         android:id="@+id/Profile_screen_layout"
         android:layout_width="match_parent"
@@ -12,7 +11,6 @@
         android:orientation="vertical"
         android:background="@color/app_background"
         android:weightSum="1">
-
 
         <RelativeLayout
             android:id="@+id/check_gesture"
@@ -71,7 +69,8 @@
                         android:id="@+id/btn_home_psychometric_test"
                         android:layout_width="@dimen/m120dp"
                         android:layout_height="@dimen/m60dp"
-                        android:background="@drawable/bg_button_orange"
+                        android:clickable="true"
+                        android:background="@drawable/ripple_orange"
                         android:padding="@dimen/m2dp"
                         android:orientation="horizontal"
                         android:gravity="center"
@@ -102,7 +101,8 @@
                         android:visibility="gone"
                         android:layout_width="@dimen/m120dp"
                         android:layout_height="@dimen/m60dp"
-                        android:background="@drawable/bg_button_orange"
+                        android:clickable="true"
+                        android:background="@drawable/ripple_orange"
                         android:padding="@dimen/m2dp"
                         android:orientation="horizontal"
                         android:gravity="center"
@@ -126,11 +126,12 @@
                         android:id="@+id/btn_home_step_by_step"
                         android:layout_width="@dimen/m120dp"
                         android:layout_height="@dimen/m60dp"
-                        android:background="@drawable/bg_button_orange"
                         android:padding="@dimen/m2dp"
                         android:orientation="horizontal"
                         android:gravity="center"
                         android:layout_gravity="end"
+                        android:clickable="true"
+                        android:background="@drawable/ripple_orange"
                         android:contentDescription="Click to search colleges step by step">
 
                         <ImageView
@@ -144,6 +145,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textAllCaps="false"
                             android:gravity="center_vertical"
                             android:text="Step-By-Step College Search"
                             android:textColor="@color/white"
@@ -177,7 +179,7 @@
             android:clickable="true"
             android:contentDescription="@string/profile_tute_description"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_profile_tute5"
+            android:src="@drawable/ic_home_tute5"
             />
     </FrameLayout>
 

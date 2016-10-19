@@ -11,8 +11,11 @@
     app:cardCornerRadius="@dimen/corner_radius"
     app:cardElevation="@dimen/cardview_default_elevation"
     app:cardUseCompatPadding="true">
+
 <RelativeLayout
     android:id="@+id/card_news_container"
+    android:clickable="true"
+    android:background="@drawable/ripple_white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -58,8 +61,7 @@
         android:paddingLeft="10dp"
         android:layout_below="@id/textview_news_title"
         android:layout_toRightOf="@id/image_news_collapsed"
-        android:singleLine="true"
-        android:text="July 13, 2015 06:45 PM"
+        android:maxLines="1"
         android:textSize="14sp"
         />
 

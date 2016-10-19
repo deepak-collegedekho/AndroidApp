@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/qna_card_list_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -12,45 +11,48 @@
     app:cardUseCompatPadding="true"
     >
     <LinearLayout
+        android:id="@+id/qna_card_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingLeft="5dp"
         android:paddingBottom="5dp"
+        android:clickable="true"
+        android:background="@drawable/ripple_white"
         android:weightSum="10">
-<RelativeLayout
-    android:layout_width="0dp"
-    android:layout_weight="5"
-    android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="wrap_content">
 
-        <com.collegedekho.app.widget.CircularImageView
-            style="@style/AppTheme.ImageView.ProfileImage"
-            android:src="@android:drawable/sym_def_app_icon"
-            android:id="@+id/card_qna_profile_image"
-            android:layout_marginTop="0dp"
-            android:visibility="gone"/>
+            <com.collegedekho.app.widget.CircularImageView
+                style="@style/AppTheme.ImageView.ProfileImage"
+                android:src="@android:drawable/sym_def_app_icon"
+                android:id="@+id/card_qna_profile_image"
+                android:layout_marginTop="0dp"
+                android:visibility="gone"/>
 
-        <TextView
-            android:id="@+id/card_qna_question_heading"
-            style="@style/AppTheme.TextView.size14sp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textStyle="bold"
-            android:layout_toRightOf="@id/card_qna_profile_image"
-            android:text="Manipal Institute of Technology"
-            android:textColor="@color/heading_color"/>
-        <TextView
-            android:id="@+id/card_qna_user_name"
-            style="@style/AppTheme.TextView.size14sp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:paddingTop="0dp"
-            android:layout_toRightOf="@id/card_qna_profile_image"
-            android:layout_below="@id/card_qna_question_heading"
-            android:text="Shashi"
-            android:textColor="@color/heading_color"/>
+            <TextView
+                android:id="@+id/card_qna_question_heading"
+                style="@style/AppTheme.TextView.size14sp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textStyle="bold"
+                android:layout_toRightOf="@id/card_qna_profile_image"
+                android:text="Manipal Institute of Technology"
+                android:textColor="@color/heading_color"/>
+            <TextView
+                android:id="@+id/card_qna_user_name"
+                style="@style/AppTheme.TextView.size14sp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:paddingTop="0dp"
+                android:layout_toRightOf="@id/card_qna_profile_image"
+                android:layout_below="@id/card_qna_question_heading"
+                android:text="Shashi"
+                android:textColor="@color/heading_color"/>
 
-</RelativeLayout>
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/card_qna_answer_count"
@@ -75,7 +77,7 @@
             android:orientation="vertical"
             android:paddingLeft="@dimen/m5dp">
 
-                <include layout="@layout/layout_like_button"/>
+            <include layout="@layout/layout_like_button"/>
 
             <TextView
                 android:id="@+id/card_qna_added_on"

@@ -25,7 +25,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 
@@ -41,13 +40,10 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
     public static final String TITLE = "SyllabusSubjectsListFragment";
     private static final String ARG_SUBJECT_LIST = "subjectList";
     private ArrayList<Subjects> mSubjects;
-    private String mTitle;
     private SyllabusSubjectListAdapter mAdapter;
-    private MainActivity mMainActivity;
     private TextView mEmptyTextView;
     private OnSubjectSelectedListener listener;
     private ArrayList<Subjects> mSubjectsLastStatus;
-    private Button btnSubmit;
 
     public SyllabusSubjectsListFragment() {
         // Required empty public constructor
@@ -85,11 +81,11 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new SyllabusSubjectListAdapter(getActivity(), mSubjects);
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
-        this.btnSubmit=(Button)rootView.findViewById(R.id.btn_submit_subjects);
+        Button btnSubmit=(Button)rootView.findViewById(R.id.btn_submit_subjects);
 
         if (mSubjects.size() == 0) {
             mEmptyTextView.setVisibility(View.VISIBLE);
-            this.mEmptyTextView.setText("No Subjects");
+            this.mEmptyTextView.setText(getString(R.string.no_subjects));
             btnSubmit.setVisibility(View.GONE);
         }else{
             btnSubmit.setVisibility(View.VISIBLE);
@@ -117,7 +113,6 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(ARG_SUBJECT_LIST, this.mSubjects);
-        outState.putString(ARG_TITLE, this.mTitle);
         super.onSaveInstanceState(outState);
     }
 
@@ -131,14 +126,12 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        this.mMainActivity = (MainActivity) this.getActivity();
+        MainActivity mMainActivity = (MainActivity) this.getActivity();
+        if (mMainActivity != null)
+            mMainActivity.currentFragment = this;
 
-        if (this.mMainActivity != null)
-            this.mMainActivity.currentFragment = this;
-
-        if (mSubjects.size() == 0)
-        {
-            this.mEmptyTextView.setText("No Subjects");
+        if (mSubjects.size() == 0){
+            this.mEmptyTextView.setText(getString(R.string.no_subjects));
             this.mEmptyTextView.setVisibility(View.VISIBLE);
         }
         else
@@ -226,7 +219,7 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
                 ArrayList<Chapters> chapterList = unit.getChapters();
 
                 if (originalChapterList != null && !originalChapterList.isEmpty()
-                        || chapterList != null && !chapterList.isEmpty()) {
+                        && chapterList != null && !chapterList.isEmpty()) {
 
                     int chapterSize = originalChapterList.size();
                     for (int k = 0; k < chapterSize; k++) {
@@ -250,9 +243,8 @@ public class SyllabusSubjectsListFragment extends BaseFragment {
         }
 
         if(subjetIdsMap.size()>0) {
-            Iterator it = subjetIdsMap.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry) it.next();
+            for (Object o : subjetIdsMap.entrySet()) {
+                Map.Entry pair = (Map.Entry) o;
                 subjectJsonArray.put(pair.getKey());
             }
 

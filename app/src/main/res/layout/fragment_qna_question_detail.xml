@@ -246,7 +246,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:visibility="gone"
+        android:visibility="invisible"
         android:layout_marginLeft="@dimen/m25dp"
         android:layout_marginRight="@dimen/m25dp"
         />

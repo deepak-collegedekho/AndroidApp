@@ -46,12 +46,11 @@ public class OTPReceiver extends BroadcastReceiver {
                                 String otp = body.replace(Constants.OTP_BODY, "").trim();
                                 if (!otp.matches("") && otp.length() > 0) {
 
-                                    // TODO :: change this code  instead of checking current
-                                    // TODO:: instance to some other logic
-                                    if(MainActivity.currentFragment != null
-                                            && (MainActivity.currentFragment instanceof LoginFragment
-                                            || MainActivity.currentFragment instanceof OTPVerificationFragment
-                                            || MainActivity.currentFragment instanceof PostAnonymousLoginFragment)) {
+                                  MainActivity mainActivity = (MainActivity)context;
+                                    if(mainActivity != null
+                                            && (mainActivity.currentFragment instanceof LoginFragment
+                                            || mainActivity.currentFragment instanceof OTPVerificationFragment
+                                            || mainActivity.currentFragment instanceof PostAnonymousLoginFragment)) {
                                         Intent otpIntent = new Intent(Constants.OTP_INTENT_FILTER);
                                         otpIntent.putExtra(Constants.USER_OTP, otp);
                                         LocalBroadcastManager.getInstance(context).sendBroadcast(otpIntent);

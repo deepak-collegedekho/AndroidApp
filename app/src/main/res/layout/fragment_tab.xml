@@ -75,7 +75,8 @@
                         android:id="@+id/btn_tab_psychometric_test"
                         android:layout_width="@dimen/m105dp"
                         android:layout_height="@dimen/m50dp"
-                        android:background="@drawable/bg_button_orange"
+                        android:clickable="true"
+                        android:background="@drawable/ripple_orange"
                         android:padding="@dimen/m2dp"
                         android:layout_marginRight="@dimen/m4dp"
                         android:orientation="horizontal"
@@ -105,7 +106,8 @@
                         android:id="@+id/btn_tab_psychometric_report"
                         android:layout_width="@dimen/m105dp"
                         android:layout_height="@dimen/m50dp"
-                        android:background="@drawable/bg_button_orange"
+                        android:clickable="true"
+                        android:background="@drawable/ripple_orange"
                         android:padding="@dimen/m2dp"
                         android:layout_marginRight="@dimen/m4dp"
                         android:orientation="horizontal"
@@ -130,12 +132,14 @@
                         android:id="@+id/btn_tab_step_by_step"
                         android:layout_width="@dimen/m100dp"
                         android:layout_height="@dimen/m50dp"
-                        android:background="@drawable/bg_button_orange"
+                        android:clickable="true"
+                        android:background="@drawable/ripple_orange"
                         android:padding="@dimen/m2dp"
                         android:orientation="horizontal"
                         android:gravity="center"
                         android:layout_gravity="end"
                         android:contentDescription="Click to search colleges step by step" >
+
                         <ImageView
                             android:layout_width="@dimen/m20dp"
                             android:layout_height="match_parent"
@@ -179,39 +183,27 @@
                 android:layout_marginBottom="15dp"/>
 
         </LinearLayout>
-
-
     </LinearLayout>
-    <FrameLayout
+
+
+    <ImageView
+        android:id="@+id/prep_buddy_tour_guide_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        android:scaleType="fitXY"
+        android:clickable="true"
+        android:visibility="gone"
+        android:contentDescription="@string/profile_tute_description"
+        android:background="@drawable/ic_home_tute1" />
 
-        <ImageView
-            android:id="@+id/prep_buddy_tour_guide_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:clickable="true"
-            android:visibility="gone"
-            android:contentDescription="@string/profile_tute_description"
-            android:background="@drawable/ic_profile_tute1" />
-
-    </FrameLayout>
-
-    <FrameLayout
+    <ImageView
+        android:id="@+id/prepare_tour_guide_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
-        <ImageView
-            android:id="@+id/prepare_tour_guide_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:clickable="true"
-            android:visibility="gone"
-            android:contentDescription="@string/profile_tute_description"
-            android:background="@drawable/ic_profile_tute4" />
+        android:scaleType="fitXY"
+        android:clickable="true"
+        android:visibility="gone"
+        android:contentDescription="@string/profile_tute_description"
+        android:background="@drawable/ic_home_tute4" />
 
-    </FrameLayout>
 </RelativeLayout>

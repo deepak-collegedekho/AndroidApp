@@ -57,7 +57,7 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_streams, container, false);
         GridView grid = (GridView) rootView.findViewById(R.id.stream_grid);
-        grid.setAdapter(new StreamAdapter(getActivity(), new ArrayList<Stream>(streams.subList(0,2))));
+        grid.setAdapter(new StreamAdapter(getActivity(), new ArrayList<>(streams.subList(0,2))));
         grid.setOnItemClickListener(this);
 
         boolean isHomeLoaded = getActivity().getSharedPreferences(getString(R.string.PREFS),Context.MODE_PRIVATE)
@@ -116,7 +116,7 @@ public class PsychometricStreamFragment extends BaseFragment implements AdapterV
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (new NetworkUtils(getActivity(), null).getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }

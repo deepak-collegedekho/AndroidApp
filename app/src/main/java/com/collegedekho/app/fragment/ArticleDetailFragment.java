@@ -112,35 +112,39 @@ public class ArticleDetailFragment extends BaseFragment {
         }
         // set article title
         try {
-            String response= new String(mArticle.title.getBytes("ISO-8859-1"),"UTF-8");
+            String response= new String(mArticle.getTitle().getBytes("ISO-8859-1"),"UTF-8");
             ((TextView) rootView.findViewById(R.id.textview_article_title)).setText(response);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            ((TextView) rootView.findViewById(R.id.textview_article_title)).setText(mArticle.title);
+            ((TextView) rootView.findViewById(R.id.textview_article_title)).setText(mArticle.getTitle());
         }
 
         // set article content
         if(mArticle.getNews_source()==2){
-            ((TextView) rootView.findViewById(R.id.textview_article_content)).setText(Html.fromHtml(mArticle.content));
+            ((TextView) rootView.findViewById(R.id.textview_article_content)).setText(Html.fromHtml(mArticle.getContent()));
         }else{
-            Utils.renderHtml(getActivity(),(LinearLayout)rootView.findViewById(R.id.news_content_layout),mArticle.content);
+            Utils.renderHtml(getActivity(),(LinearLayout)rootView.findViewById(R.id.news_content_layout),mArticle.getContent());
         }
 
        // load article image from server
-        if (mArticle.image != null && !mArticle.image.isEmpty())
-            ((NetworkImageView) rootView.findViewById(R.id.image_article_expanded)).setImageUrl(mArticle.image, MySingleton.getInstance(getActivity()).getImageLoader());
-        else
+        if (mArticle.getImage() != null && !mArticle.getImage().isEmpty()) {
+            NetworkImageView articleImage = (NetworkImageView) rootView.findViewById(R.id.image_article_expanded);
+            articleImage.setImageUrl(mArticle.getImage(), MySingleton.getInstance(getActivity()).getImageLoader());
+            articleImage.setDefaultImageResId(R.drawable.ic_default_image);
+            articleImage.setErrorImageResId(R.drawable.ic_default_image);
+
+        }else
             rootView.findViewById(R.id.image_article_expanded).setVisibility(View.GONE);
 
         String d = "";
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date date = sdf.parse(mArticle.published_on);
+            Date date = sdf.parse(mArticle.getPublished_on());
             sdf.applyPattern("MMMM d, yyyy KK:mm a");
             d = sdf.format(date);
         } catch (ParseException e) {
-            Log.e(TAG, "Date format unknown: " + mArticle.published_on);
+            Log.e(TAG, "Date format unknown: " + mArticle.getPublished_on());
 //                Utils.sendException(t, TAG, "DateFormatUnknown", r.getAddedOn());
         }
         ((TextView) rootView.findViewById(R.id.textview_article_pubdate)).setText(d);
@@ -163,7 +167,6 @@ public class ArticleDetailFragment extends BaseFragment {
         }
         if(similarArticle.size() <=0)
         {
-
              rootView.findViewById(R.id.similar_articleTV).setVisibility(View.GONE);
              rootView.findViewById(R.id.divider_similar_article).setVisibility(View.GONE);
              rootView.findViewById(R.id.related_article_list).setVisibility(View.GONE);
@@ -198,7 +201,7 @@ public class ArticleDetailFragment extends BaseFragment {
 
         Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_ARTICLES_LIST + "/personalize/articles/" + this.mArticle.getId());
 
-        AnalyticsUtils.AppIndexingView("CollegeDekho - Article - " + this.mArticle.title, val, val, (MainActivity) this.getActivity(), true);
+        AnalyticsUtils.AppIndexingView("CollegeDekho - Article - " + this.mArticle.getTitle(), val, val, (MainActivity) this.getActivity(), true);
     }
 
     @Override
@@ -207,7 +210,7 @@ public class ArticleDetailFragment extends BaseFragment {
 
         Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_ARTICLES_LIST + "/personalize/articles/" + this.mArticle.getId());
 
-        AnalyticsUtils.AppIndexingView("CollegeDekho - Article - " + this.mArticle.title, val, val, (MainActivity) this.getActivity(), false);
+        AnalyticsUtils.AppIndexingView("CollegeDekho - Article - " + this.mArticle.getTitle(), val, val, (MainActivity) this.getActivity(), false);
     }
 
     @Override

@@ -1,13 +1,11 @@
 package com.collegedekho.app.fragment;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +31,6 @@ import com.collegedekho.app.widget.fab.FloatingActionButton;
 import com.collegedekho.app.widget.fab.FloatingActionMenu;
 import com.fasterxml.jackson.jr.ob.JSON;
 
-import org.apache.tools.ant.Main;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,10 +45,10 @@ import java.util.List;
 public class InstituteDetailFragment extends BaseFragment {
     private static final String ARG_INSTITUTE = "param1";
     private static final String ARG_FROM_WISHLIST = "param2";
-    public static final int Videos = 4;
-    public static final int QnA = 1;
+    //public static final int QnA = 1;
     public static final int News = 2;
     public static final int Articles = 3;
+    //public static final int Videos = 4;
 
     private ArrayList<ArrayList<InstituteCourse>> courses;
     private ArrayList<News> mInstituteNewsList;
@@ -76,7 +73,7 @@ public class InstituteDetailFragment extends BaseFragment {
      * this fragment using the provided parameters.
      *
      * @param institute Parameter 1.
-     * @param institutesType
+     * @param institutesType type of institute
      * @return A new instance of fragment InstituteOverviewFragment.
      */
     public static InstituteDetailFragment newInstance(Institute institute, Constants.CDRecommendedInstituteType institutesType) {
@@ -124,7 +121,7 @@ public class InstituteDetailFragment extends BaseFragment {
             if (this.mInstitute.getGroups_exists() == 1)
             {
                 //Show Call button number exists
-                if (this.mInstitute.getL3_number() != null && !this.mInstitute.getL3_number().isEmpty() && this.mInstitute.getL3_number() != " ")
+                if (this.mInstitute.getL3_number() != null && !this.mInstitute.getL3_number().isEmpty())
                     fabCall.setVisibility(View.VISIBLE);
                 else
                     fabCall.setVisibility(View.GONE);
@@ -377,9 +374,9 @@ public class InstituteDetailFragment extends BaseFragment {
         @Override
         protected void onPostExecute(Void aVoid) {
           //  mDetailsAdapter.setQnAQuestions(mQnAQuestions);
-            if (getView() != null) {
+            //if (getView() != null) {
                 //tabLayout.setupWithViewPager(mDetailsPager);
-            }
+            //}
         }
     }
 
@@ -396,7 +393,6 @@ public class InstituteDetailFragment extends BaseFragment {
                 }
             }
         }
-
     }
 
     @Override

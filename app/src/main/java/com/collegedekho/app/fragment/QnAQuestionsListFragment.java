@@ -1,7 +1,11 @@
 package com.collegedekho.app.fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +21,7 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.QnAQuestionsListAdapter;
+import com.collegedekho.app.animation.AnimationUtil;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
@@ -27,6 +32,7 @@ import java.util.regex.Pattern;
 
 public class QnAQuestionsListFragment extends BaseFragment {
     public static final String TITLE = "QnA";
+    public static final String TAG = "Question List Fragment";
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -39,6 +45,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
     private OnQnAQuestionSelectedListener mListener;
     private EditText mQuestionTitle;
     private EditText mQuestionDesc;
+
 
     public static QnAQuestionsListFragment newInstance(ArrayList<QnAQuestions> qnaQuestions, String next)
     {
@@ -59,8 +66,8 @@ public class QnAQuestionsListFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.mQnAQuestionsList = getArguments().getParcelableArrayList(this.ARG_PARAM1);
-            this.mNextUrl = getArguments().getString(this.ARG_NEXT);
+            this.mQnAQuestionsList = getArguments().getParcelableArrayList(ARG_PARAM1);
+            this.mNextUrl = getArguments().getString(ARG_NEXT);
             this.listType = Constants.QNA_LIST_TYPE;
         }
     }
@@ -95,15 +102,15 @@ public class QnAQuestionsListFragment extends BaseFragment {
             this.mEmptyTextView.setVisibility(View.VISIBLE);
             this.mEmptyTextView.setText("Couldn't find related questions for you. Like and Shortlist college");
             recyclerView.setVisibility(View.GONE);
-            this.mToggleAskButtonVisiblity(View.GONE, View.VISIBLE);
+            this.mToggleAskButtonVisibility(View.GONE, View.VISIBLE);
         }else {
             this.mEmptyTextView.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-            this.mToggleAskButtonVisiblity(View.VISIBLE, View.VISIBLE);
+            this.mToggleAskButtonVisibility(View.VISIBLE, View.VISIBLE);
             this.mAskButton.setEnabled(true);
         }
 
-        this.mAskButton.setOnClickListener(this);
+       this.mAskButton.setOnClickListener(this);
         rootView.findViewById(R.id.view_into_grid).setOnClickListener(this);
         rootView.findViewById(R.id.view_into_list).setOnClickListener(this);
         rootView.findViewById(R.id.question_ask_cross).setOnClickListener(this);
@@ -131,7 +138,11 @@ public class QnAQuestionsListFragment extends BaseFragment {
         listener = null;
         mListener = null;
         //just a caution for showing toolbar in case mToggleAskButtonVisiblity is not called
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        if(getActivity() != null ) {
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if(actionBar != null)
+                actionBar.show();
+        }
         System.gc();
     }
 
@@ -186,25 +197,19 @@ public class QnAQuestionsListFragment extends BaseFragment {
                 break;
             case R.id.question_ask_button:
                 if(rootView != null) {
-                    if ((rootView.findViewById(R.id.qna_ask_layout)).getVisibility() == View.GONE) {
-                        (rootView.findViewById(R.id.qna_ask_layout)).setVisibility(View.VISIBLE);
+                    View askLayout = rootView.findViewById(R.id.qna_ask_layout);
+                    if (askLayout.getVisibility() == View.INVISIBLE) {
+                        AnimationUtil.circularReveal(askLayout, true);
                         rootView.findViewById(R.id.institute_qna_button_ask_submit).setEnabled(true);
-                        rootView.findViewById(R.id.dummy_view).setVisibility(View.VISIBLE);
-                        rootView.findViewById(R.id.dummy_view).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                            }
-                        });
-                        this.mToggleAskButtonVisiblity(View.GONE, View.GONE);
+                        mToggleAskButtonVisibility(View.GONE, View.GONE);
                     }
                 }
                 break;
             case R.id.question_ask_cross:
                 if(rootView != null)  {
-                    this.mToggleAskButtonVisiblity(View.VISIBLE, View.VISIBLE);
-                    (rootView.findViewById(R.id.qna_ask_layout)).setVisibility(View.GONE);
-                    rootView.findViewById(R.id.dummy_view).setVisibility(View.GONE);
+                    this.mToggleAskButtonVisibility(View.VISIBLE, View.VISIBLE);
+                    AnimationUtil.circularReveal(rootView.findViewById(R.id.qna_ask_layout),false);
+                   // rootView.findViewById(R.id.dummy_view).setVisibility(View.GONE);
                 }
                 break;
             case R.id.institute_qna_button_ask_submit:
@@ -230,38 +235,53 @@ public class QnAQuestionsListFragment extends BaseFragment {
         loading=false;
     }
 
-    private void mToggleAskButtonVisiblity(int askQuesButtonVisibility, int toolbarVisibility)
+    private void mToggleAskButtonVisibility(final int askQuesButtonVisibility, int toolbarVisibility)
     {
-        //Putting whole thing in try/catch for I am not putting MainActivity null check and
-        // hide and show methods are showing NPE warning
-        try {
-            if (askQuesButtonVisibility == View.GONE) {
-                this.mAskButton.animate().translationY(this.mAskButton.getHeight());
-                this.mQuestionTitle.requestFocus();
+        if (askQuesButtonVisibility == View.GONE) {
+            this.mAskButton.animate()
+                    .translationY(this.mAskButton.getHeight())
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            mAskButton.setVisibility(askQuesButtonVisibility);
+                        }
+                    });
 
-                //showing soft keyboard on ask button click
-                InputMethodManager inputMethodManager=(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-            }
-            else if (askQuesButtonVisibility == View.VISIBLE)
-                this.mAskButton.animate().translationY(0);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mQuestionTitle.requestFocus();
+                    //showing soft keyboard on ask button click
+                    InputMethodManager inputMethodManager=(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                }
+            }, 400);
 
-            if (toolbarVisibility == View.GONE)
-                ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-            else if (toolbarVisibility == View.VISIBLE)
-                ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        }
+        else if (askQuesButtonVisibility == View.VISIBLE) {
+            this.mAskButton.animate()
+                    .setDuration(300)
+                    .translationY(0)
+                    .setListener(null);
 
             this.mAskButton.setVisibility(askQuesButtonVisibility);
         }
-        catch(Exception e)
-        {
 
+        if(getActivity() != null) {
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if(actionBar != null) {
+                if (toolbarVisibility == View.GONE)
+                    actionBar.hide();
+                else if (toolbarVisibility == View.VISIBLE)
+                    actionBar.show();
+            }
         }
     }
 
     public QnAQuestions validateData() {
         String title =  this.mQuestionTitle.getText().toString();
-        if (title == null || title.trim().length() <= 0) {
+        if (title.trim().length() <= 0) {
             mListener.displayMessage(R.string.QUESTION_TITLE_EMPTY);
             return null;
         } else {
@@ -329,9 +349,9 @@ public class QnAQuestionsListFragment extends BaseFragment {
             View view = getView();
             if(view != null) {
                ((RecyclerView) view.findViewById(R.id.institute_questions_list)).scrollToPosition(0);
-                view.findViewById(R.id.qna_ask_layout).setVisibility(View.GONE);
-                view.findViewById(R.id.dummy_view).setVisibility(View.GONE);
-                this.mToggleAskButtonVisiblity(View.VISIBLE, View.VISIBLE);
+                view.findViewById(R.id.qna_ask_layout).setVisibility(View.INVISIBLE);
+               // view.findViewById(R.id.dummy_view).setVisibility(View.GONE);
+                this.mToggleAskButtonVisibility(View.VISIBLE, View.VISIBLE);
             }
     }
 

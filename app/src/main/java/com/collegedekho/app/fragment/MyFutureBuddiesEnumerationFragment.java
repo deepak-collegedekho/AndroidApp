@@ -29,11 +29,9 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment implements 
 
     private ArrayList<MyFutureBuddiesEnumeration> mFbEnumeration;
     private MyFBEnumerationAdapter mMyFBEnumerationAdapter;
-    private TextView mEmptyTextView;
     private boolean IS_TUTE_COMPLETED = true;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private OnMyFBSelectedListener mListener;
-    private View mRootView;
 
     public static MyFutureBuddiesEnumerationFragment newInstance(ArrayList<MyFutureBuddiesEnumeration> fbEnumeration, String next) {
         MyFutureBuddiesEnumerationFragment fragment = new MyFutureBuddiesEnumerationFragment();
@@ -62,10 +60,10 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment implements 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mRootView = inflater.inflate(R.layout.fragment_my_future_buddies_enumeration, container, false);
+        View mRootView = inflater.inflate(R.layout.fragment_my_future_buddies_enumeration, container, false);
         IS_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(MainActivity.getResourceString(R.string.MY_FB_SCREEN_TUTE), false);
 
-        this.mEmptyTextView = (TextView) mRootView.findViewById(android.R.id.empty);
+        TextView mEmptyTextView = (TextView) mRootView.findViewById(android.R.id.empty);
         this.progressBarLL = (LinearLayout) mRootView.findViewById(R.id.progressBarLL);
         this.mSwipeRefreshLayout = (SwipeRefreshLayout) mRootView.findViewById(R.id.fb_enumeration_swipe_refresh_container);
         this.mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -79,15 +77,12 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment implements 
         fbEnumerationView.setItemAnimator(new DefaultItemAnimator());
         fbEnumerationView.addOnScrollListener(scrollListener);
 
-        if (this.mFbEnumeration.size() == 0)
-        {
-            this.mEmptyTextView.setVisibility(View.VISIBLE);
-            this.mEmptyTextView.setText("Uh oh! You need to shortlist or like colleges to interact and chat with fellow aspirants & seniors of a college.");
+        if (this.mFbEnumeration.size() == 0){
+            mEmptyTextView.setVisibility(View.VISIBLE);
+            mEmptyTextView.setText("Uh oh! You need to shortlist or like colleges to interact and chat with fellow aspirants & seniors of a college.");
             fbEnumerationView.setVisibility(View.GONE);
-        }
-        else
-        {
-            this.mEmptyTextView.setVisibility(View.GONE);
+        } else  {
+            mEmptyTextView.setVisibility(View.GONE);
             fbEnumerationView.setVisibility(View.VISIBLE);
         }
 

@@ -17,11 +17,10 @@ import com.collegedekho.app.entities.MyAlertDate;
 import java.util.ArrayList;
 
 /**
- * Created by Bashir on 22/12/15.
+ * Created by {Bashir} on {22/12/15}.
  */
 public class UserAlertsFragment extends BaseFragment implements UserAlertsAdapter.OnUserAlertItemSelectListener {
 
-    private RecyclerView alertRecycler;
     private ArrayList<MyAlertDate> alertDates;
     private OnAlertItemSelectListener mListener;
 
@@ -46,14 +45,13 @@ public class UserAlertsFragment extends BaseFragment implements UserAlertsAdapte
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.user_alerts_fragment_layout, container, false);
-        return rootView;
+        return inflater.inflate(R.layout.user_alerts_fragment_layout, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        alertRecycler = (RecyclerView) view.findViewById(R.id.user_alerts_recycler);
+        RecyclerView alertRecycler = (RecyclerView) view.findViewById(R.id.user_alerts_recycler);
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         alertRecycler.setLayoutManager(layoutManager);

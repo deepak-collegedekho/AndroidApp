@@ -1,6 +1,5 @@
 package com.collegedekho.app.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -91,27 +90,6 @@ public class UserAlertsParentFragment extends BaseFragment implements ViewPager.
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null)
             mainActivity.currentFragment = this;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try{
-            if (context instanceof MainActivity) {
-//                this.mListener = (OnSubmitCalendarData) context;
-            }
-        }
-        catch (ClassCastException e){
-            throw  new ClassCastException(context.toString()
-                    +"must implement OnSubmitCalendarData");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-//        this.mListener = null;
-
     }
 
     @Override

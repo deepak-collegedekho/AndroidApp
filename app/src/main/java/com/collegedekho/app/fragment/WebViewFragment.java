@@ -10,6 +10,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,15 +36,12 @@ public class WebViewFragment extends BaseFragment {
     private String link;
     private View appBar;
     int preState = -1;
-    private ProgressBar webProgress;
     private String baseUrl ="";
 
 
     public static WebViewFragment newInstance(String link) {
-
-        Bundle args = new Bundle();
-
         WebViewFragment fragment = new WebViewFragment();
+        Bundle args = new Bundle();
         args.putString("link", link);
         fragment.setArguments(args);
         return fragment;
@@ -71,15 +69,14 @@ public class WebViewFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.web_view_fragment_layout, container, false);
-        return rootView;
+        return inflater.inflate(R.layout.web_view_fragment_layout, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         webView = (WebView) view.findViewById(R.id.web_view);
-        webProgress = (ProgressBar) view.findViewById(R.id.web_view_progress_bar);
+        ProgressBar  webProgress = (ProgressBar) view.findViewById(R.id.web_view_progress_bar);
         applyWebViewSettings(getActivity(), webView, webProgress);
 
         view.findViewById(R.id.web_view_internet_refresh).setOnClickListener(this);
@@ -149,16 +146,11 @@ public class WebViewFragment extends BaseFragment {
         WebSettings webSettings = webView.getSettings();
         webSettings.setBuiltInZoomControls(false);
         webSettings.setJavaScriptEnabled(true);
-//        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         webSettings.setDomStorageEnabled(true);
         webSettings.setUseWideViewPort(false);
-        //webSettings.setLoadWithOverviewMode(false);
-//        webSettings.setUserAgentString(webSettings.getUserAgentString() + ";NP-ANDROID-GPT");
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
 
-
         webView.setWebViewClient(new WebViewClient() {
-
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
@@ -185,7 +177,7 @@ public class WebViewFragment extends BaseFragment {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     context.startActivity(intent);
                 } catch (Exception e) {
-
+                    Log.e(TAG, "exception on overriding url");
                 }
                 return true;
             }

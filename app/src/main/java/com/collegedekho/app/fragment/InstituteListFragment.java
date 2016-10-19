@@ -460,16 +460,20 @@ public class InstituteListFragment extends BaseFragment implements TokenComplete
     private void mSetFilterList()
     {
         filtersApplied = 0;
-        ArrayList<Folder> folderList = ((MainActivity) getActivity()).getFilterList();
-        if(folderList != null && !folderList.isEmpty()) {
-            for (Folder f : folderList) {
-                if (f.getLabel().equalsIgnoreCase("stream") || f.getLabel().equalsIgnoreCase("level"))
-                    continue;
-
-                for (Facet ft : f.getFacets()) {
-                    if (ft.isSelected() == 1) {
-                        mCompletionView.addObject(ft.getLabel());
-                        filtersApplied++;
+        if(getActivity() != null) {
+            ArrayList<Folder> folderList = ((MainActivity) getActivity()).getFilterList();
+            if (folderList != null && !folderList.isEmpty()) {
+                for (Folder f : folderList) {
+                    if (f.getLabel().equalsIgnoreCase("stream") || f.getLabel().equalsIgnoreCase("level"))
+                        continue;
+                    ArrayList<Facet> facetList = f.getFacets();
+                    if(facetList != null && !facetList.isEmpty()) {
+                        for (Facet ft : facetList) {
+                            if (ft.isSelected() == 1) {
+                                mCompletionView.addObject(ft.getLabel());
+                                filtersApplied++;
+                            }
+                        }
                     }
                 }
             }

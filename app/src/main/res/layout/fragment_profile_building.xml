@@ -317,7 +317,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/m18sp"
-            android:tag="7"
             android:layout_marginTop="@dimen/m10dp"
             android:text="@string/currently_in_school"/>
 
@@ -326,7 +325,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/m18sp"
-            android:tag="1"
             android:layout_marginTop="@dimen/m10dp"
             android:text="@string/currently_in_graduation"/>
 
@@ -335,7 +333,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/m18sp"
-            android:tag="2"
             android:layout_marginTop="@dimen/m10dp"
             android:text="@string/currently_in_pg"/>
 

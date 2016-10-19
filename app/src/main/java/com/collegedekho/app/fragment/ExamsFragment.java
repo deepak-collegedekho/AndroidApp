@@ -23,16 +23,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by sureshsaini on 30/11/15.
+ * Created by {sureshsaini} on {30/11/15.}
  */
 public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
 
-    private final String TAG = "ExamsFragment";
+    private final static String TAG = "ExamsFragment";
     private static String PARAM1 = "param1";
     private OnExamsSelectListener mListener;
     private ExamsAdapter mExamAdapter;
     private SearchView mExamSearchView;
-    private ExamOnQueryListener cExamQueryListener;
     private ArrayList<Exam> mExamList = new ArrayList<>();
 
     public ExamsFragment() {
@@ -67,7 +66,7 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
         mStreamRecyclerView.setAdapter(mExamAdapter);
 
         mExamSearchView = (SearchView) rootView.findViewById(R.id.user_exam_search_view);
-        cExamQueryListener = new ExamOnQueryListener(mExamList,this, null);
+        ExamOnQueryListener  cExamQueryListener = new ExamOnQueryListener(mExamList,this, null);
         this.mExamSearchView.setOnQueryTextListener(cExamQueryListener);
         mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(rootView.findViewById(R.id.user_exam_search_hint), null));
 
@@ -86,7 +85,7 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
         }
         catch (ClassCastException e){
             throw  new ClassCastException(context.toString()
-                    +"must implement OnExamsSelectListener");
+                    +TAG +"must implement OnExamsSelectListener");
         }
     }
 
@@ -131,8 +130,10 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
                 break;
             case R.id.user_exam_search_view:
             case R.id.user_exam_search_container:
-                mExamSearchView.onActionViewExpanded();
-                getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.GONE);
+                if(getView() != null) {
+                    mExamSearchView.onActionViewExpanded();
+                    getView().findViewById(R.id.user_exam_search_hint).setVisibility(View.GONE);
+                }
                 break;
             default:
                 break;
@@ -143,7 +144,7 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
         if(this.mListener == null)
             return;
 
-        StringBuffer selectedExamsBuffer = new StringBuffer();
+        StringBuilder selectedExamsBuffer = new StringBuilder();
         selectedExamsBuffer.append("[");
         int firstTime =0;
         if(mExamList != null && !mExamList.isEmpty()) {
@@ -151,7 +152,7 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
                 if(exam == null || !exam.isSelected())continue;
 
                 ArrayList<ExamDetail> detailList = exam.getExam_details();
-                if(detailList == null && detailList.isEmpty()) continue;
+                if(detailList == null || detailList.isEmpty()) continue;
 
                 for (ExamDetail examDetailObj:detailList) {
                     if(examDetailObj == null || !examDetailObj.isSelected())continue;
@@ -164,7 +165,7 @@ public class ExamsFragment extends BaseFragment implements ExamFragmentListener{
 
                         if(examDetailObj.isResult_out()){
 
-                            String date = examDetailObj.getExam_date();
+                            //String date = examDetailObj.getExam_date();
                             selectedExamsBuffer.append(",").append("\"status\":").append(1);
                         }else{
                             selectedExamsBuffer.append(",").append("\"status\":").append(2);

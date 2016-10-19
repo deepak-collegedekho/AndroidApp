@@ -42,7 +42,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     private static final String ARG_UNDECIDED_INSTITUTE_COUNT   = "undecided_institute_count";
 
     private ArrayList<Institute> mInstitutes;
-    private ArrayList<Institute> mInstitutesForCard;
     private String mTitle;
     private SimpleCardStackAdapter mAdapter;
     private OnCDRecommendedInstituteListener mListener;
@@ -59,9 +58,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     private final StringBuilder cardState=new StringBuilder();
     private View questionLayout;
     private View mNoMoreFeaturedLayout;
-    private Animation cardMinimizeAnimation;
     private RecyclerView wishListRecyclerView;
-    private PeekAndPop peekAndPop;
     private WishlistInstituteListAdapter mWishlistInstituteListAdapter;
     private TextView mUndecidedCountText;
     private TextView mBuzzListCountText;
@@ -101,7 +98,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mInstitutes = this.getArguments().getParcelableArrayList(ARG_INSTITUTE);
-            this.mInstitutesForCard = new ArrayList<>(this.mInstitutes);
             this.mTitle = this.getArguments().getString(ARG_TITLE);
             this.mNextUrl = this.getArguments().getString(ARG_NEXT);
             this.mRecommendedCount = this.getArguments().getInt(ARG_RECOMMENDED_INSTITUTE_COUNT);
@@ -164,10 +160,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
          * Updating the count of the institutes. The same process has been repeated in the onResume
          * method also. We may remove this functionality.
          * */
-        this.mUndecidedCountText.setText(""+this.mUndecidedCount);
-        this.mRecommendedCountText.setText(""+this.mRecommendedCount);
-        this.mShortListCountText.setText(""+this.mShortListCount);
-        this.mBuzzListCountText.setText(""+this.mBuzzListCount);
+        this.mUndecidedCountText.setText(String.valueOf(mUndecidedCount));
+        this.mRecommendedCountText.setText(String.valueOf(mRecommendedCount));
+        this.mShortListCountText.setText(String.valueOf(mShortListCount));
+        this.mBuzzListCountText.setText(String.valueOf(mBuzzListCount));
 
         if(this.mAdapter == null){
             this.mAdapter = new SimpleCardStackAdapter(this.getContext(), this, CARD_CATEGORY);
@@ -213,7 +209,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
     private void setupPeekAndPopStandard() {
 
-        peekAndPop = new PeekAndPop.Builder(this.getActivity())
+        PeekAndPop peekAndPop = new PeekAndPop.Builder(this.getActivity())
                 .blurBackground(true)
                 .peekLayout(R.layout.peek_view)
                 .parentViewGroupToDisallowTouchEvents(wishListRecyclerView)
@@ -321,22 +317,22 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             if(getView() != null) {
                 View v = getView().findViewById(R.id.tab_recommended);
                 mMainActivity.translateAnimation(v, currentTab);
-                currentTab = getView().findViewById(R.id.tab_recommended);
+                currentTab = v;
             }
             mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_blue_border_box));
         } else if (CARD_CATEGORY ==Constants.CDRecommendedInstituteType.FEATURED.ordinal()){
             if(getView() != null) {
                 View v = getView().findViewById(R.id.tab_buzzlist);
                 mMainActivity.translateAnimation(v, currentTab);
-                currentTab = getView().findViewById(R.id.tab_buzzlist);
+                currentTab = v;
             }
             mAdapter.setDrawableBorderBackground(getActivity().getResources().getDrawable(R.drawable.bg_rounded_orange_border_box));
         } else if (CARD_CATEGORY ==Constants.CDRecommendedInstituteType.SHORTLIST.ordinal()){
             if(getView() != null) {
                 View v = getView().findViewById(R.id.tab_wishlist);
                 mMainActivity.translateAnimation(v, currentTab);
+                currentTab  = v;
             }
-            currentTab = getView().findViewById(R.id.tab_wishlist);
         } else if (CARD_CATEGORY ==Constants.CDRecommendedInstituteType.UNDECIDED.ordinal()){
             mMainActivity.translateAnimation(null,currentTab);
         }
@@ -354,7 +350,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             mEmptyTextView.setVisibility(View.GONE);
             questionLayout.setVisibility(View.GONE);
         }
-
 
         /**
          * If user goes inside institute detail from shortlisted institute and deleted the institute
@@ -375,7 +370,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                     this.mWishlistInstituteListAdapter.notifyItemRemoved(institute.getPosition());
 
                     this.mShortListCount--;
-                    this.mShortListCountText.setText(""+mShortListCount);
+                    this.mShortListCountText.setText(String.valueOf(mShortListCount));
 
                     if(mInstitutes == null || mInstitutes.size() <= 0){
                         mEmptyTextView.setVisibility(View.VISIBLE);
@@ -496,7 +491,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
                 if (CARD_CATEGORY != Constants.CDRecommendedInstituteType.SHORTLIST.ordinal()) {
                     CARD_CATEGORY = Constants.CDRecommendedInstituteType.SHORTLIST.ordinal();
-//                    showWishListUI(true);
                     mEmptyTextView.setText("Looking for institutes...");
                     mEmptyTextView.setVisibility(View.VISIBLE);
                     mListener.onClickWishList();
@@ -688,11 +682,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
      * */
     private void mRemoveInstituteFromList() {
         try {
-            int size = mAdapter.getCount();
             int total = mInstitutes.size();
             this.mInstitutes.remove(total-1);
-        }
-        catch (Exception e){
+        }catch (Exception e){
             Log.e(TITLE, e.getMessage());
         }
     }
@@ -768,64 +760,35 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         if(mUndecidedInstitutesCount >= 0){
             this.mUndecidedCount = mUndecidedInstitutesCount;
             try{
-                if(!mUndecidedCountText.getText().equals(""+mUndecidedCount))
-                    this.mUndecidedCountText.setText("" + mUndecidedCount);
+                if(!mUndecidedCountText.getText().equals(String.valueOf(mUndecidedCount)))
+                    this.mUndecidedCountText.setText(String.valueOf(mUndecidedCount));
             } catch (Exception e){ e.printStackTrace(); }
         }
 
         if(mShortListInstituteCount >= 0){
             this.mShortListCount = mShortListInstituteCount;
             try{
-                if(!mShortListCountText.getText().equals(""+mShortListCount))
-                    this.mShortListCountText.setText("" + mShortListCount);
+                if(!mShortListCountText.getText().equals(String.valueOf(mShortListCount)))
+                    this.mShortListCountText.setText(String.valueOf(mShortListCount));
             } catch (Exception e){ e.printStackTrace(); }
         }
 
         if(mFeaturedInstituteCount >= 0) {
             this.mBuzzListCount = mFeaturedInstituteCount;
             try{
-                if(!mBuzzListCountText.getText().equals(""+mBuzzListCount))
-                    this.mBuzzListCountText.setText("" + mBuzzListCount);
+                if(!mBuzzListCountText.getText().equals(String.valueOf(mBuzzListCount)))
+                    this.mBuzzListCountText.setText(mBuzzListCount);
             } catch (Exception e){ e.printStackTrace(); }
         }
 
         if(mRecommendedInstituteCount >= 0) {
             this.mRecommendedCount = mRecommendedInstituteCount;
             try{
-                if(!mRecommendedCountText.getText().equals(""+mRecommendedInstituteCount))
-                    this.mRecommendedCountText.setText("" + mRecommendedCount);
+                if(!mRecommendedCountText.getText().equals(String.valueOf(mRecommendedInstituteCount)))
+                    this.mRecommendedCountText.setText(String.valueOf(mRecommendedCount));
             } catch (Exception e){ e.printStackTrace(); }
         }
     }
-
-    /**
-     * This method is no longer used. The functionality is handled in the MainActivity.
-     * */
-    public void mUpdateShortlistCount(int shortListCount, boolean isIncrement) {
-        if (CARD_CATEGORY != Constants.CDRecommendedInstituteType.SHORTLIST.ordinal()) {
-            if(getActivity()!=null){
-                if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.RECOMMENDED.ordinal()) {
-                    if(this.mRecommendedCount > 0) {
-                        ((MainActivity) getActivity()).decreaseRecommendedCount();
-                        this.mRecommendedCount = ((MainActivity) getActivity()).getmRecommendedInstituteCount();
-                    }
-                } else if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.FEATURED.ordinal()) {
-                    if(this.mBuzzListCount > 0) {
-                        ((MainActivity) getActivity()).decreaseFeaturedCount();
-                        this.mBuzzListCount =((MainActivity) getActivity()).getFeaturedInstituteCount();
-                    }
-                } else if (CARD_CATEGORY == Constants.CDRecommendedInstituteType.UNDECIDED.ordinal()){
-                    if(this.mUndecidedCount > 0) {
-                        ((MainActivity) getActivity()).decreaseUndecidedCount();
-                        this.mUndecidedCount=((MainActivity) getActivity()).getUndecidedInstituteCount();
-                    }
-                }
-                this.mShortListCount = ((MainActivity) getActivity()).getShortlistInstituteCount();
-            }
-        }
-        updateCount(mUndecidedCount,mShortListCount,mBuzzListCount,mRecommendedCount);
-    }
-
 
     /**
      * This method removes insitute in case of removing it from shortlist.
@@ -998,22 +961,19 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     }
 
     public void getMinimizeAnimation(){
-
-        cardMinimizeAnimation = AnimationUtils.loadAnimation(getActivity(),
+        Animation cardMinimizeAnimation = AnimationUtils.loadAnimation(getActivity(),
                 R.anim.window_minimize_animation);
         cardMinimizeAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
                 mCardContainer.setVisibility(View.VISIBLE);
             }
-
             @Override
             public void onAnimationEnd(Animation animation) {
                 mCardContainer.setVisibility(View.GONE);
                 cardState.delete(0,cardState.length());
                 cardState.append("MINIMIZED");
             }
-
             @Override
             public void onAnimationRepeat(Animation animation) {
 
@@ -1028,9 +988,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mAdapter.clear();
         if(this.mInstitutes != null && !this.mInstitutes.isEmpty()){
             List<Institute> list = new ArrayList<>();
-            int i = 0;
             if(mInstitutes.size() >= 2) {
-                for (i = 0; i < 2 && i < mInstitutes.size(); i++) {
+                for (int i = 0; i < 2 && i < mInstitutes.size(); i++) {
                     list.add(mInstitutes.get(mInstitutes.size()-2+i));
                 }
             } else if (mInstitutes.size() == 1){

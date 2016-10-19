@@ -75,20 +75,5 @@
             android:gravity="center"
             android:scrollbars="none"
            />
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/exam_tour_guide_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:clickable="true"
-            android:visibility="gone"
-            android:contentDescription="@string/profile_tute_description"
-            android:src="@drawable/ic_exam_tute" />
-    </FrameLayout>
 
 </RelativeLayout>

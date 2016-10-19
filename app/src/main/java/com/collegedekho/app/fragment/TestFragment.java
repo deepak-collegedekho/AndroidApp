@@ -15,11 +15,8 @@ import com.collegedekho.app.R;
  */
 public class TestFragment extends BaseFragment {
 
-    private final String TAG ="Test Fragment";
     private static final String PARAM1="param1";
-
     private String mTestDetail;
-
 
     public TestFragment(){
         // required empty constructor
@@ -48,7 +45,6 @@ public class TestFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_test_detail, container, false);
         TextView similarUser = (TextView)rootView.findViewById(R.id.similar_users);
         similarUser.setText(mTestDetail);
-
         return rootView;
     }
 

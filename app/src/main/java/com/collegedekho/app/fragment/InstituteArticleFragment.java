@@ -255,24 +255,24 @@ public class InstituteArticleFragment extends BaseFragment {
     }
     /**
      * This method update article details
-     * @param article
+     * @param article article which has info to display
      */
     private void mUpdateArticleDetail(View view,  Articles article)
     {
         if(view == null || article == null)return;
         this.mArticle = article;
         try {
-            String response= new String(mArticle.title.getBytes("ISO-8859-1"),"UTF-8");
+            String response= new String(mArticle.getTitle().getBytes("ISO-8859-1"),"UTF-8");
             ((TextView) view.findViewById(R.id.article_title)).setText(response);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            ((TextView) view.findViewById(R.id.article_title)).setText(mArticle.title);
+            ((TextView) view.findViewById(R.id.article_title)).setText(mArticle.getTitle());
         }
 
-        ((TextView) view.findViewById(R.id.article_content)).setText(Html.fromHtml(article.content));
+        ((TextView) view.findViewById(R.id.article_content)).setText(Html.fromHtml(article.getContent()));
 
-        if (article.image != null && !article.image.isEmpty()) {
-            ((NetworkImageView) view.findViewById(R.id.article_college_banner)).setImageUrl(article.image, MySingleton.getInstance(getActivity()).getImageLoader());
+        if (article.getImage() != null && !article.getImage().isEmpty()) {
+            ((NetworkImageView) view.findViewById(R.id.article_college_banner)).setImageUrl(article.getImage(), MySingleton.getInstance(getActivity()).getImageLoader());
             view.findViewById(R.id.article_college_banner).setVisibility(View.VISIBLE);
         }else
             view.findViewById(R.id.article_college_banner).setVisibility(View.GONE);
@@ -281,11 +281,11 @@ public class InstituteArticleFragment extends BaseFragment {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date date = sdf.parse(article.published_on);
+            Date date = sdf.parse(article.getPublished_on());
             sdf.applyPattern("MMMM d, yyyy KK:mm a");
             d = sdf.format(date);
         } catch (ParseException e) {
-            Log.e(TAG, "Date format unknown: " + article.published_on);
+            Log.e(TAG, "Date format unknown: " + article.getPublished_on());
         }
 
         ((TextView) view.findViewById(R.id.article_pubdate)).setText(d);

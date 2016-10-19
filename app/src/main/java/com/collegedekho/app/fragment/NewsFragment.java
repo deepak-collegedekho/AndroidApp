@@ -189,7 +189,7 @@ public class NewsFragment extends BaseFragment  {
                     recyclerView.setAdapter(this.mAdapter);
                     recyclerView.setHasFixedSize(true);
                     int padd = Utils.getPadding(getContext(), 60);
-                    progressBarLL.setGravity(Gravity.RIGHT);
+                    progressBarLL.setGravity(Gravity.END);
                     progressBarLL.setPadding(0, 0, 0, padd);
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
                     this.mUpdateNewsDetail(rootView, this.mNewsList.get(0));
@@ -214,9 +214,9 @@ public class NewsFragment extends BaseFragment  {
                 }
                 break;
             case R.id.news_detail_layout:
-                rootView = getView();
-                (( MainActivity)getActivity()).onNewsSelected(this.mNews, true,  rootView.findViewById(R.id.news_college_banner));
-                break;
+                if(getView() != null && getActivity() != null) {
+                    ((MainActivity) getActivity()).onNewsSelected(this.mNews, true, getView().findViewById(R.id.news_college_banner));
+                }break;
             default:
                 break;
         }

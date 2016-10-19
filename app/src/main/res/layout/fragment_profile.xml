@@ -1130,45 +1130,40 @@
                         android:layout_height="wrap_content"
                         android:weightSum="1">
 
-                        <TextView
+                        <Button
                             android:id="@+id/profile_to_dashboard"
                             android:layout_width="0dp"
                             android:layout_weight="0.5"
                             android:layout_height="match_parent"
-                            android:text="Go To Dashboard"
+                            style="@style/MaterialButton"
+                            android:text="My Dashboard"
+                            android:textAllCaps="false"
                             android:gravity="center"
                             android:layout_marginLeft="@dimen/m30dp"
                             android:layout_marginRight="@dimen/m15dp"
                             android:layout_marginTop="@dimen/m10dp"
                             android:layout_marginBottom="@dimen/m10dp"
-                            android:paddingLeft="@dimen/m5dp"
-                            android:paddingRight="@dimen/m5dp"
-                            android:paddingTop="@dimen/m5dp"
-                            android:paddingBottom="@dimen/m5dp"
+                            android:padding="@dimen/m5dp"
                             android:textSize="14sp"
-                            android:textColor="@color/white"
-                            android:background="@drawable/bg_button_orange"
-                            android:visibility="visible"/>
+                            android:textColor="@color/white"  android:visibility="visible"/>
 
-                        <TextView
+                        <Button
                             android:id="@+id/profile_to_recommended"
                             android:layout_width="0dp"
                             android:layout_weight="0.5"
                             android:layout_height="match_parent"
+                            style="@style/MaterialButton"
+                            android:textAllCaps="false"
                             android:text="Recommended Colleges"
                             android:gravity="center"
                             android:layout_marginLeft="@dimen/m15dp"
                             android:layout_marginRight="@dimen/m30dp"
                             android:layout_marginTop="@dimen/m10dp"
                             android:layout_marginBottom="@dimen/m10dp"
-                            android:paddingLeft="@dimen/m5dp"
-                            android:paddingRight="@dimen/m5dp"
-                            android:paddingTop="@dimen/m5dp"
-                            android:paddingBottom="@dimen/m5dp"
+                            android:padding="@dimen/m5dp"
                             android:textSize="14sp"
                             android:textColor="@color/white"
-                            android:background="@drawable/bg_button_orange"
-                            android:visibility="visible"/>
+                           android:visibility="visible"/>
 
                     </LinearLayout>
 
@@ -1231,21 +1226,22 @@
                         android:textSize="18sp"
                         android:textColor="@color/black"/>
 
-                    <TextView
+                    <Button
                         android:id="@+id/profile_login_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        style="@style/MaterialButton"
                         android:text="Login"
-                        android:gravity="left|bottom"
+                        android:gravity="center"
                         android:layout_marginLeft="@dimen/m15dp"
                         android:layout_marginTop="@dimen/m10dp"
-                        android:paddingLeft="@dimen/m10dp"
-                        android:paddingRight="@dimen/m10dp"
+                        android:paddingLeft="@dimen/m8dp"
+                        android:paddingRight="@dimen/m8dp"
                         android:paddingTop="@dimen/m2dp"
                         android:paddingBottom="@dimen/m2dp"
-                        android:textSize="17sp"
+                        android:textSize="16sp"
                         android:textColor="@color/white"
-                        android:background="@drawable/bg_button_orange"
+                        android:textAllCaps="false"
                         android:visibility="visible"/>
 
                 </LinearLayout>

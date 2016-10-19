@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.NetworkUtils;
 
 public class SplashFragment extends BaseFragment {
 
@@ -26,25 +27,18 @@ public class SplashFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-   /* @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ((MainActivity)getActivity()).init();
-    }
-*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.splash_screen, container, false);
-        return rootView;
+        return inflater.inflate(R.layout.splash_screen, container, false);
     }
 
 
-    public void isInternetAvailable(){
-        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-        SharedPreferences sp = getActivity().getSharedPreferences(MainActivity.getResourceString(R.string.PREFS), Context.MODE_PRIVATE);
-        boolean IS_USER_CREATED = sp.getBoolean(MainActivity.getResourceString(R.string.USER_CREATED), false);
-        boolean IS_HOME_LOADED = sp.getBoolean(MainActivity.getResourceString(R.string.USER_HOME_LOADED), false);
+    public void onSplashGifCompleted(){
+        int amIConnectedToInternet = NetworkUtils.getConnectivityStatus();
+        SharedPreferences sp = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
+        boolean IS_USER_CREATED = sp.getBoolean(getString(R.string.USER_CREATED), false);
+        boolean IS_HOME_LOADED = sp.getBoolean(getString(R.string.USER_HOME_LOADED), false);
 
         if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED
                 && IS_USER_CREATED && !IS_HOME_LOADED ) {

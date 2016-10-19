@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto"
     package="com.collegedekho.app">
 
@@ -162,26 +163,12 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".receiver.OTPReceiver">
+      <!--  <receiver android:name=".receiver.OTPReceiver">
             <intent-filter android:priority="1000">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
-        </receiver>
-
-<!--GCM COMPONENTS-->
-<!--        <receiver
-            android:name=".gcm.GCMBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-
-                &lt;!&ndash; Receives the actual messages. &ndash;&gt;
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                &lt;!&ndash; &lt;!&ndash; Receives the registration id. &ndash;&gt;
-                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />&ndash;&gt;
-
-                <category android:name="com.collegedekho.app" />
-            </intent-filter>
         </receiver>-->
+
         <activity android:name=".activity.GCMDialogActivity"
             android:excludeFromRecents="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">

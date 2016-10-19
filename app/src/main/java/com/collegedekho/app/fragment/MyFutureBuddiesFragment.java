@@ -26,7 +26,6 @@ import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -120,7 +119,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                                 public void onClick(View v) {
 
                                     String name =   ((EditText) dialog.findViewById(R.id.user_name)).getText().toString();
-                                    if(name == null || name.length() <= 0)
+                                    if(name.length() <= 0)
                                     {
                                        mListener.displayMessage(R.string.NAME_EMPTY);
                                         return;
@@ -209,7 +208,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                         public void onClick(View v) {
 
                             String name =   ((EditText) dialog.findViewById(R.id.user_name)).getText().toString();
-                            if(name == null || name.length() <= 0)
+                            if( name.length() <= 0)
                             {
                                 mListener.displayMessage(R.string.NAME_EMPTY);
                                 return;
@@ -326,7 +325,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                         //Called each time when 1000 milliseconds (1 second) (the period parameter)
                         //update the comment list here after checking the internet connection
                         if (Constants.IS_CONNECTED_TO_INTERNET)
-                            mMainActivity.mNetworkUtils.networkData(Constants.TAG_REFRESH_MY_FB + "#"
+                            MainActivity.mNetworkUtils.networkData(Constants.TAG_REFRESH_MY_FB + "#"
                                     + String.valueOf(mMyFutureBuddies.getIndex()) + "#" + String.valueOf(MyFutureBuddiesFragment.this.mInitialCount)
                                     /*String.valueOf(mMyFBCommentsSet.size())*/, mMyFutureBuddies.getResource_uri(), null, Request.Method.GET);
                         //else

@@ -159,13 +159,12 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
 
                 int  itemPosition = -1;
                 try{
-                    itemPosition = Integer.parseInt(parent.getTag().toString()
-                    );
+                    itemPosition = Integer.parseInt(parent.getTag().toString());
                 }
                 catch(Exception e){
                     e.printStackTrace();
                 }
-                if(itemPosition == -1){
+                if(itemPosition == -1 || mExamList.size() <= 0) {
                     return;
                 }
                 Exam exam = mExamList.get(itemPosition);

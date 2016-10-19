@@ -13,6 +13,7 @@
         app:srcCompat="@drawable/ic_profile_default"
         android:visibility="visible"
         android:layout_centerVertical="true"
+        android:transitionName="shared_profile_image"
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/profile_image_description"/>
     <FrameLayout

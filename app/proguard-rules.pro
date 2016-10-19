@@ -47,7 +47,6 @@
 #Uncomment if using annotations to keep them.
 -keepattributes Signature,SourceFile,LineNumberTable,*Annotation*
 
-
 #Keep classes that are referenced on the AndroidManifest
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
@@ -65,6 +64,9 @@
 -keep class org.jdom.** { *; }
 -dontwarn org.jdom.**
 
+-keep public class com.google.android.gms.* { public *; }
+-dontwarn com.google.android.gms.**
+
 #To remove debug logs:
 -assumenosideeffects class android.util.Log {
     public static *** d(...);
@@ -76,6 +78,11 @@
 #-keepclassmembers class * {
 # public void onClickButton(android.view.View);
 #}
+
+#Maintain java native methods
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
 
 #To maintain custom components names that are used on layouts XML.
 #Uncomment if having any problem with the approach below
@@ -121,19 +128,11 @@
 #   void myCallbackMethod(java.lang.String);
 #}
 
-
 #Keeping all public class names and keep (prevent obfuscation) of their public and protected methods
 
 -keep public class * {
     public protected <methods>;
 }
-
--renamesourcefileattribute class *{
-  native <methods>;
-}
-
-#Maintain java native methods
--keepclasseswithmembernames class *
 
 #-keep class com.collegedekho.app.resource.Constants {*;}
 #-keep class com.collegedekho.app.utils.NetworkUtils {*;}

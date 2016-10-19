@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -149,11 +148,11 @@ public class NetworkUtils {
     }
 
     public void simpleGetData(@Nullable final String tag, final String url) {
-        ((MainActivity)mContext).showProgressDialog(MainActivity.GetPersonalizedMessage(tag));
+        ((MainActivity)mContext).showProgressDialog(MainActivity.GetPersonalizedMessage(tag), Constants.THEME_BACKGROUND);
         simpleGetData(tag, url, Request.Method.GET);
     }
 
-    public void simpleGetData(@Nullable final String tag, final String url, final int method) {
+    private void simpleGetData(@Nullable final String tag, final String url, final int method) {
         final Calendar calendar = Calendar.getInstance();
         StringRequest request = new StringRequest(method, url,
                 new Response.Listener<String>() {

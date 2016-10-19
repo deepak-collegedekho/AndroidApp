@@ -93,7 +93,7 @@ public class ArticleFragment extends BaseFragment {
         if(mViewType == Constants.VIEW_INTO_GRID) {
             layoutManager =new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
             rootView.findViewById(R.id.article_detail_scrollView).setVisibility(View.VISIBLE);
-            progressBarLL.setGravity(Gravity.RIGHT);
+            progressBarLL.setGravity(Gravity.END);
             int padd = Utils.getPadding(getContext(), 60);
             progressBarLL.setPadding(0,0,0, padd);
         }
@@ -185,7 +185,7 @@ public class ArticleFragment extends BaseFragment {
                     this.mAdapter = new ArticleListAdapter(getActivity(), this.mArticlesList, Constants.VIEW_INTO_GRID);
                     recyclerView.setAdapter(this.mAdapter);
                     recyclerView.setHasFixedSize(true);
-                    progressBarLL.setGravity(Gravity.RIGHT);
+                    progressBarLL.setGravity(Gravity.END);
                     int padd = Utils.getPadding(getContext(), 60);
                     progressBarLL.setPadding(0, 0, 0, padd);
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -211,9 +211,10 @@ public class ArticleFragment extends BaseFragment {
                 }
                 break;
             case R.id.article_detail_layout:
-                rootView = getView();
-                ((MainActivity)getActivity()).onArticleSelected(this.mArticle, true,rootView.findViewById(R.id.article_college_banner));
-                break;
+                if(getView() != null && getActivity() != null) {
+                    ((MainActivity) getActivity()).onArticleSelected(this.mArticle, true, getView().findViewById(R.id.article_college_banner));
+
+                }break;
             default:
                 break;
 
@@ -225,9 +226,9 @@ public class ArticleFragment extends BaseFragment {
         mUpdateArticleDetail(getView(), article);
     }
 
-    public void updateArticleList(ArrayList<Articles> articlelist, String next) {
+    public void updateArticleList(ArrayList<Articles> articleList, String next) {
         progressBarLL.setVisibility(View.GONE);
-        this.mArticlesList = articlelist;
+        this.mArticlesList = articleList;
         mUpdateArticleListAdapter(getView());
         loading = false;
         mNextUrl = next;
@@ -273,25 +274,25 @@ public class ArticleFragment extends BaseFragment {
         this.mArticle = article;
 
         try {
-            String response= new String(article.title.getBytes("ISO-8859-1"),"UTF-8");
+            String response= new String(article.getTitle().getBytes("ISO-8859-1"),"UTF-8");
             ((TextView) view.findViewById(R.id.article_title)).setText(response);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            ((TextView) view.findViewById(R.id.article_title)).setText(article.title);
+            ((TextView) view.findViewById(R.id.article_title)).setText(article.getTitle());
         }
 
         // set content of article
         try {
-            String response= new String(article.content.getBytes("ISO-8859-1"),"UTF-8");
+            String response= new String(article.getContent().getBytes("ISO-8859-1"),"UTF-8");
             ((TextView) view.findViewById(R.id.article_content)).setText(Html.fromHtml(response));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            ((TextView) view.findViewById(R.id.article_content)).setText(Html.fromHtml(article.content));
+            ((TextView) view.findViewById(R.id.article_content)).setText(Html.fromHtml(article.getContent()));
         }
 
         // load article image from server
-        if (article.image != null && !article.image.isEmpty()) {
-            ((NetworkImageView) view.findViewById(R.id.article_college_banner)).setImageUrl(article.image, MySingleton.getInstance(getActivity()).getImageLoader());
+        if (article.getImage() != null && !article.getImage().isEmpty()) {
+            ((NetworkImageView) view.findViewById(R.id.article_college_banner)).setImageUrl(article.getImage(), MySingleton.getInstance(getActivity()).getImageLoader());
             view.findViewById(R.id.article_college_banner).setVisibility(View.VISIBLE);
         }else
             view.findViewById(R.id.article_college_banner).setVisibility(View.GONE);
@@ -302,11 +303,11 @@ public class ArticleFragment extends BaseFragment {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date date = sdf.parse(article.published_on);
+            Date date = sdf.parse(article.getPublished_on());
             sdf.applyPattern("MMMM d, yyyy KK:mm a");
             d = sdf.format(date);
         } catch (ParseException e) {
-            Log.e(TAG, "Date format unknown: " + article.published_on);
+            Log.e(TAG, "Date format unknown: " + article.getPublished_on());
 //                Utils.sendException(t, TAG, "DateFormatUnknown", r.getAddedOn());
         }
         ((TextView) view.findViewById(R.id.article_pubdate)).setText(d);

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,16 +30,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Bashir on 11/2/16.
+ * Created by {Bashir} on {11/2/16}.
  */
 public class InstituteVideosFragment extends BaseFragment {
 
     private static final int RECOVERY_DIALOG_REQUEST = 1;
-    RecyclerView videosRecycler;
-    ArrayList<String> videoIdList;
-    ArrayList<VideoEntry> videoList;
-    VideoListAdapter videoListAdapter;
-    String url;
+    private static final String TAG = "InstituteVideosFragment" ;
+    private ArrayList<String> videoIdList;
+    private ArrayList<VideoEntry> videoList;
+    private VideoListAdapter videoListAdapter;
+    private String url;
     private OnTitleUpdateListener titleListener;
 
     public static InstituteVideosFragment newInstance(ArrayList<String> videoList) {
@@ -70,26 +71,24 @@ public class InstituteVideosFragment extends BaseFragment {
                 entry.setVideoId(this.videoIdList.get(i));
                 this.videoList.add(entry);
             }
-            builder.append("&key=" + Constants.YOUTUBE_DEVELOPER_KEY);
+            builder.append("&key=").append(Constants.YOUTUBE_DEVELOPER_KEY);
             url = builder.toString();
         }
     }
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.institute_videos_list, container, false);
-        return rootView;
+        return inflater.inflate(R.layout.institute_videos_list, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        videosRecycler = (RecyclerView) view.findViewById(R.id.institute_videos_recycler);
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        videosRecycler.setLayoutManager(layoutManager);
         videoListAdapter = new VideoListAdapter(getActivity(), videoList);
+        RecyclerView videosRecycler = (RecyclerView) view.findViewById(R.id.institute_videos_recycler);
+        videosRecycler.setLayoutManager(layoutManager);
         videosRecycler.setAdapter(videoListAdapter);
         checkYouTubeApi();
     }
@@ -103,7 +102,7 @@ public class InstituteVideosFragment extends BaseFragment {
                     if (videoList.get(0).getViewCount().equals("0"))
                         titleListener.onUpdate(videoList, url, this);
                 }catch (Exception e){
-
+                    Log.e(TAG, "exception in setUserVisibleHint()");
                 }
             }
         }
@@ -142,9 +141,6 @@ public class InstituteVideosFragment extends BaseFragment {
     class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoListViewHolder> {
 
         ArrayList<VideoEntry> videoList;
-        private final Map<YouTubeThumbnailView, YouTubeThumbnailLoader> thumbnailViewToLoaderMap;
-
-
         private boolean labelsVisible;
 
         private final int UNINITIALIZED = 1;
@@ -153,9 +149,6 @@ public class InstituteVideosFragment extends BaseFragment {
 
         public VideoListAdapter(Context context, ArrayList<VideoEntry> videoList) {
             this.videoList = videoList;
-
-            thumbnailViewToLoaderMap = new HashMap<>();
-
             labelsVisible = true;
         }
 
@@ -196,7 +189,7 @@ public class InstituteVideosFragment extends BaseFragment {
             private TextView label;
             private TextView duration;
             private TextView viewsCount;
-            private TextView published;
+            //private TextView published;
             private YouTubeThumbnailView thumbnail;
 
             public VideoListViewHolder(View itemView) {
@@ -204,7 +197,7 @@ public class InstituteVideosFragment extends BaseFragment {
                 label = ((TextView) itemView.findViewById(R.id.text));
                 duration = (TextView) itemView.findViewById(R.id.duration);
                 viewsCount = (TextView) itemView.findViewById(R.id.views_count);
-                published=(TextView)itemView.findViewById(R.id.published);
+                //published=(TextView)itemView.findViewById(R.id.published);
                 thumbnail = (YouTubeThumbnailView) itemView.findViewById(R.id.thumbnail);
                 itemView.setOnClickListener(this);
                 initialize();
@@ -249,8 +242,7 @@ public class InstituteVideosFragment extends BaseFragment {
 
         @Override
             public void onClick(View v) {
-            int connectivityStatus = new NetworkUtils(v.getContext(), null).getConnectivityStatus();
-            if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
+            if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
                 String videoId = videoList.get(getLayoutPosition()).getVideoId();
                 Intent intent = new Intent(v.getContext(), VideoPlayerActivity.class);
                 intent.putExtra("video_id", videoId);

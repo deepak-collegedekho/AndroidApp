@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -67,6 +66,8 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
         }
     }
 
+
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
@@ -75,35 +76,35 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
         ArticleHolder articleHolder = (ArticleHolder) holder;
 
         try {
-            String articleName= new String(articles.title.getBytes("ISO-8859-1"),"UTF-8");
+            String articleName= new String(articles.getTitle().getBytes("ISO-8859-1"),"UTF-8");
             articleHolder.articleTitle.setText(articleName);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            articleHolder.articleTitle.setText(articles.title);
+            articleHolder.articleTitle.setText(articles.getTitle());
         }
 
-        if (articles.image != null && !articles.image.isEmpty())
-            articleHolder.articleImage.setImageUrl(articles.image, imageLoader);
+        if (articles.getImage() != null && !articles.getImage().isEmpty())
+            articleHolder.articleImage.setImageUrl(articles.getImage(), imageLoader);
 
         ViewCompat.setTransitionName(articleHolder.articleImage, String.valueOf(position) + "_image");
 
         if (mViewType == Constants.VIEW_INTO_LIST) {
             try {
-                String articleContent= new String(articles.content.getBytes("ISO-8859-1"),"UTF-8");
+                String articleContent= new String(articles.getContent().getBytes("ISO-8859-1"),"UTF-8");
                 articleHolder.articleContent.setText(Html.fromHtml(articleContent));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
-                articleHolder.articleContent.setText(Html.fromHtml(articles.content));
+                articleHolder.articleContent.setText(Html.fromHtml(articles.getContent()));
             }
             String d = "";
             try {
                 sdf.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
-                Date date = sdf.parse(articles.published_on);
+                Date date = sdf.parse(articles.getPublished_on());
                 sdf.applyPattern("MMMM d, yyyy KK:mm a");
                 d = sdf.format(date);
             } catch (ParseException e) {
 
-                Log.e(TAG, "Date format unknown: " + articles.published_on);
+                Log.e(TAG, "Date format unknown: " + articles.getPublished_on());
 
             }
             articleHolder.articlePubDate.setText(d);
@@ -154,7 +155,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
         TextView articleContent;
         NetworkImageView articleImage;
         OnArticleSelectListener mListener;
-        RelativeLayout container;
         TextView streamTypeHeader;
 
         public ArticleHolder(View itemView, OnArticleSelectListener listener) {
@@ -164,14 +164,13 @@ public class ArticleListAdapter extends RecyclerView.Adapter {
                 articlePubDate = (TextView) itemView.findViewById(R.id.textview_article_pubdate);
                 articleContent = (TextView) itemView.findViewById(R.id.textview_article_content);
                 streamTypeHeader = (TextView) itemView.findViewById(R.id.card_article_heading);
-                container = (RelativeLayout) itemView.findViewById(R.id.card_article_container);
             }
             articleTitle = (TextView) itemView.findViewById(R.id.textview_article_title);
             articleImage = (NetworkImageView) itemView.findViewById(R.id.image_article_collapsed);
             articleImage.setDefaultImageResId(R.drawable.ic_default_image);
             articleImage.setErrorImageResId(R.drawable.ic_default_image);
             mListener = listener;
-            itemView.setOnClickListener(this);
+            itemView.findViewById(R.id.card_article_container).setOnClickListener(this);
         }
 
         @Override

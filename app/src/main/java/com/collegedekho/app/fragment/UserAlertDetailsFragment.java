@@ -20,19 +20,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by Bashir on 22/12/15.
+ * Created by {Bashir} on {22/12/15.}
  */
 public class UserAlertDetailsFragment extends BaseFragment implements UserAlertsMonthAdapter.OnCalendarItemSelectListener {
 
     private RecyclerView calendarRecyclerView;
     private RecyclerView detailsRecyclerView;
-    // how many days to show, defaults to six weeks, 42 days
-    private static int DAYS_COUNT = 42;
-    // current displayed month
-    private Calendar currentDate;
-    private LinearLayout.LayoutParams params;
-    private GridLayoutManager calendarLayoutManager;
-    private LinearLayoutManager detailsLayoutManager;
     private ArrayList<MyAlertDateDescription> dates;
     int month;
     int year;
@@ -64,8 +57,7 @@ public class UserAlertDetailsFragment extends BaseFragment implements UserAlerts
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootViewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_calendar_view, container, false);
-        return rootViewGroup;
+       return  inflater.inflate(R.layout.fragment_calendar_view, container, false);
     }
 
     @Override
@@ -73,20 +65,20 @@ public class UserAlertDetailsFragment extends BaseFragment implements UserAlerts
         super.onViewCreated(view, savedInstanceState);
         calendarRecyclerView = (RecyclerView) view.findViewById(R.id.calendar_recycler);
         detailsRecyclerView = (RecyclerView) view.findViewById(R.id.calendar_details_recycler);
-        calendarLayoutManager = new GridLayoutManager(getActivity(), 7);
-        detailsLayoutManager = new LinearLayoutManager(getActivity());
+        GridLayoutManager calendarLayoutManager = new GridLayoutManager(getActivity(), 7);
+        LinearLayoutManager detailsLayoutManager = new LinearLayoutManager(getActivity());
         detailsLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         detailsRecyclerView.setLayoutManager(detailsLayoutManager);
 
         calendarLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         calendarRecyclerView.setLayoutManager(calendarLayoutManager);
-        currentDate = Calendar.getInstance();
+        Calendar currentDate = Calendar.getInstance();
         Bundle bundle = getArguments();
         if (bundle != null) {
             currentDate.set(Calendar.MONTH, month);
             currentDate.set(Calendar.YEAR, year);
         }
-        params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.weight=0.9f;
         detailsRecyclerView.setLayoutParams(params);
         updateCalendar(currentDate);
@@ -94,16 +86,15 @@ public class UserAlertDetailsFragment extends BaseFragment implements UserAlerts
 
 
     public void updateCalendar(Calendar calendar) {
-        ArrayList<Date> cells = new ArrayList<Date>();
+        ArrayList<Date> cells = new ArrayList<>();
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         int monthBeginningCell = calendar.get(Calendar.DAY_OF_WEEK) - 1;
         calendar.add(Calendar.DAY_OF_MONTH, -monthBeginningCell);
-
+       int DAYS_COUNT = 42;
         while (cells.size() < DAYS_COUNT) {
             cells.add(calendar.getTime());
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
-
         // update grid
         UserAlertsMonthAdapter calendarAdapter = new UserAlertsMonthAdapter(getActivity(), cells, this, this.dates);
         calendarRecyclerView.setAdapter(calendarAdapter);

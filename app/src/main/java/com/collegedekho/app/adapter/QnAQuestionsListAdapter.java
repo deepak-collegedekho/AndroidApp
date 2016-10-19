@@ -2,7 +2,6 @@ package com.collegedekho.app.adapter;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -42,12 +42,15 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
     private ImageLoader mImageLoader;
     private SimpleDateFormat mSDF;
     private int mViewType;
+    private Animation mAnimFromLeft, mAnimFromRight;
 
     public QnAQuestionsListAdapter(Context context, ArrayList<QnAQuestions> qnaQuestions, int viewType) {
         this.mQnAQuestions = qnaQuestions;
         this.mContext = context;
-        this.mImageLoader = MySingleton.getInstance(mContext).getImageLoader();
         this.mViewType = viewType;
+        this.mImageLoader = MySingleton.getInstance(mContext).getImageLoader();
+        this.mAnimFromLeft = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_left);
+        this.mAnimFromRight = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_right);
     }
 
     @Override
@@ -157,15 +160,12 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
             if (this.mViewType == Constants.VIEW_INTO_GRID){
                 if (position % 2 == 0)
                 {
-                    Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_left);
-                    viewToAnimate.startAnimation(animation);
+                    viewToAnimate.startAnimation(mAnimFromLeft);
                 }else {
-                    Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_right);
-                    viewToAnimate.startAnimation(animation);
+                    viewToAnimate.startAnimation(mAnimFromRight);
                 }
             } else {
-                Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_left);
-                viewToAnimate.startAnimation(animation);
+                viewToAnimate.startAnimation(mAnimFromLeft);
             }
             lastPosition = position;
         }
@@ -187,7 +187,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         ImageView likeButton;
         ProgressBar likeProgressBar;
         QnAQuestionsListFragment.OnQnAQuestionSelectedListener mListener;
-        CardView container;
+        LinearLayout container;
         View likeContainer;
         View mContainer;
 
@@ -202,10 +202,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
             this.likeButton         = (ImageView) itemView.findViewById(R.id.card_item_button_like);
             this.likeContainer      = itemView.findViewById(R.id.card_item_like_layout);
             this.likeProgressBar    = (ProgressBar) itemView.findViewById(R.id.card_item_like_progressBar);
-            if (mViewType == Constants.VIEW_INTO_LIST)
-                this.container = (CardView) itemView.findViewById(R.id.qna_card_list_view);
-            else
-                this.container = (CardView) itemView.findViewById(R.id.qna_card_grid_view);
+            this.container = (LinearLayout) itemView.findViewById(R.id.qna_card_container);
 
             this.mListener = listener;
             this.container.setOnClickListener(this);
@@ -250,8 +247,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
                     }
                     break;
                 case R.id.layout_item_expand:
-                case R.id.qna_card_list_view:
-                case R.id.qna_card_grid_view:
+                case R.id.qna_card_container:
                     mListener.onQnAQuestionSelected(mQnAQuestions.get(getAdapterPosition()));
                     break;
             }

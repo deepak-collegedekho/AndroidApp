@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -14,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -38,7 +38,6 @@ import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
 import com.collegedekho.app.listener.ProfileFragmentListener;
-import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
@@ -52,26 +51,22 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
 /**
- * Created by sureshsaini on 17/5/16.
+ * Created by {sureshsaini} on {17/5/16.}
  */
 public class ProfileFragment extends BaseFragment implements ProfileFragmentListener, CustomSwipeRefreshLayout.OnRefreshListener {
 
-    private static String TAG ="Profile Fragment";
-    private static String PARAM1  = "param1";
-    public static Profile mProfile ;
+    private final static String TAG ="Profile Fragment";
+    private final static String PARAM1  = "param1";
+    public Profile mProfile ;
     private UserProfileListener mListener;
     private TextView mProfileName;
-    private CircularImageView mProfileImage;
-    private File uploadTempImageFile;
     private Uri mImageCaptureUri;
     private View mRootView;
     private Drawable mPlusDrawable;
@@ -113,12 +108,14 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         else
             mRootView.findViewById(R.id.profile_login_button).setVisibility(View.VISIBLE);
 
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            mPlusDrawable = VectorDrawableCompat.create(getActivity().getResources(), R.drawable.ic_add_inline_vector23dp, null);
-            mMinusDrawable = VectorDrawableCompat.create(getActivity().getResources(), R.drawable.ic_minus_inline, null);
-        } else {
-            mPlusDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_add_inline_vector23dp);
-            mMinusDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_minus_inline);
+        if(isAdded()) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                mPlusDrawable = VectorDrawableCompat.create(getActivity().getResources(), R.drawable.ic_add_inline_vector23dp, null);
+                mMinusDrawable = VectorDrawableCompat.create(getActivity().getResources(), R.drawable.ic_minus_inline, null);
+            } else {
+                mPlusDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_add_inline_vector23dp);
+                mMinusDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_minus_inline);
+            }
         }
 
         mUserImageLayout = (RelativeLayout) mRootView.findViewById(R.id.user_profile_image_update);
@@ -170,7 +167,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        updateProfileImage();;
+        updateProfileImage();
         updateUserProfile();
     }
 
@@ -178,7 +175,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         mProfile = MainActivity.mProfile;
         if (mProfile == null)
             return;
-
+        if(mUserImageLayout != null)
         setProfileProgressStatus(mUserImageLayout.findViewById(R.id.user_profile_progress), mProfile.getProgress());
 
         String name = mProfile.getName();
@@ -197,7 +194,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
         String phone = mProfile.getPhone_no();
         if (phone != null && !phone.isEmpty()) {
-            ((TextView) mRootView.findViewById(R.id.profile_info_phone)).setText("+91-" + phone);
+            ((TextView) mRootView.findViewById(R.id.profile_info_phone)).setText(getString(R.string.country_no) + phone);
         } else {
             ((TextView) mRootView.findViewById(R.id.profile_info_phone)).setText(getString(R.string.na));
         }
@@ -238,7 +235,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         int userCurrentStreamId = mProfile.getCurrent_stream_id();
         if (userCurrentStreamId == 33 || userCurrentStreamId == 34 || userCurrentStreamId == 35 || userCurrentStreamId == 36
                 || userCurrentStreamId == 37 || userCurrentStreamId == 38 || userCurrentStreamId == 39) {
-            ((TextView) mRootView.findViewById(R.id.profile_education_degree)).setText("School");
+            ((TextView) mRootView.findViewById(R.id.profile_education_degree)).setText(getString(R.string.school));
         } else {
             String currentDegreeName = mProfile.getCurrent_degree_name();
             if (currentDegreeName != null && !currentDegreeName.isEmpty()) {
@@ -251,7 +248,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         // set mDeviceProfile's Passing Year
         int currentPassingYear = mProfile.getCurrent_passing_year();
         if(currentPassingYear >= 2000) {
-            ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(""+currentPassingYear);
+            ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(String.valueOf(currentPassingYear));
         } else {
             ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(String.valueOf(Utils.GetCurrentYear()));
 
@@ -297,7 +294,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         int currentScore = mProfile.getCurrent_score();
         int scoreType = mProfile.getCurrent_score_type();
         if (scoreType <=  0) {
-            ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(""+currentScore);
+            ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(String.valueOf(currentScore));
         } else {
             ((TextView)mRootView.findViewById(R.id.profile_education_score)).setText(currentScore +" "+  ProfileMacro.getCurrentScoreTypeName(scoreType));
         }
@@ -313,7 +310,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         // set mDeviceProfile preferred info
         setPreferredEducationInfo(false);
 
-        setProfileProgressStatus((ProgressBar)mRootView.findViewById(R.id.profile_exams_progress), mProfile.getExams_progress());
+        setProfileProgressStatus(mRootView.findViewById(R.id.profile_exams_progress), mProfile.getExams_progress());
 
         //  set DeviceProfile Exams Names
         mExpandUserExamsLayout(false);
@@ -347,7 +344,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     /**
      *  this method is to  update mDeviceProfile preferred education info
      *  on preference part of screen
-     * @param isShowAllInfo
+     * @param isShowAllInfo flag to show all exams
      */
     public void setPreferredEducationInfo(boolean isShowAllInfo) {
         View view = getView();
@@ -373,7 +370,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         //set mDeviceProfile admission year
         int preferredYear = mProfile.getPreferred_year_of_admission();
         if(preferredYear >= 2000 ){
-            ((TextView) view.findViewById(R.id.profile_preferences_year)).setText(""+preferredYear);
+            ((TextView) view.findViewById(R.id.profile_preferences_year)).setText(String.valueOf(preferredYear));
         }else
         {
             //if nothing is set in profile, dig in current passing year from profile and set it as admission year
@@ -420,7 +417,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             if(!isShowAllInfo && count >3)
                 count =3;
 
-            StringBuffer degreesNameBuffer = new StringBuffer();
+            StringBuilder degreesNameBuffer = new StringBuilder();
             for (int i = 0; i < count; i++) {
                 if(i == 0){
                     degreesNameBuffer.append(degreeNameList.get(i));
@@ -429,7 +426,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 degreesNameBuffer.append(", ").append(degreeNameList.get(i));
             }
             if(!isShowAllInfo && degreeNameList.size() > count) {
-                ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(degreesNameBuffer.toString()+"....");
+                ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(degreesNameBuffer.append("....").toString());
 
             }else{
                 ((TextView)view.findViewById(R.id.profile_preferences_degree)).setText(degreesNameBuffer.toString());
@@ -444,7 +441,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             if(!isShowAllInfo && count >4)
                 count =4;
 
-            StringBuffer cityNameBuffer = new StringBuffer("");
+            StringBuilder cityNameBuffer = new StringBuilder();
             for (int i = 0; i < count; i++) {
                 if(i == 0){
                     cityNameBuffer.append(cityNameList.get(i));
@@ -453,7 +450,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 cityNameBuffer.append(", ").append(cityNameList.get(i));
             }
             if(!isShowAllInfo && cityNameList.size() > count) {
-                ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(cityNameBuffer.toString()+"....");
+                ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(cityNameBuffer.append("....").toString());
             }else{
                 ((TextView)view.findViewById(R.id.profile_preferences_location)).setText(cityNameBuffer.toString());
             }
@@ -465,7 +462,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     }
     /**
      * This method is used to set mDeviceProfile exams info
-     * @param showAll
+     * @param showAll boolean to show all exam' name on UI
      */
 
     private void mExpandUserExamsLayout(boolean showAll) {
@@ -479,7 +476,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             if(!showAll && count >4)
                 count =4;
 
-            StringBuffer examsNameBuffer = new StringBuffer("");
+            StringBuilder examsNameBuffer = new StringBuilder();
             for (int i = 0; i < count; i++) {
                 ProfileExam exam = examsList.get(i);
                 if(exam == null)continue;
@@ -490,8 +487,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 examsNameBuffer.append(", ").append(exam.getExam_name()) ;
             }
             if(!showAll && examsList.size() > count) {
-
-                ((TextView) mRootView.findViewById(R.id.profile_exams_name)).setText(examsNameBuffer.toString() + "....");
+                ((TextView) mRootView.findViewById(R.id.profile_exams_name)).setText(examsNameBuffer.append("....").toString());
                 mRootView.findViewById(R.id.profile_exams_name).setSelected(false);
                 ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mPlusDrawable);
                 mRootView.findViewById(R.id.profile_expand_exams_btn).setVisibility(View.VISIBLE);
@@ -541,8 +537,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         try {
             this.mListener = (UserProfileListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnSignUpListener");
+            throw new ClassCastException(TAG+ context.toString()
+                    + " must implement UserProfileListener");
         }
     }
 
@@ -554,7 +550,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
 
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
         super.onClick(v);
         switch (v.getId()){
             case R.id.profile_to_dashboard:
@@ -609,7 +605,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 break;
 
             case R.id.profile_expand_exams_btn:
-                if(mRootView.findViewById(R.id.profile_exams_name).isSelected() == true) {
+                if(mRootView.findViewById(R.id.profile_exams_name).isSelected()) {
                     // ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mPlusDrawable);
                     mExpandUserExamsLayout(false);
                     mRootView.findViewById(R.id.profile_expand_exams_btn).setContentDescription("Click to collapse the exam you are interested in");
@@ -689,6 +685,13 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 break;
             case R.id.profile_exams_edit_btn:
                 mRequestForUserExamsUpdate();
+                v.setClickable(false);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        v.setClickable(true);
+                    }
+                }, 200);
                 break;
             case R.id.profile_other_info_edit_btn:
                 ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mPlusDrawable);
@@ -789,14 +792,14 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 citySpinner.setItems(citiesList, false);
             }else {
                 stateSpinner.setItems(statesList, true);
-                stateSpinner.setText("Select State");
+                stateSpinner.setText(getString(R.string.select_state));
             }
 
             if(citiesList == null){
                 citiesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(0));
                 citySpinner.setItems(citiesList, true);
                 if(citiesList.size() > 1)
-                    citySpinner.setText("Select City");
+                    citySpinner.setText(getString(R.string.select_city));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -811,7 +814,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     List<ProfileSpinnerItem> citiesList = JSON.std.listOfFrom(ProfileSpinnerItem.class, ProfileMacro.getCitiJson(view.getSelectedSpinnerItemId()));
                     citySpinner.setItems(citiesList, true);
                     if(citiesList.size() > 1)
-                        citySpinner.setText("Select City");
+                        citySpinner.setText(getString(R.string.select_city));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -837,7 +840,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             socialCategorySpinner.setItems(socialCategoryList, false);
         }else{
             socialCategorySpinner.setItems(socialCategoryList, true);
-            socialCategorySpinner.setText("Select Category");
+            socialCategorySpinner.setText(getString(R.string.select_category));
         }
 
         // set mDeviceProfile Mother tongue
@@ -858,7 +861,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             motherTongueSpinner.setItems(motherTongueList, false);
         }else{
             motherTongueSpinner.setItems(motherTongueList, true);
-            motherTongueSpinner.setText("Select Category");
+            motherTongueSpinner.setText(getString(R.string.select_category));
         }
 
 
@@ -921,7 +924,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                                 isStreamFound = true;
                                 if(mListener != null){
                                     mListener.requestForSpecialization(userStreamId, ProfileMacro.CURRENT_EDUCATION);
-                                    currentSpecializationSpinner.setText("Loading...");
+                                    currentSpecializationSpinner.setText(getString(R.string.loading));
                                     currentSpecializationSpinner.hideArrow();
                                 }
                                 break;
@@ -940,7 +943,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             }
             else{
                 currentSubLevelSpinner.setItems(currentSubLevelList, true);
-                currentSubLevelSpinner.setText("Select Level");
+                currentSubLevelSpinner.setText(getString(R.string.select_level));
             }
 
 
@@ -1003,7 +1006,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     currentDegreeSpinner.setVisibility(View.VISIBLE);
                 }
                 mListener.requestForSpecialization(view.getSelectedSpinnerItemId(), ProfileMacro.CURRENT_EDUCATION);
-                currentSpecializationSpinner.setText("Loading...");
+                currentSpecializationSpinner.setText(getString(R.string.loading));
                 currentSpecializationSpinner.hideArrow();
             }
         });
@@ -1055,14 +1058,14 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             educationModeSpinner.setItems(educationModeList, false);
         }else{
             educationModeSpinner.setItems(educationModeList, true);
-            educationModeSpinner.setText("Select Education Mode");
+            educationModeSpinner.setText(getString(R.string.select_education_mode));
         }
 
         // set Current Score
 
         int currentScore = mProfile.getCurrent_score();
         if(currentScore > 0){
-            ((EditText)mRootView.findViewById(R.id.profile_edit_current_score)).setText(""+currentScore);
+            ((EditText)mRootView.findViewById(R.id.profile_edit_current_score)).setText(String.valueOf(currentScore));
         }
 
         // set Current Score type
@@ -1082,7 +1085,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             scoreTypeList.add(0,scoreTypeList.remove(1));
         }else if(currentScoreType == ProfileMacro.GRADES){
             scoreTypeList.add(0,scoreTypeList.remove(2));
-        }else if(currentScoreType == ProfileMacro.PERCENTAGE){
+        //}else if(currentScoreType == ProfileMacro.PERCENTAGE){
             // scoreTypeList.add(0,scoreTypeList.remove(2));
         }else if(currentScoreType == ProfileMacro.RANK){
             scoreTypeList.add(0,scoreTypeList.remove(3));
@@ -1197,12 +1200,12 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                     preferredStreamSpinner.setItems(streamList, false);
                 }else {
                     preferredStreamSpinner.setItems(streamList, false);
-                    preferredStreamSpinner.setText("Select Stream");
+                    preferredStreamSpinner.setText(getString(R.string.select_stream));
                 }
             }
             else{
                 preferredLevelSpinner.setItems(levelList, true);
-                preferredLevelSpinner.setText("Select Level");
+                preferredLevelSpinner.setText(getString(R.string.select_level));
             }
 
             preferredLevelSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
@@ -1277,7 +1280,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 if(mListener == null)
                     return;
                 mListener.requestForSpecialization(view.getSelectedSpinnerItemId(),ProfileMacro.PREFERRED_EDUCATION );
-                preferredSpecializationSpinner.setText("Loading...");
+                preferredSpecializationSpinner.setText(R.string.loading);
                 preferredSpecializationSpinner.hideArrow();
             }
         });
@@ -1435,7 +1438,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             educationModeSpinner.setItems(educationModeList, false);
         }else{
             educationModeSpinner.setItems(educationModeList, true);
-            educationModeSpinner.setText("Select Education Mode");
+            educationModeSpinner.setText(getString(R.string.select_education_mode));
         }
 
 
@@ -1457,7 +1460,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             feesRangeSpinner.setItems(feesRangeList, false);
         }else{
             feesRangeSpinner.setItems(feesRangeList, true);
-            feesRangeSpinner.setText("Select Fees Range");
+            feesRangeSpinner.setText(getString(R.string.select_fee_range));
         }
 
         // set preferred loan required
@@ -1472,9 +1475,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
         int loanAmountNeededId = mProfile.getPreferred_loan_amount_needed();
        // boolean isLoanAmountSelected = false;
-        if (loanAmountNeededId == ProfileMacro.BELOW_ONE_LAKH) {
-
-        } else if (loanAmountNeededId == ProfileMacro.ONE_TO_THREE_LAKH) {
+        //if (loanAmountNeededId == ProfileMacro.BELOW_ONE_LAKH) {}
+       if (loanAmountNeededId == ProfileMacro.ONE_TO_THREE_LAKH) {
             loanRequiredAmountList.add(0, loanRequiredAmountList.remove(1));
         } else if (loanAmountNeededId == ProfileMacro.THREE_TO_FIVE_LAKH) {
             loanRequiredAmountList.add(0, loanRequiredAmountList.remove(2));
@@ -1513,7 +1515,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     private void mRequestForUpdateInfo(){
         String userName = ((EditText) mRootView.findViewById(R.id.profile_edit_name)).getText().toString();
-        if (userName == null || userName.isEmpty() && mProfile != null){
+        if (userName.isEmpty() && mProfile != null){
             userName = mProfile.getName();
         }
         String userPhoneNumber ="";
@@ -1521,7 +1523,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             userPhoneNumber = mProfile.getPhone_no();
             if (mProfile.getIs_verified() != 1) {
                 userPhoneNumber = ((EditText) mRootView.findViewById(R.id.profile_edit_phone)).getText().toString();
-                if (userPhoneNumber != null && userPhoneNumber.length() > 0) {
+                if ( userPhoneNumber.length() > 0) {
                     if (userPhoneNumber.length() <= 9 || !Utils.isValidPhone(userPhoneNumber)) {
                         Utils.DisplayToast(getContext(), "Please enter a valid phone number.");
                         return;
@@ -1584,7 +1586,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
         String currentSpecializationIdValue ="";
         if(!(userCurrentStreamId == 33 ||userCurrentStreamId == 34 || userCurrentStreamId == 35 || userCurrentStreamId == 36
-                || userCurrentStreamId == 37) || userCurrentStreamId == 38 || userCurrentStreamId == 39){
+                || userCurrentStreamId == 37 || userCurrentStreamId == 38 || userCurrentStreamId == 39)){
             int userCurrentSpecializationId= ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_specialization)).getSelectedSpinnerItemId();
             if (userCurrentSpecializationId < 0) {
                 Utils.DisplayToast(getContext(), "Please Select your Specialization.");
@@ -1605,8 +1607,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             }
         }
         String currentScore = ((EditText) mRootView.findViewById(R.id.profile_edit_current_score)).getText().toString();
-        if(currentScore == null)
-            currentScore ="";
 
         String currentScoreIdValue ="";
         int currentScoreId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_score_type)).getSelectedSpinnerItemId();
@@ -1716,7 +1716,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             e.printStackTrace();
         }*/
         // get selected degree ids List
-        StringBuffer degreeIds = new StringBuffer("[");
+        StringBuilder degreeIds = new StringBuilder("[");
         if(mPreferredDegreesList != null ){
             boolean isFirstTime = true;
             int count = mPreferredDegreesList.size();
@@ -1733,7 +1733,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
         degreeIds.append("]");
         // get selected State ids List
-        StringBuffer stateIds = new StringBuffer("[");
+        StringBuilder stateIds = new StringBuilder("[");
         if(mPreferredStatesList != null ){
             int count = mPreferredStatesList.size();
             boolean isFirstTime = true;
@@ -1750,7 +1750,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
         stateIds.append("]");
         // get selected State ids List
-        StringBuffer cityIds = new StringBuffer("[");
+        StringBuilder cityIds = new StringBuilder("[");
         if(mPreferredCitiesList != null ){
             boolean isFirstTime = true;
             int count = mPreferredCitiesList.size();
@@ -1766,6 +1766,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             }
         }
         cityIds.append("]");
+
 
         HashMap<String, String> params = new HashMap<>();
         params.put("preferred_year_of_admission", preferredYearValue);
@@ -1787,16 +1788,16 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
      * father name , mother name and coaching institute
      */
     private void mRequestForUpdateOtherInfo() {
-        String fatherName = ((EditText) mRootView.findViewById(R.id.profile_edit_father_name)).getText().toString();
-        if (fatherName == null){
+        String fatherName = ((EditText) mRootView.findViewById(R.id.profile_edit_father_name)).getText().toString().trim();
+        if (fatherName.isEmpty()){
             fatherName = mProfile.getFathers_name();
         }
-        String motherName = ((EditText) mRootView.findViewById(R.id.profile_edit_mother_name)).getText().toString();
-        if (motherName == null){
+        String motherName = ((EditText) mRootView.findViewById(R.id.profile_edit_mother_name)).getText().toString().trim();
+        if (motherName.isEmpty()){
             motherName = mProfile.getMothers_name();
         }
-        String coachingInstitute = ((EditText) mRootView.findViewById(R.id.profile_edit_coaching_institute)).getText().toString();
-        if (coachingInstitute == null){
+        String coachingInstitute = ((EditText) mRootView.findViewById(R.id.profile_edit_coaching_institute)).getText().toString().trim();
+        if (coachingInstitute.isEmpty()){
             coachingInstitute = mProfile.getCoaching_institute();
         }
         HashMap<String, String> params = new HashMap<>();
@@ -1882,7 +1883,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             ((ProgressBar)progressbar).setMax(100);
             ((ProgressBar) progressbar).setProgress(0);
 
-            ObjectAnimator animation = ObjectAnimator.ofInt((ProgressBar) progressbar, "progress", progress);
+            ObjectAnimator animation = ObjectAnimator.ofInt(progressbar, "progress", progress);
             animation.setDuration(1000);
             animation.setInterpolator(new AnticipateOvershootInterpolator());
             animation.start();
@@ -1898,12 +1899,12 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     private void mRequestForImageCapture() {
 
         // Determine Uri of camera image to save.
-        uploadTempImageFile = new File(Environment.getExternalStorageDirectory(),
+        File uploadTempImageFile = new File(Environment.getExternalStorageDirectory(),
                 "ic_" + mProfile.getId() + "_profile.jpg");
         mImageCaptureUri = Uri.fromFile(uploadTempImageFile);
 
         // Camera.
-        List<Intent> cameraIntents = new ArrayList<Intent>();
+        List<Intent> cameraIntents = new ArrayList<>();
         Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         PackageManager packageManager = getActivity().getPackageManager();
         List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
@@ -1986,7 +1987,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     public void deleteTempImageFile() {
         if(mImageCaptureUri != null) {
             File imageFile = new File(mImageCaptureUri.getPath());
-            if(imageFile != null && imageFile.exists()){
+            if(imageFile.exists()){
                 imageFile.delete();
             }
         }
@@ -1994,9 +1995,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
 
     public void updateProfileImage(){
-        if(getView() != null && MainActivity.mProfile != null) {
+        if(mRootView != null && MainActivity.mProfile != null) {
             // set profile error image
-            mProfileImage = (CircularImageView) getView().findViewById(R.id.profile_image);
+            CircularImageView mProfileImage = (CircularImageView) mRootView.findViewById(R.id.profile_image);
             mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
             mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
 
@@ -2115,7 +2116,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     public void mRefreshProfileOnResponse(Profile profile){
         if(profile != null){
-            ProfileFragment.mProfile = profile;
+            this.mProfile = profile;
             this.updateUserProfile();
         }
         this.mSwipeRefreshLayout.setRefreshing(false);

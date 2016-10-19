@@ -160,7 +160,7 @@ public class InstituteOverviewFragment extends BaseFragment {
         }
     }
 
-    private void getInfo(ArrayList<String> heads, ArrayList<String> details) {
+    /*private void getInfo(ArrayList<String> heads, ArrayList<String> details) {
         if (mInstitute.getAwards_snap() != null && !mInstitute.getAwards_snap().isEmpty()) {
             heads.add("Achievements");
             details.add(mInstitute.getAwards_snap());
@@ -177,7 +177,7 @@ public class InstituteOverviewFragment extends BaseFragment {
             heads.add("Nearby Joints");
             details.add(mInstitute.getNear_by_joints_snap());
         }
-    }
+    }*/
 
     private void setupInfo(LinearLayout l1, LinearLayout l2) {
         setViewDetails(l1.getChildAt(0), titles[0], mInstitute.getAwards_snap());

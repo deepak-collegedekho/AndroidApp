@@ -390,7 +390,7 @@ public class MaterialSpinner extends TextView {
    * @param <T>
    *     The item type
    */
-  public <T> void setItems(@NonNull List<T> items, boolean isItemSelected) {
+  public <T> void setItems(List<T> items, boolean isItemSelected) {
     if(items == null)
       return;
 

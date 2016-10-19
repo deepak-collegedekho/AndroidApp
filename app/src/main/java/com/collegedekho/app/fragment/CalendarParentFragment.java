@@ -34,12 +34,10 @@ import java.util.LinkedHashMap;
  */
 public class CalendarParentFragment extends BaseFragment implements ViewPager.OnPageChangeListener,CalendarItemDetailsAdapter.OnItemStateChangeListener {
     private CalendarPagerAdapter mPagerAdapter;
-    private ViewPager viewPager;
     private Button btnSubmitCalendar;
     private int numPages = 1;
     private OnSubmitCalendarData mListener;
     private ArrayList<Chapters> mChapterList;
-    private HashMap<String, String> subjectsMap;
     private LinkedHashMap<String, String> yearCalendar;
     private LinkedHashMap<String, ArrayList<ChapterDetails>> chaptersDetailsList = new LinkedHashMap<>();
     public static CalendarParentFragment newInstance(ArrayList<Chapters> chapterList) {
@@ -72,7 +70,7 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initCalendar();
-        viewPager = (ViewPager) view.findViewById(R.id.pager);
+        ViewPager viewPager = (ViewPager) view.findViewById(R.id.pager);
         btnSubmitCalendar=(Button)view.findViewById(R.id.btn_submit_calendar);
 
         mPagerAdapter = new CalendarPagerAdapter(getChildFragmentManager(), numPages, yearCalendar, chaptersDetailsList,this);
@@ -94,7 +92,7 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
             numPages=1;
             return;
         }
-        subjectsMap = new LinkedHashMap<>();
+        HashMap<String, String> subjectsMap = new LinkedHashMap<>();
         for (ChapterDetails chapterDetails : chapterDetailsList) {
             String id = subjectsMap.get(chapterDetails.getSubject_id());
             if (id == null) {

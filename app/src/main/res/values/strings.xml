@@ -47,6 +47,7 @@
     <string name="ok">OK</string>
     <string name="cancel">CANCEL</string>
     <string name="skip">SKIP</string>
+    <string name="Skip">Skip</string>
     <string name="xscale">1.2f</string>
     <string name="yscale">1f</string>
 
@@ -532,6 +533,20 @@
     <string name="loading">Loading...</string>
     <string name="select_your_stream">Select Your Stream</string>
     <string name="courses_info_not_available">Courses info not available</string>
+    <string name="tag_home_tute">Home Tute</string>
+    <string name="you_do_not_have_any_shortlisted_college">You don\'t have any Shortlisted college. Please Shortlist from college Listing !</string>
+    <string name="select_category">Select Category</string>
+    <string name="select_level">Select Level</string>
+    <string name="select_education_mode">Select Education Mode</string>
+    <string name="select_fee_range">Select Fee Range</string>
+    <string name="select_state">Select State</string>
+    <string name="select_city">Select City</string>
+    <string name="school">School</string>
+    <string name="college">College</string>
+    <string name="pg_college">PG College</string>
+    <string name="not_preparing">Not Preparing</string>
+    <string name="no_subjects">No Subjects</string>
+    <string name="country_no">+91-</string>
 
     <!-- user profile tags-->
 </resources>

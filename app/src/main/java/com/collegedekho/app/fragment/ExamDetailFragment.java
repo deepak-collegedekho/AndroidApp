@@ -14,11 +14,8 @@ import com.collegedekho.app.entities.ProfileExam;
  */
 public class ExamDetailFragment extends BaseFragment{
 
-    private final String TAG = "Exam Detail Fragment";
-    private static String PARAM1 = "param1";
+    private final static  String TAG = "Exam Detail Fragment";
     private static final String EXAM_LIST = "user_education_list";
-//    private ArrayList<ExamDetail> mExamDetailList;
-
 
     public ExamDetailFragment() {
         //  empty constructor
@@ -33,17 +30,8 @@ public class ExamDetailFragment extends BaseFragment{
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-       /* if (getArguments() != null) {
-            this.mExamDetailList = getArguments().getParcelableArrayList(EXAM_LIST);
-        }*/
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_exam_detail, container, false);
-        return rootView;
+       return inflater.inflate(R.layout.fragment_exam_detail, container, false);
     }
 
     @Override

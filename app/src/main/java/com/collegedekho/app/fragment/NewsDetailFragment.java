@@ -49,7 +49,6 @@ public class NewsDetailFragment extends BaseFragment {
 
     private News mNews;
     private ArrayList<News> mNewsList;
-    private NewsListAdapter mAdapter;
     private View rootView;
 
     public NewsDetailFragment() {
@@ -128,9 +127,12 @@ public class NewsDetailFragment extends BaseFragment {
             Utils.renderHtml(getActivity(), (LinearLayout)rootView.findViewById(R.id.news_content_layout), mNews.content);
 
 
-        if (mNews.image != null && !mNews.image.isEmpty())
-            ((NetworkImageView) rootView.findViewById(R.id.image_news_expanded)).setImageUrl(mNews.image, MySingleton.getInstance(getActivity()).getImageLoader());
-        else
+        if (mNews.image != null && !mNews.image.isEmpty()) {
+            NetworkImageView newsImageView = (NetworkImageView) rootView.findViewById(R.id.image_news_expanded);
+            newsImageView.setImageUrl(mNews.image, MySingleton.getInstance(getActivity()).getImageLoader());
+            newsImageView.setDefaultImageResId(R.drawable.ic_default_image);
+            newsImageView.setErrorImageResId(R.drawable.ic_default_image);
+        } else
             rootView.findViewById(R.id.image_news_expanded).setVisibility(View.GONE);
         String d = "";
         try {
@@ -161,8 +163,7 @@ public class NewsDetailFragment extends BaseFragment {
                 }
             }
         }
-        if(similarNews.size() <=0)
-        {
+        if(similarNews.size() <= 0 ) {
 
            rootView.findViewById(R.id.similar_newsTV).setVisibility(View.GONE);
            rootView.findViewById(R.id.divider_similar_news).setVisibility(View.GONE);
@@ -175,10 +176,14 @@ public class NewsDetailFragment extends BaseFragment {
 
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.related_news_list);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-            mAdapter = new NewsListAdapter(getActivity(), similarNews, Constants.VIEW_INTO_GRID);
+            NewsListAdapter mAdapter = new NewsListAdapter(getActivity(), similarNews, Constants.VIEW_INTO_GRID);
             recyclerView.setAdapter(mAdapter);
             recyclerView.setHasFixedSize(true);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+           /* StackView stackView = (StackView)rootView.findViewById(R.id.similar_news_stack);
+            NewsStackAdapter adapt = new NewsStackAdapter(getActivity(), R.layout.card_news_grid_view, similarNews);
+            stackView.setAdapter(adapt);*/
         }
     }
 
@@ -196,19 +201,16 @@ public class NewsDetailFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-
         Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_NEWS_LIST + "/personalize/news/" + this.mNews.getId());
-
         AnalyticsUtils.AppIndexingView("CollegeDekho - News - " + this.mNews.title, val, val, (MainActivity) this.getActivity(), true);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
         Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_NEWS_LIST + "/personalize/news/" + this.mNews.getId());
-
         AnalyticsUtils.AppIndexingView("CollegeDekho - News - " + this.mNews.title, val, val, (MainActivity) this.getActivity(), false);
     }
 }
+
 

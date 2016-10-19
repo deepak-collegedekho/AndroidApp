@@ -20,15 +20,15 @@ public class Articles implements Parcelable{
         public Articles[] newArray(int size) {  return new Articles[size];   }
     };
 
-    public String title;
-    public String content;
-    public String image;
-    public long template_type;
-    public String published_on;
-    public String similar_articles;
-    public int id;
-    public String stream;
-    public String slug;
+    private String title;
+    private String content;
+    private String image;
+    private long template_type;
+    private String published_on;
+    private String similar_articles;
+    private int id;
+    private String stream;
+    private String slug;
 
     public int getNews_source() {
         return news_source;
@@ -119,5 +119,25 @@ public class Articles implements Parcelable{
 
     public void setStream(String stream) {
         this.stream = stream;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public long getTemplate_type() {
+        return template_type;
+    }
+
+    public String getPublished_on() {
+        return published_on;
     }
 }

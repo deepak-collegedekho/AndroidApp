@@ -3,7 +3,6 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,15 +36,12 @@ public class WishlistFragment extends BaseFragment {
     public static final String TITLE = "Shortlist Institutes";
     private static final String ARG_INSTITUTE = "wishlist_institute";
     private static final String ARG_FILTER_ALLOWED = "filter_allowed";
-    private static final String TAG = "Wishlist Institute Fragment";
+    private static final String TAG = "Wishlist Fragment";
     private ArrayList<Institute> mInstitutes;
     private String mTitle;
     private boolean filterAllowed;
     private TextView mEmptyTextView;
-    private boolean IS_TUTE_COMPLETED = true;
     private RecyclerView recyclerView;
-    //private View instituteView;
-    private CardView wishlistInstituteCard;
     private PeekAndPop peekAndPop;
     private WishlistInstituteListAdapter mWishlistInstituteListAdapter;
     private MainActivity mMainActivity;
@@ -95,7 +91,7 @@ public class WishlistFragment extends BaseFragment {
 
         if(mInstitutes == null || mInstitutes.size() <= 0){
             mEmptyTextView.setVisibility(View.VISIBLE);
-            mEmptyTextView.setText("You don't have any Shortlisted college. Please Shortlist from college Listing !");
+            mEmptyTextView.setText(getString(R.string.you_do_not_have_any_shortlisted_college));
         }else{
             mEmptyTextView.setVisibility(View.GONE);
         }
@@ -113,8 +109,8 @@ public class WishlistFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_wishlist, container, false);
 
-        this.IS_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
-        if(!IS_TUTE_COMPLETED) {
+        boolean isTuteCompleted = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
+        if(!isTuteCompleted) {
             rootView.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.VISIBLE);
             getActivity().invalidateOptionsMenu();
@@ -141,7 +137,7 @@ public class WishlistFragment extends BaseFragment {
 
         if(mInstitutes == null || mInstitutes.size() <= 0){
             mEmptyTextView.setVisibility(View.VISIBLE);
-            mEmptyTextView.setText("You don't have any Shortlisted college. Please Shortlist colleges from Listing !");
+            mEmptyTextView.setText(getString(R.string.you_do_not_have_any_shortlisted_college));
         }else{
             mEmptyTextView.setVisibility(View.GONE);
         }
@@ -251,7 +247,7 @@ public class WishlistFragment extends BaseFragment {
 
                 if(mInstitutes == null || mInstitutes.size() <= 0){
                     mEmptyTextView.setVisibility(View.VISIBLE);
-                    mEmptyTextView.setText("You don't have any Shortlisted college. Please Shortlist colleges from Listing !");
+                    mEmptyTextView.setText(getString(R.string.you_do_not_have_any_shortlisted_college));
                 }else{
                     mEmptyTextView.setVisibility(View.GONE);
                 }

@@ -2,7 +2,6 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/card_syllabus_subject"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -25,41 +24,60 @@
         android:max="100"
         android:progressDrawable="@drawable/progressbar_background"
         android:progress="75"/>
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/card_syllabus_subject_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1"
         android:layout_marginTop="@dimen/m10dp"
-        android:padding="@dimen/m10dp"
-        >
+        android:paddingLeft="@dimen/m10dp"
+        android:paddingTop="@dimen/m10dp"
+        android:paddingBottom="@dimen/m10dp">
+
+        <ImageView
+            android:id="@+id/syllabus_right_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/ic_right_arrow_30dp"/>
+
+        <TextView android:id="@+id/exam_percentage_sign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/syllabus_right_arrow"
+            android:textSize="24sp"
+            android:text="%"
+            />
+
+
+        <TextView android:id="@+id/exam_percentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/exam_percentage_sign"
+            android:textSize="24sp"
+            android:text="..."
+            />
+
+
         <TextView
             android:id="@+id/syllabus_subject_name"
-            android:layout_width="0dp"
-            android:layout_weight=".99"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="3dp"
             android:paddingTop="3dp"
             android:ellipsize="end"
             android:text="MATHS"
+            android:layout_toLeftOf="@id/exam_percentage"
             android:textColor="@color/white"
             android:textSize="20sp"
             />
-        <TextView android:id="@+id/exam_percentage"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            android:text="..."
-            />
-        <TextView android:id="@+id/exam_percentage_sign"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            android:text="%"
-            />
 
-    </LinearLayout>
+
+
+    </RelativeLayout>
 </android.support.v7.widget.CardView>

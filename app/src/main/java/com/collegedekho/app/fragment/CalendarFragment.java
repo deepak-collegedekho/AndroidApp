@@ -29,38 +29,14 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
     private RecyclerView detailsRecyclerView;
     private CalendarItemDetailsAdapter calendarItemDetailsAdapter;
     //    private LinearLayout.LayoutParams params;
-    // how many days to show, defaults to six weeks, 42 days
-    private static int DAYS_COUNT = 42;
-    private HashMap<String, String> subjectsMap;
     private LinkedHashMap<String, String> mYearCalendar;
     private LinkedHashMap<String, ArrayList<ChapterDetails>> chaptersDetailsList = new LinkedHashMap<>();
-
-    // default date format
-    private static final String DATE_FORMAT = "MMM yyyy";
-
-    // date format
-    private String dateFormat;
-
     // current displayed month
     private Calendar currentDate;
-
-    private GridLayoutManager calendarLayoutManager;
-    private LinearLayoutManager detailsLayoutManager;
     private static CalendarItemDetailsAdapter.OnItemStateChangeListener mListener;
-//    private static LinkedHashMap<String, ArrayList<ChapterDetails>> mChaptersDetailsList=new LinkedHashMap<>();
     int offSet = 0;
-//    private static LinkedHashMap<String, String> mYearCalendar;
     private ArrayList<Chapters> mChapterList;
 
-//    public static CalendarFragment newInstance(LinkedHashMap<String, String> yearCalendar, LinkedHashMap<String, ArrayList<ChapterDetails>> chaptersDetailsList,CalendarItemDetailsAdapter.OnItemStateChangeListener listener) {
-////        mYearCalendar = yearCalendar;
-////        mChaptersDetailsList = chaptersDetailsList;
-//        mListener=listener;
-//        Bundle args = new Bundle();
-//        CalendarFragment fragment = new CalendarFragment();
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
 
     public static CalendarFragment newInstance(CalendarItemDetailsAdapter.OnItemStateChangeListener listener) {
         mListener=listener;
@@ -86,8 +62,7 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootViewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_calendar_view, container, false);
-        return rootViewGroup;
+        return inflater.inflate(R.layout.fragment_calendar_view, container, false);
     }
 
     @Override
@@ -95,9 +70,9 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
         super.onViewCreated(view, savedInstanceState);
         calendarRecyclerView = (RecyclerView) view.findViewById(R.id.calendar_recycler);
         detailsRecyclerView = (RecyclerView) view.findViewById(R.id.calendar_details_recycler);
-        calendarLayoutManager = new GridLayoutManager(getActivity(), 7);
+        GridLayoutManager calendarLayoutManager = new GridLayoutManager(getActivity(), 7);
 
-        detailsLayoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager detailsLayoutManager = new LinearLayoutManager(getActivity());
         detailsLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         detailsRecyclerView.setLayoutManager(detailsLayoutManager);
 
@@ -106,9 +81,6 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
         currentDate = Calendar.getInstance();
         offSet = getArguments().getInt("id");
         currentDate.add(Calendar.MONTH, offSet);
-//        params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        params.weight=0.75f;
-//        detailsRecyclerView.setLayoutParams(params);
         updateCalendar(currentDate);
     }
 
@@ -117,11 +89,8 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if(calendarItemDetailsAdapter!=null){
-//                updateCalendar(currentDate);
                 calendarItemDetailsAdapter.notifyDataSetChanged();
             }
-        }else{
-            // fragment is no longer visible
         }
     }
 
@@ -136,7 +105,8 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
         // move calendar backwards to the beginning of the week
         calendar.add(Calendar.DAY_OF_MONTH, -monthBeginningCell);
 
-
+        // how many days to show, defaults to six weeks, 42 days
+        int DAYS_COUNT = 42;
         while (cells.size() < DAYS_COUNT) {
             cells.add(calendar.getTime());
             calendar.add(Calendar.DAY_OF_MONTH, 1);
@@ -177,7 +147,8 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
         if (chapterDetailsList == null || chapterDetailsList.isEmpty()) {
             return;
         }
-        subjectsMap = new LinkedHashMap<>();
+
+        HashMap<String, String> subjectsMap = new LinkedHashMap<>();
         for (ChapterDetails chapterDetails : chapterDetailsList) {
             String id = subjectsMap.get(chapterDetails.getSubject_id());
             if (id == null) {
