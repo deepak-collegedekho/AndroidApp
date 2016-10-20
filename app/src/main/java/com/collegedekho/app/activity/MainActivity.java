@@ -395,7 +395,17 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.resource_uri = extras.getString("resource_uri");
                 MainActivity.resource_uri_with_notification_id = MainActivity.resource_uri + "?notification_id=" + extras.getString("notification_id");
 
-                Log.e(TAG, " There is data  type is : "+ MainActivity.type +  " Resource uri is " + MainActivity.resource_uri);
+                Log.e(TAG, "There is data type is : "+ MainActivity.type +  " Resource uri is " + MainActivity.resource_uri);
+
+                //events params
+                Map<String, Object> eventValue = new HashMap<>();
+                eventValue.put(getResourceString(R.string.TAG_RESOURCE_URI), MainActivity.resource_uri);
+                eventValue.put(getResourceString(R.string.TAG_NOTIFICATION_ID), extras.getString("notification_id"));
+                eventValue.put(getResourceString(R.string.TAG_NOTIFICATION_TYPE), MainActivity.type);
+                eventValue.put(getResourceString(R.string.TAG_APP_STATUS), getResourceString(R.string.TAG_APP_STATUS_LAUNCHED_FROM_NOTIFICATION));
+
+                //Events
+                SendAppEvent(getResourceString(R.string.CATEGORY_NOTIFICATIONS), getResourceString(R.string.ACTION_NOTIFICATION_OPEN), eventValue, this);
             }
         }
 
@@ -529,22 +539,6 @@ public class MainActivity extends AppCompatActivity
      */
     private void mRegistrationTrueSdk() {
         MainActivity.mTrueClient = new TrueClient(getApplicationContext(), this);
-    }
-
-    /**
-     * This method is used  with connecto sdk
-     */
-    private void mRegistrationConnecto() {
-        /*new Thread(new Runnable() {
-            @Override
-            public void run() {
-                connecto = Connecto.with(MainActivity.this);
-                //this.connecto.identify("Harsh1234Vardhan", new Traits().putValue("name", "HarshVardhan"));
-                //You can also track any event if you want
-                //this.connecto.track("Session Started", new Properties().putValue("value", 800));
-                connecto.registerWithGCM(MainActivity.this, Constants.SENDER_ID);
-            }
-        }).start();*/
     }
 
     /**
@@ -989,7 +983,16 @@ public class MainActivity extends AppCompatActivity
         }
         else
             MainActivity.type = "";
+
         this.mHandleNotifications(true);
+
+        //events params
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(getResourceString(R.string.TAG_RESOURCE_URI), MainActivity.resource_uri);
+        eventValue.put(getResourceString(R.string.TAG_DEEP_LINKING_TYPE), MainActivity.type);
+
+        //Events
+        SendAppEvent(getResourceString(R.string.CATEGORY_DEEP_LINKING), getResourceString(R.string.ACTION_DEEP_LINKING_OPEN), eventValue, this);
     }
 
     private void mHandleOtherAppSharedMessage(String message) {
@@ -1197,7 +1200,6 @@ public class MainActivity extends AppCompatActivity
     }
     @Override
     protected void onDestroy() {
-        //this.connecto.track("Session Ended", new Properties().putValue("session_end_datetime", new Date().toString()));
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         super.onDestroy();
     }
@@ -1234,6 +1236,7 @@ public class MainActivity extends AppCompatActivity
                 }else{
                     onBackPressed();
                 }
+
                 return true;
             case R.id.action_profile:
                 mDisplayProfileFragment(MainActivity.mProfile, true);
@@ -1405,9 +1408,6 @@ public class MainActivity extends AppCompatActivity
         MainActivity.AppsflyerTrackerEvent(this,getResourceString(R.string.SESSION_STARTED),eventValue);
         // register user id with GA tracker
         MainActivity.tracker.setClientId(MainActivity.mProfile.getId());
-        // register user id with connecto
-        //this.connecto.identify(MainActivity.mProfile.getId(), new Traits().putValue(getResourceString(R.string.USER_NAME), MainActivity.mProfile.getName()));
-        //this.connecto.track(getResourceString(R.string.SESSION_STARTED),  new Properties().putValue(getResourceString(R.string.SESSION_STARTED_DATE_TIME), new Date().toString()));
 
     }
 
@@ -1433,6 +1433,7 @@ public class MainActivity extends AppCompatActivity
         };
         gcmDialogHandler.postDelayed(gcmDialogRunnable,90000);
     }
+
     /**
      * This method is used to load screens according to user status
      * if education and exam is selected then load profile screen
@@ -6638,7 +6639,6 @@ public class MainActivity extends AppCompatActivity
         else {
             mDisplayFragment(WebViewFragment.newInstance(url), !isFromNotification, Constants.ACTION_OPEN_WEB_URL);
         }
-
     }
 
     @Override
@@ -6650,7 +6650,18 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.type = bundle.getString("screen");
                 MainActivity.resource_uri = bundle.getString("resource_uri");
                 MainActivity.resource_uri_with_notification_id = MainActivity.resource_uri + "?notification_id=" + bundle.getString("notification_id");
-                 // changed by suresh
+
+                //events params
+                Map<String, Object> eventValue = new HashMap<>();
+                eventValue.put(getResourceString(R.string.TAG_RESOURCE_URI), MainActivity.resource_uri);
+                eventValue.put(getResourceString(R.string.TAG_NOTIFICATION_ID), bundle.getString("notification_id"));
+                eventValue.put(getResourceString(R.string.TAG_NOTIFICATION_TYPE), MainActivity.type);
+                eventValue.put(getResourceString(R.string.TAG_APP_STATUS), getResourceString(R.string.TAG_APP_STATUS_ALREADY_RUNNING));
+
+                //Events
+                SendAppEvent(getResourceString(R.string.CATEGORY_NOTIFICATIONS), getResourceString(R.string.ACTION_NOTIFICATION_OPEN), eventValue, this);
+
+                // changed by suresh
                 if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
                     mHandleNotifications(false);
                     isFromDeepLinking = false;

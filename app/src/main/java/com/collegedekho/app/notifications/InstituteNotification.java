@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.RemoteViews;
 
 import com.collegedekho.app.R;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.Map;
 
@@ -82,6 +83,8 @@ public class InstituteNotification extends CollegeDekhoNotifications {
                     super.bigImageURLViewID = R.id.news_image;
             }
         } catch (Exception e) {
+            Crashlytics.logException(e);
+
             e.printStackTrace();
         }
     }

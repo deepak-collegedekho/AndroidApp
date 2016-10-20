@@ -14,6 +14,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.NotificationPayload;
 import com.collegedekho.app.listener.ICollegeDekhoNotifications;
+import com.crashlytics.android.Crashlytics;
 import com.fasterxml.jackson.jr.ob.JSON;
 
 import org.json.JSONObject;
@@ -91,10 +92,14 @@ public class CollegeDekhoNotifications implements ICollegeDekhoNotifications{
         }
         catch (IOException e)
         {
+            Crashlytics.logException(e);
+
             Log.e(TAG, "IO Exception");
         }
         catch (Exception e)
         {
+            Crashlytics.logException(e);
+
             Log.e(TAG, "Exception");
         }
     }

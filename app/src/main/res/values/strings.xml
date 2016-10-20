@@ -158,6 +158,9 @@
     <string name="TAG_POST_QUESTION">post_question</string>
     <string name="TAG_LOAD_FILTERS">load_filters</string>
     <string name="TAG_RESOURCE_URI">resource_uri</string>
+    <string name="TAG_NOTIFICATION_ID">notification_id</string>
+    <string name="TAG_NOTIFICATION_TYPE">notification_type</string>
+    <string name="TAG_DEEP_LINKING_TYPE">deep_linking_type</string>
     <string name="TAG_LABEL">label</string>
     <string name="TAG_URI">uri</string>
     <string name="TAG_ATTR">attr</string>
@@ -317,6 +320,9 @@
     <string name="TAG_UPDATE_VIDEO_TITLE">update_video_title</string>
 
     <string name="CATEGORY_PREFERENCE">category_preference</string>
+    <string name="CATEGORY_BOOK_KEEPING">category_book_keeping</string>
+    <string name="CATEGORY_DEEP_LINKING">category_book_keeping</string>
+    <string name="CATEGORY_NOTIFICATIONS">category_notifications</string>
     <string name="CATEGORY_QNA">category_qna</string>
     <string name="CATEGORY_MY_FB">category_my_fb</string>
     <string name="CATEGORY_INSTITUTES">category_institutes</string>
@@ -364,6 +370,8 @@
     <string name="ACTION_USER_PREFERENCE">action_user_preference</string>
     <string name="ACTION_USER_EXAM_SELECTED">action_user_exam_selected</string>
     <string name="ACTION_INSTITUTE_SELECTED">action_institute_selected</string>
+    <string name="ACTION_NOTIFICATION_OPEN">action_notification_open</string>
+    <string name="ACTION_DEEP_LINKING_OPEN">action_deep_linking_open</string>
     <string name="ACTION_CD_RECOMMENDED_INSTITUTE_ACTION">action_cd_recommended_institute_action</string>
     <string name="ACTION_WHEN_NOT_PREPARING">action_when_not_preparing</string>
     <string name="ACTION_USER_LOGIN">action_user_login</string>
@@ -462,6 +470,9 @@
     <string name="server_unregistered">successfully removed device!</string>
     <string name="server_register_error">Could not register device on Server after %1$d attempts.</string>
     <string name="server_unregister_error">Could not unregister device on Server (%1$s).</string>
+
+    <!--FCM-->
+    <string name="FCM_TOKEN">fcmToken</string>
 
 
     <!--ACCESSIBILITY DESCRIPTION-->
@@ -566,4 +577,10 @@
     <string name="device_name">device_name</string>
     <string name="network_carrier">network_carrier</string>
 
+
+    <!--APP STATUS-->
+    <string name="TAG_APP_STATUS">app_status</string>
+    <string name="TAG_APP_STATUS_LAUNCHED_FROM_SYSTEM">launched_from_system</string>
+    <string name="TAG_APP_STATUS_LAUNCHED_FROM_NOTIFICATION">launched_from_notification</string>
+    <string name="TAG_APP_STATUS_ALREADY_RUNNING">already_running</string>
 </resources>

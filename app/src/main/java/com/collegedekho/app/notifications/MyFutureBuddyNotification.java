@@ -6,6 +6,7 @@ import android.os.Build;
 import android.widget.RemoteViews;
 
 import com.collegedekho.app.R;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.Map;
 
@@ -106,6 +107,8 @@ public class MyFutureBuddyNotification extends CollegeDekhoNotifications {
                 super.notification.bigContentView = super.contentBigView;
             }
         } catch (Exception e) {
+            Crashlytics.logException(e);
+
             e.printStackTrace();
         }
     }

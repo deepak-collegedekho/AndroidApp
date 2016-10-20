@@ -25,6 +25,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
+import com.crashlytics.android.Crashlytics;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
@@ -70,14 +71,14 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
         if (appContext != null)
         {
-            SharedPreferences sharedPreferences = this.getSharedPreferences("sharedprefs", MODE_PRIVATE);
+            SharedPreferences sharedPreferences = this.getSharedPreferences(getApplicationContext().getString(R.string.PREFS), MODE_PRIVATE);
 
             if (sharedPreferences != null)
             {
-                sharedPreferences.edit().putString("fcmToken", token).apply();
+                sharedPreferences.edit().putString(getApplicationContext().getString(R.string.FCM_TOKEN), token).apply();
 
                 try {
-                    String userJsonString = sharedPreferences.getString("user_id", null);
+                    String userJsonString = sharedPreferences.getString(getApplicationContext().getString(R.string.KEY_USER), null);
 
                     if (userJsonString != null && !userJsonString.isEmpty())
                     {
@@ -101,6 +102,8 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
                         }
                     }
                 } catch (IOException e) {
+                    Crashlytics.logException(e);
+
                     e.printStackTrace();
                 }
             }

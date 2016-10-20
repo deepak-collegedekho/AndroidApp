@@ -14,6 +14,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.NotificationPayload;
 import com.collegedekho.app.resource.Constants;
+import com.crashlytics.android.Crashlytics;
 import com.fasterxml.jackson.jr.ob.JSON;
 
 import org.json.JSONObject;
@@ -81,7 +82,7 @@ public class NotificationFactory {
                 }
                 default:
                 {
-
+                    this.mCollegeDekhoNotifications = new InstituteNotification();
                 }
             }
 
@@ -106,6 +107,7 @@ public class NotificationFactory {
                 }
             }
         } catch (Exception e) {
+            Crashlytics.logException(e);
             e.printStackTrace();
         }
     }
@@ -140,6 +142,8 @@ public class NotificationFactory {
                 bis.close();
                 is.close();
             } catch (IOException e) {
+                Crashlytics.logException(e);
+
                 Log.e(TAG, "Error getting bitmap", e);
             }
             return bm;
