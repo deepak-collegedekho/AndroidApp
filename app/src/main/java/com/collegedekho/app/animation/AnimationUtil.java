@@ -16,26 +16,34 @@ public class AnimationUtil {
 
         float finalRadius =  (float) Math.hypot(view.getWidth() / 2f, view.getHeight() / 2f) ;
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            Animator  revealAnimator ;
-            if(isShow){
-                revealAnimator = ViewAnimationUtils.createCircularReveal(view, view.getWidth()/2, view.getHeight(), 0,
-                    finalRadius);
-                view.setVisibility(View.VISIBLE);
-            }else{
-                revealAnimator = ViewAnimationUtils.createCircularReveal(view,view.getWidth()/2,view.getHeight(),
+
+        if(isShow){
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                Animator  revealAnimator = ViewAnimationUtils.createCircularReveal(view, view.getWidth() / 2, view.getHeight(), 0,
+                        finalRadius);
+                revealAnimator.setDuration(300);
+                revealAnimator.setInterpolator(new FastOutLinearInInterpolator());
+                revealAnimator.start();
+            }
+            view.setVisibility(View.VISIBLE);
+        }else {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+                Animator   revealAnimator = ViewAnimationUtils.createCircularReveal(view, view.getWidth() / 2, view.getHeight(),
                         finalRadius, 0);
                 revealAnimator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
                         view.setVisibility(View.INVISIBLE);
+
                     }
                 });
+                revealAnimator.setDuration(300);
+                revealAnimator.setInterpolator(new FastOutLinearInInterpolator());
+                revealAnimator.start();
+            }else{
+                view.setVisibility(View.INVISIBLE);
             }
-            revealAnimator.setDuration(300);
-            revealAnimator.setInterpolator(new FastOutLinearInInterpolator());
-            revealAnimator.start();
         }
 
     }

@@ -21,6 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:clickable="true"
+        android:background="@drawable/ripple_white"
         android:weightSum="1"
         android:padding="@dimen/m15dp"
         android:layout_gravity="center"
@@ -33,11 +35,12 @@
             android:paddingBottom="3dp"
             android:paddingTop="3dp"
             android:ellipsize="end"
-            android:text="MATHSsss"
+            android:text="MATHS"
             android:textColor="@color/text_lightest_grey"
             android:textSize="20sp"
             android:importantForAccessibility="no"/>
-        <CheckBox
+
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/syllabus_chapters_checkbox"
             android:gravity="center_vertical"
             android:layout_width="0dp"
@@ -46,6 +49,7 @@
             android:textColor="@color/white"
             style="@style/Widget.AppCompat.CompoundButton.CheckBox"
             android:importantForAccessibility="no"/>
+
         <TextView android:id="@+id/count_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

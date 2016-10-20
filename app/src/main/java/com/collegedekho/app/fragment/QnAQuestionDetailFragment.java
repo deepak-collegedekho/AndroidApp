@@ -1,13 +1,16 @@
 package com.collegedekho.app.fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +38,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class QnAQuestionDetailFragment extends BaseFragment implements View.OnClickListener {
+public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnClickListener {
     private static final String ARG_PARAM1 = "param1";
     private final String TAG = "QuestionDetail Fragment";
     private QnAQuestions mQnAQuestion;
@@ -110,8 +113,7 @@ public class QnAQuestionDetailFragment extends BaseFragment implements View.OnCl
         ArrayList<String> tags = this.mQnAQuestion.getTags();
 
         if(tags != null && tags.size() > 0)
-            for(int i = 0; i < tags.size(); i++)
-            {
+            for(int i = 0; i < tags.size(); i++) {
                 TextView tv = (TextView) LayoutInflater.from(this.getContext()).inflate(R.layout.item_tag, null);
                 tv.setText(tags.get(i));
                 tagsContainer.addView(tv);
@@ -229,44 +231,54 @@ public class QnAQuestionDetailFragment extends BaseFragment implements View.OnCl
         }
     }
 
-    private void mToggleAnswerButtonVisibility(int askQuesButtonVisibility, int toolbarVisibility)
+    private void mToggleAnswerButtonVisibility(final int askQuesButtonVisibility, int toolbarVisibility)
     {
         //Putting whole thing in try/catch for I am not putting MainActivity null check and
         // hide and show methods are showing NPE warning
-        try {
-            if (askQuesButtonVisibility == View.GONE) {
-                this.mAnswerQuestionFAB.animate().translationY(this.mAnswerQuestionFAB.getHeight());
-                this.mAnswerETV.requestFocus();
 
-                //showing soft keyboard on ask button click
-                InputMethodManager inputMethodManager=(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-            }
-            else if (askQuesButtonVisibility == View.VISIBLE)
-                this.mAnswerQuestionFAB.animate().translationY(0);
+        if (askQuesButtonVisibility == View.GONE) {
+            this.mAnswerQuestionFAB.animate()
+                    .translationY(this.mAnswerQuestionFAB.getHeight())
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            mAnswerQuestionFAB.setVisibility(askQuesButtonVisibility);
+                        }
+                    });
 
-            if (toolbarVisibility == View.GONE)
-                ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-            else if (toolbarVisibility == View.VISIBLE)
-                ((AppCompatActivity) getActivity()).getSupportActionBar().show();
-
-            this.mAnswerQuestionFAB.setVisibility(askQuesButtonVisibility);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mAnswerETV.requestFocus();
+                    //showing soft keyboard on ask button click
+                    InputMethodManager inputMethodManager=(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                }
+            }, 200);
+        } else if (askQuesButtonVisibility == View.VISIBLE) {
+            this.mAnswerQuestionFAB.animate().translationY(0);
+            mAnswerQuestionFAB.setVisibility(askQuesButtonVisibility);
         }
-        catch(Exception e)
-        {
-            Log.e(TAG,""+e.toString());
+
+
+        if(getActivity() != null) {
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if (actionBar != null) {
+                if (toolbarVisibility == View.GONE)
+                    actionBar.hide();
+                else if (toolbarVisibility == View.VISIBLE)
+                    actionBar.show();
+            }
         }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
         String resourceURI = this.mQnAQuestion.getResource_uri();
         String[] resourceURIArray = resourceURI.split("/");
-
         Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_QNA_QUESTION_LIST + "/personalize/qna/" + resourceURIArray[resourceURIArray.length - 1]);
-
         AnalyticsUtils.AppIndexingView("CollegeDekho - QnA - " + this.mQnAQuestion.getDesc(), val, val, (MainActivity) this.getActivity(), true);
     }
 
@@ -275,9 +287,7 @@ public class QnAQuestionDetailFragment extends BaseFragment implements View.OnCl
         super.onStop();
         String resourceURI = this.mQnAQuestion.getResource_uri();
         String[] resourceURIArray = resourceURI.split("/");
-
         Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_QNA_QUESTION_LIST + "/personalize/qna/" + resourceURIArray[resourceURIArray.length - 1]);
-
         AnalyticsUtils.AppIndexingView("CollegeDekho - QnA - " + this.mQnAQuestion.getDesc(), val, val, (MainActivity) this.getActivity(), false);
     }
 

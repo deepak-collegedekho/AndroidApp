@@ -32,10 +32,8 @@ public class UserAlertsAdapter extends RecyclerView.Adapter<UserAlertsAdapter.Us
     @Override
     public UserAlertsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View itemView = LayoutInflater.
-                from(parent.getContext()).
+        View itemView = LayoutInflater.from(parent.getContext()).
                 inflate(R.layout.card_syllabus_chapters, parent, false);
-
         return new UserAlertsViewHolder(itemView);
     }
 
@@ -65,8 +63,8 @@ public class UserAlertsAdapter extends RecyclerView.Adapter<UserAlertsAdapter.Us
             countTextView=(TextView)itemView.findViewById(R.id.count_view);
             countTextView.setVisibility(View.VISIBLE);
             itemView.findViewById(R.id.syllabus_chapters_checkbox).setVisibility(View.GONE);
-            itemView.setOnClickListener(this);
             mAlertContainer = itemView;
+            itemView.findViewById(R.id.card_syllabus_chapters_container).setOnClickListener(this);
         }
 
         @Override

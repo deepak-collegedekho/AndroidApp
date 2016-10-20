@@ -47,14 +47,12 @@ public class QnAQuestionsListFragment extends BaseFragment {
     private EditText mQuestionDesc;
 
 
-    public static QnAQuestionsListFragment newInstance(ArrayList<QnAQuestions> qnaQuestions, String next)
-    {
+    public static QnAQuestionsListFragment newInstance(ArrayList<QnAQuestions> qnaQuestions, String next){
         QnAQuestionsListFragment fragment = new QnAQuestionsListFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(ARG_PARAM1, qnaQuestions);
         args.putString(ARG_NEXT, next);
         fragment.setArguments(args);
-
         return fragment;
     }
 
@@ -261,7 +259,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
                     InputMethodManager inputMethodManager=(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                 }
-            }, 400);
+            }, 200);
 
         }
         else if (askQuesButtonVisibility == View.VISIBLE) {

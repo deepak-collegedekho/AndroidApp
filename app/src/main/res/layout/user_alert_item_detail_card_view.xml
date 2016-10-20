@@ -42,7 +42,7 @@
                 android:paddingBottom="2dp"
                 android:paddingTop="2dp"
                 android:ellipsize="end"
-                android:text="MATHSsss"
+                android:text="MATHS"
                 android:textStyle="bold"
                 android:maxLines="@integer/int1"
                 android:textColor="@color/text_lightest_grey"
@@ -56,7 +56,7 @@
                 android:maxLines="@integer/int1"
                 />
         </LinearLayout>
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/syllabus_chapters_checkbox"
             android:gravity="center_vertical"
             android:layout_width="0dp"
