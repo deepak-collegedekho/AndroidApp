@@ -212,7 +212,6 @@ public class QnAQuestionsListFragment extends BaseFragment {
                 if(rootView != null)  {
                     this.mToggleAskButtonVisibility(View.VISIBLE, View.VISIBLE);
                     AnimationUtil.circularReveal(rootView.findViewById(R.id.qna_ask_layout),false);
-                   // rootView.findViewById(R.id.dummy_view).setVisibility(View.GONE);
                 }
                 break;
             case R.id.institute_qna_button_ask_submit:

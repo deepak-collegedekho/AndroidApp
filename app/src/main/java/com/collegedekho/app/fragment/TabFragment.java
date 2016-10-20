@@ -285,8 +285,6 @@ public class TabFragment extends  BaseFragment{
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
             mainActivity.mUpdateTabMenuItem(this.selectedTabPosition);
-            // call this method to redraw tool bar items
-            mainActivity.invalidateOptionsMenu();
         }
 
         if(this.mExamDetailList != null && !this.mExamDetailList.isEmpty()) {

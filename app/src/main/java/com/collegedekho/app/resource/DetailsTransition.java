@@ -31,7 +31,8 @@ public class DetailsTransition extends TransitionSet {
 
     private void init() {
         setOrdering(ORDERING_TOGETHER);
-        addTransition(new ChangeBounds()).
+        ChangeBounds changeBounds = new ChangeBounds();
+        addTransition(changeBounds).
                addTransition(new ChangeImageTransform()).
                 addTransition(new ChangeTransform());
     }

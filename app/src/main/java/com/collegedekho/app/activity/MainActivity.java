@@ -875,7 +875,6 @@ public class MainActivity extends AppCompatActivity
         if (isFromNotifications) {
             this.isFromNotification = true;
             this.isFromDeepLinking = false;
-
         } else {
             this.isFromNotification = false;
             this.isFromDeepLinking = true;
@@ -891,7 +890,6 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             }
-
             case Constants.TAG_FRAGMENT_NEWS_LIST: {
                 this.mCurrentTitle = "News";
                 if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
@@ -901,7 +899,6 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             }
-
             case Constants.TAG_FRAGMENT_ARTICLES_LIST: {
                 this.mCurrentTitle = "Articles";
                 if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
@@ -911,13 +908,6 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             }
-
-            case Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE: {
-                this.mCurrentTitle = "My Shortlist";
-                this.mMakeNetworkCall(Constants.WIDGET_SHORTLIST_INSTITUTES, MainActivity.resource_uri_with_notification_id, null);
-                break;
-            }
-
             case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST: {
                 this.mCurrentTitle = "QnA";
                 if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
@@ -927,7 +917,6 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             }
-
             case Constants.TAG_FRAGMENT_MY_FB_ENUMERATION: {
                 this.mCurrentTitle = "My Future Buddies";
                 if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
@@ -937,7 +926,11 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             }
-
+            case Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE: {
+                this.mCurrentTitle = "My Shortlist";
+                this.mMakeNetworkCall(Constants.WIDGET_SHORTLIST_INSTITUTES, MainActivity.resource_uri_with_notification_id, null);
+                break;
+            }
             case Constants.WIDGET_TEST_CALENDAR:
                 this.mMakeNetworkCall(Constants.WIDGET_TEST_CALENDAR, MainActivity.resource_uri_with_notification_id, null);
                 break;
@@ -1231,6 +1224,15 @@ public class MainActivity extends AppCompatActivity
                 }else if(getSupportFragmentManager().getBackStackEntryCount() >= 1) {
                     // remove a fragment from back stack if count is greater then zero
                     getSupportFragmentManager().popBackStack();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // call this method to redraw tool bar items
+                            invalidateOptionsMenu();
+                        }
+                    }, 200);
+                }else{
+                    onBackPressed();
                 }
                 return true;
             case R.id.action_profile:
@@ -3869,6 +3871,8 @@ public class MainActivity extends AppCompatActivity
                 fragment.setSharedElementEnterTransition(new DetailsTransition());
                 fragment.setEnterTransition(new Fade());
                 fragment.setExitTransition(new Fade());
+                fragment.setAllowEnterTransitionOverlap(true);
+                fragment.setAllowReturnTransitionOverlap(true);
                 fragment.setSharedElementReturnTransition(new DetailsTransition());
             }
 
@@ -4677,7 +4681,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 },3000);
             }else{
-                super.onBackPressed();
+                onBackPressed();
             }
         } else {
             super.onBackPressed();
@@ -6093,14 +6097,16 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
     private void onPNSNews(String response) {
         try {
             this.mNewsList = JSON.std.listOfFrom(News.class, "[" + response + "]");
             this.mParseSimilarNews(this.mNewsList);
             if (this.mNewsList != null && !this.mNewsList.isEmpty()) {
-                this.mDisplayFragment(NewsDetailFragment.newInstance(this.mNewsList.get(0), new ArrayList<>(this.mNewsList)), false, Constants.TAG_FRAGMENT_NEWS_DETAIL);
+                boolean isAddToStack = false;
+                if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+                    isAddToStack = true;
+                }
+                this.mDisplayFragment(NewsDetailFragment.newInstance(this.mNewsList.get(0), new ArrayList<>(this.mNewsList)), isAddToStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
             } else {
                 isFromNotification = false;
                 mLoadUserStatusScreen();
@@ -6117,7 +6123,11 @@ public class MainActivity extends AppCompatActivity
             this.mArticlesList = JSON.std.listOfFrom(Articles.class, "[" + response + "]");
             this.mParseSimilarArticle(mArticlesList);
             if (this.mArticlesList != null && !this.mArticlesList.isEmpty()) {
-                this.mDisplayFragment(ArticleDetailFragment.newInstance(mArticlesList.get(0), this.mArticlesList), false, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
+                boolean isAddToStack = false;
+                if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+                    isAddToStack = true;
+                }
+                this.mDisplayFragment(ArticleDetailFragment.newInstance(mArticlesList.get(0), this.mArticlesList), isAddToStack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
             } else {
                 isFromNotification = false;
                 mLoadUserStatusScreen();
@@ -6135,7 +6145,11 @@ public class MainActivity extends AppCompatActivity
             if (this.mInstituteList != null && !this.mInstituteList.isEmpty()) {
                 this.mInstitute = this.mInstituteList.get(0);
                 int id = this.mInstituteList.get(0).getId();
-                this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute, Constants.CDRecommendedInstituteType.RECOMMENDED), false, Constants.TAG_FRAGMENT_INSTITUTE);
+                boolean isAddToStack = false;
+                if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+                    isAddToStack = true;
+                }
+                this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute, Constants.CDRecommendedInstituteType.RECOMMENDED), isAddToStack, Constants.TAG_FRAGMENT_INSTITUTE);
 
                 //this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
@@ -6156,7 +6170,11 @@ public class MainActivity extends AppCompatActivity
     private void onPnsMyFutureBuddy(String response) {
         try {
             this.mFB = this.mParseAndPopulateMyFB(response, 0);
-            this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, 0), false, Constants.TAG_FRAGMENT_MY_FB);
+            boolean isAddToStack = false;
+            if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+                isAddToStack = true;
+            }
+            this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, 0), isAddToStack, Constants.TAG_FRAGMENT_MY_FB);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             isFromNotification = false;
@@ -6217,7 +6235,11 @@ public class MainActivity extends AppCompatActivity
 
             qnaQuestion.setAnswer_set(qnaAnswers);
             qnaQuestion.setTags(tagArrayList);
-            this.mDisplayFragment(QnAQuestionDetailFragment.newInstance(qnaQuestion), false, getResourceString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
+            boolean isAddToStack = false;
+            if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+                isAddToStack = true;
+            }
+            this.mDisplayFragment(QnAQuestionDetailFragment.newInstance(qnaQuestion), isAddToStack, getResourceString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
         } catch (Exception e) {
             e.printStackTrace();
             isFromNotification = false;
@@ -6628,7 +6650,14 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.type = bundle.getString("screen");
                 MainActivity.resource_uri = bundle.getString("resource_uri");
                 MainActivity.resource_uri_with_notification_id = MainActivity.resource_uri + "?notification_id=" + bundle.getString("notification_id");
-                mHandleNotifications(true);  // change to true by suresh
+                 // changed by suresh
+                if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+                    mHandleNotifications(false);
+                    isFromDeepLinking = false;
+                    isFromNotification = false;
+                }else {
+                    mHandleNotifications(true);  // change to true by suresh
+                }
             }
         }
     }

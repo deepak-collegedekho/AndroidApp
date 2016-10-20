@@ -1,7 +1,5 @@
 package com.collegedekho.app.fragment;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,7 +28,6 @@ import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
-import com.collegedekho.app.utils.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -205,7 +203,6 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
                 break;
             case R.id.answer_question_cross:
                 if (rootView != null) {
-                    Utils.hideKeyboard(getActivity());
                     this.mToggleAnswerButtonVisibility(View.VISIBLE, View.VISIBLE);
                     AnimationUtil.circularReveal(rootView.findViewById(R.id.qna_answer_layout), false);
                 }
@@ -228,24 +225,19 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
                 }
                 break;
             }
+            default:
+                break;
         }
     }
 
-    private void mToggleAnswerButtonVisibility(final int askQuesButtonVisibility, int toolbarVisibility)
+    private void mToggleAnswerButtonVisibility(int askQuesButtonVisibility, int toolbarVisibility)
     {
         //Putting whole thing in try/catch for I am not putting MainActivity null check and
         // hide and show methods are showing NPE warning
 
         if (askQuesButtonVisibility == View.GONE) {
             this.mAnswerQuestionFAB.animate()
-                    .translationY(this.mAnswerQuestionFAB.getHeight())
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            mAnswerQuestionFAB.setVisibility(askQuesButtonVisibility);
-                        }
-                    });
+                    .translationY(this.mAnswerQuestionFAB.getHeight());
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -253,14 +245,16 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
                     mAnswerETV.requestFocus();
                     //showing soft keyboard on ask button click
                     InputMethodManager inputMethodManager=(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+
                 }
             }, 200);
-        } else if (askQuesButtonVisibility == View.VISIBLE) {
-            this.mAnswerQuestionFAB.animate().translationY(0);
             mAnswerQuestionFAB.setVisibility(askQuesButtonVisibility);
-        }
+        } else if (askQuesButtonVisibility == View.VISIBLE) {
 
+            mAnswerQuestionFAB.setVisibility(askQuesButtonVisibility);
+            this.mAnswerQuestionFAB.animate().translationY(0);
+        }
 
         if(getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
@@ -410,12 +404,19 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
     public void onResume() {
         super.onResume();
         MainActivity mainActivity = (MainActivity) this.getActivity();
-        if (mainActivity != null)
+        if (mainActivity != null) {
             mainActivity.currentFragment = this;
+            //  answer dialog layout was adjusting UI while soft keyboard is open
+            // so to prevent this added window soft input mode
+             mainActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        if(getActivity() != null) {
+                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        }
     }
 }

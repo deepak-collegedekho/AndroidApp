@@ -54,7 +54,7 @@ public class RangeQuestionFragment extends StepByStepFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             pQuestion = getArguments().getParcelable(ARG_QUESTION);
-            if(pQuestion!=null) {
+            if(pQuestion  == null) {
                 pQuestion = new StepByStepQuestion();
             }
                 mIsRequired = pQuestion.isRequired();
@@ -118,7 +118,7 @@ public class RangeQuestionFragment extends StepByStepFragment {
 
                 //if progress is less than a lakh, show 0
                 if (progress < 100000) {
-                    seekBarValue.setText(calculatedProgress + "");
+                    seekBarValue.setText(String.valueOf(calculatedProgress));
                 }
                 //if progress is more than or equal to a lakh,
                 //show progress by this logic
@@ -134,7 +134,7 @@ public class RangeQuestionFragment extends StepByStepFragment {
                         if (progress == mMax)
                             calculatedProgress = mMax;
 
-                        seekBarValue.setText(calculatedProgress + "");
+                        seekBarValue.setText(String.valueOf(calculatedProgress));
                     }
                 }
                 //setting progress
@@ -201,9 +201,13 @@ public class RangeQuestionFragment extends StepByStepFragment {
 
     @Override
     public void updateAndSetAnswer() {
-        String[] tagList = pQuestion.getName().split("#");
-
-        super.setAnswer(tagList[0], this.mMin);
-        super.setAnswer(tagList[1], this.mProgress);
+        String name = pQuestion.getName();
+        if(name != null) {
+            String[] tagList = name.split("#");
+            if(tagList.length >2) {
+                super.setAnswer(tagList[0], this.mMin);
+                super.setAnswer(tagList[1], this.mProgress);
+            }
+        }
     }
 }

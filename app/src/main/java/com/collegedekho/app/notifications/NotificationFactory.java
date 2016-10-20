@@ -75,6 +75,10 @@ public class NotificationFactory {
                     this.mCollegeDekhoNotifications = new MyFutureBuddyNotification();
                     break;
                 }
+                case Constants.TAG_FRAGMENT_INSTITUTE_LIST: {
+                    this.mCollegeDekhoNotifications = new InstituteNotification();
+                    break;
+                }
                 default:
                 {
 

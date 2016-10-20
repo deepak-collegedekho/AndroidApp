@@ -109,7 +109,7 @@ public class NetworkUtils {
 
 
 
-    public void getOrDeleteData(@Nullable final String tag, final String url, final int method)
+    private void getOrDeleteData(@Nullable final String tag, final String url, final int method)
     {
         final Calendar calendar=Calendar.getInstance();
         StringRequest request = new StringRequest(method, url,
@@ -197,24 +197,20 @@ public class NetworkUtils {
         getOrDeleteData(tag, url, Request.Method.DELETE);
     }
 
-    public void postOrPutData(final String tag, final String url, final Map<String, String> params, final int method)
+    private void postOrPutData(final String tag, final String url, final Map<String, String> params, final int method)
     {
         final Calendar calendar=Calendar.getInstance();
         StringRequest request = new StringRequest(method, url,
-                new Response.Listener<String>()
-                {
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response)
-                    {
+                    public void onResponse(String response)  {
                         Utils.logApiResponseTime(calendar, tag + " " + url);
                         mHandleSuccessResponse(tag, response);
                     }
                 },
-                new Response.ErrorListener()
-                {
+                new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError volleyError)
-                    {
+                    public void onErrorResponse(VolleyError volleyError) {
                         Utils.logApiResponseTime(calendar, tag + " " + url);
                         mHandleErrorResponse(volleyError, tag, url, params, method);
                     }
@@ -237,9 +233,7 @@ public class NetworkUtils {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         request.setShouldCache(true);
 
-        if (tag != null)
-            request.setTag(tag);
-
+        if (tag != null) request.setTag(tag);
         mQueue.add(request);
     }
 
@@ -263,23 +257,24 @@ public class NetworkUtils {
                     public void onErrorResponse(VolleyError volleyError)
                     {
                         Utils.logApiResponseTime(calendar,tag+" "+url);
-
                         String json = null;
                         NetworkResponse response = volleyError.networkResponse;
                         if (response != null && response.data != null)
                         {
                             json = new String(response.data);
-
                         }
                         json = trimMessage(json, "detail");
-                        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-                        if (json != null  && amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
+                        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+                            mListener.onJsonObjectRequestError(tag, mContext.getString(R.string.no_internet_please_try_again), url, params, method);
 
-                            Crashlytics.logException(volleyError);
-                                mListener.onJsonObjectRequestError(tag, Constants.SERVER_FAULT, url, params, method);
-                        }else
-                        {
-                            mHandleErrorResponse(volleyError, tag, url, null, method);
+                        }else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
+                            mListener.onJsonObjectRequestError(tag, mContext.getString(R.string.server_timeout_error),  url, params, method);
+                        }
+                        else  if(json != null) {
+                            mListener.onJsonObjectRequestError(tag,mContext.getString(R.string.server_fault),  url, params, method);
+
+                        }else {
+                            mListener.onJsonObjectRequestError(tag,mContext.getString(R.string.unknown_server_error), url, params, method);
                         }
                     }
                 })
@@ -295,19 +290,16 @@ public class NetworkUtils {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         request.setShouldCache(true);
 
-        if (tag != null)
-            request.setTag(tag);
-
+        if (tag != null)  request.setTag(tag);
         mQueue.add(request);
     }
 
     /**
      *  This method is used to set headers to request on server
-     * @return
+     * @return return headers
      */
 
     private HashMap<String, String > getHeaders(){
-
         mHeaders = new HashMap<>();
         // set user'token if user token is not set
         if((mtoken == null || mtoken.isEmpty()) && MainActivity.mProfile != null)
@@ -373,10 +365,10 @@ public class NetworkUtils {
 
 
     /**
-     * This method is used to write to MutliPart request file in data output stream
-     * @param dataOutputStream
-     * @param fileData
-     * @param fileName
+     * This method is used to write to MultiPart request file in data output stream
+     * @param dataOutputStream dataOutput Stream
+     * @param fileData byte array of image file
+     * @param fileName image file  name
      * @throws IOException
      */
     private void buildPart(DataOutputStream dataOutputStream, byte[] fileData, String fileName) throws IOException {
@@ -401,13 +393,10 @@ public class NetworkUtils {
             bufferSize = Math.min(bytesAvailable, maxBufferSize);
             bytesRead = fileInputStream.read(buffer, 0, bufferSize);
         }
-
         dataOutputStream.writeBytes(lineEnd);
     }
 
-
-
-    public String trimMessage(String json, String key) {
+    private String trimMessage(String json, String key) {
         String trimmedString;
         try {
             JSONObject obj = new JSONObject(json);
@@ -469,22 +458,21 @@ public class NetworkUtils {
     /**
      * This method is used to handle success response  when volly
      *  request an api
-     * @param tag
-     * @param response
+     * @param tag  tag for which request has been sent to server
+     * @param response server response
      */
     private void mHandleSuccessResponse(String tag, String response) {
         if(mListener != null) {
             mListener.onDataLoaded(tag, response);
         }
     }
-
     /**
      * This method is used to handle error response  when volly
      *  request an api
-     * @param volleyError
-     * @param tag
-     * @param url
-     * @param method
+     * @param volleyError vollyError
+     * @param tag  tag for which request has been sent to server
+     * @param url server url
+     * @param method method Type post or get
      */
     private void mHandleErrorResponse(VolleyError volleyError, String tag, String url, Map<String, String> params, int method){
 
@@ -521,11 +509,8 @@ public class NetworkUtils {
         {
             saveToSharedPref(params);
         }
-
         json = trimMessage(json, "detail");
-
-        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-        if (amIConnectedToInternet == Constants.TYPE_NOT_CONNECTED) {
+        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             mListener.onError(tag, mContext.getString(R.string.no_internet_please_try_again), responseCode,url, params, method);
 
         }else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
@@ -595,13 +580,13 @@ public class NetworkUtils {
         return response;
     }
 
-    public void writeStream(OutputStream out, String data) throws IOException {
+    private void writeStream(OutputStream out, String data) throws IOException {
         BufferedWriter printWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
         printWriter.write(data);
         printWriter.flush();
     }
 
-    public String readStream(InputStream in) throws IOException {
+    private String readStream(InputStream in) throws IOException {
         String response = "";
         byte[] buffer = new byte[8192];
         int read = in.read(buffer);

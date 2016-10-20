@@ -344,6 +344,7 @@ public class NewsFragment extends BaseFragment  {
         this.mAdapter.updateNewsAdapter(newList);
 
     }
+
 /*
     public interface OnNewsSelectedListener extends  BaseListener{
         void onNewsSelected(News news, boolean flag);

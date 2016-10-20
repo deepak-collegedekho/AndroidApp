@@ -34,8 +34,7 @@ import java.util.HashMap;
  * create an instance of this fragment.
  */
 public class MultipleChoiceQuestionFragment extends StepByStepFragment implements AdapterView.OnItemClickListener{
-    public static final int TYPE_PRIMARY = 1;
-    public static final int TYPE_SECONDARY = 2;
+
     private static final String ARG_QUESTION = "question";
     private static final String ARG_TYPE = "type";
     private StepByStepQuestion pQuestion;
@@ -43,11 +42,9 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
     private boolean mIsRequired;
     private boolean mIsSkippable;
     private ChoiceListAdapter mChoiceListAdapter;
-    private boolean mAnswered;
     private ArrayList<StepByStepChoice> mChoiceHashMap;
     private HashMap<Integer, Integer> mAnswers;
     private boolean mIsAnswerDeemedForSecondary = false;
-    private boolean[] mIsChecked;
 
     public MultipleChoiceQuestionFragment() {
         // Required empty public constructor
@@ -68,12 +65,11 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.pQuestion = getArguments().getParcelable(ARG_QUESTION);
-            if(pQuestion!=null){
+            if(pQuestion == null){
                 pQuestion = new StepByStepQuestion();
             }
                 this.mIsRequired = this.pQuestion.isRequired();
                 this.mIsSkippable = this.pQuestion.is_skippable();
-                this.mIsChecked = new boolean[this.pQuestion.getChoices().size()];
             this.mAnswers = new HashMap<>();
         }
     }
@@ -84,7 +80,7 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
         View rootView = inflater.inflate(R.layout.fragment_multiple_choice_question, container, false);
 
         ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setText(pQuestion.getText());
-        ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setContentDescription(pQuestion.getText() + ". Please select a choice from below and then click on the lower right corner to move ahead");
+        (rootView.findViewById(R.id.institute_qna_question_title)).setContentDescription(pQuestion.getText() + ". Please select a choice from below and then click on the lower right corner to move ahead");
         ListView choiceList = (ListView) rootView.findViewById(R.id.multiple_choice_list);
         choiceList.setOnItemClickListener(this);
         //choiceList.setItemsCanFocus(true);
@@ -135,10 +131,7 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
 
     @Override
     public boolean isAnswered() {
-        if (this.mAnswers.size() == 0)
-            return false;
-        else
-            return true;
+        return this.mAnswers.size() != 0;
     }
 
     @Override
@@ -155,7 +148,6 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
         Object[] s = values.toArray();
         ArrayList<String> answers = new ArrayList<String>();
         JSONArray answerList = new JSONArray();
-        String answerString = "[";
         for (int i = 0; i < values.size(); i++)
         {
             if (values.contains(1)) {

@@ -216,6 +216,7 @@ public class NewsDetailFragment extends BaseFragment {
         Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_NEWS_LIST + "/personalize/news/" + this.mNews.getId());
         AnalyticsUtils.AppIndexingView("CollegeDekho - News - " + this.mNews.title, val, val, (MainActivity) this.getActivity(), false);
     }
+
 }
 
 
