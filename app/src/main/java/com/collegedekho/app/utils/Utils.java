@@ -713,7 +713,7 @@ public class Utils {
         {
             params.put(context.getString(R.string.app_version), BuildConfig.VERSION_NAME);
             params.put(context.getString(R.string.os_name), System.getProperty("os.name"));
-            params.put(context.getString(R.string.os_version), System.getProperty("os.version"));
+            params.put(context.getString(R.string.os_version), Build.VERSION.RELEASE);
             params.put(context.getString(R.string.device_manufacturer), Build.MANUFACTURER);
             params.put(context.getString(R.string.device_model), Build.MODEL);
             params.put(context.getString(R.string.device_name), Build.MODEL);

@@ -12,7 +12,7 @@
         android:background="@color/primary_color_dark"
         android:padding="10dp"
         android:textColor="@color/white"
-        android:text="Chat Forums for Shortlisted and Liked Colleges"/>
+        android:text="Chat Forums for Shortlisted Colleges"/>
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"

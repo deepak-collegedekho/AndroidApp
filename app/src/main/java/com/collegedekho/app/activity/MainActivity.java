@@ -203,12 +203,6 @@ import io.fabric.sdk.android.Fabric;
 import static com.collegedekho.app.utils.AnalyticsUtils.SendAppEvent;
 
 /*
-import io.connecto.android.sdk.Connecto;
-import io.connecto.android.sdk.Properties;
-import io.connecto.android.sdk.Traits;
-*/
-
-/*
 The MIT License (MIT)
 
 Copyright (c) 2014 Marco Granatiero
@@ -3867,7 +3861,7 @@ public class MainActivity extends AppCompatActivity
             (currentFragment).updateNews(news);
         }
         else {
-            Fragment fragment = NewsDetailFragment.newInstance(news, this.mNewsList);
+            /*Fragment fragment = NewsDetailFragment.newInstance(news, this.mNewsList);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 fragment.setSharedElementEnterTransition(new DetailsTransition());
                 fragment.setEnterTransition(new Fade());
@@ -3885,8 +3879,8 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
 
             fragmentTransaction.addToBackStack(fragment.toString());
-            fragmentTransaction.commit();
-            // this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
+            fragmentTransaction.commit();*/
+            this.mDisplayFragment(NewsDetailFragment.newInstance(news, this.mNewsList), addToBackStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
         }
 
         // send news selected Events
@@ -3904,8 +3898,7 @@ public class MainActivity extends AppCompatActivity
         } else if (currentFragment instanceof ArticleDetailFragment) {
             (currentFragment).updateArticle(article);
         } else {
-
-            Fragment fragment = ArticleDetailFragment.newInstance(article, this.mArticlesList);
+            /*Fragment fragment = ArticleDetailFragment.newInstance(article, this.mArticlesList);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 fragment.setSharedElementEnterTransition(new DetailsTransition());
                 fragment.setEnterTransition(new Fade());
@@ -3921,8 +3914,8 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
 
             fragmentTransaction.addToBackStack(fragment.toString());
-            fragmentTransaction.commit();
-            //this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
+            fragmentTransaction.commit();*/
+            this.mDisplayFragment(ArticleDetailFragment.newInstance(article, this.mArticlesList), addToBackstack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
         }
 
         // sens article select Events

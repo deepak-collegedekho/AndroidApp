@@ -82,7 +82,7 @@ public class NotificationFactory {
                 }
                 default:
                 {
-                    this.mCollegeDekhoNotifications = new InstituteNotification();
+                    this.mCollegeDekhoNotifications = new MyFutureBuddyNotification();
                 }
             }
 
