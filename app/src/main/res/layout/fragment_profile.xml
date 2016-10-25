@@ -261,9 +261,8 @@
 
                         <Button
                             android:id="@+id/profile_info_save_btn"
-                            style="@style/Widget.AppCompat.Button.Colored"
+                            style="@style/MaterialButton"
                             android:layout_width="wrap_content"
-                            android:backgroundTint="@color/primary_orange"
                             android:layout_height="wrap_content"
                             android:textColor="@color/white"
                             android:text="Save"/>
@@ -526,9 +525,8 @@
                         </LinearLayout>
                         <Button
                             android:id="@+id/profile_education_save_btn"
-                            style="@style/Widget.AppCompat.Button.Colored"
+                            style="@style/MaterialButton"
                             android:layout_width="wrap_content"
-                            android:backgroundTint="@color/primary_orange"
                             android:layout_height="wrap_content"
                             android:textColor="@color/white"
                             android:text="Save"/>
@@ -808,9 +806,8 @@
 
                         <Button
                             android:id="@+id/profile_preferred_save_btn"
-                            style="@style/Widget.AppCompat.Button.Colored"
+                            style="@style/MaterialButton"
                             android:layout_width="wrap_content"
-                            android:backgroundTint="@color/primary_orange"
                             android:layout_height="wrap_content"
                             android:textColor="@color/white"
                             android:text="Save"/>
@@ -1088,9 +1085,8 @@
 
                         <Button
                             android:id="@+id/profile_other_info_save_btn"
-                            style="@style/Widget.AppCompat.Button.Colored"
+                            style="@style/MaterialButton"
                             android:layout_width="wrap_content"
-                            android:backgroundTint="@color/primary_orange"
                             android:layout_height="wrap_content"
                             android:textColor="@color/white"
                             android:text="Save"/>

@@ -18,7 +18,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -48,7 +47,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.transition.Fade;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -153,7 +151,6 @@ import com.collegedekho.app.listener.ProfileFragmentListener;
 import com.collegedekho.app.receiver.OTPReceiver;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
-import com.collegedekho.app.resource.DetailsTransition;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
@@ -201,6 +198,7 @@ import java.util.concurrent.TimeUnit;
 import io.fabric.sdk.android.Fabric;
 
 import static com.collegedekho.app.utils.AnalyticsUtils.SendAppEvent;
+import static com.collegedekho.app.utils.NetworkUtils.getConnectivityStatus;
 
 /*
 The MIT License (MIT)
@@ -458,9 +456,7 @@ public class MainActivity extends AppCompatActivity
         logUser();
 
         setupOtpRequest(true);
-
-        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
-        if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED && IS_HOME_LOADED) {
+        if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED && IS_HOME_LOADED) {
             Utils.appLaunched(this);
         }
 
@@ -1281,7 +1277,7 @@ public class MainActivity extends AppCompatActivity
             mSearchView.setOnSearchClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+                    if (getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
                         displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
                         mSearchView.onActionViewCollapsed();
                     }
@@ -1547,7 +1543,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void requestForProfile(HashMap<String, String> params){
-        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED)
+        if (getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED)
             return;
 
         if(params != null && mProfile != null) {
@@ -1651,7 +1647,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void requestForSpecialization(int streamId, String requestType) {
-        if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+        if (getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
             this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_SPECIALIZATION + "#" + requestType, Constants.BASE_URL + "specializations/?stream=" + streamId, null, Request.Method.GET);
         }
     }
@@ -1664,7 +1660,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void requestForDegrees(int levelId, String requestType) {
-        int amIConnectedToInternet = MainActivity.mNetworkUtils.getConnectivityStatus();
+        int amIConnectedToInternet = getConnectivityStatus();
         if (amIConnectedToInternet != Constants.TYPE_NOT_CONNECTED) {
             this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_DEGREES + "#" + requestType, Constants.BASE_URL + "degrees/?level=" + levelId, null, Request.Method.GET);
         }
@@ -2380,10 +2376,14 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayHomeAsUpEnabled(){
 
         // it will change hamburger icon into a back arrow on toolbar
+        // sometimes Hamburger icon does not change into back arrow
+        // because Home Fragment onResume() called after mDisplayFragment()
+        // when mClearBackStack() is called just before it.
         if (currentFragment instanceof HomeFragment)
             mDrawerToggle.setDrawerIndicatorEnabled(true);
-        else
+        else {
             mDrawerToggle.setDrawerIndicatorEnabled(false);
+        }
         // set all menu items unchecked when tab fragment is not selected
         if(!(currentFragment instanceof TabFragment)){
             int size = mNavigationView.getMenu().size();
@@ -2391,6 +2391,7 @@ public class MainActivity extends AppCompatActivity
                 mNavigationView.getMenu().getItem(i).setChecked(false);
             }
         }
+        invalidateOptionsMenu();
     }
 
     private void mShowAppBarLayout(){
@@ -3861,7 +3862,7 @@ public class MainActivity extends AppCompatActivity
             (currentFragment).updateNews(news);
         }
         else {
-            /*Fragment fragment = NewsDetailFragment.newInstance(news, this.mNewsList);
+           /* Fragment fragment = NewsDetailFragment.newInstance(news, this.mNewsList);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 fragment.setSharedElementEnterTransition(new DetailsTransition());
                 fragment.setEnterTransition(new Fade());
@@ -3898,7 +3899,7 @@ public class MainActivity extends AppCompatActivity
         } else if (currentFragment instanceof ArticleDetailFragment) {
             (currentFragment).updateArticle(article);
         } else {
-            /*Fragment fragment = ArticleDetailFragment.newInstance(article, this.mArticlesList);
+          /*  Fragment fragment = ArticleDetailFragment.newInstance(article, this.mArticlesList);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 fragment.setSharedElementEnterTransition(new DetailsTransition());
                 fragment.setEnterTransition(new Fade());
@@ -3923,8 +3924,6 @@ public class MainActivity extends AppCompatActivity
         eventValue.put(Constants.TAG_RESOURCE_URI, String.valueOf(article.getId()));
         eventValue.put(getResourceString(R.string.ACTION_ARTICLE_SELECTED), article.getId());
         SendAppEvent(getResourceString(R.string.CATEGORY_ARTICLE), getResourceString(R.string.ACTION_ARTICLE_SELECTED), eventValue, this);
-
-
     }
 
     @Override
@@ -3986,7 +3985,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void requestToUploadProfileImage(byte[] fileByteArray) {
-        if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+        if (getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(Constants.PROFILE_IMAGE_UPLOADING);
             this.mNetworkUtils.postMultiPartRequest(Constants.PROFILE_IMAGE_UPLOADING,Constants.BASE_URL+"upload-image/",fileByteArray);
         } else {
@@ -4069,7 +4068,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params, int method) {
-        if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+        if (getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(tag);
             MainActivity.mNetworkUtils.networkData(tag, url, params, method);
         } else {
@@ -4078,7 +4077,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mMakeNetworkCall(String tag, String url, Map<String, String> params) {
-        if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+        if (getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(tag);
             MainActivity.mNetworkUtils.networkData(tag, url, params);
         } else {
@@ -4087,7 +4086,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mMakeJsonObjectNetworkCall(String tag, String url, JSONObject params, int method) {
-        if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+        if (getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
             this.showProgress(tag);
             MainActivity.mNetworkUtils.networkDataWithObjectParam(tag, url, params, method);
         } else {
@@ -4675,7 +4674,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 },3000);
             }else{
-                onBackPressed();
+                super.onBackPressed();
             }
         } else {
             super.onBackPressed();
@@ -4693,6 +4692,10 @@ public class MainActivity extends AppCompatActivity
             int count = getSupportFragmentManager().getBackStackEntryCount();
             for (int i = 0; i < count; i++)
                 getSupportFragmentManager().popBackStack();
+
+            if(currentFragment instanceof  HomeFragment){
+
+            }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -5696,7 +5699,7 @@ public class MainActivity extends AppCompatActivity
         videosFragment = fragment;
         if (videoList != null && !videoList.isEmpty()) {
             this.videoList = videoList;
-            if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+            if (getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
                 mNetworkUtils.simpleGetData(Constants.TAG_UPDATE_VIDEO_TITLE, url);
             } else {
                 displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);

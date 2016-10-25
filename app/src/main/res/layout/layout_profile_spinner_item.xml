@@ -27,6 +27,8 @@
     android:gravity="center_vertical"
     android:minHeight="@dimen/m40dp"
     android:maxLines="3"
+    android:textColor="@drawable/profile_spinner_item_text_color"
+    android:text="profile item"
     android:paddingBottom="@dimen/m10dp"
     android:paddingLeft="@dimen/m10dp"
     android:paddingRight="@dimen/m10dp"

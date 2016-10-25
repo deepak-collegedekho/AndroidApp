@@ -249,12 +249,9 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         fbComment.setCommentSent(false);
 
         this.mMyFBCommentsSet.add(this.mMyFBCommentsSet.size(), fbComment);
-
         this.mMyFBCommentsListAdapter.notifyItemInserted(this.mMyFBCommentsSet.size() - 1);
         this.mMyFBCommentsListAdapter.notifyDataSetChanged();
-
         this.mCommentsListView.scrollToPosition(this.mMyFBCommentsSet.size() - 1);
-
         this.mListener.onMyFBCommentSubmitted(this.mMyFutureBuddies.getResource_uri(), value, this.mMyFutureBuddies.getIndex(), this.mMyFBCommentsSet.size());
         this.mChatText.setText("");
     }
@@ -288,12 +285,9 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         if (this.mMyFBCommentsSet.size() > Constants.NUMBER_OF_COMMENTS_IN_ONE_GO)
         {
             int increment = this.mMyFBCommentsSet.size() - Constants.NUMBER_OF_COMMENTS_IN_ONE_GO;
-
             this.mListener.onMyFBUpdated(increment, this.mMyFutureBuddies.getIndex());
         }
-
         this.mListener = null;
-
         System.gc();
     }
 
@@ -343,15 +337,11 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause(){
         super.onPause();
-
-        if (this.mMyFbRefreshTimer != null)
-        {
+        if (this.mMyFbRefreshTimer != null)   {
             this.mMyFbRefreshTimer.cancel();
             this.mMyFbRefreshTimer.purge();
-
             this.mMyFbRefreshTimer = null;
         }
     }
@@ -359,12 +349,9 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     @Override
     public void onStart() {
         super.onStart();
-
         String resourceURI = this.mMyFutureBuddies.getResource_uri();
         String[] resourceURIArray = resourceURI.split("/");
-
         Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_MY_FB_ENUMERATION + "/personalize/forums/" + resourceURIArray[resourceURIArray.length - 1]);
-
         AnalyticsUtils.AppIndexingView("CollegeDekho - MyFutureBuddy - " + this.mMyFutureBuddies.getInstitute_name(), val, val, (MainActivity) this.getActivity(), true);
     }
 
@@ -374,9 +361,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
         String resourceURI = this.mMyFutureBuddies.getResource_uri();
         String[] resourceURIArray = resourceURI.split("/");
-
         Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_MY_FB_ENUMERATION + "/personalize/forums/" + resourceURIArray[resourceURIArray.length - 1]);
-
         AnalyticsUtils.AppIndexingView("CollegeDekho - MyFutureBuddy - " + this.mMyFutureBuddies.getInstitute_name(), val, val, (MainActivity) this.getActivity(), false);
     }
 
@@ -386,13 +371,10 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             this.mEmptyTextView.setVisibility(View.GONE);
 
         this.mMyFBCommentsSet.set(this.mMyFBCommentsSet.size() - 1, comment);
-
         this.mMyFBCommentsListAdapter.notifyItemChanged(this.mMyFBCommentsSet.size() - 1);
         //this.mMyFBCommentsListAdapter.notifyItemInserted(this.mMyFBCommentsSet.size() - 1);
         this.mMyFBCommentsListAdapter.notifyDataSetChanged();
-
         this.mCommentsListView.scrollToPosition(this.mMyFBCommentsSet.size() - 1);
-
         this.setmSubmittingState(false);
     }
     public void sendChatRequest(String value)
@@ -406,13 +388,10 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             return;
 
         this.mMyFBCommentsSet.clear();
-
         if (this.mEmptyTextView.getVisibility() == View.VISIBLE)
             this.mEmptyTextView.setVisibility(View.GONE);
-
         this.mMyFBCommentsSet.addAll(chatPings);
         this.mMyFBCommentsListAdapter.notifyDataSetChanged();
-
         int netNewComments = newCommentCount - mInitialCount;
         this.mInitialCount = newCommentCount;
 
@@ -449,8 +428,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
     @Override
     public String getEntity() {
-        if (this.mMyFutureBuddies != null)
-        {
+        if (this.mMyFutureBuddies != null){
             String[] resourceURISplit = this.mMyFutureBuddies.getResource_uri().split("/");
             return resourceURISplit[resourceURISplit.length - 1];
         }

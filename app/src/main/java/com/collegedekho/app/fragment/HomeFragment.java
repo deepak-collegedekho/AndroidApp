@@ -3,7 +3,6 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,35 +89,38 @@ public class HomeFragment extends BaseFragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        Constants.READY_TO_CLOSE = true;
-    }
-
-    @Override
     public void onDestroy() {
         Utils.UnregisterReceiver(this.getActivity());
         super.onDestroy();
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        Constants.READY_TO_CLOSE = true;
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (mainActivity != null) {
+
+            // this will change back arrow to hamburger icon on toolbar
+            if (mainActivity.mDrawerToggle != null) {
+                mainActivity.mDrawerToggle.setDrawerIndicatorEnabled(false);
+            }
+        }
+    }
+
+
+    @Override
     public void onResume() {
         super.onResume();
-        try {
-            getActivity().invalidateOptionsMenu();
-        } catch (Exception e) {
-           e.printStackTrace();
-            Log.e(TAG, e.getMessage());
-        }
-
         Constants.READY_TO_CLOSE = false;
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
 
             // this will change back arrow to hamburger icon on toolbar
-            if(mainActivity.getSupportActionBar() != null && mainActivity.mDrawerToggle != null){
+            if(mainActivity.mDrawerToggle != null){
                 mainActivity.mDrawerToggle.setDrawerIndicatorEnabled(true);
             }
+            mainActivity.invalidateOptionsMenu();
             mainActivity.currentFragment = this;
             mainActivity.mUpdateTabMenuItem(-1);
             mainActivity.speakMessageForAccessibility("Welcome To your Dashboard.");

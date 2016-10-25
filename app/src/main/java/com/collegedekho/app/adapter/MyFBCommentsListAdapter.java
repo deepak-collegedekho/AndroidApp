@@ -41,13 +41,15 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
     private Context mContext;
     private volatile SimpleDateFormat mSDF;
     private final ImageLoader mImageLoader;
-    public boolean IS_UP_SCROLLING = true;
+    private LayoutInflater mLayoutInflater;
+
 
 
 
     public MyFBCommentsListAdapter(Context context, ArrayList<MyFutureBuddyComment> myFBCommentList) {
         this.mMyFBCommentList = myFBCommentList;
         this.mContext = context;
+        this.mLayoutInflater = LayoutInflater.from(mContext);
         this.mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
     }
 
@@ -57,7 +59,7 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(mContext).inflate(R.layout.my_fb_comment_card, parent, false);
+        View rootView = mLayoutInflater.inflate(R.layout.my_fb_comment_card, parent, false);
         try {
             return new MyFBCommentsHolder(rootView, (MyFutureBuddiesFragment.OnMyFBInteractionListener) mContext);
         } catch (ClassCastException e) {

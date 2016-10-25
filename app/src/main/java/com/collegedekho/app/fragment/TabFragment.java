@@ -150,18 +150,18 @@ public class TabFragment extends  BaseFragment{
         });
 
 
-       if(MainActivity.mProfile != null) {
+        if(MainActivity.mProfile != null) {
 
-           updateUserProfile(rootView, MainActivity.mProfile);
+            updateUserProfile(rootView, MainActivity.mProfile);
             String image = MainActivity.mProfile.getImage();
             if (image != null && ! image.isEmpty()) {
                 mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
                 mProfileImage.setVisibility(View.VISIBLE);
             }
-           if(mExamDetailList == null || mExamDetailList.isEmpty()){
-               mExamDetailList = MainActivity.mProfile.getYearly_exams();
-           }
-       }
+            if(mExamDetailList == null || mExamDetailList.isEmpty()){
+                mExamDetailList = MainActivity.mProfile.getYearly_exams();
+            }
+        }
         if(this.mExamDetailList != null && this.mExamDetailList.size() > 0) {
             this.mExamTabPager.setVisibility(View.VISIBLE);
             this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
@@ -185,10 +185,10 @@ public class TabFragment extends  BaseFragment{
                 public void onPageScrollStateChanged(int state) {
                     Log.e("","");
                 }
-           });
+            });
 
-           rootView.findViewById(R.id.exam_swipe_listener_layout).setOnTouchListener(this.onSwipeTouchListener);
-           rootView.findViewById(R.id.include_layout_home_widget).setOnTouchListener(this.onSwipeTouchListener);
+            rootView.findViewById(R.id.exam_swipe_listener_layout).setOnTouchListener(this.onSwipeTouchListener);
+            rootView.findViewById(R.id.include_layout_home_widget).setOnTouchListener(this.onSwipeTouchListener);
 
             if(this.isFistTime) {
                 this.isFistTime = false;
@@ -209,6 +209,10 @@ public class TabFragment extends  BaseFragment{
         rootView.findViewById(R.id.home_widget_third).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_fourth).setOnClickListener(this);
         rootView.findViewById(R.id.profile_image).setOnClickListener(this);
+        rootView.findViewById(R.id.btn_tab_step_by_step).setOnClickListener(this);
+        rootView.findViewById(R.id.btn_tab_psychometric_test).setOnClickListener(this);
+        rootView.findViewById(R.id.btn_tab_psychometric_report).setOnClickListener(this);
+
         rootView.findViewById(R.id.include_image_layout).findViewById(R.id.profile_image_edit_button).setOnClickListener(this);
 
         String psychometricResults = sharedPreferences.getString("psychometric_report", null);
@@ -220,31 +224,6 @@ public class TabFragment extends  BaseFragment{
             rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.btn_tab_psychometric_report).setVisibility(View.GONE);
         }
-
-        rootView.findViewById(R.id.btn_tab_psychometric_test).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mListener.onPsychometricTestSelected();
-            }
-        });
-
-        rootView.findViewById(R.id.btn_tab_psychometric_report).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mListener.onTabPsychometricReport();
-            }
-        });
-
-//        if (MainActivity.mProfile.getStep_by_step_given() == 1)
-//            rootView.findViewById(R.id.btn_tab_step_by_step).setVisibility(View.GONE);
-
-        rootView.findViewById(R.id.btn_tab_step_by_step).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mListener.onTabStepByStep();
-            }
-        });
-
         return rootView;
     }
 
@@ -263,24 +242,24 @@ public class TabFragment extends  BaseFragment{
     public void onResume() {
         super.onResume();
 
-            if (MainActivity.mProfile.getYearly_exams() != null && MainActivity.mProfile.getYearly_exams().size() > 0) {
-                mExamsTabLayout.setVisibility(View.VISIBLE);
-                this.mExamDetailList = MainActivity.mProfile.getYearly_exams();
-                this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
-                mExamTabPager.setAdapter(this.mDetailsAdapter);
-                mExamTabPager.invalidate();
-                if (mExamDetailList != null && !mExamDetailList.isEmpty()) {
-                    this.mExamDetail = this.mExamDetailList.get(this.mExamTabPager.getCurrentItem());
-                }
-                if (mPagerHeader != null)
-                    ((ViewPager.LayoutParams) mPagerHeader.getLayoutParams()).isDecor = true;
-                if (mExamDetailList != null && selectedTabPosition < mExamDetailList.size())
-                    mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
-            } else {
-                if (selectedTabPosition == 3)
-                    selectedTabPosition = 1;
-                mExamsTabLayout.setVisibility(View.GONE);
+        if (MainActivity.mProfile.getYearly_exams() != null && MainActivity.mProfile.getYearly_exams().size() > 0) {
+            mExamsTabLayout.setVisibility(View.VISIBLE);
+            this.mExamDetailList = MainActivity.mProfile.getYearly_exams();
+            this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
+            mExamTabPager.setAdapter(this.mDetailsAdapter);
+            mExamTabPager.invalidate();
+            if (mExamDetailList != null && !mExamDetailList.isEmpty()) {
+                this.mExamDetail = this.mExamDetailList.get(this.mExamTabPager.getCurrentItem());
             }
+            if (mPagerHeader != null)
+                ((ViewPager.LayoutParams) mPagerHeader.getLayoutParams()).isDecor = true;
+            if (mExamDetailList != null && selectedTabPosition < mExamDetailList.size())
+                mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
+        } else {
+            if (selectedTabPosition == 3)
+                selectedTabPosition = 1;
+            mExamsTabLayout.setVisibility(View.GONE);
+        }
         MainActivity mainActivity = (MainActivity)getActivity();
         if (mainActivity != null) {
             mainActivity.currentFragment = this;
@@ -292,8 +271,8 @@ public class TabFragment extends  BaseFragment{
             if(this.mExamDetailList.size() > pagerPosition)
                 this.mExamDetail = this.mExamDetailList.get(pagerPosition);
         }else{
-                this.mExamDetail = new ProfileExam();
-                this.mExamDetail.setId(0);
+            this.mExamDetail = new ProfileExam();
+            this.mExamDetail.setId(0);
         }
         this.mUpdateSubMenuItem();
     }
@@ -314,7 +293,7 @@ public class TabFragment extends  BaseFragment{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-       try{
+        try{
             if (context instanceof MainActivity)
                 this.mListener = (OnHomeItemSelectListener)context;
         }
@@ -349,25 +328,31 @@ public class TabFragment extends  BaseFragment{
     @Override
     public void onClick(View view) {
         super.onClick(view);
-        if(view.getId() == R.id.profile_image || view.getId() == R.id.profile_image_edit_button) {
-            if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
-                ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
-                return;
-            }
-            if(mListener != null)
+        switch (view.getId()){
+            case R.id.profile_image:
+            case R.id.profile_image_edit_button:
+                if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+                    ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
+                    return;
+                }
                 mListener.requestForProfileFragment();
-        }
-        if (view.getId() == R.id.btn_tab_psychometric_test)
-            mListener.onPsychometricTestSelected();
-        if (view.getId() == R.id.btn_tab_step_by_step)
-            mListener.onTabStepByStep();
-        else {
-            try {
-                this.selectedSubMenuPosition = Integer.parseInt((String) view.getTag());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            this.mSubMenuItemClickListener();
+                break;
+            case R.id.btn_tab_psychometric_test:
+                mListener.onPsychometricTestSelected();
+                break;
+            case R.id.btn_tab_psychometric_report:
+                mListener.onTabPsychometricReport();
+                break;
+            case R.id.btn_tab_step_by_step:
+                mListener.onTabStepByStep();
+                break;
+            default:
+                try {
+                    this.selectedSubMenuPosition = Integer.parseInt((String) view.getTag());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                this.mSubMenuItemClickListener();
         }
     }
 
@@ -730,16 +715,16 @@ public class TabFragment extends  BaseFragment{
     }
 
 
-        /**
-         * This interface must be implemented by activities that contain this
-         * fragment to allow an interaction in this fragment to be communicated
-         * to the activity and potentially other fragments contained in that
-         * activity.
-         * <p>
-         * See the Android Training lesson <a href=
-         * "http://developer.android.com/training/basics/fragments/communicating.html"
-         * >Communicating with Other Fragments</a> for more information.
-         */
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
     public  interface OnHomeItemSelectListener {
 
         void onExamTabSelected(ProfileExam tabPosition);

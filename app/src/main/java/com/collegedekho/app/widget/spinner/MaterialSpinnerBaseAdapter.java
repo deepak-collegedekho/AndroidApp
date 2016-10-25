@@ -19,7 +19,6 @@ package com.collegedekho.app.widget.spinner;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +46,8 @@ public abstract class MaterialSpinnerBaseAdapter<T> extends BaseAdapter {
       LayoutInflater inflater = LayoutInflater.from(context);
       convertView = inflater.inflate(R.layout.layout_profile_spinner_item, parent, false);
       textView = (TextView) convertView.findViewById(R.id.tv_tinted_spinner);
-      textView.setTextColor(textColor);
+     // textView.setTextColor(textColor);
+
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
         Configuration config = context.getResources().getConfiguration();
         if (config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
@@ -62,12 +62,12 @@ public abstract class MaterialSpinnerBaseAdapter<T> extends BaseAdapter {
     ProfileSpinnerItem baseObject = (ProfileSpinnerItem)getItem(position);
     textView.setText(baseObject.getName());
 
-    if(baseObject.isSelected()){
+   if(baseObject.isSelected()){
       textView.setActivated(true);
-      textView.setTextColor(Color.WHITE);
+      //textView.setTextColor(Color.WHITE);
     }else{
       textView.setActivated(false);
-      textView.setTextColor(textColor);
+      //textView.setTextColor(textColor);
     }
     return convertView;
   }
