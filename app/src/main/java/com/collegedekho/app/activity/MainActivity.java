@@ -47,6 +47,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -70,6 +71,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.appsflyer.AppsFlyerConversionListener;
@@ -338,8 +340,8 @@ public class MainActivity extends AppCompatActivity
     private Runnable gcmDialogRunnable;
     // navigation drawer and toolbar variables
     private Toolbar mToolbar;
-    private NavigationView mNavigationView ;
-    private DrawerLayout mDrawerLayout ;
+    private NavigationView mNavigationView;
+    private DrawerLayout mDrawerLayout;
     public ActionBarDrawerToggle mDrawerToggle;
     private OTPReceiver mOtpReceiver;
 
@@ -372,8 +374,8 @@ public class MainActivity extends AppCompatActivity
         else if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(intentType)) {
                 this.mOtherAppSharedMessage = intent.getStringExtra(Intent.EXTRA_TEXT);
-            } else if (intentType.startsWith("image/")) {
-                // Handle single image being sent
+            } else {
+                Toast.makeText(this, "Sorry!! Only text content can be shared", Toast.LENGTH_SHORT).show();
             }
         }
         //TODO: changed else if to if, watch out for consequences
@@ -989,6 +991,7 @@ public class MainActivity extends AppCompatActivity
 
         String resourceURI = "personalize/forums/";
         MainActivity.resource_uri = Constants.BASE_URL + resourceURI;
+        MainActivity.resource_uri_with_notification_id = Constants.BASE_URL + resourceURI;
         MainActivity.type = Constants.TAG_FRAGMENT_MY_FB_ENUMERATION;
         this.mHandleNotifications(true);
     }
@@ -3068,7 +3071,6 @@ public class MainActivity extends AppCompatActivity
 
             sharedPreferences.edit().putBoolean(getString(R.string.USER_CREATED), true).apply();
 
-            String token = sharedPreferences.getString("fcmToken", "");
 
             IS_USER_CREATED = true;
 
@@ -3076,15 +3078,20 @@ public class MainActivity extends AppCompatActivity
             eventValue.put(Constants.TAG_USER_LOGIN, Constants.TAG_PHONE_NUMBER_LOGIN);
             SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
 
-            String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+            String token = sharedPreferences.getString(getString(R.string.FCM_TOKEN), "");
 
-            HashMap<String, String> params = (HashMap<String, String>) Utils.GetDeviceInfo(this);
+            if (!token.isEmpty())
+            {
+                String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+                HashMap<String, String> params = (HashMap<String, String>) Utils.GetDeviceInfo(this);
 
-            params.put(getApplicationContext().getString(R.string.USER_DEVICE_ID), deviceId);
-            params.put(getApplicationContext().getString(R.string.USER_FCM_REGISTRATION_ID), token);
-            params.put(getApplicationContext().getString(R.string.USER_APP_SOURCE), String.valueOf(Constants.SOURCE_COLLEGE_DEKHO_APP));
+                params.put(getApplicationContext().getString(R.string.USER_DEVICE_ID), deviceId);
+                params.put(getApplicationContext().getString(R.string.USER_FCM_REGISTRATION_ID), token);
+                params.put(getApplicationContext().getString(R.string.USER_APP_SOURCE), String.valueOf(Constants.SOURCE_COLLEGE_DEKHO_APP));
 
-            this.mMakeNetworkCall(Constants.TAG_FCM_TOKEN_SYNC, Constants.BASE_URL+ "register-device/", params, Request.Method.POST);
+                this.mMakeNetworkCall(Constants.TAG_FCM_TOKEN_SYNC, Constants.BASE_URL+ "register-device/", params, Request.Method.POST);
+            }
+
         }
     }
 
@@ -6700,7 +6707,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public String getOtherAppSharedMessage(){
-        return  this.mOtherAppSharedMessage;
+        return this.mOtherAppSharedMessage;
     }
 
     public void setOtherAppSharedMessage(String message){

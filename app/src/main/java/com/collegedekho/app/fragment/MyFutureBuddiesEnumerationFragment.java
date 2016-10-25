@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -135,7 +136,11 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment implements 
         MainActivity mMainActivity = (MainActivity) this.getActivity();
 
         if (mMainActivity != null)
+        {
             mMainActivity.currentFragment = this;
+            if (mMainActivity.getOtherAppSharedMessage() != null && !mMainActivity.getOtherAppSharedMessage().trim().isEmpty())
+                Toast.makeText(this.getContext(), "Please select a college to share the content with", Toast.LENGTH_SHORT).show();
+        }
 
         View view =  getView();
         if(view != null ){
