@@ -1314,6 +1314,7 @@ public class MainActivity extends AppCompatActivity
         }else if(currentFragment instanceof WishlistFragment){
             isTuteComplete = sharedPreferences.getBoolean("Wishlist tute", false);
             showMenuGroupVIsibility(menu, isTuteComplete);
+            menu.setGroupVisible(R.id.search_menu_group, false);
         }else  if(currentFragment instanceof CDRecommendedInstituteFragment){
             int tab = ((CDRecommendedInstituteFragment) currentFragment).currentTabId;
             if(tab == 1){
@@ -1323,6 +1324,7 @@ public class MainActivity extends AppCompatActivity
                 isTuteComplete = sharedPreferences.getBoolean("Wishlist tute", false);
                 showMenuGroupVIsibility(menu, isTuteComplete);
             }
+            menu.setGroupVisible(R.id.search_menu_group, false);
         } else if(currentFragment instanceof  HomeFragment){
             isTuteComplete = sharedPreferences.getBoolean("Home Tute", false);
             showMenuGroupVIsibility(menu, isTuteComplete);
@@ -1369,7 +1371,7 @@ public class MainActivity extends AppCompatActivity
                 if (mSearchView != null) {
                     mSearchView.setQueryHint("Search Questions");
                 }
-            } else if (currentFragment instanceof InstituteListFragment && mCurrentTitle != null && !(mCurrentTitle.equals("WishList Institutes") || mCurrentTitle.equals("Recommended Institutes"))) {
+            } else if (currentFragment instanceof InstituteListFragment){// && mCurrentTitle != null && !(mCurrentTitle.equals("WishList Institutes") || mCurrentTitle.equals("Recommended Institutes"))) {
                 menu.setGroupVisible(R.id.search_menu_group, true);
                 if (mSearchView != null) {
                     mSearchView.setQueryHint("Search Institutes");
@@ -6119,14 +6121,17 @@ public class MainActivity extends AppCompatActivity
             List<News> newsList = JSON.std.listOfFrom(News.class, "[" + response + "]");
             this.mParseSimilarNews(newsList);
             if (newsList != null && !newsList.isEmpty()) {
-                boolean isAddToStack = false;
-                if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
-                    isAddToStack = true;
-                }
                 if (currentFragment instanceof NewsDetailFragment) {
                     (currentFragment).updateNews(newsList.get(0));
                 }
                 else {
+                    boolean isAddToStack = false;
+                    if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+                        isAddToStack = true;
+                    }
+                    if(newsList == null){
+                        newsList = new ArrayList<>();
+                    }
                     Fragment fragment = NewsDetailFragment.newInstance(newsList.get(0), new ArrayList<>(this.mNewsList));
                     this.mDisplayFragment(fragment, isAddToStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
                 }
@@ -6146,14 +6151,17 @@ public class MainActivity extends AppCompatActivity
             List<Articles> articlesList = JSON.std.listOfFrom(Articles.class, "[" + response + "]");
             this.mParseSimilarArticle(articlesList);
             if (articlesList != null && !articlesList.isEmpty()) {
-                boolean isAddToStack = false;
-                if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
-                    isAddToStack = true;
-                }
                 if (currentFragment instanceof ArticleDetailFragment) {
                     (currentFragment).updateArticle(articlesList.get(0));
                 }
                 else {
+                    boolean isAddToStack = false;
+                    if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+                        isAddToStack = true;
+                    }
+                    if(mArticlesList == null){
+                        mArticlesList = new ArrayList<>();
+                    }
                    Fragment fragment = ArticleDetailFragment.newInstance(articlesList.get(0), this.mArticlesList);
                     this.mDisplayFragment(fragment, isAddToStack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
                 }
