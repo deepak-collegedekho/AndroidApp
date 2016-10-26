@@ -3,6 +3,8 @@ package com.collegedekho.app.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Random;
+
 /**
  * Created by harshvardhan on 04/10/16.
  */
@@ -27,7 +29,7 @@ public class NotificationPayload implements Parcelable{
     //if this is not populated, nothing will open up, but just the app home page
     private String screen = "";
     //this is required for stuff n ol
-    private String notification_id = "";
+    private String notification_id = "0";
     //this is also required for stuff n ol
     private String entity_id = "";
 

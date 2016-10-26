@@ -318,4 +318,7 @@ public class Constants
     public static final int SOURCE_COLLEGE_DEKHO_APP = 1;
     public static final int SOURCE_COLLEGE_APP_SDK = 2;
     public static final int SOURCE_EXAM_APP_SDK = 3;
+
+    public static final int THRESHOLD_CHARACTER_LIMIT_FOR_NOTIFICATION_TITLE = 30;
+    public static final float CRUSHED_NOTIFICATION_TITLE_SIZE = 14.0f;
 }

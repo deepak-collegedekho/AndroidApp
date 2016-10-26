@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Profile;
@@ -93,7 +94,7 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
                                 Map<String, String> params = Utils.GetDeviceInfo(getApplicationContext());
 
                                 params.put(getApplicationContext().getString(R.string.USER_DEVICE_ID), deviceId);
-                                params.put(getApplicationContext().getString(R.string.USER_FCM_REGISTRATION_ID), profile.getToken());
+                                params.put(getApplicationContext().getString(R.string.USER_FCM_REGISTRATION_ID), token);
                                 params.put(getApplicationContext().getString(R.string.USER_APP_SOURCE), String.valueOf(Constants.SOURCE_COLLEGE_DEKHO_APP));
 
                                 DeviceFcmRegistrationTask applyTask = new DeviceFcmRegistrationTask(params, profile.getToken());

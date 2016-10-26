@@ -69,7 +69,7 @@ public class CollegeDekhoNotifications implements ICollegeDekhoNotifications{
             for (Map.Entry<String, String> entry : messageDataMap.entrySet())
                 intent.putExtra(entry.getKey(), entry.getValue());
 
-            this.pendingIntent = PendingIntent.getActivity(this.mContext, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+            this.pendingIntent = PendingIntent.getActivity(this.mContext, Integer.parseInt(this.mNotificationPayload.getNotification_id()), intent, PendingIntent.FLAG_ONE_SHOT);
 
             this.builder = new NotificationCompat.Builder(this.mContext.getApplicationContext());
 

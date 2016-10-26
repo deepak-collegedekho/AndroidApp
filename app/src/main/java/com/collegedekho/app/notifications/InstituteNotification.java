@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.RemoteViews;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.resource.Constants;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 public class InstituteNotification extends CollegeDekhoNotifications {
 
-    private static final String TAG = "NewsAndArticleNotification";
+    private static final String TAG = "InstituteNotification";
 
     @Override
     public void process(Map<String, String> messageDataMap, Context context) {
@@ -42,8 +43,8 @@ public class InstituteNotification extends CollegeDekhoNotifications {
                 CharSequence titleSequence = title.subSequence(0, title.length());
                 super.contentView.setTextViewText(R.id.notification_title, titleSequence);
 
-                if (Build.VERSION.SDK_INT >= 16 && titleSequence.length() > 50) {
-                    super.contentView.setTextViewTextSize(R.id.notification_title, 1, 14.0f);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && titleSequence.length() > Constants.THRESHOLD_CHARACTER_LIMIT_FOR_NOTIFICATION_TITLE) {
+                    super.contentView.setTextViewTextSize(R.id.notification_title, 1, Constants.CRUSHED_NOTIFICATION_TITLE_SIZE);
                 }
             }
             else
@@ -70,12 +71,14 @@ public class InstituteNotification extends CollegeDekhoNotifications {
                 if (bigTitle != null && !bigTitle.isEmpty())
                 {
                     //if bit_title is there, show UI
-                    CharSequence bigTitleSequence = bigTitle.subSequence(0, bigTitle.length() -1);
+                    CharSequence bigTitleSequence = bigTitle.subSequence(0, bigTitle.length());
 
                     super.contentBigView.setTextViewText(R.id.expanded_notification_title, bigTitleSequence);
                 }
                 else
                     super.contentBigView.setTextViewText(R.id.expanded_notification_title, title);
+
+                super.contentBigView.setTextViewText(R.id.expanded_notification_time, timeSequence);
 
                 bigImageURL = super.mNotificationPayload.getBig_image();
 

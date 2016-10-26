@@ -2431,13 +2431,28 @@ public class MainActivity extends AppCompatActivity
         boolean hideProgressDialog=true;
         switch (tags[0]) {
             case Constants.TAG_SKIP_LOGIN:
+                //Deleting exam summary on login, since old user's and new user's are merged. And profile is taken from latest user.
+                // So old mDeviceProfile's exam summary gets obsolete. We need to reset the cache
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
+                this.mUserCreatedSuccessfully(response, Constants.TAG_SKIP_LOGIN);
+                break;
             case Constants.TAG_TRUE_SDK_LOGIN:
+                //Deleting exam summary on login, since old user's and new user's are merged. And profile is taken from latest user.
+                // So old mDeviceProfile's exam summary gets obsolete. We need to reset the cache
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
+                this.mUserCreatedSuccessfully(response, Constants.TAG_TRUE_SDK_LOGIN);
+                break;
             case Constants.TAG_FACEBOOK_LOGIN:
+                //Deleting exam summary on login, since old user's and new user's are merged. And profile is taken from latest user.
+                // So old mDeviceProfile's exam summary gets obsolete. We need to reset the cache
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
+                this.mUserCreatedSuccessfully(response, Constants.TAG_FACEBOOK_LOGIN);
+                break;
             case Constants.TAG_PHONE_NUMBER_LOGIN:
                 //Deleting exam summary on login, since old user's and new user's are merged. And profile is taken from latest user.
                 // So old mDeviceProfile's exam summary gets obsolete. We need to reset the cache
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                this.mUserCreatedSuccessfully(response);
+                this.mUserCreatedSuccessfully(response, Constants.TAG_PHONE_NUMBER_LOGIN);
                 break;
             case Constants.TAG_USER_PHONE_ADDED:
                 onMobileNumberSubmitted();
@@ -3024,7 +3039,7 @@ public class MainActivity extends AppCompatActivity
      * and resp
      * @param response response
      */
-    private void mUserCreatedSuccessfully(String response) {
+    private void mUserCreatedSuccessfully(String response, String type) {
         Map<String, Object> responseMap = null;
         try {
             responseMap = JSON.std.mapFrom(response);
@@ -3071,16 +3086,15 @@ public class MainActivity extends AppCompatActivity
 
             sharedPreferences.edit().putBoolean(getString(R.string.USER_CREATED), true).apply();
 
-
             IS_USER_CREATED = true;
 
             HashMap<String, Object> eventValue = new HashMap<>();
-            eventValue.put(Constants.TAG_USER_LOGIN, Constants.TAG_PHONE_NUMBER_LOGIN);
+            eventValue.put(Constants.TAG_USER_LOGIN, type);
             SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
 
-            String token = sharedPreferences.getString(getString(R.string.FCM_TOKEN), "");
+            String token = sharedPreferences.getString(getString(R.string.FCM_TOKEN), null);
 
-            if (!token.isEmpty())
+            if (token != null && !token.isEmpty())
             {
                 String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
                 HashMap<String, String> params = (HashMap<String, String>) Utils.GetDeviceInfo(this);
@@ -3089,9 +3103,8 @@ public class MainActivity extends AppCompatActivity
                 params.put(getApplicationContext().getString(R.string.USER_FCM_REGISTRATION_ID), token);
                 params.put(getApplicationContext().getString(R.string.USER_APP_SOURCE), String.valueOf(Constants.SOURCE_COLLEGE_DEKHO_APP));
 
-                this.mMakeNetworkCall(Constants.TAG_FCM_TOKEN_SYNC, Constants.BASE_URL+ "register-device/", params, Request.Method.POST);
+                this.mMakeNetworkCall(Constants.TAG_FCM_TOKEN_SYNC, Constants.BASE_URL + "register-device/", params, Request.Method.POST);
             }
-
         }
     }
 

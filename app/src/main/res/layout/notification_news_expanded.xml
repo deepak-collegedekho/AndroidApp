@@ -42,10 +42,10 @@
             android:maxLines="3"
             android:layout_weight="1.0" />
         <TextView
+            android:id="@+id/expanded_notification_time"
             android:textColor="#fff"
             android:gravity="bottom"
             android:layout_gravity="right"
-            android:id="@+id/notification_time"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:text="11:23 AM" />

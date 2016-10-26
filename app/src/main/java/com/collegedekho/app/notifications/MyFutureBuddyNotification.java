@@ -6,6 +6,7 @@ import android.os.Build;
 import android.widget.RemoteViews;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.resource.Constants;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.Map;
@@ -52,8 +53,8 @@ public class MyFutureBuddyNotification extends CollegeDekhoNotifications {
                 CharSequence titleSequence = title.subSequence(0, title.length());
                 super.contentView.setTextViewText(R.id.notification_fb_title, titleSequence);
 
-                if (Build.VERSION.SDK_INT >= 16 && titleSequence.length() > 50) {
-                    super.contentView.setTextViewTextSize(R.id.notification_fb_title, 1, 14.0f);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && titleSequence.length() > Constants.THRESHOLD_CHARACTER_LIMIT_FOR_NOTIFICATION_TITLE) {
+                    super.contentView.setTextViewTextSize(R.id.notification_fb_title, 1, Constants.CRUSHED_NOTIFICATION_TITLE_SIZE);
                 }
             }
             else
@@ -79,15 +80,23 @@ public class MyFutureBuddyNotification extends CollegeDekhoNotifications {
                 // Inflate the notification_my_fb_expanded layout as RemoteViews
                 super.contentBigView = new RemoteViews(super.mContext.getPackageName(), R.layout.notification_my_fb_expanded);
 
+                CharSequence bigTitleSequence = bigTitle.subSequence(0, bigTitle.length());
+
                 if (bigTitle != null && !bigTitle.isEmpty())
                 {
                     //if bit_title is there, show UI
-                    CharSequence bigTitleSequence = bigTitle.subSequence(0, bigTitle.length());
-
                     super.contentBigView.setTextViewText(R.id.notification_fb_title_expanded, bigTitleSequence);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && bigTitleSequence.length() > Constants.THRESHOLD_CHARACTER_LIMIT_FOR_NOTIFICATION_TITLE) {
+                        super.contentBigView.setTextViewTextSize(R.id.notification_fb_title_expanded, 1, Constants.CRUSHED_NOTIFICATION_TITLE_SIZE);
+                    }
                 }
                 else {
                     super.contentBigView.setTextViewText(R.id.notification_fb_title_expanded, title);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && title.length() > Constants.THRESHOLD_CHARACTER_LIMIT_FOR_NOTIFICATION_TITLE) {
+                        super.contentBigView.setTextViewTextSize(R.id.notification_fb_title_expanded, 1, Constants.CRUSHED_NOTIFICATION_TITLE_SIZE);
+                    }
                 }
 
                 if (bigBody != null && !bigBody.isEmpty())

@@ -60,7 +60,7 @@
         android:textColor="@color/textSecondary"
         android:textSize="@dimen/m14sp"
         android:layout_marginTop="@dimen/activity_vertical_margin_tiny"
-        android:layout_marginBottom="@dimen/activity_vertical_margin_tiny"
+        android:layout_marginBottom="@dimen/activity_vertical_margin_small"
         android:layout_toRightOf="@id/notification_fb_icon_expanded"
         android:layout_toStartOf="@id/notification_fb_time_expanded"
         android:layout_toLeftOf="@id/notification_fb_time_expanded"
