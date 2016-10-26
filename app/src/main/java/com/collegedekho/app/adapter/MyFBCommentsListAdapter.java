@@ -166,9 +166,11 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
             }
             int left = Utils.getPadding(mContext,10);
             int right = Utils.getPadding(mContext,10);
-            int top = Utils.getPadding(mContext,20);
+            int top = Utils.getPadding(mContext,5);
             int bottom = Utils.getPadding(mContext,5);
-            qnaAnswerHolder.userName.setPadding(left,0,right,0);
+            qnaAnswerHolder.mUserImageOther.setPadding(0,top,0,0);
+            qnaAnswerHolder.mUserImageSelf.setPadding(0,top,0,0);
+            qnaAnswerHolder.userName.setPadding(left,top,right,0);
             qnaAnswerHolder.time.setPadding(left,0,right,bottom);
             qnaAnswerHolder.time.setTextColor(mContext.getResources().getColor(R.color.chat_time_gray));
             qnaAnswerHolder.userName.setText(myFBComment.getUser());
