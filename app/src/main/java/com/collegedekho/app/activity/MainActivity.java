@@ -4157,8 +4157,6 @@ public class MainActivity extends AppCompatActivity
                 return "Loading Questions";
             case Constants.TAG_LOAD_MY_FB:
                 return "Loading your Forums chat";
-            /*case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
-                return "Submitting Comment...";*/
             case Constants.ACTION_QNA_ANSWER_SUBMITTED:
                 return "Submitting Answer";
             case Constants.ACTION_VOTE_QNA_QUESTION_ENTITY:
@@ -4204,6 +4202,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_REQUEST_FOR_EXAMS:
             case Constants.REFRESH_CHATROOM:
             case Constants.TAG_REFRESH_PROFILE:
+            case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
                 return null;
             case "":
                 return null;

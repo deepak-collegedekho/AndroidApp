@@ -173,7 +173,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     public void updateUserProfile() {
         mProfile = MainActivity.mProfile;
-        if (mProfile == null)
+        if (mProfile == null && !isAdded())
             return;
         if(mUserImageLayout != null)
         setProfileProgressStatus(mUserImageLayout.findViewById(R.id.user_profile_progress), mProfile.getProgress());

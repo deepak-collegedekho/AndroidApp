@@ -150,14 +150,15 @@ public class InstituteOverviewFragment extends BaseFragment {
         else
             facilityLayout.setVisibility(View.VISIBLE);
 
-        for (Facility f : facilities) {
-            NetworkImageView imageView = (NetworkImageView) inflater.inflate(R.layout.item_facility_38dp, facilityLayout, false);
-            imageView.setDefaultImageResId(R.drawable.ic_cd);
-            imageView.setErrorImageResId(R.drawable.ic_cd);
-            imageView.setImageUrl(f.image_new, imageLoader);
-            imageView.setContentDescription(f.tag);
-            facilityLayout.addView(imageView);
-        }
+        if (facilities != null)
+            for (Facility f : facilities) {
+                NetworkImageView imageView = (NetworkImageView) inflater.inflate(R.layout.item_facility_38dp, facilityLayout, false);
+                imageView.setDefaultImageResId(R.drawable.ic_cd);
+                imageView.setErrorImageResId(R.drawable.ic_cd);
+                imageView.setImageUrl(f.image_new, imageLoader);
+                imageView.setContentDescription(f.tag);
+                facilityLayout.addView(imageView);
+            }
     }
 
     /*private void getInfo(ArrayList<String> heads, ArrayList<String> details) {
