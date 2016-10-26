@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -52,6 +53,10 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
     private View mAnswerQuestionFAB;
     private EditText mAnswerETV;
 
+    public QnAQuestionDetailFragment() {
+        // Required empty public constructor
+    }
+
     public static QnAQuestionDetailFragment newInstance(QnAQuestions qnaQuestionAnswers) {
         QnAQuestionDetailFragment fragment = new QnAQuestionDetailFragment();
         Bundle args = new Bundle();
@@ -60,9 +65,6 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
         return fragment;
     }
 
-    public QnAQuestionDetailFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,8 +82,17 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_qna_question_detail, container, false);
+        return inflater.inflate(R.layout.fragment_qna_question_detail, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        updateQnaDetail(view);
+    }
+
+    private void updateQnaDetail(final View rootView){
+        if(rootView == null) return;
         this.mEmptyTextView = (TextView) rootView.findViewById(android.R.id.empty);
         TextView questionUser = (TextView) rootView.findViewById(R.id.question_user);
         TextView questionAskedDate = (TextView) rootView.findViewById(R.id.question_time);
@@ -141,20 +152,20 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
         this.mUpVoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
-                        mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
-                        return;
-                    }
-                    if (v.isSelected()) {
-                        mListener.displayMessage(R.string.ALREADY_UP_VOTED);
-                        return;
-                    }
-                    mUpVoteButton.setClickable(false);
-                    if (mQnAQuestion.getCurrent_user_vote_type() == Constants.DISLIKE_THING) {
-                        mListener.onQnAQuestionVoteFromDetail(Constants.NOT_INTERESTED_THING, mQnAQuestion.getIndex());
-                    } else {
-                        mListener.onQnAQuestionVoteFromDetail(Constants.LIKE_THING, mQnAQuestion.getIndex());
-                    }
+                if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
+                    mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
+                    return;
+                }
+                if (v.isSelected()) {
+                    mListener.displayMessage(R.string.ALREADY_UP_VOTED);
+                    return;
+                }
+                mUpVoteButton.setClickable(false);
+                if (mQnAQuestion.getCurrent_user_vote_type() == Constants.DISLIKE_THING) {
+                    mListener.onQnAQuestionVoteFromDetail(Constants.NOT_INTERESTED_THING, mQnAQuestion.getIndex());
+                } else {
+                    mListener.onQnAQuestionVoteFromDetail(Constants.LIKE_THING, mQnAQuestion.getIndex());
+                }
 
             }
         });
@@ -184,8 +195,6 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
         this.mAnswersListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         this.mAnswersListView.setAdapter(this.mQnAAnswersListAdapter);
         this.mAnswersListView.setItemAnimator(new DefaultItemAnimator());
-
-        return rootView;
     }
 
     @Override
@@ -418,5 +427,14 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
         if(getActivity() != null) {
                 getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         }
+    }
+
+    public void updateQnaDetailFromNotification(QnAQuestions qnAQuestions){
+        if(qnAQuestions == null )return;
+        this.mQnAQuestion = qnAQuestions;
+        if(this.mQnAQuestion!=null) {
+            this.mQnAAnswersSet = mQnAQuestion.getAnswer_set();
+        }
+        updateQnaDetail(getView());
     }
 }

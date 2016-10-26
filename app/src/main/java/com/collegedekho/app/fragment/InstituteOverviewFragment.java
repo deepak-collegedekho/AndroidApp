@@ -145,7 +145,7 @@ public class InstituteOverviewFragment extends BaseFragment {
     private void setupFacilities(LayoutInflater inflater, LinearLayout facilityLayout, ArrayList<Facility> facilities) {
         ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
 
-        if (facilities.size() <= 0)
+        if (facilities != null && facilities.size() <= 0)
             facilityLayout.setVisibility(View.GONE);
         else
             facilityLayout.setVisibility(View.VISIBLE);

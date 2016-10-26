@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -98,9 +99,17 @@ public class InstituteDetailFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_institute_detail, container, false);
+     return inflater.inflate(R.layout.fragment_institute_detail, container, false);
+    }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        updateInstituteDetail(view);
+    }
 
+    private void updateInstituteDetail(View rootView){
+        if(rootView == null) return;
         if (this.mInstituteType == Constants.CDRecommendedInstituteType.SHORTLIST)
         {
             Animation animation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.simple_grow);
@@ -181,7 +190,7 @@ public class InstituteDetailFragment extends BaseFragment {
                 if(position == 1)
                     mDetailsAdapter.setCourses(courses);
                 else if(position == 4)
-                   mDetailsAdapter.updateInstituteNews(mInstituteNewsList, nextNewsUrl);
+                    mDetailsAdapter.updateInstituteNews(mInstituteNewsList, nextNewsUrl);
                 else if(position == 5)
                     mDetailsAdapter.updateInstituteArticles(mInstituteArticleList, nextArticleUrl);
             }
@@ -194,7 +203,6 @@ public class InstituteDetailFragment extends BaseFragment {
 
         ((ViewPager.LayoutParams) (rootView.findViewById(R.id.pager_header)).getLayoutParams()).isDecor = true;
 
-        return rootView;
     }
 
     public void OnInstituteRemoved()
@@ -315,6 +323,13 @@ public class InstituteDetailFragment extends BaseFragment {
         this.mInstituteArticleList = articleList;
         this.nextArticleUrl = next;
         mDetailsAdapter.updateInstituteArticles( this.mInstituteArticleList, next);
+    }
+
+    public void updateInstitutedFromNotification(Institute institute, Constants.CDRecommendedInstituteType instituteType){
+        this.mInstitute = institute;
+        this.mInstituteType = instituteType;
+        updateInstituteDetail(getView());
+
     }
 
     private class LoadCoursesAsyncTask extends AsyncTask<String, Void, Void> {

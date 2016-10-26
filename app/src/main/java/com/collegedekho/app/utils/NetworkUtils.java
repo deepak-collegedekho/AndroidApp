@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -478,7 +479,7 @@ public class NetworkUtils {
 
         // set volly error on crashlytics;
         Crashlytics.logException(volleyError);
-
+        Log.e("Network Utill", "your url is "+url);
         String json = null;
         int responseCode = -1;
         NetworkResponse response = volleyError.networkResponse;

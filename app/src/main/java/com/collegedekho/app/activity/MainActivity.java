@@ -47,7 +47,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -336,8 +335,6 @@ public class MainActivity extends AppCompatActivity
 
     private SearchView mSearchView = null;
     private ProgressBar mSearchProgress;
-    private Handler gcmDialogHandler=new Handler();
-    private Runnable gcmDialogRunnable;
     // navigation drawer and toolbar variables
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
@@ -686,7 +683,7 @@ public class MainActivity extends AppCompatActivity
             getSupportLoaderManager().initLoader(0, null, this);
 
             // register GCM dialog to ask user'profile data
-            mRegisterGcmDialog();
+          //  mRegisterGcmDialog();
 
             if (IS_USER_CREATED) {
                 // if user is anonymous  then logout from facebook
@@ -1405,6 +1402,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mRegisterGcmDialog(){
+
+       /* private Handler gcmDialogHandler=new Handler();
+        private Runnable gcmDialogRunnable;
         gcmDialogRunnable = new Runnable() {
             @Override
             public void run() {
@@ -1424,7 +1424,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
-        gcmDialogHandler.postDelayed(gcmDialogRunnable,90000);
+        gcmDialogHandler.postDelayed(gcmDialogRunnable,90000);*/
     }
 
     /**
@@ -1476,6 +1476,7 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
+
 
     }
 
@@ -6116,14 +6117,20 @@ public class MainActivity extends AppCompatActivity
 
     private void onPNSNews(String response) {
         try {
-            this.mNewsList = JSON.std.listOfFrom(News.class, "[" + response + "]");
-            this.mParseSimilarNews(this.mNewsList);
-            if (this.mNewsList != null && !this.mNewsList.isEmpty()) {
+            List<News> newsList = JSON.std.listOfFrom(News.class, "[" + response + "]");
+            this.mParseSimilarNews(newsList);
+            if (newsList != null && !newsList.isEmpty()) {
                 boolean isAddToStack = false;
                 if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
                     isAddToStack = true;
                 }
-                this.mDisplayFragment(NewsDetailFragment.newInstance(this.mNewsList.get(0), new ArrayList<>(this.mNewsList)), isAddToStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
+                if (currentFragment instanceof NewsDetailFragment) {
+                    (currentFragment).updateNews(newsList.get(0));
+                }
+                else {
+                    Fragment fragment = NewsDetailFragment.newInstance(newsList.get(0), new ArrayList<>(this.mNewsList));
+                    this.mDisplayFragment(fragment, isAddToStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
+                }
             } else {
                 isFromNotification = false;
                 mLoadUserStatusScreen();
@@ -6137,14 +6144,20 @@ public class MainActivity extends AppCompatActivity
 
     private void onPnsArticles(String response) {
         try {
-            this.mArticlesList = JSON.std.listOfFrom(Articles.class, "[" + response + "]");
-            this.mParseSimilarArticle(mArticlesList);
-            if (this.mArticlesList != null && !this.mArticlesList.isEmpty()) {
+            List<Articles> articlesList = JSON.std.listOfFrom(Articles.class, "[" + response + "]");
+            this.mParseSimilarArticle(articlesList);
+            if (articlesList != null && !articlesList.isEmpty()) {
                 boolean isAddToStack = false;
                 if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
                     isAddToStack = true;
                 }
-                this.mDisplayFragment(ArticleDetailFragment.newInstance(mArticlesList.get(0), this.mArticlesList), isAddToStack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
+                if (currentFragment instanceof ArticleDetailFragment) {
+                    (currentFragment).updateArticle(articlesList.get(0));
+                }
+                else {
+                   Fragment fragment = ArticleDetailFragment.newInstance(articlesList.get(0), this.mArticlesList);
+                    this.mDisplayFragment(fragment, isAddToStack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
+                }
             } else {
                 isFromNotification = false;
                 mLoadUserStatusScreen();
@@ -6158,16 +6171,21 @@ public class MainActivity extends AppCompatActivity
 
     private void onPnsInstituteNews(String response) {
         try {
-            this.mInstituteList = JSON.std.listOfFrom(Institute.class, "[" + response + "]");
-            if (this.mInstituteList != null && !this.mInstituteList.isEmpty()) {
-                this.mInstitute = this.mInstituteList.get(0);
-                int id = this.mInstituteList.get(0).getId();
+            List<Institute> instituteList = JSON.std.listOfFrom(Institute.class, "[" + response + "]");
+            if (instituteList != null && !instituteList.isEmpty()) {
+                this.mInstitute = instituteList.get(0);
+                int id = instituteList.get(0).getId();
                 boolean isAddToStack = false;
                 if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
                     isAddToStack = true;
                 }
-                this.mDisplayFragment(InstituteDetailFragment.newInstance(this.mInstitute, Constants.CDRecommendedInstituteType.RECOMMENDED), isAddToStack, Constants.TAG_FRAGMENT_INSTITUTE);
 
+                 if(currentFragment instanceof InstituteDetailFragment){
+                     ((InstituteDetailFragment) currentFragment).updateInstitutedFromNotification(this.mInstitute, Constants.CDRecommendedInstituteType.RECOMMENDED);
+                 }else {
+                     Fragment fragment = InstituteDetailFragment.newInstance(this.mInstitute, Constants.CDRecommendedInstituteType.RECOMMENDED);
+                     this.mDisplayFragment(fragment, isAddToStack, Constants.TAG_FRAGMENT_INSTITUTE);
+                 }
                 //this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
@@ -6191,7 +6209,12 @@ public class MainActivity extends AppCompatActivity
             if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
                 isAddToStack = true;
             }
-            this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, 0), isAddToStack, Constants.TAG_FRAGMENT_MY_FB);
+            if(currentFragment instanceof MyFutureBuddiesFragment){
+                ((MyFutureBuddiesFragment) currentFragment).updateMyFBFromNotification(this.mFB);
+            }else {
+               Fragment fragment = MyFutureBuddiesFragment.newInstance(this.mFB, 0);
+                this.mDisplayFragment(fragment, isAddToStack, Constants.TAG_FRAGMENT_MY_FB);
+            }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             isFromNotification = false;
@@ -6253,11 +6276,17 @@ public class MainActivity extends AppCompatActivity
             qnaQuestion.setAnswer_set(qnaAnswers);
             qnaQuestion.setTags(tagArrayList);
             boolean isAddToStack = false;
-            if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
+            if (getSupportFragmentManager().getBackStackEntryCount() >= 1) {
                 isAddToStack = true;
             }
-            this.mDisplayFragment(QnAQuestionDetailFragment.newInstance(qnaQuestion), isAddToStack, getResourceString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
-        } catch (Exception e) {
+            //TODO:: when FCM is added for Q&A then replace above parsing code by jackson
+            if (currentFragment instanceof QnAQuestionDetailFragment) {
+                ((QnAQuestionDetailFragment) currentFragment).updateQnaDetailFromNotification(qnaQuestion);
+            } else {
+                Fragment fragment = QnAQuestionDetailFragment.newInstance(qnaQuestion);
+                this.mDisplayFragment(fragment, isAddToStack, getResourceString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
+            }
+        }catch (Exception e) {
             e.printStackTrace();
             isFromNotification = false;
             mLoadUserStatusScreen();

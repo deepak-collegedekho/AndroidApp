@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.collegedekho.app.activity.MainActivity.currentFragment;
+
 public class MyFutureBuddiesFragment extends BaseFragment{
 
     private static final String ARG_PARAM1 = "param1";
@@ -90,8 +92,8 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         } else if (mMyFutureBuddies.getState_name() != null && !mMyFutureBuddies.getState_name().equalsIgnoreCase("null")){
             instiFullName = instiFullName + " | " + mMyFutureBuddies.getState_name().trim();
         }
-
         ((TextView) rootView.findViewById(R.id.fb_title)).setText(instiFullName);
+
         this.mChatText = (EditText) rootView.findViewById(R.id.fb_chat_input);
 
         (rootView.findViewById(R.id.fb_push_chat)).setOnClickListener(new View.OnClickListener() {
@@ -298,7 +300,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         this.mMainActivity = (MainActivity) this.getActivity();
 
         if (this.mMainActivity != null) {
-            this.mMainActivity.currentFragment = this;
+            currentFragment = this;
             this.mOtherAppSharedMessage = mMainActivity.getOtherAppSharedMessage();
         }
 
@@ -438,6 +440,24 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
     @Override
     public void hide() {
+
+    }
+
+    public void updateMyFBFromNotification(MyFutureBuddy myFutureBuddy) {
+        this.mMyFutureBuddies = myFutureBuddy;
+        this.mInitialCount =0;
+        this.mOtherAppSharedMessage = null;
+
+        String instiFullName = mMyFutureBuddies.getInstitute_name();
+        if(mMyFutureBuddies.getCity_name() != null && !mMyFutureBuddies.getCity_name().equalsIgnoreCase("null")){
+            instiFullName = instiFullName + " | " + mMyFutureBuddies.getCity_name().trim();
+        } else if (mMyFutureBuddies.getState_name() != null && !mMyFutureBuddies.getState_name().equalsIgnoreCase("null")){
+            instiFullName = instiFullName + " | " + mMyFutureBuddies.getState_name().trim();
+        }
+        if(getView() != null) {
+            ((TextView) getView().findViewById(R.id.fb_title)).setText(instiFullName);
+        }
+       updateChatPings(mMyFutureBuddies.getFutureBuddiesCommentsSet(),myFutureBuddy.getComments_count());
 
     }
 
