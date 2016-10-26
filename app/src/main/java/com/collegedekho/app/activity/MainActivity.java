@@ -755,9 +755,9 @@ public class MainActivity extends AppCompatActivity
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
 
-        // register drawer layout  and toolbar with DrawerToggle
-        //drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        // register drawer layout  and toolbar with DrawerToggle;
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
 
@@ -2297,7 +2297,7 @@ public class MainActivity extends AppCompatActivity
             if (this.currentFragment instanceof HomeFragment) {
 
                 mShowAppBarLayout();
-
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                 View bottomMenu = findViewById(R.id.bottom_tab_layout);
                 bottomMenu.animate().translationY(0);
                 bottomMenu.setVisibility(View.VISIBLE);
@@ -6129,8 +6129,8 @@ public class MainActivity extends AppCompatActivity
                     if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
                         isAddToStack = true;
                     }
-                    if(newsList == null){
-                        newsList = new ArrayList<>();
+                    if(this.mNewsList == null){
+                        this.mNewsList = new ArrayList<>();
                     }
                     Fragment fragment = NewsDetailFragment.newInstance(newsList.get(0), new ArrayList<>(this.mNewsList));
                     this.mDisplayFragment(fragment, isAddToStack, Constants.TAG_FRAGMENT_NEWS_DETAIL);
@@ -6159,8 +6159,8 @@ public class MainActivity extends AppCompatActivity
                     if(getSupportFragmentManager().getBackStackEntryCount() >= 1){
                         isAddToStack = true;
                     }
-                    if(mArticlesList == null){
-                        mArticlesList = new ArrayList<>();
+                    if(this.mArticlesList == null){
+                        this.mArticlesList = new ArrayList<>();
                     }
                    Fragment fragment = ArticleDetailFragment.newInstance(articlesList.get(0), this.mArticlesList);
                     this.mDisplayFragment(fragment, isAddToStack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
