@@ -8,6 +8,7 @@ public class ProfileSpinnerItem {
     private int id;
     private String name;
     private boolean isSelected;
+    private int institutes_count;
 
     public ProfileSpinnerItem(){
         // required empty constructor
@@ -35,5 +36,13 @@ public class ProfileSpinnerItem {
 
     public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
+    }
+
+    public int getInstitutes_count() {
+        return institutes_count;
+    }
+
+    public void setInstitutes_count(int institutes_count) {
+        this.institutes_count = institutes_count;
     }
 }

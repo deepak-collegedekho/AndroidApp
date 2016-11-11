@@ -69,21 +69,13 @@ public class ExamStreamAdapter extends RecyclerView.Adapter<ExamStreamAdapter.Vi
                 }
                 ProfileSpinnerItem selectedItem = mStreamList.get(itemPosition);
                 selectedItem.setSelected(true);
-
                 notifyDataSetChanged();
-
             }
         });
-
-
     }
-
-
-
     @Override
     public int getItemCount() {
         return mStreamList.size();
-
     }
 
     public void updateStreamList(ArrayList<ProfileSpinnerItem> streamList){

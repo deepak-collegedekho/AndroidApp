@@ -20,7 +20,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.Request;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.Constants;
@@ -37,25 +36,15 @@ public class OTPVerificationFragment extends BaseFragment {
     private CheckBox cbTerms;
     private OTPVerificationListener mListener;
     InputMethodManager imm;
+
     public static OTPVerificationFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        OTPVerificationFragment fragment = new OTPVerificationFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        return new OTPVerificationFragment();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.otp_fragment_layout, container, false);
-        return rootView;
+        return inflater.inflate(R.layout.otp_fragment_layout, container, false);
     }
 
     @Override
@@ -89,16 +78,13 @@ public class OTPVerificationFragment extends BaseFragment {
             ((TextView) view.findViewById(R.id.btn_submit_mobile)).setText(R.string.send_otp);
             }
         }
-
         view.findViewById(R.id.otp_verify_skip_button).setOnClickListener(this);
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
         MainActivity mMainActivity = (MainActivity) this.getActivity();
-
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
     }
@@ -142,22 +128,22 @@ public class OTPVerificationFragment extends BaseFragment {
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
-
             case R.id.otp_verify_skip_button:
-                getActivity().onBackPressed();
+                if(isAdded()) {
+                    getActivity().onBackPressed();
+                }
                 break;
             case R.id.btn_submit_mobile:
                 if (mListener != null) {
-
-                    String number = edtMobileNumber.getText().toString();
-                    if (number != null && !number.trim().equals("") && number.trim().length() == 10 && TextUtils.isDigitsOnly(number)) {
+                    String number = edtMobileNumber.getText().toString().trim();
+                    if (!number.isEmpty() && number.trim().length() == 10 && TextUtils.isDigitsOnly(number)) {
                         if (cbTerms.isChecked()) {
                             mListener.onSubmitPhoneNumber(number);
                             if(MainActivity.mProfile != null){
                                 MainActivity.mProfile.setPhone_no(number);
                                 HashMap<String, String> params = new HashMap<>();
                                 params.put(getString(R.string.USER_PHONE), number);
-                                mListener.requestForProfile(params, Request.Method.POST);
+                                mListener.requestForProfile(params);
                             }
                         } else {
                             mListener.displayMessage(R.string.ACCEPT_TERMS_AND_CONDITIONS);
@@ -167,7 +153,6 @@ public class OTPVerificationFragment extends BaseFragment {
                     }
                 }
                 break;
-
             case R.id.btn_submit_otp:
                 if (mListener != null) {
                     String otp = edtOTP.getText().toString();
@@ -176,7 +161,6 @@ public class OTPVerificationFragment extends BaseFragment {
                     } else {
                         edtOTP.setError("Invalid OTP");
                     }
-
                 }
                 break;
             case R.id.btn_resend_otp:
@@ -263,7 +247,7 @@ public class OTPVerificationFragment extends BaseFragment {
     public interface OTPVerificationListener {
         void onSubmitPhoneNumber(String mobileNumber);
         void onSubmitOTP(String mobileNumber, String otp);
-        void requestForProfile(HashMap<String, String> params, int method);
+        void requestForProfile(HashMap<String, String> params);
         void onResendOTP(String mobileNumber);
         void displayMessage(int messageId);
     }

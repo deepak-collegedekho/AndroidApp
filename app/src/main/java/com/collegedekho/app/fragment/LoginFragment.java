@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
@@ -222,11 +221,11 @@ public class LoginFragment extends  BaseFragment {
     {
         if(mListener != null) {
             HashMap<String, String> params = new HashMap<>();
-            String deviceId = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
+           // String deviceId = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
             //params.put(MainActivity.getResourceString(R.string.USER_DEVICE_ID), deviceId);
             params.put(MainActivity.getResourceString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
 
-            mListener.onSkipUserLogin(params);
+           // mListener.onSkipUserLogin(params);
         }
     }
 
@@ -262,7 +261,7 @@ public class LoginFragment extends  BaseFragment {
 
     public interface OnUserLoginListener {
 
-        void onSkipUserLogin(HashMap<String, String> params);
+        //void onSkipUserLogin(HashMap<String, String> params);
         void onSubmitPhoneNumber(String phoneNumber);
         void onOtpReceived(String phoneNumber, String otp);
         void displayMessage(int messageId);

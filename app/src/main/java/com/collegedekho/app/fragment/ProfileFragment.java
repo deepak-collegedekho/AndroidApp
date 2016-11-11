@@ -30,7 +30,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.volley.Request;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.crop.Crop;
@@ -258,7 +257,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             hashMap.put("current_passing_year", String.valueOf(Utils.GetCurrentYear()));
             hashMap.put("preferred_year_of_admission", String.valueOf(String.valueOf(Utils.GetCurrentYear())));
 
-            ((MainActivity) getActivity()).requestForProfile(hashMap, Request.Method.POST);
+            ((MainActivity) getActivity()).requestForProfile(hashMap);
 
             MainActivity.mProfile.setPreferred_year_of_admission(Utils.GetCurrentYear());
 
@@ -386,7 +385,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             HashMap<String, String> hashMap = new HashMap<>();
             hashMap.put("preferred_year_of_admission", String.valueOf(currentEducationPassingYear));
 
-            ((MainActivity) getActivity()).requestForProfile(hashMap, Request.Method.POST);
+            ((MainActivity) getActivity()).requestForProfile(hashMap);
 
             MainActivity.mProfile.setPreferred_year_of_admission(currentEducationPassingYear);
         }

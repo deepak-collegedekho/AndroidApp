@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -66,8 +65,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,6 +73,7 @@ import com.android.volley.Request;
 import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
 import com.appsflyer.DebugLogQueue;
+import com.collegedekho.app.BuildConfig;
 import com.collegedekho.app.R;
 import com.collegedekho.app.crop.Crop;
 import com.collegedekho.app.database.DataBaseHelper;
@@ -135,6 +133,7 @@ import com.collegedekho.app.fragment.PsychometricTestParentFragment;
 import com.collegedekho.app.fragment.QnAQuestionDetailFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
 import com.collegedekho.app.fragment.SplashFragment;
+import com.collegedekho.app.fragment.SplashLoginFragment;
 import com.collegedekho.app.fragment.StreamFragment;
 import com.collegedekho.app.fragment.SyllabusSubjectsListFragment;
 import com.collegedekho.app.fragment.SyllabusUnitListFragment;
@@ -229,6 +228,7 @@ SOFTWARE.*/
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, NavigationView.OnNavigationItemSelectedListener,
         HomeFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
+        SplashLoginFragment.OnSplashLoginListener,
         DataLoadListener, StreamFragment.OnStreamInteractionListener,PsychometricStreamFragment.OnStreamInteractionListener,
         AdapterView.OnItemSelectedListener, ExamsFragment.OnExamsSelectListener,
         InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener, OnNewsSelectListener,
@@ -436,24 +436,6 @@ public class MainActivity extends AppCompatActivity
         // load splash screen
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
-        //if app is already started then don't do init process again
-        /*if (this.IS_HOME_LOADED)
-        {
-            Log.e(TAG, "Home is loaded already, skiping init");
-
-            this.loadInItData();
-        }
-        else
-        {
-            Log.e(TAG, "Home is not yet loaded, starting init");
-
-            // load splash screen
-            this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
-        }*/
-
-        // TODO: Move this to where you establish a user session
-        logUser();
-
         setupOtpRequest(true);
         if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED && IS_HOME_LOADED) {
             Utils.appLaunched(this);
@@ -510,8 +492,7 @@ public class MainActivity extends AppCompatActivity
                 // load profile user
                 mProfile = JSON.std.beanFrom(Profile.class, sp.getString(getResourceString(R.string.KEY_USER), null));
                 mNetworkUtils.setToken(MainActivity.mProfile.getToken());
-
-                // user id register
+                // user id registration
                 setUserIdWithAllEvents();
             }
         } catch (Exception e) {
@@ -674,39 +655,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void loadInItData() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED)
-        {
-            // start curser loader
-            getSupportLoaderManager().initLoader(0, null, this);
-
-            // register GCM dialog to ask user'profile data
-          //  mRegisterGcmDialog();
-
-            if (IS_USER_CREATED) {
-                // if user is anonymous  then logout from facebook
-                if (mProfile != null && (mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER))
-                    //  disconnectFromFacebook();
-
-                    this.mLoadUserStatusScreen();
-            } else {
-                // disconnectFromFacebook();
-                MainActivity.this.mDisplayLoginFragment();
-            }
-        } else {
-            getUserPermissions();
-        }
-/*
-        HashMap hashMap = new HashMap<>();
-        hashMap.put(getResourceString(R.string.USER_FIRST_NAME), "Harsh");
-        hashMap.put(getResourceString(R.string.USER_LAST_NAME), "Vardhan");
-        hashMap.put(getResourceString(R.string.USER_VERIFIED), "YesYes");
-        //hashMap.clear();
-        this.mMakeNetworkCall(TAG, "http://www.launch.collegedekho.com/api/1/send-otp/", hashMap);*/
-    }
-
     @Override
     public void setTitle(CharSequence title) {
 //        mTitle = title;
@@ -719,28 +667,81 @@ public class MainActivity extends AppCompatActivity
 //        mDrawerToggle.syncState();
     }
 
-    /* private void getBitMapResources(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                BitMapHolder bitMapHolder = new BitMapHolder();
-                bitMapHolder.setContext(MainActivity.this);
-                bitMapHolder.getBitMapFromResource();
-            }
-        }).start();
-
-    }*/
+    /**
+     * This method would be called  just after splash GIF animation is completed on splash screen
+     */
     @Override
     public void onGifCompleted() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (currentFragment instanceof SplashFragment)
-                    ((SplashFragment) currentFragment).onSplashGifCompleted();
-            }
+                if (IS_USER_CREATED && !IS_HOME_LOADED && currentFragment instanceof SplashFragment
+                        && NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED){
+                    ((SplashFragment) currentFragment).noInternetAvailable();
+                } else {
+                    mCheckAppPermissions();
+                }
+             }
         }, 10);
     }
 
+    /**
+     *  this method will check app permissions for contacts, write to external storage
+     *  and sms are enabled otherwise it will ask the permissions for lolliPop onwards devices
+     */
+    private void mCheckAppPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED) {
+            // start curser loader if not started with id "0"
+            getSupportLoaderManager().initLoader(0, null, this);
+            // load screen fragment according user status
+            this.mLoadUserStatusScreen();
+        } else {
+            // ask for user app permissions
+            getUserPermissions();
+        }
+    }
+
+    /**
+     * This method is used to load fragments according to user status and notifications
+     *  1. If user is not created then open splash login fragment
+     *  2. If User level is set  load profile building fragment
+     *  3. If education is selected but exam is not selected then load exams screen
+     *  4. If education and exam are selected then load profile screen
+     *  5. if both are not selected then load education screen
+     */
+    private void mLoadUserStatusScreen() {
+        if (!IS_USER_CREATED) {
+            // if user is not created the first user will login with nay option
+            this.mDisplaySplashLoginFragment();
+
+        }else if (MainActivity.type != null && !MainActivity.type.matches("")) {
+            this.isFromNotification = true;
+            this.mHandleNotifications(true);
+
+        } else if (this.mOtherAppSharedMessage != null && !this.mOtherAppSharedMessage.isEmpty()) {
+            this.mHandleOtherAppSharedMessage(this.mOtherAppSharedMessage);
+
+        } else if (this.mDeepLinkingURI != null && !this.mDeepLinkingURI.isEmpty()) {
+            Log.e("MA: DL URL ", MainActivity.this.mDeepLinkingURI);
+            this.isFromDeepLinking = true;
+            this.mHandleDeepLinking(this.mDeepLinkingURI);
+
+        }else if ((MainActivity.mProfile.getExams_set() == ProfileMacro.EXAMS_SELECTED) || IS_HOME_LOADED){
+            // show App bar layout
+            mShowAppBarLayout();
+            // load user home screen
+            mDisplayHomeFragment();
+            // request to update profile info if anything is change on server
+            requestForProfile(null);
+        }else  if(MainActivity.mProfile.getCurrent_level_id() <= 0) {
+            this.mDisplaySplashLoginFragment();
+        }else{
+            this.mDisplayProfileBuildingFragment(false);
+
+        }
+    }
     private void mSetAppToolBar() {
 
         // replace default action bar with Tool bar
@@ -846,13 +847,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void logUser() {
-        if (MainActivity.mProfile != null) {
-            Crashlytics.setUserIdentifier(MainActivity.mProfile.getId());
-            Crashlytics.setUserEmail(MainActivity.mProfile.getEmail());
-            Crashlytics.setUserName(MainActivity.mProfile.getName());
-        }
-    }
 
     private void mHandleNotifications(boolean isFromNotifications) {
         if (isFromNotifications) {
@@ -1397,9 +1391,13 @@ public class MainActivity extends AppCompatActivity
         eventValue.put(getResourceString(R.string.USER_EMAIL), mProfile.getEmail());
         eventValue.put(getResourceString(R.string.USER_PHONE), mProfile.getPhone_no());
 
-        MainActivity.AppsflyerTrackerEvent(this,getResourceString(R.string.SESSION_STARTED),eventValue);
+        MainActivity.AppsflyerTrackerEvent(this,getString(R.string.SESSION_STARTED),eventValue);
         // register user id with GA tracker
         MainActivity.tracker.setClientId(MainActivity.mProfile.getId());
+        // set user credencial with crashlytices
+        Crashlytics.setUserIdentifier(MainActivity.mProfile.getId());
+        Crashlytics.setUserEmail(MainActivity.mProfile.getEmail());
+        Crashlytics.setUserName(MainActivity.mProfile.getName());
 
     }
 
@@ -1429,38 +1427,7 @@ public class MainActivity extends AppCompatActivity
         gcmDialogHandler.postDelayed(gcmDialogRunnable,90000);*/
     }
 
-    /**
-     * This method is used to load screens according to user status
-     * if education and exam is selected then load profile screen
-     * if education is selected but exam is not selected then load exams screen
-     * if both are not selected then load education screen
-     */
-    private void mLoadUserStatusScreen() {
-        if (MainActivity.type != null && !MainActivity.type.matches("")) {
-            this.isFromNotification = true;
-            this.mHandleNotifications(true);
 
-        } else if (this.mOtherAppSharedMessage != null && !this.mOtherAppSharedMessage.isEmpty()) {
-
-            this.mHandleOtherAppSharedMessage(this.mOtherAppSharedMessage);
-
-        } else if (this.mDeepLinkingURI != null && !this.mDeepLinkingURI.isEmpty()) {
-            Log.e("MA: DL URL ", MainActivity.this.mDeepLinkingURI);
-            this.isFromDeepLinking = true;
-            this.mHandleDeepLinking(this.mDeepLinkingURI);
-
-        }else if ((MainActivity.mProfile.getExams_set()
-                == ProfileMacro.EXAMS_SELECTED) || IS_HOME_LOADED){
-            // show App bar layout
-            mShowAppBarLayout();
-            // load user home screen
-            mDisplayHomeFragment();
-            // request to update profile info if anything is change on server
-            requestForProfile(null);
-        }else {
-            mDisplayProfileBuildingFragment();
-        }
-    }
     public void onProfileImageUploaded(String responseJson) {
         try {
             Profile profile = JSON.std.beanFrom(Profile.class, responseJson);
@@ -1492,7 +1459,6 @@ public class MainActivity extends AppCompatActivity
     private void mParseProfileResponse(String response){
         try {
             MainActivity.mProfile = JSON.std.beanFrom(Profile.class,response);
-
             String u = JSON.std.asString(mProfile);
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
 
@@ -1529,8 +1495,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
     public void onRefreshProfile(){
-        this.mMakeNetworkCall(Constants.TAG_REFRESH_PROFILE, Constants.BASE_URL + "profile/", null);
+        this.requestForUserProfileUpdate(Constants.TAG_REFRESH_PROFILE, null);
     }
 
     private void mParseAndRefreshProfileResponse(String response){
@@ -1688,17 +1655,10 @@ public class MainActivity extends AppCompatActivity
      * @param tag tag
      * @param responseJson responseJson
      */
-
     private void profileSuccessfullyUpdated(String tag, String responseJson) {
-        try {
-            String[] TAG = tag.split("#");
-            Profile profile = JSON.std.beanFrom(Profile.class, responseJson);
-            if(profile == null)
-                return;
-            // ProfileFragment.mProfile= profile;
-            MainActivity.mProfile = profile;
-
+           mParseProfileResponse(responseJson);
             if(currentFragment instanceof ProfileFragment) {
+                String[] TAG = tag.split("#");
                 if (TAG[0].equalsIgnoreCase(Constants.TAG_UPDATE_USER_PROFILE)) {
                     Utils.DisplayToast(getApplicationContext(), "Profile Updated");
                     try {
@@ -1714,19 +1674,11 @@ public class MainActivity extends AppCompatActivity
                 }
             }else if(currentFragment instanceof ProfileBuildingFragment){
                 ((ProfileBuildingFragment) currentFragment).profileUpdatedSuccessfully();
-            }
-            else if(currentFragment instanceof  HomeFragment){
-
+            }else if(currentFragment instanceof  HomeFragment){
                 ((HomeFragment)currentFragment).updateUserInfo();
             }else if(currentFragment instanceof  TabFragment){
-
                 ((TabFragment)currentFragment).updateUserInfo();
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
 
@@ -2213,6 +2165,33 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+    private void mDisplaySplashLoginFragment() {
+        SplashLoginFragment fragment = SplashLoginFragment.newInstance();
+        try {
+            currentFragment = fragment;
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+            fragmentTransaction.replace(R.id.container, fragment,SplashLoginFragment.class.getSimpleName() );
+            fragmentTransaction.commitAllowingStateLoss();
+
+        } catch (Exception e) {
+            Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
+        } finally {
+            //Send GA Session
+            MainActivity.GAScreenEvent(getResourceString(R.string.TAG_FRAGMENT_SPLASH_LOGIN));
+            HashMap<String, Object> eventValue = new HashMap<>();
+            eventValue.put(getResourceString(R.string.SCREEN_NAME), getResourceString(R.string.TAG_FRAGMENT_SPLASH_LOGIN));
+            eventValue.put(getResourceString(R.string.LAST_SCREEN_NAME), this.mLastScreenName);
+            eventValue.put(getResourceString(R.string.TIME_LAPSED_SINCE_LAST_SCREEN_NAME_IN_MS), String.valueOf(new Date().getTime() - this.mTimeScreenClicked.getTime()));
+
+            this.mTimeScreenClicked = new Date();
+            this.mLastScreenName = getResourceString(R.string.TAG_FRAGMENT_SPLASH_LOGIN);
+
+            //Events
+            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_SCREEN_SELECTED), eventValue, this);
+        }
+    }
 
     // TODO :: EDIT THIS POST ANONYMOUS LOGIN FRAGMENT
     private void mDisplayPostAnonymousLoginFragment() {
@@ -2433,29 +2412,18 @@ public class MainActivity extends AppCompatActivity
         int voteType ;
         boolean hideProgressDialog=true;
         switch (tags[0]) {
-            case Constants.TAG_SKIP_LOGIN:
-                //Deleting exam summary on login, since old user's and new user's are merged. And profile is taken from latest user.
-                // So old mDeviceProfile's exam summary gets obsolete. We need to reset the cache
-                DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                this.mUserCreatedSuccessfully(response, Constants.TAG_SKIP_LOGIN);
-                break;
+            case Constants.TAG_SPLASH_SKIP_LOGIN:
+            case Constants.TAG_SPLASH_HELP_ME_LOGIN:
+            case Constants.TAG_SPLASH_I_KNOW_LOGIN:
+                this.mSplashLoginSuccessfully(response,tags[0]);
+                 break;
             case Constants.TAG_TRUE_SDK_LOGIN:
-                //Deleting exam summary on login, since old user's and new user's are merged. And profile is taken from latest user.
-                // So old mDeviceProfile's exam summary gets obsolete. We need to reset the cache
-                DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                this.mUserCreatedSuccessfully(response, Constants.TAG_TRUE_SDK_LOGIN);
-                break;
             case Constants.TAG_FACEBOOK_LOGIN:
-                //Deleting exam summary on login, since old user's and new user's are merged. And profile is taken from latest user.
-                // So old mDeviceProfile's exam summary gets obsolete. We need to reset the cache
-                DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                this.mUserCreatedSuccessfully(response, Constants.TAG_FACEBOOK_LOGIN);
-                break;
             case Constants.TAG_PHONE_NUMBER_LOGIN:
                 //Deleting exam summary on login, since old user's and new user's are merged. And profile is taken from latest user.
                 // So old mDeviceProfile's exam summary gets obsolete. We need to reset the cache
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
-                this.mUserCreatedSuccessfully(response, Constants.TAG_PHONE_NUMBER_LOGIN);
+                this.mProfileLoginSuccessfully(response, tags[0]);
                 break;
             case Constants.TAG_USER_PHONE_ADDED:
                 onMobileNumberSubmitted();
@@ -2473,7 +2441,7 @@ public class MainActivity extends AppCompatActivity
                 this.mOnUserExamsSubmitted(response);
                 break;
             case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
-                mMakeNetworkCall(Constants.TAG_UPDATE_PROFILE_EXAMS, Constants.BASE_URL +"profile/", null);
+                this.requestForUserProfileUpdate(Constants.TAG_UPDATE_PROFILE_EXAMS, null);
                 this.onUserExamsEdited(response);
                 break;
             case Constants.TAG_UPDATE_PROFILE_OBJECT:
@@ -2695,8 +2663,10 @@ public class MainActivity extends AppCompatActivity
                     voteType = Integer.parseInt(tags[3]);
 
                     this.mQnAAnswerVoteUpdated(Integer.parseInt(parentIndex), Integer.parseInt(childIndex), voteType);
-                    //GA Event for answer vote
-                    MainActivity.GATrackerEvent(getResourceString(R.string.CATEGORY_QNA), Constants.ACTION_VOTE_QNA_ANSWER_ENTITY, "Answer Voted : " + String.valueOf(voteType));
+
+                    HashMap<String, Object> eventValue1 = new HashMap<>();
+                    eventValue1.put(Constants.TAG_USER_LOGIN, "Answer Voted : " + String.valueOf(voteType));
+                    SendAppEvent(getResourceString(R.string.CATEGORY_QNA), Constants.ACTION_VOTE_QNA_ANSWER_ENTITY,eventValue1, this );
                 }
                 break;
             case Constants.TAG_LOAD_MY_FB:
@@ -2880,6 +2850,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     private void parseLevelStreams(String responseJson) {
         String resultJson = extractResults(responseJson);
         try {
@@ -3036,39 +3007,57 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
+     *  Decide which fragment will open based on User splash login action
+     * @param response server response
+     * @param tag tag which action is taken by user on splash login screen
+     */
+
+    private void mSplashLoginSuccessfully(String response, String tag){
+        mUserCreatedSuccessfully(response, tag);
+        switch (tag) {
+            case Constants.TAG_SPLASH_SKIP_LOGIN:
+                mDisplayNotPreparingFragment();
+                break;
+            case Constants.TAG_SPLASH_HELP_ME_LOGIN:
+                mDisplayProfileBuildingFragment(true);
+                break;
+            case Constants.TAG_SPLASH_I_KNOW_LOGIN:
+                onIknowWhatIWant();
+                break;
+        }
+    }
+    /**
+     *  handle response when user login by phone number or true caller
+     * @param response server response
+     * @param tag tag which action is taken by user on login screen
+     */
+
+    private void mProfileLoginSuccessfully(String response, String tag){
+         Map<String, Object> responseMap = null;
+         try {
+             responseMap = JSON.std.mapFrom(response);
+         } catch (IOException e) {
+             e.printStackTrace();
+         }
+         if (responseMap != null && responseMap.containsKey("verified")) {
+             if (currentFragment instanceof LoginFragment) {
+                 ((LoginFragment) currentFragment).onInvalidOtp();
+             } else if (currentFragment instanceof PostAnonymousLoginFragment) {
+                 ((PostAnonymousLoginFragment) currentFragment).onInvalidOtp();
+             }
+         }else{
+             mUserCreatedSuccessfully(response, tag);
+         }
+     }
+
+    /**
      * This method is called when user login with true sdk , facebook, phone number
      * or skip option then user response is parse and user is created and saved in
      * shared pref . and load user status screens
      * and resp
      * @param response response
      */
-    private void mUserCreatedSuccessfully(String response, String type) {
-        Map<String, Object> responseMap = null;
-        try {
-            responseMap = JSON.std.mapFrom(response);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (responseMap != null && responseMap.containsKey("verified")) {
-
-            if (currentFragment instanceof LoginFragment) {
-                ((LoginFragment) currentFragment).onInvalidOtp();
-            } else if (currentFragment instanceof PostAnonymousLoginFragment) {
-                ((PostAnonymousLoginFragment) currentFragment).onInvalidOtp();
-            }
-
-        } else {
-            //Remove the BroadcastReciever for SMS
-            ComponentName component = new ComponentName(this, OTPReceiver.class);
-
-            int status = this.getPackageManager().getComponentEnabledSetting(component);
-            if (status == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
-                Log.d("MainActivity", "receiver is enabled");
-                //Disable
-                this.getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-            }
-
+    private void mUserCreatedSuccessfully(String response, String tag) {
             // parse user response and  create a user
             this.mParseProfileResponse(response);
             // set token in network utill
@@ -3081,33 +3070,33 @@ public class MainActivity extends AppCompatActivity
             if (!IS_USER_CREATED) {
                 //Events
                 Map<String, Object> eventValue = new HashMap<>();
-                SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
                 eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
-            }
+                SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
+               }
 
-            SharedPreferences sharedPreferences = this.getSharedPreferences("sharedprefs", MODE_PRIVATE);
-
+            SharedPreferences sharedPreferences = this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE);
             sharedPreferences.edit().putBoolean(getString(R.string.USER_CREATED), true).apply();
-
             IS_USER_CREATED = true;
 
             HashMap<String, Object> eventValue = new HashMap<>();
-            eventValue.put(Constants.TAG_USER_LOGIN, type);
+            eventValue.put(Constants.TAG_USER_LOGIN, tag);
             SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
 
-            String token = sharedPreferences.getString(getString(R.string.FCM_TOKEN), null);
+           mRegisterWithFCM();
+    }
+    private void mRegisterWithFCM(){
 
-            if (token != null && !token.isEmpty())
-            {
-                String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-                HashMap<String, String> params = (HashMap<String, String>) Utils.GetDeviceInfo(this);
+        String token = getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).getString(getString(R.string.FCM_TOKEN), null);
+        if (token != null && !token.isEmpty())
+        {
+            String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+            HashMap<String, String> params = (HashMap<String, String>) Utils.GetDeviceInfo(this);
 
-                params.put(getApplicationContext().getString(R.string.USER_DEVICE_ID), deviceId);
-                params.put(getApplicationContext().getString(R.string.USER_FCM_REGISTRATION_ID), token);
-                params.put(getApplicationContext().getString(R.string.USER_APP_SOURCE), String.valueOf(Constants.SOURCE_COLLEGE_DEKHO_APP));
+            params.put(getApplicationContext().getString(R.string.USER_DEVICE_ID), deviceId);
+            params.put(getApplicationContext().getString(R.string.USER_FCM_REGISTRATION_ID), token);
+            params.put(getApplicationContext().getString(R.string.USER_APP_SOURCE), String.valueOf(Constants.SOURCE_COLLEGE_DEKHO_APP));
 
-                this.mMakeNetworkCall(Constants.TAG_FCM_TOKEN_SYNC, Constants.BASE_URL + "register-device/", params, Request.Method.POST);
-            }
+            this.mMakeNetworkCall(Constants.TAG_FCM_TOKEN_SYNC, Constants.BASE_URL + "register-device/", params, Request.Method.POST);
         }
     }
 
@@ -3192,19 +3181,26 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is used to provide education level and
-     * user will select current education or he/she can skip,
-     * if user don't skip then ask for thestream .
-     * specialization , degrees
+     *  This Screen will collect user info like level, subLevel, marks, stream
+     * and user's preparing exams if user don't have clear vision fo streams and exams
+     *  then there is also a skip and not preparing option .
+     * @param addIntoBackStack flag will decide fragment will add into back stack or not
      */
-    private void mDisplayProfileBuildingFragment() {
+    private void mDisplayProfileBuildingFragment(boolean addIntoBackStack) {
         Fragment fragment = ProfileBuildingFragment.newInstance();
-        this.mDisplayFragment(fragment, false,ProfileBuildingFragment.class.getSimpleName());
+        this.mDisplayFragment(fragment, addIntoBackStack,ProfileBuildingFragment.class.getSimpleName());
+    }
+
+    /**
+     * If user is not preparing for any exam then user will move to not preparing fragment
+     */
+    private void mDisplayNotPreparingFragment() {
+        Fragment fragment = NotPreparingFragment.newInstance();
+        this.mDisplayFragment(fragment, true,ProfileBuildingFragment.class.getSimpleName());
     }
 
     /**
      * This method is used to display step by step questions
-     *
      * @param response server response  to display
      */
     private void mDisplayStepByStepQuestion(String response){
@@ -4001,6 +3997,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+
     @Override
     public void displayMessage(int messageId) {
         displaySnackBar(messageId);
@@ -4119,25 +4116,13 @@ public class MainActivity extends AppCompatActivity
 
     public static String GetPersonalizedMessage(String tag) {
         switch (tag) {
-            case Constants.TAG_WISH_LIST_APPLIED_COURSE:
-                return "Applying to institute";
-            case Constants.TAG_LOAD_STREAM:
-            case Constants.TAG_UPDATE_STREAM:
-            case Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM:
-                return "Loading Streams";
-            case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
-                return "Loading Exams";
             case Constants.TAG_EXAM_SUMMARY:
             case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
             case Constants.WIDGET_SYLLABUS:
             case Constants.CARD_BUZZLIST_INSTITUTES:
+            case Constants.SEARCHED_INSTITUTES:
+            case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
                 return "Loading";
-            case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
-                return "Loading Profile";
-            case Constants.TAG_UPDATE_INSTITUTES:
-                return "Updating Institutes";
-            case Constants.TAG_UPDATE_USER_PROFILE:
-                return "Updating Profile";
             case Constants.WIDGET_INSTITUTES:
             case Constants.WIDGET_INSTITUTES_SBS:
             case Constants.WIDGET_TRENDING_INSTITUTES:
@@ -4145,6 +4130,21 @@ public class MainActivity extends AppCompatActivity
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
             case Constants.WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE:
                 return "Loading Institutes";
+            case Constants.TAG_UPDATE_INSTITUTES:
+                return "Updating Institutes";
+            case Constants.TAG_WISH_LIST_APPLIED_COURSE:
+                return "Applying to institute";
+            case Constants.TAG_UPDATE_STREAM:
+            case Constants.TAG_SUBMIT_EDIT_PSYCHOMETRIC_EXAM:
+                return "Loading Streams";
+            case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
+                return "Loading Exams";
+            case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
+                return "Loading Profile";
+            case Constants.PROFILE_IMAGE_UPLOADING:
+                return "Uploading Image";
+            case Constants.TAG_UPDATE_USER_PROFILE:
+                return "Updating Profile";
             case Constants.WIDGET_NEWS:
                 return "Loading News";
             case Constants.WIDGET_ARTICES:
@@ -4166,10 +4166,6 @@ public class MainActivity extends AppCompatActivity
                 return "Processing Vote";
             case Constants.WIDGET_FORUMS:
                 return "Loading Forums";
-            case Constants.SEARCHED_INSTITUTES:
-                return "Loading";
-            case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
-                return "Loading";
             case Constants.WIDGET_TEST_CALENDAR:
                 return "Loading your plan";
             case Constants.TAG_MY_ALERTS:
@@ -4178,8 +4174,8 @@ public class MainActivity extends AppCompatActivity
                 return "Verifying OTP";
             case Constants.TAG_USER_PHONE_ADDED:
                 return "Requesting OTP";
-            case Constants.PROFILE_IMAGE_UPLOADING:
-                return "Uploading Image";
+            case Constants.TAG_SUBMIT_SBS_EXAM:
+                return "Getting institutes for your preferences";
             case Constants.TAG_NEXT_ARTICLES:
             case Constants.TAG_NEXT_FORUMS_LIST:
             case Constants.TAG_NEXT_INSTITUTE:
@@ -4201,15 +4197,11 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_REQUEST_FOR_DEGREES:
             case Constants.TAG_UPDATE_PROFILE_OBJECT:
             case Constants.TAG_UPDATE_PROFILE_EXAMS:
-            case Constants.TAG_REQUEST_FOR_EXAMS:
             case Constants.REFRESH_CHATROOM:
             case Constants.TAG_REFRESH_PROFILE:
             case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
-                return null;
             case "":
                 return null;
-            case Constants.TAG_SUBMIT_SBS_EXAM:
-                return "Getting institutes for your preferences";
             default:
                 return "Loading";
         }
@@ -4219,6 +4211,12 @@ public class MainActivity extends AppCompatActivity
         switch (tag) {
             case Constants.TAG_LOAD_SUB_LEVELS:
             case Constants.TAG_LOAD_LEVEL_STREAMS:
+            case Constants.TAG_LOAD_STREAM:
+            case Constants.TAG_REQUEST_FOR_EXAMS:
+            case Constants.TAG_SPLASH_HELP_ME_LOGIN:
+            case Constants.TAG_SPLASH_I_KNOW_LOGIN:
+            case Constants.TAG_SPLASH_SKIP_LOGIN:
+            case Constants.TAG_USER_EXAMS_SUBMISSION:
                 return Constants.THEME_TRANSPARENT;
         }
         return Constants.THEME_BACKGROUND;
@@ -4738,29 +4736,95 @@ public class MainActivity extends AppCompatActivity
         }catch (Exception error)  {
             Log.e(TAG, error.getMessage());
         }
+    }
 
+    @Override
+    public void onSplashSkipLogin() {
+        if(mProfile != null && mProfile.getId() != null && !mProfile.getId().isEmpty()){
+                mDisplayNotPreparingFragment();
+        }else {
+            HashMap<String, String> params = new HashMap<>();
+            params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
+            onUserCommonLogin(params, Constants.TAG_SPLASH_SKIP_LOGIN);
+        }
+    }
 
+    @Override
+    public void onSplashHelpMeLogin() {
+        if(mProfile != null && mProfile.getId() != null && !mProfile.getId().isEmpty()){
+            mDisplayProfileBuildingFragment(true);
+        }else {
+            HashMap<String, String> params = new HashMap<>();
+            params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
+            onUserCommonLogin(params, Constants.TAG_SPLASH_HELP_ME_LOGIN);
+        }
+    }
+
+    @Override
+    public void onSplashIKnowLogin() {
+        if(mProfile != null && mProfile.getId() != null && !mProfile.getId().isEmpty()){
+            onIknowWhatIWant();
+        }else {
+            HashMap<String, String> params = new HashMap<>();
+            params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
+            onUserCommonLogin(params, Constants.TAG_SPLASH_I_KNOW_LOGIN);
+        }
+    }
+
+    @Override
+    public void onIknowWhatIWant() {
+        this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
+
+        //Events
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), "I_KNOW_WHAT_I_WANT");
+        SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
+    }
+
+    @Override
+    public void onSkipSelectedInProfileBuilding() {
+        this.mDisplayFragment(NotPreparingFragment.newInstance(), true, NotPreparingFragment.class.toString());
+    }
+
+    @Override
+    public void onRequestForSubLevels(int level){
+        mMakeNetworkCall(Constants.TAG_LOAD_SUB_LEVELS,Constants.BASE_URL+"sublevels/?level="+level, null);
+    }
+
+    @Override
+    public void onRequestForLevelStreams(int level){
+        mMakeNetworkCall(Constants.TAG_LOAD_LEVEL_STREAMS,Constants.BASE_URL+"streams/?preferred_level="+mProfile.getPreferred_level()+"&is_extra="+level, null);
     }
 
     /**
-     * This method is called when user skip
-     *  registration or facebook login
+     * This method is used to get exams list based on preferred level
+     * and preferred stream if preferred stream is not available then we send
+     * current stream and
      */
     @Override
-    public void onSkipUserLogin(HashMap<String, String> params) {
-        onUserCommonLogin(params,Constants.TAG_SKIP_LOGIN);
+    public void onRequestForUserExams() {
+        // request for yearly exam based on preferred level
+        StringBuffer  examUrl = new StringBuffer(Constants.BASE_URL);
+        examUrl.append("stream-yearly-exams/?preferred_level="+mProfile.getPreferred_level());
+
+        int userPreferredStreamId = mProfile.getPreferred_stream_id();
+        if(userPreferredStreamId > 0){
+            examUrl.append("&preferred_stream="+userPreferredStreamId);
+        }else{
+            examUrl.append("&current_stream="+mProfile.getCurrent_stream_id());
+        }
+
+        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, examUrl.toString(), null, Request.Method.GET);
     }
+
 
     /**
      * This method is used to login with facebook account
      * @param params request data
      */
-    public void onUserCommonLogin(HashMap<String, String> params , String TAG) {
+    private void onUserCommonLogin(HashMap<String, String> params , String TAG) {
+        params.put(getResourceString(R.string.app_version), BuildConfig.VERSION_NAME.substring(0, 5));
         this.mMakeNetworkCall(TAG, Constants.BASE_URL + "auth/new-common-login/", params);
-        //Events
-        HashMap<String, Object> eventValue = new HashMap<>();
-        eventValue.put(Constants.TAG_USER_LOGIN, TAG);
-        SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
     }
 
     @Override
@@ -4787,7 +4851,11 @@ public class MainActivity extends AppCompatActivity
         }
 
         if( trueProfile.email == null) {
-            trueProfile.email = MainActivity.mProfile.getEmail();
+            if(mProfile != null && mProfile.getEmail() != null) {
+                trueProfile.email = MainActivity.mProfile.getEmail();
+            }else{
+                trueProfile.email="";
+            }
 
         }
         params.put(MainActivity.getResourceString(R.string.USER_NAME),trueProfile.firstName+" "+trueProfile.lastName);
@@ -4824,24 +4892,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is used to log out facebook account
-     * when user wants to login with different account
-     * or  have not successfully login
-     */
-   /* private void disconnectFromFacebook() {
-        if (AccessToken.getCurrentAccessToken() == null) {
-            return; // already logged out
-        }
-        new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, new GraphRequest
-                .Callback() {
-            @Override
-            public void onCompleted(GraphResponse graphResponse) {
-                LoginManager.getInstance().logOut();
-            }
-        }).executeAsync();
-    }*/
-
-    /**
      *  This method is called when user's exams are edited
      * @param responseJson user profile json
      */
@@ -4863,68 +4913,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public static void GATrackerEvent(String category, String action, String label) {
-        if (MainActivity.tracker != null) {
-            MainActivity.tracker.send(new HitBuilders.EventBuilder()
-                    .setCategory(category)
-                    .setAction(action)
-                    .setLabel(label)
-                    .build());
-        }
-    }
-
-    /**
-     *  If user login with any social site like facebook and stream and level has conflict
-     *  it shows a dialog to choose stream and level.
-     * @param tag Tag
-     * @param URL Api Url according to login
-     * @param jsonObj response json
-     * @param params request data send to api
-     */
-    public void showDialogForStreamLevel(final String tag, final String URL, JSONObject jsonObj, final Map<String, String> params) {
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.layout_stream_conflict_dailog);
-        dialog.setTitle("Select Your Stream and Level");
-        RadioGroup streamRadioGroup = (RadioGroup) dialog.findViewById(R.id.stream_radio_group);
-        RadioGroup levelRadioGroup = (RadioGroup) dialog.findViewById(R.id.level_radio_group);
-        try {
-            final String stream_id = jsonObj.getString(getResourceString(R.string.USER_STREAM));
-            final String level_id = jsonObj.getString(getResourceString(R.string.USER_LEVEL));
-            String streamName = jsonObj.getString(getResourceString(R.string.USER_STREAM_NAME));
-            String levelName = jsonObj.getString(getResourceString(R.string.USER_LEVEL_NAME));
-            if (mProfile.getPreferred_stream_id()== Integer.parseInt(stream_id))
-                streamRadioGroup.setVisibility(View.GONE);
-
-            ((RadioButton) dialog.findViewById(R.id.firstStream)).setText(streamName);
-            ((RadioButton) dialog.findViewById(R.id.secondStream)).setText(mProfile.getPreferred_stream_short_name());
-
-            ((RadioButton) dialog.findViewById(R.id.firstLevel)).setText(levelName);
-            ((RadioButton) dialog.findViewById(R.id.secondLevel)).setText(mProfile.getPreferred_level_name());
-
-            // if button is clicked, close the custom dialog
-//            dialog.findViewById(R.id.ok_button).setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    dialog.dismiss();
-//                    if (((RadioButton) dialog.findViewById(R.id.firstStream)).isChecked())
-//                        params.put(getResourceString(R.string.USER_STREAM), stream_id);
-//                    if (((RadioButton) dialog.findViewById(R.id.secondStream)).isChecked())
-//                        params.put(getResourceString(R.string.USER_STREAM), mProfile.getPreferred_stream_id());
-//                    if (((RadioButton) dialog.findViewById(R.id.firstLevel)).isChecked())
-//                        params.put(getResourceString(R.string.USER_LEVEL), level_id);
-//                    if (((RadioButton) dialog.findViewById(R.id.secondLevel)).isChecked())
-//                        params.put(getResourceString(R.string.USER_LEVEL), mDeviceProfile.getLevel());
-//                    mMakeNetworkCall(tag, URL, params);
-//                }
-//
-//
-//            });
-//            dialog.setCanceledOnTouchOutside(false);
-//            dialog.show();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     public ArrayList<Folder> getFilterList() {
         if (!this.mFilters.equals("")) {
@@ -5219,52 +5207,6 @@ public class MainActivity extends AppCompatActivity
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), StepByStepFragment.class.getSimpleName());
         SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
-    }
-
-    @Override
-    public void onIknowWhatIWant() {
-        this.mMakeNetworkCall(Constants.TAG_LOAD_STREAM, Constants.BASE_URL + "streams/", null);
-
-        //Events
-        Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), "I_KNOW_WHAT_I_WANT");
-        SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_WHEN_NOT_PREPARING), eventValue, this);
-    }
-
-    @Override
-    public void onRequestForSubLevels(int level){
-        mMakeNetworkCall(Constants.TAG_LOAD_SUB_LEVELS,Constants.BASE_URL+"sublevels/?level="+level, null);
-    }
-
-    @Override
-    public void onRequestForLevelStreams(int level){
-        mMakeNetworkCall(Constants.TAG_LOAD_LEVEL_STREAMS,Constants.BASE_URL+"streams/?is_extra="+level, null);
-    }
-
-    @Override
-    public void onSkipSelectedInProfileBuilding() {
-        this.mDisplayFragment(NotPreparingFragment.newInstance(), true, NotPreparingFragment.class.toString());
-    }
-
-    /**
-     * This method is used to get exams list based on preferred level
-     * and preferred stream if preferred stream is not available then we send
-     * current stream and
-     */
-    @Override
-    public void onRequestForUserExams() {
-        // request for yearly exam based on preferred level
-        StringBuffer  examUrl = new StringBuffer(Constants.BASE_URL);
-        examUrl.append("stream-yearly-exams/?preferred_level="+mProfile.getPreferred_level());
-
-        int userPreferredStreamId = mProfile.getPreferred_stream_id();
-        if(userPreferredStreamId > 0){
-            examUrl.append("&preferred_stream="+userPreferredStreamId);
-        }else{
-            examUrl.append("&current_stream="+mProfile.getCurrent_stream_id());
-        }
-
-        this.mMakeNetworkCall(Constants.TAG_REQUEST_FOR_EXAMS, examUrl.toString(), null, Request.Method.GET);
     }
 
 
@@ -5776,12 +5718,6 @@ public class MainActivity extends AppCompatActivity
         params.put(Constants.OTP_CODE, otp);
         this.mMakeNetworkCall(Constants.TAG_VERIFY_USER_PHONE, Constants.BASE_URL + "verify-otp/", params);
     }
-
-    @Override
-    public void requestForProfile(HashMap<String, String> params, int method) {
-
-    }
-
 
     @Override
     public void onOtpReceived(String mobileNumber, String otp) {
@@ -6548,7 +6484,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void restartApplication() {
-        loadInItData();
+        mCheckAppPermissions();
     }
 
     private void getUserPermissions() {

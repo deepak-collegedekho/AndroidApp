@@ -124,15 +124,12 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
 
         //set comment
         qnaAnswerHolder.commentText.setText(Html.fromHtml(myFBComment.getComment()));
-
         description = myFBComment.getComment();
-
         if ((myFBComment.getToken()).equals(MainActivity.mProfile.getToken())) {
 
             description = "You said " + description;
-
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                qnaAnswerHolder.myFbCard.setBackgroundResource(R.drawable.ic_chat_inline);
+                qnaAnswerHolder.myFbCard.setBackgroundResource(R.drawable.ic_chat_inline_vector);
             } else {
                 qnaAnswerHolder.myFbCard.setCardBackgroundColor(this.mContext.getResources().getColor(R.color.self_comment_card_background));
             }
@@ -144,7 +141,6 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
             qnaAnswerHolder.myFbCardLayout.setPadding(left,0,right,0);
             qnaAnswerHolder.time.setPadding(left,0,right,bottom);
             qnaAnswerHolder.time.setTextColor(this.mContext.getResources().getColor(R.color.chat_time_blue));
-
             qnaAnswerHolder.mUserImageSelf.setVisibility(View.VISIBLE);
             qnaAnswerHolder.mUserImageOther.setVisibility(View.GONE);
 
@@ -174,9 +170,7 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
             qnaAnswerHolder.time.setPadding(left,0,right,bottom);
             qnaAnswerHolder.time.setTextColor(mContext.getResources().getColor(R.color.chat_time_gray));
             qnaAnswerHolder.userName.setText(myFBComment.getUser());
-
             description = myFBComment.getUser() + " " + description;
-
             qnaAnswerHolder.mUserImageSelf.setVisibility(View.GONE);
             qnaAnswerHolder.mUserImageOther.setVisibility(View.VISIBLE);
             qnaAnswerHolder.mSentNotifier.setVisibility(View.GONE);

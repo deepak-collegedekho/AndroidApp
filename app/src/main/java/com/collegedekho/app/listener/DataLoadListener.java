@@ -18,6 +18,5 @@ public interface DataLoadListener {
 
     void onJsonObjectRequestError(String tag, String response, String url, JSONObject params, int method);
 
-    void showDialogForStreamLevel(String tag, String url, JSONObject jsonObj, Map<String, String> params);
 
 }

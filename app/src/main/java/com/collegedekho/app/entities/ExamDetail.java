@@ -20,6 +20,7 @@ public class ExamDetail implements Parcelable
     private String exam_tag="";
     private String exam_short_name="Exam";
     private boolean isSelected;
+    private int institutes_count =0;
 
     public boolean is_preparing() {
         return is_preparing;
@@ -41,6 +42,7 @@ public class ExamDetail implements Parcelable
         year = in.readString();
         exam_date = in.readString();
         status = in.readInt();
+        institutes_count = in.readInt();
         exam_name = in.readString();
         exam_tag = in.readString();
         exam_short_name = in.readString();
@@ -71,6 +73,7 @@ public class ExamDetail implements Parcelable
         dest.writeString(year);
         dest.writeString(exam_date);
         dest.writeInt(status);
+        dest.writeInt(institutes_count);
         dest.writeString(exam_name);
         dest.writeString(exam_tag);
         dest.writeString(exam_short_name);
@@ -158,5 +161,13 @@ public class ExamDetail implements Parcelable
 
     public void setExam_tag(String exam_tag) {
         this.exam_tag = exam_tag;
+    }
+
+    public int getInstitutes_count() {
+        return institutes_count;
+    }
+
+    public void setInstitutes_count(int institutes_count) {
+        this.institutes_count = institutes_count;
     }
 }

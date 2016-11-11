@@ -19,8 +19,7 @@ public class NotPreparingFragment extends BaseFragment {
     private OnNotPreparingOptionsListener listener;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup rootView=(ViewGroup)inflater.inflate(R.layout.not_preparing_fragment_layout,container,false);
-        return rootView;
+        return inflater.inflate(R.layout.not_preparing_fragment_layout,container,false);
     }
 
     @Override
@@ -49,15 +48,12 @@ public class NotPreparingFragment extends BaseFragment {
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-
             case R.id.btn_step_by_step:
                 listener.onStepByStep();
                 break;
-
             case R.id.btn_i_know:
                 listener.onIknowWhatIWant();
                 break;
-
             case R.id.btn_psychometric_test:
                 listener.onPsychometricTestSelected();
                 break;

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/ic_splash"
     android:gravity="center_horizontal">
+
     <LinearLayout
         android:id="@+id/splash_logoLL"
         android:layout_width="match_parent"

@@ -1,11 +1,15 @@
 package com.collegedekho.app.utils;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -49,6 +53,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static com.collegedekho.app.activity.MainActivity.getResourceString;
+import static com.collegedekho.app.activity.MainActivity.mProfile;
 
 /**
  * @author Mayank Gautam
@@ -303,8 +310,8 @@ public class NetworkUtils {
     private HashMap<String, String > getHeaders(){
         mHeaders = new HashMap<>();
         // set user'token if user token is not set
-        if((mtoken == null || mtoken.isEmpty()) && MainActivity.mProfile != null)
-            mtoken = MainActivity.mProfile.getToken();
+        if((mtoken == null || mtoken.isEmpty()) && mProfile != null)
+            mtoken = mProfile.getToken();
 
         if(mtoken != null)
             mHeaders.put("Authorization", "Token " + mtoken);
@@ -444,10 +451,10 @@ public class NetworkUtils {
     {
 
         SharedPreferences preferences = mContext.getSharedPreferences(mContext.getString(R.string.PREFS), Context.MODE_PRIVATE);
-        String instituteId  = params.get(MainActivity.getResourceString(R.string.APPLY_INSTITUTE));
+        String instituteId  = params.get(getResourceString(R.string.APPLY_INSTITUTE));
 
         Set<String> idList = preferences.getStringSet(instituteId, new HashSet<String>());
-        idList.add(params.get(MainActivity.getResourceString(R.string.APPLY_COURSE)));
+        idList.add(params.get(getResourceString(R.string.APPLY_COURSE)));
 
         preferences.edit().putString(Constants.INSTITUTE_ID, instituteId)
                 .putStringSet(instituteId, idList)
@@ -490,14 +497,14 @@ public class NetworkUtils {
         }
 
         String[] tags = tag.split("#");
-        if(tags[0].equalsIgnoreCase(Constants.TAG_TRUE_SDK_LOGIN) || tags[0].equalsIgnoreCase(Constants.TAG_FACEBOOK_LOGIN) )
+        if(tags[0].equalsIgnoreCase(Constants.TAG_TRUE_SDK_LOGIN)  )
         {
             try {
                 JSONObject jsonObj = new JSONObject(json);
                 if(json != null) {
                     String code = jsonObj.getString("Code");
                     if (Integer.parseInt(code) == ErrorCode.LOGIN_PREFERENCE_CONFLICT) {
-                        mListener.showDialogForStreamLevel(tag, url, jsonObj, params);
+                         showDialogForStreamLevel(tag, url, jsonObj, params, method);
                         return;
                     }
                 }
@@ -596,6 +603,59 @@ public class NetworkUtils {
             read = in.read(buffer);
         }
         return response;
+    }
+
+    /**
+     *  If user login with any social site like facebook and stream and level has conflict
+     *  it shows a dialog to choose stream and level.
+     * @param tag Tag
+     * @param URL Api Url according to login
+     * @param jsonObj response json
+     * @param params request data send to api
+     */
+    public void showDialogForStreamLevel(final String tag, final String URL, JSONObject jsonObj, final Map<String, String> params, int method) {
+        final Dialog dialog = new Dialog(mContext);
+        dialog.setContentView(R.layout.layout_stream_conflict_dailog);
+        dialog.setTitle("Select Your Stream and Level");
+        RadioGroup streamRadioGroup = (RadioGroup) dialog.findViewById(R.id.stream_radio_group);
+        RadioGroup levelRadioGroup = (RadioGroup) dialog.findViewById(R.id.level_radio_group);
+        try {
+            final String stream_id = jsonObj.getString(getResourceString(R.string.USER_STREAM));
+            final String level_id = jsonObj.getString(getResourceString(R.string.USER_LEVEL));
+            String streamName = jsonObj.getString(getResourceString(R.string.USER_STREAM_NAME));
+            String levelName = jsonObj.getString(getResourceString(R.string.USER_LEVEL_NAME));
+            if (mProfile.getPreferred_stream_id()== Integer.parseInt(stream_id))
+                streamRadioGroup.setVisibility(View.GONE);
+
+            ((RadioButton) dialog.findViewById(R.id.firstStream)).setText(streamName);
+            ((RadioButton) dialog.findViewById(R.id.secondStream)).setText(mProfile.getPreferred_stream_short_name());
+
+            ((RadioButton) dialog.findViewById(R.id.firstLevel)).setText(levelName);
+            ((RadioButton) dialog.findViewById(R.id.secondLevel)).setText(mProfile.getPreferred_level_name());
+
+            // if button is clicked, close the custom dialog
+//            dialog.findViewById(R.id.ok_button).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    dialog.dismiss();
+//                    if (((RadioButton) dialog.findViewById(R.id.firstStream)).isChecked())
+//                        params.put(getResourceString(R.string.USER_STREAM), stream_id);
+//                    if (((RadioButton) dialog.findViewById(R.id.secondStream)).isChecked())
+//                        params.put(getResourceString(R.string.USER_STREAM), mProfile.getPreferred_stream_id());
+//                    if (((RadioButton) dialog.findViewById(R.id.firstLevel)).isChecked())
+//                        params.put(getResourceString(R.string.USER_LEVEL), level_id);
+//                    if (((RadioButton) dialog.findViewById(R.id.secondLevel)).isChecked())
+//                        params.put(getResourceString(R.string.USER_LEVEL), mDeviceProfile.getLevel());
+//                    networkData(tag, URL, params, method);
+//                }
+//
+//
+//            });
+//            dialog.setCanceledOnTouchOutside(false);
+//            dialog.show();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 }

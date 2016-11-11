@@ -106,5 +106,4 @@ public class Exam implements Parcelable{
         this.exam_details = exam_details;
     }
 
-
 }

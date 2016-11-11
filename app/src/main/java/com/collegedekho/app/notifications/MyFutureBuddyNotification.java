@@ -11,8 +11,6 @@ import com.crashlytics.android.Crashlytics;
 
 import java.util.Map;
 
-import static android.support.v4.app.NotificationCompat.DEFAULT_ALL;
-
 /**
  * Created by harshvardhan on 05/10/16.
  */
@@ -56,9 +54,7 @@ public class MyFutureBuddyNotification extends CollegeDekhoNotifications {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && titleSequence.length() > Constants.THRESHOLD_CHARACTER_LIMIT_FOR_NOTIFICATION_TITLE) {
                     super.contentView.setTextViewTextSize(R.id.notification_fb_title, 1, Constants.CRUSHED_NOTIFICATION_TITLE_SIZE);
                 }
-            }
-            else
-            {
+            }else {
                 return;
             }
 

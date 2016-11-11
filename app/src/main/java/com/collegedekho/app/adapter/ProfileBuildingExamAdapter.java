@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
+import com.collegedekho.app.listener.ExamInstituteCountListener;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.ExamYearSpinner;
@@ -30,17 +31,19 @@ import java.util.ArrayList;
 /**
  * Created by sureshsaini on 30/11/15.
  */
-public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderView> {
+public class ProfileBuildingExamAdapter extends RecyclerView.Adapter<ProfileBuildingExamAdapter.ExamHolderView> {
 
     private Context mContext;
+    private ExamInstituteCountListener mInstituteCountListener;
     private ArrayList<Exam> mExamList = new ArrayList<>();
     private int lastPosition=-1;
     private int textColorId;
     private boolean mShowAllExams ;
 
 
-    public ExamsAdapter(Context context, ArrayList<Exam> examList){
+    public ProfileBuildingExamAdapter(Context context, ExamInstituteCountListener instituteCountListener, ArrayList<Exam> examList){
         this.mContext = context;
+        this.mInstituteCountListener = instituteCountListener;
         this.mExamList.addAll(examList);
 
         if(mExamList != null && !mExamList.isEmpty()){
@@ -53,9 +56,9 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                 for (int j = 0; j < count; j++) {
                     ExamDetail obj = examDetailList.get(j);
                     if (obj == null) continue;
-                   if (obj.is_preparing()) {
+                    if (obj.is_preparing()) {
                         obj.setSelected(true);
-                       exam.setSelected(true);
+                        exam.setSelected(true);
                     }
                 }
             }
@@ -65,7 +68,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
 
     @Override
     public ExamHolderView onCreateViewHolder(ViewGroup parent, int viewType) {
-      //  LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+        //  LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
         View convertView = LayoutInflater.from(mContext).inflate(R.layout.layout_exam_drop_down, parent, false);
         return new ExamHolderView(convertView);
     }
@@ -81,6 +84,13 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
         if(examName == null || examName.isEmpty()){
             examName = exam.getExam_name();
         }
+        // set Institute count of exam
+        /*int instituteCount = exam.getInstitutes_count();
+        if(instituteCount == 1){
+            examName =examName+" ("+instituteCount+")College";
+        }else if(instituteCount > 1){
+            examName =examName+" ("+instituteCount+")Colleges";
+        }*/
         holder.mExamName.setText(examName);
 
         // exam position is taged to get this position while clicked
@@ -180,6 +190,9 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                         }
                     }
                 }
+
+                // update institute count
+                mInstituteCountListener.updateInstituteCount();
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -194,12 +207,10 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                 } catch(NumberFormatException e){
                     e.printStackTrace();
                 }
-
                 if(itemPosition == -1){
                     return;
                 }
                 Exam exam = mExamList.get(itemPosition);
-
                 if (v.isSelected()) {
 
                     v.setSelected(false);
@@ -234,9 +245,11 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
                     }
 
                 }
+                // update institute count
+                mInstituteCountListener.updateInstituteCount();
             }
         });
-      // this.setAnimation(holder.examCard, position);
+        // this.setAnimation(holder.examCard, position);
     }
 
     @Override
@@ -246,7 +259,7 @@ public class ExamsAdapter extends RecyclerView.Adapter<ExamsAdapter.ExamHolderVi
     }
 
     public void updateExamsList(ArrayList<Exam> newExamList){
-       //TODO:: commented code for testing to ask marks for those exams which results is already out.
+        //TODO:: commented code for testing to ask marks for those exams which results is already out.
        /* int count1 = newExamList.size();
         for (int i = 0; i < count1; i++) {
             Exam examObj = newExamList.get(i);

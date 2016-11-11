@@ -218,6 +218,7 @@
     <string name="TAG_FRAGMENT_USER_EDUCATION">fragment_user_education</string>
     <string name="TAG_FRAGMENT_SIGNIN">fragment_signin</string>
     <string name="TAG_FRAGMENT_LOGIN">fragment_login</string>
+    <string name="TAG_FRAGMENT_SPLASH_LOGIN">fragment_splash_login</string>
     <string name="TAG_FRAGMENT_POST_ANONYMOUS_LOGIN">fragment_post_anonymous_login</string>
 
     <string name="METHOD_GET">GET</string>
@@ -391,6 +392,9 @@
     <string name="ACTION_CALL_COLLEGE">Call to College for information</string>
     <string name="ACTION_APPLY_COLLEGE">Apply to get the admission</string>
     <string name="ACTION_USER_ACTION">action_user_action</string>
+    <string name="ACTION_SPLASH_SKIP_LOGIN">action_splash_skip_login</string>
+    <string name="ACTION_SPLASH_HELP_ME_LOGIN">action_splash_help_me_login</string>
+    <string name="ACTION_SPLASH_I_KNOW_LOGIN">action_splash_i_know_login</string>
 
 
     <!--String messages-->
@@ -583,4 +587,5 @@
     <string name="TAG_APP_STATUS_LAUNCHED_FROM_SYSTEM">launched_from_system</string>
     <string name="TAG_APP_STATUS_LAUNCHED_FROM_NOTIFICATION">launched_from_notification</string>
     <string name="TAG_APP_STATUS_ALREADY_RUNNING">already_running</string>
+    <string name="pref_institute_count">pref_institute_count</string>
 </resources>
