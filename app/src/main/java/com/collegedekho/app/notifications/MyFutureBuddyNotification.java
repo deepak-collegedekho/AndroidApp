@@ -26,16 +26,6 @@ public class MyFutureBuddyNotification extends CollegeDekhoNotifications {
 
         long currentTimeMillis = System.currentTimeMillis();
 
-/*        super.builder.setSmallIcon(this.getNotificationIcon())
-                .setDefaults(DEFAULT_ALL)
-                .setContentIntent(this.pendingIntent)
-                .setOngoing(true)
-                .setWhen(currentTimeMillis)
-                .setOnlyAlertOnce(true)
-                .setAutoCancel(true);
-
-        super.notification = super.builder.build();*/
-
         String title = "";
         String body = "";
 

@@ -152,6 +152,7 @@ import com.collegedekho.app.receiver.OTPReceiver;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.resource.MySingleton;
+import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
@@ -651,9 +652,7 @@ public class MainActivity extends AppCompatActivity
                 Looper.loop();
             }
         }).start();
-
     }
-
 
     @Override
     public void setTitle(CharSequence title) {
@@ -1382,7 +1381,8 @@ public class MainActivity extends AppCompatActivity
      * and GA Tracker
      */
     private void setUserIdWithAllEvents(){
-        // register user id with apps flyer
+        // register user id with apps flyer and GA
+        MainActivity.tracker.setClientId(MainActivity.mProfile.getId());
         AppsFlyerLib.getInstance().setCustomerUserId(MainActivity.mProfile.getId());
         //Appsflyer events
         Map<String, Object> eventValue = new HashMap<>();
@@ -1399,6 +1399,7 @@ public class MainActivity extends AppCompatActivity
         Crashlytics.setUserEmail(MainActivity.mProfile.getEmail());
         Crashlytics.setUserName(MainActivity.mProfile.getName());
 
+        SendAppEvent(getResourceString(R.string.CATEGORY_BOOK_KEEPING), getResourceString(R.string.SESSION_STARTED), eventValue, this);
     }
 
     private void mRegisterGcmDialog(){

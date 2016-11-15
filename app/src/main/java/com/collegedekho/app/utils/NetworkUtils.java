@@ -431,7 +431,6 @@ public class NetworkUtils {
         }
     }
 
-
     public void networkDataWithObjectParam(String tag, String url, JSONObject params, int method)
     {
         this.postOrPutData(tag, url, params, method);
@@ -461,8 +460,8 @@ public class NetworkUtils {
                 .putInt(Constants.KEY_APPLY_STATUS, Constants.APPLY_PENDING)
                 .apply();
         Toast.makeText(mContext, "Failed to apply the course, will retry after sometime.", Toast.LENGTH_LONG).show();
-
     }
+
     /**
      * This method is used to handle success response  when volly
      *  request an api

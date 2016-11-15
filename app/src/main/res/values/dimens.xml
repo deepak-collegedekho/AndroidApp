@@ -107,7 +107,7 @@
     <dimen name="widget_image_width">100dp</dimen>
     <dimen name="course_label_horizontal_margin">10dp</dimen>
     <dimen name="gradient_radius">5dp</dimen>
-    <dimen name="fb_card_width">230dp</dimen>
+    <dimen name="fb_card_width">250dp</dimen>
 
     <dimen name="cover_width">40dp</dimen>
     <dimen name="cover_height">40dp</dimen>
