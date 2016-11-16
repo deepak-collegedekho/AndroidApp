@@ -15,6 +15,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
+            android:layout_gravity="center"
             android:layout_height="wrap_content">
 
             <ImageView
@@ -25,20 +26,22 @@
                 android:layout_marginLeft="@dimen/m10dp"
                 app:srcCompat="@drawable/ic_cd_colored"/>
 
-            <TextView
-                android:id="@+id/profile_institutes_count"
-                android:layout_width="match_parent"
+            <com.robinhood.ticker.TickerView
+                android:id="@id/institute_count_ticker"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="28sp"
-                android:gravity="center"
+                android:layout_marginTop="@dimen/m10dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/bg_white_gradient"
                 android:textColor="@color/black"
-                android:text="20149"/>
+                app:ticker_animationDuration="500"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:layout_below="@id/profile_institutes_count"
+                android:layout_below="@id/institute_count_ticker"
                 android:gravity="center"
                 android:layout_marginBottom="10dp"
                 android:textColor="@color/black"

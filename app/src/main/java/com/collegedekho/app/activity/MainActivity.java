@@ -152,7 +152,6 @@ import com.collegedekho.app.receiver.OTPReceiver;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.ContainerHolderSingleton;
 import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
@@ -437,7 +436,6 @@ public class MainActivity extends AppCompatActivity
         // load splash screen
         this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
 
-        setupOtpRequest(true);
         if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED && IS_HOME_LOADED) {
             Utils.appLaunched(this);
         }
@@ -1206,7 +1204,7 @@ public class MainActivity extends AppCompatActivity
                 if(currentFragment instanceof  HomeFragment){
                     mDrawerLayout.openDrawer(GravityCompat.START);
 
-                }else if(getSupportFragmentManager().getBackStackEntryCount() >= 1) {
+                }/*else if(getSupportFragmentManager().getBackStackEntryCount() >= 1) {
                     // remove a fragment from back stack if count is greater then zero
                     getSupportFragmentManager().popBackStack();
                     new Handler().postDelayed(new Runnable() {
@@ -1216,8 +1214,15 @@ public class MainActivity extends AppCompatActivity
                             invalidateOptionsMenu();
                         }
                     }, 200);
-                }else{
+                }*/else{
                     onBackPressed();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // call this method to redraw tool bar items
+                            invalidateOptionsMenu();
+                        }
+                    }, 200);
                 }
 
                 return true;
@@ -2497,15 +2502,18 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAKE_ME_TO_RECOMMENDED:
                 isFromNotification = true;
                 this.mCurrentTitle = "Recommended Institutes";
-                if(currentFragment instanceof ProfileBuildingFragment)
-                    ((ProfileBuildingFragment)currentFragment).hideNavigationIcon();
+                if(currentFragment instanceof ProfileBuildingFragment) {
+                    ((ProfileBuildingFragment) currentFragment).hideNavigationIcon();
+                    ((ProfileBuildingFragment) currentFragment).updateUserNamePhoneNumber();
+                }
+                mClearBackStack();
                 mShowAppBarLayout();
                 Constants.IS_RECOMENDED_COLLEGE = true;
-                if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
+                /*if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.RECOMMENDED, true);
-                } else {
+                } else {*/
                     this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.RECOMMENDED, false);
-                }
+                //}
                 break;
 
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
@@ -4668,9 +4676,7 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment != null) {
             if (currentFragment instanceof SyllabusSubjectsListFragment) {
                 ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
-            } else if (currentFragment instanceof OTPVerificationFragment && MainActivity.mProfile.getIs_verified() == 0) {
-                setupOtpRequest(false);
-            }else if (currentFragment instanceof WebViewFragment){
+            } else if (currentFragment instanceof WebViewFragment){
                 boolean canGoBack = ((WebViewFragment) currentFragment).canGoBack();
                 if(canGoBack)
                     return;
@@ -5222,15 +5228,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnTakeMeToRecommended() {
-        mClearBackStack();
+       // this.mClearBackStack();
         this.mMakeNetworkCall(Constants.TAKE_ME_TO_RECOMMENDED, Constants.BASE_URL + "personalize/recommended-institutes/",null);
-
     }
 
     @Override
     public void OnTakeMeToDashBoard() {
         this.mClearBackStack();
-        mDisplayHomeFragment();
+        this.mDisplayHomeFragment();
     }
 
     @Override
@@ -5334,10 +5339,10 @@ public class MainActivity extends AppCompatActivity
         HashMap<String, String> params = new HashMap<>();
         params.put("source", String.valueOf(Constants.REMOMMENDED_INSTITUTE_ACTION));
         params.put("action", String.valueOf("1"));
-        if (MainActivity.mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED && setupOtpRequest(true)) {
+        if (MainActivity.mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED){
             Constants.IS_CAF_LOADED = true;
-            mDisplayOtpVerificationFragment();
-        }
+         }
+        mDisplayOtpVerificationFragment();
         this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard + "#" + cardCategory + "#" + nextUrl, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
 
@@ -5782,7 +5787,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mDisplayOtpVerificationFragment() {
-        if (MainActivity.mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED && setupOtpRequest(true)) {
+        if (MainActivity.mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED && setupOtpRequest()) {
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(OTPVerificationFragment.class.getSimpleName());
             if (fragment == null)
                 mDisplayFragment(OTPVerificationFragment.newInstance(), true, OTPVerificationFragment.class.getSimpleName());
@@ -5791,7 +5796,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private boolean setupOtpRequest(boolean canRequest) {
+    private boolean setupOtpRequest() {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         String today = df.format(calendar.getTime());
@@ -5799,11 +5804,9 @@ public class MainActivity extends AppCompatActivity
         if (oldDate != null && oldDate.equals(today)) {
             return false;
         }else {
-            if (!canRequest) {
-                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.CAN_ASK_OTP_TODAY), today).apply();
-            }
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.CAN_ASK_OTP_TODAY), today).apply();
+            return true;
         }
-        return true;
     }
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {

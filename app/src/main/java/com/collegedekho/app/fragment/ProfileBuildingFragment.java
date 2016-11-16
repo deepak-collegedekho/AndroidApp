@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,6 +21,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +61,8 @@ import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
 import com.collegedekho.app.widget.NumberPicker;
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.robinhood.ticker.TickerUtils;
+import com.robinhood.ticker.TickerView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -68,6 +72,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -81,6 +86,9 @@ import java.util.List;
 public class ProfileBuildingFragment extends BaseFragment implements ProfileFragmentListener,
         ExamFragmentListener, ExamInstituteCountListener
 {
+
+    private static final char[] NUMBER_LIST = TickerUtils.getDefaultNumberList();
+    protected static final Random RANDOM = new Random(System.currentTimeMillis());
     private static final String TAG = "user_education_fragment";
     private OnUserEducationInteractionListener mListener;
     private RecyclerView mStreamRecyclerView;
@@ -105,6 +113,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     private String mEventAction = "";
     private HashMap<String, Object> mEventValue = new HashMap<>();;
     final String[] marks_arrays = {"30-40%", "40-50%","50-60%","60-70%", "70-80%", "80-90%", "90-100%",};
+    private String mInstituteCount = "";
 
     public ProfileBuildingFragment() {
         // Required empty public constructor
@@ -131,6 +140,11 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         animationFromTop.setDuration(Constants.ANIM_SHORTEST_DURATION);
         animationFromBottom = AnimationUtils.loadAnimation(this.getActivity(), R.anim.slide_from_bottom);
         animationFromBottom.setDuration(Constants.ANIM_SHORTEST_DURATION);
+
+        TickerView mInstituteCountTicker = (TickerView) mRootView.findViewById(R.id.institute_count_ticker);
+        mInstituteCountTicker.setCharacterList(NUMBER_LIST);
+        mInstituteCountTicker.setText("20149");
+        mInstituteCountTicker.setGravity(Gravity.CENTER);
 
         if(MainActivity.mProfile != null){
 
@@ -476,11 +490,30 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             this.mResetEventVariables();
         }
     }
-    private void setInstituteCount(String count) {
-        if (mRootView != null){
-            TextView tv = (TextView) mRootView.findViewById(R.id.profile_institutes_count);
-            tv.setText(count);
+    private void setInstituteCount(final String count) {
+        if(!mInstituteCount.equalsIgnoreCase(count)) {
+            mInstituteCount = count;
+            if (mRootView != null) {
+                final TickerView mInstituteCountTicker = (TickerView) mRootView.findViewById(R.id.institute_count_ticker);
+                mInstituteCountTicker.setCharacterList(NUMBER_LIST);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isAdded() && mInstituteCountTicker != null) {
+                            mInstituteCountTicker.setText(String.valueOf(count));
+                            MediaPlayer mp = MediaPlayer.create(getActivity().getApplicationContext(), R.raw.institute_count);
+                            mp.start();
+                        }
+                    }
+                }, 200);
+            }
         }
+    }
+
+    protected String getRandomNumber(int digits) {
+        final int digitsInPowerOf10 = (int) Math.pow(10, digits);
+        return Integer.toString(RANDOM.nextInt(digitsInPowerOf10) +
+                digitsInPowerOf10 * (RANDOM.nextInt(8) + 1));
     }
 
     private void mRequestForSubLevels(int level) {
@@ -1406,15 +1439,13 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
         if(mListener == null)
             return;
-        // check mDeviceProfile's name and phone Number
+        // check user's name and phone Number
+        // if name or phone is given and have any issue then
+        // the it will show a toast
         HashMap<String, String> userParams = new HashMap<>();
         if(!getUserNameAndPhone(userParams)){
             return;
         }
-
-        if(userParams.size() >= 1)
-            this.mListener.requestForProfile(userParams);
-
 
         mRootView.findViewById(R.id.user_education_top_layout).setVisibility(View.GONE);
         mListener.OnTakeMeToRecommended();
@@ -1561,6 +1592,23 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         // save user's current stream id on server
         params.put("current_stream_id", String.valueOf(MainActivity.mProfile.getCurrent_stream_id()));
         this.mListener.requestForProfile(params);
+    }
+
+    /**
+     * This method is used to update name and phone number
+     * when user select option to go to recommended colleges
+     */
+    public void updateUserNamePhoneNumber(){
+        HashMap<String, String> userParams = new HashMap<>();
+        if(!getUserNameAndPhone(userParams)){
+            return;
+        }
+
+        if(userParams.size() >= 1 && mListener != null){
+            if(NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
+                mListener.requestForProfile(userParams);
+            }
+        }
     }
 
     @Override

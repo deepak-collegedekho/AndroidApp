@@ -2,7 +2,9 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +13,17 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
+import com.robinhood.ticker.TickerUtils;
+import com.robinhood.ticker.TickerView;
 
 /**
  *Created by ${sureshsaini} on ${20/11/15}.
  */
 public class SplashLoginFragment extends  BaseFragment {
 
+    private static final char[] NUMBER_LIST = TickerUtils.getDefaultNumberList();
     private OnSplashLoginListener mListener;
+    private TickerView mInstituteCountTicker ;
 
     public static SplashLoginFragment newInstance() {
         return new SplashLoginFragment();
@@ -35,12 +41,29 @@ public class SplashLoginFragment extends  BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mInstituteCountTicker = (TickerView)view.findViewById(R.id.institute_count_ticker);
+        mInstituteCountTicker.setCharacterList(NUMBER_LIST);
+        mInstituteCountTicker.setText("1000");
+        mInstituteCountTicker.setGravity(Gravity.CENTER);
         view.findViewById(R.id.splash_login_help_me).setOnClickListener(this);
         view.findViewById(R.id.splash_login_i_know).setOnClickListener(this);
         view.findViewById(R.id.splash_login_skip_layout).setOnClickListener(this);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                updateTickerView();
+            }
+        }, 300);
     }
 
-    @Override
+    private void updateTickerView() {
+       if(mInstituteCountTicker != null){
+           mInstituteCountTicker.setText("21409");
+       }
+  }
+
+
+   @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {

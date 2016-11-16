@@ -6,6 +6,7 @@
     <item name="empty" type="id" />
 
     <item name="fab_label" type="id" />
+    <item name="institute_count_ticker" type="id" />
 
     <!--profile ids -->
     <item name="user_name" type="id" />

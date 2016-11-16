@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -30,12 +31,14 @@
                 android:layout_marginTop="20dp"
                 android:text="Do you know there are"/>
 
-            <TextView
+            <com.robinhood.ticker.TickerView
+                android:id="@id/institute_count_ticker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="28sp"
                 android:textColor="@color/black"
-                android:text="20149"/>
+                android:background="@drawable/bg_white_gradient"
+                app:ticker_animationDuration="600" />
 
             <TextView
                 android:layout_width="wrap_content"

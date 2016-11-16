@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.collegedekho.app.R;
 
 public class SplashFragment extends BaseFragment {
@@ -39,5 +38,5 @@ public class SplashFragment extends BaseFragment {
     }
 
     @Override
-    public void hide() {  }
+    public void hide() { }
 }
