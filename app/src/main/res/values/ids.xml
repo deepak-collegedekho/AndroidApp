@@ -7,6 +7,11 @@
 
     <item name="fab_label" type="id" />
     <item name="institute_count_ticker" type="id" />
+    <item name="institute_count_ticker1" type="id" />
+    <item name="institute_count_ticker2" type="id" />
+    <item name="institute_count_ticker3" type="id" />
+    <item name="institute_count_ticker4" type="id" />
+    <item name="institute_count_ticker5" type="id" />
 
     <!--profile ids -->
     <item name="user_name" type="id" />

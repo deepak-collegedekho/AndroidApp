@@ -17,10 +17,15 @@ public class Constants
     public static final int RC_QUIT_VIDEO_PLAYER=5;
     public static final int GCM_RESULT_DATA_KEY=201;
 
+    public static final int APP_OLD_FLOW = 1;
+    public static final int APP_NEW_FLOW = 2;
+
     public static final String KEY_USER = "user_id";
     public static final String ANONYMOUS_USER = "Anonymous User";
     public static final String TAG_FACEBOOK_LOGIN = "user_facebook_login";
     public static final String TAG_TRUE_SDK_LOGIN = "true_sdk_login";
+    public static final String TAG_CREATE_USER = "tag_splash_create_user";
+    public static final String TAG_CREATING_USER = "tag_creating_user";
     public static final String TAG_SPLASH_SKIP_LOGIN = "tag_splash_skip_login";
     public static final String TAG_SPLASH_HELP_ME_LOGIN = "tag_splash_help_me_login";
     public static final String TAG_SPLASH_I_KNOW_LOGIN = "tag_splash_i_know_login";

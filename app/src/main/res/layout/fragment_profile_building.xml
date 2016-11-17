@@ -26,22 +26,46 @@
                 android:layout_marginLeft="@dimen/m10dp"
                 app:srcCompat="@drawable/ic_cd_colored"/>
 
-            <com.robinhood.ticker.TickerView
-                android:id="@id/institute_count_ticker"
+            <LinearLayout
+                android:id="@+id/institute_count_ticker_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="28sp"
-                android:layout_marginTop="@dimen/m10dp"
                 android:layout_centerHorizontal="true"
-                android:background="@drawable/bg_white_gradient"
-                android:textColor="@color/black"
-                app:ticker_animationDuration="500"/>
+                android:layout_marginTop="@dimen/m10dp"
+                android:orientation="horizontal">
+
+                <com.robinhood.ticker.TickerView
+                    android:id="@id/institute_count_ticker5"
+                    style="@style/TickerView"
+                    app:ticker_animationDuration="500"/>
+
+                <com.robinhood.ticker.TickerView
+                    android:id="@id/institute_count_ticker4"
+                    style="@style/TickerView"
+                    app:ticker_animationDuration="500"/>
+
+                <com.robinhood.ticker.TickerView
+                    android:id="@id/institute_count_ticker3"
+                    style="@style/TickerView"
+                    app:ticker_animationDuration="500"/>
+
+                <com.robinhood.ticker.TickerView
+                    android:id="@id/institute_count_ticker2"
+                    style="@style/TickerView"
+                    app:ticker_animationDuration="500"/>
+
+                <com.robinhood.ticker.TickerView
+                    android:id="@id/institute_count_ticker1"
+                    style="@style/TickerView"
+                    app:ticker_animationDuration="500"/>
+            </LinearLayout>
 
             <TextView
+                android:id="@+id/profile_building_college_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:layout_below="@id/institute_count_ticker"
+                android:layout_below="@id/institute_count_ticker_layout"
                 android:gravity="center"
                 android:layout_marginBottom="10dp"
                 android:textColor="@color/black"

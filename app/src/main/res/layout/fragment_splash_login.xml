@@ -24,28 +24,65 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="19sp"
                 android:textColor="@color/black"
                 android:gravity="center"
                 android:fontFamily="sans-serif"
                 android:layout_marginTop="20dp"
                 android:text="Do you know there are"/>
 
-            <com.robinhood.ticker.TickerView
-                android:id="@id/institute_count_ticker"
+            <LinearLayout
+                android:id="@+id/institute_count_ticker_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="28sp"
-                android:textColor="@color/black"
-                android:background="@drawable/bg_white_gradient"
-                app:ticker_animationDuration="600" />
+                android:layout_marginTop="@dimen/m10dp"
+                android:orientation="horizontal">
+
+                <com.robinhood.ticker.TickerView
+                    android:id="@id/institute_count_ticker5"
+                    style="@style/TickerView.Small"
+                    app:ticker_animationDuration="800"/>
+
+                <com.robinhood.ticker.TickerView
+                    android:id="@id/institute_count_ticker4"
+                    style="@style/TickerView.Small"
+                    app:ticker_animationDuration="800"/>
+
+                <com.robinhood.ticker.TickerView
+                    android:id="@id/institute_count_ticker3"
+                    style="@style/TickerView.Small"
+                    app:ticker_animationDuration="800"/>
+
+                <com.robinhood.ticker.TickerView
+                    android:id="@id/institute_count_ticker2"
+                    style="@style/TickerView.Small"
+                    app:ticker_animationDuration="800"/>
+
+                <com.robinhood.ticker.TickerView
+                    android:id="@id/institute_count_ticker1"
+                    style="@style/TickerView.Small"
+                    app:ticker_animationDuration="800"/>
+
+                <com.robinhood.ticker.TickerView
+                    android:id="@+id/institute_count_ticker_plus"
+                    style="@style/TickerView.Small"
+                    android:text="+"
+                    app:ticker_animationDuration="500"/>
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="19sp"
                 android:textColor="@color/black"
                 android:text="Colleges in India"/>
+
+            <com.robinhood.ticker.TickerView
+                android:id="@id/institute_count_ticker"
+                style="@style/TickerView"
+                android:layout_marginTop="@dimen/m20dp"
+                app:ticker_animationDuration="800"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -53,19 +90,20 @@
                 android:textSize="20sp"
                 android:textColor="@color/black"
                 android:gravity="center"
-                android:layout_marginTop="@dimen/m30dp"
+                android:layout_marginTop="@dimen/m10dp"
                 android:textStyle="bold"
-                android:text="But there is one perfect\n college for you"/>
+                android:text="College for you"/>
 
             <Button
                 android:id="@+id/splash_login_help_me"
-                android:layout_width="wrap_content"
+                android:layout_width="200dp"
                 style="@style/MaterialButton"
                 android:layout_marginRight="5dp"
-                android:text="Help Me Discover"
-                android:textAllCaps="false"
-                android:textSize="@dimen/m16sp"
+                android:text="Proceed"
+                android:textAllCaps="true"
+                android:textSize="@dimen/m18sp"
                 android:layout_marginTop="15dp"
+                android:textColor="@color/white"
                 android:layout_height="wrap_content" />
 
             <LinearLayout
@@ -75,6 +113,7 @@
                 android:layout_gravity="center"
                 android:padding="@dimen/m8dp"
                 android:layout_marginTop="10dp"
+                android:visibility="invisible"
                 android:orientation="vertical"
                 android:contentDescription="@string/sign_up_skip_description"
                 android:importantForAccessibility="yes">
@@ -97,6 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|right"
                 android:padding="@dimen/m8dp"
+                android:visibility="invisible"
                 android:layout_marginTop="20dp"
                 android:orientation="vertical"
                 android:importantForAccessibility="yes">

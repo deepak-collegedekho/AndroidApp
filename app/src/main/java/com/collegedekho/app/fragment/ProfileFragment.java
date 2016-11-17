@@ -248,8 +248,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         int currentPassingYear = mProfile.getCurrent_passing_year();
         if(currentPassingYear >= 2000) {
             ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(String.valueOf(currentPassingYear));
-        } else {
-            ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(String.valueOf(Utils.GetCurrentYear()));
+
+        } else{
+            // we will not set user current passing year and preferred year utill he
+            // will not set,  discussed with Harsh and Shashank
+           /* ((TextView) mRootView.findViewById(R.id.profile_education_year)).setText(String.valueOf(Utils.GetCurrentYear()));
 
             //TODO :: save it locally and send it to server when you have more than 5 unsynced keys
             HashMap<String, String> hashMap = new HashMap<>();
@@ -261,7 +264,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
             MainActivity.mProfile.setPreferred_year_of_admission(Utils.GetCurrentYear());
 
-            MainActivity.mProfile.setCurrent_passing_year(Utils.GetCurrentYear());
+            MainActivity.mProfile.setCurrent_passing_year(Utils.GetCurrentYear());*/
         }
 
         // set DeviceProfile Stream Name in Current Education
@@ -610,11 +613,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
             case R.id.profile_expand_exams_btn:
                 if(mRootView.findViewById(R.id.profile_exams_name).isSelected()) {
-                    // ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mPlusDrawable);
                     mExpandUserExamsLayout(false);
                     mRootView.findViewById(R.id.profile_expand_exams_btn).setContentDescription("Click to collapse the exam you are interested in");
                 }else{
-                    // ((ImageView)mRootView.findViewById(R.id.profile_expand_exams_btn)).setImageDrawable(mMinusDrawable);
                     mExpandUserExamsLayout(true);
                     mRootView.findViewById(R.id.profile_expand_exams_btn).setContentDescription("Click to expand the exam you are interested in");
                 }
@@ -1577,7 +1578,10 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     private void mRequestForUpdateCurrentEducation(){
         String currentSubLevelIdValue ="";
         int userCurrentSubLevelId = ((MaterialSpinner) mRootView.findViewById(R.id.profile_edit_current_sub_level)).getSelectedSpinnerItemId();
-        if (userCurrentSubLevelId > 0) {
+        if (userCurrentSubLevelId < 0) {
+            Utils.DisplayToast(getContext(), "Please Select your SubLevel.");
+            return;
+        }else{
             currentSubLevelIdValue  +=  userCurrentSubLevelId;
         }
         String currentStreamIdValue ="";
@@ -2019,28 +2023,24 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             mRootView.findViewById(R.id.profile_expand_info_btn).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.profile_info_edit_layout).setVisibility(View.GONE);
             mRootView.findViewById(R.id.profile_expanded_info_layout).setVisibility(View.GONE);
-            // onClick(mRootView.findViewById(R.id.profile_expand_info_btn));
         }else if(viewPosition == 1){
             mRootView.findViewById(R.id.profile_education_layout).setVisibility(View.VISIBLE);
             ((ImageView)mRootView.findViewById(R.id.profile_expand_education_btn)).setImageDrawable(mPlusDrawable);
             mRootView.findViewById(R.id.profile_expand_education_btn).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.profile_education_edit_layout).setVisibility(View.GONE);
             mRootView.findViewById(R.id.profile_expanded_education_layout).setVisibility(View.GONE);
-            //  onClick(mRootView.findViewById(R.id.profile_expand_education_btn));
         }else if(viewPosition == 2){
             mRootView.findViewById(R.id.profile_preferred_layout).setVisibility(View.VISIBLE);
             ((ImageView)mRootView.findViewById(R.id.profile_expand_preferred_btn)).setImageDrawable(mPlusDrawable);
             mRootView.findViewById(R.id.profile_expand_preferred_btn).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.profile_preferred_edit_layout).setVisibility(View.GONE);
             mRootView.findViewById(R.id.profile_expanded_preferred_layout).setVisibility(View.GONE);
-            //  onClick(mRootView.findViewById(R.id.profile_expand_preferred_btn));
         }else if(viewPosition == 4){
             mRootView.findViewById(R.id.profile_other_info_layout).setVisibility(View.VISIBLE);
             ((ImageView)mRootView.findViewById(R.id.profile_expand_other_info_btn)).setImageDrawable(mPlusDrawable);
             mRootView.findViewById(R.id.profile_expand_other_info_btn).setVisibility(View.VISIBLE);
             mRootView.findViewById(R.id.profile_other_info_edit_layout).setVisibility(View.GONE);
             mRootView.findViewById(R.id.profile_expanded_other_info_layout).setVisibility(View.GONE);
-            // onClick(mRootView.findViewById(R.id.profile_expand_other_info_btn));
         }
     }
 

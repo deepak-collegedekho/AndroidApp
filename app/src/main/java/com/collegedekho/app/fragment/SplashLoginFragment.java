@@ -1,10 +1,10 @@
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,25 +41,70 @@ public class SplashLoginFragment extends  BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mInstituteCountTicker = (TickerView)view.findViewById(R.id.institute_count_ticker);
+
+        TickerView mInstituteCountTicker = (TickerView) view.findViewById(R.id.institute_count_ticker);
+        TickerView mInstituteCountTicker1 = (TickerView) view.findViewById(R.id.institute_count_ticker1);
+        TickerView mInstituteCountTicker2 = (TickerView) view.findViewById(R.id.institute_count_ticker2);
+        TickerView mInstituteCountTicker3 = (TickerView) view.findViewById(R.id.institute_count_ticker3);
+        TickerView mInstituteCountTicker4 = (TickerView) view.findViewById(R.id.institute_count_ticker4);
+        TickerView mInstituteCountTicker5 = (TickerView) view.findViewById(R.id.institute_count_ticker5);
+        TickerView mInstituteCountTickerPlus = (TickerView) view.findViewById(R.id.institute_count_ticker_plus);
         mInstituteCountTicker.setCharacterList(NUMBER_LIST);
-        mInstituteCountTicker.setText("1000");
-        mInstituteCountTicker.setGravity(Gravity.CENTER);
+        mInstituteCountTicker1.setCharacterList(NUMBER_LIST);
+        mInstituteCountTicker2.setCharacterList(NUMBER_LIST);
+        mInstituteCountTicker3.setCharacterList(NUMBER_LIST);
+        mInstituteCountTicker4.setCharacterList(NUMBER_LIST);
+        mInstituteCountTicker5.setCharacterList(NUMBER_LIST);
+        mInstituteCountTickerPlus.setCharacterList(NUMBER_LIST);
+        mInstituteCountTicker.setText("20430");
+        mInstituteCountTicker1.setText("0");
+        mInstituteCountTicker2.setText("0");
+        mInstituteCountTicker3.setText("0");
+        mInstituteCountTicker4.setText("0");
+        mInstituteCountTicker5.setText("0");
+        mInstituteCountTickerPlus.setText("+");
+
         view.findViewById(R.id.splash_login_help_me).setOnClickListener(this);
         view.findViewById(R.id.splash_login_i_know).setOnClickListener(this);
         view.findViewById(R.id.splash_login_skip_layout).setOnClickListener(this);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                updateTickerView();
+                String count = "20430";
+                if( count.length() ==1) {
+                    updateTickerValue(count, "0","0","0","0");
+                }else if(count.length() ==2){
+                    updateTickerValue(count.substring(1,2),count.substring(0,1),"0","0","0");
+                }else if(count.length() ==3){
+                    updateTickerValue(count.substring(2,3),count.substring(1,2),count.substring(0,1),"0","0");
+                }else if(count.length() ==4){
+                    updateTickerValue(count.substring(3,4),count.substring(2,3),count.substring(1,2),count.substring(0,1),"0");
+                }else if(count.length() ==5){
+                    updateTickerValue(count.substring(4,5),count.substring(3,4),count.substring(2,3), count.substring(1,2),count.substring(0,1));
+                }
+                MediaPlayer mp = MediaPlayer.create(getActivity().getApplicationContext(), R.raw.institute_count);
+                mp.start();
             }
-        }, 300);
+        }, 400);
     }
 
-    private void updateTickerView() {
-       if(mInstituteCountTicker != null){
-           mInstituteCountTicker.setText("21409");
-       }
+    private void updateTickerValue(String value1,String value2, String value3, String value4, String value5 ) {
+        View v = getView();
+        if(v != null) {
+            TickerView mInstituteCountTicker = (TickerView) v.findViewById(R.id.institute_count_ticker);
+            TickerView mInstituteCountTicker1 = (TickerView) v.findViewById(R.id.institute_count_ticker1);
+            TickerView mInstituteCountTicker2 = (TickerView) v.findViewById(R.id.institute_count_ticker2);
+            TickerView mInstituteCountTicker3 = (TickerView) v.findViewById(R.id.institute_count_ticker3);
+            TickerView mInstituteCountTicker4 = (TickerView) v.findViewById(R.id.institute_count_ticker4);
+            TickerView mInstituteCountTicker5 = (TickerView) v.findViewById(R.id.institute_count_ticker5);
+
+            mInstituteCountTicker.setText("1");
+            mInstituteCountTicker1.setText(value1);
+            mInstituteCountTicker2.setText(value2);
+            mInstituteCountTicker3.setText(value3);
+            mInstituteCountTicker4.setText(value4);
+            mInstituteCountTicker5.setText(value5);
+        }
   }
 
 

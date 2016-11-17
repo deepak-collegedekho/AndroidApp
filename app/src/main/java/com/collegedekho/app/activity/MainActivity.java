@@ -228,7 +228,7 @@ SOFTWARE.*/
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, NavigationView.OnNavigationItemSelectedListener,
         HomeFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
-        SplashLoginFragment.OnSplashLoginListener,
+        SplashFragment.OnSplashListener, SplashLoginFragment.OnSplashLoginListener,
         DataLoadListener, StreamFragment.OnStreamInteractionListener,PsychometricStreamFragment.OnStreamInteractionListener,
         AdapterView.OnItemSelectedListener, ExamsFragment.OnExamsSelectListener,
         InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener, OnNewsSelectListener,
@@ -323,6 +323,7 @@ public class MainActivity extends AppCompatActivity
     private int mRecommendedInstituteCount;
     private Snackbar mSnackbar;
     private boolean IS_USER_CREATED;
+    private boolean USER_CREATING_PROCESS;
     private  boolean IS_HOME_LOADED;
     private static Context mContext;
     public static TrueClient mTrueClient;
@@ -493,6 +494,8 @@ public class MainActivity extends AppCompatActivity
                 mNetworkUtils.setToken(MainActivity.mProfile.getToken());
                 // user id registration
                 setUserIdWithAllEvents();
+                // sync user detail with server
+                requestForProfile(null);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -675,7 +678,11 @@ public class MainActivity extends AppCompatActivity
                 if (IS_USER_CREATED && !IS_HOME_LOADED && currentFragment instanceof SplashFragment
                         && NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED){
                     ((SplashFragment) currentFragment).noInternetAvailable();
-                } else {
+                } else if(!USER_CREATING_PROCESS && !IS_USER_CREATED && NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED){
+                    USER_CREATING_PROCESS = true;
+                    showProgress(Constants.TAG_CREATING_USER);
+                    return;
+                }else{
                     mCheckAppPermissions();
                 }
              }
@@ -709,6 +716,7 @@ public class MainActivity extends AppCompatActivity
      *  5. if both are not selected then load education screen
      */
     private void mLoadUserStatusScreen() {
+
         if (!IS_USER_CREATED) {
             // if user is not created the first user will login with nay option
             this.mDisplaySplashLoginFragment();
@@ -732,7 +740,7 @@ public class MainActivity extends AppCompatActivity
             mDisplayHomeFragment();
             // request to update profile info if anything is change on server
             requestForProfile(null);
-        }else  if(MainActivity.mProfile.getCurrent_level_id() <= 0) {
+        }else  if(MainActivity.mProfile.getCurrent_level_id() <= 0 && mProfile.getApp_flow() == Constants.APP_NEW_FLOW) {
             this.mDisplaySplashLoginFragment();
         }else{
             this.mDisplayProfileBuildingFragment(false);
@@ -836,7 +844,7 @@ public class MainActivity extends AppCompatActivity
         }
         if(position != -1) {
             mClearBackStackWithoutAnimation();
-            mUpdateTabMenuItem(position);
+           // mUpdateTabMenuItem(position); // comment by suresh
             onTabMenuSelected(position);
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -1386,17 +1394,8 @@ public class MainActivity extends AppCompatActivity
      * and GA Tracker
      */
     private void setUserIdWithAllEvents(){
-        // register user id with apps flyer and GA
-        MainActivity.tracker.setClientId(MainActivity.mProfile.getId());
+        // register user id with apps flyer
         AppsFlyerLib.getInstance().setCustomerUserId(MainActivity.mProfile.getId());
-        //Appsflyer events
-        Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(getResourceString(R.string.SESSION_STARTED_DATE_TIME), new Date().toString());
-        eventValue.put(getResourceString(R.string.USER_ID), MainActivity.mProfile.getId());
-        eventValue.put(getResourceString(R.string.USER_EMAIL), mProfile.getEmail());
-        eventValue.put(getResourceString(R.string.USER_PHONE), mProfile.getPhone_no());
-
-        MainActivity.AppsflyerTrackerEvent(this,getString(R.string.SESSION_STARTED),eventValue);
         // register user id with GA tracker
         MainActivity.tracker.setClientId(MainActivity.mProfile.getId());
         // set user credencial with crashlytices
@@ -1404,6 +1403,12 @@ public class MainActivity extends AppCompatActivity
         Crashlytics.setUserEmail(MainActivity.mProfile.getEmail());
         Crashlytics.setUserName(MainActivity.mProfile.getName());
 
+        // Events
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(getResourceString(R.string.SESSION_STARTED_DATE_TIME), new Date().toString());
+        eventValue.put(getResourceString(R.string.USER_ID), MainActivity.mProfile.getId());
+        eventValue.put(getResourceString(R.string.USER_EMAIL), mProfile.getEmail());
+        eventValue.put(getResourceString(R.string.USER_PHONE), mProfile.getPhone_no());
         SendAppEvent(getResourceString(R.string.CATEGORY_BOOK_KEEPING), getResourceString(R.string.SESSION_STARTED), eventValue, this);
     }
 
@@ -2418,6 +2423,12 @@ public class MainActivity extends AppCompatActivity
         int voteType ;
         boolean hideProgressDialog=true;
         switch (tags[0]) {
+            case Constants.TAG_CREATE_USER:
+                mUserCreatedSuccessfully(response,tags[0]);
+                if(USER_CREATING_PROCESS){
+                    this.mCheckAppPermissions();
+                }
+                break;
             case Constants.TAG_SPLASH_SKIP_LOGIN:
             case Constants.TAG_SPLASH_HELP_ME_LOGIN:
             case Constants.TAG_SPLASH_I_KNOW_LOGIN:
@@ -3033,6 +3044,9 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_SPLASH_I_KNOW_LOGIN:
                 onIknowWhatIWant();
                 break;
+            default:
+                mLoadUserStatusScreen();
+                break;
         }
     }
     /**
@@ -3056,6 +3070,8 @@ public class MainActivity extends AppCompatActivity
              }
          }else{
              mUserCreatedSuccessfully(response, tag);
+             // load user status screeen
+             this.mLoadUserStatusScreen();
          }
      }
 
@@ -3073,18 +3089,15 @@ public class MainActivity extends AppCompatActivity
             mNetworkUtils.setToken(MainActivity.mProfile.getToken());
             // set user ids with apps flyer
             this.setUserIdWithAllEvents();
-            // load user status screeen
-            this.mLoadUserStatusScreen();
 
             if (!IS_USER_CREATED) {
                 //Events
                 Map<String, Object> eventValue = new HashMap<>();
                 eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
                 SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
-               }
+            }
 
-            SharedPreferences sharedPreferences = this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE);
-            sharedPreferences.edit().putBoolean(getString(R.string.USER_CREATED), true).apply();
+            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_CREATED), true).apply();
             IS_USER_CREATED = true;
 
             HashMap<String, Object> eventValue = new HashMap<>();
@@ -3595,6 +3608,15 @@ public class MainActivity extends AppCompatActivity
 
         if(tag.equalsIgnoreCase(Constants.TAG_LOAD_BUZZLIST_INSTITUTE)){
             Utils.DisplayToast(getApplicationContext(),"LOADING FAILED");
+        }
+
+        if(tag.equalsIgnoreCase(Constants.TAG_CREATE_USER)){
+            if(!USER_CREATING_PROCESS){
+                USER_CREATING_PROCESS =true;
+            }else{
+                mCheckAppPermissions();
+            }
+            return;
         }
 
         if (!MainActivity.this.isFinishing()) {
@@ -4148,6 +4170,8 @@ public class MainActivity extends AppCompatActivity
                 return "Loading Streams";
             case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
                 return "Loading Exams";
+            case Constants.TAG_CREATING_USER:
+                return "Creating User...";
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
                 return "Loading Profile";
             case Constants.PROFILE_IMAGE_UPLOADING:
@@ -4209,6 +4233,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.REFRESH_CHATROOM:
             case Constants.TAG_REFRESH_PROFILE:
             case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
+            case Constants.TAG_CREATE_USER:
             case "":
                 return null;
             default:
@@ -4728,6 +4753,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+
     /**
      * This method is used to clear back stack of FragmentManager
      * It will remove all fragments present in stack. and now stack
@@ -4744,10 +4771,18 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, error.getMessage());
         }
     }
+    @Override
+    public void onRequestForUserCreation() {
+        if (mProfile == null || mProfile.getId() == null || mProfile.getId().isEmpty()) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
+            onUserCommonLogin(params, Constants.TAG_CREATE_USER);
+        }
+    }
 
     @Override
     public void onSplashSkipLogin() {
-        if(mProfile != null && mProfile.getId() != null && !mProfile.getId().isEmpty()){
+        if(IS_USER_CREATED){
                 mDisplayNotPreparingFragment();
         }else {
             HashMap<String, String> params = new HashMap<>();
@@ -4758,7 +4793,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSplashHelpMeLogin() {
-        if(mProfile != null && mProfile.getId() != null && !mProfile.getId().isEmpty()){
+        if(IS_USER_CREATED){
             mDisplayProfileBuildingFragment(true);
         }else {
             HashMap<String, String> params = new HashMap<>();
@@ -4769,7 +4804,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSplashIKnowLogin() {
-        if(mProfile != null && mProfile.getId() != null && !mProfile.getId().isEmpty()){
+        if(IS_USER_CREATED){
             onIknowWhatIWant();
         }else {
             HashMap<String, String> params = new HashMap<>();
@@ -4945,11 +4980,6 @@ public class MainActivity extends AppCompatActivity
             MainActivity.tracker.send(new HitBuilders.ScreenViewBuilder()
                     .build());
         }
-    }
-
-    public static void AppsflyerTrackerEvent(Context context, String eventName, Map<String, Object> eventValue)
-    {
-        AppsFlyerLib.getInstance().trackEvent(context, eventName, eventValue);
     }
 
     @Override
@@ -5263,6 +5293,15 @@ public class MainActivity extends AppCompatActivity
                 // mHomeTabContainer.setVisibility(View.VISIBLE);
                 if (mExamList.size() <= 0) {
                     Utils.DisplayToast(getApplicationContext(), "No Exams Found for your preferences");
+                    // when no exam is available then set
+                    //  selected tab position to which tab is selected
+                    if(mCollegeTab != null && mCollegeTab.isSelected()){
+                        setNavigationDrawerItemSelected(1);
+                    }else if(mConnectTab != null && mConnectTab.isSelected()){
+                        setNavigationDrawerItemSelected(2);
+                    }else if(mReadTab != null && mReadTab.isSelected()){
+                        setNavigationDrawerItemSelected(4);
+                    }
                     return;
                 }
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(ExamsFragment.class.getSimpleName());
@@ -5809,6 +5848,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override
         public void onContainerAvailable(ContainerHolder containerHolder, String containerVersion) {
@@ -5910,7 +5950,7 @@ public class MainActivity extends AppCompatActivity
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            mUpdateTabMenuItem(postion);
+            //mUpdateTabMenuItem(postion);// comment by suresh
             onTabMenuSelected(postion);
         }
     };
@@ -5969,6 +6009,11 @@ public class MainActivity extends AppCompatActivity
             mHomeTabContainer.setVisibility(View.GONE);
             currentBottomItem = null;
         }
+        setNavigationDrawerItemSelected(tabPosition);
+        translateAnimation(viewToMoveUp,viewToMoveDown);
+    }
+
+    private void setNavigationDrawerItemSelected(int tabPosition){
         if(tabPosition > 0){
             mNavigationView.getMenu().getItem(tabPosition-1).setChecked(true);
         } else {
@@ -5976,7 +6021,6 @@ public class MainActivity extends AppCompatActivity
             for(int i = 0 ; i < size ; i++)
                 mNavigationView.getMenu().getItem(i).setChecked(false);
         }
-        translateAnimation(viewToMoveUp,viewToMoveDown);
     }
 
 
@@ -6005,13 +6049,14 @@ public class MainActivity extends AppCompatActivity
                     userExamList.size() <= 0) {
                 fromTabFragment = true;
                 onRequestForUserExams();
-                mHomeTabContainer.setVisibility(View.GONE);
+                // commented by Suresh
+                //mHomeTabContainer.setVisibility(View.GONE);
                 return;
             }
         }
 
+        mUpdateTabMenuItem(tabPosition);
         if (currentFragment instanceof TabFragment) {
-
             ((TabFragment) currentFragment).updateTabFragment(tabPosition);
         } else{
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
@@ -6020,7 +6065,6 @@ public class MainActivity extends AppCompatActivity
                 if(mProfile != null && mProfile.getYearly_exams() != null) {
                     list.addAll(mProfile.getYearly_exams());
                 }
-
                 this.mDisplayFragment(TabFragment.newInstance(tabPosition, list), true, TabFragment.class.getSimpleName());
             }else {
                 this.mDisplayFragment(fragment, false, TabFragment.class.getSimpleName());

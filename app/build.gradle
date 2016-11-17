@@ -23,16 +23,16 @@ android {
              storeFile file('/home/sureshsaini/Android/harsh_debug_keystore/debug.keystore')
          }
     }*/
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion '24.0.2'
     defaultConfig
             {
                 vectorDrawables.useSupportLibrary = true
                 applicationId "com.collegedekho.app"
                 minSdkVersion 16
-                targetSdkVersion 24
+                targetSdkVersion 25
                 versionCode 12
-                versionName "1.0.1_debug"
+                versionName "1.0.1_rc"
                 multiDexEnabled true
             }
     buildTypes {
@@ -73,14 +73,14 @@ dependencies {
     }
     compile 'com.appsflyer:af-android-sdk:4.5.0@aar'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:design:24.2.1'
-    compile 'com.android.support:support-v4:24.2.1'
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:cardview-v7:24.2.1'
-    compile 'com.android.support:gridlayout-v7:24.2.1'
-    compile 'com.android.support:recyclerview-v7:24.2.1'
-    compile 'com.android.support:support-vector-drawable:24.2.1'
-    compile 'com.android.support:animated-vector-drawable:24.2.1'
+    compile 'com.android.support:design:25.0.1'
+    compile 'com.android.support:support-v4:25.0.1'
+    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:cardview-v7:25.0.1'
+    compile 'com.android.support:gridlayout-v7:25.0.1'
+    compile 'com.android.support:recyclerview-v7:25.0.1'
+    compile 'com.android.support:support-vector-drawable:25.0.1'
+    compile 'com.android.support:animated-vector-drawable:25.0.1'
     compile 'com.google.android.gms:play-services-auth:9.8.0'
     compile 'com.google.android.gms:play-services-identity:9.8.0'
     compile 'com.google.android.gms:play-services-analytics:9.8.0'
@@ -88,7 +88,7 @@ dependencies {
     compile 'com.fasterxml.jackson.jr:jackson-jr-objects:2.8.3'
     compile 'com.android.volley:volley:1.0.0'
     compile 'net.sourceforge.htmlcleaner:htmlcleaner:2.2'
-    compile 'com.google.firebase:firebase-messaging:9.6.1'
+    compile 'com.google.firebase:firebase-messaging:9.8.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha8'
     compile 'com.robinhood.ticker:ticker:1.1.1'
 }

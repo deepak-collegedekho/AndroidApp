@@ -17,6 +17,7 @@ public class Profile implements Parcelable{
     private String id =   "";
     private int progress = 0;
     private String app_version = "";
+    private int app_flow ;
     private int exams_set = 0 ;
     private int is_verified = 0;
     private String token ="";
@@ -62,7 +63,7 @@ public class Profile implements Parcelable{
     private ArrayList<String> preferred_degrees_short_names;
     private ArrayList<Integer> preferred_degrees_ids;
     private String preferred_level_name  ="";
-    private int preferred_level = 0 ;
+    private int preferred_level = 0;
     private ArrayList<String> preferred_states_names;
     private ArrayList<Integer> preferred_states_ids;
     private ArrayList<String> preferred_cities_names;
@@ -94,6 +95,7 @@ public class Profile implements Parcelable{
         id = in.readString();
         progress = in.readInt();
         app_version = in.readString();
+        app_flow = in.readInt();
         exams_set = in.readInt();
         is_verified = in.readInt();
         token = in.readString();
@@ -169,6 +171,7 @@ public class Profile implements Parcelable{
         dest.writeString(id);
         dest.writeInt(progress);
         dest.writeString(app_version);
+        dest.writeInt(app_flow);
         dest.writeInt(exams_set);
         dest.writeInt(is_verified);
         dest.writeString(token);
@@ -303,6 +306,14 @@ public class Profile implements Parcelable{
 
     public void setApp_version(String app_version) {
         this.app_version = app_version;
+    }
+
+    public int getApp_flow() {
+        return app_flow;
+    }
+
+    public void setApp_flow(int app_flow) {
+        this.app_flow = app_flow;
     }
 
     public int getExams_set() {

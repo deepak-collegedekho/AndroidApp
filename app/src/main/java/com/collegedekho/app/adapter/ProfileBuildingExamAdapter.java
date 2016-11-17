@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
-import com.collegedekho.app.listener.ExamInstituteCountListener;
+import com.collegedekho.app.listener.InstituteCountListener;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.ExamYearSpinner;
@@ -34,14 +34,14 @@ import java.util.ArrayList;
 public class ProfileBuildingExamAdapter extends RecyclerView.Adapter<ProfileBuildingExamAdapter.ExamHolderView> {
 
     private Context mContext;
-    private ExamInstituteCountListener mInstituteCountListener;
+    private InstituteCountListener mInstituteCountListener;
     private ArrayList<Exam> mExamList = new ArrayList<>();
     private int lastPosition=-1;
     private int textColorId;
     private boolean mShowAllExams ;
 
 
-    public ProfileBuildingExamAdapter(Context context, ExamInstituteCountListener instituteCountListener, ArrayList<Exam> examList){
+    public ProfileBuildingExamAdapter(Context context, InstituteCountListener instituteCountListener, ArrayList<Exam> examList){
         this.mContext = context;
         this.mInstituteCountListener = instituteCountListener;
         this.mExamList.addAll(examList);
@@ -192,7 +192,7 @@ public class ProfileBuildingExamAdapter extends RecyclerView.Adapter<ProfileBuil
                 }
 
                 // update institute count
-                mInstituteCountListener.updateInstituteCount();
+                mInstituteCountListener.updateInstituteCountOnExamSelection();
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -246,7 +246,7 @@ public class ProfileBuildingExamAdapter extends RecyclerView.Adapter<ProfileBuil
 
                 }
                 // update institute count
-                mInstituteCountListener.updateInstituteCount();
+                mInstituteCountListener.updateInstituteCountOnExamSelection();
             }
         });
         // this.setAnimation(holder.examCard, position);

@@ -11,8 +11,8 @@
         android:endColor="#9c9999"
         />
     <padding
-        android:bottom="@dimen/m4dp"
-        android:top="@dimen/m4dp"
-        android:left="@dimen/m8dp"
-        android:right="@dimen/m8dp"/>
+        android:bottom="@dimen/m1dp"
+        android:top="@dimen/m1dp"
+        android:left="@dimen/m6dp"
+        android:right="@dimen/m6dp"/>
 </shape>

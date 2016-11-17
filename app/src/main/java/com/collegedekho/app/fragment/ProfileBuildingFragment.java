@@ -21,7 +21,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,9 +46,9 @@ import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
 import com.collegedekho.app.entities.SubLevel;
 import com.collegedekho.app.listener.ExamFragmentListener;
-import com.collegedekho.app.listener.ExamInstituteCountListener;
 import com.collegedekho.app.listener.ExamOnQueryListener;
 import com.collegedekho.app.listener.ExamSearchCloseListener;
+import com.collegedekho.app.listener.InstituteCountListener;
 import com.collegedekho.app.listener.ProfileFragmentListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
@@ -60,7 +59,6 @@ import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
 import com.collegedekho.app.widget.NumberPicker;
-import com.fasterxml.jackson.jr.ob.JSON;
 import com.robinhood.ticker.TickerUtils;
 import com.robinhood.ticker.TickerView;
 
@@ -68,7 +66,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +81,7 @@ import java.util.Random;
  * create an instance of this fragment.
  */
 public class ProfileBuildingFragment extends BaseFragment implements ProfileFragmentListener,
-        ExamFragmentListener, ExamInstituteCountListener
+        ExamFragmentListener, InstituteCountListener
 {
 
     private static final char[] NUMBER_LIST = TickerUtils.getDefaultNumberList();
@@ -114,6 +111,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     private HashMap<String, Object> mEventValue = new HashMap<>();;
     final String[] marks_arrays = {"30-40%", "40-50%","50-60%","60-70%", "70-80%", "80-90%", "90-100%",};
     private String mInstituteCount = "";
+    private ArrayList<SubLevel> mSubLevelList;
 
     public ProfileBuildingFragment() {
         // Required empty public constructor
@@ -141,16 +139,36 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         animationFromBottom = AnimationUtils.loadAnimation(this.getActivity(), R.anim.slide_from_bottom);
         animationFromBottom.setDuration(Constants.ANIM_SHORTEST_DURATION);
 
-        TickerView mInstituteCountTicker = (TickerView) mRootView.findViewById(R.id.institute_count_ticker);
-        mInstituteCountTicker.setCharacterList(NUMBER_LIST);
-        mInstituteCountTicker.setText("20149");
-        mInstituteCountTicker.setGravity(Gravity.CENTER);
+        TickerView mInstituteCountTicker1 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker1);
+        TickerView mInstituteCountTicker2 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker2);
+        TickerView mInstituteCountTicker3 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker3);
+        TickerView mInstituteCountTicker4 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker4);
+        TickerView mInstituteCountTicker5 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker5);
+        mInstituteCountTicker1.setCharacterList(NUMBER_LIST);
+        mInstituteCountTicker2.setCharacterList(NUMBER_LIST);
+        mInstituteCountTicker3.setCharacterList(NUMBER_LIST);
+        mInstituteCountTicker4.setCharacterList(NUMBER_LIST);
+        mInstituteCountTicker5.setCharacterList(NUMBER_LIST);
+        mInstituteCountTicker1.setText("0");
+        mInstituteCountTicker2.setText("3");
+        mInstituteCountTicker3.setText("4");
+        mInstituteCountTicker4.setText("0");
+        mInstituteCountTicker5.setText("2");
 
         if(MainActivity.mProfile != null){
 
+            if(MainActivity.mProfile.getApp_flow() == Constants.APP_OLD_FLOW){
+                mInstituteCountTicker1.setVisibility(View.GONE);
+                mInstituteCountTicker2.setVisibility(View.GONE);
+                mInstituteCountTicker3.setVisibility(View.GONE);
+                mInstituteCountTicker4.setVisibility(View.GONE);
+                mInstituteCountTicker5.setVisibility(View.GONE);
+                mRootView.findViewById(R.id.profile_building_college_text).setVisibility(View.GONE);
+            }
+
             mUserSubLevelID = MainActivity.mProfile.getCurrent_sublevel_id();
             mUserCurrentMarks = MainActivity.mProfile.getCurrent_score();
-            // update profile image  e
+            // update profile image
             updateProfileImage();
 
             String userName = MainActivity.mProfile.getName();
@@ -325,40 +343,49 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
                 //  set heading text according to  stream screen
                 ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
+                ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText(getString(R.string.Skip));
 
                 // show streams list to choose current stream based on current level
-                try {
+              /*  try {
                     mStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class,
                             ProfileMacro.getStreamJson(MainActivity.mProfile.getCurrent_level_id()));
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }*/
                 if(MainActivity.mProfile != null){
 
-                    int userStreamId = MainActivity.mProfile.getCurrent_stream_id();
-                    if(mStreamList != null){
-                        int count = mStreamList.size();
-                        for (int i = 0; i <  count; i++) {
-                            ProfileSpinnerItem streamOj = mStreamList.get(i);
-                            if(streamOj == null )continue;
-                            if(streamOj.getId() == userStreamId)
-                                streamOj.setSelected(true);
-                            else
-                                streamOj.setSelected(false);
+                    if(mStreamList == null){
+                        int streamType = 1 ; //  0 for college and 1 for school
+                        int currentLevelID = MainActivity.mProfile.getCurrent_level_id();
+                        if (currentLevelID == ProfileMacro.LEVEL_UNDER_GRADUATE) {
+                            streamType = 0;
+                        } else if (currentLevelID == ProfileMacro.LEVEL_POST_GRADUATE) {
+                            streamType = 0;
+                        }
+                        mListener.onRequestForLevelStreams(streamType);
+                    }else {
+                        int userStreamId = MainActivity.mProfile.getCurrent_stream_id();
+                        if (mStreamList != null) {
+                            int count = mStreamList.size();
+                            for (int i = 0; i < count; i++) {
+                                ProfileSpinnerItem streamOj = mStreamList.get(i);
+                                if (streamOj == null) continue;
+                                if (streamOj.getId() == userStreamId)
+                                    streamOj.setSelected(true);
+                                else
+                                    streamOj.setSelected(false);
+                            }
+                        }
+                        if (mStreamAdapter == null) {
+                            mStreamAdapter = new ExamStreamAdapter(this, getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
+                            mStreamRecyclerView.setAdapter(mStreamAdapter);
+                        } else {
+                            mStreamRecyclerView.setAdapter(mStreamAdapter);
+                            mStreamAdapter.updateStreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
                         }
                     }
-
                 }
 
-
-                ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText(getString(R.string.Skip));
-                if (mStreamAdapter == null) {
-                    mStreamAdapter = new ExamStreamAdapter(getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
-                    mStreamRecyclerView.setAdapter(mStreamAdapter);
-                } else {
-                    mStreamRecyclerView.setAdapter(mStreamAdapter);
-                    mStreamAdapter.updateStreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
-                }
             }
         }
     }
@@ -491,29 +518,50 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         }
     }
     private void setInstituteCount(final String count) {
+
+        if(MainActivity.mProfile != null && MainActivity.mProfile.getApp_flow() == Constants.APP_OLD_FLOW){
+            return;
+        }
         if(!mInstituteCount.equalsIgnoreCase(count)) {
             mInstituteCount = count;
-            if (mRootView != null) {
-                final TickerView mInstituteCountTicker = (TickerView) mRootView.findViewById(R.id.institute_count_ticker);
-                mInstituteCountTicker.setCharacterList(NUMBER_LIST);
-                new Handler().postDelayed(new Runnable() {
+                  new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (isAdded() && mInstituteCountTicker != null) {
-                            mInstituteCountTicker.setText(String.valueOf(count));
+                        if (isAdded()){
+                            if( count.length() ==1) {
+                                updateTickerValue(count, "0","0","0","0");
+                            }else if(count.length() ==2){
+                                updateTickerValue(count.substring(1,2),count.substring(0,1),"0","0","0");
+                            }else if(count.length() ==3){
+                                updateTickerValue(count.substring(2,3),count.substring(1,2),count.substring(0,1),"0","0");
+                            }else if(count.length() ==4){
+                                updateTickerValue(count.substring(3,4),count.substring(2,3),count.substring(1,2),count.substring(0,1),"0");
+                            }else if(count.length() ==5){
+                                updateTickerValue(count.substring(4,5),count.substring(3,4),count.substring(2,3), count.substring(1,2),count.substring(0,1));
+                            }
                             MediaPlayer mp = MediaPlayer.create(getActivity().getApplicationContext(), R.raw.institute_count);
                             mp.start();
                         }
+
                     }
                 }, 200);
-            }
         }
     }
 
-    protected String getRandomNumber(int digits) {
-        final int digitsInPowerOf10 = (int) Math.pow(10, digits);
-        return Integer.toString(RANDOM.nextInt(digitsInPowerOf10) +
-                digitsInPowerOf10 * (RANDOM.nextInt(8) + 1));
+    protected void updateTickerValue(String value1,String value2, String value3, String value4, String value5 ) {
+        if(mRootView != null) {
+            TickerView mInstituteCountTicker1 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker1);
+            TickerView mInstituteCountTicker2 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker2);
+            TickerView mInstituteCountTicker3 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker3);
+            TickerView mInstituteCountTicker4 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker4);
+            TickerView mInstituteCountTicker5 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker5);
+
+            mInstituteCountTicker1.setText(value1);
+            mInstituteCountTicker2.setText(value2);
+            mInstituteCountTicker3.setText(value3);
+            mInstituteCountTicker4.setText(value4);
+            mInstituteCountTicker5.setText(value5);
+        }
     }
 
     private void mRequestForSubLevels(int level) {
@@ -525,8 +573,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     }
 
     public void mSubLevelsResponseCompleted(ArrayList<SubLevel> subLevelsList){
-        if(subLevelsList != null && !subLevelsList.isEmpty()){
-            int instituteCount = subLevelsList.get(0).getInstitutes_count();
+        this.mSubLevelList = subLevelsList;
+        if(this.mSubLevelList != null && !this.mSubLevelList.isEmpty()){
+            int instituteCount = this.mSubLevelList.get(0).getInstitutes_count();
             if(isAdded()) {
                 getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().
                         putInt(getString(R.string.pref_institute_count), instituteCount).apply();
@@ -553,7 +602,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     public void onSubLevelSelected(int position){
         // set mDeviceProfile's sub level base
         mUserSubLevelID = (int)subLevelAdapter.getItemId(position);
-        //mUserSubLevelID = ProfileMacro.getSubLevel(which, userLevel);
         // Now show Next Button
         mAnimateFooterButtons();
         // dismiss dialog
@@ -706,23 +754,21 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         }
         // setting default  current education level school
         int currentLevelID = ProfileMacro.LEVEL_TWELFTH;
-        int streamType = 1 ; //  0 for college and 1 for school
         int checkedRadioGroupIndex = radioGroupEducation.indexOfChild(mRootView.findViewById(selectedRadioButton));
         if(checkedRadioGroupIndex  == 1){
-            streamType = 0;
             currentLevelID =  ProfileMacro.LEVEL_UNDER_GRADUATE;
         }else if(checkedRadioGroupIndex == 2){
-            streamType = 0;
             currentLevelID =  ProfileMacro.LEVEL_POST_GRADUATE;
         }
-        // request for streams
-        this.mListener.onRequestForLevelStreams(streamType);
 
         // setting default preferred level ug
+        int streamType = 1 ; //  0 for college and 1 for school
         int preferredLevelId = ProfileMacro.LEVEL_UNDER_GRADUATE;
         if (currentLevelID == ProfileMacro.LEVEL_UNDER_GRADUATE) {
+            streamType = 0;
             preferredLevelId = ProfileMacro.LEVEL_POST_GRADUATE;
         } else if (currentLevelID == ProfileMacro.LEVEL_POST_GRADUATE) {
+            streamType = 0;
             preferredLevelId = ProfileMacro.LEVEL_PHD;
         }
 
@@ -733,6 +779,8 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             MainActivity.mProfile.setCurrent_level_id(currentLevelID);
             MainActivity.mProfile.setPreferred_level(preferredLevelId);
         }
+        // request for streams
+        this.mListener.onRequestForLevelStreams(streamType);
 
         // send Events
         this.mEventAction = getString(R.string.ACTION_CURRENT_LEVEL_SELECTED);
@@ -1017,6 +1065,10 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
             }
         }
+        if(this.mSubLevelList != null && !this.mSubLevelList.isEmpty()) {
+            int instituteCount = this.mSubLevelList.get(0).getInstitutes_count();
+            setInstituteCount(String.valueOf(instituteCount));
+        }
     }
 
     private void mEditCurrentStream(){
@@ -1035,40 +1087,52 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
         mStreamRecyclerView.setVisibility(View.VISIBLE);
 
-        if(mStreamList == null){
 
-            try {
-                mStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class,
-                        ProfileMacro.getStreamJson(MainActivity.mProfile.getCurrent_level_id()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        // set selected true stream if user has selected stream earlier
+        if(MainActivity.mProfile != null) {
 
-        }
-        // set selected true stream if mDeviceProfile has same stream
-        if(MainActivity.mProfile != null){
-
-            int userStreamId = MainActivity.mProfile.getCurrent_stream_id();
-            if(mStreamList != null){
-                int count = mStreamList.size();
-                for (int i = 0; i <  count; i++) {
-                    ProfileSpinnerItem streamOj = mStreamList.get(i);
-                    if(streamOj == null )continue;
-                    if(streamOj.getId() == userStreamId)
-                        streamOj.setSelected(true);
-                    else
-                        streamOj.setSelected(false);
+            if (mStreamList == null) {
+/*
+                try {
+                    mStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class,
+                            ProfileMacro.getStreamJson(MainActivity.mProfile.getCurrent_level_id()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }*/
+                int streamType = 1 ; //  0 for college and 1 for school
+                int currentLevelID = MainActivity.mProfile.getCurrent_level_id();
+                if (currentLevelID == ProfileMacro.LEVEL_UNDER_GRADUATE) {
+                    streamType = 0;
+                } else if (currentLevelID == ProfileMacro.LEVEL_POST_GRADUATE) {
+                    streamType = 0;
+                }
+                this.mListener.onRequestForLevelStreams(streamType);
+            } else {
+                int userStreamId = MainActivity.mProfile.getCurrent_stream_id();
+                if (mStreamList != null) {
+                    int count = mStreamList.size();
+                    for (int i = 0; i < count; i++) {
+                        ProfileSpinnerItem streamOj = mStreamList.get(i);
+                        if (streamOj == null) continue;
+                        if (streamOj.getId() == userStreamId) {
+                            streamOj.setSelected(true);
+                            // update institute count for that stream
+                            setInstituteCount(String.valueOf(streamOj.getInstitutes_count()));
+                        } else {
+                            streamOj.setSelected(false);
+                        }
+                    }
+                }
+                if(mStreamAdapter == null) {
+                    mStreamAdapter = new ExamStreamAdapter(this,getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
+                    mStreamRecyclerView.setAdapter(mStreamAdapter);
+                }else {
+                    mStreamRecyclerView.setAdapter(mStreamAdapter);
+                    mStreamAdapter.updateStreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
                 }
             }
         }
 
-        if(mStreamAdapter == null) {
-            mStreamAdapter = new ExamStreamAdapter(getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
-            mStreamRecyclerView.setAdapter(mStreamAdapter);
-        }else {
-            mStreamRecyclerView.setAdapter(mStreamAdapter);
-            mStreamAdapter.updateStreamList((ArrayList<ProfileSpinnerItem>) mStreamList);
-        }
     }
 
     private void mEditUserExams(){
@@ -1503,17 +1567,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
 
     public void mLevelStreamResponseCompleted(ArrayList<ProfileSpinnerItem> streamList) {
-         // update user level on server
+         // request to update user level info on server
         updateUserEducationLevel();
-        // set Institute Count
-        if(streamList != null && !streamList.isEmpty()) {
-            int instituteCount = streamList.get(0).getInstitutes_count();
-            if(isAdded()) {
-                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit()
-                        .putInt(getString(R.string.pref_institute_count), instituteCount).apply();
-            }
-            setInstituteCount(String.valueOf(instituteCount));
-        }
+
         //  show next layout to select current stream
         // set heading to acco. current stream screen
         ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
@@ -1552,15 +1608,18 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 for (int i = 0; i <  count; i++) {
                     ProfileSpinnerItem streamOj = mStreamList.get(i);
                     if(streamOj == null )continue;
-                    if(streamOj.getId() == userStreamId)
+                    if(streamOj.getId() == userStreamId) {
                         streamOj.setSelected(true);
-                    else
+                        // update institute count for this stream
+                        setInstituteCount(String.valueOf(streamOj.getInstitutes_count()));
+                    }else {
                         streamOj.setSelected(false);
+                    }
                 }
             }
         }
         if (mStreamAdapter == null) {
-            mStreamAdapter = new ExamStreamAdapter(getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
+            mStreamAdapter = new ExamStreamAdapter(this,getActivity(), (ArrayList<ProfileSpinnerItem>) mStreamList);
             mStreamRecyclerView.setAdapter(mStreamAdapter);
         } else {
             mStreamRecyclerView.setAdapter(mStreamAdapter);
@@ -1610,9 +1669,17 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             }
         }
     }
+    @Override
+    public void updateInstituteCountOnStreamSelection(int instituteCount) {
+            if(isAdded()) {
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit()
+                        .putInt(getString(R.string.pref_institute_count), instituteCount).apply();
+            }
+            setInstituteCount(String.valueOf(instituteCount));
+    }
 
     @Override
-    public void updateInstituteCount() {
+    public void updateInstituteCountOnExamSelection() {
         int instituteCount = 0;
         boolean isAnyExamSelected = false;
         if(mAllExamList != null && !mAllExamList.isEmpty()){
