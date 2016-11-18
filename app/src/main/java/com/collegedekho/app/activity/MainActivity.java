@@ -4810,6 +4810,11 @@ public class MainActivity extends AppCompatActivity
             HashMap<String, String> params = new HashMap<>();
             params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
             onUserCommonLogin(params, Constants.TAG_SPLASH_I_KNOW_LOGIN);
+            //Events
+            Map<String, Object> eventValue = new HashMap<>();
+            eventValue.put(getResourceString(R.string.ACTION_PROCEED_LOGIN), "Proceed login");
+            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_PROCEED_LOGIN), eventValue, this);
+
         }
     }
 

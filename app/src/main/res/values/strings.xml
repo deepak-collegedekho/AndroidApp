@@ -393,7 +393,7 @@
     <string name="ACTION_APPLY_COLLEGE">Apply to get the admission</string>
     <string name="ACTION_USER_ACTION">action_user_action</string>
     <string name="ACTION_SPLASH_SKIP_LOGIN">action_splash_skip_login</string>
-    <string name="ACTION_SPLASH_HELP_ME_LOGIN">action_splash_help_me_login</string>
+    <string name="ACTION_PROCEED_LOGIN">action_proceed_login</string>
     <string name="ACTION_SPLASH_I_KNOW_LOGIN">action_splash_i_know_login</string>
 
 

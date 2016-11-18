@@ -144,25 +144,25 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         TickerView mInstituteCountTicker3 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker3);
         TickerView mInstituteCountTicker4 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker4);
         TickerView mInstituteCountTicker5 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker5);
+        TickerView mInstituteCountTickerPlus = (TickerView) view.findViewById(R.id.institute_count_ticker_plus);
         mInstituteCountTicker1.setCharacterList(NUMBER_LIST);
         mInstituteCountTicker2.setCharacterList(NUMBER_LIST);
         mInstituteCountTicker3.setCharacterList(NUMBER_LIST);
         mInstituteCountTicker4.setCharacterList(NUMBER_LIST);
         mInstituteCountTicker5.setCharacterList(NUMBER_LIST);
+        mInstituteCountTickerPlus.setCharacterList(NUMBER_LIST);
+        mInstituteCount = "20430";
         mInstituteCountTicker1.setText("0");
         mInstituteCountTicker2.setText("3");
         mInstituteCountTicker3.setText("4");
         mInstituteCountTicker4.setText("0");
         mInstituteCountTicker5.setText("2");
+        mInstituteCountTickerPlus.setText("+");
 
         if(MainActivity.mProfile != null){
 
             if(MainActivity.mProfile.getApp_flow() == Constants.APP_OLD_FLOW){
-                mInstituteCountTicker1.setVisibility(View.GONE);
-                mInstituteCountTicker2.setVisibility(View.GONE);
-                mInstituteCountTicker3.setVisibility(View.GONE);
-                mInstituteCountTicker4.setVisibility(View.GONE);
-                mInstituteCountTicker5.setVisibility(View.GONE);
+                mRootView.findViewById(R.id.institute_count_ticker_layout).setVisibility(View.GONE);
                 mRootView.findViewById(R.id.profile_building_college_text).setVisibility(View.GONE);
             }
 
@@ -531,16 +531,18 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                             if( count.length() ==1) {
                                 updateTickerValue(count, "0","0","0","0");
                             }else if(count.length() ==2){
-                                updateTickerValue(count.substring(1,2),count.substring(0,1),"0","0","0");
+                                updateTickerValue("0",count.substring(0,1),"0","0","0");
                             }else if(count.length() ==3){
-                                updateTickerValue(count.substring(2,3),count.substring(1,2),count.substring(0,1),"0","0");
+                                updateTickerValue("0",count.substring(1,2),count.substring(0,1),"0","0");
                             }else if(count.length() ==4){
-                                updateTickerValue(count.substring(3,4),count.substring(2,3),count.substring(1,2),count.substring(0,1),"0");
+                                updateTickerValue("0",count.substring(2,3),count.substring(1,2),count.substring(0,1),"0");
                             }else if(count.length() ==5){
-                                updateTickerValue(count.substring(4,5),count.substring(3,4),count.substring(2,3), count.substring(1,2),count.substring(0,1));
+                                updateTickerValue("0",count.substring(3,4),count.substring(2,3), count.substring(1,2),count.substring(0,1));
                             }
-                            MediaPlayer mp = MediaPlayer.create(getActivity().getApplicationContext(), R.raw.institute_count);
-                            mp.start();
+                            if(isAdded()) {
+                                MediaPlayer mp = MediaPlayer.create(getActivity().getApplicationContext(), R.raw.institute_count);
+                                mp.start();
+                            }
                         }
 
                     }
@@ -1451,12 +1453,17 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
         // add all stream Exam on the top
         int examCount = mAllExamList.size();
-        for (int i = 0; i < examCount; i++) {
+        int i=0;
+        while(i < examCount) {
             Exam exam = mAllExamList.get(i);
-            if(exam == null || exam.getExam_type() == ProfileMacro.OTHER_EXAM)continue;
-            //mStreamExamList.add(exam);
-            mAllExamList.remove(i);
-            mAllExamList.add(0, exam);
+            if(exam == null || exam.getExam_type() == ProfileMacro.STREAM_EXAM){
+                i++;
+                continue;
+            }else {
+                examCount--;
+                mAllExamList.remove(i);
+                mAllExamList.add(exam);
+            }
         }
 
         this.mStreamExamList.addAll(mAllExamList);

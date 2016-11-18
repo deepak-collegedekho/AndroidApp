@@ -58,6 +58,12 @@
                     android:id="@id/institute_count_ticker1"
                     style="@style/TickerView"
                     app:ticker_animationDuration="500"/>
+
+                <com.robinhood.ticker.TickerView
+                    android:id="@id/institute_count_ticker_plus"
+                    style="@style/TickerView"
+                    android:text="+"
+                    app:ticker_animationDuration="500"/>
             </LinearLayout>
 
             <TextView

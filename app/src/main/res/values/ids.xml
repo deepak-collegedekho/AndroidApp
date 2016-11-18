@@ -12,6 +12,7 @@
     <item name="institute_count_ticker3" type="id" />
     <item name="institute_count_ticker4" type="id" />
     <item name="institute_count_ticker5" type="id" />
+    <item name="institute_count_ticker_plus" type="id" />
 
     <!--profile ids -->
     <item name="user_name" type="id" />

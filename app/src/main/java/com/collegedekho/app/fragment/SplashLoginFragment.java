@@ -74,16 +74,18 @@ public class SplashLoginFragment extends  BaseFragment {
                 if( count.length() ==1) {
                     updateTickerValue(count, "0","0","0","0");
                 }else if(count.length() ==2){
-                    updateTickerValue(count.substring(1,2),count.substring(0,1),"0","0","0");
+                    updateTickerValue("0",count.substring(0,1),"0","0","0");
                 }else if(count.length() ==3){
-                    updateTickerValue(count.substring(2,3),count.substring(1,2),count.substring(0,1),"0","0");
+                    updateTickerValue("0",count.substring(1,2),count.substring(0,1),"0","0");
                 }else if(count.length() ==4){
-                    updateTickerValue(count.substring(3,4),count.substring(2,3),count.substring(1,2),count.substring(0,1),"0");
+                    updateTickerValue("0",count.substring(2,3),count.substring(1,2),count.substring(0,1),"0");
                 }else if(count.length() ==5){
-                    updateTickerValue(count.substring(4,5),count.substring(3,4),count.substring(2,3), count.substring(1,2),count.substring(0,1));
+                    updateTickerValue("0",count.substring(3,4),count.substring(2,3), count.substring(1,2),count.substring(0,1));
                 }
-                MediaPlayer mp = MediaPlayer.create(getActivity().getApplicationContext(), R.raw.institute_count);
-                mp.start();
+                if(isAdded()) {
+                    MediaPlayer mp = MediaPlayer.create(getActivity().getApplicationContext(), R.raw.institute_count);
+                    mp.start();
+                }
             }
         }, 400);
     }

@@ -41,30 +41,30 @@
                 <com.robinhood.ticker.TickerView
                     android:id="@id/institute_count_ticker5"
                     style="@style/TickerView.Small"
-                    app:ticker_animationDuration="800"/>
+                    app:ticker_animationDuration="1000"/>
 
                 <com.robinhood.ticker.TickerView
                     android:id="@id/institute_count_ticker4"
                     style="@style/TickerView.Small"
-                    app:ticker_animationDuration="800"/>
+                    app:ticker_animationDuration="1000"/>
 
                 <com.robinhood.ticker.TickerView
                     android:id="@id/institute_count_ticker3"
                     style="@style/TickerView.Small"
-                    app:ticker_animationDuration="800"/>
+                    app:ticker_animationDuration="1000"/>
 
                 <com.robinhood.ticker.TickerView
                     android:id="@id/institute_count_ticker2"
                     style="@style/TickerView.Small"
-                    app:ticker_animationDuration="800"/>
+                    app:ticker_animationDuration="1000"/>
 
                 <com.robinhood.ticker.TickerView
                     android:id="@id/institute_count_ticker1"
                     style="@style/TickerView.Small"
-                    app:ticker_animationDuration="800"/>
+                    app:ticker_animationDuration="1000"/>
 
                 <com.robinhood.ticker.TickerView
-                    android:id="@+id/institute_count_ticker_plus"
+                    android:id="@id/institute_count_ticker_plus"
                     style="@style/TickerView.Small"
                     android:text="+"
                     app:ticker_animationDuration="500"/>
@@ -82,7 +82,7 @@
                 android:id="@id/institute_count_ticker"
                 style="@style/TickerView"
                 android:layout_marginTop="@dimen/m20dp"
-                app:ticker_animationDuration="800"/>
+                app:ticker_animationDuration="1000"/>
 
             <TextView
                 android:layout_width="wrap_content"

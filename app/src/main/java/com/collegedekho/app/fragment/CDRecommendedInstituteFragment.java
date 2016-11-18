@@ -132,6 +132,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mCardContainer.setListener(this);
 
         this.mPageTitleTV           = (TextView)rootView.findViewById(R.id.recommended_page_title);
+        if(mTitle != null) {
+            this.mPageTitleTV.setText(mTitle);
+        }
         this.mEmptyTextView         = (TextView)rootView.findViewById(android.R.id.empty);
         this.mLikeImageView         = (ImageView) rootView.findViewById(R.id.like_textview);
         this.mDislikeImageView      = (ImageView) rootView.findViewById(R.id.dislike_textview);
