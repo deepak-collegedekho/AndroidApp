@@ -1429,6 +1429,10 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
     private void updateExamsLayouts(ArrayList<Exam> mAllExamList){
 
+        if(isAdded()) {
+            getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit()
+                    .putInt(getString(R.string.pref_institute_count), Integer.parseInt(mInstituteCount)).apply();
+        }
         if(mAllExamList == null || mAllExamList.isEmpty()){
             mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
             mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
@@ -1583,6 +1587,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
         // hide current level radio groups
         mRootView.findViewById(R.id.user_education_radio_group).setVisibility(View.GONE);
+        //mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
 
         // show current education layout
         mRootView.findViewById(R.id.user_education_education_layout).setVisibility(View.VISIBLE);
@@ -1678,10 +1683,10 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     }
     @Override
     public void updateInstituteCountOnStreamSelection(int instituteCount) {
-            if(isAdded()) {
-                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit()
-                        .putInt(getString(R.string.pref_institute_count), instituteCount).apply();
-            }
+       /* if(isAdded()) {
+            getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit()
+                    .putInt(getString(R.string.pref_institute_count), instituteCount).apply();
+        }*/
             setInstituteCount(String.valueOf(instituteCount));
     }
 

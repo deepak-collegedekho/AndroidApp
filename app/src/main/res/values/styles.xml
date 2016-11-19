@@ -713,7 +713,7 @@
         <item name="android:gravity">center</item>
         <item name="android:paddingTop">3dp</item>
         <item name="android:paddingBottom">3dp</item>
-        <item name="android:background">@drawable/ic_institute_count</item>
+        <item name="android:background">@drawable/bg_white_gradient</item>
     </style>
     <style name="TickerView.Small" parent="TickerView">
         <item name="android:paddingLeft">5dp</item>

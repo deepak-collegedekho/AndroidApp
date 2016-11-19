@@ -394,7 +394,8 @@
     <string name="ACTION_USER_ACTION">action_user_action</string>
     <string name="ACTION_SPLASH_SKIP_LOGIN">action_splash_skip_login</string>
     <string name="ACTION_PROCEED_LOGIN">action_proceed_login</string>
-    <string name="ACTION_SPLASH_I_KNOW_LOGIN">action_splash_i_know_login</string>
+    <string name="ACTION_FLOW_ONE_USER_CREATED">action_flow_one_user_created</string>
+    <string name="ACTION_FLOW_TWO_USER_CREATED">action_flow_two_user_created</string>
 
 
     <!--String messages-->

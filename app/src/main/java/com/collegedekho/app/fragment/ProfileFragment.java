@@ -1809,8 +1809,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             coachingInstitute = mProfile.getCoaching_institute();
         }
         HashMap<String, String> params = new HashMap<>();
+        if(fatherName != null)
         params.put("fathers_name", fatherName);
+        if(motherName != null)
         params.put("mothers_name", motherName);
+        if(coachingInstitute != null)
         params.put("coaching_institute", coachingInstitute);
         mListener.onUserProfileEdited(params, 4);
     }

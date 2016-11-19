@@ -3095,6 +3095,19 @@ public class MainActivity extends AppCompatActivity
                 Map<String, Object> eventValue = new HashMap<>();
                 eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
                 SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
+
+                Map<String, Object> eventValue1 = new HashMap<>();
+
+                if(MainActivity.mProfile.getApp_flow() == Constants.APP_OLD_FLOW) {
+                    eventValue1.put(getResourceString(R.string.ACTION_FLOW_ONE_USER_CREATED), HomeFragment.class.getSimpleName());
+                    SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_FLOW_ONE_USER_CREATED), eventValue1, this);
+
+                }else {
+                    eventValue1.put(getResourceString(R.string.ACTION_FLOW_TWO_USER_CREATED), HomeFragment.class.getSimpleName());
+                    SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_FLOW_TWO_USER_CREATED), eventValue1, this);
+                }
+
+
             }
 
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_CREATED), true).apply();
@@ -4171,7 +4184,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_EDUCATION_DETAILS_SUBMIT:
                 return "Loading Exams";
             case Constants.TAG_CREATING_USER:
-                return "Creating User...";
+                return "Loading...";//"Creating User...";
             case Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM:
                 return "Loading Profile";
             case Constants.PROFILE_IMAGE_UPLOADING:

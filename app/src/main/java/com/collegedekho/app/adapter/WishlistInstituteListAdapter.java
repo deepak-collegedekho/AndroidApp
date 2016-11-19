@@ -251,7 +251,7 @@ public class WishlistInstituteListAdapter extends RecyclerView.Adapter<WishlistI
                     WishlistInstituteListAdapter.mEventValue.put("action_on", "institute_peek_apply");
                 }
                 else if (view.getId() == R.id.wishlist_institute_btn_remove_shortlist) {
-                    message = "Removing " + institute.getShort_name() +  " from Wishlist";
+                    message = "Removing " + institute.getShort_name() +  " from ShortList";
                     WishlistInstituteListAdapter.this.mListener.OnWishlistInstituteRemoved(institute, position);
                     WishlistInstituteListAdapter.mEventValue.put("action_on", "institute_peek_shortlist");
                 }

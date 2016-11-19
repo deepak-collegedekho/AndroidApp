@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="19sp"
                 android:textColor="@color/black"
-                android:text="Colleges in India"/>
+                android:text="Colleges in India?"/>
 
             <com.robinhood.ticker.TickerView
                 android:id="@id/institute_count_ticker"
@@ -92,7 +92,7 @@
                 android:gravity="center"
                 android:layout_marginTop="@dimen/m10dp"
                 android:textStyle="bold"
-                android:text="College for you"/>
+                android:text="College for you!"/>
 
             <Button
                 android:id="@+id/splash_login_help_me"
