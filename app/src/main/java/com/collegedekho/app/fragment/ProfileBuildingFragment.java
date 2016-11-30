@@ -1,33 +1,30 @@
 package com.collegedekho.app.fragment;
 
-import android.content.ComponentName;
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -37,8 +34,6 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamStreamAdapter;
 import com.collegedekho.app.adapter.ProfileBuildingExamAdapter;
 import com.collegedekho.app.adapter.SubLevelAdapter;
-import com.collegedekho.app.animation.AnimationLoader;
-import com.collegedekho.app.crop.Crop;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamDetail;
 import com.collegedekho.app.entities.Profile;
@@ -49,27 +44,31 @@ import com.collegedekho.app.listener.ExamFragmentListener;
 import com.collegedekho.app.listener.ExamOnQueryListener;
 import com.collegedekho.app.listener.ExamSearchCloseListener;
 import com.collegedekho.app.listener.InstituteCountListener;
-import com.collegedekho.app.listener.ProfileFragmentListener;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.AnalyticsUtils;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
-import com.collegedekho.app.widget.CircularImageView;
-import com.collegedekho.app.widget.CircularProgressBar;
-import com.collegedekho.app.widget.NumberPicker;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.robinhood.ticker.TickerUtils;
 import com.robinhood.ticker.TickerView;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+
+import static com.collegedekho.app.activity.MainActivity.REQUEST_CHECK_SETTINGS;
+import static com.collegedekho.app.activity.MainActivity.currentFragment;
 
 
 /**
@@ -80,13 +79,10 @@ import java.util.Random;
  * Use the {@link ProfileBuildingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProfileBuildingFragment extends BaseFragment implements ProfileFragmentListener,
-        ExamFragmentListener, InstituteCountListener
+public class ProfileBuildingFragment extends BaseFragment implements ExamFragmentListener, InstituteCountListener
 {
-
     private static final char[] NUMBER_LIST = TickerUtils.getDefaultNumberList();
-    protected static final Random RANDOM = new Random(System.currentTimeMillis());
-    private static final String TAG = "user_education_fragment";
+    private static final String TAG = "ProfileBuildingFragment";
     private OnUserEducationInteractionListener mListener;
     private RecyclerView mStreamRecyclerView;
     private View mRootView ;
@@ -102,16 +98,16 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     private boolean  isStreamSelected;
     private Animation animationFromTop;
     private Animation animationFromBottom;
-    private Uri mImageCaptureUri;
     private int mUserSubLevelID = 0;
-    private int mUserCurrentMarks = 0;
     private int mLastSelectedCurrentLevelID = 0; // if last selected current level  and stream are same then present exam list be used
     private String mEventCategory = "";
     private String mEventAction = "";
-    private HashMap<String, Object> mEventValue = new HashMap<>();;
-    final String[] marks_arrays = {"30-40%", "40-50%","50-60%","60-70%", "70-80%", "80-90%", "90-100%",};
+    private HashMap<String, Object> mEventValue = new HashMap<>();
     private String mInstituteCount = "";
     private ArrayList<SubLevel> mSubLevelList;
+    private LocationRequest locationRequest;
+    private Location mLastLocation;
+    private GoogleApiClient mGoogleApiClient;
 
     public ProfileBuildingFragment() {
         // Required empty public constructor
@@ -132,6 +128,12 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     }
 
     @Override
+    public void onStart() {
+        createLocationRequest();
+        super.onStart();
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         animationFromTop = AnimationUtils.loadAnimation(this.getActivity(), R.anim.slide_from_top);
@@ -139,6 +141,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         animationFromBottom = AnimationUtils.loadAnimation(this.getActivity(), R.anim.slide_from_bottom);
         animationFromBottom.setDuration(Constants.ANIM_SHORTEST_DURATION);
 
+        mStreamRecyclerView = (RecyclerView)view.findViewById(R.id.user_education_recycler_view);
+        mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        mExamSearchView = (SearchView) view.findViewById(R.id.user_exam_search_view);
         TickerView mInstituteCountTicker1 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker1);
         TickerView mInstituteCountTicker2 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker2);
         TickerView mInstituteCountTicker3 = (TickerView) mRootView.findViewById(R.id.institute_count_ticker3);
@@ -159,46 +164,10 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         mInstituteCountTicker5.setText("2");
         mInstituteCountTickerPlus.setText("+");
 
-        if(MainActivity.mProfile != null){
-
-            if(MainActivity.mProfile.getApp_flow() == Constants.APP_OLD_FLOW){
-                mRootView.findViewById(R.id.institute_count_ticker_layout).setVisibility(View.GONE);
-                mRootView.findViewById(R.id.profile_building_college_text).setVisibility(View.GONE);
-            }
-
-            mUserSubLevelID = MainActivity.mProfile.getCurrent_sublevel_id();
-            mUserCurrentMarks = MainActivity.mProfile.getCurrent_score();
-            // update profile image
-            updateProfileImage();
-
-            String userName = MainActivity.mProfile.getName();
-            if(userName != null && !userName.isEmpty()){
-                if(!userName.equalsIgnoreCase(getString(R.string.ANONYMOUS_USER))) {
-                    view.findViewById(R.id.user_education_edit_name_til).setVisibility(View.GONE);
-                    view.findViewById(R.id.user_education_name_layout).setVisibility(View.VISIBLE);
-                    ((TextView)view.findViewById(R.id.user_name)).setText(userName);
-                    mRootView.findViewById(R.id.user_education_name_layout).setContentDescription("Your name is " + userName);
-                }else {
-                    view.findViewById(R.id.user_education_edit_name_til).setVisibility(View.VISIBLE);
-                    view.findViewById(R.id.user_education_name_layout).setVisibility(View.GONE);
-                }
-            }
-
-            String userPhoneNumber = MainActivity.mProfile.getPhone_no();
-            if(userPhoneNumber != null && !userPhoneNumber.isEmpty()) {
-                view.findViewById(R.id.user_education_edit_phone_til).setVisibility(View.GONE);
-                view.findViewById(R.id.user_education_phone_layout).setVisibility(View.VISIBLE);
-                ((TextView)view.findViewById(R.id.user_phone)).setText(userPhoneNumber);
-                mRootView.findViewById(R.id.user_education_phone_layout).setContentDescription("your phone number is " + userPhoneNumber);
-            }else {
-                view.findViewById(R.id.user_education_edit_phone_til).setVisibility(View.VISIBLE);
-                view.findViewById(R.id.user_education_phone_layout).setVisibility(View.GONE);
-            }
+        if(MainActivity.mProfile != null && MainActivity.mProfile.getApp_flow() == Constants.APP_OLD_FLOW){
+            mRootView.findViewById(R.id.institute_count_ticker_layout).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.profile_building_college_text).setVisibility(View.GONE);
         }
-
-        mStreamRecyclerView = (RecyclerView)view.findViewById(R.id.user_education_recycler_view);
-        mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        mExamSearchView = (SearchView) view.findViewById(R.id.user_exam_search_view);
         /// load profile completion Ui Screen
         mLoadUserProfileCompletedUI();
         view.findViewById(R.id.user_education_radio_button_school).setOnClickListener(this);
@@ -209,12 +178,10 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         view.findViewById(R.id.user_education_stream_edit_btn).setOnClickListener(this);
         view.findViewById(R.id.user_education_exams_edit_btn).setOnClickListener(this);
         view.findViewById(R.id.user_education_skip_button).setOnClickListener(this);
-        view.findViewById(R.id.user_profile_image_update).setOnClickListener(this);
         view.findViewById(R.id.go_to_recommended).setOnClickListener(this);
         view.findViewById(R.id.go_to_dash_board).setOnClickListener(this);
         view.findViewById(R.id.go_to_profile).setOnClickListener(this);
         view.findViewById(R.id.user_exam_search_container).setOnClickListener(this);
-        view.findViewById(R.id.user_profile_image_update).setContentDescription("click to upload your photograph");
         mExamSearchView.setOnSearchClickListener(this);
     }
 
@@ -223,19 +190,17 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         if(MainActivity.mProfile == null)
             return;
         Profile profile = MainActivity.mProfile;
+        mLastSelectedCurrentLevelID = profile.getCurrent_level_id();
+        mUserSubLevelID = profile.getCurrent_sublevel_id();
 
         // if current education selected  then show next layout
-        if(profile.getCurrent_level_id() >= 1 && profile.getCurrent_sublevel_id() >= 1) {
+        if(mLastSelectedCurrentLevelID >= 1 && mUserSubLevelID >= 1) {
 
             if(isAdded()) {
                 int instituteCount = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).
                         getInt(getString(R.string.pref_institute_count), 0);
                 setInstituteCount(String.valueOf(instituteCount));
             }
-            // set mDeviceProfile profile completion progress
-            CircularProgressBar profileCompleted =  (CircularProgressBar) mRootView.findViewById(R.id.user_profile_progress);
-            profileCompleted.setProgress(0);
-            profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
 
             // show recyclerView For stream or exams list
             mStreamRecyclerView.setVisibility(View.VISIBLE);
@@ -345,13 +310,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
                 ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText(getString(R.string.Skip));
 
-                // show streams list to choose current stream based on current level
-              /*  try {
-                    mStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class,
-                            ProfileMacro.getStreamJson(MainActivity.mProfile.getCurrent_level_id()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
                 if(MainActivity.mProfile != null){
 
                     if(mStreamList == null){
@@ -412,8 +370,10 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         super.onResume();
         this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
         MainActivity mainActivity = (MainActivity) getActivity();
-        if (mainActivity != null)
-            mainActivity.currentFragment = this;
+        if (mainActivity != null) {
+            currentFragment = this;
+            mGoogleApiClient = mainActivity.getGoogleClient();
+        }
     }
 
     @Override
@@ -432,29 +392,19 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     @Override
     public void onPause() {
         super.onPause();
-
         // this code to remove focus from search view
         if (mExamSearchView != null && !mExamSearchView.isIconified()) {
             mExamSearchView.setIconified(true);
             mExamSearchView.setQuery("", false);
             mExamSearchView.onActionViewCollapsed();
-
-            if( mRootView != null){
-                (mRootView.findViewById(R.id.user_education_name_edit_text)).requestFocus();
-            }
         }
-
     }
 
     @Override
     public void onClick(View view) {
         super.onClick(view);
-
         switch(view.getId())
         {
-            case R.id.user_profile_image_update:
-                mRequestForImageCapture();
-                break;
             case R.id.user_education_skip_button:
                 mUserEducationSkip();
                 break;
@@ -486,19 +436,10 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 mEditUserExams();
                 break;
             case R.id.go_to_recommended:
-                this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
-                this.mEventValue.put("action_what", "go_to_recommended");
-                mTakeMeToRecommended();
-                break;
             case R.id.go_to_dash_board:
-                this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
-                this.mEventValue.put("action_what", "go_to_dash_board");
-                mTakeMeToDashBoard();
-                break;
             case R.id.go_to_profile:
                 this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
-                this.mEventValue.put("action_what", "go_to_profile");
-                mTakeMeToProfile();
+                mTakeMeToHome(Integer.parseInt(view.getTag().toString()));
                 break;
             case R.id.user_exam_search_view:
             case R.id.user_exam_search_container:
@@ -510,8 +451,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
                 break;
         }
 
-        if (!this.mEventAction.isEmpty() && this.mEventAction != "")
-        {
+        if (!this.mEventAction.isEmpty() && this.mEventAction != ""){
             //Events
             AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
             this.mResetEventVariables();
@@ -524,29 +464,29 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         }
         if(!mInstituteCount.equalsIgnoreCase(count)) {
             mInstituteCount = count;
-                  new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isAdded()){
-                            if( count.length() ==1) {
-                                updateTickerValue(count, "0","0","0","0");
-                            }else if(count.length() ==2){
-                                updateTickerValue("0",count.substring(0,1),"0","0","0");
-                            }else if(count.length() ==3){
-                                updateTickerValue("0",count.substring(1,2),count.substring(0,1),"0","0");
-                            }else if(count.length() ==4){
-                                updateTickerValue("0",count.substring(2,3),count.substring(1,2),count.substring(0,1),"0");
-                            }else if(count.length() ==5){
-                                updateTickerValue("0",count.substring(3,4),count.substring(2,3), count.substring(1,2),count.substring(0,1));
-                            }
-                            if(isAdded()) {
-                                MediaPlayer mp = MediaPlayer.create(getActivity().getApplicationContext(), R.raw.institute_count);
-                                mp.start();
-                            }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (isAdded()){
+                        if( count.length() ==1) {
+                            updateTickerValue(count, "0","0","0","0");
+                        }else if(count.length() ==2){
+                            updateTickerValue("0",count.substring(0,1),"0","0","0");
+                        }else if(count.length() ==3){
+                            updateTickerValue("0",count.substring(1,2),count.substring(0,1),"0","0");
+                        }else if(count.length() ==4){
+                            updateTickerValue("0",count.substring(2,3),count.substring(1,2),count.substring(0,1),"0");
+                        }else if(count.length() ==5){
+                            updateTickerValue("0",count.substring(3,4),count.substring(2,3), count.substring(1,2),count.substring(0,1));
                         }
-
+                        if(isAdded()) {
+                            MediaPlayer mp = MediaPlayer.create(getActivity().getApplicationContext(), R.raw.institute_count);
+                            mp.start();
+                        }
                     }
-                }, 200);
+
+                }
+            }, 200);
         }
     }
 
@@ -611,75 +551,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             subLevelDialog.dismiss();
         // check if fragment is added to activity then show dialog to ask marks
         // otherwise set default marks and request for streams
-        if(isAdded()) {
-            mShowDialogForMarks();
-        }else{
-            mUserCurrentMarks = mGetMarks(-1);
-            mNextStepSelected();
-        }
+        mNextStepSelected();
     }
 
-    private void mShowDialogForMarks() {
-
-        View marksDialogView = getActivity().getLayoutInflater().inflate(R.layout.layout_marks_picker, null, false);
-
-        final NumberPicker mMarksPicker = (NumberPicker) marksDialogView.findViewById(R.id.marks_number_picker);
-        mMarksPicker.setMaxValue(marks_arrays.length-1);
-        mMarksPicker.setMinValue(0);
-        mMarksPicker.setSaveFromParentEnabled(false);
-        mMarksPicker.setSaveEnabled(true);
-        mMarksPicker.setWrapSelectorWheel(false);
-        mMarksPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        mMarksPicker.setDisplayedValues(marks_arrays);
-
-        AlertDialog marksDialog = new AlertDialog.Builder(getActivity())
-                .setTitle(getString(R.string.please_enter_your_current_marks))
-                .setCancelable(false)
-                .setView(marksDialogView)
-                .setPositiveButton("Done", null)
-                .create();
-        marksDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-
-            @Override
-            public void onShow(final DialogInterface dialog) {
-
-                Button b = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                b.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-
-                        int marksPosition = mMarksPicker.getValue();
-                        mUserCurrentMarks = mGetMarks(marksPosition);
-                        mNextStepSelected();
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
-        marksDialog.show();
-
-        marksDialogView.startAnimation(AnimationLoader.getInAnimation(getActivity()));
-
-    }
-    private int mGetMarks(int position){
-        if(position == 0 ){
-            return 35;
-        }else if(position == 1 ){
-            return 45;
-        }else if(position == 2 ){
-            return 55;
-        }else if(position == 3 ){
-            return 65;
-        }else if(position == 4 ){
-            return 75;
-        }else if(position == 5 ){
-            return 85;
-        }else if(position == 6 ){
-            return 95;
-        }
-        return 50;
-    }
 
     private void mAnimateFooterButtons()
     {
@@ -708,19 +582,14 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             return;
         }
 
-        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
-
-        if(this.mListener ==  null)
-            return;
-
         mClearUserExams();
+        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
         this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
         this.mEventValue.put("action_what", "skip");
         this.mEventValue.put("action_where", "current_stream");
 
         this.mListener.onSkipSelectedInProfileBuilding();
-        if (!this.mEventAction.isEmpty() && !this.mEventAction.equals(""))
-        {
+        if (!this.mEventAction.isEmpty() && !this.mEventAction.equals("")){
             //Events
             AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, mEventValue, this.getActivity());
             this.mResetEventVariables();
@@ -738,7 +607,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
             if (educationLevelView.getVisibility() == View.VISIBLE) {
                 setUserEducationLevel();
             } else{
-                setUserEducationStream();
+                checkForLocationPermission();
             }
         }else{
             setUserEducationExams();
@@ -802,7 +671,38 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
 
 
-    private void setUserEducationStream() {
+    public void checkForLocationPermission() {
+        if(mStreamList != null) {
+            int count = mStreamList.size();
+            boolean isStreamSelected = false;
+            for (int i = 0; i < count; i++) {
+                ProfileSpinnerItem objItem = mStreamList.get(i);
+                if (!objItem.isSelected()) continue;
+                isStreamSelected = true;
+                break;
+            }
+            if (!isStreamSelected) {
+                mListener.displayMessage(R.string.please_select_your_stream);
+                return;
+            }
+        }
+
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION}, Constants.RC_HANDLE_LOCATION);
+        }else {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if(mLastLocation == null){
+                checkLocationSettings();
+            }else{
+                mRequestForLocationUpdate();
+            }
+        }
+    }
+    public void setUserEducationStream() {
 
         // check user has been selected a stream
         int currentStreamId  = 0;
@@ -965,45 +865,31 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         }
         selectedExamsBuffer.append("]");
 
-        // check mDeviceProfile's name and phone Number
-        HashMap<String, String> userParams = new HashMap<>();
-        if(!getUserNameAndPhone(userParams)){
-            return;
-        }
-
         if(!isExamSelected){
             mListener.displayMessage(R.string.SELECT_ONE_EXAM);
             return;
         }
 
+        HashMap<String, String> userParams = new HashMap<>();
         userParams.put("yearly_exams", selectedExamsBuffer.toString());
         this.mListener.onUserExamSelected(userParams);
 
         this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
         this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_EXAM_SELECTED);
-        // for (int n = 0; n < parentArray.length(); n++) {
         try
         {
-            // JSONObject examDetail = (JSONObject) parentArray.get(n);
-            this.mEventValue.put(MainActivity.getResourceString(R.string.USER_EXAM_SELECTED), selectedExamsBuffer.toString());//examDetail.get(MainActivity.getResourceString(R.string.EXAM_ID)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.SCORE)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.STATUS)));
-
             //Events
+            this.mEventValue.put(MainActivity.getResourceString(R.string.USER_EXAM_SELECTED), selectedExamsBuffer.toString());//examDetail.get(MainActivity.getResourceString(R.string.EXAM_ID)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.SCORE)) + "#" + examDetail.get(MainActivity.getResourceString(R.string.STATUS)));
             AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, this.mEventValue, this.getActivity());
-
             this.mEventValue.clear();
+        }catch(Exception e){
+            Log.e(TAG,"exception in sending events");
         }
-        catch(Exception e)
-        {
-
-        }
-        // }
-
         this.mResetEventVariables();
     }
 
 
     /**
-     *
      * @param searchResults
      */
     @Override
@@ -1085,7 +971,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         mRootView.findViewById(R.id.user_education_heading_devider).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_heading).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.VISIBLE);
-        ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText("Skip");
+        ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText(getString(R.string.skip));
         ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
         mStreamRecyclerView.setVisibility(View.VISIBLE);
 
@@ -1094,13 +980,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         if(MainActivity.mProfile != null) {
 
             if (mStreamList == null) {
-/*
-                try {
-                    mStreamList = JSON.std.listOfFrom(ProfileSpinnerItem.class,
-                            ProfileMacro.getStreamJson(MainActivity.mProfile.getCurrent_level_id()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
+
                 int streamType = 1 ; //  0 for college and 1 for school
                 int currentLevelID = MainActivity.mProfile.getCurrent_level_id();
                 if (currentLevelID == ProfileMacro.LEVEL_UNDER_GRADUATE) {
@@ -1221,195 +1101,24 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         }
     }
 
-    private boolean getUserNameAndPhone(HashMap<String, String> profileParams){
-
-        View nameView = mRootView.findViewById(R.id.user_education_edit_name_til);
-        if(nameView.getVisibility() == View.VISIBLE){
-            String userName = ((EditText) mRootView.findViewById(R.id.user_education_name_edit_text)).getText().toString().trim();
-            if(!userName.isEmpty()) {
-                if (!Utils.isValidName(userName)) {
-                    mListener.displayMessage(R.string.NAME_INVALID);
-                    return false;
-                }
-                profileParams.put(getString(R.string.USER_NAME),userName);
-
-                // hide name EditText
-                ((TextView) mRootView.findViewById(R.id.user_name)).setText(userName);
-                mRootView.findViewById(R.id.user_education_name_layout).setContentDescription("Your name is " + userName);
-                mRootView.findViewById(R.id.user_education_name_layout).setVisibility(View.VISIBLE);
-                nameView.setVisibility(View.GONE);
-                if(MainActivity.mProfile != null)
-                    MainActivity.mProfile.setName(userName);
-            }
-        }else{
-            if(MainActivity.mProfile != null)
-                profileParams.put(getString(R.string.USER_NAME),MainActivity.mProfile.getName());
-        }
-
-        View phoneView = mRootView.findViewById(R.id.user_education_edit_phone_til);
-        if(phoneView.getVisibility() == View.VISIBLE){
-            String userPhoneNumber = ((EditText) mRootView.findViewById(R.id.user_education_phone_edit_text)).getText().toString().trim();
-            if (!userPhoneNumber.trim().isEmpty()) {
-                if (userPhoneNumber.length() <= 9 || !Utils.isValidPhone(userPhoneNumber)) {
-                    mListener.displayMessage(R.string.PHONE_INVALID);
-                    return false;
-                }
-                profileParams.put(getString(R.string.USER_PHONE),userPhoneNumber);
-                ((TextView) mRootView.findViewById(R.id.user_phone)).setText(userPhoneNumber);
-                mRootView.findViewById(R.id.user_education_phone_layout).setContentDescription("your phone number is " + userPhoneNumber);
-                mRootView.findViewById(R.id.user_education_phone_layout).setVisibility(View.VISIBLE);
-                phoneView.setVisibility(View.GONE);
-                if(MainActivity.mProfile != null)
-                    MainActivity.mProfile.setPhone_no(userPhoneNumber);
-            }
-        }else{
-            if(MainActivity.mProfile != null)
-                profileParams.put(getString(R.string.USER_PHONE),MainActivity.mProfile.getPhone_no());
-        }
-        return true;
-    }
-
-
-
-    private void mRequestForImageCapture() {
-
-        // Determine Uri of camera image to save.
-        File imageFile = new File(Environment.getExternalStorageDirectory(),
-                "tmp_avatar_" + String.valueOf(System.currentTimeMillis()) + ".jpg");
-        mImageCaptureUri = Uri.fromFile(imageFile);
-
-        // Camera.
-        List<Intent> cameraIntents = new ArrayList<>();
-        Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        PackageManager packageManager = getActivity().getPackageManager();
-        List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-        for(ResolveInfo res : listCam) {
-            final String packageName = res.activityInfo.packageName;
-            Intent intent = new Intent(captureIntent);
-            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            intent.setPackage(packageName);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-            cameraIntents.add(intent);
-        }
-        // Filesystem.
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        // Chooser of filesystem options.
-        Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
-        // Add the camera options.
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
-        getActivity().startActivityForResult(chooserIntent, Crop.REQUEST_PICK);
-    }
-
-    @Override
-    public void requestForCropProfileImage(Intent result) {
-        Uri source;
-        if(result != null){
-            source = result.getData();
-        }else{
-            source = mImageCaptureUri;
-        }
-        Uri destination = Uri.fromFile(new File(getActivity().getCacheDir(), "cropped"));
-        Crop.of(source, destination).asSquare().start(getActivity());
-    }
-
-
-    @Override
-    public void uploadUserProfileImage(Uri uri) {
-
-        if(uri == null)
-            return;
-        // set bitmap to profile image
-        if(getView() != null) {
-            CircularImageView profileImage   = (CircularImageView) getView().findViewById(R.id.profile_image);
-            profileImage.setImageURI(uri);
-        }
-
-        File imageFile = new File(uri.getPath());
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(imageFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        Bitmap bm = BitmapFactory.decodeStream(fis);
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        float bitmapRatio = (float) width / (float) height;
-        if (bitmapRatio > 1) {
-            width = 700;
-            height = (int) (width / bitmapRatio);
-        } else {
-            height = 600;
-            width = (int) (height * bitmapRatio);
-        }
-
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bm, width, height, true);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        // delete  temp created profile image
-        deleteTempImageFile();
-        // request to upload profile image file
-        if(mListener != null) {
-            mListener.requestToUploadProfileImage(byteArray);
-        }
-    }
-
-    @Override
-    public void deleteTempImageFile() {
-        if(mImageCaptureUri != null) {
-            File imageFile = new File(mImageCaptureUri.getPath());
-            if(imageFile.exists()){
-                imageFile.delete();
-            }
-        }
-    }
-
-
-    public void updateProfileImage(){
-        if(mRootView != null && MainActivity.mProfile != null) {
-            // set profile error image
-            CircularImageView mProfileImage = (CircularImageView) mRootView.findViewById(R.id.profile_image);
-            mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
-            mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
-
-            String image = MainActivity.mProfile.getImage();
-            mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-
-            CircularProgressBar profileCompleted =  (CircularProgressBar) mRootView.findViewById(R.id.user_profile_progress);
-            profileCompleted.setProgress(0);
-            profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
-
-        }
-    }
-
     public void profileUpdatedSuccessfully(){
-        if( mRootView == null || MainActivity.mProfile == null)
-            return;
-        Profile profile = MainActivity.mProfile;
-        String name = profile.getName();
-
-        if (name != null && !name.isEmpty() && !name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())){
-            ((TextView) mRootView.findViewById(R.id.user_name)).setText(name);
-            mRootView.findViewById(R.id.user_education_name_layout).setContentDescription("Your name is " + name);
-            mRootView.findViewById(R.id.user_education_name_layout).setVisibility(View.VISIBLE);
-            mRootView.findViewById(R.id.user_education_edit_name_til).setVisibility(View.GONE);
+        //if user is selected stream and  after that level response comes
+        // then it will reset user stream id
+        int currentStreamId =0;
+        boolean checkStream = false;
+        if(mStreamList != null && !mStreamList.isEmpty()){
+            int count = mStreamList.size();
+            for (int i = 0; i < count; i++) {
+                ProfileSpinnerItem objItem = mStreamList.get(i);
+                if(!objItem.isSelected()) continue;
+                currentStreamId = objItem.getId();
+                checkStream = true;
+                break;
+            }
+            if(checkStream && MainActivity.mProfile != null){
+                MainActivity.mProfile.setCurrent_stream_id(currentStreamId);
+            }
         }
-
-        String phone = profile.getPhone_no();
-        if (phone != null && !phone.isEmpty() && !phone.equalsIgnoreCase("null")) {
-            ((TextView) mRootView.findViewById(R.id.user_phone)).setText(phone);
-            mRootView.findViewById(R.id.user_education_phone_layout).setContentDescription("your phone number is " + phone);
-            mRootView.findViewById(R.id.user_education_phone_layout).setVisibility(View.VISIBLE);
-            mRootView.findViewById(R.id.user_education_edit_phone_til).setVisibility(View.GONE);
-        }
-
-        CircularProgressBar profileCompleted =  (CircularProgressBar) mRootView.findViewById(R.id.user_profile_progress);
-        profileCompleted.setProgress(0);
-        profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
-
     }
 
     public void updateExamsList(ArrayList<Exam> examList){
@@ -1506,69 +1215,30 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
     }
 
 
-    private void mTakeMeToRecommended(){
+    private void mTakeMeToHome(int ViewId){
         if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
-
-        if(mListener == null)
-            return;
-        // check user's name and phone Number
-        // if name or phone is given and have any issue then
-        // the it will show a toast
-        HashMap<String, String> userParams = new HashMap<>();
-        if(!getUserNameAndPhone(userParams)){
-            return;
+        switch (ViewId){
+            case 1:
+                mListener.OnTakeMeToRecommended();
+                this.mEventValue.put("action_what", "go_to_recommended");
+                break;
+            case 2:
+                mListener.OnTakeMeToDashBoard();
+                this.mEventValue.put("action_what", "go_to_dash_board");
+                break;
+            case 3:
+                mListener.OnTakeMeToProfile();
+                this.mEventValue.put("action_what", "go_to_profile");
+                break;
         }
+        if(mRootView != null)
+            mRootView.findViewById(R.id.user_education_top_layout).setVisibility(View.GONE);
 
-        mRootView.findViewById(R.id.user_education_top_layout).setVisibility(View.GONE);
-        mListener.OnTakeMeToRecommended();
     }
 
-    private void mTakeMeToDashBoard(){
-        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
-            ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
-            return;
-        }
-
-        if(mListener == null)
-            return;
-        // check mDeviceProfile's name and phone Number
-        HashMap<String, String> userParams = new HashMap<>();
-        if(!getUserNameAndPhone(userParams)){
-            return;
-        }
-
-        if(userParams.size() >= 1)
-            this.mListener.requestForProfile(userParams);
-
-
-        mRootView.findViewById(R.id.user_education_top_layout).setVisibility(View.GONE);
-        mListener.OnTakeMeToDashBoard();
-    }
-
-    private void mTakeMeToProfile(){
-        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
-            ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
-            return;
-        }
-
-        if(mListener == null)
-            return;
-
-        // check mDeviceProfile's name and phone Number
-        HashMap<String, String> userParams = new HashMap<>();
-        if(!getUserNameAndPhone(userParams)){
-            return;
-        }
-
-        if(userParams.size() >= 1)
-            this.mListener.requestForProfile(userParams);
-
-        mRootView.findViewById(R.id.user_education_top_layout).setVisibility(View.GONE);
-        mListener.OnTakeMeToProfile();
-    }
 
     private void mResetEventVariables()
     {
@@ -1578,16 +1248,17 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
 
 
     public void mLevelStreamResponseCompleted(ArrayList<ProfileSpinnerItem> streamList) {
-         // request to update user level info on server
+        // request to update user level info on server
         updateUserEducationLevel();
 
+        if(mRootView == null)return;
         //  show next layout to select current stream
         // set heading to acco. current stream screen
         ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
 
         // hide current level radio groups
         mRootView.findViewById(R.id.user_education_radio_group).setVisibility(View.GONE);
-        //mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
+        mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
 
         // show current education layout
         mRootView.findViewById(R.id.user_education_education_layout).setVisibility(View.VISIBLE);
@@ -1644,50 +1315,35 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         params.put("current_level_id", String.valueOf(MainActivity.mProfile.getCurrent_level_id()));
         params.put("current_sublevel_id", String.valueOf(mUserSubLevelID));
         params.put("preferred_level", String.valueOf(MainActivity.mProfile.getPreferred_level()));
-        params.put("current_score", String.valueOf( mUserCurrentMarks));
         params.put("current_score_type", String.valueOf(ProfileMacro.PERCENTAGE));
 
-        // check mDeviceProfile's name and phone Number
-        if(!getUserNameAndPhone(params)){
-            return;
+        // set location coordinates
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mLastLocation != null ) {
+                params.put("latitude", String.valueOf(mLastLocation.getLatitude()));
+                params.put("longitude", String.valueOf(mLastLocation.getLongitude()));
+            }
         }
-        // save mDeviceProfile profile data on server
-        this.mListener.requestForProfile(params);
+        // save user's profile data on server
+        if(this.mListener != null)
+            this.mListener.requestForProfile(params);
     }
+
+
     private void updateUserStreamId() {
         HashMap<String, String> params = new HashMap<>();
-        // check mDeviceProfile's name and phone Number
-        if(!getUserNameAndPhone(params)){
-            return;
-        }
         // save user's current stream id on server
         params.put("current_stream_id", String.valueOf(MainActivity.mProfile.getCurrent_stream_id()));
         this.mListener.requestForProfile(params);
     }
 
-    /**
-     * This method is used to update name and phone number
-     * when user select option to go to recommended colleges
-     */
-    public void updateUserNamePhoneNumber(){
-        HashMap<String, String> userParams = new HashMap<>();
-        if(!getUserNameAndPhone(userParams)){
-            return;
-        }
 
-        if(userParams.size() >= 1 && mListener != null){
-            if(NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
-                mListener.requestForProfile(userParams);
-            }
-        }
-    }
     @Override
     public void updateInstituteCountOnStreamSelection(int instituteCount) {
-       /* if(isAdded()) {
-            getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit()
-                    .putInt(getString(R.string.pref_institute_count), instituteCount).apply();
-        }*/
-            setInstituteCount(String.valueOf(instituteCount));
+        setInstituteCount(String.valueOf(instituteCount));
     }
 
     @Override
@@ -1714,13 +1370,123 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         }
         if(!isAnyExamSelected){
             if(isAdded()) {
-             instituteCount = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).
-                     getInt(getString(R.string.pref_institute_count), instituteCount);
+                instituteCount = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).
+                        getInt(getString(R.string.pref_institute_count), instituteCount);
             }
         }
         if(instituteCount > 0){
             setInstituteCount(String.valueOf(instituteCount));
         }
+    }
+    private void mRequestForLocationUpdate(){
+
+        HashMap<String, String> params = new HashMap<>();
+        if (mLastLocation != null) {
+            params.put("latitude", String.valueOf(mLastLocation.getLatitude()));
+            params.put("longitude", String.valueOf(mLastLocation.getLongitude()));
+        }
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, locationListener);
+        }
+        if(mListener != null){
+            if(params.size() > 0) {
+                mListener.onRequestForLocationUpdate(params);
+            }else{
+                setUserEducationStream();
+            }
+        }
+    }
+
+    LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            mLastLocation = location;
+            mRequestForLocationUpdate();
+        }
+    };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode) {
+            case Activity.RESULT_OK:
+                if(getActivity() != null) {
+                    if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                            || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, locationListener);
+                        ((MainActivity)getActivity()).showProgressDialog(Constants.TAG_USER_EXAMS_SUBMISSION,Constants.THEME_TRANSPARENT);
+                    }
+                }else{
+                    if(mListener != null)
+                        setUserEducationStream();
+                }
+                break;
+            case Activity.RESULT_CANCELED:
+                setUserEducationStream();
+                break;
+        }
+    }
+
+    public void askForLocationSetting(){
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mLastLocation == null) {
+                checkLocationSettings();
+            } else {
+                mRequestForLocationUpdate();
+            }
+        }
+    }
+
+
+    private void createLocationRequest() {
+        locationRequest = LocationRequest.create()
+                .setFastestInterval(5 * 1000)
+                .setInterval(30 * 1000)
+                .setPriority(LocationRequest.PRIORITY_LOW_POWER);
+
+    }
+    private void checkLocationSettings() {
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true);
+
+        final PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                final LocationSettingsStates state =result.getLocationSettingsStates();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
+                      Log.e(TAG, "location settings are satisfied");
+                        setUserEducationStream();
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            status.startResolutionForResult(getActivity(), REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException e) {
+                            // Ignore the error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
+                        Log.e(TAG, "location settings are not satisfied");
+                        setUserEducationStream();
+                        break;
+                }
+            }
+        });
     }
 
 
@@ -1741,11 +1507,11 @@ public class ProfileBuildingFragment extends BaseFragment implements ProfileFrag
         void onUserExamSelected(HashMap<String, String> examJson);
         void displayMessage(int messageId);
         void requestForProfile(HashMap<String, String> params);
+        void onRequestForLocationUpdate(HashMap<String, String> params);
         void onRequestForUserExams();
         void OnTakeMeToRecommended();
         void OnTakeMeToDashBoard();
         void OnTakeMeToProfile();
-        void requestToUploadProfileImage(byte[] fileByteArray);
     }
 
 }

@@ -28,7 +28,6 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
     private RecyclerView calendarRecyclerView;
     private RecyclerView detailsRecyclerView;
     private CalendarItemDetailsAdapter calendarItemDetailsAdapter;
-    //    private LinearLayout.LayoutParams params;
     private LinkedHashMap<String, String> mYearCalendar;
     private LinkedHashMap<String, ArrayList<ChapterDetails>> chaptersDetailsList = new LinkedHashMap<>();
     // current displayed month
@@ -52,10 +51,7 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
         Bundle args=getParentFragment().getArguments();
         if(args!=null){
             mChapterList=args.getParcelableArrayList("chapters_list");
-            if(mChapterList!=null &&mChapterList.size()>0) {
-                mChapterList.size();
-                initCalendar();
-            }
+            initCalendar();
         }
     }
 
@@ -150,20 +146,21 @@ public class CalendarFragment extends BaseFragment implements CalendarAdapter.On
 
         HashMap<String, String> subjectsMap = new LinkedHashMap<>();
         for (ChapterDetails chapterDetails : chapterDetailsList) {
-            String id = subjectsMap.get(chapterDetails.getSubject_id());
-            if (id == null) {
-                subjectsMap.put(chapterDetails.getSubject_id(), chapterDetails.getDays_to_complete());
+            String subjectId = chapterDetails.getSubject_id();
+            String subjectValue = subjectsMap.get(subjectId);
+            if (subjectValue == null) {
+                subjectsMap.put(subjectId, chapterDetails.getDays_to_complete());
             } else {
-                float total = Float.valueOf(subjectsMap.get(chapterDetails.getSubject_id())) + Float.valueOf(chapterDetails.getDays_to_complete());
-                subjectsMap.put(chapterDetails.getSubject_id(), String.valueOf(total));
+                float total = Float.valueOf(subjectValue) + Float.valueOf(chapterDetails.getDays_to_complete());
+                subjectsMap.put(subjectId, String.valueOf(total));
             }
-            ArrayList<ChapterDetails> detailsList = chaptersDetailsList.get(chapterDetails.getSubject_id());
+            ArrayList<ChapterDetails> detailsList = chaptersDetailsList.get(subjectId);
             if (detailsList == null) {
                 detailsList = new ArrayList<>();
                 detailsList.add(chapterDetails);
-                chaptersDetailsList.put(chapterDetails.getSubject_id(), detailsList);
+                chaptersDetailsList.put(subjectId, detailsList);
             } else {
-                chaptersDetailsList.get(chapterDetails.getSubject_id()).add(chapterDetails);
+                detailsList.add(chapterDetails);
             }
         }
         Calendar calendar = Calendar.getInstance();

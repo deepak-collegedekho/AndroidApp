@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,9 +42,10 @@ public class PsychometricTestFragment extends BaseFragment implements Psychometr
             int start=id*4;
             int end=start+4;
             if(end>mQuestionList.size()){
-                end=mQuestionList.size()-start;
+                end=mQuestionList.size();
             }
             subList = new ArrayList<>(mQuestionList.subList(start, end));
+            Log.e("TAG", "psychometric test");
         }
     }
 

@@ -1,11 +1,15 @@
 package com.collegedekho.app.fragment;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -90,7 +94,7 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if(keyCode == event.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)
-                    mPhoneNumberSubmitted();
+                    mCheckSmsPermission();
                 return false;
             }
 
@@ -159,44 +163,40 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
             return;
         }
         switch (view.getId()) {
-            case R.id.fb_login:
-                //LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends", "email", "user_likes", "user_education_history"));
-                break;
-            case R.id.login_phone_submit_button:
-                mPhoneNumberSubmitted();
+             case R.id.login_phone_submit_button:
+                 mCheckSmsPermission();
                 break;
             case R.id.login_verify_phone_button:
                 mRequestForOtpVerification(mOtpET.getText().toString());
                 break;
             case R.id.login_resend_otp:
-                mRequestForOtp();
+                mRequestForOTP();
                 break;
             case R.id.sign_up_skip_layout:
                 mSkipLogin();
                 break;
         }
     }
-    private void mPhoneNumberSubmitted(){
-
-        if(mRequestForOtp() && getView() != null) {
-            getView().findViewById(R.id.login_otp_layout).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.login_phone_submit_button).setVisibility(View.GONE);
+    private void mCheckSmsPermission(){
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(),  new String[]{Manifest.permission.RECEIVE_SMS},
+                    Constants.RC_HANDLE_SMS_PERM);
+        }else {
+            mRequestForOTP();
         }
     }
 
-    private boolean mRequestForOtp(){
-        if(mListener == null)
-            return false;
+    public void mRequestForOTP(){
         mOtpET.setText("");
         String phoneNumber = mPhoneNumberET.getText().toString();
         if (phoneNumber == null || phoneNumber.trim().equals("") ||
                 phoneNumber.trim().length() < 10 || !TextUtils.isDigitsOnly(phoneNumber)) {
             mPhoneNumberET.setError("Enter Valid Mobile Number");
-            return false;
+            return ;
         }
-
-        mListener.onSubmitPhoneNumber(phoneNumber);
-        return true;
+        if(mListener != null)
+        mListener.onRequestForOTP(phoneNumber);
     }
 
     private void mRequestForOtpVerification(String otp){
@@ -259,10 +259,17 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
         }
     };
 
+    public void displayOTPLayout() {
+        if(getView() != null) {
+            getView().findViewById(R.id.login_otp_layout).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.login_phone_submit_button).setVisibility(View.GONE);
+        }
+    }
+
     public interface OnUserPostAnonymousLoginListener {
 
 //        void onSkipUserLogin(HashMap<String, String> params);
-        void onSubmitPhoneNumber(String phoneNumber);
+        void onRequestForOTP(String phoneNumber);
         void onOtpReceived(String phoneNumber, String otp);
         void displayMessage(int messageId);
 

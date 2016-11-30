@@ -80,14 +80,11 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
         }
             this.drawableLike = ContextCompat.getDrawable(mContext, R.drawable.ic_like);
             this.drawableFees = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_fees);
-        //  this. drawablePlacement = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_placement);
             this. drawableInfo = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_information);
             this. drawableBubble = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_bubble);
             this. drawableHeart = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_heart);
             this. drawableFacilityArrow = ContextCompat.getDrawable(mContext, R.drawable.ic_wishlist_arrow_down);
 
-
-        // this.cardCategory =cardCategory;
     }
 
     public void addAll(ArrayList<CardModel> item) {
@@ -113,13 +110,9 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
 
         convertView.findViewById(R.id.institute_card_layout).setBackground(backgroundBorder);
         convertView.setTag(position);
-
         setVectorDrawable(convertView);
 
-
-
         this.mFacilityText = (TextView) (convertView.findViewById(R.id.facility_toast));
-
         CardModel model = getCardModel(position);
         model.setTag(mData.size()-1-position);
 
@@ -140,12 +133,8 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Institute institute = ((CardModel) SimpleCardStackAdapter.this.getItem(position)).getInstitute();
-               /* if (cardCategory == Constants.CDRecommendedInstituteType.UNBAISED.ordinal()
-                        || cardCategory == Constants.CDRecommendedInstituteType.UNDECIDED.ordinal()){*/
                 mListener.OnAppliedInstitute(institute);
-               /* } else if (cardCategory == Constants.CDRecommendedInstituteType.SHORTLISTED.ordinal()) {
-                    mListener.onRemoveShortlisted(institute);
-                }*/
+
             }
         });
         (convertView.findViewById(R.id.header_view)).setOnClickListener(new View.OnClickListener() {
@@ -163,7 +152,6 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
                 }else {
                     SimpleCardStackAdapter.this.mListener.OnInstituteLiked(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute(), false);
                 }
-//                SimpleCardStackAdapter.this.notifyDataSetChanged();
             }
 
             @Override
@@ -173,7 +161,6 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
                 } else {
                     SimpleCardStackAdapter.this.mListener.OnInstituteDislike(((CardModel) SimpleCardStackAdapter.this.getItem(getCount() - 1 - position)).getInstitute(), false);
                 }
-//                SimpleCardStackAdapter.this.notifyDataSetChanged();
             }
 
             @Override
@@ -183,7 +170,6 @@ public final class SimpleCardStackAdapter extends BaseAdapter {
                 }else {
                     SimpleCardStackAdapter.this.mListener.OnDecideLater(((CardModel) SimpleCardStackAdapter.this.getItem(getCount()-1-position)).getInstitute(), false);
                 }
-//                SimpleCardStackAdapter.this.notifyDataSetChanged();
             }
         });
 

@@ -22,8 +22,8 @@ public class StepByStepQuestion implements Parcelable {
         }
     };
 
-    private String name;
-    private String text;
+    private String name ="";
+    private String text ="";
     private int image;
     private boolean is_skippable;
     private boolean required;

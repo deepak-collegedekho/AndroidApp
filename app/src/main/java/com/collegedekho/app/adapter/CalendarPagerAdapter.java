@@ -5,33 +5,20 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.collegedekho.app.entities.ChapterDetails;
 import com.collegedekho.app.fragment.CalendarFragment;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.LinkedHashMap;
 
 /**
  * Created by Bashir on 14/12/15.
  */
 public class CalendarPagerAdapter extends FragmentStatePagerAdapter {
     private int NUM_PAGES=1;
-    LinkedHashMap<String,String> mYearCalendar;
-    private LinkedHashMap<String,ArrayList<ChapterDetails>> mChaptersDetailsList;
     private String[] monthNames = {"","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
     private CalendarItemDetailsAdapter.OnItemStateChangeListener mListener;
-    Fragment fragment;
-    public CalendarPagerAdapter(FragmentManager fm, int pageCount,LinkedHashMap<String,String> yearCalendar,LinkedHashMap<String,ArrayList<ChapterDetails>> chaptersDetailsList,CalendarItemDetailsAdapter.OnItemStateChangeListener listener)
-    {
-        super(fm);
-        this.mChaptersDetailsList=chaptersDetailsList;
-        this.mYearCalendar=yearCalendar;
-        this.NUM_PAGES=pageCount;
-        this.mListener=listener;
-    }
+    private Fragment fragment;
 
-    public CalendarPagerAdapter(FragmentManager fm, int pageCount,CalendarItemDetailsAdapter.OnItemStateChangeListener listener)
+    public CalendarPagerAdapter(FragmentManager fm, int pageCount, CalendarItemDetailsAdapter.OnItemStateChangeListener listener)
     {
         super(fm);
         this.NUM_PAGES=pageCount;

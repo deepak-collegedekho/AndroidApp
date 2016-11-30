@@ -28,14 +28,16 @@
             android:layout_marginLeft="40dp"
             android:layout_weight=".5" >
 
-            <TextView android:id="@+id/recommended_count"
+
+            <com.robinhood.ticker.TickerView
+                android:id="@+id/recommended_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:text="2145"
                 android:textSize="12sp"
                 android:textColor="@color/white"
                 android:layout_marginRight="10dp"
+                app:ticker_animationDuration="500"
+                android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"/>
 
             <LinearLayout
@@ -76,15 +78,16 @@
             android:layout_marginRight="40dp"
             android:layout_marginLeft="15dp" >
 
-
-            <TextView android:id="@+id/shortlist_count"
+            <com.robinhood.ticker.TickerView
+                android:id="@+id/shortlist_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:text="--"
                 android:textSize="12sp"
+                android:gravity="center"
                 android:textColor="@color/white"
                 android:layout_marginRight="10dp"
+                app:ticker_animationDuration="500"
+                android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"/>
 
             <LinearLayout
@@ -139,15 +142,16 @@
             android:layout_marginRight="15dp"
             android:layout_weight="0.5" >
 
-
-            <TextView android:id="@+id/trending_count"
+            <com.robinhood.ticker.TickerView
+                android:id="@+id/trending_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:text="--"
                 android:textSize="12sp"
+                android:gravity="center"
                 android:textColor="@color/white"
                 android:layout_marginRight="10dp"
+                app:ticker_animationDuration="500"
+                android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"/>
 
             <LinearLayout
@@ -188,14 +192,16 @@
             android:layout_marginRight="40dp">
 
 
-            <TextView android:id="@+id/explore_count"
+            <com.robinhood.ticker.TickerView
+                android:id="@+id/explore_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:text="--"
                 android:textSize="12sp"
+                android:gravity="center"
                 android:textColor="@color/white"
                 android:layout_marginRight="10dp"
+                app:ticker_animationDuration="500"
+                android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"/>
 
             <LinearLayout

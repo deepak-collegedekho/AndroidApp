@@ -1,16 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Crop.DoneCancelBar">
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/btn_cancel"
+        android:gravity="center"
+        android:orientation="horizontal"
         style="@style/Crop.ActionButton">
-        <TextView style="@style/Crop.ActionButtonText.Cancel" />
-    </FrameLayout>
 
-    <FrameLayout
+        <TextView
+            style="@style/Crop.ActionButtonText.Cancel"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/btn_done"
+        android:gravity="center"
+        android:orientation="horizontal"
         style="@style/Crop.ActionButton">
-        <TextView style="@style/Crop.ActionButtonText.Done" />
-    </FrameLayout>
+
+        <TextView
+            style="@style/Crop.ActionButtonText.Done"
+            />
+
+    </LinearLayout>
 
 </LinearLayout>

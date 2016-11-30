@@ -1,12 +1,16 @@
 package com.collegedekho.app.fragment;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -134,24 +138,14 @@ public class OTPVerificationFragment extends BaseFragment {
                 }
                 break;
             case R.id.btn_submit_mobile:
-                if (mListener != null) {
-                    String number = edtMobileNumber.getText().toString().trim();
-                    if (!number.isEmpty() && number.trim().length() == 10 && TextUtils.isDigitsOnly(number)) {
-                        if (cbTerms.isChecked()) {
-                            mListener.onSubmitPhoneNumber(number);
-                            if(MainActivity.mProfile != null){
-                                MainActivity.mProfile.setPhone_no(number);
-                                HashMap<String, String> params = new HashMap<>();
-                                params.put(getString(R.string.USER_PHONE), number);
-                                mListener.requestForProfile(params);
-                            }
-                        } else {
-                            mListener.displayMessage(R.string.ACCEPT_TERMS_AND_CONDITIONS);
-                        }
-                    } else {
-                        edtMobileNumber.setError("Enter Valid Mobile Number");
-                    }
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(),  new String[]{Manifest.permission.RECEIVE_SMS},
+                            Constants.RC_HANDLE_SMS_PERM);
+                }else{
+                    mRequestForOTP();
                 }
+
                 break;
             case R.id.btn_submit_otp:
                 if (mListener != null) {
@@ -179,6 +173,27 @@ public class OTPVerificationFragment extends BaseFragment {
                 break;
             default:
                 break;
+        }
+    }
+    public void mRequestForOTP(){
+
+        if (mListener != null) {
+            String number = edtMobileNumber.getText().toString().trim();
+            if (!number.isEmpty() && number.trim().length() == 10 && TextUtils.isDigitsOnly(number)) {
+                if (cbTerms.isChecked()) {
+                    mListener.onRequestForOTP(number);
+                    if(MainActivity.mProfile != null){
+                        MainActivity.mProfile.setPhone_no(number);
+                        HashMap<String, String> params = new HashMap<>();
+                        params.put(getString(R.string.USER_PHONE), number);
+                        mListener.requestForProfile(params);
+                    }
+                } else {
+                    mListener.displayMessage(R.string.ACCEPT_TERMS_AND_CONDITIONS);
+                }
+            } else {
+                edtMobileNumber.setError("Enter Valid Mobile Number");
+            }
         }
     }
 
@@ -245,7 +260,7 @@ public class OTPVerificationFragment extends BaseFragment {
     }
 
     public interface OTPVerificationListener {
-        void onSubmitPhoneNumber(String mobileNumber);
+        void onRequestForOTP(String mobileNumber);
         void onSubmitOTP(String mobileNumber, String otp);
         void requestForProfile(HashMap<String, String> params);
         void onResendOTP(String mobileNumber);

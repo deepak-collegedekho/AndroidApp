@@ -186,7 +186,7 @@ public class LoginFragment extends  BaseFragment {
             return false;
         }
 
-        mListener.onSubmitPhoneNumber(phoneNumber);
+        mListener.onRequestForOTP(phoneNumber);
         return true;
     }
 
@@ -262,7 +262,7 @@ public class LoginFragment extends  BaseFragment {
     public interface OnUserLoginListener {
 
         //void onSkipUserLogin(HashMap<String, String> params);
-        void onSubmitPhoneNumber(String phoneNumber);
+        void onRequestForOTP(String phoneNumber);
         void onOtpReceived(String phoneNumber, String otp);
         void displayMessage(int messageId);
     }

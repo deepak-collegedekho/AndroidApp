@@ -27,9 +27,6 @@ public class RangeQuestionFragment extends StepByStepFragment {
     private static final String ARG_QUESTION = "question";
 
     private StepByStepQuestion pQuestion;
-    private boolean mIsRequired;
-    private boolean mIsSkippable;
-    private String mType;
     private boolean mAnswered;
     private ArrayList<StepByStepChoice> mChoiceHashMap;
     private int mMin;
@@ -54,11 +51,6 @@ public class RangeQuestionFragment extends StepByStepFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             pQuestion = getArguments().getParcelable(ARG_QUESTION);
-            if(pQuestion  == null) {
-                pQuestion = new StepByStepQuestion();
-            }
-                mIsRequired = pQuestion.isRequired();
-                mIsSkippable = pQuestion.is_skippable();
         }
     }
 
@@ -70,15 +62,6 @@ public class RangeQuestionFragment extends StepByStepFragment {
         ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setText(pQuestion.getText());
         rootView.findViewById(R.id.institute_qna_question_title).setContentDescription(pQuestion.getText() + ". Please select a range below and then click on the lower right corner to move ahead");
         this.mChoiceHashMap = this.pQuestion.getChoices();
-
-
-/*
-        Collection c = this.mChoiceHashMap.keySet();
-        ArrayList<Integer> valList = new ArrayList<>();
-
-        for (Object str : c)
-            valList.add(Integer.parseInt(str.toString()));
-*/
 
         if(mChoiceHashMap != null && mChoiceHashMap.size() > 1) {
             this.mMin = Integer.parseInt(this.mChoiceHashMap.get(0).getName());

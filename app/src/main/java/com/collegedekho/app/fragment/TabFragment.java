@@ -3,6 +3,7 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -24,13 +25,12 @@ import com.collegedekho.app.listener.OnSwipeTouchListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
-import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
+import com.robinhood.ticker.TickerUtils;
+import com.robinhood.ticker.TickerView;
 
 import java.util.ArrayList;
-
-
 
 /**
  * Created by {sureshsaini} on {6/12/15}.
@@ -39,7 +39,6 @@ public class TabFragment extends  BaseFragment{
     private final String TAG ="Tab Fragment";
     private static String PARAM1 = "param1";
     private static String PARAM2 = "param2";
-
     private int selectedTabPosition = 0;
     private int selectedSubMenuPosition = 0;
     private  OnHomeItemSelectListener mListener;
@@ -55,11 +54,11 @@ public class TabFragment extends  BaseFragment{
     private int i = 0 ;
     private int examId;
     private View mExamsTabLayout;
-
-    private TextView mRecommendedCountTV;
-    private TextView mTrendingCountTV;
-    private TextView mShortlistCountTV;
-    private TextView mExploreCountTV;
+    private TickerView mRecommendedCountTV;
+    private TickerView mTrendingCountTV;
+    private TickerView mShortlistCountTV;
+    private TickerView mExploreCountTV;
+    private static final char[] NUMBER_LIST = TickerUtils.getDefaultNumberList();
 
     public static TabFragment newInstance(int tabPosoition,ArrayList<ProfileExam> examList) {
         TabFragment fragment = new TabFragment();
@@ -89,10 +88,18 @@ public class TabFragment extends  BaseFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
-        mRecommendedCountTV     =   (TextView)rootView.findViewById(R.id.recommended_count);
-        mTrendingCountTV        =   (TextView)rootView.findViewById(R.id.trending_count);
-        mShortlistCountTV       =   (TextView)rootView.findViewById(R.id.shortlist_count);
-        mExploreCountTV         =   (TextView)rootView.findViewById(R.id.explore_count);
+        mRecommendedCountTV     =   (TickerView)rootView.findViewById(R.id.recommended_count);
+        mTrendingCountTV        =   (TickerView)rootView.findViewById(R.id.trending_count);
+        mShortlistCountTV       =   (TickerView)rootView.findViewById(R.id.shortlist_count);
+        mExploreCountTV         =   (TickerView) rootView.findViewById(R.id.explore_count);
+        mRecommendedCountTV.setCharacterList(NUMBER_LIST);
+        mTrendingCountTV.setCharacterList(NUMBER_LIST);
+        mShortlistCountTV.setCharacterList(NUMBER_LIST);
+        mExploreCountTV.setCharacterList(NUMBER_LIST);
+        mRecommendedCountTV.setText("0");
+        mTrendingCountTV.setText("0");
+        mShortlistCountTV.setText("0");
+        mExploreCountTV.setText("0");
         mPagerHeader            =   (PagerTabStrip) rootView.findViewById(R.id.exam_pager_header);
         mExamTabPager           =   (ViewPager) rootView.findViewById(R.id.exam_detail_pager);
         mExamsTabLayout         =   rootView.findViewById(R.id.exams_tab_layout);
@@ -479,11 +486,11 @@ public class TabFragment extends  BaseFragment{
             ll.setLayoutParams(lp);
 
             LinearLayout ll2 = (LinearLayout)view.findViewById(R.id.home_widget_second_layout);
-
-            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) (getView().findViewById(R.id.home_widget_third)).getLayoutParams();
-            int marginInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45 , getResources().getDisplayMetrics());
-            lp2.setMargins(marginInDp,0,marginInDp,0);
-            getView().findViewById(R.id.home_widget_third).setLayoutParams(lp2);
+             ll2.setLayoutParams(lp);
+            //LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) (getView().findViewById(R.id.home_widget_third)).getLayoutParams();
+            //int marginInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45 , getResources().getDisplayMetrics());
+            //lp2.setMargins(marginInDp,0,marginInDp,0);
+            //getView().findViewById(R.id.home_widget_third).setLayoutParams(lp2);
 
             firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
             secondSubMenuIV.setImageResource(R.drawable.ic_syllabus);
@@ -550,16 +557,20 @@ public class TabFragment extends  BaseFragment{
             int trending = (this.mExamSummary != null) ? this.mExamSummary.getBuzzlist_count() : 0;
             int explore = (this.mExamSummary != null) ? this.mExamSummary.getBackup_count() : 0;
 
-            Utils.SetCounterAnimation(mRecommendedCountTV, recommended, "" , "", Constants.ANIM_SHORT_DURATION);
+            //Utils.SetCounterAnimation(mRecommendedCountTV, recommended, "" , "", Constants.ANIM_SHORT_DURATION);
+            setInstituteCount(mRecommendedCountTV, recommended);
             mRecommendedCountTV.setContentDescription(String.valueOf(recommended));
 
-            Utils.SetCounterAnimation(mShortlistCountTV, shortlist, "" , "", Constants.ANIM_SHORT_DURATION);
+            //Utils.SetCounterAnimation(mShortlistCountTV, shortlist, "" , "", Constants.ANIM_SHORT_DURATION);
+            setInstituteCount(mShortlistCountTV, shortlist);
             mShortlistCountTV.setContentDescription(String.valueOf(shortlist));
 
-            Utils.SetCounterAnimation(mTrendingCountTV, trending, "" , "", Constants.ANIM_SHORT_DURATION);
+           // Utils.SetCounterAnimation(mTrendingCountTV, trending, "" , "", Constants.ANIM_SHORT_DURATION);
+            setInstituteCount(mTrendingCountTV, trending);
             mTrendingCountTV.setContentDescription(String.valueOf(trending));
 
-            Utils.SetCounterAnimation(mExploreCountTV, explore, "" , "", Constants.ANIM_SHORT_DURATION);
+           // Utils.SetCounterAnimation(mExploreCountTV, explore, "" , "", Constants.ANIM_SHORT_DURATION);
+            setInstituteCount(mExploreCountTV, explore);
             mExploreCountTV.setContentDescription(String.valueOf(explore));
         } else {
             mRecommendedCountTV.setVisibility(View.GONE);
@@ -567,6 +578,16 @@ public class TabFragment extends  BaseFragment{
             mShortlistCountTV.setVisibility(View.GONE);
             mExploreCountTV.setVisibility(View.GONE);
         }
+    }
+    private void setInstituteCount(final TickerView view,final int count){
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(view != null)
+                view.setText(String.valueOf(count));
+            }
+        }, 200);
     }
 
     private void mtoggleView(LinearLayout linearLayout1, LinearLayout linearLayout2, int visibility)

@@ -15,6 +15,7 @@ public class Constants
     public static final int RC_HANDLE_STORAGE_PERM =3;
     public static final int RC_HANDLE_SMS_PERM=4;
     public static final int RC_QUIT_VIDEO_PLAYER=5;
+    public static final int RC_HANDLE_LOCATION = 6;
     public static final int GCM_RESULT_DATA_KEY=201;
 
     public static final int APP_OLD_FLOW = 1;
@@ -173,6 +174,7 @@ public class Constants
     public static final String PROFILE_IMAGE_UPLOADING = "profile_image_uploading";
     public static final String TAG_LOAD_SUB_LEVELS = "tag_load_sub_levels";
     public static final String TAG_LOAD_LEVEL_STREAMS = "tag_load_level_streams";
+    public static final String TAG_LOCATION_UPDATED = "tag_location_updated";
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;

@@ -52,9 +52,9 @@ public class AnalyticsUtils {
         );
 
         if (indexingStarting)
-            AppIndex.AppIndexApi.start(context.client, viewAction);
+            AppIndex.AppIndexApi.start(context.mGoogleApiClient, viewAction);
         else
-            AppIndex.AppIndexApi.end(context.client, viewAction);
+            AppIndex.AppIndexApi.end(context.mGoogleApiClient, viewAction);
     }
 
     public static void SendAppEvent(String eventCategory, String eventName, Map<String, Object> eventParams, Context context)

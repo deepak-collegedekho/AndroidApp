@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.SubLevel;
 import com.collegedekho.app.fragment.ProfileBuildingFragment;
-import com.collegedekho.app.listener.ProfileFragmentListener;
 
 import java.util.ArrayList;
 
@@ -28,9 +27,9 @@ public class SubLevelAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private Animation mAnimFromRight;
-    private ProfileFragmentListener mListener;
+    private ProfileBuildingFragment mListener;
 
-   public SubLevelAdapter(Context context, ProfileFragmentListener listener, ArrayList<SubLevel> sublevelList){
+   public SubLevelAdapter(Context context, ProfileBuildingFragment listener, ArrayList<SubLevel> sublevelList){
 
        this. mContext = context;
        this.mSublevelList = sublevelList;

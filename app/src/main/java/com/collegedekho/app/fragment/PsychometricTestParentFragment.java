@@ -65,8 +65,8 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.psychometric_test_parent_fragment, container, false);
-        return rootView;
+        return inflater.inflate(R.layout.psychometric_test_parent_fragment, container, false);
+
     }
 
     @Override

@@ -22,7 +22,6 @@ public class StepByStepAdapter extends FragmentStatePagerAdapter {
     private ArrayList<StepByStepQuestion> mPQuestion;
     private Context mContext;
     private StepByStepFragment mCurrentQuestionFragment;
-    private StepByStepFragment mLastQuestionFragment;
     private ArrayList<StepByStepFragment> mStepByStepFragmentsArray;
 
 
@@ -31,18 +30,13 @@ public class StepByStepAdapter extends FragmentStatePagerAdapter {
 
         this.mContext = context;
         this.mPQuestion = pQuestions;
-        this.mStepByStepFragmentsArray = new ArrayList<StepByStepFragment>();
+        this.mStepByStepFragmentsArray = new ArrayList<>();
     }
 
-    public StepByStepAdapter(FragmentManager fm) {
-        super(fm);
-    }
 
     @Override
     public StepByStepFragment getItem(int position)
     {
-        this.mLastQuestionFragment = this.mCurrentQuestionFragment;
-
         return this.mReturnFragmentofType(this.mPQuestion.get(position), (this.mPQuestion.get(position).getType()));
     }
 

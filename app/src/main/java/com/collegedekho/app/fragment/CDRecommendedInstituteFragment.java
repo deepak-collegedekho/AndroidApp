@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +27,8 @@ import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.GridSpacingItemDecoration;
+import com.robinhood.ticker.TickerUtils;
+import com.robinhood.ticker.TickerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +62,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     private View mNoMoreFeaturedLayout;
     private RecyclerView wishListRecyclerView;
     private WishlistInstituteListAdapter mWishlistInstituteListAdapter;
-    private TextView mUndecidedCountText;
+    private TickerView mUndecidedCountText;
     private TextView mBuzzListCountText;
     private TextView mRecommendedCountText;
     private TextView mShortListCountText;
@@ -70,6 +73,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     private View currentTab;
     public int currentTabId;
     private MainActivity mMainActivity;
+    private static final char[] NUMBER_LIST = TickerUtils.getDefaultNumberList();
 
 
     public CDRecommendedInstituteFragment() {
@@ -139,7 +143,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mLikeImageView         = (ImageView) rootView.findViewById(R.id.like_textview);
         this.mDislikeImageView      = (ImageView) rootView.findViewById(R.id.dislike_textview);
         this.mUndecidedImageView    = (ImageView) rootView.findViewById(R.id.decide_later_textview);
-        this.mUndecidedCountText    = (TextView)rootView.findViewById(R.id.badge_counter);
+        this.mUndecidedCountText    = (TickerView)rootView.findViewById(R.id.badge_counter);
+        this.mUndecidedCountText.setCharacterList(NUMBER_LIST);
         this.mBuzzListCountText     = (TextView)rootView.findViewById(R.id.cd_reco_buzzlist_count);
         this.mRecommendedCountText  = (TextView)rootView.findViewById(R.id.cd_reco_recommended_count);
         this.mShortListCountText = (TextView)rootView.findViewById(R.id.cd_reco_wishlist_count);
@@ -748,11 +753,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         void onClickBuzzList();
         void onClickWishList();
         void onClickRecommendedList();
-        void onNextBuzzList();
-
-        void OnWishlistInstituteSelected(Institute institute, boolean isFromCard);
-        void OnWishlistInstituteApplied(Institute institute, int position);
-        void OnWishlistInstituteRemoved(Institute institute, int position);
         @Override
         void onEndReached(String next, int type);
         @Override
@@ -767,8 +767,13 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         if(mUndecidedInstitutesCount >= 0){
             this.mUndecidedCount = mUndecidedInstitutesCount;
             try{
-                if(!mUndecidedCountText.getText().equals(String.valueOf(mUndecidedCount)))
-                    this.mUndecidedCountText.setText(String.valueOf(mUndecidedCount));
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(mUndecidedCountText != null)
+                            mUndecidedCountText.setText(String.valueOf(mUndecidedCount));
+                    }
+                }, 200);
             } catch (Exception e){ e.printStackTrace(); }
         }
 

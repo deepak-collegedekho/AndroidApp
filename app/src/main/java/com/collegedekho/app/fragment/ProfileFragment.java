@@ -1,5 +1,6 @@
 package com.collegedekho.app.fragment;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +39,7 @@ import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
 import com.collegedekho.app.listener.ProfileFragmentListener;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.ProfileMacro;
 import com.collegedekho.app.utils.Utils;
@@ -570,7 +573,17 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 mListener.onPostAnonymousLogin();
                 break;
             case R.id.user_profile_image_update:
-                mRequestForImageCapture();
+
+                // start loader for cursor
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            Constants.RC_HANDLE_STORAGE_PERM);
+                }else {
+                    mRequestForImageCapture();
+                }
                 break;
             case R.id.profile_expand_info_btn:
                 View view = mRootView.findViewById(R.id.profile_expanded_info_layout);
@@ -1907,7 +1920,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     }
 
 
-    private void mRequestForImageCapture() {
+    public void mRequestForImageCapture() {
 
         // Determine Uri of camera image to save.
         File uploadTempImageFile = new File(Environment.getExternalStorageDirectory(),

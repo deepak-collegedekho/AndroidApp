@@ -16,6 +16,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -168,6 +169,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tagmanager.Container;
 import com.google.android.gms.tagmanager.ContainerHolder;
 import com.google.android.gms.tagmanager.TagManager;
@@ -229,24 +231,24 @@ public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, NavigationView.OnNavigationItemSelectedListener,
         HomeFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
         SplashFragment.OnSplashListener, SplashLoginFragment.OnSplashLoginListener,
-        DataLoadListener, StreamFragment.OnStreamInteractionListener,PsychometricStreamFragment.OnStreamInteractionListener,
+        DataLoadListener, StreamFragment.OnStreamInteractionListener, PsychometricStreamFragment.OnStreamInteractionListener,
         AdapterView.OnItemSelectedListener, ExamsFragment.OnExamsSelectListener,
         InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener, OnNewsSelectListener,
         ProfileFragment.UserProfileListener, OnArticleSelectListener,
         InstituteQnAFragment.OnQuestionAskedListener, FilterFragment.OnFilterInteractionListener,
         InstituteOverviewFragment.OnInstituteShortlistedListener, QnAQuestionsListFragment.OnQnAQuestionSelectedListener,
         QnAQuestionDetailFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
-        MyFutureBuddiesFragment.OnMyFBInteractionListener,  ProfileBuildingFragment.OnUserEducationInteractionListener,
-        LoginFragment.OnUserLoginListener,PostAnonymousLoginFragment.OnUserPostAnonymousLoginListener,InstituteDetailFragment.OnInstituteDetailListener,
+        MyFutureBuddiesFragment.OnMyFBInteractionListener, ProfileBuildingFragment.OnUserEducationInteractionListener,
+        LoginFragment.OnUserLoginListener, PostAnonymousLoginFragment.OnUserPostAnonymousLoginListener, InstituteDetailFragment.OnInstituteDetailListener,
         PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
         UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteFragment.OnCDRecommendedInstituteListener,
-        InstituteVideosFragment.OnTitleUpdateListener,OTPVerificationFragment.OTPVerificationListener, ITrueCallback, WishlistFragment.WishlistInstituteInteractionListener {
+        InstituteVideosFragment.OnTitleUpdateListener, OTPVerificationFragment.OTPVerificationListener, ITrueCallback, WishlistFragment.WishlistInstituteInteractionListener {
 
     static {
 
-        // to support vector drawable in prelollypop
+        // to support vector drawable in pre-lollipop
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         Constants.FilterCategoryMap.put(Constants.ID_FACILITIES, Constants.FILTER_CATEGORY_CAMPUS_AND_HOUSING);
@@ -266,8 +268,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private static final String TAG = "MainActivity";
-    public static boolean IN_FOREGROUND=false;
-    private boolean IS_NETWORK_TASK_RUNNING=false;
+    public static boolean IN_FOREGROUND = false;
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
 
@@ -295,7 +296,6 @@ public class MainActivity extends AppCompatActivity
     private String mLastScreenName = "";
     private Date mTimeScreenClicked = new Date();
     public boolean fromTabFragment = false;
-    private String mGTMContainerId = "www.collegedekho.com";
     public DeviceProfile mDeviceProfile;
     public static Profile mProfile;
     private static String type = "";
@@ -324,15 +324,13 @@ public class MainActivity extends AppCompatActivity
     private Snackbar mSnackbar;
     private boolean IS_USER_CREATED;
     private boolean USER_CREATING_PROCESS;
-    private  boolean IS_HOME_LOADED;
+    private boolean IS_HOME_LOADED;
     private static Context mContext;
     public static TrueClient mTrueClient;
-    private Resources mResources ;
+    private Resources mResources;
     private TextToSpeech mTextToSpeech;
-    /*** ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    public GoogleApiClient client;
+    public GoogleApiClient mGoogleApiClient;
+    public static final int REQUEST_CHECK_SETTINGS = 999;
 
     private SearchView mSearchView = null;
     private ProgressBar mSearchProgress;
@@ -346,30 +344,28 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.mContext = this;
-        Log.e(TAG, " onCreate()  enter time"+ System.currentTimeMillis());
+        Log.e(TAG, " onCreate()  enter time" + System.currentTimeMillis());
         this.IS_HOME_LOADED = this.getSharedPreferences(getString(R.string.PREFS), MODE_PRIVATE).getBoolean(getString(R.string.USER_HOME_LOADED), false);
 
         try {
             super.onCreate(savedInstanceState);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             e.printStackTrace();
             finish();
             reStartApplication();
         }
 
-        Intent intent =  this.getIntent();
+        Intent intent = this.getIntent();
         String action = intent.getAction();
         String data = intent.getDataString();
         String intentType = intent.getType();
 
         if (Intent.ACTION_VIEW.equals(action) && data != null) {
-            if (data.contains("collegedekho.com"))
-            {
+            if (data.contains("collegedekho.com")) {
                 this.mDeepLinkingURI = data;
-                Log.e(TAG, " DeepLinking URL is  : "+ mDeepLinkingURI);
+                Log.e(TAG, " DeepLinking URL is  : " + mDeepLinkingURI);
             }
-        }
-        else if (Intent.ACTION_SEND.equals(action) && type != null) {
+        } else if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(intentType)) {
                 this.mOtherAppSharedMessage = intent.getStringExtra(Intent.EXTRA_TEXT);
             } else {
@@ -377,8 +373,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         //TODO: changed else if to if, watch out for consequences
-        if (intent.getExtras() != null)
-        {
+        if (intent.getExtras() != null) {
             Log.e(TAG, "Extras are not null");
 
             Bundle extras = intent.getExtras();
@@ -387,7 +382,7 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.resource_uri = extras.getString("resource_uri");
                 MainActivity.resource_uri_with_notification_id = MainActivity.resource_uri + "?notification_id=" + extras.getString("notification_id");
 
-                Log.e(TAG, "There is data type is : "+ MainActivity.type +  " Resource uri is " + MainActivity.resource_uri);
+                Log.e(TAG, "There is data type is : " + MainActivity.type + " Resource uri is " + MainActivity.resource_uri);
 
                 //events params
                 Map<String, Object> eventValue = new HashMap<>();
@@ -414,17 +409,11 @@ public class MainActivity extends AppCompatActivity
         // register with true SDk
         this.mRegistrationTrueSdk();
 
-        // register with Connecto
-        //this.mRegistrationConnecto();
-
         // register with fabric Crashlytics
         this.mRegistrationFabricCrashlytics();
 
         // register with Apps Flayer
         this.mRegistrationAppsFlyer();
-
-        // register with facebook Sdk
-        //this.mRegistrationFacebookSdk();
 
         // register with GA tracker
         this.mRegistrationGATracker();
@@ -441,18 +430,21 @@ public class MainActivity extends AppCompatActivity
             Utils.appLaunched(this);
         }
 
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(AppIndex.API)
+                .addApi(LocationServices.API)
+                .build();
         mSearchProgress = (ProgressBar) findViewById(R.id.resource_progress_bar);
 
         mTextToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
-                if(status != TextToSpeech.ERROR) {
+                if (status != TextToSpeech.ERROR) {
                     mTextToSpeech.setLanguage(Locale.UK);
                 }
             }
         });
-        Log.e(TAG, " onCreate()  end time"+ System.currentTimeMillis());
+        Log.e(TAG, " onCreate()  end time" + System.currentTimeMillis());
     }
 
     /**
@@ -467,20 +459,14 @@ public class MainActivity extends AppCompatActivity
         Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
         layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
 
-        // create network utills
+        // create network utils
         this.mNetworkUtils = new NetworkUtils(this, this);
 
-        // start loader for cursor
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
-                == PackageManager.PERMISSION_GRANTED ) {
-            getSupportLoaderManager().initLoader(0, null, this);
-        }
-
         this.mHomeTabContainer = findViewById(R.id.bottom_button_container);
-        this.mCollegeTab = (TextView)findViewById(R.id.college_list);
-        this.mConnectTab = (TextView)findViewById(R.id.connect);
-        this.mPrepareTab = (TextView)findViewById(R.id.prepare);
-        this.mReadTab    = (TextView)findViewById(R.id.read);
+        this.mCollegeTab = (TextView) findViewById(R.id.college_list);
+        this.mConnectTab = (TextView) findViewById(R.id.connect);
+        this.mPrepareTab = (TextView) findViewById(R.id.prepare);
+        this.mReadTab = (TextView) findViewById(R.id.read);
         this.mCollegeTab.setOnClickListener(mClickListener);
         this.mConnectTab.setOnClickListener(mClickListener);
         this.mPrepareTab.setOnClickListener(mClickListener);
@@ -495,12 +481,23 @@ public class MainActivity extends AppCompatActivity
                 // user id registration
                 setUserIdWithAllEvents();
                 // sync user detail with server
-                requestForProfile(null);
+                // update user location
+                HashMap<String, String> params =  null;
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    if (mLastLocation != null) {
+                        params = new HashMap<>();
+                        params.put("latitude", String.valueOf(mLastLocation.getLatitude()));
+                        params.put("longitude", String.valueOf(mLastLocation.getLongitude()));
+                    }
+                }
+                requestForProfile(params);
+
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             this.IS_USER_CREATED = sp.getBoolean(getResourceString(R.string.USER_CREATED), false);
             this.IS_HOME_LOADED = sp.getBoolean(getResourceString(R.string.USER_HOME_LOADED), false);
         }
@@ -516,7 +513,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * This method is used with GA tracker
      */
-    private void mRegistrationGATracker(){
+    private void mRegistrationGATracker() {
 
         new Thread(new Runnable() {
             @Override
@@ -540,61 +537,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is used to register and initialize facebook sdk
-     */
-   /* private void mRegistrationFacebookSdk()
-    {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                FacebookSdk.sdkInitialize(MainActivity.this);
-                callbackManager = CallbackManager.Factory.create();
-                LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        Log.e(TAG, "Logged In ");
-                        showProgressDialog("Signing with facebook account");
-                        AccessToken token = AccessToken.getCurrentAccessToken();
-                        if (token != null) {
-                            RequestData(token);
-                        }
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        Log.e(TAG, "facebook login canceled");
-                        displayMessage(R.string.FACEBOOK_SIGNIN_FAILED);
-                    }
-
-                    @Override
-                    public void onError(FacebookException error) {
-                        error.printStackTrace();
-                        Log.e(TAG, "facebook login on error");
-                        displayMessage(R.string.SIGNIN_ERROR);
-                    }
-                });
-                try
-                {
-                    PackageInfo info = getPackageManager().getPackageInfo(
-                            "com.collegedekho.app",
-                            PackageManager.GET_SIGNATURES);
-                    for (Signature signature : info.signatures) {
-                        MessageDigest md = MessageDigest.getInstance("SHA");
-                        md.update(signature.toByteArray());
-                        String keyHAsh = Base64.encodeToString(md.digest(), Base64.DEFAULT);
-                        Log.d("KeyHash:", keyHAsh);
-                    }
-                }
-                catch (PackageManager.NameNotFoundException e) {
-                }
-                catch (NoSuchAlgorithmException e) {
-                }
-            }
-        }).start();
-
-    }*/
-
-    /**
      * This method is used to register Fabric Crashlytics
      */
     private void mRegistrationFabricCrashlytics() {
@@ -609,7 +551,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * This method is used to register Apps flyer tracker
      */
-    private void mRegistrationAppsFlyer(){
+    private void mRegistrationAppsFlyer() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -624,16 +566,16 @@ public class MainActivity extends AppCompatActivity
                 AppsFlyerLib.getInstance().setCurrencyCode("INR");
                 AppsFlyerLib.getInstance().setDebugLog(true);
 
-                AppsFlyerLib.getInstance().registerConversionListener(MainActivity.this,new AppsFlyerConversionListener() {
+                AppsFlyerLib.getInstance().registerConversionListener(MainActivity.this, new AppsFlyerConversionListener() {
                     public void onInstallConversionDataLoaded(Map<String, String> conversionData) {
                         DebugLogQueue.getInstance().push("\nGot conversion data from server");
-                        for (String attrName : conversionData.keySet()){
-                            Log.d(TAG, "attribute: "+attrName+" = "+conversionData.get(attrName));
+                        for (String attrName : conversionData.keySet()) {
+                            Log.d(TAG, "attribute: " + attrName + " = " + conversionData.get(attrName));
                         }
                     }
 
                     public void onInstallConversionFailure(String errorMessage) {
-                        Log.d(TAG, "error getting conversion data: "+errorMessage);
+                        Log.d(TAG, "error getting conversion data: " + errorMessage);
                     }
 
                     public void onAppOpenAttribution(Map<String, String> attributionData) {
@@ -641,30 +583,18 @@ public class MainActivity extends AppCompatActivity
                     }
 
                     public void onAttributionFailure(String errorMessage) {
-                        Log.d(TAG, "error onAttributionFailure : "+errorMessage);
+                        Log.d(TAG, "error onAttributionFailure : " + errorMessage);
                     }
 
-                    private void printMap(Map<String,String> map){
+                    private void printMap(Map<String, String> map) {
                         for (String key : map.keySet()) {
-                            Log.d(TAG, key+"="+map.get(key));
+                            Log.d(TAG, key + "=" + map.get(key));
                         }
                     }
                 });
                 Looper.loop();
             }
         }).start();
-    }
-
-    @Override
-    public void setTitle(CharSequence title) {
-//        mTitle = title;
-//        getSupportActionBar().setTitle(mTitle);
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-//        mDrawerToggle.syncState();
     }
 
     /**
@@ -676,16 +606,16 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run() {
                 if (IS_USER_CREATED && !IS_HOME_LOADED && currentFragment instanceof SplashFragment
-                        && NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED){
+                        && NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
                     ((SplashFragment) currentFragment).noInternetAvailable();
-                } else if(!USER_CREATING_PROCESS && !IS_USER_CREATED && NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED){
+                } else if (!USER_CREATING_PROCESS && !IS_USER_CREATED && NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
                     USER_CREATING_PROCESS = true;
                     showProgress(Constants.TAG_CREATING_USER);
                     return;
-                }else{
+                } else {
                     mCheckAppPermissions();
                 }
-             }
+            }
         }, 10);
     }
 
@@ -694,16 +624,14 @@ public class MainActivity extends AppCompatActivity
      *  and sms are enabled otherwise it will ask the permissions for lolliPop onwards devices
      */
     private void mCheckAppPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS},
+                    Constants.RC_HANDLE_CONTACTS_PERM);
+        } else {
             // start curser loader if not started with id "0"
             getSupportLoaderManager().initLoader(0, null, this);
             // load screen fragment according user status
             this.mLoadUserStatusScreen();
-        } else {
-            // ask for user app permissions
-            getUserPermissions();
         }
     }
 
@@ -721,7 +649,7 @@ public class MainActivity extends AppCompatActivity
             // if user is not created the first user will login with nay option
             this.mDisplaySplashLoginFragment();
 
-        }else if (MainActivity.type != null && !MainActivity.type.matches("")) {
+        } else if (MainActivity.type != null && !MainActivity.type.matches("")) {
             this.isFromNotification = true;
             this.mHandleNotifications(true);
 
@@ -733,27 +661,27 @@ public class MainActivity extends AppCompatActivity
             this.isFromDeepLinking = true;
             this.mHandleDeepLinking(this.mDeepLinkingURI);
 
-        }else if ((MainActivity.mProfile.getExams_set() == ProfileMacro.EXAMS_SELECTED) || IS_HOME_LOADED){
+        } else if ((MainActivity.mProfile.getExams_set() == ProfileMacro.EXAMS_SELECTED) || IS_HOME_LOADED) {
             // show App bar layout
             mShowAppBarLayout();
             // load user home screen
             mDisplayHomeFragment();
             // request to update profile info if anything is change on server
             requestForProfile(null);
-        }else  if(MainActivity.mProfile.getCurrent_level_id() <= 0 && mProfile.getApp_flow() == Constants.APP_NEW_FLOW) {
+        } else if (MainActivity.mProfile.getCurrent_level_id() <= 0 && mProfile.getApp_flow() == Constants.APP_NEW_FLOW) {
             this.mDisplaySplashLoginFragment();
-        }else{
+        } else {
             this.mDisplayProfileBuildingFragment(false);
-
         }
     }
+
     private void mSetAppToolBar() {
 
         // replace default action bar with Tool bar
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -765,28 +693,28 @@ public class MainActivity extends AppCompatActivity
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         mDrawerToggle = new ActionBarDrawerToggle(
-                this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+                this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
 
                 // set user profile image on navigation drawer layout
-                CircularImageView mProfileImage = (CircularImageView) drawerView. findViewById(R.id.profile_image);
+                CircularImageView mProfileImage = (CircularImageView) drawerView.findViewById(R.id.profile_image);
                 mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
                 mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
                 String profileImage = MainActivity.mProfile.getImage();
 
-                if (profileImage == null )profileImage ="";
+                if (profileImage == null) profileImage = "";
                 mProfileImage.setImageUrl(profileImage, MySingleton.getInstance(getApplicationContext()).getImageLoader());
 
                 // set user's name on navigation drawer
                 String userName = MainActivity.mProfile.getName();
-                if(userName != null ) {
-                    ((TextView)drawerView.findViewById(R.id.user_name)).setText(userName);
+                if (userName != null) {
+                    ((TextView) drawerView.findViewById(R.id.user_name)).setText(userName);
                 }
                 // it will show user's profile completion progress on navigation drawer
-                CircularProgressBar profileCompleted =  (CircularProgressBar)drawerView.findViewById(R.id.user_profile_progress);
+                CircularProgressBar profileCompleted = (CircularProgressBar) drawerView.findViewById(R.id.user_profile_progress);
                 profileCompleted.setProgress(0);
                 profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
 
@@ -796,26 +724,7 @@ public class MainActivity extends AppCompatActivity
         mDrawerToggle.syncState();
 
         mToolbar.setLogo(R.drawable.ic_cd_colored);
-       /* getToolbarLogoIcon(mToolbar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentFragment instanceof SyllabusSubjectsListFragment)
-                    ((SyllabusSubjectsListFragment) currentFragment).submitSyllabusStatus();
-                else if (currentFragment instanceof CalendarParentFragment)
-                    ((CalendarParentFragment) currentFragment).submitCalendarData();
-                else if (currentFragment instanceof OTPVerificationFragment)
-                    return;
-                else if(isFromNotification ) {
 
-                    mClearBackStack();
-                    isFromNotification = false;
-                    mLoadUserStatusScreen();
-                    return;
-                }
-                mClearBackStack();
-                invalidateOptionsMenu();
-            }
-        });*/
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -842,9 +751,9 @@ public class MainActivity extends AppCompatActivity
             sendIntent.setType("text/plain");
             startActivity(sendIntent);
         }
-        if(position != -1) {
+        if (position != -1) {
             mClearBackStackWithoutAnimation();
-           // mUpdateTabMenuItem(position); // comment by suresh
+            // mUpdateTabMenuItem(position); // comment by suresh
             onTabMenuSelected(position);
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -934,7 +843,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.ACTION_OPEN_WEB_URL:
                 if (MainActivity.mProfile != null)
-                    MainActivity.resource_uri_with_notification_id +=  "&&user_id=" + MainActivity.mProfile.getId();
+                    MainActivity.resource_uri_with_notification_id += "&&user_id=" + MainActivity.mProfile.getId();
                 onDisplayWebFragment(MainActivity.resource_uri_with_notification_id);
                 break;
 
@@ -953,23 +862,21 @@ public class MainActivity extends AppCompatActivity
         MainActivity.resource_uri = "";
         MainActivity.resource_uri_with_notification_id = "";
         this.mDeepLinkingURI = "";
-        getIntent().putExtra("screen","");
-        getIntent().putExtra("resource_uri","");
+        getIntent().putExtra("screen", "");
+        getIntent().putExtra("resource_uri", "");
     }
 
     private void mHandleDeepLinking(String uri) {
         String[] uriArray = uri.split("/");
         String resourceURI = "";
-        if (uriArray.length > 3)
-        {
+        if (uriArray.length > 3) {
             MainActivity.type = uriArray[3];
             for (int i = 4; i < uriArray.length; i++) {
                 if (!uriArray[i].isEmpty())
                     resourceURI += uriArray[i] + "/";
             }
             MainActivity.resource_uri = Constants.BASE_URL + resourceURI;
-        }
-        else
+        } else
             MainActivity.type = "";
 
         this.mHandleNotifications(true);
@@ -1039,7 +946,6 @@ public class MainActivity extends AppCompatActivity
         request.setParameters(parameters);
         request.executeAsync();
     }*/
-
     private void mSetupGTM() {
         TagManager tagManager = TagManager.getInstance(this);
 
@@ -1047,8 +953,9 @@ public class MainActivity extends AppCompatActivity
         // warning and error messages, but also verbose, debug, info messages.
         tagManager.setVerboseLoggingEnabled(true);
 
+        String mGTMContainerId = "www.collegedekho.com";
         PendingResult<ContainerHolder> pending =
-                tagManager.loadContainerPreferNonDefault(this.mGTMContainerId,
+                tagManager.loadContainerPreferNonDefault(mGTMContainerId,
                         R.raw.gtm_analytics);
 
         // The onResult method will be called as soon as one of the following happens:
@@ -1086,8 +993,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e(TAG, " onResume  enter time"+ System.currentTimeMillis());
-        IN_FOREGROUND=true;
+        Log.e(TAG, " onResume  enter time" + System.currentTimeMillis());
+        IN_FOREGROUND = true;
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             MainActivity.type = extras.getString("screen");
@@ -1096,11 +1003,11 @@ public class MainActivity extends AppCompatActivity
         adjustFontScale(getResources().getConfiguration());
         // Logs 'install' and 'app activate' App Events.
         // AppEventsLogger.activateApp(this);
-        IntentFilter linkFilter=new IntentFilter(Constants.CONTENT_LINK_FILTER);
+        IntentFilter linkFilter = new IntentFilter(Constants.CONTENT_LINK_FILTER);
         linkFilter.addAction(Constants.NOTIFICATION_FILTER);
-        LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver,linkFilter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver, linkFilter);
         System.gc();
-        Log.e(TAG, " onResume  end time"+ System.currentTimeMillis());
+        Log.e(TAG, " onResume  end time" + System.currentTimeMillis());
     }
 
     @Override
@@ -1116,40 +1023,36 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        IN_FOREGROUND=false;
+        IN_FOREGROUND = false;
         // Logs 'app deactivate' App Event.
         // AppEventsLogger.deactivateApp(this);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         System.gc();
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
         // register OTP broadcast receiver if user's phone number
         // is not verified
-        if(mProfile == null || mProfile.getIs_verified() != Constants.PHONE_VERIFIED) {
+        if (mProfile == null || mProfile.getIs_verified() != Constants.PHONE_VERIFIED) {
             if (mOtpReceiver == null)
                 mOtpReceiver = new OTPReceiver();
 
-            IntentFilter filter ;
+            IntentFilter filter;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
                 filter = new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION);
-            }else{
+            } else {
                 filter = new IntentFilter();
                 filter.addAction("android.provider.Telephony.SMS_RECEIVED");
             }
             this.registerReceiver(mOtpReceiver, filter);
         }
 
-        Log.e(TAG, " onStart()  enter time"+ System.currentTimeMillis());
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
+        mGoogleApiClient.connect();
+        Action viewAction = Action.newAction(Action.TYPE_VIEW,
+                // TODO: choose an action type.
                 "CollegeDekho App", // TODO: Define a title for the content shown.
                 // TODO: If you have web page content that matches this app activity's content,
                 // make sure this auto-generated web page URL is correct.
@@ -1158,15 +1061,15 @@ public class MainActivity extends AppCompatActivity
                 // TODO: Make sure this auto-generated app URL is correct.
                 Uri.parse(Constants.BASE_APP_URI.toString())
         );
-        AppIndex.AppIndexApi.start(client, viewAction);
-        Log.e(TAG, " onStart()  end time"+ System.currentTimeMillis());
+        AppIndex.AppIndexApi.start(mGoogleApiClient, viewAction);
+        Log.e(TAG, " onStart()  end time" + System.currentTimeMillis());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         // unregister Otp broadcast receiver
-        if(mOtpReceiver != null) {
+        if (mOtpReceiver != null) {
             unregisterReceiver(mOtpReceiver);
             mOtpReceiver = null;
         }
@@ -1182,16 +1085,36 @@ public class MainActivity extends AppCompatActivity
                 // TODO: Make sure this auto-generated app URL is correct.
                 Uri.parse(Constants.BASE_APP_URI.toString())
         );
-        AppIndex.AppIndexApi.end(client, viewAction);
+        AppIndex.AppIndexApi.end(mGoogleApiClient, viewAction);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.disconnect();
+        mGoogleApiClient.disconnect();
     }
+
     @Override
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         super.onDestroy();
     }
+
+
+    /*@Override
+    public void onConnected(Bundle connectionHint) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // mLastLocation = LocationServices.FusedLocationApi.getLastLocation( mGoogleApiClient);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }*/
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -1209,7 +1132,7 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case android.R.id.home:
                 //called when the up affordance/carat in actionbar is pressed
-                if(currentFragment instanceof  HomeFragment){
+                if (currentFragment instanceof HomeFragment) {
                     mDrawerLayout.openDrawer(GravityCompat.START);
 
                 }/*else if(getSupportFragmentManager().getBackStackEntryCount() >= 1) {
@@ -1222,7 +1145,7 @@ public class MainActivity extends AppCompatActivity
                             invalidateOptionsMenu();
                         }
                     }, 200);
-                }*/else{
+                }*/ else {
                     onBackPressed();
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -1296,42 +1219,42 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if ( currentFragment instanceof ProfileBuildingFragment || currentFragment instanceof ProfileFragment
+        if (currentFragment instanceof ProfileBuildingFragment || currentFragment instanceof ProfileFragment
                 || currentFragment instanceof ExamsFragment || currentFragment instanceof StreamFragment
                 || currentFragment instanceof PsychometricStreamFragment || currentFragment instanceof StepByStepFragment
-                || currentFragment instanceof  OTPVerificationFragment ||currentFragment instanceof WebViewFragment
+                || currentFragment instanceof OTPVerificationFragment || currentFragment instanceof WebViewFragment
                 || currentFragment instanceof PsychometricTestParentFragment) {
             menu.setGroupVisible(R.id.main_menu_group, false);
-        }else {
-            if(menu.size()>0)
+        } else {
+            if (menu.size() > 0)
                 menu.getItem(0).setVisible(true);
         }
         setSearchAvailable(menu);
         SharedPreferences sharedPreferences = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE);
-        boolean isTuteComplete  = false ;
-        if(currentFragment instanceof TabFragment){
-            if(((TabFragment) currentFragment).getSelectedTab() == 1){
+        boolean isTuteComplete = false;
+        if (currentFragment instanceof TabFragment) {
+            if (((TabFragment) currentFragment).getSelectedTab() == 1) {
                 isTuteComplete = sharedPreferences.getBoolean(getString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
                 showMenuGroupVIsibility(menu, isTuteComplete);
-            } else if(((TabFragment) currentFragment).getSelectedTab() == 3){
+            } else if (((TabFragment) currentFragment).getSelectedTab() == 3) {
                 isTuteComplete = sharedPreferences.getBoolean("prepare_tute", false);
                 showMenuGroupVIsibility(menu, isTuteComplete);
             }
-        }else if(currentFragment instanceof WishlistFragment){
+        } else if (currentFragment instanceof WishlistFragment) {
             isTuteComplete = sharedPreferences.getBoolean("Wishlist tute", false);
             showMenuGroupVIsibility(menu, isTuteComplete);
             menu.setGroupVisible(R.id.search_menu_group, false);
-        }else  if(currentFragment instanceof CDRecommendedInstituteFragment){
+        } else if (currentFragment instanceof CDRecommendedInstituteFragment) {
             int tab = ((CDRecommendedInstituteFragment) currentFragment).currentTabId;
-            if(tab == 1){
+            if (tab == 1) {
                 isTuteComplete = sharedPreferences.getBoolean(getString(R.string.RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE), false);
                 showMenuGroupVIsibility(menu, isTuteComplete);
-            } else if (tab == 2){
+            } else if (tab == 2) {
                 isTuteComplete = sharedPreferences.getBoolean("Wishlist tute", false);
                 showMenuGroupVIsibility(menu, isTuteComplete);
             }
             menu.setGroupVisible(R.id.search_menu_group, false);
-        } else if(currentFragment instanceof  HomeFragment){
+        } else if (currentFragment instanceof HomeFragment) {
             isTuteComplete = sharedPreferences.getBoolean("Home Tute", false);
             showMenuGroupVIsibility(menu, isTuteComplete);
         }
@@ -1343,11 +1266,11 @@ public class MainActivity extends AppCompatActivity
      * @param menu inflated menu layout
      * @param flag menu items will show and hide based on this flag
      */
-    private void showMenuGroupVIsibility(Menu menu, boolean flag){
-        if(!flag){
+    private void showMenuGroupVIsibility(Menu menu, boolean flag) {
+        if (!flag) {
             menu.setGroupVisible(R.id.search_menu_group, false);
             menu.setGroupVisible(R.id.main_menu_group, false);
-        }else {
+        } else {
             menu.setGroupVisible(R.id.main_menu_group, true);
             menu.setGroupVisible(R.id.search_menu_group, true);
         }
@@ -1355,7 +1278,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setSearchAvailable(Menu menu) {
         if (currentFragment != null) {
-            if (currentFragment instanceof HomeFragment || (currentFragment instanceof TabFragment )) {
+            if (currentFragment instanceof HomeFragment || (currentFragment instanceof TabFragment)) {
                 menu.setGroupVisible(R.id.search_menu_group, true);
                 if (mSearchView != null) {
                     mSearchView.setQueryHint("Search Institutes");
@@ -1377,7 +1300,7 @@ public class MainActivity extends AppCompatActivity
                 if (mSearchView != null) {
                     mSearchView.setQueryHint("Search Questions");
                 }
-            } else if (currentFragment instanceof InstituteListFragment){// && mCurrentTitle != null && !(mCurrentTitle.equals("WishList Institutes") || mCurrentTitle.equals("Recommended Institutes"))) {
+            } else if (currentFragment instanceof InstituteListFragment) {// && mCurrentTitle != null && !(mCurrentTitle.equals("WishList Institutes") || mCurrentTitle.equals("Recommended Institutes"))) {
                 menu.setGroupVisible(R.id.search_menu_group, true);
                 if (mSearchView != null) {
                     mSearchView.setQueryHint("Search Institutes");
@@ -1393,7 +1316,7 @@ public class MainActivity extends AppCompatActivity
      * This method is used to register userId with Apps Flyer
      * and GA Tracker
      */
-    private void setUserIdWithAllEvents(){
+    private void setUserIdWithAllEvents() {
         // register user id with apps flyer
         AppsFlyerLib.getInstance().setCustomerUserId(MainActivity.mProfile.getId());
         // register user id with GA tracker
@@ -1412,46 +1335,17 @@ public class MainActivity extends AppCompatActivity
         SendAppEvent(getResourceString(R.string.CATEGORY_BOOK_KEEPING), getResourceString(R.string.SESSION_STARTED), eventValue, this);
     }
 
-    private void mRegisterGcmDialog(){
-
-       /* private Handler gcmDialogHandler=new Handler();
-        private Runnable gcmDialogRunnable;
-        gcmDialogRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if(IN_FOREGROUND && IS_HOME_LOADED){
-
-                    if(!IS_NETWORK_TASK_RUNNING &&  currentFragment != null &&
-                            !(currentFragment instanceof ProfileFragment)) {
-                        Intent gcmIntent = new Intent(MainActivity.this, GCMDialogActivity.class);
-                        MainActivity.this.startActivityForResult(gcmIntent,Constants.GCM_RESULT_DATA_KEY);
-                    }else {
-                        gcmDialogHandler.removeCallbacks(gcmDialogRunnable);
-                        gcmDialogHandler.postDelayed(gcmDialogRunnable,3000);
-                    }
-                }else{
-                    gcmDialogHandler.removeCallbacks(gcmDialogRunnable);
-                    gcmDialogHandler.postDelayed(gcmDialogRunnable,90000);
-                }
-            }
-        };
-        gcmDialogHandler.postDelayed(gcmDialogRunnable,90000);*/
-    }
-
 
     public void onProfileImageUploaded(String responseJson) {
         try {
             Profile profile = JSON.std.beanFrom(Profile.class, responseJson);
-            if(mProfile != null && profile != null)
+            if (mProfile != null && profile != null)
                 mProfile.setImage(profile.getImage());
             String u = JSON.std.asString(mProfile);
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
 
-            if(currentFragment instanceof ProfileFragment ){
+            if (currentFragment instanceof ProfileFragment) {
                 ((ProfileFragment) currentFragment).updateProfileImage();
-            }
-            if(currentFragment instanceof ProfileBuildingFragment ){
-                ((ProfileBuildingFragment) currentFragment).updateProfileImage();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -1467,9 +1361,9 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void mParseProfileResponse(String response){
+    private void mParseProfileResponse(String response) {
         try {
-            MainActivity.mProfile = JSON.std.beanFrom(Profile.class,response);
+            MainActivity.mProfile = JSON.std.beanFrom(Profile.class, response);
             String u = JSON.std.asString(mProfile);
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
 
@@ -1483,61 +1377,62 @@ public class MainActivity extends AppCompatActivity
      * @param profile user profile object which contains user info
      * @param backStack fragment will add in back stack or not
      */
-    private void mDisplayProfileFragment(Profile profile, boolean backStack){
-        if(profile == null)
+    private void mDisplayProfileFragment(Profile profile, boolean backStack) {
+        if (profile == null)
             return;
         View sharedView = null;
-        if(currentFragment instanceof HomeFragment){
-            sharedView  =  (currentFragment).getView().findViewById(R.id.profile_image);
+        if (currentFragment instanceof HomeFragment) {
+            sharedView = (currentFragment).getView().findViewById(R.id.profile_image);
         }
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ProfileFragment.class.getSimpleName());
         if (fragment == null) {
-            mDisplayFragment(ProfileFragment.getInstance(profile),sharedView,"shared_profile_image", backStack, ProfileFragment.class.getSimpleName());
-        } else{
+            mDisplayFragment(ProfileFragment.getInstance(profile), sharedView, "shared_profile_image", backStack, ProfileFragment.class.getSimpleName());
+        } else {
             try {
                 int count = getSupportFragmentManager().getBackStackEntryCount();
-                for (int i = 0; i < count-1; i++)
+                for (int i = 0; i < count - 1; i++)
                     getSupportFragmentManager().popBackStack();
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
-            mDisplayFragment(fragment, sharedView,"shared_profile_image",false, ProfileFragment.class.getSimpleName());
+            mDisplayFragment(fragment, sharedView, "shared_profile_image", false, ProfileFragment.class.getSimpleName());
         }
     }
 
     @Override
-    public void onRefreshProfile(){
+    public void onRefreshProfile() {
         this.requestForUserProfileUpdate(Constants.TAG_REFRESH_PROFILE, null);
     }
 
-    private void mParseAndRefreshProfileResponse(String response){
+    private void mParseAndRefreshProfileResponse(String response) {
         try {
-            MainActivity.mProfile = JSON.std.beanFrom(Profile.class,response);
-            if(currentFragment instanceof  ProfileFragment)
+            MainActivity.mProfile = JSON.std.beanFrom(Profile.class, response);
+            if (currentFragment instanceof ProfileFragment)
                 ((ProfileFragment) currentFragment).mRefreshProfileOnResponse(MainActivity.mProfile);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+
     /**
      * This method is used to request for post and get user's profile data
      * @param params
      */
     @Override
-    public void requestForProfile(HashMap<String, String> params){
+    public void requestForProfile(HashMap<String, String> params) {
         if (getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED)
             return;
 
-        if(params != null && mProfile != null) {
+        if (params != null && mProfile != null) {
             // if user's name is not available or name is anonymous and user has saved his/her
             // name in me profile contacts then fetch name and save it on server
             String name = mProfile.getName();
-            if(name == null || name.isEmpty()
+            if (name == null || name.isEmpty()
                     || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
                 if (mDeviceProfile != null && mDeviceProfile.profileData != null
-                        && mDeviceProfile.profileData[0]  != null && !mDeviceProfile.profileData[0].isEmpty()){
+                        && mDeviceProfile.profileData[0] != null && !mDeviceProfile.profileData[0].isEmpty()) {
                     params.put(getString(R.string.USER_NAME), mDeviceProfile.profileData[0]);
                 }
             }
@@ -1545,7 +1440,7 @@ public class MainActivity extends AppCompatActivity
             // exist in our server database then sever will allow to replace it with mDeviceProfile's email id
             if (mProfile.getIs_anony() == ProfileMacro.ANONYMOUS_USER) {
                 String email = Utils.getDeviceEmail(getApplicationContext());
-                if(email != null && !email.isEmpty())
+                if (email != null && !email.isEmpty())
                     params.put(getString(R.string.USER_EMAIL), email);
             }
             // if user's phone number is not available and it is saved in me profile contacts
@@ -1558,6 +1453,11 @@ public class MainActivity extends AppCompatActivity
         requestForUserProfileUpdate(Constants.TAG_UPDATE_PROFILE_OBJECT, params);
     }
 
+    @Override
+    public void onRequestForLocationUpdate(HashMap<String, String> params) {
+        requestForUserProfileUpdate(Constants.TAG_LOCATION_UPDATED, params);
+    }
+
     /**
      * This method is used to update user profile whenever mDeviceProfile update
      *  his/her information about basic info , current education, preferred education details,
@@ -1565,19 +1465,19 @@ public class MainActivity extends AppCompatActivity
      * @param params params
      * @param TAG tag
      */
-    public void requestForUserProfileUpdate( String TAG, HashMap<String, String> params) {
+    public void requestForUserProfileUpdate(String TAG, HashMap<String, String> params) {
 
         int requestMethod = Request.Method.GET;
-        if(params !=  null)
+        if (params != null) {
             requestMethod = Request.Method.POST;
-
+        }
         this.mMakeNetworkCall(TAG, Constants.BASE_URL +"profile/", params, requestMethod);
     }
 
     /**
      * This method is called when user select exams while profile building
      * and send a request to set user's exams
-     * @param params HashMap of user selected exams with yearly_exams as key and value as exam ids
+     * @param params HashMap of user selected exams with yearly_exams as a key and exam id as a value
      */
     @Override
     public void onUserExamSelected(HashMap<String, String> params) {
@@ -1667,29 +1567,29 @@ public class MainActivity extends AppCompatActivity
      * @param responseJson responseJson
      */
     private void profileSuccessfullyUpdated(String tag, String responseJson) {
-           mParseProfileResponse(responseJson);
-            if(currentFragment instanceof ProfileFragment) {
-                String[] TAG = tag.split("#");
-                if (TAG[0].equalsIgnoreCase(Constants.TAG_UPDATE_USER_PROFILE)) {
-                    Utils.DisplayToast(getApplicationContext(), "Profile Updated");
-                    try {
-                        int viewPosition = Integer.parseInt(TAG[1]);
-                        ((ProfileFragment) currentFragment).profileUpdatedSuccessfully(viewPosition);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else if (TAG[0].equalsIgnoreCase(Constants.TAG_UPDATE_PROFILE_EXAMS)) {
-                    ((ProfileFragment) currentFragment).profileUpdatedSuccessfully(3);
-                } else {
-                    ((ProfileFragment) currentFragment).updateUserProfile();
+        mParseProfileResponse(responseJson);
+        if(currentFragment instanceof ProfileFragment) {
+            String[] TAG = tag.split("#");
+            if (TAG[0].equalsIgnoreCase(Constants.TAG_UPDATE_USER_PROFILE)) {
+                Utils.DisplayToast(getApplicationContext(), "Profile Updated");
+                try {
+                    int viewPosition = Integer.parseInt(TAG[1]);
+                    ((ProfileFragment) currentFragment).profileUpdatedSuccessfully(viewPosition);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }else if(currentFragment instanceof ProfileBuildingFragment){
-                ((ProfileBuildingFragment) currentFragment).profileUpdatedSuccessfully();
-            }else if(currentFragment instanceof  HomeFragment){
-                ((HomeFragment)currentFragment).updateUserInfo();
-            }else if(currentFragment instanceof  TabFragment){
-                ((TabFragment)currentFragment).updateUserInfo();
+            } else if (TAG[0].equalsIgnoreCase(Constants.TAG_UPDATE_PROFILE_EXAMS)) {
+                ((ProfileFragment) currentFragment).profileUpdatedSuccessfully(3);
+            } else {
+                ((ProfileFragment) currentFragment).updateUserProfile();
             }
+        }else if(currentFragment instanceof ProfileBuildingFragment){
+            ((ProfileBuildingFragment) currentFragment).profileUpdatedSuccessfully();
+        }else if(currentFragment instanceof  HomeFragment){
+            ((HomeFragment)currentFragment).updateUserInfo();
+        }else if(currentFragment instanceof  TabFragment){
+            ((TabFragment)currentFragment).updateUserInfo();
+        }
     }
 
 
@@ -1924,9 +1824,9 @@ public class MainActivity extends AppCompatActivity
                         }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.RECOMMENDED) {
                             ((CDRecommendedInstituteFragment) fragment).updateRecommendedList(this.mInstituteList, next, this.mRecommendedInstituteCount);
                         }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.SHORTLIST){
-                            ((CDRecommendedInstituteFragment) currentFragment).updateWishList(this.mInstituteList, next);
+                            ((CDRecommendedInstituteFragment) fragment).updateWishList(this.mInstituteList, next);
                         }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.FEATURED){
-                            ((CDRecommendedInstituteFragment) currentFragment).updateBuzzList(this.mInstituteList, next,this.mFeaturedInstituteCount);
+                            ((CDRecommendedInstituteFragment) fragment).updateBuzzList(this.mInstituteList, next,this.mFeaturedInstituteCount);
                         }
                     }
 
@@ -1939,7 +1839,7 @@ public class MainActivity extends AppCompatActivity
             }*/
         } catch (IOException e) {
             this.hideProgressDialog();
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "");
         }
     }
 
@@ -2139,31 +2039,24 @@ public class MainActivity extends AppCompatActivity
                     || currentFragment instanceof  ProfileBuildingFragment) {
                 ((ProfileFragmentListener) currentFragment).requestForCropProfileImage(data);
             }
-
         }else  if(requestCode == Crop.REQUEST_CROP){
-
             if (currentFragment instanceof ProfileFragment
                     || currentFragment instanceof  ProfileBuildingFragment) {
                 if(resultCode == RESULT_OK)
                     ((ProfileFragmentListener) currentFragment).uploadUserProfileImage(Crop.getOutput(data));
                 else if(resultCode == RESULT_CANCELED)
                     ((ProfileFragmentListener) currentFragment).deleteTempImageFile();
-
             }
-
         }else if (requestCode == Constants.RC_QUIT_VIDEO_PLAYER) {
             if (currentFragment instanceof SplashFragment) {
                 isFromNotification = false;
                 this.mLoadUserStatusScreen();
             }
         }
-        else if(mTrueClient.onActivityResult(requestCode,resultCode,data)) {
+        else if(mTrueClient != null && mTrueClient.onActivityResult(requestCode,resultCode,data)) {
             return;
         }
-        /*else  if(callbackManager.onActivityResult(requestCode, resultCode, data))
-        {
-            return;
-        }*/else if(requestCode==Constants.GCM_RESULT_DATA_KEY && resultCode==RESULT_OK){
+        else if(requestCode==Constants.GCM_RESULT_DATA_KEY && resultCode==RESULT_OK){
             HashMap<String, String> params = null;
             try {
                 params = (HashMap<String, String>) data.getSerializableExtra(Constants.DIALOG_DATA);
@@ -2174,6 +2067,10 @@ public class MainActivity extends AppCompatActivity
             if(params!=null && !params.isEmpty()) {
                 requestForProfile(params);
             }
+        }
+        else if(requestCode== REQUEST_CHECK_SETTINGS){
+            if(currentFragment instanceof  ProfileBuildingFragment)
+                currentFragment.onActivityResult(requestCode,resultCode,data);
         }
     }
     private void mDisplaySplashLoginFragment() {
@@ -2433,7 +2330,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_SPLASH_HELP_ME_LOGIN:
             case Constants.TAG_SPLASH_I_KNOW_LOGIN:
                 this.mSplashLoginSuccessfully(response,tags[0]);
-                 break;
+                break;
             case Constants.TAG_TRUE_SDK_LOGIN:
             case Constants.TAG_FACEBOOK_LOGIN:
             case Constants.TAG_PHONE_NUMBER_LOGIN:
@@ -2441,6 +2338,10 @@ public class MainActivity extends AppCompatActivity
                 // So old mDeviceProfile's exam summary gets obsolete. We need to reset the cache
                 DataBaseHelper.getInstance(this).deleteAllExamSummary();
                 this.mProfileLoginSuccessfully(response, tags[0]);
+                break;
+            case Constants.TAG_LOCATION_UPDATED:
+                if(currentFragment instanceof  ProfileBuildingFragment)
+                    ((ProfileBuildingFragment) currentFragment).setUserEducationStream();
                 break;
             case Constants.TAG_USER_PHONE_ADDED:
                 onMobileNumberSubmitted();
@@ -2515,16 +2416,11 @@ public class MainActivity extends AppCompatActivity
                 this.mCurrentTitle = "Recommended Institutes";
                 if(currentFragment instanceof ProfileBuildingFragment) {
                     ((ProfileBuildingFragment) currentFragment).hideNavigationIcon();
-                    ((ProfileBuildingFragment) currentFragment).updateUserNamePhoneNumber();
                 }
                 mClearBackStack();
                 mShowAppBarLayout();
                 Constants.IS_RECOMENDED_COLLEGE = true;
-                /*if (tags.length == 2 && tags[1] != null && tags[1].equals("next")) {
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.RECOMMENDED, true);
-                } else {*/
-                    this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.RECOMMENDED, false);
-                //}
+                this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.RECOMMENDED, false);
                 break;
 
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
@@ -3056,24 +2952,24 @@ public class MainActivity extends AppCompatActivity
      */
 
     private void mProfileLoginSuccessfully(String response, String tag){
-         Map<String, Object> responseMap = null;
-         try {
-             responseMap = JSON.std.mapFrom(response);
-         } catch (IOException e) {
-             e.printStackTrace();
-         }
-         if (responseMap != null && responseMap.containsKey("verified")) {
-             if (currentFragment instanceof LoginFragment) {
-                 ((LoginFragment) currentFragment).onInvalidOtp();
-             } else if (currentFragment instanceof PostAnonymousLoginFragment) {
-                 ((PostAnonymousLoginFragment) currentFragment).onInvalidOtp();
-             }
-         }else{
-             mUserCreatedSuccessfully(response, tag);
-             // load user status screeen
-             this.mLoadUserStatusScreen();
-         }
-     }
+        Map<String, Object> responseMap = null;
+        try {
+            responseMap = JSON.std.mapFrom(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (responseMap != null && responseMap.containsKey("verified")) {
+            if (currentFragment instanceof LoginFragment) {
+                ((LoginFragment) currentFragment).onInvalidOtp();
+            } else if (currentFragment instanceof PostAnonymousLoginFragment) {
+                ((PostAnonymousLoginFragment) currentFragment).onInvalidOtp();
+            }
+        }else{
+            mUserCreatedSuccessfully(response, tag);
+            // load user status screeen
+            this.mLoadUserStatusScreen();
+        }
+    }
 
     /**
      * This method is called when user login with true sdk , facebook, phone number
@@ -3083,41 +2979,41 @@ public class MainActivity extends AppCompatActivity
      * @param response response
      */
     private void mUserCreatedSuccessfully(String response, String tag) {
-            // parse user response and  create a user
-            this.mParseProfileResponse(response);
-            // set token in network utill
-            mNetworkUtils.setToken(MainActivity.mProfile.getToken());
-            // set user ids with apps flyer
-            this.setUserIdWithAllEvents();
+        // parse user response and  create a user
+        this.mParseProfileResponse(response);
+        // set token in network utill
+        mNetworkUtils.setToken(MainActivity.mProfile.getToken());
+        // set user ids with apps flyer
+        this.setUserIdWithAllEvents();
 
-            if (!IS_USER_CREATED) {
-                //Events
-                Map<String, Object> eventValue = new HashMap<>();
-                eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
-                SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
+        if (!IS_USER_CREATED) {
+            //Events
+            Map<String, Object> eventValue = new HashMap<>();
+            eventValue.put(getResourceString(R.string.ACTION_USER_PROFILE_CREATED), HomeFragment.class.getSimpleName());
+            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_PROFILE_CREATED), eventValue, this);
 
-                Map<String, Object> eventValue1 = new HashMap<>();
+            Map<String, Object> eventValue1 = new HashMap<>();
 
-                if(MainActivity.mProfile.getApp_flow() == Constants.APP_OLD_FLOW) {
-                    eventValue1.put(getResourceString(R.string.ACTION_FLOW_ONE_USER_CREATED), HomeFragment.class.getSimpleName());
-                    SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_FLOW_ONE_USER_CREATED), eventValue1, this);
+            if(MainActivity.mProfile.getApp_flow() == Constants.APP_OLD_FLOW) {
+                eventValue1.put(getResourceString(R.string.ACTION_FLOW_ONE_USER_CREATED), HomeFragment.class.getSimpleName());
+                SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_FLOW_ONE_USER_CREATED), eventValue1, this);
 
-                }else {
-                    eventValue1.put(getResourceString(R.string.ACTION_FLOW_TWO_USER_CREATED), HomeFragment.class.getSimpleName());
-                    SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_FLOW_TWO_USER_CREATED), eventValue1, this);
-                }
-
-
+            }else {
+                eventValue1.put(getResourceString(R.string.ACTION_FLOW_TWO_USER_CREATED), HomeFragment.class.getSimpleName());
+                SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_FLOW_TWO_USER_CREATED), eventValue1, this);
             }
 
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_CREATED), true).apply();
-            IS_USER_CREATED = true;
 
-            HashMap<String, Object> eventValue = new HashMap<>();
-            eventValue.put(Constants.TAG_USER_LOGIN, tag);
-            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
+        }
 
-           mRegisterWithFCM();
+        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_CREATED), true).apply();
+        IS_USER_CREATED = true;
+
+        HashMap<String, Object> eventValue = new HashMap<>();
+        eventValue.put(Constants.TAG_USER_LOGIN, tag);
+        SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_USER_LOGIN), eventValue, this);
+
+        mRegisterWithFCM();
     }
     private void mRegisterWithFCM(){
 
@@ -3881,7 +3777,6 @@ public class MainActivity extends AppCompatActivity
             if (!MainActivity.this.isFinishing())
                 progressDialog.show();
         }
-        IS_NETWORK_TASK_RUNNING=true;
     }
 
     public void hideProgressDialog() {
@@ -3889,7 +3784,6 @@ public class MainActivity extends AppCompatActivity
             progressDialog.dismiss();
         if(mTransparentProgressDialog != null && mTransparentProgressDialog.isShowing())
             mTransparentProgressDialog.dismiss();
-        IS_NETWORK_TASK_RUNNING=false;
     }
 
     public void hideErrorDialog() {
@@ -4264,6 +4158,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_SPLASH_I_KNOW_LOGIN:
             case Constants.TAG_SPLASH_SKIP_LOGIN:
             case Constants.TAG_USER_EXAMS_SUBMISSION:
+            case Constants.TAG_LOCATION_UPDATED:
                 return Constants.THEME_TRANSPARENT;
         }
         return Constants.THEME_BACKGROUND;
@@ -4522,7 +4417,7 @@ public class MainActivity extends AppCompatActivity
             SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getResourceString(R.string.ACTION_MY_FB_COMMENT_SUBMITTED), eventValue, this);
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "mOnMyFBCommentAdded() exception while parsing FB comment ");
         }
     }
 
@@ -4732,7 +4627,7 @@ public class MainActivity extends AppCompatActivity
             }else if(!Constants.READY_TO_CLOSE){
                 Constants.READY_TO_CLOSE = true;
                 Utils.DisplayToast(getApplicationContext(), "Press again to close CollegeDekho");
-               new Handler().postDelayed(new Runnable() {
+                new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         Constants.READY_TO_CLOSE = false;
@@ -4796,7 +4691,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSplashSkipLogin() {
         if(IS_USER_CREATED){
-                mDisplayNotPreparingFragment();
+            mDisplayNotPreparingFragment();
         }else {
             HashMap<String, String> params = new HashMap<>();
             params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
@@ -5156,6 +5051,7 @@ public class MainActivity extends AppCompatActivity
 
     private void onPsychometricTestResponse(String response) {
         try {
+
             Map<String, Object> map = JSON.std.mapFrom(response);
             String val = JSON.std.asString(map.get("questions"));
             this.psychometricQuestionsList = JSON.std.listOfFrom(PsychometricTestQuestion.class, val);
@@ -5276,7 +5172,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnTakeMeToRecommended() {
-       // this.mClearBackStack();
+        // this.mClearBackStack();
         this.mMakeNetworkCall(Constants.TAKE_ME_TO_RECOMMENDED, Constants.BASE_URL + "personalize/recommended-institutes/",null);
     }
 
@@ -5398,7 +5294,7 @@ public class MainActivity extends AppCompatActivity
         params.put("action", String.valueOf("1"));
         if (MainActivity.mProfile.getIs_verified() != ProfileMacro.NUMBER_VERIFIED){
             Constants.IS_CAF_LOADED = true;
-         }
+        }
         mDisplayOtpVerificationFragment();
         this.mMakeNetworkCall(Constants.TAG_RECOMMENDED_SHORTLIST_INSTITUTE + "#" + isLastCard + "#" + cardCategory + "#" + nextUrl, institute.getResource_uri() + "shortlist/", params, Request.Method.POST);
     }
@@ -5479,12 +5375,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onClickWishList() {
         this.mMakeNetworkCall(Constants.CARD_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
-    }
-
-    @Override
-    public void onNextBuzzList() {
-        if(next!=null)
-            this.mMakeNetworkCall(Constants.CARD_BUZZLIST_INSTITUTES+"#next", next, null);
     }
 
     @Override
@@ -5769,7 +5659,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSubmitPhoneNumber(String phoneNumber) {
+    public void onRequestForOTP(String phoneNumber) {
         HashMap<String, String> params = new HashMap<>();
         params.put(getResourceString(R.string.USER_PHONE), phoneNumber);
         this.mMakeNetworkCall(Constants.TAG_USER_PHONE_ADDED, Constants.BASE_URL + "send-otp/", params);
@@ -5840,6 +5730,8 @@ public class MainActivity extends AppCompatActivity
     private void onMobileNumberSubmitted() {
         if (currentFragment instanceof OTPVerificationFragment) {
             ((OTPVerificationFragment) currentFragment).displayOTPLayout();
+        }else if (currentFragment instanceof PostAnonymousLoginFragment) {
+            ((PostAnonymousLoginFragment) currentFragment).displayOTPLayout();
         }
     }
 
@@ -5864,6 +5756,10 @@ public class MainActivity extends AppCompatActivity
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.CAN_ASK_OTP_TODAY), today).apply();
             return true;
         }
+    }
+
+    public GoogleApiClient getGoogleClient() {
+        return mGoogleApiClient;
     }
 
 
@@ -5936,16 +5832,15 @@ public class MainActivity extends AppCompatActivity
 
         try {
             this.chaptersList = JSON.std.listOfFrom(Chapters.class, response);
-
+            if (currentFragment instanceof CalendarParentFragment) {
+                ((CalendarParentFragment) currentFragment).updateCalander(new ArrayList<>(this.chaptersList));
+                return;
+            }
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(CalendarParentFragment.class.getSimpleName() );
             if(fragment == null)
                 this.mDisplayFragment(CalendarParentFragment.newInstance(new ArrayList<>(this.chaptersList)), !isFromNotification, CalendarParentFragment.class.getSimpleName());
             else {
-                if (currentFragment instanceof CalendarParentFragment)
-                    ((CalendarParentFragment) currentFragment).updateCalander(new ArrayList<>(this.chaptersList));
-
                 this.mDisplayFragment(fragment, false, CalendarParentFragment.class.getSimpleName());
-
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -6164,7 +6059,7 @@ public class MainActivity extends AppCompatActivity
                     if(this.mArticlesList == null){
                         this.mArticlesList = new ArrayList<>();
                     }
-                   Fragment fragment = ArticleDetailFragment.newInstance(articlesList.get(0), this.mArticlesList);
+                    Fragment fragment = ArticleDetailFragment.newInstance(articlesList.get(0), this.mArticlesList);
                     this.mDisplayFragment(fragment, isAddToStack, Constants.TAG_FRAGMENT_ARTICLE_DETAIL);
                 }
             } else {
@@ -6189,12 +6084,12 @@ public class MainActivity extends AppCompatActivity
                     isAddToStack = true;
                 }
 
-                 if(currentFragment instanceof InstituteDetailFragment){
-                     ((InstituteDetailFragment) currentFragment).updateInstitutedFromNotification(this.mInstitute, Constants.CDRecommendedInstituteType.RECOMMENDED);
-                 }else {
-                     Fragment fragment = InstituteDetailFragment.newInstance(this.mInstitute, Constants.CDRecommendedInstituteType.RECOMMENDED);
-                     this.mDisplayFragment(fragment, isAddToStack, Constants.TAG_FRAGMENT_INSTITUTE);
-                 }
+                if(currentFragment instanceof InstituteDetailFragment){
+                    ((InstituteDetailFragment) currentFragment).updateInstitutedFromNotification(this.mInstitute, Constants.CDRecommendedInstituteType.RECOMMENDED);
+                }else {
+                    Fragment fragment = InstituteDetailFragment.newInstance(this.mInstitute, Constants.CDRecommendedInstituteType.RECOMMENDED);
+                    this.mDisplayFragment(fragment, isAddToStack, Constants.TAG_FRAGMENT_INSTITUTE);
+                }
                 //this.mMakeNetworkCall(Constants.TAG_LOAD_COURSES, Constants.BASE_URL + "institutecourses/" + "?institute=" + id, null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_NEWS, Constants.BASE_URL + "personalize/news/" + "?institute=" + String.valueOf(id), null);
                 this.mMakeNetworkCall(Constants.TAG_LOAD_INSTITUTE_ARTICLE, Constants.BASE_URL + "personalize/articles/" + "?institute=" + String.valueOf(id), null);
@@ -6221,7 +6116,7 @@ public class MainActivity extends AppCompatActivity
             if(currentFragment instanceof MyFutureBuddiesFragment){
                 ((MyFutureBuddiesFragment) currentFragment).updateMyFBFromNotification(this.mFB);
             }else {
-               Fragment fragment = MyFutureBuddiesFragment.newInstance(this.mFB, 0);
+                Fragment fragment = MyFutureBuddiesFragment.newInstance(this.mFB, 0);
                 this.mDisplayFragment(fragment, isAddToStack, Constants.TAG_FRAGMENT_MY_FB);
             }
         } catch (Exception e) {
@@ -6499,95 +6394,60 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         switch (requestCode) {
-            case Constants.RC_HANDLE_ALL_PERM:
-                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "Read Contacts permission granted -");
-                    restartApplication();
-                    return;
-                }
-                break;
             case Constants.RC_HANDLE_CONTACTS_PERM:
                 if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "Read Contacts permission granted -");
-                    restartApplication();
-                    return;
+                    // start curser loader if not started with id "0"
+                    getSupportLoaderManager().initLoader(0, null, this);
                 }
+                // load screen fragment according user status
+                this.mLoadUserStatusScreen();
                 break;
 
             case Constants.RC_HANDLE_STORAGE_PERM:
                 if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "Read Contacts permission granted -");
-                    restartApplication();
-                    return;
+                    if(currentFragment instanceof ProfileFragment)
+                        ((ProfileFragment) currentFragment).mRequestForImageCapture();
+                }else {
+                    showPermissionErrorDialog("Permission Not Granted, You can't upload profile image without access media files permission");
                 }
                 break;
             case Constants.RC_HANDLE_SMS_PERM:
                 if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "Read Contacts permission granted -");
-                    restartApplication();
-                    return;
+                    if(currentFragment instanceof  OTPVerificationFragment){
+                        ((OTPVerificationFragment) currentFragment).mRequestForOTP();
+                    }else if(currentFragment instanceof PostAnonymousLoginFragment){
+                        ((PostAnonymousLoginFragment) currentFragment).mRequestForOTP();
+                    }
+                }else{
+                    showPermissionErrorDialog("Permission Not Granted, OTP will not receive without sms permission");
                 }
                 break;
+            case Constants.RC_HANDLE_LOCATION:
+                if (grantResults.length > 0    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if(currentFragment instanceof  ProfileBuildingFragment)
+                        ((ProfileBuildingFragment) currentFragment).askForLocationSetting();
+                }else{
+                    if(currentFragment instanceof  ProfileBuildingFragment)
+                        ((ProfileBuildingFragment) currentFragment).setUserEducationStream();
+                }
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 return;
         }
+    }
+    private void showPermissionErrorDialog(String msg){
 
-        Log.e(TAG, "Permission not granted: results len = " + grantResults.length +
-                " Result code = " + (grantResults.length > 0 ? grantResults[0] : "(empty)"));
-
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                finish();
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("CollegeDekho")
-                .setMessage("Permission Not Granted, Application will quit now.")
-                .setPositiveButton("Ok", listener)
+                .setMessage(msg)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
                 .show();
     }
-
-    private void restartApplication() {
-        mCheckAppPermissions();
-    }
-
-    private void getUserPermissions() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this,
-                Manifest.permission.RECEIVE_SMS)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // No explanation needed, we can request the permission.
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECEIVE_SMS},
-                    Constants.RC_HANDLE_ALL_PERM);
-        } else if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_CONTACTS},
-                    Constants.RC_HANDLE_CONTACTS_PERM);
-        } else if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    Constants.RC_HANDLE_STORAGE_PERM);
-        } else if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.RECEIVE_SMS)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.RECEIVE_SMS},
-                    Constants.RC_HANDLE_SMS_PERM);
-        }
-    }
-
 
     public static String getResourceString(int resourceId) {
         try {
@@ -6764,6 +6624,8 @@ public class MainActivity extends AppCompatActivity
     public void setOtherAppSharedMessage(String message){
         this.mOtherAppSharedMessage = message;
     }
+
+
 }
 
 

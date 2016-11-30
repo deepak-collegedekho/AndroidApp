@@ -133,9 +133,7 @@ public class StreamFragment extends BaseFragment implements AdapterView.OnItemCl
     @Override
     public void onResume() {
         super.onResume();
-
         MainActivity mMainActivity = (MainActivity) this.getActivity();
-
         if (mMainActivity != null)
             mMainActivity.currentFragment = this;
     }

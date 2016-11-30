@@ -83,12 +83,9 @@ public class NotPreparingFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
         MainActivity mainActivity = (MainActivity) getActivity();
-
         if (mainActivity != null)
             mainActivity.currentFragment = this;
-
     }
 
     public static NotPreparingFragment newInstance(){

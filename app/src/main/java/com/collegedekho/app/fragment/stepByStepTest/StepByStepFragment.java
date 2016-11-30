@@ -35,23 +35,14 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class StepByStepFragment extends BaseFragment implements PsychometricAnalysisPageListener{
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String QUESTION_LIST = "question_list";
-    private static final String ARG_PARAM2 = "param2";
     private static JSONObject mAnswersMap = new JSONObject();
     private ViewPager mViewPager;
     private FloatingActionButton mNextButton;
     private StepByStepAdapter mQuestionAdapter;
-    private StepByStepQuestion.CurrentLevels mCurrentLevel;
     private int mQuestionSetCount = 1;
     private boolean mIsFinished = false;
-    private boolean mIsStreamQuestionSkipped = false;
-
-    // TODO: Rename and change types of parameters
     private ArrayList<StepByStepQuestion> mStepByStepQuestions;
-    private String mParam2;
-
     private OnStepByStepFragmentListener mListener;
 
     public StepByStepFragment() {
@@ -71,52 +62,24 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
         Bundle args = new Bundle();
         args.putParcelableArrayList(QUESTION_LIST, stepByStepQuestions);
         fragment.setArguments(args);
-
         return fragment;
     }
 
-    public void setCurrentLevelType(StepByStepQuestion.CurrentLevels currentLevel)
-    {
-        this.mCurrentLevel = currentLevel;
-    }
-
-    public void setQuestionSetCount(int questionSetCount)
-    {
-        this.mQuestionSetCount = questionSetCount;
-    }
-
-    public void incrementQuestionSetCount()
-    {
-        this.mQuestionSetCount += 1;
-    }
-
-    public void updateQuestionSet(ArrayList<StepByStepQuestion> stepByStepQuestion)
-    {
-        this.mNextButton.setEnabled(true);
-
-        if(mQuestionAdapter == null){
-            this.mQuestionAdapter = new StepByStepAdapter(getActivity().getSupportFragmentManager(), getActivity().getApplicationContext(), this.mStepByStepQuestions);
-            this.mViewPager.setAdapter(this.mQuestionAdapter);
-
-        }else {
-            this.mStepByStepQuestions.addAll(stepByStepQuestion);
-            this.mQuestionAdapter.notifyDataSetChanged();
-        }
-
-        this.mSetCurrentItem();
-    }
-
-    private void mSetCurrentItem()
-    {
-        this.mViewPager.setCurrentItem(this.mViewPager.getCurrentItem() == this.mQuestionAdapter.getCount() - 1 ? this.mQuestionAdapter.getCount() - 1 : this.mViewPager.getCurrentItem() + 1);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.mStepByStepQuestions = getArguments().getParcelableArrayList(QUESTION_LIST);
-
+            ArrayList<StepByStepQuestion> stepByStepQuestions = getArguments().getParcelableArrayList(QUESTION_LIST);
+            // sometimes question was null
+            mStepByStepQuestions = new ArrayList<>();
+            if(stepByStepQuestions != null) {
+                for (int i = 0; i < stepByStepQuestions.size(); i++) {
+                   StepByStepQuestion que = stepByStepQuestions.get(i);
+                    if(que == null )continue;
+                    mStepByStepQuestions.add(que);
+                }
+            }
             if (MainActivity.mProfile.getCurrent_stream_id() > 0)
                 mQuestionSetCount = 2;
         }
@@ -141,7 +104,6 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
             @Override
             public void onClick(View v) {
                 boolean carryOnToNext = false;
-                int skipBy = 1;
                 int currentIndex;
                 boolean isRequired;
                 boolean isSkippable;
@@ -275,28 +237,27 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
         return rootView;
     }
 
-/*
-    @Override
-    public void onResume() {
 
-        new Handler().postDelayed(new Runnable() {
-            public void run() {
-                if (!StepByStepFragment.this.mIsStreamQuestionSkipped)
-                {
-                    if (StepByStepFragment.this.mStepByStepQuestions.get(StepByStepFragment.this.mViewPager.getCurrentItem()).is_skippable())
-                    {
-                        StepByStepFragment.this.mIsStreamQuestionSkipped = true;
-                        StepByStepFragment.this.mNextButton.performClick();
+    public void updateQuestionSet(ArrayList<StepByStepQuestion> stepByStepQuestion)
+    {
+        this.mNextButton.setEnabled(true);
 
-                        Toast.makeText(StepByStepFragment.this.getActivity(), "We know your preference for stream", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        }, 1000);
+        if(mQuestionAdapter == null){
+            this.mQuestionAdapter = new StepByStepAdapter(getActivity().getSupportFragmentManager(), getActivity().getApplicationContext(), this.mStepByStepQuestions);
+            this.mViewPager.setAdapter(this.mQuestionAdapter);
 
-        super.onResume();
+        }else {
+            this.mStepByStepQuestions.addAll(stepByStepQuestion);
+            this.mQuestionAdapter.notifyDataSetChanged();
+        }
+
+        this.mSetCurrentItem();
     }
-*/
+
+    private void mSetCurrentItem()
+    {
+        this.mViewPager.setCurrentItem(this.mViewPager.getCurrentItem() == this.mQuestionAdapter.getCount() - 1 ? this.mQuestionAdapter.getCount() - 1 : this.mViewPager.getCurrentItem() + 1);
+    }
 
     private String mGetQuestionSetCountIncrementedString()
     {

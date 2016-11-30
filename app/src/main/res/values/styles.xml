@@ -671,12 +671,10 @@
     </style>
 
     <style name="Crop.ActionButtonText.Done">
-        <item name="android:drawableLeft">@drawable/crop__ic_done</item>
         <item name="android:text">Done</item>
     </style>
 
     <style name="Crop.ActionButtonText.Cancel">
-        <item name="android:drawableLeft">@drawable/crop__ic_cancel</item>
         <item name="android:text">Cancel</item>
     </style>
 

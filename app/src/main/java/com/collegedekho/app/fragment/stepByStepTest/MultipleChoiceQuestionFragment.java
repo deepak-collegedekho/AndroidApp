@@ -38,9 +38,6 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
     private static final String ARG_QUESTION = "question";
     private static final String ARG_TYPE = "type";
     private StepByStepQuestion pQuestion;
-    private int mType;
-    private boolean mIsRequired;
-    private boolean mIsSkippable;
     private ChoiceListAdapter mChoiceListAdapter;
     private ArrayList<StepByStepChoice> mChoiceHashMap;
     private HashMap<Integer, Integer> mAnswers;
@@ -65,11 +62,6 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.pQuestion = getArguments().getParcelable(ARG_QUESTION);
-            if(pQuestion == null){
-                pQuestion = new StepByStepQuestion();
-            }
-                this.mIsRequired = this.pQuestion.isRequired();
-                this.mIsSkippable = this.pQuestion.is_skippable();
             this.mAnswers = new HashMap<>();
         }
     }
@@ -137,13 +129,6 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
     @Override
     public void updateAndSetAnswer()
     {
-        //Remove duplicate entries and relax
-        /*HashSet hs = new HashSet();
-        hs.addAll(this.mAnswers);
-
-        this.mAnswers.clear();
-        this.mAnswers.addAll(hs);*/
-
         Collection values = this.mAnswers.values();
         Object[] s = values.toArray();
         ArrayList<String> answers = new ArrayList<String>();
@@ -157,7 +142,6 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
             answers.add(String.valueOf(s[i]));
             answerList.put(String.valueOf(s[i]));
         }
-        //ArrayList<String> answerStrings = ArrayList;
         super.setAnswer(pQuestion.getName(), answerList);
     }
 
@@ -233,41 +217,8 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
             CheckBox choice = (CheckBox) convertView.findViewById(R.id.multiple_choice_checkbox);
             if(sbsChoice.isSelected())
                 choice.setChecked(true);
-            else
+           else
                 choice.setChecked(false);
-
-
-
-           /* choice.setTag(position);
-            //choice.setText(sbsChoice.getName());
-            choice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    StepByStepChoice tempSbsChoice;
-                    mIsChecked[position] = isChecked;
-
-                    if (mIsChecked[position]) {
-                        tempSbsChoice = mChoiceListAdapter.getItem(Integer.parseInt(buttonView.getTag().toString()));
-
-                        mAnswered = true;
-                        mAnswers.put(position, tempSbsChoice.getId());
-                    }
-                    else
-                    {
-                        if (mAnswers.containsKey(position))
-                            mAnswers.remove(position);
-                    }
-                }
-            });
-
-            choice.setChecked(mIsChecked[position]);
-
-            choiceText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    choice.performClick();
-                }
-            });*/
 
             //set image_new
             ImageLoader imageLoader = MySingleton.getInstance(getActivity()).getImageLoader();
@@ -282,14 +233,6 @@ public class MultipleChoiceQuestionFragment extends StepByStepFragment implement
             }
             else
                 optionImage.setVisibility(View.GONE);
-
-          /* optionImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    choice.performClick();
-                }
-            });*/
-
             return convertView;
         }
     }

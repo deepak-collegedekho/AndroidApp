@@ -17,6 +17,7 @@
             android:padding="@dimen/m7dp"
             android:layout_marginRight="@dimen/m7dp"
             android:layout_marginTop="@dimen/m7dp"
+            android:tint="@color/white"
             app:srcCompat="@drawable/ic_cross_icon"/>
 
         <TextView
