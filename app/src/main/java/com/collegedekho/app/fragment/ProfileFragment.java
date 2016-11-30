@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -21,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -573,17 +575,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 mListener.onPostAnonymousLogin();
                 break;
             case R.id.user_profile_image_update:
-
                 // start loader for cursor
-                if (ContextCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(),
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            Constants.RC_HANDLE_STORAGE_PERM);
-                }else {
-                    mRequestForImageCapture();
-                }
+                checkMediaFilePermission();
                 break;
             case R.id.profile_expand_info_btn:
                 View view = mRootView.findViewById(R.id.profile_expanded_info_layout);
@@ -1916,6 +1909,34 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         {
             ((CircularProgressBar) progressbar).setProgress(0);
             ((CircularProgressBar) progressbar).setProgressWithAnimation(progress, 2000);
+        }
+    }
+    private void checkMediaFilePermission(){
+
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.media_file_permission)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ActivityCompat.requestPermissions(getActivity(),
+                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    Constants.RC_HANDLE_STORAGE_PERM);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            builder.create();
+            builder.show();
+
+        }else {
+            mRequestForImageCapture();
         }
     }
 

@@ -590,4 +590,8 @@
     <string name="TAG_APP_STATUS_LAUNCHED_FROM_NOTIFICATION">launched_from_notification</string>
     <string name="TAG_APP_STATUS_ALREADY_RUNNING">already_running</string>
     <string name="pref_institute_count">pref_institute_count</string>
+    <string name="media_file_permission">We need your photo gallery access to upload your profile picture. We will not able to Personalise your app without this permission. Click to agree and proceed</string>
+    <string name="sms_permission"><![CDATA[We need the permission to read the text messages so that we can send you latest updates for colleges & exams. Click to agree and proceed.]]></string>
+    <string name="location_permission">We need location access permission to personalise your app and recommend best colleges for you based on location. Agree to Proceed.</string>
+    <string name="contact_permission">We require your contact access for authentification of your account.  We will only read your own contact for your details to strengthen your profile.</string>
 </resources>

@@ -613,7 +613,7 @@ public class MainActivity extends AppCompatActivity
                     showProgress(Constants.TAG_CREATING_USER);
                     return;
                 } else {
-                    mCheckAppPermissions();
+                    checkForContactPermissions();
                 }
             }
         }, 10);
@@ -623,15 +623,31 @@ public class MainActivity extends AppCompatActivity
      *  this method will check app permissions for contacts, write to external storage
      *  and sms are enabled otherwise it will ask the permissions for lolliPop onwards devices
      */
-    private void mCheckAppPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS},
-                    Constants.RC_HANDLE_CONTACTS_PERM);
-        } else {
+    private void checkForContactPermissions() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.contact_permission)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_CONTACTS},
+                                    Constants.RC_HANDLE_CONTACTS_PERM);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                            mLoadUserStatusScreen();
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            builder.create();
+            builder.show();
+        }else{
             // start curser loader if not started with id "0"
-            getSupportLoaderManager().initLoader(0, null, this);
+            getSupportLoaderManager().initLoader(0, null, MainActivity.this);
             // load screen fragment according user status
-            this.mLoadUserStatusScreen();
+            mLoadUserStatusScreen();
         }
     }
 
@@ -2323,7 +2339,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_CREATE_USER:
                 mUserCreatedSuccessfully(response,tags[0]);
                 if(USER_CREATING_PROCESS){
-                    this.mCheckAppPermissions();
+                    this.checkForContactPermissions();
                 }
                 break;
             case Constants.TAG_SPLASH_SKIP_LOGIN:
@@ -3523,7 +3539,7 @@ public class MainActivity extends AppCompatActivity
             if(!USER_CREATING_PROCESS){
                 USER_CREATING_PROCESS =true;
             }else{
-                mCheckAppPermissions();
+                checkForContactPermissions();
             }
             return;
         }
@@ -6408,7 +6424,7 @@ public class MainActivity extends AppCompatActivity
                     if(currentFragment instanceof ProfileFragment)
                         ((ProfileFragment) currentFragment).mRequestForImageCapture();
                 }else {
-                    showPermissionErrorDialog("Permission Not Granted, You can't upload profile image without access media files permission");
+                    showPermissionErrorDialog("Permission Not Granted, You can't upload profile image without this permission");
                 }
                 break;
             case Constants.RC_HANDLE_SMS_PERM:
@@ -6419,7 +6435,7 @@ public class MainActivity extends AppCompatActivity
                         ((PostAnonymousLoginFragment) currentFragment).mRequestForOTP();
                     }
                 }else{
-                    showPermissionErrorDialog("Permission Not Granted, OTP will not receive without sms permission");
+                    showPermissionErrorDialog("Permission Not Granted, OTP will not be receive without this permission");
                 }
                 break;
             case Constants.RC_HANDLE_LOCATION:

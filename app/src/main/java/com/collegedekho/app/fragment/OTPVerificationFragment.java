@@ -3,6 +3,7 @@ package com.collegedekho.app.fragment;
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -12,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -138,14 +140,7 @@ public class OTPVerificationFragment extends BaseFragment {
                 }
                 break;
             case R.id.btn_submit_mobile:
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(),  new String[]{Manifest.permission.RECEIVE_SMS},
-                            Constants.RC_HANDLE_SMS_PERM);
-                }else{
-                    mRequestForOTP();
-                }
-
+                checkForSmsPermission();
                 break;
             case R.id.btn_submit_otp:
                 if (mListener != null) {
@@ -175,6 +170,34 @@ public class OTPVerificationFragment extends BaseFragment {
                 break;
         }
     }
+
+    private void checkForSmsPermission(){
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.sms_permission)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ActivityCompat.requestPermissions(getActivity(),  new String[]{Manifest.permission.RECEIVE_SMS},
+                                    Constants.RC_HANDLE_SMS_PERM);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            builder.create();
+            builder.show();
+
+        }else{
+            mRequestForOTP();
+        }
+    }
+
     public void mRequestForOTP(){
 
         if (mListener != null) {

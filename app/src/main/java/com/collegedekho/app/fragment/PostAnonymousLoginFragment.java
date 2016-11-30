@@ -3,6 +3,7 @@ package com.collegedekho.app.fragment;
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -11,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -94,7 +96,7 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if(keyCode == event.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)
-                    mCheckSmsPermission();
+                    checkForSmsPermission();
                 return false;
             }
 
@@ -164,7 +166,7 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
         }
         switch (view.getId()) {
              case R.id.login_phone_submit_button:
-                 mCheckSmsPermission();
+                 checkForSmsPermission();
                 break;
             case R.id.login_verify_phone_button:
                 mRequestForOtpVerification(mOtpET.getText().toString());
@@ -177,12 +179,29 @@ public class PostAnonymousLoginFragment extends  BaseFragment {
                 break;
         }
     }
-    private void mCheckSmsPermission(){
+    private void checkForSmsPermission(){
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(),  new String[]{Manifest.permission.RECEIVE_SMS},
-                    Constants.RC_HANDLE_SMS_PERM);
-        }else {
+
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.sms_permission)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ActivityCompat.requestPermissions(getActivity(),  new String[]{Manifest.permission.RECEIVE_SMS},
+                                    Constants.RC_HANDLE_SMS_PERM);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            builder.create();
+            builder.show();
+
+        }else{
             mRequestForOTP();
         }
     }
