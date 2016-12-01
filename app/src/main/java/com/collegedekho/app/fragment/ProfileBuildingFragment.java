@@ -108,6 +108,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     private LocationRequest locationRequest;
     private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
+    private TextView mSkipButton;
 
     public ProfileBuildingFragment() {
         // Required empty public constructor
@@ -270,7 +271,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                 emptyText.setVisibility(View.VISIBLE);
                 emptyText.setText(getString(R.string.loading_exams));
                 mRootView.findViewById(R.id.user_education_recycler_view).setVisibility(View.GONE);
-                ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText(getString(R.string.not_preparing));
+                this.mSkipButton.setText(getString(R.string.not_preparing));
 
             }else {
 
@@ -308,7 +309,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
 
                 //  set heading text according to  stream screen
                 ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
-                ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText(getString(R.string.Skip));
+                this.mSkipButton.setText(getString(R.string.Skip));
 
                 if(MainActivity.mProfile != null){
 
@@ -583,13 +584,29 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         }
 
         mClearUserExams();
-        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
-        this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
-        this.mEventValue.put("action_what", "skip");
-        this.mEventValue.put("action_where", "current_stream");
+
+        if(this.mListener ==  null) {
+            return;
+        }
 
         this.mListener.onSkipSelectedInProfileBuilding();
-        if (!this.mEventAction.isEmpty() && !this.mEventAction.equals("")){
+
+        this.mEventCategory = MainActivity.getResourceString(R.string.CATEGORY_PREFERENCE);
+        this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
+
+        if (this.mSkipButton.getText() == getString(R.string.skip))
+        {
+            this.mEventValue.put("action_what", getString(R.string.skip));
+            this.mEventValue.put("action_where", "current_stream");
+        }
+        if (this.mSkipButton.getText() == getString(R.string.not_preparing))
+        {
+            this.mEventValue.put("action_what", getString(R.string.not_preparing));
+            this.mEventValue.put("action_where", "exam_selection");
+        }
+
+        if (!this.mEventAction.isEmpty() && !this.mEventAction.equals(""))
+        {
             //Events
             AnalyticsUtils.SendAppEvent(this.mEventCategory, this.mEventAction, mEventValue, this.getActivity());
             this.mResetEventVariables();
@@ -790,7 +807,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         mExamSearchView.setQuery("", false);
         mExamSearchView.setOnCloseListener(new ExamSearchCloseListener(null,mRootView.findViewById(R.id.user_education_next_button_layout)));
 
-        ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText(getString(R.string.not_preparing));
+        this.mSkipButton.setText(getString(R.string.not_preparing));
 
         if(mExamAdapter == null) {
             mExamAdapter = new ProfileBuildingExamAdapter(getActivity(), this, mStreamExamList);
@@ -984,10 +1001,14 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         mRootView.findViewById(R.id.user_education_heading_devider).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_heading).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.VISIBLE);
+
         ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText(getString(R.string.skip));
         ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));
+
         mStreamRecyclerView.setVisibility(View.VISIBLE);
 
+        this.mSkipButton = ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View));
+        this.mSkipButton.setText("Skip");
 
         // set selected true stream if user has selected stream earlier
         if(MainActivity.mProfile != null) {
@@ -1290,7 +1311,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
             currentLevelTxtView.setText(getString(R.string.pg_college));
         }
 
-        ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View)).setText(getString(R.string.Skip));
+        if (this.mSkipButton == null)
+            this.mSkipButton = ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View));
+        this.mSkipButton.setText(getString(R.string.Skip));
         // show streams for current level
         mStreamRecyclerView.setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_skip_button).setVisibility(View.VISIBLE);

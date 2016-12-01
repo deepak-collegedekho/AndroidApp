@@ -159,7 +159,9 @@
     <string name="TAG_LOAD_FILTERS">load_filters</string>
     <string name="TAG_RESOURCE_URI">resource_uri</string>
     <string name="TAG_NOTIFICATION_ID">notification_id</string>
+    <string name="TAG_FEED_ID">feed_id</string>
     <string name="TAG_NOTIFICATION_TYPE">notification_type</string>
+    <string name="TAG_FEED_TYPE">feed_type</string>
     <string name="TAG_DEEP_LINKING_TYPE">deep_linking_type</string>
     <string name="TAG_LABEL">label</string>
     <string name="TAG_URI">uri</string>
@@ -324,6 +326,7 @@
     <string name="CATEGORY_BOOK_KEEPING">category_book_keeping</string>
     <string name="CATEGORY_DEEP_LINKING">category_deep_linking</string>
     <string name="CATEGORY_NOTIFICATIONS">category_notifications</string>
+    <string name="CATEGORY_FEED">category_feed</string>
     <string name="CATEGORY_QNA">category_qna</string>
     <string name="CATEGORY_MY_FB">category_my_fb</string>
     <string name="CATEGORY_INSTITUTES">category_institutes</string>
@@ -372,6 +375,7 @@
     <string name="ACTION_USER_EXAM_SELECTED">action_user_exam_selected</string>
     <string name="ACTION_INSTITUTE_SELECTED">action_institute_selected</string>
     <string name="ACTION_NOTIFICATION_OPEN">action_notification_open</string>
+    <string name="ACTION_FEED_SELECTED">action_feed_selected</string>
     <string name="ACTION_DEEP_LINKING_OPEN">action_deep_linking_open</string>
     <string name="ACTION_CD_RECOMMENDED_INSTITUTE_ACTION">action_cd_recommended_institute_action</string>
     <string name="ACTION_WHEN_NOT_PREPARING">action_when_not_preparing</string>
@@ -450,7 +454,7 @@
     <string name="INSTITUTE_ID">institute_id_set</string>
     <string name="YOUTUBE_DEVELOPER_KEY">AIzaSyAGQbQY_dTXvNNoGs1X_JymCXNrpXdQhkk</string>
 
-        <!--Login msg-->
+    <!--Login msg-->
     <string name="personalize_your_app">Personalize your app </string>
     <string name="perfect_set_of_recommended">For a perfect set of recommended colleges</string>
     <string name="based_on_your_preferences">\u2022 Based on your preferences</string>
@@ -503,7 +507,7 @@
     <string name="dialog_title">Share more, Gain more.\nAnd open the door of possibilities for you!</string>
     <string name="GCM_DIALOG_SELECTION_ERROR">Nothing selected</string>
 
-   <!--   internet  and server errors-->
+    <!--   internet  and server errors-->
     <string name="internet_not_available">Internet is not available</string>
     <string name="no_internet">You are not connected to Internet</string>
     <string name="no_internet_please_try_again">You are not connected to internet. Please connect and try again.</string>
@@ -522,7 +526,7 @@
     <string name="user_apply_course_email">user_apply_course_email</string>
     <string name="user_apply_course_phone">user_apply_course_phone</string>
 
-      <!--  profile building education strings   -->
+    <!--  profile building education strings   -->
     <string name="currently_in_school">Currently In School</string>
     <string name="currently_in_graduation">In College/ Graduated College</string>
     <string name="currently_in_pg">In Post Graduate College</string>

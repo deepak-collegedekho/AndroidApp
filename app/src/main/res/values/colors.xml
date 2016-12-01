@@ -47,6 +47,7 @@
     <color name="light_grey_background">#E8E7EE</color>
     <color name="chat_time_gray">#6d6e70</color>
     <color name="chat_time_blue">#32c7ff</color>
+    <color name="tab_inactive_color">#949494</color>
 
     <color name="arrow_color">#7C7C7C</color>
     <color name="skip_btn_color">#e1515253</color>

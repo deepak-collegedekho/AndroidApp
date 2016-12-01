@@ -84,6 +84,7 @@ import com.collegedekho.app.entities.DeviceProfile;
 import com.collegedekho.app.entities.Exam;
 import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.entities.Facet;
+import com.collegedekho.app.entities.Feed;
 import com.collegedekho.app.entities.Folder;
 import com.collegedekho.app.entities.Institute;
 import com.collegedekho.app.entities.InstituteCourse;
@@ -111,7 +112,9 @@ import com.collegedekho.app.fragment.ArticleFragment;
 import com.collegedekho.app.fragment.BaseFragment;
 import com.collegedekho.app.fragment.CDRecommendedInstituteFragment;
 import com.collegedekho.app.fragment.CalendarParentFragment;
+import com.collegedekho.app.fragment.CollegesDashboard;
 import com.collegedekho.app.fragment.ExamsFragment;
+import com.collegedekho.app.fragment.FeedFragment;
 import com.collegedekho.app.fragment.FilterFragment;
 import com.collegedekho.app.fragment.HomeFragment;
 import com.collegedekho.app.fragment.InstituteDetailFragment;
@@ -119,6 +122,7 @@ import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
 import com.collegedekho.app.fragment.InstituteVideosFragment;
+import com.collegedekho.app.fragment.InteractionDashboard;
 import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
@@ -127,6 +131,7 @@ import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.NotPreparingFragment;
 import com.collegedekho.app.fragment.OTPVerificationFragment;
 import com.collegedekho.app.fragment.PostAnonymousLoginFragment;
+import com.collegedekho.app.fragment.PrepareDashboard;
 import com.collegedekho.app.fragment.ProfileBuildingFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.PsychometricStreamFragment;
@@ -229,7 +234,6 @@ SOFTWARE.*/
 
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, NavigationView.OnNavigationItemSelectedListener,
-        HomeFragment.OnTabSelectListener, TabFragment.OnHomeItemSelectListener,
         SplashFragment.OnSplashListener, SplashLoginFragment.OnSplashLoginListener,
         DataLoadListener, StreamFragment.OnStreamInteractionListener, PsychometricStreamFragment.OnStreamInteractionListener,
         AdapterView.OnItemSelectedListener, ExamsFragment.OnExamsSelectListener,
@@ -244,7 +248,9 @@ public class MainActivity extends AppCompatActivity
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
         UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteFragment.OnCDRecommendedInstituteListener,
-        InstituteVideosFragment.OnTitleUpdateListener, OTPVerificationFragment.OTPVerificationListener, ITrueCallback, WishlistFragment.WishlistInstituteInteractionListener {
+        InstituteVideosFragment.OnTitleUpdateListener,OTPVerificationFragment.OTPVerificationListener, ITrueCallback,
+        WishlistFragment.WishlistInstituteInteractionListener, FeedFragment.onFeedInteractionListener,
+        CollegesDashboard.OnHomeItemSelectListener, InteractionDashboard.OnHomeItemSelectListener, PrepareDashboard.OnHomeItemSelectListener {
 
     static {
 
@@ -304,12 +310,12 @@ public class MainActivity extends AppCompatActivity
     private Menu menu;
     private String mYear;
 
-    private View mHomeTabContainer;
-    private TextView mCollegeTab;
-    private TextView mConnectTab;
-    private TextView mPrepareTab;
-    private TextView mReadTab;
-    public View currentBottomItem;
+    //private View mHomeTabContainer;
+    //private TextView mCollegeTab;
+    //private TextView mConnectTab;
+    //private TextView mPrepareTab;
+    //private TextView mReadTab;
+    //public View currentBottomItem;
 
     private List<MyAlertDate> myAlertsList;
     private boolean isFromNotification;
@@ -387,9 +393,9 @@ public class MainActivity extends AppCompatActivity
                 //events params
                 Map<String, Object> eventValue = new HashMap<>();
                 eventValue.put(getResourceString(R.string.TAG_RESOURCE_URI), MainActivity.resource_uri);
-                eventValue.put(getResourceString(R.string.TAG_NOTIFICATION_ID), extras.getString("notification_id"));
                 eventValue.put(getResourceString(R.string.TAG_NOTIFICATION_TYPE), MainActivity.type);
                 eventValue.put(getResourceString(R.string.TAG_APP_STATUS), getResourceString(R.string.TAG_APP_STATUS_LAUNCHED_FROM_NOTIFICATION));
+                eventValue.put(getResourceString(R.string.TAG_NOTIFICATION_ID), extras.getString("notification_id"));
 
                 //Events
                 SendAppEvent(getResourceString(R.string.CATEGORY_NOTIFICATIONS), getResourceString(R.string.ACTION_NOTIFICATION_OPEN), eventValue, this);
@@ -461,16 +467,6 @@ public class MainActivity extends AppCompatActivity
 
         // create network utils
         this.mNetworkUtils = new NetworkUtils(this, this);
-
-        this.mHomeTabContainer = findViewById(R.id.bottom_button_container);
-        this.mCollegeTab = (TextView) findViewById(R.id.college_list);
-        this.mConnectTab = (TextView) findViewById(R.id.connect);
-        this.mPrepareTab = (TextView) findViewById(R.id.prepare);
-        this.mReadTab = (TextView) findViewById(R.id.read);
-        this.mCollegeTab.setOnClickListener(mClickListener);
-        this.mConnectTab.setOnClickListener(mClickListener);
-        this.mPrepareTab.setOnClickListener(mClickListener);
-        this.mReadTab.setOnClickListener(mClickListener);
 
         SharedPreferences sp = this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE);
         try {
@@ -862,6 +858,27 @@ public class MainActivity extends AppCompatActivity
                     MainActivity.resource_uri_with_notification_id += "&&user_id=" + MainActivity.mProfile.getId();
                 onDisplayWebFragment(MainActivity.resource_uri_with_notification_id);
                 break;
+            case Constants.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST: {
+                this.mCurrentTitle = "Recommended Colleges";
+                this.mMakeNetworkCall(Constants.WIDGET_RECOMMENDED_INSTITUTES, MainActivity.resource_uri_with_notification_id, null);
+                break;
+            }
+            case Constants.TAG_PROFILE_FRAGMENT:
+            {
+                this.mCurrentTitle = "Profile";
+                this.requestForProfileFragment();
+                break;
+            }
+            case Constants.TAG_LOAD_STEP_BY_STEP:
+            {
+                this.startStepByStep();
+                break;
+            }
+            case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
+            {
+                this.onPsychometricTestSelected();
+                break;
+            }
 
             default:
                 this.isFromNotification = false;
@@ -1247,12 +1264,12 @@ public class MainActivity extends AppCompatActivity
         }
         setSearchAvailable(menu);
         SharedPreferences sharedPreferences = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE);
-        boolean isTuteComplete = false;
-        if (currentFragment instanceof TabFragment) {
-            if (((TabFragment) currentFragment).getSelectedTab() == 1) {
+        boolean isTuteComplete  = false ;
+        if(currentFragment instanceof HomeFragment){
+            if(((HomeFragment) currentFragment).getSelectedTab() == 1){
                 isTuteComplete = sharedPreferences.getBoolean(getString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
                 showMenuGroupVIsibility(menu, isTuteComplete);
-            } else if (((TabFragment) currentFragment).getSelectedTab() == 3) {
+            } else if(((HomeFragment) currentFragment).getSelectedTab() == 3){
                 isTuteComplete = sharedPreferences.getBoolean("prepare_tute", false);
                 showMenuGroupVIsibility(menu, isTuteComplete);
             }
@@ -1294,7 +1311,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setSearchAvailable(Menu menu) {
         if (currentFragment != null) {
-            if (currentFragment instanceof HomeFragment || (currentFragment instanceof TabFragment)) {
+            if (currentFragment instanceof HomeFragment) {
                 menu.setGroupVisible(R.id.search_menu_group, true);
                 if (mSearchView != null) {
                     mSearchView.setQueryHint("Search Institutes");
@@ -1599,16 +1616,13 @@ public class MainActivity extends AppCompatActivity
             } else {
                 ((ProfileFragment) currentFragment).updateUserProfile();
             }
-        }else if(currentFragment instanceof ProfileBuildingFragment){
+        }
+        else if(currentFragment instanceof ProfileBuildingFragment){
             ((ProfileBuildingFragment) currentFragment).profileUpdatedSuccessfully();
         }else if(currentFragment instanceof  HomeFragment){
             ((HomeFragment)currentFragment).updateUserInfo();
-        }else if(currentFragment instanceof  TabFragment){
-            ((TabFragment)currentFragment).updateUserInfo();
         }
     }
-
-
 
     private void updateUserSpecializationList(String requestType,String responseJson) {
         try {
@@ -1707,6 +1721,38 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, e.getMessage());
         }
     }
+
+    /**
+     * This method is used to update feed list of next page
+     * @param response responseJson
+     */
+    private void updateNextFeedList(String response) {
+        try {
+            List<Feed> feedList = JSON.std.listOfFrom(Feed.class, extractResults(response));
+            if (currentFragment instanceof HomeFragment) {
+                ((HomeFragment) currentFragment).feedNextLoaded(new ArrayList<>(feedList), next);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    /**
+     * This method is used to refresh feed list on swipe down gesture
+     * @param response responseJson
+     */
+    private void mFeedRefreshed(String response) {
+        try {
+            List<Feed> feedList = JSON.std.listOfFrom(Feed.class, extractResults(response));
+            if (currentFragment instanceof HomeFragment) {
+                ((HomeFragment) currentFragment).feedsRefreshed(new ArrayList<>(feedList), next);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+
     /**
      * This method is used to update institutes list of next page
      * @param response server response to parse qna next list
@@ -1802,7 +1848,6 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayInstituteList(String response, boolean filterAllowed, boolean isHavingNextUrl) {
         this.mDisplayInstituteList(response, filterAllowed, isHavingNextUrl, Constants.INSTITUTE_TYPE);
     }
-
 
     private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl, Constants.CDRecommendedInstituteType cdRecommendedInstituteType, boolean isUpdate) {
         try {
@@ -2201,9 +2246,9 @@ public class MainActivity extends AppCompatActivity
 
                 mShowAppBarLayout();
                 mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-                View bottomMenu = findViewById(R.id.bottom_tab_layout);
+                /*View bottomMenu = findViewById(R.id.bottom_tab_layout);
                 bottomMenu.animate().translationY(0);
-                bottomMenu.setVisibility(View.VISIBLE);
+                bottomMenu.setVisibility(View.VISIBLE);*/
             }
             mDisplayHomeAsUpEnabled();
         } catch (Exception e) {
@@ -2253,9 +2298,9 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.commitAllowingStateLoss();
             if (this.currentFragment instanceof HomeFragment) {
                 mShowAppBarLayout();
-                View bottomMenu = findViewById(R.id.bottom_tab_layout);
+                /*View bottomMenu = findViewById(R.id.bottom_tab_layout);
                 bottomMenu.animate().translationY(0);
-                bottomMenu.setVisibility(View.VISIBLE);
+                bottomMenu.setVisibility(View.VISIBLE);*/
             }
             mDisplayHomeAsUpEnabled();
         } catch (Exception e) {
@@ -2294,7 +2339,7 @@ public class MainActivity extends AppCompatActivity
             mDrawerToggle.setDrawerIndicatorEnabled(false);
         }
         // set all menu items unchecked when tab fragment is not selected
-        if(!(currentFragment instanceof TabFragment)){
+        if(!(currentFragment instanceof CollegesDashboard)){
             int size = mNavigationView.getMenu().size();
             for (int i = 0; i < size; i++) {
                 mNavigationView.getMenu().getItem(i).setChecked(false);
@@ -2773,6 +2818,16 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_USER_EXAMS_DELETE:
                 MainActivity.mProfile.setYearly_exams(new ArrayList<ProfileExam>());
                 break;
+
+            case Constants.TAG_LOAD_FEED:
+                this.mDisplayFeedFragment(response);
+                break;
+            case Constants.TAG_NEXT_FEED:
+                this.updateNextFeedList(response);
+                break;
+            case Constants.TAG_REFRESHED_FEED:
+                this.mFeedRefreshed(response);
+                break;
         }
         try {
             if(hideProgressDialog)
@@ -2781,7 +2836,6 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
     }
-
 
     private void parseLevelStreams(String responseJson) {
         String resultJson = extractResults(responseJson);
@@ -3018,8 +3072,6 @@ public class MainActivity extends AppCompatActivity
                 eventValue1.put(getResourceString(R.string.ACTION_FLOW_TWO_USER_CREATED), HomeFragment.class.getSimpleName());
                 SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_FLOW_TWO_USER_CREATED), eventValue1, this);
             }
-
-
         }
 
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_CREATED), true).apply();
@@ -3113,8 +3165,8 @@ public class MainActivity extends AppCompatActivity
             }
             currentFragment.updateExamSummary(examSummary);
             if(update){
-                if(currentFragment instanceof  TabFragment)
-                    ((TabFragment) currentFragment).updateCollegeCountFromVolley(update);
+                if(currentFragment instanceof  HomeFragment)
+                    ((HomeFragment) currentFragment).updateUserYearlyExam(update);
             }
             if (MainActivity.type != null && !MainActivity.type.matches("") && MainActivity.resource_uri != null && !MainActivity.resource_uri.matches("")) {
                 mHandleNotifications(true);
@@ -3728,6 +3780,8 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(Constants.TAG_NEXT_FORUMS_LIST, next, null);
         else if (listType == Constants.INSTITUTE_SEARCH_TYPE)
             this.mMakeNetworkCall(Constants.TAG_NEXT_INSTITUTE, next, null);
+        else if (listType == Constants.FEED_TYPE)
+            this.mMakeNetworkCall(Constants.TAG_NEXT_FEED, next, null);
     }
 
 
@@ -4618,9 +4672,9 @@ public class MainActivity extends AppCompatActivity
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
-        if(currentBottomItem != null){
+        /*if(currentBottomItem != null){
             translateAnimation(null,currentBottomItem);
-        }
+        }*/
 
         if (currentFragment != null) {
             if (currentFragment instanceof SyllabusSubjectsListFragment) {
@@ -4875,9 +4929,9 @@ public class MainActivity extends AppCompatActivity
             // if user has removed all exams and when go back to tab
             // screen has and make first tab selected because third tab
             //  gives exam preparation details
-            if(currentFragment instanceof  TabFragment){
-                ((TabFragment) currentFragment).setSelectedTab(3);
-                ((TabFragment) currentFragment).updateExamsList(mProfile.getYearly_exams());
+            if(currentFragment instanceof  HomeFragment){
+                ((HomeFragment) currentFragment).setSelectedTab(3);
+                ((HomeFragment) currentFragment).updateExamsList(mProfile.getYearly_exams());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -4932,7 +4986,6 @@ public class MainActivity extends AppCompatActivity
      * This method is used to load home screen after profile building is done.
      */
     private void mDisplayHomeFragment() {
-
         mClearBackStack();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
         if (fragment == null)
@@ -4944,6 +4997,18 @@ public class MainActivity extends AppCompatActivity
         this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_HOME_LOADED), true).apply();
     }
 
+    private void mDisplayFeedFragment(String response) {
+        try {
+            List<Feed> feedList = JSON.std.listOfFrom(Feed.class, this.extractResults(response));
+
+            if (currentFragment instanceof HomeFragment)
+            {
+                ((HomeFragment) currentFragment).feedsLoaded(new ArrayList<>(feedList), this.next);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
 
     @Override
     public void onExamTabSelected(ProfileExam examDetailObj) {
@@ -4970,6 +5035,7 @@ public class MainActivity extends AppCompatActivity
         this.mMakeNetworkCall(requestType, url, params);
     }
 
+    @Override
     public void onHomeItemSelected(String requestType, String url, String tag) {
         if (requestType.equalsIgnoreCase(Constants.WIDGET_INSTITUTES)
                 || requestType.equalsIgnoreCase(Constants.WIDGET_RECOMMENDED_INSTITUTES)
@@ -5033,15 +5099,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
+    /*@Override
     public void onHomeStepByStep() {
         this.startStepByStep();
+    }*/
+
+    public void mGetFeed(String tag, String url)
+    {
+        //this.mMakeNetworkCall(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/", null);
+        this.mMakeNetworkCall(tag, url, null);
     }
 
-
-
-
-    @Override
+    /*@Override
     public void onHomePsychometricReport(){
         try {
             String results = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).getString("psychometric_report", null);
@@ -5053,7 +5122,7 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e){
             Utils.DisplayToast(getApplicationContext(),"Cannot load psychometric results.");
         }
-    }
+    }*/
 
     @Override
     public void onPsychometricTestSelected()
@@ -5225,13 +5294,13 @@ public class MainActivity extends AppCompatActivity
                     Utils.DisplayToast(getApplicationContext(), "No Exams Found for your preferences");
                     // when no exam is available then set
                     //  selected tab position to which tab is selected
-                    if(mCollegeTab != null && mCollegeTab.isSelected()){
+                    /*if(mCollegeTab != null && mCollegeTab.isSelected()){
                         setNavigationDrawerItemSelected(1);
                     }else if(mConnectTab != null && mConnectTab.isSelected()){
                         setNavigationDrawerItemSelected(2);
                     }else if(mReadTab != null && mReadTab.isSelected()){
                         setNavigationDrawerItemSelected(4);
-                    }
+                    }*/
                     return;
                 }
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(ExamsFragment.class.getSimpleName());
@@ -5546,7 +5615,6 @@ public class MainActivity extends AppCompatActivity
                         shortlistParams.put("action", String.valueOf("1"));
 
                         mMakeNetworkCall(ShortlistedTag , mInstitute.getResource_uri() + "shortlist/", shortlistParams, Request.Method.POST);
-
                     }
                 }
             });
@@ -5778,6 +5846,31 @@ public class MainActivity extends AppCompatActivity
         return mGoogleApiClient;
     }
 
+    @Override
+    public void onFeedSelected(Feed feed) {
+        MainActivity.type = feed.getScreen();
+        MainActivity.resource_uri = feed.getResource_uri();
+        if (MainActivity.resource_uri.contains("?"))
+            MainActivity.resource_uri_with_notification_id = MainActivity.resource_uri + "&&feed_id=" + feed.getId();
+        else
+            MainActivity.resource_uri_with_notification_id = MainActivity.resource_uri + "?feed_id=" + feed.getId();
+
+        //events params
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(getResourceString(R.string.TAG_RESOURCE_URI), MainActivity.resource_uri);
+        eventValue.put(getResourceString(R.string.TAG_FEED_TYPE), MainActivity.type);
+        eventValue.put(getResourceString(R.string.TAG_FEED_ID), feed.getId());
+
+        //Events
+        SendAppEvent(getResourceString(R.string.CATEGORY_FEED), getResourceString(R.string.ACTION_FEED_SELECTED), eventValue, this);
+
+        this.mHandleNotifications(true);
+    }
+
+    @Override
+    public void onFeedRefreshed(String tag, String url) {
+        this.mMakeNetworkCall(tag, url, null);
+    }
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
         @Override
@@ -5885,7 +5978,7 @@ public class MainActivity extends AppCompatActivity
     };
 
     public void mUpdateTabMenuItem(int tabPosition) {
-        mCollegeTab.setSelected(false);
+        /*mCollegeTab.setSelected(false);
         mConnectTab.setSelected(false);
         mPrepareTab.setSelected(false);
         mReadTab.setSelected(false);
@@ -5935,11 +6028,11 @@ public class MainActivity extends AppCompatActivity
             viewToMoveDown = currentBottomItem;
             currentBottomItem = null;
         }else {
-            mHomeTabContainer.setVisibility(View.GONE);
+            //mHomeTabContainer.setVisibility(View.GONE);
             currentBottomItem = null;
         }
         setNavigationDrawerItemSelected(tabPosition);
-        translateAnimation(viewToMoveUp,viewToMoveDown);
+        translateAnimation(viewToMoveUp,viewToMoveDown);*/
     }
 
     private void setNavigationDrawerItemSelected(int tabPosition){
@@ -5998,7 +6091,6 @@ public class MainActivity extends AppCompatActivity
             }else {
                 this.mDisplayFragment(fragment, false, TabFragment.class.getSimpleName());
             }
-
         }
     }
 
@@ -6267,7 +6359,7 @@ public class MainActivity extends AppCompatActivity
         } else if (currentFragment != null && currentFragment instanceof ArticleFragment) {
 
             this.mMakeNetworkCall(Constants.SEARCH_ARTICLES, Constants.BASE_URL + "articles/search=" + searchString + "/", null);
-        } else if ((currentFragment != null && currentFragment instanceof HomeFragment) || (currentFragment != null && currentFragment instanceof TabFragment)) {
+        } else if ((currentFragment != null && currentFragment instanceof HomeFragment)) {
             this.mExamTag = "";
             this.mMakeNetworkCall(Constants.SEARCH_INSTITUTES, Constants.BASE_URL + "colleges/search=" + searchString + "/", null);
         }

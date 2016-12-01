@@ -58,6 +58,7 @@ public class Constants
     public static final String PNS_QNA = "pns_qna";
     public static final String PNS_ARTICLES="pns_articles";
     public static final String WIDGET_RECOMMENDED_INSTITUTES = "recommended_institutes";
+    public static final String TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST = "recommended_institutes";
     public static final String WIDGET_RECOMMENDED_INSTITUTES_FRON_PROFILE = "recommended_institutes_from_profile";
     public static final String WIDGET_SHORTLIST_INSTITUTES = "shortlist_institutes";
     public static final String CARD_SHORTLIST_INSTITUTES = "card_shortlist_institutes";
@@ -106,6 +107,7 @@ public class Constants
     public static final String TAG_NEXT_WISHLIST_INSTITUTE = "next_wish_list_institutes";
     public static final String TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING = "last_shortlist_institutes_while_removing";
     public static final String TAG_NEXT_INSTITUTE = "next_institutes";
+    public static final String TAG_NEXT_FEED = "next_feed";
     public static final String TAG_NEXT_NEWS = "next_news";
     public static final String TAG_NEXT_ARTICLES = "next_articles";
     public static final String TAG_NEXT_QNA_LIST = "next_aqna_list";
@@ -152,6 +154,8 @@ public class Constants
     public static final String TAG_FRAGMENT_INSTITUTE_LIST = "fragment_institute_list";
     public static final String TAG_FRAGMENT_WISHLIST_INSTITUTE_LIST = "fragment_wishlist_institute_list";
     public static final String TAG_FRAGMENT_STREAMS = "fragment_streams";
+    public static final String TAG_PROFILE_FIX = "profile_fix";
+    public static final String TAG_PROFILE_FRAGMENT = "ProfileFragment";
     public static final int LIKE_THING = 0;
     public static final int DISLIKE_THING = 1;
     public static final int NOT_INTERESTED_THING = -1;
@@ -175,6 +179,8 @@ public class Constants
     public static final String TAG_LOAD_SUB_LEVELS = "tag_load_sub_levels";
     public static final String TAG_LOAD_LEVEL_STREAMS = "tag_load_level_streams";
     public static final String TAG_LOCATION_UPDATED = "tag_location_updated";
+    public static final String TAG_LOAD_FEED = "tag_load_feed";
+    public static final String TAG_REFRESHED_FEED = "tag_refreshed_feed";
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;
@@ -226,6 +232,7 @@ public class Constants
     public static final int FORUM_LIST_TYPE  = 6 ;
     public static final int INSTITUTE_SEARCH_TYPE   = 7 ;
     public static final int WISH_LIST_TYPE   = 8;
+    public static final int FEED_TYPE = 9;
 
     public static final int APPLY_COMPLETE  = 0;
     public static final int APPLY_PENDING   = 1;

@@ -205,6 +205,5 @@ public class MyFutureBuddiesEnumerationFragment extends BaseFragment implements 
 
         this.mMyFBEnumerationAdapter.notifyItemChanged(myFbEnumerationIndex);
         this.mMyFBEnumerationAdapter.notifyDataSetChanged();
-
     }
 }

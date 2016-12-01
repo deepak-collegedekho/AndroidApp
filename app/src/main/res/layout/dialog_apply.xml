@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:contentDescription="Fill this one time form to apply">
+    android:contentDescription="Fill this one feed_time form to apply">
 
     <TextView
         android:layout_width="match_parent"

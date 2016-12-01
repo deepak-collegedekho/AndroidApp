@@ -45,7 +45,7 @@
                     android:textSize="16sp"
                     android:textColor="@color/black"
                     android:layout_toRightOf="@id/include_image_layout"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="40dp"
                     android:layout_alignTop="@id/include_image_layout"
                     />
                 <TextView
@@ -171,16 +171,9 @@
 
             <include layout="@layout/layout_home_widget"
                 android:layout_height="0dp"
-                android:layout_weight=".80"
+                android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:id="@+id/include_layout_home_widget"/>
-
-            <include layout="@layout/layout_bottom_button"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight=".20"
-                android:visibility="gone"
-                android:layout_marginBottom="15dp"/>
 
         </LinearLayout>
     </LinearLayout>

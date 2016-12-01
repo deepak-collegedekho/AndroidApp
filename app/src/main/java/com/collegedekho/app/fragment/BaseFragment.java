@@ -13,8 +13,11 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.entities.News;
+import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
+
+import java.util.ArrayList;
 
 
 /**
@@ -114,6 +117,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     public void updateLikeButtons(int position) {}
     public void instituteQnAQuestionAdded(QnAQuestions q){}
     public void updateExamSummary(ExamSummary examSummary) {}
+
 
     public interface BaseListener{
         void onEndReached(String next, int type);

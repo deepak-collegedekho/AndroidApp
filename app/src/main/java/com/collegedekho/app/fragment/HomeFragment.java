@@ -1,8 +1,10 @@
 package com.collegedekho.app.fragment;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,179 +12,225 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.entities.Profile;
-import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.NetworkUtils;
+import com.collegedekho.app.adapter.HomePagerAdapter;
+import com.collegedekho.app.entities.ExamSummary;
+import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.utils.Utils;
-import com.collegedekho.app.widget.CircularImageView;
-import com.collegedekho.app.widget.CircularProgressBar;
 
+import java.util.ArrayList;
 
-/**
- * Created by {Suresh} on {#27/11/15}.
- */
 public class HomeFragment extends BaseFragment {
-
     private final static String TAG = "Home Fragment";
-    private OnTabSelectListener mListener;
-    private View mRootView;
 
-    public HomeFragment() {
-        // Required empty public constructor
-    }
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+    private HomePagerAdapter mHomePagerAdapter;
+    private int mSelectedTabPosition = -1;
+
 
     public static HomeFragment newInstance() {
-        return new HomeFragment();
+
+        Bundle args = new Bundle();
+
+        HomeFragment fragment = new HomeFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.RegisterBroadcastReceiver(this.getActivity());
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+        final View rootView = inflater.inflate(R.layout.activity_custom_view_icon_text_tabs, container, false);
+        this.mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
+
+        this.mHomePagerAdapter = new HomePagerAdapter(getFragmentManager(), (MainActivity) this.getActivity());
+        this.mViewPager.setAdapter(this.mHomePagerAdapter);
+        this.mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                HomeFragment.this.mSelectedTabPosition = position;
+                HomeFragment.this.mMarkTabAsSelected(position);
+                /*TabLayout.Tab tab = HomeFragment.this.mTabLayout.getTabAt(position);
+                if (tab != null)
+                {
+                    View customView =  tab.getCustomView();
+                    if (customView != null)
+                    {
+                        Drawable[] drawables = ((TextView)customView).getCompoundDrawables();
+                        Drawable drawable = Utils.ApplyThemeToDrawable(drawables[1], HomeFragment.this.getResources().getColor(R.color.primary_color));
+                        ((TextView)customView).setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+
+                        customView.setSelected(true);
+                    }
+                }
+                for (int i = 0; i<=3; i++)
+                {
+                    if (i == position)
+                        continue;
+                    tab = HomeFragment.this.mTabLayout.getTabAt(i);
+                    if (tab != null)
+                    {
+                        View customView =  tab.getCustomView();
+                        if (customView != null)
+                        {
+                            Drawable[] drawables = ((TextView)customView).getCompoundDrawables();
+                            Drawable drawable = Utils.ApplyThemeToDrawable(drawables[1], HomeFragment.this.getResources().getColor(R.color.tab_inactive_color));
+                            ((TextView)customView).setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+
+                            customView.setSelected(false);
+                        }
+                    }
+                }*/
+                /*ColorStateList colors;
+
+                colors = getResources().getColorStateList(R.color.home_tab_selector);
+
+                Drawable icon = HomeFragment.this.mTabLayout.getTabAt(position).getIcon();
+                if (icon != null) {
+                    icon = DrawableCompat.wrap(icon);
+                    DrawableCompat.setTintList(icon, colors);
+                }
+                View customView =  HomeFragment.this.mTabLayout.getTabAt(position).getCustomView();
+                if (customView != null)
+                {
+                    Drawable[] drawables = ((TextView)customView).getCompoundDrawables();
+                    Utils.ApplyThemeToDrawable()
+                    customView.setSelected(true);
+                }*/
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        this.mTabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
+        this.mTabLayout.setupWithViewPager(this.mViewPager);
+        this.mTabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.primaryColor));
+        /*this.mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int tabIconColor = ContextCompat.getColor(HomeFragment.this.getContext(), R.color.primary_color);
+                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                int tabIconColor = ContextCompat.getColor(HomeFragment.this.getContext(), R.color.tab_inactive_color);
+                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });*/
+
+        setupTabIcons();
+
+        return rootView;
+    }
+
+    /* This function marks the given index as selected and
+     *
+     */
+    private void mMarkTabAsSelected(int position)
+    {
+        TabLayout.Tab tab = HomeFragment.this.mTabLayout.getTabAt(position);
+        if (tab != null)
+        {
+            View customView =  tab.getCustomView();
+            if (customView != null)
+            {
+                Drawable[] drawables = ((TextView)customView).getCompoundDrawables();
+                Drawable drawable = Utils.ApplyThemeToDrawable(drawables[1], HomeFragment.this.getResources().getColor(R.color.primary_color));
+                ((TextView)customView).setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+
+                customView.setSelected(true);
+            }
+        }
+        for (int i = 0; i<=3; i++)
+        {
+            if (i == position)
+                continue;
+            tab = HomeFragment.this.mTabLayout.getTabAt(i);
+            if (tab != null)
+            {
+                View customView =  tab.getCustomView();
+                if (customView != null)
+                {
+                    Drawable[] drawables = ((TextView)customView).getCompoundDrawables();
+                    Drawable drawable = Utils.ApplyThemeToDrawable(drawables[1], HomeFragment.this.getResources().getColor(R.color.tab_inactive_color));
+                    ((TextView)customView).setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+
+                    customView.setSelected(false);
+                }
+            }
+        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_home, container, false);
-        String psychometricResults = null;
-        boolean isTuteCompleted = false;
-        if(isAdded()) {
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
-            psychometricResults = sharedPreferences.getString("psychometric_report", null);
-            isTuteCompleted = sharedPreferences.getBoolean(getString(R.string.tag_home_tute), false);
-            mRootView.findViewById(R.id.college_list_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
-            mRootView.findViewById(R.id.connect_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
-            mRootView.findViewById(R.id.prepare_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
-            mRootView.findViewById(R.id.updates_layout_RL).setOnClickListener(((MainActivity) getActivity()).mClickListener);
+    public void onResume() {
+        super.onResume();
+
+        MainActivity mainActivity = (MainActivity)getActivity();
+        if (mainActivity != null) {
+            mainActivity.currentFragment = this;
         }
 
-        if(!isTuteCompleted) {
-            mRootView.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);
-            mRootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.VISIBLE);
-        }else {
-            mRootView.findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
-            mRootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
-        }
-
-        if (MainActivity.mProfile == null ) {
-            mRootView.findViewById(R.id.btn_home_psychometric_test).setVisibility(View.GONE);
-            mRootView.findViewById(R.id.btn_home_psychometric_report).setVisibility(View.GONE);
-
-        }else if (psychometricResults != null && MainActivity.mProfile.getPsychometric_given() == 1) {
-            mRootView.findViewById(R.id.btn_home_psychometric_test).setVisibility(View.GONE);
-            mRootView.findViewById(R.id.btn_home_psychometric_report).setVisibility(View.VISIBLE);
-
-        } else {
-            mRootView.findViewById(R.id.btn_home_psychometric_test).setVisibility(View.VISIBLE);
-            mRootView.findViewById(R.id.btn_home_psychometric_report).setVisibility(View.GONE);
-        }
-
-        mRootView.findViewById(R.id.profile_image_edit_button).setOnClickListener(this);
-        mRootView.findViewById(R.id.btn_home_psychometric_test).setOnClickListener(this);
-        mRootView.findViewById(R.id.btn_home_psychometric_report).setOnClickListener(this);
-        mRootView.findViewById(R.id.btn_home_step_by_step).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_image).setOnClickListener(this);
-        mRootView.findViewById(R.id.recommended_tute_image).setOnClickListener(this);
-        mRootView.findViewById(R.id.recommended_tute_frame).setOnClickListener(this);
-        return mRootView;
-    }
-
-    @Override
-    public void onDestroy() {
-        Utils.UnregisterReceiver(this.getActivity());
-        super.onDestroy();
+        if (this.mSelectedTabPosition == -1)
+            this.mMarkTabAsSelected(0);
+        else
+            this.mMarkTabAsSelected(this.mSelectedTabPosition);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Constants.READY_TO_CLOSE = true;
-        MainActivity mainActivity = (MainActivity) getActivity();
-        if (mainActivity != null) {
-
-            // this will change back arrow to hamburger icon on toolbar
-            if (mainActivity.mDrawerToggle != null) {
-                mainActivity.mDrawerToggle.setDrawerIndicatorEnabled(false);
-            }
-        }
     }
 
+    /**
+     * Adding custom view to tab
+     */
+    private void setupTabIcons() {
+        TextView feedIcon = (TextView) LayoutInflater.from(this.getContext()).inflate(R.layout.dashboard_tab_item, null);
+        feedIcon.setText("Feed");
+        feedIcon.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_feed, 0, 0);
+        this.mTabLayout.getTabAt(0).setCustomView(feedIcon);
+        this.mTabLayout.getTabAt(0).setTag(0);
+        //mTabLayout.getTabAt(0).setIcon(R.drawable.ic_feed);
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Constants.READY_TO_CLOSE = false;
-        MainActivity mainActivity = (MainActivity) getActivity();
-        if (mainActivity != null) {
+        TextView collegeIcon = (TextView) LayoutInflater.from(this.getContext()).inflate(R.layout.dashboard_tab_item, null);
+        collegeIcon.setText("Colleges");
+        collegeIcon.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_institute_grey, 0, 0);
+        this.mTabLayout.getTabAt(1).setCustomView(collegeIcon);
+        this.mTabLayout.getTabAt(1).setTag(1);
+        //mTabLayout.getTabAt(1).setIcon(R.drawable.ic_institute_grey);
 
-            // this will change back arrow to hamburger icon on toolbar
-            if(mainActivity.mDrawerToggle != null){
-                mainActivity.mDrawerToggle.setDrawerIndicatorEnabled(true);
-            }
-            mainActivity.invalidateOptionsMenu();
-            mainActivity.currentFragment = this;
-            mainActivity.mUpdateTabMenuItem(-1);
-            mainActivity.speakMessageForAccessibility("Welcome To your Dashboard.");
-        }
-        // update user info
-        updateUserInfo();
-    }
+        TextView askChatIcon = (TextView) LayoutInflater.from(this.getContext()).inflate(R.layout.dashboard_tab_item, null);
+        askChatIcon.setText("Ask & Chat");
+        askChatIcon.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_ask_and_chat, 0, 0);
+        this.mTabLayout.getTabAt(2).setCustomView(askChatIcon);
+        this.mTabLayout.getTabAt(2).setTag(2);
+        //mTabLayout.getTabAt(2).setIcon(R.drawable.ic_ask_and_chat);
 
-    public void updateUserInfo(){
-
-        if(mRootView == null || MainActivity.mProfile == null)
-            return;
-
-        TextView mProfileName  = (TextView)mRootView.findViewById(R.id.user_name);
-        TextView mProfileNumber  = (TextView)mRootView.findViewById(R.id.user_phone);
-        CircularImageView mProfileImage = (CircularImageView)mRootView.findViewById(R.id.profile_image);
-
-        mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
-        mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
-
-        Profile profile = MainActivity.mProfile;
-        String name = profile.getName();
-        if (name == null || name.isEmpty() || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())) {
-            mProfileName.setText("Name : Anonymous User");
-        } else {
-            String userName = name.substring(0, 1).toUpperCase() + name.substring(1);
-            mProfileName.setText("Name : "+userName);
-        }
-
-        String phone = profile.getPhone_no();
-        if (phone == null || phone.isEmpty() || phone.equals("null")) {
-            mProfileNumber.setText("Phone : Not Set");
-        } else {
-            mProfileNumber.setText("Phone : " + phone);
-        }
-
-        CircularProgressBar profileCompleted =  (CircularProgressBar) mRootView.findViewById(R.id.user_profile_progress);
-        profileCompleted.setProgress(0);
-        profileCompleted.setProgressWithAnimation(MainActivity.mProfile.getProgress(), 2000);
-
-        String image = MainActivity.mProfile.getImage();
-        if (image != null && !image.isEmpty())
-            mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try{
-            if (context instanceof MainActivity)
-                this.mListener = (OnTabSelectListener) context;
-        }
-        catch (ClassCastException e){
-            throw  new ClassCastException(context.toString()
-                    +"must implement OnTabSelectListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        this.mListener = null;
+        TextView prepareIcon = (TextView) LayoutInflater.from(this.getContext()).inflate(R.layout.dashboard_tab_item, null);
+        prepareIcon.setText("Prepare");
+        prepareIcon.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_degree, 0, 0);
+        this.mTabLayout.getTabAt(3).setCustomView(prepareIcon);
+        this.mTabLayout.getTabAt(3).setTag(3);
+        //mTabLayout.getTabAt(3).setIcon(R.drawable.ic_degree);
     }
 
     @Override
@@ -200,61 +248,56 @@ public class HomeFragment extends BaseFragment {
 
     }
 
-    @Override
-    public void onClick(View view) {
-        super.onClick(view);
-
-        switch (view.getId())
-        {
-            case R.id.recommended_tute_image:
-            case R.id.recommended_tute_frame:
-                view.setVisibility(View.GONE);
-                if(getView() != null){
-                    getView().findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
-                    getView().findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
-                }
-                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean("Home Tute", true).apply();
-                getActivity().invalidateOptionsMenu();
-                break;
-            case R.id.profile_image:
-            case R.id.profile_image_edit_button:
-                if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
-                    ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
-                    return;
-                }
-                if(mListener != null)
-                    mListener.requestForProfileFragment();
-                break;
-            case R.id.btn_home_psychometric_test:
-                mListener.onPsychometricTestSelected();
-                break;
-            case R.id.btn_home_psychometric_report:
-                mListener.onHomePsychometricReport();
-                break;
-            case R.id.btn_home_step_by_step:
-                mListener.onHomeStepByStep();
-                break;
-            default:
-                break;
-        }
+    public void feedsLoaded(ArrayList feedList, String nextURL)
+    {
+        if (this.mHomePagerAdapter != null && feedList != null)
+            this.mHomePagerAdapter.feedListLoaded(feedList, nextURL);
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnTabSelectListener {
-        void onHomeItemSelected(String requestType, String url, String examTag);
-        void onHomeStepByStep();
-        void requestForProfileFragment();
-        void onPsychometricTestSelected();
-        void onHomePsychometricReport();
+    public void feedsRefreshed(ArrayList feedList, String nextURL)
+    {
+        if (this.mHomePagerAdapter != null && feedList != null)
+            this.mHomePagerAdapter.feedListRefreshed(feedList, nextURL);
     }
 
+    public void feedNextLoaded(ArrayList feedList, String nextURL)
+    {
+        if (this.mHomePagerAdapter != null && feedList != null)
+            this.mHomePagerAdapter.feedListNextLoaded(feedList, nextURL);
+    }
+
+    public void updateUserInfo() {
+        if (this.mHomePagerAdapter != null)
+            this.mHomePagerAdapter.updateUserProfile();
+    }
+
+    public void updateUserYearlyExam(boolean update) {
+        if (this.mHomePagerAdapter != null)
+            this.mHomePagerAdapter.updateUserYearlyExam(update);
+    }
+
+    public int getSelectedTab()
+    {
+        if (this.mHomePagerAdapter != null)
+            return this.mHomePagerAdapter.getSelectedTab();
+
+        return -1;
+    }
+
+    public void updateExamSummary(ExamSummary updateExamSummary) {
+        if (this.mHomePagerAdapter != null)
+            this.mHomePagerAdapter.updateExamSummary(updateExamSummary);
+    }
+
+
+    public void setSelectedTab(int selectedTab) {
+        if (this.mHomePagerAdapter != null)
+            this.mHomePagerAdapter.setSelectedTab(selectedTab);
+
+    }
+
+    public void updateExamsList(ArrayList<ProfileExam> yearly_exams) {
+        if (this.mHomePagerAdapter != null)
+            this.mHomePagerAdapter.updateExamsList(yearly_exams);
+    }
 }

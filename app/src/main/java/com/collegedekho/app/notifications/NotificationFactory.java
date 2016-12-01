@@ -13,7 +13,10 @@ import android.widget.RemoteViews;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.NotificationPayload;
+import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.service.DeviceFcmRegistrationTask;
+import com.collegedekho.app.service.PassiveProfileSyncTask;
 import com.crashlytics.android.Crashlytics;
 import com.fasterxml.jackson.jr.ob.JSON;
 
@@ -24,7 +27,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.Map;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 /**
@@ -80,6 +86,34 @@ public class NotificationFactory {
                     this.mCollegeDekhoNotifications = new InstituteNotification();
                     break;
                 }
+                case Constants.TAG_PROFILE_FIX:
+                    if (jsonObject.has("profileJson"))
+                    {
+                        Profile profile = JSON.std.beanFrom(Profile.class, jsonObject.get("profileJson"));
+
+                        if (jsonObject.has("syncToServer"))
+                        {
+                            if (jsonObject.get("syncToServer").equals("0"))
+                            {
+                                String u = null;
+
+                                try {
+                                    u = JSON.std.asString(profile);
+                                    this.mContext.getSharedPreferences(this.mContext.getString(R.string.PREFS), MODE_PRIVATE).edit().putString(this.mContext.getString(R.string.KEY_USER), u).apply();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (jsonObject.get("syncToServer").equals("1"))
+                            {
+                                Map<Object, Object> map = JSON.std.mapFrom(jsonObject.get("profileJson"));
+                                PassiveProfileSyncTask profileSyncTask = new PassiveProfileSyncTask(profile, profile.getToken(), context, map);
+                                profileSyncTask.execute();
+                            }
+                        }
+                    }
+
+                    return;
                 default:
                 {
                     this.mCollegeDekhoNotifications = new MyFutureBuddyNotification();
