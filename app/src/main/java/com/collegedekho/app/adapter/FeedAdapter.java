@@ -7,12 +7,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Feed;
 import com.collegedekho.app.fragment.FeedFragment;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.widget.FadeInImageView;
 
@@ -28,6 +31,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     private final Context mContext;
     private final ImageLoader mImageLoader;
     private FeedFragment.onFeedInteractionListener mListener;
+    // Allows to remember the last item shown on screen
+    public int lastPosition = -1;
 
     public FeedAdapter(Context context, ArrayList<Feed> feedList)
     {
@@ -121,6 +126,28 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                 feedViewHolder.mListener.onFeedSelected(feed);
             }
         });
+
+        this.mSetAnimation(feedViewHolder.feedCard, position);
+    }
+
+    /**
+     * Here is the key method to apply the animation
+     */
+    private void mSetAnimation(View viewToAnimate, int position)
+    {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.fade_in);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(FeedAdapter.FeedViewHolder holder) {
+        holder.itemView.clearAnimation();
+        super.onViewDetachedFromWindow(holder);
     }
 
     public void updateFeedList(ArrayList<Feed> feedList){

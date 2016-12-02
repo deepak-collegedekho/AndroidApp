@@ -7,9 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,6 +27,7 @@ import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
+import com.collegedekho.app.widget.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -46,6 +49,8 @@ public class PrepareDashboard extends BaseFragment {
     private PagerTabStrip mPagerHeader = null;
     private View mExamsTabLayout;
 
+    private FloatingActionButton mLeftButton;
+    private FloatingActionButton mRightButton;
 
     public static PrepareDashboard newInstance() {
          return new PrepareDashboard();
@@ -154,6 +159,46 @@ public class PrepareDashboard extends BaseFragment {
         } else {
             rootView.findViewById(R.id.btn_tab_psychometric_test).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.btn_tab_psychometric_report).setVisibility(View.GONE);
+        }
+
+        if (this.mExamDetailList.size() > 1)
+        {
+            this.mLeftButton = (FloatingActionButton) rootView.findViewById(R.id.exam_left_nav);
+            this.mRightButton = (FloatingActionButton) rootView.findViewById(R.id.exam_right_nav);
+
+            this.mLeftButton.setVisibility(View.VISIBLE);
+            this.mRightButton.setVisibility(View.VISIBLE);
+
+            this.mLeftButton.setHapticFeedbackEnabled(true);
+            this.mRightButton.setHapticFeedbackEnabled(true);
+
+            this.mLeftButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int currentPosition = PrepareDashboard.this.mExamTabPager.getCurrentItem();
+                    if (currentPosition > 0)
+                        PrepareDashboard.this.mExamTabPager.setCurrentItem(currentPosition - 1);
+                    else
+                    {
+                        PrepareDashboard.this.mLeftButton.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                        PrepareDashboard.this.mLeftButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
+                    }
+                }
+            });
+
+            this.mRightButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int currentPosition = PrepareDashboard.this.mExamTabPager.getCurrentItem();
+                    if (PrepareDashboard.this.mExamDetailList.size() - 1 > currentPosition)
+                        PrepareDashboard.this.mExamTabPager.setCurrentItem(currentPosition + 1);
+                    else
+                    {
+                        PrepareDashboard.this.mRightButton.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                        PrepareDashboard.this.mRightButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
+                    }
+                }
+            });
         }
 
         return rootView;

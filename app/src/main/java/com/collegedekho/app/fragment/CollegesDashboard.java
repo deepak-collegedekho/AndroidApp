@@ -9,9 +9,11 @@ import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,6 +30,7 @@ import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
+import com.collegedekho.app.widget.fab.FloatingActionButton;
 import com.robinhood.ticker.TickerUtils;
 import com.robinhood.ticker.TickerView;
 
@@ -52,6 +55,8 @@ public class CollegesDashboard extends BaseFragment {
     private boolean isFistTime = false;
     protected  static int EXAM_TAB_POSITION =0;
     private View mExamsTabLayout;
+    private FloatingActionButton mLeftButton;
+    private FloatingActionButton mRightButton;
 
     private TickerView mRecommendedCountTV;
     private TickerView mTrendingCountTV;
@@ -163,6 +168,45 @@ public class CollegesDashboard extends BaseFragment {
                 this.mExamTabSelected(currentPosition);
             }
             this.mExamTabPager.setCurrentItem(CollegesDashboard.EXAM_TAB_POSITION);
+            if (this.mExamDetailList.size() > 1)
+            {
+                this.mLeftButton = (FloatingActionButton) rootView.findViewById(R.id.exam_left_nav);
+                this.mRightButton = (FloatingActionButton) rootView.findViewById(R.id.exam_right_nav);
+
+                this.mLeftButton.setVisibility(View.VISIBLE);
+                this.mRightButton.setVisibility(View.VISIBLE);
+
+                this.mLeftButton.setHapticFeedbackEnabled(true);
+                this.mRightButton.setHapticFeedbackEnabled(true);
+
+                this.mLeftButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int currentPosition = CollegesDashboard.this.mExamTabPager.getCurrentItem();
+                        if (currentPosition > 0)
+                            CollegesDashboard.this.mExamTabPager.setCurrentItem(currentPosition - 1);
+                        else
+                        {
+                            CollegesDashboard.this.mLeftButton.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                            CollegesDashboard.this.mLeftButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
+                        }
+                    }
+                });
+
+                this.mRightButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int currentPosition = CollegesDashboard.this.mExamTabPager.getCurrentItem();
+                        if (CollegesDashboard.this.mExamDetailList.size() - 1 > currentPosition)
+                            CollegesDashboard.this.mExamTabPager.setCurrentItem(currentPosition + 1);
+                        else
+                        {
+                            CollegesDashboard.this.mRightButton.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                            CollegesDashboard.this.mRightButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
+                        }
+                    }
+                });
+            }
         }else{
 
             if(this.mListener != null)
