@@ -142,6 +142,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         animationFromBottom = AnimationUtils.loadAnimation(this.getActivity(), R.anim.slide_from_bottom);
         animationFromBottom.setDuration(Constants.ANIM_SHORTEST_DURATION);
 
+        this.mSkipButton = ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View));
         mStreamRecyclerView = (RecyclerView)view.findViewById(R.id.user_education_recycler_view);
         mStreamRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mExamSearchView = (SearchView) view.findViewById(R.id.user_exam_search_view);
@@ -1007,7 +1008,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
 
         mStreamRecyclerView.setVisibility(View.VISIBLE);
 
-        this.mSkipButton = ((TextView) mRootView.findViewById(R.id.user_education_skip_Text_View));
         this.mSkipButton.setText("Skip");
 
         // set selected true stream if user has selected stream earlier

@@ -41,7 +41,6 @@ public class CollegesDashboard extends BaseFragment {
     private static String PARAM1 = "param1";
     private static String PARAM2 = "param2";
 
-    private int mSelectedTabPosition = 0;
     private int mSelectedSubMenuPosition = 0;
     private CollegesDashboard.OnHomeItemSelectListener mListener;
     private ArrayList<ProfileExam> mExamDetailList;
@@ -51,10 +50,7 @@ public class CollegesDashboard extends BaseFragment {
     private ViewPager mExamTabPager  = null;
     private PagerTabStrip mPagerHeader = null;
     private boolean isFistTime = false;
-    private boolean IS_COLLEGE_TUTE_COMPLETED = true;
-    private boolean IS_PREPARE_TUTE_COMPLETED = true;
-    private int i = 0 ;
-    private int examId;
+    protected  static int EXAM_TAB_POSITION =0;
     private View mExamsTabLayout;
 
     private TickerView mRecommendedCountTV;
@@ -66,12 +62,7 @@ public class CollegesDashboard extends BaseFragment {
     private View mHomeWidgetLayout;
 
     public static CollegesDashboard newInstance() {
-
-        Bundle args = new Bundle();
-
-        CollegesDashboard fragment = new CollegesDashboard();
-        fragment.setArguments(args);
-        return fragment;
+          return new CollegesDashboard();
     }
 
     public static CollegesDashboard newInstance(int tabPosoition,ArrayList<ProfileExam> examList) {
@@ -83,18 +74,13 @@ public class CollegesDashboard extends BaseFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
-    public void CollegesDashboard()
-    {
-
-    }
+    public void CollegesDashboard(){ }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if(args != null) {
-            this.mSelectedTabPosition = args.getInt(PARAM1);
             this.mExamDetailList = args.getParcelableArrayList(PARAM2);
         }
         this.isFistTime = true;
@@ -127,31 +113,7 @@ public class CollegesDashboard extends BaseFragment {
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
-        this.IS_COLLEGE_TUTE_COMPLETED = sharedPreferences.getBoolean(getString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
-        this.IS_PREPARE_TUTE_COMPLETED = sharedPreferences.getBoolean("prepare_tute", false);
-
-        rootView.findViewById(R.id.prepare_tour_guide_image).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.setVisibility(View.GONE);
-                CollegesDashboard.this.IS_PREPARE_TUTE_COMPLETED = true;
-                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean("prepare_tute", true).apply();
-                updateCollegeCount(CollegesDashboard.this.mSelectedTabPosition);
-                //TabFragment.this.getActivity().invalidateOptionsMenu();
-            }
-        });
-
-        rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!CollegesDashboard.this.IS_COLLEGE_TUTE_COMPLETED){
-                    CollegesDashboard.this.IS_COLLEGE_TUTE_COMPLETED = true;
-                    getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
-                    updateCollegeCount(CollegesDashboard.this.mSelectedTabPosition);
-                }
-            }
-        });
-
+        rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnClickListener(this);
 
         if(MainActivity.mProfile != null) {
 
@@ -233,15 +195,32 @@ public class CollegesDashboard extends BaseFragment {
         return rootView;
     }
 
-    private void updateCollegeCount(int selectedTabPosition) {
+    private void mExamTabSelected(int position) {
+        if(this.mExamDetailList != null && this.mExamDetailList.size() >position) {
+            this.mExamDetail = this.mExamDetailList.get(position);
+        }
+        requestToUpdateExamSummary();
+    }
+    private void requestToUpdateExamSummary(){
+        if(mListener != null && this.mExamDetail != null) {
+            this.mListener.onExamTabSelected(this.mExamDetail);
+        }
+    }
 
-        if(selectedTabPosition == 1 && this.mListener != null ){
+    public void updateUserYearlyExamSummary(ExamSummary examSummary){
+        if(examSummary == null)return;
+        this.mExamSummary = examSummary;
+        updateCollegeCount();
+    }
+
+    private void updateCollegeCount() {
+            if(this.mExamSummary == null)return;
+
             this.mRecommendedCountTV.setVisibility(View.VISIBLE);
             this.mTrendingCountTV.setVisibility(View.VISIBLE);
             this.mShortlistCountTV.setVisibility(View.VISIBLE);
             this.mExploreCountTV.setVisibility(View.VISIBLE);
 
-            this.mListener.onExamTabSelected(this.mExamDetail);
 
             int recommended = (this.mExamSummary != null) ? this.mExamSummary.getRecommended_count() : 0;
             int shortlist = (this.mExamSummary != null) ? this.mExamSummary.getShortlist_count() : 0;
@@ -259,12 +238,7 @@ public class CollegesDashboard extends BaseFragment {
 
             setInstituteCount(this.mExploreCountTV, explore);
             this.mExploreCountTV.setContentDescription(String.valueOf(explore));
-        } else {
-            this.mRecommendedCountTV.setVisibility(View.GONE);
-            this.mTrendingCountTV.setVisibility(View.GONE);
-            this.mShortlistCountTV.setVisibility(View.GONE);
-            this.mExploreCountTV.setVisibility(View.GONE);
-        }
+
     }
 
     private void setInstituteCount(final TickerView view,final int count){
@@ -278,13 +252,7 @@ public class CollegesDashboard extends BaseFragment {
         }, 200);
     }
 
-    private void mExamTabSelected(int position) {
-        if(this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() >position) {
-            this.mExamDetail = this.mExamDetailList.get(position);
-            this.examId = this.mExamDetail.getId();
-            updateCollegeCount(this.mSelectedTabPosition);
-        }
-    }
+
 
     private void mHomeWidgetSelected(String requestType, String url, String tag){
         if(this.mListener != null)
@@ -331,16 +299,6 @@ public class CollegesDashboard extends BaseFragment {
         this.mListener = null;
     }
 
-    public void updateExamSummary(ExamSummary examSummary) {
-        this.mExamSummary = examSummary;
-    }
-
-    public void updateCollegeCountFromVolley(boolean update){
-        int updateId = Integer.parseInt(this.mExamSummary.getYearly_exam_id());
-        if(this.examId == updateId && update){
-            updateCollegeCount(this.mSelectedTabPosition);
-        }
-    }
 
     public void updateUserInfo() {
         updateUserProfile(getView(), MainActivity.mProfile);
@@ -396,6 +354,12 @@ public class CollegesDashboard extends BaseFragment {
             case R.id.btn_tab_step_by_step:
                 this.mListener.onTabStepByStep();
                 break;
+            case R.id.prep_buddy_tour_guide_image:
+                view.setVisibility(View.GONE);
+                if(isAdded())
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.INSTITUTE_HOME_TUTE), true).apply();
+                updateCollegeCount();
+                    break;
             default:
                 try {
                     this.mSelectedSubMenuPosition = Integer.parseInt((String) view.getTag());
@@ -407,7 +371,6 @@ public class CollegesDashboard extends BaseFragment {
     }
 
     private void mSubMenuItemClickListener(){
-        if(this.mSelectedTabPosition == 1){
 
             if(this.mSelectedSubMenuPosition == 1) {
                 if(this.mExamDetail != null)
@@ -427,47 +390,9 @@ public class CollegesDashboard extends BaseFragment {
                 else
                     this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/",null);
             }
-        } else if(this.mSelectedTabPosition == 2){
-            if(this.mSelectedSubMenuPosition == 1){
-                this.mHomeWidgetSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL + "personalize/forums/", null);
-            }else if(this.mSelectedSubMenuPosition == 2){
-                this.mHomeWidgetSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL+"personalize/qna/", null);
-            }
-        } else if (this.mSelectedTabPosition == 3){
-            if(this.mExamDetail != null) {
-                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, "" + this.mExamDetail.getId()).apply();
-                if (this.mSelectedSubMenuPosition == 1) {
-                    this.mHomeWidgetSelected(Constants.WIDGET_TEST_CALENDAR, Constants.BASE_URL + "yearly-exams/" + this.mExamDetail.getId() + "/calendar/", null);
-                } else if (this.mSelectedSubMenuPosition == 2) {
-                    this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/" + this.mExamDetail.getId() + "/syllabus/", null);
-                } else if (this.mSelectedSubMenuPosition == 3) {
-                    this.mHomeWidgetSelected(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", this.mExamDetail.getExam_tag());
-                }
-            }
-        } else if (this.mSelectedTabPosition == 4){
-            if(this.mSelectedSubMenuPosition == 1){
-                this.mHomeWidgetSelected(Constants.WIDGET_NEWS, Constants.BASE_URL+"personalize/news", null);
-            }else  if(this.mSelectedSubMenuPosition == 2){
-                this.mHomeWidgetSelected(Constants.WIDGET_ARTICES, Constants.BASE_URL+"personalize/articles", null);
-            }
-        }
+
     }
 
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        /*if (isVisibleToUser && this.getActivity() != null)
-            ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");*/
-    }
-
-    public int getSelectedTab(){
-        return this.mSelectedTabPosition;
-    }
-
-    public void setSelectedTab(int selectedTabPosition){
-        this.mSelectedTabPosition = selectedTabPosition;
-    }
 
     public void updateExamsList(ArrayList<ProfileExam> examsList){
         if(this.mExamDetailList == null)
@@ -484,34 +409,17 @@ public class CollegesDashboard extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        /*this.mExamSwipeListener.bringToFront();
-        this.mExamSwipeListener.invalidate();
-
-        this.mHomeWidgetLayout.bringToFront();
-        this.mHomeWidgetLayout.invalidate();*/
-
-        if (MainActivity.mProfile.getYearly_exams() != null && MainActivity.mProfile.getYearly_exams().size() > 0) {
+        this.mExamDetailList = MainActivity.mProfile.getYearly_exams();
+        if (this.mExamDetailList != null && !this.mExamDetailList.isEmpty()) {
             this.mExamsTabLayout.setVisibility(View.VISIBLE);
-            this.mExamDetailList = MainActivity.mProfile.getYearly_exams();
             this.mDetailsAdapter = new ExamDetailAdapter(getChildFragmentManager(), this.mExamDetailList);
             this.mExamTabPager.setAdapter(this.mDetailsAdapter);
             this.mExamTabPager.invalidate();
-            if (this.mExamDetailList != null && !this.mExamDetailList.isEmpty()) {
-                this.mExamDetail = this.mExamDetailList.get(this.mExamTabPager.getCurrentItem());
-            }
             if (this.mPagerHeader != null)
                 ((ViewPager.LayoutParams) this.mPagerHeader.getLayoutParams()).isDecor = true;
-            if (this.mExamDetailList != null && this.mSelectedTabPosition < this.mExamDetailList.size())
-                this.mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
+            this.mExamTabPager.setCurrentItem(EXAM_TAB_POSITION);
         } else {
-            if (this.mSelectedTabPosition == 3)
-                this.mSelectedTabPosition = 1;
             this.mExamsTabLayout.setVisibility(View.GONE);
-        }
-        MainActivity mainActivity = (MainActivity)getActivity();
-        if (mainActivity != null) {
-            //mainActivity.currentFragment = this;
-            mainActivity.mUpdateTabMenuItem(this.mSelectedTabPosition);
         }
 
         if(this.mExamDetailList != null && !this.mExamDetailList.isEmpty()) {
@@ -522,13 +430,13 @@ public class CollegesDashboard extends BaseFragment {
             this.mExamDetail = new ProfileExam();
             this.mExamDetail.setId(0);
         }
+        requestToUpdateExamSummary();
         this.mUpdateSubMenuItem();
     }
 
     private void mUpdateSubMenuItem(){
         final View view = getView();
-        if(view ==   null)
-            return;
+        if(view ==   null)  return;
 
         TextView firstSubMenuTV       = (TextView)view.findViewById(R.id.home_widget_textview_first);
         TextView secondSubMenuTV   = (TextView)view.findViewById(R.id.home_widget_textview_second);
@@ -540,18 +448,14 @@ public class CollegesDashboard extends BaseFragment {
         ImageView thirdSubMenuIV      = (ImageView)view.findViewById(R.id.home_widget_image_third);
         ImageView fourthSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_fourth);
 
-        if(this.mSelectedTabPosition == 1){
-            this.IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
-            //View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-            if(!this.IS_COLLEGE_TUTE_COMPLETED) {
+
+        boolean  IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.INSTITUTE_HOME_TUTE), false);
+            if(!IS_COLLEGE_TUTE_COMPLETED) {
                 getActivity().invalidateOptionsMenu();
                 view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
-                //bottomMenu.animate().translationY(bottomMenu.getHeight());
-                //bottomMenu.setVisibility(View.GONE);
+
             } else {
                 view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
-                //bottomMenu.animate().translationY(0);
-                //bottomMenu.setVisibility(View.VISIBLE);
             }
 
             LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
@@ -585,113 +489,12 @@ public class CollegesDashboard extends BaseFragment {
             ll2.getChildAt(0).setVisibility(View.VISIBLE);
             ll2.getChildAt(1).setVisibility(View.VISIBLE);
 
-            this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
+            this.mToggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
 
-        }else if(this.mSelectedTabPosition == 2){
-            view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
-            view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.GONE);
-            //View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-            //bottomMenu.animate().translationY(0);
-            //bottomMenu.setVisibility(View.VISIBLE);
-
-            LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 0.5f);
-            ll.setLayoutParams(lp);
-            LinearLayout ll2 = (LinearLayout)view.findViewById(R.id.home_widget_second_layout);
-            ll2.setLayoutParams(lp);
-
-            firstSubMenuIV.setImageResource(R.drawable.ic_chat_bubble_widget);
-            secondSubMenuIV.setImageResource(R.drawable.ic_qna);
-
-            firstSubMenuTV.setText("Future Buddies");
-            firstSubMenuTV.setContentDescription("Click to chat with your Future mates");
-            secondSubMenuTV.setText("Q & A");
-            secondSubMenuTV.setContentDescription("Click to ask questions");
-
-            ll2.getChildAt(0).setVisibility(View.VISIBLE);
-            ll2.getChildAt(1).setVisibility(View.VISIBLE);
-
-            this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
-            view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
-
-        }else  if(this.mSelectedTabPosition == 3){
-            this.IS_PREPARE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("prepare_tute", false);
-            //View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-            if(!this.IS_PREPARE_TUTE_COMPLETED) {
-                getActivity().invalidateOptionsMenu();
-                view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.VISIBLE);
-                //bottomMenu.animate().translationY(bottomMenu.getHeight());
-                //bottomMenu.setVisibility(View.GONE);
-            } else {
-                view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.GONE);
-                //bottomMenu.animate().translationY(0);
-                //bottomMenu.setVisibility(View.VISIBLE);
-            }
-
-            LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 0.5f);
-            ll.setLayoutParams(lp);
-
-            LinearLayout ll2 = (LinearLayout)view.findViewById(R.id.home_widget_second_layout);
-
-            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) (getView().findViewById(R.id.home_widget_third)).getLayoutParams();
-            int marginInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45 , getResources().getDisplayMetrics());
-            lp2.setMargins(marginInDp,0,marginInDp,0);
-            getView().findViewById(R.id.home_widget_third).setLayoutParams(lp2);
-
-            firstSubMenuIV.setImageResource(R.drawable.ic_test_calendar);
-            secondSubMenuIV.setImageResource(R.drawable.ic_syllabus);
-            thirdSubMenuIV.setImageResource(R.drawable.ic_important_dates);
-
-            firstSubMenuTV.setText(getString(R.string.test_calendar_title));
-            firstSubMenuTV.setContentDescription("Click to see test preparation calendar");
-            secondSubMenuTV.setText(getString(R.string.syllabus_title));
-            secondSubMenuTV.setContentDescription("Click to see syllabus for exam");
-            thirdSubMenuTV.setText(getString(R.string.important_dates));
-            thirdSubMenuTV.setContentDescription("Click to see Important Dates for exam");
-
-            ll2.getChildAt(0).setVisibility(View.VISIBLE);
-            ll2.getChildAt(1).setVisibility(View.GONE);
-
-            this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
-            view.findViewById(R.id.home_widget_second_layout).setVisibility(View.VISIBLE);
-
-        }else  if(this.mSelectedTabPosition == 4){
-
-            view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
-            view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.GONE);
-            //View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-            //bottomMenu.animate().translationY(0);
-            //bottomMenu.setVisibility(View.VISIBLE);
-
-            LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 0.5f);
-            ll.setLayoutParams(lp);
-
-            LinearLayout ll2 = (LinearLayout)view.findViewById(R.id.home_widget_second_layout);
-            ll2.setLayoutParams(lp);
-
-            firstSubMenuIV.setImageResource(R.drawable.ic_news);
-            secondSubMenuIV.setImageResource(R.drawable.ic_article);
-
-            firstSubMenuTV.setText(getString(R.string.news_title));
-            firstSubMenuTV.setContentDescription("Click to read news");
-            secondSubMenuTV.setText(getString(R.string.article_title));
-            secondSubMenuTV.setContentDescription("Click to read articles");
-
-            ll2.getChildAt(0).setVisibility(View.VISIBLE);
-            ll2.getChildAt(1).setVisibility(View.VISIBLE);
-
-            this.mtoggleView(ll, (LinearLayout) view.findViewById(R.id.home_widget_second_layout), View.VISIBLE);
-            view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
-        }
-        updateCollegeCount(this.mSelectedTabPosition);
+        updateCollegeCount();
     }
 
-    private void mtoggleView(LinearLayout linearLayout1, LinearLayout linearLayout2, int visibility)
+    private void mToggleView(LinearLayout linearLayout1, LinearLayout linearLayout2, int visibility)
     {
         if (visibility == View.VISIBLE)
         {
@@ -713,19 +516,6 @@ public class CollegesDashboard extends BaseFragment {
             linearLayout2.animate().setDuration(Constants.ANIM_LONG_DURATION).translationY(linearLayout2.getHeight());
             linearLayout2.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        final MainActivity mainActivity = (MainActivity)getActivity();
-        /*if(mainActivity.currentBottomItem != null){
-            mainActivity.mUpdateTabMenuItem(-2);
-        }*/
-        //View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
-        //bottomMenu.animate().translationY(bottomMenu.getHeight());
-        //bottomMenu.setVisibility(View.GONE);
-
     }
 
     @Override

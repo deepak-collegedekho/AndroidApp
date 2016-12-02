@@ -67,8 +67,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     }
 
     public static FeedFragment newInstance() {
-        FeedFragment fragment = new FeedFragment();
-        return fragment;
+        return new FeedFragment();
     }
 
     @Override
@@ -94,7 +93,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
         this.mFeedRecyclerView = (RecyclerView) rootView.findViewById(R.id.feed_list);
         this.mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.feed_swipe_refresh_container);
-        this.mSwipeRefreshLayout.bringToFront();
+       // this.mSwipeRefreshLayout.bringToFront();
         this.mSwipeRefreshLayout.setOnRefreshListener(this);
 
         this.mFeedAdapter = new FeedAdapter(this.getContext(), this.mFeedList);
@@ -110,15 +109,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         return rootView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -136,6 +126,12 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public void onDetach() {
         super.onDetach();
         super.listener = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     @Override
@@ -161,24 +157,30 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     public void feedRefreshed(List<Feed> feedList, String next)
     {
-        if (this.mFeedList != null && feedList != null && feedList.size() > 0)
+        if (feedList != null && feedList.size() > 0)
         {
-            this.mFeedList.clear();
+            if(this.mFeedList == null){
+                this.mFeedList = new ArrayList<>();
+            }else {
+                this.mFeedList.clear();
+            }
 
             this.mFeedList.addAll(feedList);
-            this.mFeedAdapter.notifyDataSetChanged();
-
+            this.mFeedAdapter.updateFeedList(this.mFeedList);
             super.mNextUrl = this.mFeedFragmentNextURL = next;
         }
-
         this.mSwipeRefreshLayout.setRefreshing(false);
     }
 
     public void updateList(List<Feed> feedList, String next) {
-        if (this.mFeedList != null && feedList != null && feedList.size() > 0)
+        if (feedList != null && feedList.size() > 0)
         {
+            if(this.mFeedList == null) {
+                this.mFeedList = new ArrayList<>();
+            }
+
             this.mFeedList.addAll(feedList);
-            this.mFeedAdapter.notifyDataSetChanged();
+            this.mFeedAdapter.updateFeedList(this.mFeedList);
 
             super.mNextUrl = this.mFeedFragmentNextURL = next;
         }

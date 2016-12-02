@@ -14,6 +14,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.HomePagerAdapter;
 import com.collegedekho.app.entities.ExamSummary;
+import com.collegedekho.app.entities.Feed;
 import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.utils.Utils;
 
@@ -26,20 +27,10 @@ public class HomeFragment extends BaseFragment {
     private ViewPager mViewPager;
     private HomePagerAdapter mHomePagerAdapter;
     private int mSelectedTabPosition = -1;
-
+    private ArrayList<Feed> mFeedList;
 
     public static HomeFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        HomeFragment fragment = new HomeFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        return new HomeFragment();
     }
 
     @Nullable
@@ -47,13 +38,15 @@ public class HomeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.activity_custom_view_icon_text_tabs, container, false);
         this.mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
-
-        this.mHomePagerAdapter = new HomePagerAdapter(getFragmentManager(), (MainActivity) this.getActivity());
+        if(this.mHomePagerAdapter == null) {
+            this.mHomePagerAdapter = new HomePagerAdapter(getChildFragmentManager(), getActivity());
+        }else{
+            this.mHomePagerAdapter.feedListRefreshed(this.mFeedList, super.mNextUrl);
+        }
         this.mViewPager.setAdapter(this.mHomePagerAdapter);
         this.mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -138,7 +131,6 @@ public class HomeFragment extends BaseFragment {
         });*/
 
         setupTabIcons();
-
         return rootView;
     }
 
@@ -147,6 +139,10 @@ public class HomeFragment extends BaseFragment {
      */
     private void mMarkTabAsSelected(int position)
     {
+        MainActivity mainActivity = (MainActivity)getActivity();
+        if (mainActivity != null) {
+            mainActivity.setNavigationDrawerItemSelected(position);
+        }
         TabLayout.Tab tab = HomeFragment.this.mTabLayout.getTabAt(position);
         if (tab != null)
         {
@@ -186,18 +182,18 @@ public class HomeFragment extends BaseFragment {
 
         MainActivity mainActivity = (MainActivity)getActivity();
         if (mainActivity != null) {
+            // this will change back arrow to hamburger icon on toolbar
+            if(mainActivity.mDrawerToggle != null){
+                mainActivity.mDrawerToggle.setDrawerIndicatorEnabled(true);
+            }
             mainActivity.currentFragment = this;
+            mainActivity.invalidateOptionsMenu();
         }
 
         if (this.mSelectedTabPosition == -1)
             this.mMarkTabAsSelected(0);
         else
             this.mMarkTabAsSelected(this.mSelectedTabPosition);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     /**
@@ -209,28 +205,24 @@ public class HomeFragment extends BaseFragment {
         feedIcon.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_feed, 0, 0);
         this.mTabLayout.getTabAt(0).setCustomView(feedIcon);
         this.mTabLayout.getTabAt(0).setTag(0);
-        //mTabLayout.getTabAt(0).setIcon(R.drawable.ic_feed);
 
         TextView collegeIcon = (TextView) LayoutInflater.from(this.getContext()).inflate(R.layout.dashboard_tab_item, null);
         collegeIcon.setText("Colleges");
         collegeIcon.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_institute_grey, 0, 0);
         this.mTabLayout.getTabAt(1).setCustomView(collegeIcon);
         this.mTabLayout.getTabAt(1).setTag(1);
-        //mTabLayout.getTabAt(1).setIcon(R.drawable.ic_institute_grey);
 
         TextView askChatIcon = (TextView) LayoutInflater.from(this.getContext()).inflate(R.layout.dashboard_tab_item, null);
         askChatIcon.setText("Ask & Chat");
         askChatIcon.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_ask_and_chat, 0, 0);
         this.mTabLayout.getTabAt(2).setCustomView(askChatIcon);
         this.mTabLayout.getTabAt(2).setTag(2);
-        //mTabLayout.getTabAt(2).setIcon(R.drawable.ic_ask_and_chat);
 
         TextView prepareIcon = (TextView) LayoutInflater.from(this.getContext()).inflate(R.layout.dashboard_tab_item, null);
         prepareIcon.setText("Prepare");
         prepareIcon.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_degree, 0, 0);
         this.mTabLayout.getTabAt(3).setCustomView(prepareIcon);
         this.mTabLayout.getTabAt(3).setTag(3);
-        //mTabLayout.getTabAt(3).setIcon(R.drawable.ic_degree);
     }
 
     @Override
@@ -248,20 +240,26 @@ public class HomeFragment extends BaseFragment {
 
     }
 
-    public void feedsLoaded(ArrayList feedList, String nextURL)
+    public void feedsLoaded(ArrayList<Feed> feedList, String nextURL)
     {
+        super.mNextUrl = nextURL;
+        this.mFeedList = feedList;
         if (this.mHomePagerAdapter != null && feedList != null)
             this.mHomePagerAdapter.feedListLoaded(feedList, nextURL);
     }
 
-    public void feedsRefreshed(ArrayList feedList, String nextURL)
+    public void feedsRefreshed(ArrayList<Feed> feedList, String nextURL)
     {
+        super.mNextUrl = nextURL;
+        this.mFeedList = feedList;
         if (this.mHomePagerAdapter != null && feedList != null)
             this.mHomePagerAdapter.feedListRefreshed(feedList, nextURL);
     }
 
-    public void feedNextLoaded(ArrayList feedList, String nextURL)
+    public void feedNextLoaded(ArrayList<Feed> feedList, String nextURL)
     {
+        super.mNextUrl = nextURL;
+        this.mFeedList = feedList;
         if (this.mHomePagerAdapter != null && feedList != null)
             this.mHomePagerAdapter.feedListNextLoaded(feedList, nextURL);
     }
@@ -271,18 +269,19 @@ public class HomeFragment extends BaseFragment {
             this.mHomePagerAdapter.updateUserProfile();
     }
 
-    public void updateUserYearlyExam(boolean update) {
+    public void updateUserYearlyExamSummary(ExamSummary examSummary) {
         if (this.mHomePagerAdapter != null)
-            this.mHomePagerAdapter.updateUserYearlyExam(update);
+            this.mHomePagerAdapter.updateUserYearlyExamSummary(examSummary);
     }
 
-    public int getSelectedTab()
+    public void  setSelectedPage(int position)
     {
-        if (this.mHomePagerAdapter != null)
-            return this.mHomePagerAdapter.getSelectedTab();
-
-        return -1;
+        if ( position >=0){
+           mMarkTabAsSelected(position);
+            mViewPager.setCurrentItem(position);
+        }
     }
+
 
     public void updateExamSummary(ExamSummary updateExamSummary) {
         if (this.mHomePagerAdapter != null)
@@ -290,11 +289,6 @@ public class HomeFragment extends BaseFragment {
     }
 
 
-    public void setSelectedTab(int selectedTab) {
-        if (this.mHomePagerAdapter != null)
-            this.mHomePagerAdapter.setSelectedTab(selectedTab);
-
-    }
 
     public void updateExamsList(ArrayList<ProfileExam> yearly_exams) {
         if (this.mHomePagerAdapter != null)

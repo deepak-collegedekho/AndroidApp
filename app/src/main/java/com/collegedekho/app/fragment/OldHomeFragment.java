@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
@@ -19,9 +20,11 @@ import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
 
 
+*/
 /**
  * Created by {Suresh} on {#27/11/15}.
- */
+ *//*
+
 public class OldHomeFragment extends BaseFragment {
 
     private final static String TAG = "Home Fragment";
@@ -239,7 +242,8 @@ public class OldHomeFragment extends BaseFragment {
         }
     }
 
-    /**
+    */
+/**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
@@ -248,7 +252,8 @@ public class OldHomeFragment extends BaseFragment {
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
-     */
+     *//*
+
     public interface OnTabSelectListener {
         void onHomeItemSelected(String requestType, String url, String examTag);
         void onHomeStepByStep();
@@ -258,3 +263,4 @@ public class OldHomeFragment extends BaseFragment {
     }
 
 }
+*/

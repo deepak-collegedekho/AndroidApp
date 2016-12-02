@@ -39,7 +39,6 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     protected String mNextUrl;
     protected BaseListener listener;
     public int listType;
-    protected  static int EXAM_TAB_POSITION =0;
     private int scrollDist = 0;
     private boolean isVisible = true;
 

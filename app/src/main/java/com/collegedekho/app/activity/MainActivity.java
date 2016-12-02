@@ -143,7 +143,6 @@ import com.collegedekho.app.fragment.SplashLoginFragment;
 import com.collegedekho.app.fragment.StreamFragment;
 import com.collegedekho.app.fragment.SyllabusSubjectsListFragment;
 import com.collegedekho.app.fragment.SyllabusUnitListFragment;
-import com.collegedekho.app.fragment.TabFragment;
 import com.collegedekho.app.fragment.UserAlertsFragment;
 import com.collegedekho.app.fragment.UserAlertsParentFragment;
 import com.collegedekho.app.fragment.WebViewFragment;
@@ -301,7 +300,6 @@ public class MainActivity extends AppCompatActivity
     private Institute mInstitute;
     private String mLastScreenName = "";
     private Date mTimeScreenClicked = new Date();
-    public boolean fromTabFragment = false;
     public DeviceProfile mDeviceProfile;
     public static Profile mProfile;
     private static String type = "";
@@ -309,13 +307,6 @@ public class MainActivity extends AppCompatActivity
     private static String resource_uri_with_notification_id = "";
     private Menu menu;
     private String mYear;
-
-    //private View mHomeTabContainer;
-    //private TextView mCollegeTab;
-    //private TextView mConnectTab;
-    //private TextView mPrepareTab;
-    //private TextView mReadTab;
-    //public View currentBottomItem;
 
     private List<MyAlertDate> myAlertsList;
     private boolean isFromNotification;
@@ -468,6 +459,12 @@ public class MainActivity extends AppCompatActivity
         // create network utils
         this.mNetworkUtils = new NetworkUtils(this, this);
 
+        // start loader for cursor
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
+                == PackageManager.PERMISSION_GRANTED ) {
+            getSupportLoaderManager().initLoader(0, null, this);
+        }
+
         SharedPreferences sp = this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE);
         try {
             if (sp.contains(getResourceString(R.string.KEY_USER))) {
@@ -609,43 +606,13 @@ public class MainActivity extends AppCompatActivity
                     showProgress(Constants.TAG_CREATING_USER);
                     return;
                 } else {
-                    checkForContactPermissions();
+                    mLoadUserStatusScreen();
                 }
             }
         }, 10);
     }
 
-    /**
-     *  this method will check app permissions for contacts, write to external storage
-     *  and sms are enabled otherwise it will ask the permissions for lolliPop onwards devices
-     */
-    private void checkForContactPermissions() {
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.contact_permission)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_CONTACTS},
-                                    Constants.RC_HANDLE_CONTACTS_PERM);
-                        }
-                    })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // User cancelled the dialog
-                            mLoadUserStatusScreen();
-                        }
-                    });
-            // Create the AlertDialog object and return it
-            builder.create();
-            builder.show();
-        }else{
-            // start curser loader if not started with id "0"
-            getSupportLoaderManager().initLoader(0, null, MainActivity.this);
-            // load screen fragment according user status
-            mLoadUserStatusScreen();
-        }
-    }
 
     /**
      * This method is used to load fragments according to user status and notifications
@@ -745,14 +712,14 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         int position = -1;
-        if (id == R.id.nav_colleges) {
+        if (id == R.id.nav_Feed) {
+            position = 0;
+        } else if (id == R.id.nav_colleges) {
             position = 1;
         } else if (id == R.id.nav_connect) {
             position = 2;
         } else if (id == R.id.nav_prepare) {
             position = 3;
-        } else if (id == R.id.nav_read) {
-            position = 4;
         } else if (id == R.id.nav_share) {
             // request for share intent to download app  from playStore
             Intent sendIntent = new Intent();
@@ -765,14 +732,34 @@ public class MainActivity extends AppCompatActivity
         }
         if (position != -1) {
             mClearBackStackWithoutAnimation();
-            // mUpdateTabMenuItem(position); // comment by suresh
             onTabMenuSelected(position);
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
-        // mDrawerToggle.syncState();
         return true;
     }
 
+    private void onTabMenuSelected(int position) {
+       /* if(mProfile != null) {
+            ArrayList<ProfileExam> userExamList = mProfile.getYearly_exams();
+            if (position == 3 && userExamList != null && userExamList.size() <= 0) {
+                onRequestForUserExams();
+                return;
+            }
+        }*/
+        if (currentFragment instanceof HomeFragment) {
+            ((HomeFragment) currentFragment).setSelectedPage(position);
+        }
+    }
+
+    public void setNavigationDrawerItemSelected(int tabPosition){
+        if(tabPosition >= 0){
+            mNavigationView.getMenu().getItem(tabPosition).setChecked(true);
+        } else {
+            int size = mNavigationView.getMenu().size();
+            for(int i = 0 ; i < size ; i++)
+                mNavigationView.getMenu().getItem(i).setChecked(false);
+        }
+    }
 
     private void mHandleNotifications(boolean isFromNotifications) {
         if (isFromNotifications) {
@@ -1167,18 +1154,7 @@ public class MainActivity extends AppCompatActivity
                 //called when the up affordance/carat in actionbar is pressed
                 if (currentFragment instanceof HomeFragment) {
                     mDrawerLayout.openDrawer(GravityCompat.START);
-
-                }/*else if(getSupportFragmentManager().getBackStackEntryCount() >= 1) {
-                    // remove a fragment from back stack if count is greater then zero
-                    getSupportFragmentManager().popBackStack();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            // call this method to redraw tool bar items
-                            invalidateOptionsMenu();
-                        }
-                    }, 200);
-                }*/ else {
+                }else {
                     onBackPressed();
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -1188,7 +1164,6 @@ public class MainActivity extends AppCompatActivity
                         }
                     }, 200);
                 }
-
                 return true;
             case R.id.action_profile:
                 mDisplayProfileFragment(MainActivity.mProfile, true);
@@ -1265,7 +1240,7 @@ public class MainActivity extends AppCompatActivity
         setSearchAvailable(menu);
         SharedPreferences sharedPreferences = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE);
         boolean isTuteComplete  = false ;
-        if(currentFragment instanceof HomeFragment){
+        /*if(currentFragment instanceof HomeFragment){
             if(((HomeFragment) currentFragment).getSelectedTab() == 1){
                 isTuteComplete = sharedPreferences.getBoolean(getString(R.string.PREP_BUDDY_SCREEN_TUTE), false);
                 showMenuGroupVIsibility(menu, isTuteComplete);
@@ -1273,7 +1248,7 @@ public class MainActivity extends AppCompatActivity
                 isTuteComplete = sharedPreferences.getBoolean("prepare_tute", false);
                 showMenuGroupVIsibility(menu, isTuteComplete);
             }
-        } else if (currentFragment instanceof WishlistFragment) {
+        } else*/ if (currentFragment instanceof WishlistFragment) {
             isTuteComplete = sharedPreferences.getBoolean("Wishlist tute", false);
             showMenuGroupVIsibility(menu, isTuteComplete);
             menu.setGroupVisible(R.id.search_menu_group, false);
@@ -1287,10 +1262,10 @@ public class MainActivity extends AppCompatActivity
                 showMenuGroupVIsibility(menu, isTuteComplete);
             }
             menu.setGroupVisible(R.id.search_menu_group, false);
-        } else if (currentFragment instanceof HomeFragment) {
+        } /*else if (currentFragment instanceof HomeFragment) {
             isTuteComplete = sharedPreferences.getBoolean("Home Tute", false);
             showMenuGroupVIsibility(menu, isTuteComplete);
-        }
+        }*/
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -2384,7 +2359,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_CREATE_USER:
                 mUserCreatedSuccessfully(response,tags[0]);
                 if(USER_CREATING_PROCESS){
-                    this.checkForContactPermissions();
+                    this.mLoadUserStatusScreen();
                 }
                 break;
             case Constants.TAG_SPLASH_SKIP_LOGIN:
@@ -3148,36 +3123,6 @@ public class MainActivity extends AppCompatActivity
         SendAppEvent(getResourceString(R.string.CATEGORY_INSTITUTES), getResourceString(R.string.ACTION_CD_RECOMMENDED_INSTITUTE_ACTION), eventValue, this);
     }
 
-    private void mUpdateExamDetail(String responseJson, boolean update) {
-        try {
-            ExamSummary examSummary = JSON.std.beanFrom(ExamSummary.class, responseJson);
-            if (examSummary.getPreference_uri() != null) {
-
-                String dbSummary = DataBaseHelper.getInstance(this).getExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()));
-                if (dbSummary == null) {
-                    DataBaseHelper.getInstance(this).addExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()), responseJson);
-                } else if (update) {
-                    DataBaseHelper.getInstance(this).updateExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()), responseJson);
-                }
-
-                String u = JSON.std.asString(MainActivity.mProfile);
-                this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
-            }
-            currentFragment.updateExamSummary(examSummary);
-            if(update){
-                if(currentFragment instanceof  HomeFragment)
-                    ((HomeFragment) currentFragment).updateUserYearlyExam(update);
-            }
-            if (MainActivity.type != null && !MainActivity.type.matches("") && MainActivity.resource_uri != null && !MainActivity.resource_uri.matches("")) {
-                mHandleNotifications(true);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG, e.toString());
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
-        }
-    }
 
     /**
      *  This Screen will collect user info like level, subLevel, marks, stream
@@ -3591,7 +3536,7 @@ public class MainActivity extends AppCompatActivity
             if(!USER_CREATING_PROCESS){
                 USER_CREATING_PROCESS =true;
             }else{
-                checkForContactPermissions();
+                mLoadUserStatusScreen();
             }
             return;
         }
@@ -4124,13 +4069,6 @@ public class MainActivity extends AppCompatActivity
 
     public static String GetPersonalizedMessage(String tag) {
         switch (tag) {
-            case Constants.TAG_EXAM_SUMMARY:
-            case Constants.TAG_SUBMIT_EDITED_EXAMS_LIST:
-            case Constants.WIDGET_SYLLABUS:
-            case Constants.CARD_BUZZLIST_INSTITUTES:
-            case Constants.SEARCHED_INSTITUTES:
-            case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
-                return "Loading";
             case Constants.WIDGET_INSTITUTES:
             case Constants.WIDGET_INSTITUTES_SBS:
             case Constants.WIDGET_TRENDING_INSTITUTES:
@@ -4211,6 +4149,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_REFRESH_PROFILE:
             case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
             case Constants.TAG_CREATE_USER:
+            case Constants.TAG_REFRESHED_FEED:
             case "":
                 return null;
             default:
@@ -4930,7 +4869,6 @@ public class MainActivity extends AppCompatActivity
             // screen has and make first tab selected because third tab
             //  gives exam preparation details
             if(currentFragment instanceof  HomeFragment){
-                ((HomeFragment) currentFragment).setSelectedTab(3);
                 ((HomeFragment) currentFragment).updateExamsList(mProfile.getYearly_exams());
             }
         } catch (Exception e) {
@@ -5000,9 +4938,7 @@ public class MainActivity extends AppCompatActivity
     private void mDisplayFeedFragment(String response) {
         try {
             List<Feed> feedList = JSON.std.listOfFrom(Feed.class, this.extractResults(response));
-
-            if (currentFragment instanceof HomeFragment)
-            {
+            if (currentFragment instanceof HomeFragment) {
                 ((HomeFragment) currentFragment).feedsLoaded(new ArrayList<>(feedList), this.next);
             }
         } catch (IOException e) {
@@ -5020,14 +4956,37 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         Map<String, String> params = this.mGetTheFilters();
-
         if (params == null)
             params = new HashMap<>();
 
         params.put("tag_uris[" + (params.size()) + "]", examDetailObj.getExam_tag());
-
         this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/" + id + "/summary/", params);
     }
+    private void mUpdateExamDetail(String responseJson, boolean update) {
+        try {
+            ExamSummary examSummary = JSON.std.beanFrom(ExamSummary.class, responseJson);
+            if (examSummary.getPreference_uri() != null) {
+                DataBaseHelper db = DataBaseHelper.getInstance(this);
+                String dbSummary = db.getExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()));
+                if (dbSummary == null) {
+                    db.addExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()), responseJson);
+                } else if (update) {
+                    db.updateExamSummary(Integer.parseInt(examSummary.getYearly_exam_id()), responseJson);
+                }
+            }
+            if(currentFragment instanceof  HomeFragment)
+                ((HomeFragment) currentFragment).updateUserYearlyExamSummary(examSummary);
+            if (MainActivity.type != null && !MainActivity.type.matches("") && MainActivity.resource_uri != null && !MainActivity.resource_uri.matches("")) {
+                mHandleNotifications(true);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG, e.toString());
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+    }
+
 
     @Override
     public void onChatRoomSwipedDown(String requestType, String url){
@@ -5963,88 +5922,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public View.OnClickListener mClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            int postion = -1;
-            try {
-                postion = Integer.parseInt((String) view.getTag());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            //mUpdateTabMenuItem(postion);// comment by suresh
-            onTabMenuSelected(postion);
-        }
-    };
-
-    public void mUpdateTabMenuItem(int tabPosition) {
-        /*mCollegeTab.setSelected(false);
-        mConnectTab.setSelected(false);
-        mPrepareTab.setSelected(false);
-        mReadTab.setSelected(false);
-
-        mHomeTabContainer.setVisibility(View.VISIBLE);
-
-        View viewToMoveUp = null;
-        View viewToMoveDown = null;
-
-        if (tabPosition == 1) {
-            mCollegeTab.setSelected(true);
-            if(currentBottomItem != mCollegeTab){
-                viewToMoveUp = mCollegeTab;
-            }
-            if(currentBottomItem != null && currentBottomItem != mCollegeTab){
-                viewToMoveDown = currentBottomItem;
-            }
-            currentBottomItem = mCollegeTab;
-        }else if (tabPosition == 2) {
-            mConnectTab.setSelected(true);
-            if(currentBottomItem != mConnectTab) {
-                viewToMoveUp = mConnectTab;
-            }
-            if(currentBottomItem != null && currentBottomItem != mConnectTab){
-                viewToMoveDown = currentBottomItem;
-            }
-            currentBottomItem = mConnectTab;
-        }else if (tabPosition == 3) {
-            mPrepareTab.setSelected(true);
-            if(currentBottomItem != mPrepareTab) {
-                viewToMoveUp = mPrepareTab;
-            }
-            if(currentBottomItem != null && currentBottomItem != mPrepareTab){
-                viewToMoveDown = currentBottomItem;
-            }
-            currentBottomItem = mPrepareTab;
-        }else if (tabPosition == 4) {
-            mReadTab.setSelected(true);
-            if(currentBottomItem != mReadTab) {
-                viewToMoveUp = mReadTab;
-            }
-            if(currentBottomItem != null && currentBottomItem != mReadTab){
-                viewToMoveDown = currentBottomItem;
-            }
-            currentBottomItem = mReadTab;
-        }else if(tabPosition == -2){
-            viewToMoveDown = currentBottomItem;
-            currentBottomItem = null;
-        }else {
-            //mHomeTabContainer.setVisibility(View.GONE);
-            currentBottomItem = null;
-        }
-        setNavigationDrawerItemSelected(tabPosition);
-        translateAnimation(viewToMoveUp,viewToMoveDown);*/
-    }
-
-    private void setNavigationDrawerItemSelected(int tabPosition){
-        if(tabPosition > 0){
-            mNavigationView.getMenu().getItem(tabPosition-1).setChecked(true);
-        } else {
-            int size = mNavigationView.getMenu().size();
-            for(int i = 0 ; i < size ; i++)
-                mNavigationView.getMenu().getItem(i).setChecked(false);
-        }
-    }
-
 
     public void translateAnimation(View viewToMoveUp, View viewToMoveDown) {
         Animation translateUp= AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_up);
@@ -6061,38 +5938,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void onTabMenuSelected(int tabPosition) {
-
-        //TODO::  remove this when future buddies tab are present
-        if(mProfile != null) {
-            ArrayList<ProfileExam> userExamList = mProfile.getYearly_exams();
-
-            if (tabPosition == 3 && userExamList != null &&
-                    userExamList.size() <= 0) {
-                fromTabFragment = true;
-                onRequestForUserExams();
-                // commented by Suresh
-                //mHomeTabContainer.setVisibility(View.GONE);
-                return;
-            }
-        }
-
-        mUpdateTabMenuItem(tabPosition);
-        if (currentFragment instanceof TabFragment) {
-            ((TabFragment) currentFragment).updateTabFragment(tabPosition);
-        } else{
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(TabFragment.class.getSimpleName());
-            if (fragment == null) {
-                ArrayList<ProfileExam> list = new ArrayList<>();
-                if(mProfile != null && mProfile.getYearly_exams() != null) {
-                    list.addAll(mProfile.getYearly_exams());
-                }
-                this.mDisplayFragment(TabFragment.newInstance(tabPosition, list), true, TabFragment.class.getSimpleName());
-            }else {
-                this.mDisplayFragment(fragment, false, TabFragment.class.getSimpleName());
-            }
-        }
-    }
 
     private void onMyAlertsLoaded(String response) {
         try {
@@ -6507,8 +6352,6 @@ public class MainActivity extends AppCompatActivity
                     // start curser loader if not started with id "0"
                     getSupportLoaderManager().initLoader(0, null, this);
                 }
-                // load screen fragment according user status
-                this.mLoadUserStatusScreen();
                 break;
 
             case Constants.RC_HANDLE_STORAGE_PERM:

@@ -1,5 +1,6 @@
 package com.collegedekho.app.adapter;
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -12,21 +13,18 @@ import com.collegedekho.app.fragment.CollegesDashboard;
 import com.collegedekho.app.fragment.FeedFragment;
 import com.collegedekho.app.fragment.InteractionDashboard;
 import com.collegedekho.app.fragment.PrepareDashboard;
-import com.collegedekho.app.fragment.TabFragment;
 
 import java.util.ArrayList;
 
 public class HomePagerAdapter extends FragmentStatePagerAdapter {
 
-    private MainActivity mActivity;
+    private Activity mActivity;
     private FeedFragment mFeedFragment = null;
-    private TabFragment mTabFragment = null;
     private CollegesDashboard mCollegesDashboard = null;
     private InteractionDashboard mInteractionDashboard = null;
     private PrepareDashboard mPrepareDashboard = null;
-    private int selectedTab;
 
-    public HomePagerAdapter(FragmentManager fm, MainActivity activity) {
+    public HomePagerAdapter(FragmentManager fm, Activity activity) {
         super(fm);
         this.mActivity = activity;
     }
@@ -37,29 +35,25 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
         ArrayList<ProfileExam> list = new ArrayList<>();
         switch (position) {
             case 0:
-                this.mFeedFragment = FeedFragment.newInstance();
-                fragment = this.mFeedFragment;
+                fragment = this.mFeedFragment = FeedFragment.newInstance();
                 break;
             case 1:
                 if(MainActivity.mProfile != null && MainActivity.mProfile.getYearly_exams() != null) {
                     list.addAll(MainActivity.mProfile.getYearly_exams());
                 }
-                this.mCollegesDashboard = CollegesDashboard.newInstance(1, list);
-                fragment = this.mCollegesDashboard;
+                fragment = this.mCollegesDashboard = CollegesDashboard.newInstance(1, list);
                 break;
             case 2:
                 if(MainActivity.mProfile != null && MainActivity.mProfile.getYearly_exams() != null) {
                     list.addAll(MainActivity.mProfile.getYearly_exams());
                 }
-                this.mInteractionDashboard = InteractionDashboard.newInstance(2, list);
-                fragment = this.mInteractionDashboard;
+                fragment = this.mInteractionDashboard = InteractionDashboard.newInstance(2, list);
                 break;
             case 3:
                 if(MainActivity.mProfile != null && MainActivity.mProfile.getYearly_exams() != null) {
                     list.addAll(MainActivity.mProfile.getYearly_exams());
                 }
-                this.mPrepareDashboard = PrepareDashboard.newInstance(3, list);
-                fragment = this.mPrepareDashboard;
+                fragment =  this.mPrepareDashboard = PrepareDashboard.newInstance(3, list);
                 break;
             default:
                 break;
@@ -80,49 +74,38 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public void feedListLoaded(ArrayList mFeedList, String nextUrl) {
-        if(this.mFeedFragment != null)
+        if(this.mFeedFragment != null && this.mFeedFragment.isAdded())
             this.mFeedFragment.updateList(mFeedList, nextUrl);
     }
 
     public void feedListRefreshed(ArrayList mFeedList, String nextUrl) {
-        if(this.mFeedFragment != null)
+        if(this.mFeedFragment != null && this.mFeedFragment.isAdded()) {
             this.mFeedFragment.feedRefreshed(mFeedList, nextUrl);
+        }
     }
 
     public void feedListNextLoaded(ArrayList mFeedList, String nextUrl) {
-        if(this.mFeedFragment != null)
+        if(this.mFeedFragment != null && this.mFeedFragment.isAdded())
             this.mFeedFragment.updateList(mFeedList, nextUrl);
     }
 
     public void updateUserProfile() {
-        if(this.mCollegesDashboard != null)
+        if(this.mCollegesDashboard != null && this.mCollegesDashboard.isAdded())
             this.mCollegesDashboard.updateUserInfo();
     }
 
-    public void updateUserYearlyExam(boolean update) {
-        if(this.mCollegesDashboard != null)
-            this.mCollegesDashboard.updateCollegeCountFromVolley(update);
-    }
-
-    public int getSelectedTab() {
-        if(this.mCollegesDashboard != null)
-            return this.mCollegesDashboard.getSelectedTab();
-
-        return -1;
-    }
-
-    public void setSelectedTab(int selectedTab) {
-        if(this.mCollegesDashboard != null)
-            this.mCollegesDashboard.setSelectedTab(selectedTab);
+    public void updateUserYearlyExamSummary(ExamSummary examSummary) {
+        if(this.mCollegesDashboard != null && this.mCollegesDashboard.isAdded())
+            this.mCollegesDashboard.updateUserYearlyExamSummary(examSummary);
     }
 
     public void updateExamsList(ArrayList<ProfileExam> yearly_exams) {
-        if(this.mCollegesDashboard != null)
+        if(this.mCollegesDashboard != null && this.mCollegesDashboard.isAdded())
             this.mCollegesDashboard.updateExamsList(yearly_exams);
     }
 
     public void updateExamSummary(ExamSummary updateExamSummary) {
-        if(this.mCollegesDashboard != null)
+        if(this.mCollegesDashboard != null && this.mCollegesDashboard.isAdded())
             this.mCollegesDashboard.updateExamSummary(updateExamSummary);
     }
 }

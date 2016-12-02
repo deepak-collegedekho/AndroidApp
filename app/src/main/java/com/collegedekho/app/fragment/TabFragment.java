@@ -1,3 +1,4 @@
+/*
 package com.collegedekho.app.fragment;
 
 import android.content.Context;
@@ -32,9 +33,11 @@ import com.robinhood.ticker.TickerView;
 
 import java.util.ArrayList;
 
+*/
 /**
  * Created by {sureshsaini} on {6/12/15}.
- */
+ *//*
+
 public class TabFragment extends  BaseFragment{
     private final String TAG ="Tab Fragment";
     private static String PARAM1 = "param1";
@@ -126,9 +129,11 @@ public class TabFragment extends  BaseFragment{
                 view.setVisibility(View.GONE);
                 IS_PREPARE_TUTE_COMPLETED = true;
                 getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean("prepare_tute", true).apply();
-                /*View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+                */
+/*View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                 bottomMenu.animate().translationY(0);
-                bottomMenu.setVisibility(View.VISIBLE);*/
+                bottomMenu.setVisibility(View.VISIBLE);*//*
+
                 updateCollegeCount(selectedTabPosition);
                 TabFragment.this.getActivity().invalidateOptionsMenu();
             }
@@ -148,9 +153,11 @@ public class TabFragment extends  BaseFragment{
                         v.setVisibility(View.GONE);
                         IS_COLLEGE_TUTE_COMPLETED = true;
                         getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.PREP_BUDDY_SCREEN_TUTE), true).apply();
-                        /*View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+                        */
+/*View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
                         bottomMenu.animate().translationY(0);
-                        bottomMenu.setVisibility(View.VISIBLE);*/
+                        bottomMenu.setVisibility(View.VISIBLE);*//*
+
                         updateCollegeCount(selectedTabPosition);
                         TabFragment.this.getActivity().invalidateOptionsMenu();
                     }
@@ -276,11 +283,13 @@ public class TabFragment extends  BaseFragment{
                 selectedTabPosition = 1;
             mExamsTabLayout.setVisibility(View.GONE);
         }
-        MainActivity mainActivity = (MainActivity)getActivity();
+       */
+/* MainActivity mainActivity = (MainActivity)getActivity();
         if (mainActivity != null) {
             //mainActivity.currentFragment = this;
             mainActivity.mUpdateTabMenuItem(this.selectedTabPosition);
-        }
+        }*//*
+
 
         if(this.mExamDetailList != null && !this.mExamDetailList.isEmpty()) {
             int pagerPosition = mExamTabPager.getCurrentItem();
@@ -297,12 +306,16 @@ public class TabFragment extends  BaseFragment{
     public void onPause() {
         super.onPause();
         final MainActivity mainActivity = (MainActivity)getActivity();
-        /*if(mainActivity.currentBottomItem != null){
+        */
+/*if(mainActivity.currentBottomItem != null){
             mainActivity.mUpdateTabMenuItem(-2);
-        }*/
-        /*View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
+        }*//*
+
+        */
+/*View bottomMenu = getActivity().findViewById(R.id.bottom_tab_layout);
         bottomMenu.animate().translationY(bottomMenu.getHeight());
-        bottomMenu.setVisibility(View.GONE);*/
+        bottomMenu.setVisibility(View.GONE);*//*
+
 
     }
 
@@ -745,7 +758,8 @@ public class TabFragment extends  BaseFragment{
     }
 
 
-    /**
+    */
+/**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
@@ -754,7 +768,8 @@ public class TabFragment extends  BaseFragment{
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
-     */
+     *//*
+
     public  interface OnHomeItemSelectListener {
 
         void onExamTabSelected(ProfileExam tabPosition);
@@ -764,4 +779,4 @@ public class TabFragment extends  BaseFragment{
         void onPsychometricTestSelected();
         void onTabPsychometricReport();
     }
-}
+}*/

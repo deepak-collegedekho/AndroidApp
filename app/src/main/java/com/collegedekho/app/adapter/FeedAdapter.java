@@ -123,6 +123,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         });
     }
 
+    public void updateFeedList(ArrayList<Feed> feedList){
+        this.mFeedList = feedList;
+        notifyDataSetChanged();
+
+    }
+
     @Override
     public int getItemCount() {
         return this.mFeedList.size();

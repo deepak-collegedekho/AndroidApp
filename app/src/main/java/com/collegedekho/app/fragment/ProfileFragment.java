@@ -105,7 +105,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
         this.mSwipeRefreshLayout = (CustomSwipeRefreshLayout) mRootView.findViewById(R.id.profile_swipe_refresh_container);
         this.mSwipeRefreshLayout.setOnRefreshListener(this);
-//        this.mSwipeRefreshLayout.setEnabled(false);
 
         if(mProfile.getIs_verified() == ProfileMacro.NUMBER_VERIFIED)
             mRootView.findViewById(R.id.profile_login_button).setVisibility(View.GONE);
@@ -121,6 +120,12 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 mMinusDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_minus_inline);
             }
         }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                checkForContactPermissions();
+            }
+        }, 500);
 
         mUserImageLayout = (RelativeLayout) mRootView.findViewById(R.id.user_profile_image_update);
 
@@ -1911,10 +1916,35 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             ((CircularProgressBar) progressbar).setProgressWithAnimation(progress, 2000);
         }
     }
-    private void checkMediaFilePermission(){
+    /**
+     *  this method will check app permissions for contacts, write to external storage
+     *  and sms are enabled otherwise it will ask the permissions for lolliPop onwards devices
+     */
+    private void checkForContactPermissions() {
+        if(!isAdded())
+            return;
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
 
-        if (ContextCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.contact_permission)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_CONTACTS},
+                                    Constants.RC_HANDLE_CONTACTS_PERM);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            builder.create();
+            builder.show();
+        }
+    }
+    private void checkMediaFilePermission(){
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -1924,6 +1954,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                             ActivityCompat.requestPermissions(getActivity(),
                                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                     Constants.RC_HANDLE_STORAGE_PERM);
+                            //
                         }
                     })
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -1934,7 +1965,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             // Create the AlertDialog object and return it
             builder.create();
             builder.show();
-
         }else {
             mRequestForImageCapture();
         }
