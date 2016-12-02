@@ -21,7 +21,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.ExamDetailAdapter;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
-import com.collegedekho.app.listener.OnSwipeTouchListener;
+import com.collegedekho.app.listener.DashBoardItemListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
@@ -37,11 +37,10 @@ import java.util.ArrayList;
 
 public class PrepareDashboard extends BaseFragment {
     private static String PARAM1 = "param1";
-    private static String PARAM2 = "param2";
 
     private int mSelectedSubMenuPosition = 0;
     protected  static int EXAM_TAB_POSITION =0;
-    private PrepareDashboard.OnHomeItemSelectListener mListener;
+    private DashBoardItemListener mListener;
     private ArrayList<ProfileExam> mExamDetailList;
     private ExamDetailAdapter mDetailsAdapter;
     private ProfileExam mExamDetail;
@@ -56,12 +55,10 @@ public class PrepareDashboard extends BaseFragment {
          return new PrepareDashboard();
     }
 
-    public static PrepareDashboard newInstance(int tabPosoition,ArrayList<ProfileExam> examList) {
+    public static PrepareDashboard newInstance(ArrayList<ProfileExam> examList) {
         PrepareDashboard fragment = new PrepareDashboard();
         Bundle args = new Bundle();
-        args.putInt(PARAM1, tabPosoition);
-        args.putParcelableArrayList(PARAM2, examList);
-        fragment.setArguments(args);
+        args.putParcelableArrayList(PARAM1, examList);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,7 +70,7 @@ public class PrepareDashboard extends BaseFragment {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if(args != null) {
-            this.mExamDetailList = args.getParcelableArrayList(PARAM2);
+            this.mExamDetailList = args.getParcelableArrayList(PARAM1);
         }
     }
 
@@ -136,10 +133,6 @@ public class PrepareDashboard extends BaseFragment {
                 Log.e("","");
             }
         });
-
-
-        rootView.findViewById(R.id.exam_swipe_listener_layout).setOnTouchListener(this.onSwipeTouchListener);
-        rootView.findViewById(R.id.include_layout_home_widget).setOnTouchListener(this.onSwipeTouchListener);
 
         rootView.findViewById(R.id.home_widget_first).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_second).setOnClickListener(this);
@@ -205,36 +198,12 @@ public class PrepareDashboard extends BaseFragment {
     }
 
 
-    private void mExamTabSelected(int position) {
-        if(this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() >position) {
-            this.mExamDetail = this.mExamDetailList.get(position);
-        }
-    }
-
-    OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(getActivity()) {
-        @Override
-        public void onSwipeLeft() {
-            int currentPosition = PrepareDashboard.this.mExamTabPager.getCurrentItem();
-            if (PrepareDashboard.this.mExamDetailList.size()-1 >= currentPosition)
-                PrepareDashboard.this.mExamTabPager.setCurrentItem(currentPosition + 1);
-        }
-
-        @Override
-        public void onSwipeRight() {
-            super.onSwipeRight();
-
-            int currentPosition = PrepareDashboard.this.mExamTabPager.getCurrentItem();
-            if (currentPosition > 0)
-                PrepareDashboard.this.mExamTabPager.setCurrentItem(currentPosition - 1);
-        }
-    };
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try{
             if (context instanceof MainActivity) {
-                this.mListener = (OnHomeItemSelectListener)context;
+                this.mListener = (DashBoardItemListener)context;
                 this.setUserVisibleHint(true);
             }
         } catch (ClassCastException e){
@@ -340,6 +309,12 @@ public class PrepareDashboard extends BaseFragment {
     }
 
 
+    private void mExamTabSelected(int position) {
+        if(this.mListener != null && this.mExamDetailList != null && this.mExamDetailList.size() >position) {
+            this.mExamDetail = this.mExamDetailList.get(position);
+        }
+    }
+
     public void updateExamsList(ArrayList<ProfileExam> examsList){
         if(examsList == null)
             return;
@@ -361,8 +336,8 @@ public class PrepareDashboard extends BaseFragment {
         ImageView firstSubMenuIV = (ImageView) view.findViewById(R.id.home_widget_image_first);
         ImageView secondSubMenuIV = (ImageView) view.findViewById(R.id.home_widget_image_second);
 
-        boolean IS_PREPARE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.PREPARE_HOME_TUTE), false);
-         if (!IS_PREPARE_TUTE_COMPLETED) {
+        boolean IsPrepareTuteCompleted = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.PREPARE_HOME_TUTE), false);
+         if (!IsPrepareTuteCompleted) {
             getActivity().invalidateOptionsMenu();
             view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.VISIBLE);
         } else {
@@ -418,13 +393,4 @@ public class PrepareDashboard extends BaseFragment {
 
     }
 
-    public interface OnHomeItemSelectListener {
-
-        void onExamTabSelected(ProfileExam tabPosition);
-        void onHomeItemSelected(String requestType, String url,String examTag);
-        void requestForProfileFragment();
-        void onTabStepByStep();
-        void onPsychometricTestSelected();
-        void onTabPsychometricReport();
-    }
 }

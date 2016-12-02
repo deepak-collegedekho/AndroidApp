@@ -122,7 +122,6 @@ import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
 import com.collegedekho.app.fragment.InstituteVideosFragment;
-import com.collegedekho.app.fragment.InteractionDashboard;
 import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
@@ -131,7 +130,6 @@ import com.collegedekho.app.fragment.NewsFragment;
 import com.collegedekho.app.fragment.NotPreparingFragment;
 import com.collegedekho.app.fragment.OTPVerificationFragment;
 import com.collegedekho.app.fragment.PostAnonymousLoginFragment;
-import com.collegedekho.app.fragment.PrepareDashboard;
 import com.collegedekho.app.fragment.ProfileBuildingFragment;
 import com.collegedekho.app.fragment.ProfileFragment;
 import com.collegedekho.app.fragment.PsychometricStreamFragment;
@@ -148,6 +146,7 @@ import com.collegedekho.app.fragment.UserAlertsParentFragment;
 import com.collegedekho.app.fragment.WebViewFragment;
 import com.collegedekho.app.fragment.WishlistFragment;
 import com.collegedekho.app.fragment.stepByStepTest.StepByStepFragment;
+import com.collegedekho.app.listener.DashBoardItemListener;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.listener.OnApplyClickedListener;
 import com.collegedekho.app.listener.OnArticleSelectListener;
@@ -248,8 +247,7 @@ public class MainActivity extends AppCompatActivity
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
         UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteFragment.OnCDRecommendedInstituteListener,
         InstituteVideosFragment.OnTitleUpdateListener,OTPVerificationFragment.OTPVerificationListener, ITrueCallback,
-        WishlistFragment.WishlistInstituteInteractionListener, FeedFragment.onFeedInteractionListener,
-        CollegesDashboard.OnHomeItemSelectListener, InteractionDashboard.OnHomeItemSelectListener, PrepareDashboard.OnHomeItemSelectListener {
+        WishlistFragment.WishlistInstituteInteractionListener, FeedFragment.onFeedInteractionListener,DashBoardItemListener {
 
     static {
 
@@ -5131,8 +5129,12 @@ public class MainActivity extends AppCompatActivity
         HashMap<String, String> params = new HashMap<>();
         params.put(getResourceString(R.string.preferred_stream_id), ""+streamId);
         params.put(getResourceString(R.string.USER_DEVICE_ID), deviceId);
-
         this.requestForProfile(params);
+        // if home is already loaded then just clear back stack
+        if(IS_HOME_LOADED){
+            mClearBackStack();
+            return;
+        }
         this.mDisplayHomeFragment();
 
     }

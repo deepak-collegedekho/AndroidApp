@@ -24,6 +24,7 @@ import com.collegedekho.app.adapter.ExamDetailAdapter;
 import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
+import com.collegedekho.app.listener.DashBoardItemListener;
 import com.collegedekho.app.listener.OnSwipeTouchListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
@@ -42,10 +43,8 @@ import java.util.ArrayList;
 
 public class CollegesDashboard extends BaseFragment {
     private static String PARAM1 = "param1";
-    private static String PARAM2 = "param2";
 
-    private int mSelectedSubMenuPosition = 0;
-    private CollegesDashboard.OnHomeItemSelectListener mListener;
+    private DashBoardItemListener mListener;
     private ArrayList<ProfileExam> mExamDetailList;
     private ExamDetailAdapter mDetailsAdapter;
     private ProfileExam mExamDetail;
@@ -70,12 +69,10 @@ public class CollegesDashboard extends BaseFragment {
           return new CollegesDashboard();
     }
 
-    public static CollegesDashboard newInstance(int tabPosoition,ArrayList<ProfileExam> examList) {
+    public static CollegesDashboard newInstance(ArrayList<ProfileExam> examList) {
         CollegesDashboard fragment = new CollegesDashboard();
         Bundle args = new Bundle();
-        args.putInt(PARAM1, tabPosoition);
-        args.putParcelableArrayList(PARAM2, examList);
-        fragment.setArguments(args);
+        args.putParcelableArrayList(PARAM1, examList);
         fragment.setArguments(args);
         return fragment;
     }
@@ -86,7 +83,7 @@ public class CollegesDashboard extends BaseFragment {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if(args != null) {
-            this.mExamDetailList = args.getParcelableArrayList(PARAM2);
+            this.mExamDetailList = args.getParcelableArrayList(PARAM1);
         }
         this.isFistTime = true;
     }
@@ -327,7 +324,7 @@ public class CollegesDashboard extends BaseFragment {
         try{
             if (context instanceof MainActivity)
             {
-                this.mListener = (OnHomeItemSelectListener)context;
+                this.mListener = (DashBoardItemListener) context;
                 this.setUserVisibleHint(true);
             }
         }
@@ -406,29 +403,29 @@ public class CollegesDashboard extends BaseFragment {
                     break;
             default:
                 try {
-                    this.mSelectedSubMenuPosition = Integer.parseInt((String) view.getTag());
+                    int pos = Integer.parseInt((String) view.getTag());
+                    this.mSubMenuItemClickListener(pos);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                this.mSubMenuItemClickListener();
         }
     }
 
-    private void mSubMenuItemClickListener(){
+    private void mSubMenuItemClickListener(int position){
 
-            if(this.mSelectedSubMenuPosition == 1) {
+            if(position == 1) {
                 if(this.mExamDetail != null)
                     this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/", this.mExamDetail.getExam_tag());
                 else
                     this.mHomeWidgetSelected(Constants.WIDGET_RECOMMENDED_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/",null);
-            } else if(this.mSelectedSubMenuPosition == 2) {
+            } else if(position == 2) {
                 this.mHomeWidgetSelected(Constants.WIDGET_SHORTLIST_INSTITUTES, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
-            } else if(this.mSelectedSubMenuPosition == 3) {
+            } else if(position == 3) {
                 if(this.mExamDetail != null)
                     this.mHomeWidgetSelected(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2", this.mExamDetail.getExam_tag());
                 else
                     this.mHomeWidgetSelected(Constants.CARD_BUZZLIST_INSTITUTES, Constants.BASE_URL + "personalize/recommended-institutes/?action=2",null);
-            } else if(this.mSelectedSubMenuPosition == 4) {
+            } else if(position == 4) {
                 if(this.mExamDetail != null)
                     this.mHomeWidgetSelected(Constants.WIDGET_INSTITUTES, Constants.BASE_URL + "personalize/institutes/", this.mExamDetail.getExam_tag());
                 else
@@ -467,6 +464,7 @@ public class CollegesDashboard extends BaseFragment {
         }
 
         if(this.mExamDetailList != null && !this.mExamDetailList.isEmpty()) {
+
             int pagerPosition = this.mExamTabPager.getCurrentItem();
             if(this.mExamDetailList.size() > pagerPosition)
                 this.mExamDetail = this.mExamDetailList.get(pagerPosition);
@@ -577,13 +575,4 @@ public class CollegesDashboard extends BaseFragment {
 
     }
 
-    public interface OnHomeItemSelectListener {
-
-        void onExamTabSelected(ProfileExam tabPosition);
-        void onHomeItemSelected(String requestType, String url,String examTag);
-        void requestForProfileFragment();
-        void onTabStepByStep();
-        void onPsychometricTestSelected();
-        void onTabPsychometricReport();
-    }
 }

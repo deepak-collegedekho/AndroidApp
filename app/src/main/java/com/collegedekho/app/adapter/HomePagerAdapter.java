@@ -41,19 +41,16 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
                 if(MainActivity.mProfile != null && MainActivity.mProfile.getYearly_exams() != null) {
                     list.addAll(MainActivity.mProfile.getYearly_exams());
                 }
-                fragment = this.mCollegesDashboard = CollegesDashboard.newInstance(1, list);
+                fragment = this.mCollegesDashboard = CollegesDashboard.newInstance(list);
                 break;
             case 2:
-                if(MainActivity.mProfile != null && MainActivity.mProfile.getYearly_exams() != null) {
-                    list.addAll(MainActivity.mProfile.getYearly_exams());
-                }
-                fragment = this.mInteractionDashboard = InteractionDashboard.newInstance(2, list);
+                fragment = this.mInteractionDashboard = InteractionDashboard.newInstance();
                 break;
             case 3:
                 if(MainActivity.mProfile != null && MainActivity.mProfile.getYearly_exams() != null) {
                     list.addAll(MainActivity.mProfile.getYearly_exams());
                 }
-                fragment =  this.mPrepareDashboard = PrepareDashboard.newInstance(3, list);
+                fragment =  this.mPrepareDashboard = PrepareDashboard.newInstance(list);
                 break;
             default:
                 break;
