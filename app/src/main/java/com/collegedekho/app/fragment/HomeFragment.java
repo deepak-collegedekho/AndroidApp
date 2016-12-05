@@ -186,7 +186,7 @@ public class HomeFragment extends BaseFragment {
         this.mTabLayout.getTabAt(1).setTag(1);
 
         TextView askChatIcon = (TextView) LayoutInflater.from(this.getContext()).inflate(R.layout.dashboard_tab_item, null);
-        askChatIcon.setText("Social");
+        askChatIcon.setText("Chat");
         askChatIcon.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_connect, 0, 0);
         this.mTabLayout.getTabAt(2).setCustomView(askChatIcon);
         this.mTabLayout.getTabAt(2).setTag(2);

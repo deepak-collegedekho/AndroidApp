@@ -54,8 +54,8 @@ public class CollegesDashboard extends BaseFragment {
     private boolean isFistTime = false;
     protected  static int EXAM_TAB_POSITION =0;
     private View mExamsTabLayout;
-    private FloatingActionButton mLeftButton;
-    private FloatingActionButton mRightButton;
+    private ImageView mLeftButton;
+    private ImageView mRightButton;
 
     private TickerView mRecommendedCountTV;
     private TickerView mTrendingCountTV;
@@ -202,8 +202,8 @@ public class CollegesDashboard extends BaseFragment {
     {
         if (this.mExamDetailList != null && this.mExamDetailList.size() > 1)
         {
-            this.mLeftButton = (FloatingActionButton) view.findViewById(R.id.exam_left_nav);
-            this.mRightButton = (FloatingActionButton) view.findViewById(R.id.exam_right_nav);
+            this.mLeftButton = (ImageView) view.findViewById(R.id.exam_left_nav);
+            this.mRightButton = (ImageView) view.findViewById(R.id.exam_right_nav);
 
             this.mLeftButton.setVisibility(View.VISIBLE);
             this.mRightButton.setVisibility(View.VISIBLE);

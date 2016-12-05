@@ -5144,7 +5144,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPsychometricTestSelected()
     {
-        this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_QUESTIONS, Constants.BASE_URL + "psychometric/", null);
+        this.mMakeNetworkCall(Constants.TAG_PSYCHOMETRIC_QUESTIONS, Constants.BASE_URL + "star-psychometric/2/", null);
         //Events
         Map<String, Object> eventValue = new HashMap<>();
         eventValue.put(getResourceString(R.string.CHOSEN_ACTION_WHEN_NOT_PREPARING), PsychometricTestQuestion.class.getSimpleName());
@@ -5165,7 +5165,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSubmitPsychometricTest(JSONObject params) {
-        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM, Constants.BASE_URL + "star-psychometric/", params, 1);
+        this.mMakeJsonObjectNetworkCall(Constants.TAG_SUBMIT_PSYCHOMETRIC_EXAM, Constants.BASE_URL + "star-psychometric/2/", params, 1);
     }
 
     private void mDisplayStreamsSelection(String response) {

@@ -48,8 +48,8 @@ public class PrepareDashboard extends BaseFragment {
     private PagerTabStrip mPagerHeader = null;
     private View mExamsTabLayout;
 
-    private FloatingActionButton mLeftButton;
-    private FloatingActionButton mRightButton;
+    private ImageView mLeftButton;
+    private ImageView mRightButton;
 
     public static PrepareDashboard newInstance() {
          return new PrepareDashboard();
@@ -279,8 +279,8 @@ public class PrepareDashboard extends BaseFragment {
     {
         if (this.mExamDetailList != null && this.mExamDetailList.size() > 1)
         {
-            this.mLeftButton = (FloatingActionButton) view.findViewById(R.id.exam_left_nav);
-            this.mRightButton = (FloatingActionButton) view.findViewById(R.id.exam_right_nav);
+            this.mLeftButton = (ImageView) view.findViewById(R.id.exam_left_nav);
+            this.mRightButton = (ImageView) view.findViewById(R.id.exam_right_nav);
 
             this.mLeftButton.setVisibility(View.VISIBLE);
             this.mRightButton.setVisibility(View.VISIBLE);

@@ -9,10 +9,10 @@
     app:cardElevation="@dimen/m3dp"
     app:cardUseCompatPadding="true"
     app:cardPreventCornerOverlap="true"
-    android:layout_marginTop="@dimen/m2dp"
-    android:layout_marginBottom="@dimen/m2dp"
-    android:layout_marginLeft="@dimen/m3dp"
-    android:layout_marginRight="@dimen/m3dp"
+    android:layout_marginTop="@dimen/m10dp"
+    android:layout_marginBottom="@dimen/m10dp"
+    android:layout_marginLeft="@dimen/m8dp"
+    android:layout_marginRight="@dimen/m8dp"
     >
     <LinearLayout
         android:layout_width="match_parent"
