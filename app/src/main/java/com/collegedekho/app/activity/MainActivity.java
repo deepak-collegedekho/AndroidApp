@@ -169,6 +169,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -233,6 +234,7 @@ SOFTWARE.*/
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, NavigationView.OnNavigationItemSelectedListener,
         SplashFragment.OnSplashListener, SplashLoginFragment.OnSplashLoginListener,
+       GoogleApiClient.ConnectionCallbacks,  GoogleApiClient.OnConnectionFailedListener,
         DataLoadListener, StreamFragment.OnStreamInteractionListener, PsychometricStreamFragment.OnStreamInteractionListener,
         AdapterView.OnItemSelectedListener, ExamsFragment.OnExamsSelectListener,
         InstituteListFragment.OnInstituteSelectedListener, OnApplyClickedListener, OnNewsSelectListener,
@@ -428,6 +430,8 @@ public class MainActivity extends AppCompatActivity
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(AppIndex.API)
                 .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
                 .build();
         mSearchProgress = (ProgressBar) findViewById(R.id.resource_progress_bar);
 
@@ -1116,23 +1120,25 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    /*@Override
+    @Override
     public void onConnected(Bundle connectionHint) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // mLastLocation = LocationServices.FusedLocationApi.getLastLocation( mGoogleApiClient);
-        }
+        Log.e(TAG, "onConnected called");
+        Constants.IS_LOCATION_SERVICES_ENABLED = true;
     }
 
     @Override
     public void onConnectionSuspended(int i) {
+        Log.e(TAG, "onConnectionSuspended called");
+        Constants.IS_LOCATION_SERVICES_ENABLED = false;
 
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.e(TAG, "onConnectionFailed called");
+        Constants.IS_LOCATION_SERVICES_ENABLED = false;
 
-    }*/
+    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -4429,7 +4435,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mInstituteQnAQuestionAdded(String response) {
-        ArrayList<String> tagArrayList = new ArrayList<>();
+        /*ArrayList<String> tagArrayList = new ArrayList<>();
         ArrayList<QnAAnswers> qnaAnswers = new ArrayList<>();
         QnAQuestions qnaQuestion = new QnAQuestions();
         try {
@@ -4478,15 +4484,9 @@ public class MainActivity extends AppCompatActivity
             }
 
             qnaQuestion.setAnswer_set(qnaAnswers);
-            qnaQuestion.setTags(tagArrayList);
-
-            Map<String, Object> eventValue = new HashMap<>();
-            eventValue.put(Constants.TAG_RESOURCE_URI, qnaQuestion.getResource_uri());
-            eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
-
-            //Events
-            SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_QNA_QUESTION_ASKED), eventValue, this);
-
+            qnaQuestion.setTags(tagArrayList);*/
+        try {
+            QnAQuestions qnaQuestion = JSON.std.beanFrom(QnAQuestions.class, response);
             if(this.mQnAQuestions == null)
                 this.mQnAQuestions = new ArrayList<>();
 
@@ -4495,7 +4495,14 @@ public class MainActivity extends AppCompatActivity
                 (currentFragment).instituteQnAQuestionAdded(qnaQuestion);
             }
 
-        } catch (JSONException e) {
+            Map<String, Object> eventValue = new HashMap<>();
+            eventValue.put(Constants.TAG_RESOURCE_URI, qnaQuestion.getResource_uri());
+            eventValue.put(getResourceString(R.string.QNA_QUESTION_RESOURCE_URI), qnaQuestion.getResource_uri());
+            //Events
+            SendAppEvent(getResourceString(R.string.CATEGORY_QNA), getResourceString(R.string.ACTION_QNA_QUESTION_ASKED), eventValue, this);
+
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -4511,11 +4518,16 @@ public class MainActivity extends AppCompatActivity
 
     public ArrayList<QnAQuestions> parseAndReturnQnAList(String qnaString, boolean isNewList) {
         try {
-            QnAQuestions qnaQuestion;
+            //QnAQuestions qnaQuestion;
+            if(mQnAQuestions == null)
+                mQnAQuestions = new ArrayList<>();
             if (isNewList) {
                 mQnAQuestions.clear();
             }
-            JSONObject qnaResult = new JSONObject(qnaString);
+            String result = extractResults(qnaString);
+            List<QnAQuestions> qnaQuestionList = JSON.std.listOfFrom(QnAQuestions.class, result);
+            mQnAQuestions.addAll(qnaQuestionList);
+           /* JSONObject qnaResult = new JSONObject(qnaString);
             next = qnaResult.getString("next");
             JSONArray resultArray = qnaResult.getJSONArray("results");
 
@@ -4574,8 +4586,8 @@ public class MainActivity extends AppCompatActivity
                 qnaQuestion.setTags(tagArrayList);
 
                 mQnAQuestions.add(qnaQuestion);
-            }
-        } catch (JSONException e) {
+            }*/
+        } catch (IOException e) {
             Log.e(MainActivity.class.getSimpleName(), e.getMessage() + e.getCause());
         } finally {
             return mQnAQuestions;
@@ -5212,8 +5224,11 @@ public class MainActivity extends AppCompatActivity
         this.mParseProfileResponse(responseJson);
 
         // update user exam on profile building fragment
-        if(currentFragment instanceof ProfileBuildingFragment)
-            ((ProfileBuildingFragment)currentFragment).onExamSubmittedSuccessfully();
+       if(currentFragment instanceof ProfileBuildingFragment) {
+           //((ProfileBuildingFragment) currentFragment).onExamSubmittedSuccessfully();
+           mDisplayHomeFragment();
+       }
+
     }
 
     @Override
@@ -6083,7 +6098,7 @@ public class MainActivity extends AppCompatActivity
 
     private void onPnsQnA(String response) {
         try {
-            QnAQuestions qnaQuestion = new QnAQuestions();
+           /* QnAQuestions qnaQuestion = new QnAQuestions();
             ArrayList<String> tagArrayList = new ArrayList<>();
             ArrayList<QnAAnswers> qnaAnswers = new ArrayList<>();
 
@@ -6133,12 +6148,18 @@ public class MainActivity extends AppCompatActivity
             }
 
             qnaQuestion.setAnswer_set(qnaAnswers);
-            qnaQuestion.setTags(tagArrayList);
+            qnaQuestion.setTags(tagArrayList);*/
+            QnAQuestions qnaQuestion = JSON.std.beanFrom(QnAQuestions.class,response);
             boolean isAddToStack = false;
             if (getSupportFragmentManager().getBackStackEntryCount() >= 1) {
                 isAddToStack = true;
             }
-            //TODO:: when FCM is added for Q&A then replace above parsing code by jackson
+            if(this.mQnAQuestions == null)
+                this.mQnAQuestions = new ArrayList<>();
+            else
+                this.mQnAQuestions.clear();
+
+            this.mQnAQuestions.add(qnaQuestion);
             if (currentFragment instanceof QnAQuestionDetailFragment) {
                 ((QnAQuestionDetailFragment) currentFragment).updateQnaDetailFromNotification(qnaQuestion);
             } else {

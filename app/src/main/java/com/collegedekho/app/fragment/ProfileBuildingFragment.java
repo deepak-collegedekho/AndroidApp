@@ -180,9 +180,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         view.findViewById(R.id.user_education_stream_edit_btn).setOnClickListener(this);
         view.findViewById(R.id.user_education_exams_edit_btn).setOnClickListener(this);
         view.findViewById(R.id.user_education_skip_button).setOnClickListener(this);
-        view.findViewById(R.id.go_to_recommended).setOnClickListener(this);
+      /*  view.findViewById(R.id.go_to_recommended).setOnClickListener(this);
         view.findViewById(R.id.go_to_dash_board).setOnClickListener(this);
-        view.findViewById(R.id.go_to_profile).setOnClickListener(this);
+        view.findViewById(R.id.go_to_profile).setOnClickListener(this);*/
         view.findViewById(R.id.user_exam_search_container).setOnClickListener(this);
         mExamSearchView.setOnSearchClickListener(this);
     }
@@ -437,12 +437,12 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                 this.mEventValue.put("editing_what", "exams_edit");
                 mEditUserExams();
                 break;
-            case R.id.go_to_recommended:
+          /*  case R.id.go_to_recommended:
             case R.id.go_to_dash_board:
             case R.id.go_to_profile:
                 this.mEventAction = MainActivity.getResourceString(R.string.ACTION_USER_ACTION);
                 mTakeMeToHome(Integer.parseInt(view.getTag().toString()));
-                break;
+                break;*/
             case R.id.user_exam_search_view:
             case R.id.user_exam_search_container:
                 mExamSearchView.onActionViewExpanded();
@@ -726,7 +726,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
             builder.show();
         }else {
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if(mLastLocation == null){
+            if(mLastLocation == null && Constants.IS_LOCATION_SERVICES_ENABLED){
                 checkLocationSettings();
             }else{
                 mRequestForLocationUpdate();
@@ -948,7 +948,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     private void mEditCurrentEducationLevel(){
         isStreamSelected = false;
         mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
-        mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
+       // mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_education_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_stream_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.GONE);
@@ -995,7 +995,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         mRootView.findViewById(R.id.user_education_stream_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
-        mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
+       // mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_next_button).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_next_button_layout).setVisibility(View.VISIBLE);
@@ -1053,7 +1053,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
 
     private void mEditUserExams(){
         mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.GONE);
-        mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
+       // mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_heading_devider).setVisibility(View.VISIBLE);
         mRootView.findViewById(R.id.user_education_heading).setVisibility(View.VISIBLE);
         ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.which_exams_are_you_preparing));
@@ -1062,7 +1062,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     }
 
 
-    public void onExamSubmittedSuccessfully() {
+   /* public void onExamSubmittedSuccessfully() {
         mStreamRecyclerView.setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_exam_search_container).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_heading).setVisibility(View.GONE);
@@ -1070,7 +1070,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         mRootView.findViewById(R.id.empty).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_heading_devider).setVisibility(View.GONE);
         mRootView.findViewById(R.id.user_education_exams_layout).setVisibility(View.VISIBLE);
-        mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.VISIBLE);
+      //  mRootView.findViewById(R.id.go_to_dashboard_layout).setVisibility(View.VISIBLE);
 
         mRootView.findViewById(R.id.user_education_exams_layout).startAnimation(animationFromTop);
 
@@ -1114,7 +1114,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                 userExamSTxtView.setText("Not Set");
             }
         }
-    }
+    }*/
 
     private void mClearUserExams()
     {
@@ -1421,18 +1421,18 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
             params.put("latitude", String.valueOf(mLastLocation.getLatitude()));
             params.put("longitude", String.valueOf(mLastLocation.getLongitude()));
         }
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if(params.size() > 0) {
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, locationListener);
-        }
-        if(mListener != null){
-            if(params.size() > 0) {
-                mListener.onRequestForLocationUpdate(params);
-            }else{
-                setUserEducationStream();
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, locationListener);
             }
+            if(mListener != null)
+                mListener.onRequestForLocationUpdate(params);
+        }else{
+            setUserEducationStream();
         }
+
     }
 
     LocationListener locationListener = new LocationListener() {
@@ -1469,7 +1469,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (mLastLocation == null) {
+            if (mLastLocation == null && Constants.IS_LOCATION_SERVICES_ENABLED) {
                 checkLocationSettings();
             } else {
                 mRequestForLocationUpdate();
@@ -1482,7 +1482,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         locationRequest = LocationRequest.create()
                 .setFastestInterval(5 * 1000)
                 .setInterval(30 * 1000)
-                .setPriority(LocationRequest.PRIORITY_LOW_POWER);
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
     }
     private void checkLocationSettings() {

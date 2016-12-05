@@ -281,6 +281,7 @@ public class Constants
     public static long HOLD_REMOVE_VIBRATION_DURATION = 100;
 
     public static final String CD_RECOMMENDED_INSTITUTE_ACTION_TYPE = "cd_recommended_institute_action_type";
+    public static boolean IS_LOCATION_SERVICES_ENABLED;
 
     public enum CDRecommendedInstituteType {
         RECOMMENDED, FEATURED, UNDECIDED, SHORTLIST, NOT_INTERESTED

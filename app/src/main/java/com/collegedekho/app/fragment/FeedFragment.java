@@ -89,7 +89,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                              Bundle savedInstanceState) {
         this.mActivity = (MainActivity) this.getContext();
         // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
 
         this.mFeedRecyclerView = (RecyclerView) rootView.findViewById(R.id.feed_list);
         this.mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.feed_swipe_refresh_container);

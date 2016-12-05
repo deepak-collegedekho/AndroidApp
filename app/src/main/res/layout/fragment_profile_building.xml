@@ -278,7 +278,7 @@
 
         </RadioGroup>
 
-        <LinearLayout
+       <!-- <LinearLayout
             android:id="@+id/go_to_dashboard_layout"
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -316,7 +316,7 @@
                 android:text="@string/go_to_me_profile"/>
 
         </LinearLayout>
-
+-->
     </LinearLayout>
 
 
@@ -331,15 +331,6 @@
         android:focusable="true"
         android:clickable="true"
         android:layout_height="wrap_content">
-
-        <!-- <TextView android:id="@+id/user_exam_search_hint"
-             android:clickable="false"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:layout_centerVertical="true"
-             android:text="Select Exam"
-             android:layout_marginLeft="@dimen/m40dp"
-             />-->
 
         <android.support.v7.widget.SearchView
             android:id="@+id/user_exam_search_view"
