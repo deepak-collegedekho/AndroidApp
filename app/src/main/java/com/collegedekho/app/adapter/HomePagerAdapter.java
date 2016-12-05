@@ -75,9 +75,9 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter {
             this.mFeedFragment.updateList(mFeedList, nextUrl);
     }
 
-    public void feedListRefreshed(ArrayList mFeedList, String nextUrl) {
+    public void feedListRefreshed(ArrayList mFeedList, String nextUrl, boolean hasFailed) {
         if(this.mFeedFragment != null && this.mFeedFragment.isAdded()) {
-            this.mFeedFragment.feedRefreshed(mFeedList, nextUrl);
+            this.mFeedFragment.feedRefreshed(mFeedList, nextUrl, hasFailed);
         }
     }
 

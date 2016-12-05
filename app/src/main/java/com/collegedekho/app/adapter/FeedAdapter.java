@@ -19,6 +19,7 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.widget.FadeInImageView;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 /**
@@ -56,6 +57,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
         //setting title
         String title = feed.getTitle();
+        try {
+            title = new String(title.getBytes("ISO-8859-1"),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            title = feed.getTitle();
+        }
         if (title != null && !title.isEmpty())
         {
             feedViewHolder.feedTitle.setText(title);
@@ -63,12 +70,20 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             //setting feed title color
             if (feed.getTitle_color() != null && !feed.getTitle_color().isEmpty())
                 feedViewHolder.feedTitle.setTextColor(Color.parseColor(feed.getTitle_color()));
+            else
+                feedViewHolder.feedTitle.setTextColor(this.mContext.getResources().getColor(R.color.heading_color));
         }
         else
             feedViewHolder.feedTitle.setVisibility(View.GONE);
 
         //setting time
         String time = feed.getFeed_time();
+        try {
+            time = new String(time.getBytes("ISO-8859-1"),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            time = feed.getFeed_time();
+        }
         if (time != null && !time.isEmpty())
         {
             feedViewHolder.feedTime.setText(time);
@@ -77,6 +92,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             //setting feed time color
             if (feed.getTime_color() != null && !feed.getTime_color().isEmpty())
                 feedViewHolder.feedTime.setTextColor(Color.parseColor(feed.getTime_color()));
+            else
+                feedViewHolder.feedTime.setTextColor(this.mContext.getResources().getColor(R.color.text_light_grey));
         }
         else
             feedViewHolder.feedTime.setVisibility(View.GONE);
@@ -103,6 +120,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
         //setting description
         String description = feed.getDescription();
+        try {
+            description = new String(description.getBytes("ISO-8859-1"),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            description = feed.getDescription();
+        }
         if (description != null && !description.isEmpty())
         {
             feedViewHolder.feedDescription.setText(description);
@@ -111,6 +134,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             //setting feed description color
             if (feed.getDescription_color() != null && !feed.getDescription_color().isEmpty())
                 feedViewHolder.feedDescription.setTextColor(Color.parseColor(feed.getDescription_color()));
+            else
+                feedViewHolder.feedDescription.setTextColor(this.mContext.getResources().getColor(R.color.subheading_color));
         }
         else
             feedViewHolder.feedDescription.setVisibility(View.GONE);
@@ -118,6 +143,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         //setting card background color
         if (feed.getFeed_background_color() != null && !feed.getFeed_background_color().isEmpty())
             feedViewHolder.feedCard.setBackgroundColor(Color.parseColor(feed.getFeed_background_color()));
+        else
+            feedViewHolder.feedCard.setBackgroundColor(this.mContext.getResources().getColor(R.color.card_bg));
 
         //send feed selected on click
         feedViewHolder.feedCard.setOnClickListener(new View.OnClickListener() {

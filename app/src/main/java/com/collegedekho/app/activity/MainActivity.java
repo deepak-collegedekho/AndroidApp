@@ -194,6 +194,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1751,7 +1752,7 @@ public class MainActivity extends AppCompatActivity
         try {
             List<Feed> feedList = JSON.std.listOfFrom(Feed.class, extractResults(response));
             if (currentFragment instanceof HomeFragment) {
-                ((HomeFragment) currentFragment).feedsRefreshed(new ArrayList<>(feedList), next);
+                ((HomeFragment) currentFragment).feedsRefreshed(new ArrayList<>(feedList), next, false);
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
@@ -1867,6 +1868,7 @@ public class MainActivity extends AppCompatActivity
                 if (currentFragment != null && currentFragment instanceof CDRecommendedInstituteFragment) {
                     String val = this.extractResults(response);
                     this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
+                    Collections.reverse(this.mInstituteList);
                     if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED) {
                         ((CDRecommendedInstituteFragment) currentFragment).showUndecidedInstitutes(this.mInstituteList, next);
                     }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.RECOMMENDED) {
@@ -1878,6 +1880,7 @@ public class MainActivity extends AppCompatActivity
             } else {
                 String val = this.extractResults(response);
                 this.mInstituteList = JSON.std.listOfFrom(Institute.class, val);
+                Collections.reverse(this.mInstituteList);
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
 
                 if (fragment == null) {
@@ -3625,6 +3628,24 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             }
+            case Constants.TAG_LOAD_FEED:
+            {
+
+                break;
+            }
+            case Constants.TAG_NEXT_FEED:
+            {
+
+                break;
+            }
+            case Constants.TAG_REFRESHED_FEED:
+            {
+                if (currentFragment instanceof HomeFragment) {
+                    ((HomeFragment) currentFragment).feedsRefreshed(new ArrayList<Feed>(), "", true);
+                }
+                break;
+            }
+
         }
     }
 
@@ -5854,7 +5875,7 @@ public class MainActivity extends AppCompatActivity
         MainActivity.type = feed.getScreen();
         MainActivity.resource_uri = feed.getResource_uri();
         if (MainActivity.resource_uri.contains("?"))
-            MainActivity.resource_uri_with_notification_id = MainActivity.resource_uri + "&&feed_id=" + feed.getId();
+            MainActivity.resource_uri_with_notification_id = MainActivity.resource_uri + "&feed_id=" + feed.getId();
         else
             MainActivity.resource_uri_with_notification_id = MainActivity.resource_uri + "?feed_id=" + feed.getId();
 

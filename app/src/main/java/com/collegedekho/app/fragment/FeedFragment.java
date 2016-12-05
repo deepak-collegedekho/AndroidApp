@@ -115,7 +115,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         super.onAttach(context);
         if (context instanceof MainActivity) {
             super.listener = (onFeedInteractionListener) context;
-            this.setUserVisibleHint(true);
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement onFeedInteractionListener");
@@ -131,7 +130,8 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public void onResume() {
         super.onResume();
-
+        if (this.mFeedList == null || this.mFeedList.size() == 0)
+            ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
     }
 
     @Override
@@ -155,9 +155,9 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             ((onFeedInteractionListener) super.listener).onFeedRefreshed(Constants.TAG_REFRESHED_FEED, Constants.BASE_URL + "feeds/");
     }
 
-    public void feedRefreshed(List<Feed> feedList, String next)
+    public void feedRefreshed(List<Feed> feedList, String next, boolean hasFailed)
     {
-        if (feedList != null && feedList.size() > 0)
+        if (feedList != null && feedList.size() > 0 && !hasFailed)
         {
             if(this.mFeedList == null){
                 this.mFeedList = new ArrayList<>();
@@ -189,8 +189,11 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser && this.getActivity() != null)
-            ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
+        /*if (isVisibleToUser && this.getActivity() != null)
+        {
+            if (this.mFeedList == null || this.mFeedList.size() == 0)
+                ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
+        }*/
     }
 
     /**
