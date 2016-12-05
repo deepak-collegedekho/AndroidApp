@@ -154,45 +154,7 @@ public class PrepareDashboard extends BaseFragment {
             rootView.findViewById(R.id.btn_tab_psychometric_report).setVisibility(View.GONE);
         }
 
-        if (this.mExamDetailList.size() > 1)
-        {
-            this.mLeftButton = (FloatingActionButton) rootView.findViewById(R.id.exam_left_nav);
-            this.mRightButton = (FloatingActionButton) rootView.findViewById(R.id.exam_right_nav);
-
-            this.mLeftButton.setVisibility(View.VISIBLE);
-            this.mRightButton.setVisibility(View.VISIBLE);
-
-            this.mLeftButton.setHapticFeedbackEnabled(true);
-            this.mRightButton.setHapticFeedbackEnabled(true);
-
-            this.mLeftButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int currentPosition = PrepareDashboard.this.mExamTabPager.getCurrentItem();
-                    if (currentPosition > 0)
-                        PrepareDashboard.this.mExamTabPager.setCurrentItem(currentPosition - 1);
-                    else
-                    {
-                        PrepareDashboard.this.mLeftButton.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-                        PrepareDashboard.this.mLeftButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
-                    }
-                }
-            });
-
-            this.mRightButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int currentPosition = PrepareDashboard.this.mExamTabPager.getCurrentItem();
-                    if (PrepareDashboard.this.mExamDetailList.size() - 1 > currentPosition)
-                        PrepareDashboard.this.mExamTabPager.setCurrentItem(currentPosition + 1);
-                    else
-                    {
-                        PrepareDashboard.this.mRightButton.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-                        PrepareDashboard.this.mRightButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
-                    }
-                }
-            });
-        }
+        this.mInitializeExamTabNavButtons(rootView);
 
         return rootView;
     }
@@ -292,6 +254,16 @@ public class PrepareDashboard extends BaseFragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        this.mExamDetailList = MainActivity.mProfile.getYearly_exams();
+
+        if (getView()!= null)
+            this.mInitializeExamTabNavButtons(getView());
+    }
+
     private void mSubMenuItemClickListener(){
         if(this.mExamDetail != null) {
             getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_EXAM_ID, "" + this.mExamDetail.getId()).apply();
@@ -299,6 +271,57 @@ public class PrepareDashboard extends BaseFragment {
                 this.mHomeWidgetSelected(Constants.WIDGET_SYLLABUS, Constants.BASE_URL + "yearly-exams/" + this.mExamDetail.getId() + "/syllabus/", null);
             } else if (this.mSelectedSubMenuPosition == 2) {
                 this.mHomeWidgetSelected(Constants.TAG_MY_ALERTS, Constants.BASE_URL + "exam-alerts/", this.mExamDetail.getExam_tag());
+            }
+        }
+    }
+
+    private void mInitializeExamTabNavButtons(View view)
+    {
+        if (this.mExamDetailList != null && this.mExamDetailList.size() > 1)
+        {
+            this.mLeftButton = (FloatingActionButton) view.findViewById(R.id.exam_left_nav);
+            this.mRightButton = (FloatingActionButton) view.findViewById(R.id.exam_right_nav);
+
+            this.mLeftButton.setVisibility(View.VISIBLE);
+            this.mRightButton.setVisibility(View.VISIBLE);
+
+            this.mLeftButton.setHapticFeedbackEnabled(true);
+            this.mRightButton.setHapticFeedbackEnabled(true);
+
+            this.mLeftButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int currentPosition = PrepareDashboard.this.mExamTabPager.getCurrentItem();
+                    if (currentPosition > 0)
+                        PrepareDashboard.this.mExamTabPager.setCurrentItem(currentPosition - 1);
+                    else
+                    {
+                        PrepareDashboard.this.mLeftButton.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                        PrepareDashboard.this.mLeftButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
+                    }
+                }
+            });
+
+            this.mRightButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int currentPosition = PrepareDashboard.this.mExamTabPager.getCurrentItem();
+                    if (PrepareDashboard.this.mExamDetailList.size() - 1 > currentPosition)
+                        PrepareDashboard.this.mExamTabPager.setCurrentItem(currentPosition + 1);
+                    else
+                    {
+                        PrepareDashboard.this.mRightButton.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                        PrepareDashboard.this.mRightButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
+                    }
+                }
+            });
+        }
+        else
+        {
+            if (this.mLeftButton != null && this.mRightButton != null)
+            {
+                this.mLeftButton.setVisibility(View.GONE);
+                this.mRightButton.setVisibility(View.GONE);
             }
         }
     }
