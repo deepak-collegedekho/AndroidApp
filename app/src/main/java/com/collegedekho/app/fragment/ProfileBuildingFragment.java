@@ -1482,7 +1482,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         locationRequest = LocationRequest.create()
                 .setFastestInterval(5 * 1000)
                 .setInterval(30 * 1000)
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                .setPriority(LocationRequest.PRIORITY_LOW_POWER);
 
     }
     private void checkLocationSettings() {
