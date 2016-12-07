@@ -4,6 +4,7 @@
     <item name="app_logo_icon_layout" type="id" />
     <item name="navigation_cd_icon" type="id" />
     <item name="empty" type="id" />
+    <item name="home_tute_image" type="id" />
 
     <item name="fab_label" type="id" />
     <item name="institute_count_ticker" type="id" />

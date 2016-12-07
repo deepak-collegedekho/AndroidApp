@@ -42,7 +42,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private FeedAdapter mFeedAdapter;
 
-    private MainActivity mActivity;
 
     public FeedFragment() {
         // Required empty public constructor
@@ -87,24 +86,26 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        this.mActivity = (MainActivity) this.getContext();
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
 
         this.mFeedRecyclerView = (RecyclerView) rootView.findViewById(R.id.feed_list);
         this.mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.feed_swipe_refresh_container);
-       // this.mSwipeRefreshLayout.bringToFront();
+
         this.mSwipeRefreshLayout.setOnRefreshListener(this);
-
-        this.mFeedAdapter = new FeedAdapter(this.getContext(), this.mFeedList);
+        if(mFeedAdapter == null) {
+            this.mFeedAdapter = new FeedAdapter(this.getContext(), this.mFeedList);
+        }else{
+            this.mFeedAdapter.updateFeedList(this.mFeedList);
+        }
         super.layoutManager = new LinearLayoutManager(this.getContext());
-
         this.mFeedRecyclerView.setLayoutManager(super.layoutManager);
         this.mFeedRecyclerView.setAdapter(this.mFeedAdapter);
         this.mFeedRecyclerView.setItemAnimator(new DefaultItemAnimator());
         this.mFeedRecyclerView.addOnScrollListener(super.scrollListener);
 
         super.mNextUrl = this.mFeedFragmentNextURL;
+
 
         return rootView;
     }

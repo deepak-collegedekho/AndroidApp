@@ -45,6 +45,11 @@ public class PsychometricTestFragment extends BaseFragment implements Psychometr
                 end=mQuestionList.size();
             }
             subList = new ArrayList<>(mQuestionList.subList(start, end));
+            int count = subList.size();
+            for (int i = 0; i < count; i++) {
+                subList.get(i).setQue_no(start+1);
+                start++;
+            }
             Log.e("TAG", "psychometric test");
         }
     }

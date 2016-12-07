@@ -1,5 +1,6 @@
 package com.collegedekho.app.fragment;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -34,6 +36,7 @@ public class HomeFragment extends BaseFragment {
     private HomePagerAdapter mHomePagerAdapter;
     private int mSelectedTabPosition = -1;
     private ArrayList<Feed> mFeedList;
+    private int tuteCount = 1;
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -103,6 +106,40 @@ public class HomeFragment extends BaseFragment {
         this.mTabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.primaryColor));
 
         setupTabIcons();
+
+        ImageView tuteImage = (ImageView)rootView.findViewById(R.id.home_tute_image);
+        final View tabs = rootView.findViewById(R.id.tabs);
+        boolean  isTuteCompleted = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.FEED_HOME_TUTE), false);
+        if(!isTuteCompleted) {
+            tuteImage.setVisibility(View.VISIBLE);
+            tabs.setVisibility(View.GONE);
+        } else {
+            tuteImage.setVisibility(View.GONE);
+            tabs.setVisibility(View.VISIBLE);
+        }
+        tuteImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(tuteCount == 1)
+                    ((ImageView)view).setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute2));
+                else  if(tuteCount == 2)
+                    ((ImageView)view).setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute3));
+                else  if(tuteCount == 3) {
+                    ((ImageView) view).setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute4));
+                    if(isAdded())
+                        getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.FEED_HOME_TUTE), true).apply();
+
+                }else{
+                    view.setVisibility(View.GONE);
+                    tabs.setVisibility(View.VISIBLE);
+                    if(isAdded())
+                        getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.FEED_HOME_TUTE), true).apply();
+
+                }
+                tuteCount ++;
+
+            }
+        });
 
         return rootView;
     }

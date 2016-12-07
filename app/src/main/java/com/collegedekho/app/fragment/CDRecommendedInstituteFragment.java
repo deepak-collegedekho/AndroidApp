@@ -306,9 +306,12 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         if (getView() != null)
             getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-        getActivity().invalidateOptionsMenu();
+       // getActivity().invalidateOptionsMenu();
         this.mMainActivity = (MainActivity) this.getActivity();
-
+        if(mMainActivity != null && mMainActivity.mDrawerToggle != null){
+            mMainActivity.mDrawerToggle.setDrawerIndicatorEnabled(false);
+                mMainActivity.setNavigationDrawerItemSelected(-1);
+        }
         /**
          * This updates the count in the Layout and Displays the count.
          * */

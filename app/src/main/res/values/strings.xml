@@ -401,6 +401,15 @@
     <string name="ACTION_PROCEED_LOGIN">action_proceed_login</string>
     <string name="ACTION_FLOW_ONE_USER_CREATED">action_flow_one_user_created</string>
     <string name="ACTION_FLOW_TWO_USER_CREATED">action_flow_two_user_created</string>
+    <string name="ACTION_EVENT_PERMISSION">action_event_permission</string>
+    <string name="ACTION_CONTACT_PERMISSION_ALLOW">contact_Permission_allow</string>
+    <string name="ACTION_CONTACT_PERMISSION_DENY">contact_Permission_deny</string>
+    <string name="ACTION_MEDIA_ACCESS_PERMISSION_ALLOW">media_access_Permission_allow</string>
+    <string name="ACTION_MEDIA_ACCESS_PERMISSION_DENY">media_access_Permission_deny</string>
+    <string name="ACTION_LOCATION_PERMISSION_ALLOW">location_Permission_allow</string>
+    <string name="ACTION_LOCATION_PERMISSION_DENY">location_Permission_deny</string>
+    <string name="ACTION_SMS_PERMISSION_ALLOW">sms_Permission_allow</string>
+    <string name="ACTION_SMS_PERMISSION_DENY">sms_Permission_deny</string>
 
 
     <!--String messages-->
@@ -446,9 +455,10 @@
     <string name="PROFILE_SCREEN_TUTE">profile_tute</string>
     <string name="EDUCATION_SCREEN_TUTE">education_tute</string>
     <string name="EXAMS_SCREEN_TUTE">exams_tute</string>
-    <string name="PREP_BUDDY_HOME_TUTE">prep_buddy_home_tute</string>
+    <string name="INTERACTION_HOME_TUTE">interaction_home_tute</string>
     <string name="PREPARE_HOME_TUTE">prepare_home_tute</string>
-    <string name="INSTITUTE_HOME_TUTE">institute_home_tute</string>
+    <string name="FEED_HOME_TUTE">feed_home_tute</string>
+    <string name="INSTITUTES_HOME_TUTE">institutes_home_tute</string>
     <string name="INSTITUTE_LIST_SCREEN_TUTE">institute_tute</string>
     <string name="RECOMMENDED_INSTITUTE_LIST_SCREEN_TUTE">recommended_institute_tute</string>
     <string name="MY_FB_SCREEN_TUTE">myfb_tute</string>
@@ -597,8 +607,8 @@
     <string name="TAG_APP_STATUS_LAUNCHED_FROM_NOTIFICATION">launched_from_notification</string>
     <string name="TAG_APP_STATUS_ALREADY_RUNNING">already_running</string>
     <string name="pref_institute_count">pref_institute_count</string>
-    <string name="media_file_permission">We need your photo gallery access to upload your profile picture. We will not able to Personalise your app without this permission. Click to agree and proceed</string>
-    <string name="sms_permission"><![CDATA[We need the permission to read the text messages so that we can send you latest updates for colleges & exams. Click to agree and proceed.]]></string>
-    <string name="location_permission">We need location access permission to personalise your app and recommend best colleges for you based on location. Agree to Proceed.</string>
-    <string name="contact_permission">We require your contact access for authentification of your account.  We will only read your own contact for your details to strengthen your profile.</string>
+    <string name="media_file_permission">Want to choose the best pic from your gallery? Allow us access to files in the next step.</string>
+    <string name="sms_permission">We can automatically verify OTP sent by us. Allow us to read your sms and sit back and relax while with verify your phone number.</string>
+    <string name="location_permission">To show state exams we need to know your current location. Press allow in the next step for location preference. </string>
+    <string name="contact_permission">We can verify you android id to make it a more personalized experience for you. We do not share this information with anyone. Allow for contacts in the next step.</string>
 </resources>

@@ -46,10 +46,12 @@ public class InteractionDashboard extends BaseFragment {
         rootView.findViewById(R.id.home_widget_first).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_second).setOnClickListener(this);
         rootView.findViewById(R.id.profile_image).setOnClickListener(this);
-        rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnClickListener(this);
         rootView.findViewById(R.id.btn_tab_step_by_step).setOnClickListener(this);
         rootView.findViewById(R.id.btn_tab_psychometric_test).setOnClickListener(this);
         rootView.findViewById(R.id.btn_tab_psychometric_report).setOnClickListener(this);
+        ImageView tuteImage = (ImageView)rootView.findViewById(R.id.home_tute_image);
+        tuteImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute6));
+        tuteImage.setOnClickListener(this);
 
         rootView.findViewById(R.id.include_image_layout).findViewById(R.id.profile_image_edit_button).setOnClickListener(this);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
@@ -72,7 +74,6 @@ public class InteractionDashboard extends BaseFragment {
         try {
             if (context instanceof MainActivity) {
                 this.mListener = (DashBoardItemListener) context;
-                this.setUserVisibleHint(true);
             }
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
@@ -144,10 +145,10 @@ public class InteractionDashboard extends BaseFragment {
             case R.id.btn_tab_step_by_step:
                 this.mListener.onTabStepByStep();
                 break;
-            case R.id.prep_buddy_tour_guide_image:
+            case R.id.home_tute_image:
                 view.setVisibility(View.GONE);
                 if(isAdded())
-                    getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.PREP_BUDDY_HOME_TUTE), true).apply();
+                    getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.INTERACTION_HOME_TUTE), true).apply();
 
                 break;
             default:
@@ -183,12 +184,11 @@ public class InteractionDashboard extends BaseFragment {
         ImageView secondSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_second);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
-        boolean IsTutECompleted = sharedPreferences.getBoolean(getString(R.string.PREP_BUDDY_HOME_TUTE), false);
+        boolean IsTutECompleted = sharedPreferences.getBoolean(getString(R.string.INTERACTION_HOME_TUTE), false);
         if(!IsTutECompleted) {
-            getActivity().invalidateOptionsMenu();
-            view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.home_tute_image).setVisibility(View.VISIBLE);
         } else {
-            view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+            view.findViewById(R.id.home_tute_image).setVisibility(View.GONE);
         }
         view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
 

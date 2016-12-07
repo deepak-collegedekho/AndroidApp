@@ -31,7 +31,6 @@ import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
-import com.collegedekho.app.widget.fab.FloatingActionButton;
 import com.robinhood.ticker.TickerUtils;
 import com.robinhood.ticker.TickerView;
 
@@ -115,7 +114,9 @@ public class CollegesDashboard extends BaseFragment {
         mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
-        rootView.findViewById(R.id.prep_buddy_tour_guide_image).setOnClickListener(this);
+        ImageView tuteImage = (ImageView)rootView.findViewById(R.id.home_tute_image);
+        tuteImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute5));
+        tuteImage.setOnClickListener(this);
 
         if(MainActivity.mProfile != null) {
 
@@ -338,7 +339,6 @@ public class CollegesDashboard extends BaseFragment {
             if (context instanceof MainActivity)
             {
                 this.mListener = (DashBoardItemListener) context;
-                this.setUserVisibleHint(true);
             }
         }
         catch (ClassCastException e){
@@ -408,10 +408,10 @@ public class CollegesDashboard extends BaseFragment {
             case R.id.btn_tab_step_by_step:
                 this.mListener.onTabStepByStep();
                 break;
-            case R.id.prep_buddy_tour_guide_image:
+            case R.id.home_tute_image:
                 view.setVisibility(View.GONE);
                 if(isAdded())
-                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.INSTITUTE_HOME_TUTE), true).apply();
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.INSTITUTES_HOME_TUTE), true).apply();
                 updateCollegeCount();
                     break;
             default:
@@ -507,13 +507,11 @@ public class CollegesDashboard extends BaseFragment {
         ImageView fourthSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_fourth);
 
 
-        boolean  IS_COLLEGE_TUTE_COMPLETED = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.INSTITUTE_HOME_TUTE), false);
-            if(!IS_COLLEGE_TUTE_COMPLETED) {
-                getActivity().invalidateOptionsMenu();
-                view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.VISIBLE);
-
+        boolean  isTuteCompleted = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.INSTITUTES_HOME_TUTE), false);
+            if(!isTuteCompleted) {
+                view.findViewById(R.id.home_tute_image).setVisibility(View.VISIBLE);
             } else {
-                view.findViewById(R.id.prep_buddy_tour_guide_image).setVisibility(View.GONE);
+                view.findViewById(R.id.home_tute_image).setVisibility(View.GONE);
             }
 
             LinearLayout ll = (LinearLayout)view.findViewById(R.id.home_widget_first_layout);

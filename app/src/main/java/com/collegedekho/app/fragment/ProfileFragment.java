@@ -148,7 +148,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         mRootView.findViewById(R.id.profile_education_save_btn).setOnClickListener(this);
         mRootView.findViewById(R.id.profile_preferred_save_btn).setOnClickListener(this);
         mRootView.findViewById(R.id.profile_other_info_save_btn).setOnClickListener(this);
-        mRootView.findViewById(R.id.profile_to_dashboard).setOnClickListener(this);
+        mRootView.findViewById(R.id.profile_to_Feed_dashboard).setOnClickListener(this);
         mRootView.findViewById(R.id.profile_to_recommended).setOnClickListener(this);
 
         mRootView.findViewById(R.id.profile_login_button).setContentDescription("click to login");
@@ -167,7 +167,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         mRootView.findViewById(R.id.profile_education_save_btn).setContentDescription("Save info you entered");
         mRootView.findViewById(R.id.profile_preferred_save_btn).setContentDescription("Save info you entered");
         mRootView.findViewById(R.id.profile_other_info_save_btn).setContentDescription("Save info you entered");
-        mRootView.findViewById(R.id.profile_to_dashboard).setContentDescription("Click to go to your Dashboard");
+        mRootView.findViewById(R.id.profile_to_Feed_dashboard).setContentDescription("Click to go to your Dashboard");
         mRootView.findViewById(R.id.profile_to_recommended).setContentDescription("Click to see recommended colleges");
 
         return mRootView;
@@ -570,8 +570,8 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     public void onClick(final View v) {
         super.onClick(v);
         switch (v.getId()){
-            case R.id.profile_to_dashboard:
-                mListener.toDashboard();
+            case R.id.profile_to_Feed_dashboard:
+                mListener.toFeedDashboard();
                 break;
             case R.id.profile_to_recommended:
                 mListener.toRecommended();
@@ -2265,7 +2265,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         void onRequestForUserExams();
         void requestForSpecialization(int streamId, String requestType);
         void requestForDegrees(int levelId, String requestType);
-        void toDashboard();
+        void toFeedDashboard();
         void toRecommended();
         void onRefreshProfile();
     }

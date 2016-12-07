@@ -145,7 +145,7 @@ public class PsychometricTestParentFragment extends BaseFragment implements Psyc
 
 
     private void submitPsychometricTest() {
-        ArrayList<HashMap<String,Integer>>mapArrayList=new ArrayList<>();
+        ArrayList<HashMap<String,Integer>> mapArrayList = new ArrayList<>();
         HashMap<String, Integer> questionResponse = new HashMap<>();
         JSONObject object=new JSONObject();
         for (PsychometricTestQuestion question : mQuestionsList) {

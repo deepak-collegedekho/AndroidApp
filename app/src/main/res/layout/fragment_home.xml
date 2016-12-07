@@ -179,7 +179,7 @@
             android:clickable="true"
             android:contentDescription="@string/profile_tute_description"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_home_tute5"
+            android:src="@drawable/ic_home_tute1"
             />
     </FrameLayout>
 

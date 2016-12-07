@@ -8,7 +8,7 @@
             android:title="Feed" />
         <item
             android:id="@+id/nav_colleges"
-            android:icon="@drawable/ic_cd_colored"
+            android:icon="@drawable/ic_institute_grey"
             android:title="Colleges" />
         <item
             android:id="@+id/nav_connect"

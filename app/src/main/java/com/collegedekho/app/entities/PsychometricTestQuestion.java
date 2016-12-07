@@ -22,6 +22,7 @@ public class PsychometricTestQuestion implements Parcelable{
     private String question;
     private String id;
     private String stream_id;
+    private int que_no;
     private int checkedId;
     private String answer="0";
 
@@ -79,6 +80,14 @@ public class PsychometricTestQuestion implements Parcelable{
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    public int getQue_no() {
+        return que_no;
+    }
+
+    public void setQue_no(int que_no) {
+        this.que_no = que_no;
     }
 
     @Override

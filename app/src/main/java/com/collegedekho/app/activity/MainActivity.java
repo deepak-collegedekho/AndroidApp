@@ -477,18 +477,7 @@ public class MainActivity extends AppCompatActivity
                 // user id registration
                 setUserIdWithAllEvents();
                 // sync user detail with server
-                // update user location
-                HashMap<String, String> params =  null;
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                        || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                    if (mLastLocation != null) {
-                        params = new HashMap<>();
-                        params.put("latitude", String.valueOf(mLastLocation.getLatitude()));
-                        params.put("longitude", String.valueOf(mLastLocation.getLongitude()));
-                    }
-                }
-                requestForProfile(params);
+                requestForProfile(null);
 
             }
         } catch (Exception e) {
@@ -1536,6 +1525,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onUserProfileEdited(HashMap<String, String> params,int viewPosition ) {
+        // update user location
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mLastLocation != null) {
+                params = new HashMap<>();
+                params.put("latitude", String.valueOf(mLastLocation.getLatitude()));
+                params.put("longitude", String.valueOf(mLastLocation.getLongitude()));
+            }
+        }
         this.requestForUserProfileUpdate(Constants.TAG_UPDATE_USER_PROFILE+"#"+viewPosition, params);
     }
     /**
@@ -1596,8 +1595,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void toDashboard(){
+    public void toFeedDashboard(){
         mClearBackStack();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+              if(currentFragment != null && currentFragment instanceof  HomeFragment){
+                  ((HomeFragment) currentFragment).setSelectedPage(0);
+              }
+            }
+        }, 200);
     }
 
     /**
@@ -2484,11 +2491,11 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAKE_ME_TO_RECOMMENDED:
                 isFromNotification = true;
                 this.mCurrentTitle = "Recommended Institutes";
-                if(currentFragment instanceof ProfileBuildingFragment) {
+               /* if(currentFragment instanceof ProfileBuildingFragment) {
                     ((ProfileBuildingFragment) currentFragment).hideNavigationIcon();
-                }
+                }*/
                 mClearBackStack();
-                mShowAppBarLayout();
+               // mShowAppBarLayout();
                 Constants.IS_RECOMENDED_COLLEGE = true;
                 this.mDisplayCDRecommendedInstituteList(response, true, Constants.CDRecommendedInstituteType.RECOMMENDED, false);
                 break;
@@ -4669,9 +4676,6 @@ public class MainActivity extends AppCompatActivity
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
-        /*if(currentBottomItem != null){
-            translateAnimation(null,currentBottomItem);
-        }*/
 
         if (currentFragment != null) {
             if (currentFragment instanceof SyllabusSubjectsListFragment) {
@@ -4719,16 +4723,10 @@ public class MainActivity extends AppCompatActivity
             int count = getSupportFragmentManager().getBackStackEntryCount();
             for (int i = 0; i < count; i++)
                 getSupportFragmentManager().popBackStack();
-
-            if(currentFragment instanceof  HomeFragment){
-
-            }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
     }
-
-
 
     /**
      * This method is used to clear back stack of FragmentManager
@@ -4738,7 +4736,7 @@ public class MainActivity extends AppCompatActivity
     private  void mClearBackStackWithoutAnimation() {
         try {
             Constants.DISABLE_FRAGMENT_ANIMATION = true;
-            int count = getSupportFragmentManager().getBackStackEntryCount()-1;
+            int count = getSupportFragmentManager().getBackStackEntryCount();
             for (int i = 0; i < count; i++)
                 getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             Constants.DISABLE_FRAGMENT_ANIMATION = false;
@@ -4985,7 +4983,7 @@ public class MainActivity extends AppCompatActivity
         mClearBackStack();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
         if (fragment == null)
-            this.mDisplayFragment(HomeFragment.newInstance(), false, HomeFragment.class.toString());
+            this.mDisplayFragment(HomeFragment.newInstance(), false, HomeFragment.class.getSimpleName());
         else {
             this.mDisplayFragment(fragment, false, HomeFragment.class.getSimpleName());
         }
@@ -6417,20 +6415,29 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
+        Map<String, Object> eventValue = new HashMap<>();
         switch (requestCode) {
             case Constants.RC_HANDLE_CONTACTS_PERM:
                 if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //events params
+                    eventValue.put(getString(R.string.ACTION_CONTACT_PERMISSION_ALLOW), getString(R.string.ACTION_CONTACT_PERMISSION_ALLOW));
                     // start curser loader if not started with id "0"
                     getSupportLoaderManager().initLoader(0, null, this);
+                }else{
+                    //events params
+                    eventValue.put(getString(R.string.ACTION_CONTACT_PERMISSION_DENY), getString(R.string.ACTION_CONTACT_PERMISSION_DENY));
                 }
                 break;
-
             case Constants.RC_HANDLE_STORAGE_PERM:
                 if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if(currentFragment instanceof ProfileFragment)
                         ((ProfileFragment) currentFragment).mRequestForImageCapture();
+                    //events params
+                    eventValue.put(getString(R.string.ACTION_MEDIA_ACCESS_PERMISSION_ALLOW), getString(R.string.ACTION_MEDIA_ACCESS_PERMISSION_ALLOW));
                 }else {
                     showPermissionErrorDialog("Permission Not Granted, You can't upload profile image without this permission");
+                    //events params
+                    eventValue.put(getString(R.string.ACTION_MEDIA_ACCESS_PERMISSION_DENY), getString(R.string.ACTION_MEDIA_ACCESS_PERMISSION_DENY));
                 }
                 break;
             case Constants.RC_HANDLE_SMS_PERM:
@@ -6440,21 +6447,32 @@ public class MainActivity extends AppCompatActivity
                     }else if(currentFragment instanceof PostAnonymousLoginFragment){
                         ((PostAnonymousLoginFragment) currentFragment).mRequestForOTP();
                     }
+                    //events params
+                    eventValue.put(getString(R.string.ACTION_SMS_PERMISSION_ALLOW), getString(R.string.ACTION_SMS_PERMISSION_ALLOW));
                 }else{
                     showPermissionErrorDialog("Permission Not Granted, OTP will not be receive without this permission");
+                    //events params
+                    eventValue.put(getString(R.string.ACTION_SMS_PERMISSION_DENY), getString(R.string.ACTION_SMS_PERMISSION_DENY));
                 }
                 break;
             case Constants.RC_HANDLE_LOCATION:
                 if (grantResults.length > 0    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if(currentFragment instanceof  ProfileBuildingFragment)
                         ((ProfileBuildingFragment) currentFragment).askForLocationSetting();
+                    //events params
+                    eventValue.put(getString(R.string.ACTION_LOCATION_PERMISSION_ALLOW), getString(R.string.ACTION_LOCATION_PERMISSION_ALLOW));
                 }else{
                     if(currentFragment instanceof  ProfileBuildingFragment)
                         ((ProfileBuildingFragment) currentFragment).setUserEducationStream();
+                    //events params
+                    eventValue.put(getString(R.string.ACTION_LOCATION_PERMISSION_DENY), getString(R.string.ACTION_LOCATION_PERMISSION_DENY));
                 }
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-                return;
+        }
+        //Events
+        if(eventValue.size() > 0) {
+            SendAppEvent(getString(R.string.CATEGORY_PREFERENCE), getString(R.string.ACTION_EVENT_PERMISSION), eventValue, this);
         }
     }
     private void showPermissionErrorDialog(String msg){

@@ -1448,12 +1448,11 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode) {
             case Activity.RESULT_OK:
-                if(getActivity() != null) {
-                    if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                if(getActivity() != null &&
+                   ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                             || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, locationListener);
                         ((MainActivity)getActivity()).showProgressDialog(Constants.TAG_USER_EXAMS_SUBMISSION,Constants.THEME_TRANSPARENT);
-                    }
                 }else{
                     if(mListener != null)
                         setUserEducationStream();

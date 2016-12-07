@@ -27,7 +27,6 @@ import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
-import com.collegedekho.app.widget.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -137,10 +136,12 @@ public class PrepareDashboard extends BaseFragment {
         rootView.findViewById(R.id.home_widget_first).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_second).setOnClickListener(this);
         rootView.findViewById(R.id.profile_image).setOnClickListener(this);
-        rootView.findViewById(R.id.prepare_tour_guide_image).setOnClickListener(this);
         rootView.findViewById(R.id.btn_tab_step_by_step).setOnClickListener(this);
         rootView.findViewById(R.id.btn_tab_psychometric_test).setOnClickListener(this);
         rootView.findViewById(R.id.btn_tab_psychometric_report).setOnClickListener(this);
+        ImageView tuteImage = (ImageView)rootView.findViewById(R.id.home_tute_image);
+        tuteImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute7));
+        tuteImage.setOnClickListener(this);
 
         rootView.findViewById(R.id.include_image_layout).findViewById(R.id.profile_image_edit_button).setOnClickListener(this);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
@@ -166,7 +167,6 @@ public class PrepareDashboard extends BaseFragment {
         try{
             if (context instanceof MainActivity) {
                 this.mListener = (DashBoardItemListener)context;
-                this.setUserVisibleHint(true);
             }
         } catch (ClassCastException e){
             throw  new ClassCastException(context.toString()
@@ -238,7 +238,7 @@ public class PrepareDashboard extends BaseFragment {
             case R.id.btn_tab_step_by_step:
                 this.mListener.onTabStepByStep();
                 break;
-            case R.id.prepare_tour_guide_image:
+            case R.id.home_tute_image:
                 view.setVisibility(View.GONE);
                 if(isAdded())
                 getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.PREPARE_HOME_TUTE), true).apply();
@@ -361,10 +361,9 @@ public class PrepareDashboard extends BaseFragment {
 
         boolean IsPrepareTuteCompleted = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.PREPARE_HOME_TUTE), false);
          if (!IsPrepareTuteCompleted) {
-            getActivity().invalidateOptionsMenu();
-            view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.home_tute_image).setVisibility(View.VISIBLE);
         } else {
-            view.findViewById(R.id.prepare_tour_guide_image).setVisibility(View.GONE);
+            view.findViewById(R.id.home_tute_image).setVisibility(View.GONE);
         }
         view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
 

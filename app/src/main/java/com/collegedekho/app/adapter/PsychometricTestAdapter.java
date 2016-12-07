@@ -39,7 +39,7 @@ public class PsychometricTestAdapter extends RecyclerView.Adapter<PsychometricTe
     @Override
     public void onBindViewHolder(PsychometricTestViewHolder holder, int position) {
         PsychometricTestQuestion question = itemList.get(position);
-        holder.txt_serial_no.setText(question.getId()+") ");
+        holder.txt_serial_no.setText(String.valueOf(question.getQue_no()));
         holder.txt_question_text.setText(question.getQuestion());
         holder.radioGroup.check(question.getCheckedId());
         holder.mContainer.setContentDescription(question.getQuestion() + " Select Always or sometimes or never from options just below");

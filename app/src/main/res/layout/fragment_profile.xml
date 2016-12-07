@@ -1127,7 +1127,7 @@
                         android:weightSum="1">
 
                         <Button
-                            android:id="@+id/profile_to_dashboard"
+                            android:id="@+id/profile_to_Feed_dashboard"
                             android:layout_width="0dp"
                             android:layout_weight="0.5"
                             android:layout_height="match_parent"
