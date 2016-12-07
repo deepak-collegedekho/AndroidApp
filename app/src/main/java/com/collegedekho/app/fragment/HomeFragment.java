@@ -162,7 +162,6 @@ public class HomeFragment extends BaseFragment {
                 Drawable[] drawables = ((TextView)customView).getCompoundDrawables();
                 Drawable drawable = Utils.ApplyThemeToDrawable(drawables[1], HomeFragment.this.getResources().getColor(R.color.primary_color));
                 ((TextView)customView).setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
-
                 customView.setSelected(true);
             }
         }

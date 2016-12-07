@@ -1530,7 +1530,6 @@ public class MainActivity extends AppCompatActivity
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             if (mLastLocation != null) {
-                params = new HashMap<>();
                 params.put("latitude", String.valueOf(mLastLocation.getLatitude()));
                 params.put("longitude", String.valueOf(mLastLocation.getLongitude()));
             }
