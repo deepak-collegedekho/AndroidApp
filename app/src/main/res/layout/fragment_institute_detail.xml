@@ -6,28 +6,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollbars="none">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:weightSum="1"
         android:orientation="vertical">
-                <com.collegedekho.app.display.CustomViewPager
-                    android:id="@+id/college_detail_pager"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:importantForAccessibility="no">
-                    <android.support.v4.view.PagerTabStrip
-                        android:id="@+id/pager_header"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top"
-                        android:textColor="#fff"
-                        android:background="@color/primaryColor"
-                        android:scrollbars="none"
-                        app:layout_scrollFlags="scroll|enterAlways"
-                        app:tabMode="scrollable"
-                        android:importantForAccessibility="no" />
-                </com.collegedekho.app.display.CustomViewPager>
+
+        <com.collegedekho.app.display.CustomViewPager
+            android:id="@+id/college_detail_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no">
+
+            <android.support.v4.view.PagerTabStrip
+                android:id="@+id/pager_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:textColor="#fff"
+                android:background="@color/primaryColor"
+                android:scrollbars="none"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:tabMode="scrollable"
+                android:importantForAccessibility="no" />
+        </com.collegedekho.app.display.CustomViewPager>
     </LinearLayout>
     <com.collegedekho.app.widget.fab.FloatingActionMenu
         android:id="@+id/fab_menu"

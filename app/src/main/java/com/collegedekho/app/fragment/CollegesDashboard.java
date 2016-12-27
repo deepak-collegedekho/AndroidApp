@@ -28,7 +28,6 @@ import com.collegedekho.app.listener.DashBoardItemListener;
 import com.collegedekho.app.listener.OnSwipeTouchListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
 import com.robinhood.ticker.TickerUtils;
@@ -364,6 +363,8 @@ public class CollegesDashboard extends BaseFragment {
 
         TextView mProfileName = (TextView) view.findViewById(R.id.user_name);
         TextView mProfileNumber = (TextView) view.findViewById(R.id.user_phone);
+        mProfileName.setOnClickListener(this);
+        mProfileNumber.setOnClickListener(this);
         mProfileName.setVisibility(View.VISIBLE);
         mProfileNumber.setVisibility(View.VISIBLE);
 
@@ -391,12 +392,10 @@ public class CollegesDashboard extends BaseFragment {
     public void onClick(View view) {
         super.onClick(view);
         switch (view.getId()){
+            case R.id.user_name:
+            case R.id.user_phone:
             case R.id.profile_image:
             case R.id.profile_image_edit_button:
-                if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
-                    ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
-                    return;
-                }
                 this.mListener.requestForProfileFragment();
                 break;
             case R.id.btn_tab_psychometric_test:

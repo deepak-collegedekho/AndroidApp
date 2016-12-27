@@ -260,15 +260,18 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
     public boolean onQueryTextChange(String newText) {
         if (newText.isEmpty() || newText.contentEquals(""))
         {
-            this.mFacetAdapter.animateTo(this.mCurrentFolders.get(this.currentPos).getFacets());
-            this.mFilterRecyclerView.scrollToPosition(0);
-
+            if(this.mCurrentFolders != null && this.mCurrentFolders.size() > currentPos ) {
+                this.mFacetAdapter.animateTo(this.mCurrentFolders.get(this.currentPos).getFacets());
+                this.mFilterRecyclerView.scrollToPosition(0);
+            }
             return true;
         }
         else {
-            final ArrayList<Facet> filteredModelList = filter(this.mCurrentFolders.get(this.currentPos).getFacets(), newText);
-            mFacetAdapter.animateTo(filteredModelList);
-            mFilterRecyclerView.scrollToPosition(0);
+            if(this.mCurrentFolders != null && this.mCurrentFolders.size() > currentPos ) {
+                ArrayList<Facet> filteredModelList = filter(this.mCurrentFolders.get(this.currentPos).getFacets(), newText);
+                mFacetAdapter.animateTo(filteredModelList);
+                mFilterRecyclerView.scrollToPosition(0);
+            }
             return true;
         }
     }

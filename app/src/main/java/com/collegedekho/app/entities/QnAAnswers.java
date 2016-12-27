@@ -161,14 +161,14 @@ public class QnAAnswers implements Parcelable {
     public void setIndex(int index) {
         this.index = index;
     }
-
+/*
     public int getQuestionIndex() {
         return questionIndex;
     }
 
     public void setQuestionIndex(int questionIndex) {
         this.questionIndex = questionIndex;
-    }
+    }*/
 
     public int getCurrent_user_vote_type() {
         return current_user_vote_type;

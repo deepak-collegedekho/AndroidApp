@@ -82,6 +82,7 @@ public class Profile implements Parcelable{
     private int preference_progress = 0;
     private int exams_progress = 0;
     private int others_progress = 0;
+    private String counselor_contact_no = "";
 
     public Profile(){
         // required empty contructor
@@ -160,6 +161,7 @@ public class Profile implements Parcelable{
         preference_progress = in.readInt();
         exams_progress = in.readInt();
         others_progress = in.readInt();
+        counselor_contact_no = in.readString();
     }
 
     @Override
@@ -233,6 +235,7 @@ public class Profile implements Parcelable{
         dest.writeInt(preference_progress);
         dest.writeInt(exams_progress);
         dest.writeInt(others_progress);
+        dest.writeString(counselor_contact_no);
     }
 
     @Override
@@ -826,5 +829,13 @@ public class Profile implements Parcelable{
 
     public void setOthers_progress(int others_progress) {
         this.others_progress = others_progress;
+    }
+
+    public String getCounselor_contact_no() {
+        return "9650672665";//counselor_contact_no;
+    }
+
+    public void setCounselor_contact_no(String counselor_contact_no) {
+        this.counselor_contact_no = counselor_contact_no;
     }
 }

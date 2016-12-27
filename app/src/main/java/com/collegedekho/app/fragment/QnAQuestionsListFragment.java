@@ -358,7 +358,7 @@ public class QnAQuestionsListFragment extends BaseFragment {
     }
 
     public interface OnQnAQuestionSelectedListener extends BaseListener{
-        void onQnAQuestionSelected(QnAQuestions qnaQuestion);
+        void onQnAQuestionSelected(QnAQuestions qnaQuestion, int qnaPosition);
         void onQuestionAsked(QnAQuestions qnaQuestion);
         @Override
         void onEndReached(String next, int type);

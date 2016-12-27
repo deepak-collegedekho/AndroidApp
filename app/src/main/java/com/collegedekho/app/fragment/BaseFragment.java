@@ -13,11 +13,8 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.entities.News;
-import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.entities.QnAQuestions;
 import com.collegedekho.app.resource.Constants;
-
-import java.util.ArrayList;
 
 
 /**
@@ -32,7 +29,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     private static final float SHOW_THRESHOLD = 32;
 
     protected String TAG ="BaseFragment";
-    protected int pastVisiblesItems, visibleItemCount, totalItemCount;
+    protected int firstVisibleItem, visibleItemCount, totalItemCount;
     protected boolean loading = false;
     protected LinearLayout progressBarLL;
     protected LinearLayoutManager layoutManager;
@@ -42,6 +39,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     private int scrollDist = 0;
     private boolean isVisible = true;
 
+    private boolean hideToolBar;
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -50,18 +48,19 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
 
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
             visibleItemCount = layoutManager.getChildCount();
             totalItemCount = layoutManager.getItemCount();
-            pastVisiblesItems = layoutManager.findFirstVisibleItemPosition();
+            firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
 
-            if ((!loading) && ((visibleItemCount + pastVisiblesItems) >= totalItemCount)) {
+            if ((!loading) && ((visibleItemCount + firstVisibleItem) >= totalItemCount)) {
                 loading = true;
 
-                if(mNextUrl != null && !mNextUrl.equalsIgnoreCase("null") && progressBarLL != null)
+                if (mNextUrl != null && !mNextUrl.equalsIgnoreCase("null") && progressBarLL != null)
                     progressBarLL.setVisibility(View.VISIBLE);
 
-                if(listener != null)
-                    listener.onEndReached(mNextUrl,listType);
+                if (listener != null)
+                    listener.onEndReached(mNextUrl, listType);
             }
 
             //  Check scrolled distance against the minimum
@@ -89,6 +88,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
                 Log.e("BaseFragment", "Component Visible : " + isVisible);
             }
         }
+
     };
 
     public abstract void show();

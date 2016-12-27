@@ -115,7 +115,6 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
                 if (StepByStepFragment.this.mIsFinished) {
                     inContextFragment.updateAndSetAnswer();
                     StepByStepFragment.this.mFinishTest();
-                    //StepByStepFragment.this.mNextButton.setEnabled(false);
                     return;
                 }
 
@@ -247,7 +246,14 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
             this.mViewPager.setAdapter(this.mQuestionAdapter);
 
         }else {
-            this.mStepByStepQuestions.addAll(stepByStepQuestion);
+            if(stepByStepQuestion != null) {
+                for (int i = 0; i < stepByStepQuestion.size(); i++) {
+                    StepByStepQuestion que = stepByStepQuestion.get(i);
+                    if(que == null )continue;
+                    this.mStepByStepQuestions.add(que);
+                }
+            }
+            //this.mStepByStepQuestions.addAll(stepByStepQuestion);
             this.mQuestionAdapter.notifyDataSetChanged();
         }
 
@@ -403,13 +409,4 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
         }
     }
 
-    public static JSONObject getAnswers()
-    {
-        return StepByStepFragment.mAnswersMap;
-    }
-
-    public static void resetAnswer()
-    {
-        StepByStepFragment.mAnswersMap = new JSONObject();
-    }
 }

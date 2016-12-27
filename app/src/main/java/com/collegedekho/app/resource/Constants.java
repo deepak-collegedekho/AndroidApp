@@ -181,6 +181,7 @@ public class Constants
     public static final String TAG_LOCATION_UPDATED = "tag_location_updated";
     public static final String TAG_LOAD_FEED = "tag_load_feed";
     public static final String TAG_REFRESHED_FEED = "tag_refreshed_feed";
+    public static final String TAG_LOAD_COUNSELOR_CHAT = "tag_load_counselor_chat";
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;
@@ -329,6 +330,9 @@ public class Constants
 
     public static final int CODE_FAILED = -1;
     public static final int CODE_SUCCESS = 0;
+
+    public static final int USER_COMMENT = 1;
+    public static final int ADMIN_COMMENT = 0;
 
     public static int PHONE_VERIFIED = 1;
 

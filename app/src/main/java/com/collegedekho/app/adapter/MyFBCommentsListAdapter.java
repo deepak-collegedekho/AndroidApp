@@ -1,7 +1,6 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
-import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -19,6 +18,7 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.MyFutureBuddyComment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
+import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.utils.Utils;
 import com.collegedekho.app.widget.CircularImageView;
@@ -72,16 +72,15 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         String simpleDate = "";
         String shortDate = "";
         String time = "";
-        String description = "";
         //set date
         try
         {
-            if (myFBComment.getAdded_on() != null)
+            String commentAddedDate = myFBComment.getAdded_on();
+            if (commentAddedDate != null)
             {
                 this.mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
                 this.mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-                Date date = this.mSDF.parse(myFBComment.getAdded_on());
+                Date date = this.mSDF.parse(commentAddedDate);
 
                 //Get Full date
                 this.mSDF.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
@@ -101,14 +100,17 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
                     myFBCommentsHolder.date.setText(String.valueOf(shortDate));
                 }
                 if(position >0 ) {
-                    Date prevDate = this.mSDF.parse(mMyFBCommentList.get(position -1).getAdded_on());
-                    String prevShortDate = this.mSDF.format(prevDate);
+                    String prevCommentDate = mMyFBCommentList.get(position -1).getAdded_on();
+                    if(prevCommentDate != null) {
+                        Date prevDate = this.mSDF.parse(prevCommentDate);
+                        String prevShortDate = this.mSDF.format(prevDate);
 
-                    if(!prevShortDate.equalsIgnoreCase(shortDate)) {
-                        myFBCommentsHolder.date.setVisibility(View.VISIBLE);
-                        myFBCommentsHolder.date.setText(String.valueOf(shortDate));
-                    } else {
-                        myFBCommentsHolder.date.setVisibility(View.GONE);
+                        if (!prevShortDate.equalsIgnoreCase(shortDate)) {
+                            myFBCommentsHolder.date.setVisibility(View.VISIBLE);
+                            myFBCommentsHolder.date.setText(String.valueOf(shortDate));
+                        } else {
+                            myFBCommentsHolder.date.setVisibility(View.GONE);
+                        }
                     }
                 }
             }
@@ -119,17 +121,26 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
         myFBCommentsHolder.dateAddedOn.setText(simpleDate);
         myFBCommentsHolder.time.setText(String.valueOf(time));
 
-        description = myFBComment.getComment();
+        // set Chat description
+        String commentToken = myFBComment.getToken();
+        if (commentToken == null || commentToken.isEmpty()){
+            int commentType = myFBComment.getIs_user();
+            if(commentType == Constants.USER_COMMENT){
+                setMyOwnComment(myFBCommentsHolder, myFBComment);
+            }else{
+                setOtherUsersComment(myFBCommentsHolder, myFBComment);
+            }
+        }else if(commentToken.equals(MainActivity.mProfile.getToken())) {
+            setMyOwnComment(myFBCommentsHolder, myFBComment);
+        } else {
+            setOtherUsersComment(myFBCommentsHolder, myFBComment);
+        }
 
-        //set comment
-        myFBCommentsHolder.commentText.setText(Html.fromHtml(description));
-        //myFBCommentsHolder.myFbCardLayout.getBackground().setAlpha(0);
+    }
 
-        if ((myFBComment.getToken()).equals(MainActivity.mProfile.getToken())) {
+    private void setMyOwnComment(MyFBCommentsHolder myFBCommentsHolder, MyFutureBuddyComment myFBComment){
 
-            description = "You said " + description;
-
-            myFBCommentsHolder.myFbCard.setCardBackgroundColor(this.mContext.getResources().getColor(R.color.self_comment_card_background));
+        myFBCommentsHolder.myFbCard.setCardBackgroundColor(this.mContext.getResources().getColor(R.color.self_comment_card_background));
 
             /*if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 myFBCommentsHolder.myFbCard.getBackground().setAlpha(0);
@@ -139,32 +150,40 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
                 myFBCommentsHolder.myFbCard.setCardBackgroundColor(this.mContext.getResources().getColor(R.color.self_comment_card_background));
             }*/
 
-            myFBCommentsHolder.myFbCardLayout.setGravity(Gravity.RIGHT);
-            int left = Utils.getPadding(mContext,10);
-            int right = Utils.getPadding(mContext,10);
-            int top = Utils.getPadding(mContext,5);
-            int bottom = Utils.getPadding(mContext,10);
+        myFBCommentsHolder.myFbCardLayout.setGravity(Gravity.RIGHT);
+        int left = Utils.getPadding(mContext,10);
+        int right = Utils.getPadding(mContext,10);
+        int top = Utils.getPadding(mContext,5);
+        int bottom = Utils.getPadding(mContext,10);
 
-            //myFBCommentsHolder.myFbCardLayout.setPadding(left,0,right,0);
-            myFBCommentsHolder.time.setPadding(left,0,right,bottom);
-            myFBCommentsHolder.time.setTextColor(this.mContext.getResources().getColor(R.color.chat_time_gray));
+        //myFBCommentsHolder.myFbCardLayout.setPadding(left,0,right,0);
+        myFBCommentsHolder.time.setPadding(left,0,right,bottom);
+        myFBCommentsHolder.time.setTextColor(this.mContext.getResources().getColor(R.color.chat_time_gray));
 
-            myFBCommentsHolder.mUserImageSelf.setVisibility(View.VISIBLE);
-            myFBCommentsHolder.mUserImageOther.setVisibility(View.GONE);
+        myFBCommentsHolder.mUserImageSelf.setVisibility(View.VISIBLE);
+        myFBCommentsHolder.mUserImageOther.setVisibility(View.GONE);
 
-            if (myFBComment.isCommentSent())
-                myFBCommentsHolder.mSentNotifier.setVisibility(View.VISIBLE);
+        if (myFBComment.isCommentSent())
+            myFBCommentsHolder.mSentNotifier.setVisibility(View.VISIBLE);
 
-            myFBCommentsHolder.userName.setPadding(left,top,right,0);
-            myFBCommentsHolder.userName.setVisibility(View.VISIBLE);
-            myFBCommentsHolder.userName.setText(myFBComment.getUser());
-            myFBCommentsHolder.setIsRecyclable(false);
+        myFBCommentsHolder.userName.setPadding(left,top,right,0);
+        myFBCommentsHolder.userName.setVisibility(View.VISIBLE);
+        myFBCommentsHolder.userName.setText(myFBComment.getUser());
+        myFBCommentsHolder.setIsRecyclable(false);
 
-            updateUserImage(myFBComment.getUser_image(), myFBCommentsHolder.mUserImageSelf);
-            myFBCommentsHolder.mUserImageOther.setPadding(left,0,right,0);
-        } else {
+        updateUserImage(myFBComment.getUser_image(), myFBCommentsHolder.mUserImageSelf);
+        myFBCommentsHolder.mUserImageOther.setPadding(left,0,right,0);
 
-            myFBCommentsHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
+        String description = myFBComment.getComment();
+        //set comment
+        myFBCommentsHolder.commentText.setText(Html.fromHtml(description));
+        description = "You said " + description;
+        myFBCommentsHolder.mContainer.setContentDescription(description);
+    }
+
+    private void setOtherUsersComment(MyFBCommentsHolder myFBCommentsHolder, MyFutureBuddyComment myFBComment){
+
+        myFBCommentsHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
 
             /*if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 myFBCommentsHolder.myFbCard.setBackgroundResource(R.drawable.chat_bg);
@@ -172,45 +191,29 @@ public class MyFBCommentsListAdapter extends RecyclerView.Adapter {
                 myFBCommentsHolder.myFbCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
             }*/
 
-            int left = Utils.getPadding(mContext,10);
-            int right = Utils.getPadding(mContext,10);
-            int top = Utils.getPadding(mContext,5);
-            int bottom = Utils.getPadding(mContext,10);
+        int left = Utils.getPadding(mContext,10);
+        int right = Utils.getPadding(mContext,10);
+        int top = Utils.getPadding(mContext,5);
+        int bottom = Utils.getPadding(mContext,10);
 
-            myFBCommentsHolder.mUserImageOther.setPadding(0,top,0,0);
-            myFBCommentsHolder.mUserImageSelf.setPadding(0,top,0,0);
-            myFBCommentsHolder.userName.setPadding(left,top,right,0);
-            myFBCommentsHolder.time.setPadding(left,0,right,bottom);
-            myFBCommentsHolder.time.setTextColor(mContext.getResources().getColor(R.color.chat_time_gray));
-            myFBCommentsHolder.userName.setText(myFBComment.getUser());
+        myFBCommentsHolder.mUserImageOther.setPadding(0,top,0,0);
+        myFBCommentsHolder.mUserImageSelf.setPadding(0,top,0,0);
+        myFBCommentsHolder.userName.setPadding(left,top,right,0);
+        myFBCommentsHolder.time.setPadding(left,0,right,bottom);
+        myFBCommentsHolder.time.setTextColor(mContext.getResources().getColor(R.color.chat_time_gray));
+        myFBCommentsHolder.userName.setText(myFBComment.getUser());
 
-            description = myFBComment.getUser() + " " + description;
+        myFBCommentsHolder.mUserImageSelf.setVisibility(View.GONE);
+        myFBCommentsHolder.mUserImageOther.setVisibility(View.VISIBLE);
+        myFBCommentsHolder.mSentNotifier.setVisibility(View.GONE);
+        updateUserImage(myFBComment.getUser_image(), myFBCommentsHolder.mUserImageOther);
+        myFBCommentsHolder.mUserImageOther.setPadding(left,top,right,0);
 
-            myFBCommentsHolder.mUserImageSelf.setVisibility(View.GONE);
-            myFBCommentsHolder.mUserImageOther.setVisibility(View.VISIBLE);
-            myFBCommentsHolder.mSentNotifier.setVisibility(View.GONE);
-            updateUserImage(myFBComment.getUser_image(), myFBCommentsHolder.mUserImageOther);
-            myFBCommentsHolder.mUserImageOther.setPadding(left,top,right,0);
-        }
-
+        String description = myFBComment.getComment();
+        //set comment
+        myFBCommentsHolder.commentText.setText(Html.fromHtml(description));
+        description = myFBComment.getUser() + " " + description;
         myFBCommentsHolder.mContainer.setContentDescription(description);
-
-        //this is to increase the height of comment holder
-        //textview so that height of card view is increased
-        /*new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) myFBCommentsHolder.myFbCard.getLayoutParams();
-
-                myFBCommentsHolder.commentText.measure(0, 0);
-                int h = myFBCommentsHolder.commentText.getHeight();
-
-                layoutParams.height = h + 350;
-                layoutParams.width = layoutParams.width + 1 - 1;
-
-                myFBCommentsHolder.myFbCard.setLayoutParams(layoutParams);
-            }
-        }, 50);*/
     }
 
     private void updateUserImage(String image, CircularImageView imageView){

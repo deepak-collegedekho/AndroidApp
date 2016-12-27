@@ -30,4 +30,9 @@
         </menu>
     </item>
 
+    <item
+        android:id="@+id/about_app"
+        android:icon="@drawable/ic_about"
+        android:title="About" />
+
 </menu>

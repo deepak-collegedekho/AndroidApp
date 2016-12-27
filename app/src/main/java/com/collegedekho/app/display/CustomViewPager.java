@@ -22,7 +22,7 @@ public class CustomViewPager extends ViewPager {
     public void draw(Canvas canvas) {
         try {
             super.draw(canvas);
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             Log.d("CustomViewPager", "Null Pointer Exception skipped");
         }
     }

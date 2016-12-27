@@ -25,9 +25,7 @@ import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by {Bashir} on {11/2/16}.
@@ -167,7 +165,7 @@ public class InstituteVideosFragment extends BaseFragment {
         }
 
         @Override
-        public void onBindViewHolder(VideoListViewHolder holder, int position) {
+        public void onBindViewHolder(VideoListViewHolder holder, int position)  {
             final VideoEntry entry = videoList.get(position);
             int state = (int) holder.thumbnail.getTag(R.id.initialize);
 

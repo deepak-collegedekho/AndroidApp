@@ -16,6 +16,10 @@ import com.collegedekho.app.utils.NetworkUtils;
 import com.robinhood.ticker.TickerUtils;
 import com.robinhood.ticker.TickerView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  *Created by ${sureshsaini} on ${20/11/15}.
  */
@@ -23,7 +27,28 @@ public class SplashLoginFragment extends  BaseFragment {
 
     private static final char[] NUMBER_LIST = TickerUtils.getDefaultNumberList();
     private OnSplashLoginListener mListener;
-    private TickerView mInstituteCountTicker ;
+    private Unbinder mUnBinder;
+    @BindView(R.id.institute_count_ticker)
+    TickerView mInstituteCountTicker;
+
+    @BindView(R.id.institute_count_ticker1)
+    TickerView mInstituteCountTicker1;
+
+    @BindView(R.id.institute_count_ticker2)
+    TickerView mInstituteCountTicker2 ;
+
+    @BindView(R.id.institute_count_ticker3)
+    TickerView mInstituteCountTicker3;
+
+    @BindView(R.id.institute_count_ticker4)
+    TickerView mInstituteCountTicker4;
+
+    @BindView(R.id.institute_count_ticker5)
+    TickerView mInstituteCountTicker5;
+
+    @BindView(R.id.institute_count_ticker_plus)
+    TickerView mInstituteCountTickerPlus;
+
 
     public static SplashLoginFragment newInstance() {
         return new SplashLoginFragment();
@@ -35,20 +60,15 @@ public class SplashLoginFragment extends  BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-       return  inflater.inflate(R.layout.fragment_splash_login, container, false);
+       View view = inflater.inflate(R.layout.fragment_splash_login, container, false);
+        mUnBinder = ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TickerView mInstituteCountTicker = (TickerView) view.findViewById(R.id.institute_count_ticker);
-        TickerView mInstituteCountTicker1 = (TickerView) view.findViewById(R.id.institute_count_ticker1);
-        TickerView mInstituteCountTicker2 = (TickerView) view.findViewById(R.id.institute_count_ticker2);
-        TickerView mInstituteCountTicker3 = (TickerView) view.findViewById(R.id.institute_count_ticker3);
-        TickerView mInstituteCountTicker4 = (TickerView) view.findViewById(R.id.institute_count_ticker4);
-        TickerView mInstituteCountTicker5 = (TickerView) view.findViewById(R.id.institute_count_ticker5);
-        TickerView mInstituteCountTickerPlus = (TickerView) view.findViewById(R.id.institute_count_ticker_plus);
         mInstituteCountTicker.setCharacterList(NUMBER_LIST);
         mInstituteCountTicker1.setCharacterList(NUMBER_LIST);
         mInstituteCountTicker2.setCharacterList(NUMBER_LIST);
@@ -93,13 +113,6 @@ public class SplashLoginFragment extends  BaseFragment {
     private void updateTickerValue(String value1,String value2, String value3, String value4, String value5 ) {
         View v = getView();
         if(v != null) {
-            TickerView mInstituteCountTicker = (TickerView) v.findViewById(R.id.institute_count_ticker);
-            TickerView mInstituteCountTicker1 = (TickerView) v.findViewById(R.id.institute_count_ticker1);
-            TickerView mInstituteCountTicker2 = (TickerView) v.findViewById(R.id.institute_count_ticker2);
-            TickerView mInstituteCountTicker3 = (TickerView) v.findViewById(R.id.institute_count_ticker3);
-            TickerView mInstituteCountTicker4 = (TickerView) v.findViewById(R.id.institute_count_ticker4);
-            TickerView mInstituteCountTicker5 = (TickerView) v.findViewById(R.id.institute_count_ticker5);
-
             mInstituteCountTicker.setText("1");
             mInstituteCountTicker1.setText(value1);
             mInstituteCountTicker2.setText(value2);
@@ -125,6 +138,8 @@ public class SplashLoginFragment extends  BaseFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        if(mUnBinder != null)
+            mUnBinder.unbind();
     }
 
     @Override

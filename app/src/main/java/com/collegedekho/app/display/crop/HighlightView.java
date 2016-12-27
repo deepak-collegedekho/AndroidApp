@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.collegedekho.app.crop;
+package com.collegedekho.app.display.crop;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

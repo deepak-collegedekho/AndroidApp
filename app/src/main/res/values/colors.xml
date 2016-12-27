@@ -22,6 +22,7 @@
     <color name="bg_divider">#4c000000</color>
     <color name="primary_color_100">#E8E9EE</color>
     <color name="white">#fff</color>
+    <color name="white_line">#dfdfdf</color>
     <color name="off_white">#dfd9d7</color>
     <color name="black">#000</color>
     <color name="text_lightest_grey">#aca9a9</color>

@@ -38,6 +38,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.collegedekho.app.activity.MainActivity.mProfile;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link InstituteDetailFragment#newInstance} factory method to
@@ -153,7 +155,14 @@ public class InstituteDetailFragment extends BaseFragment {
                 @Override
                 public void onClick(View view) {
                     //Call intent
-                    Uri number = Uri.parse("tel:" + InstituteDetailFragment.this.mInstitute.getL3_number());
+                    String contactNumber =  InstituteDetailFragment.this.mInstitute.getL3_number();
+                    if(MainActivity.mProfile != null) {
+                        String contact = mProfile.getCounselor_contact_no();
+                        if (contact != null && !contact.isEmpty()) {
+                          contactNumber = contact;
+                        }
+                    }
+                    Uri number = Uri.parse("tel:" +contactNumber);
                     Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
                     InstituteDetailFragment.this.getActivity().startActivity(callIntent);
                 }

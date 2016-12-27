@@ -1,4 +1,4 @@
-package com.collegedekho.app.crop;
+package com.collegedekho.app.display.crop;
 
 import android.annotation.TargetApi;
 import android.app.Activity;

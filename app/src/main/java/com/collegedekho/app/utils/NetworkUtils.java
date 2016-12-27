@@ -419,6 +419,9 @@ public class NetworkUtils {
 
     public void networkData(String tag, String url, Map<String, String> params, int method)
     {
+        if(url == null || url.isEmpty()){
+            return;
+        }
         switch (method) {
             case Request.Method.GET:
             case Request.Method.DELETE:

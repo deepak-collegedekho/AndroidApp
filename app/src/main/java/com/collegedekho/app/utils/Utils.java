@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -669,10 +670,7 @@ public class Utils {
         alertDialog.show();
     }
 
-    public static int getToolbarHeight(Context context) {
-        int height = (int) context.getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
-        return height;
-    }
+
 
     /*
     *
@@ -747,5 +745,17 @@ public class Utils {
         }
 
         return params;
+    }
+   /* public static int getToolbarHeight(Context context) {
+        int height = (int) context.getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
+        return height;
+    }*/
+    public static int getToolbarHeight(Context context) {
+        final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.actionBarSize});
+        int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
+
+        return toolbarHeight;
     }
 }

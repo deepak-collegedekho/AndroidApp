@@ -18,21 +18,25 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/ic_splash</item>
+    </style>
+
     <style name="NotificationExpandedTitle" parent="@android:style/TextAppearance.Medium">
         <item name="android:textSize">@dimen/notification_title_text_size</item>
-        <item name="android:textColor">#ffffffff</item>
+        <item name="android:textColor">#ffffff</item>
     </style>
 
 
     <!--<style name="myToolbarNavigationButtonStyle" parent="@style/Widget.AppCompat.Toolbar.Button.Navigation">-->
-        <!--<item name="android:minWidth">0dp</item>-->
-        <!--<item name="android:padding">10dp</item>-->
-        <!--<item name="android:scaleType">centerInside</item>-->
+    <!--<item name="android:minWidth">0dp</item>-->
+    <!--<item name="android:padding">10dp</item>-->
+    <!--<item name="android:scaleType">centerInside</item>-->
     <!--</style>-->
 
     <!--<style name="myToolbarStyle" parent="@style/Widget.AppCompat.Toolbar">-->
-        <!--<item name="android:paddingRight">0dp</item>-->
-        <!--<item name="android:paddingLeft">0dp</item>-->
+    <!--<item name="android:paddingRight">0dp</item>-->
+    <!--<item name="android:paddingLeft">0dp</item>-->
     <!--</style>-->
 
 

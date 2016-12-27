@@ -76,6 +76,9 @@ public class MyFutureBuddiesFragment extends BaseFragment{
             this.mMyFutureBuddies = this.getArguments().getParcelable(ARG_PARAM1);
             this.mInitialCount = this.getArguments().getInt(ARG_PARAM2);
             this.mMyFBCommentsSet = this.mMyFutureBuddies.getFutureBuddiesCommentsSet();
+            if(this.mMyFBCommentsSet == null){
+                this.mMyFBCommentsSet = new ArrayList<>();
+            }
             this.mOtherAppSharedMessage = null;
         }
     }
@@ -323,7 +326,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                         if (Constants.IS_CONNECTED_TO_INTERNET)
                             MainActivity.mNetworkUtils.networkData(Constants.TAG_REFRESH_MY_FB + "#"
                                     + String.valueOf(mMyFutureBuddies.getIndex()) + "#" + String.valueOf(MyFutureBuddiesFragment.this.mInitialCount)
-                                    /*String.valueOf(mMyFBCommentsSet.size())*/, mMyFutureBuddies.getResource_uri(), null, Request.Method.GET);
+                                    , mMyFutureBuddies.getResource_uri(), null, Request.Method.GET);
                         //else
                         //Toast.makeText(mMainActivity, "Please connect to internet to receive messages..", Toast.LENGTH_SHORT).show();
                     }
@@ -352,9 +355,11 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     public void onStart() {
         super.onStart();
         String resourceURI = this.mMyFutureBuddies.getResource_uri();
-        String[] resourceURIArray = resourceURI.split("/");
-        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_MY_FB_ENUMERATION + "/personalize/forums/" + resourceURIArray[resourceURIArray.length - 1]);
-        AnalyticsUtils.AppIndexingView("CollegeDekho - MyFutureBuddy - " + this.mMyFutureBuddies.getInstitute_name(), val, val, (MainActivity) this.getActivity(), true);
+        if (resourceURI != null) {
+            String[] resourceURIArray = resourceURI.split("/");
+            Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_MY_FB_ENUMERATION + "/personalize/forums/" + resourceURIArray[resourceURIArray.length - 1]);
+            AnalyticsUtils.AppIndexingView("CollegeDekho - MyFutureBuddy - " + this.mMyFutureBuddies.getInstitute_name(), val, val, (MainActivity) this.getActivity(), true);
+        }
     }
 
     @Override
@@ -362,9 +367,11 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         super.onStop();
 
         String resourceURI = this.mMyFutureBuddies.getResource_uri();
-        String[] resourceURIArray = resourceURI.split("/");
-        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_MY_FB_ENUMERATION + "/personalize/forums/" + resourceURIArray[resourceURIArray.length - 1]);
-        AnalyticsUtils.AppIndexingView("CollegeDekho - MyFutureBuddy - " + this.mMyFutureBuddies.getInstitute_name(), val, val, (MainActivity) this.getActivity(), false);
+        if (resourceURI != null) {
+            String[] resourceURIArray = resourceURI.split("/");
+            Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_MY_FB_ENUMERATION + "/personalize/forums/" + resourceURIArray[resourceURIArray.length - 1]);
+            AnalyticsUtils.AppIndexingView("CollegeDekho - MyFutureBuddy - " + this.mMyFutureBuddies.getInstitute_name(), val, val, (MainActivity) this.getActivity(), false);
+        }
     }
 
     public void commentAdded(MyFutureBuddyComment comment)

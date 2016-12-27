@@ -66,6 +66,9 @@ public class HomeFragment extends BaseFragment {
                 //events params
                 Map<String, Object> eventValue = new HashMap<>();
                 String val = "";
+                if(getActivity() != null){
+                    ((MainActivity)getActivity()).mHideCounselorMenu();
+                }
 
                 switch(position) {
                     case 0:
@@ -199,10 +202,22 @@ public class HomeFragment extends BaseFragment {
             mainActivity.invalidateOptionsMenu();
         }
 
-        if (this.mSelectedTabPosition == -1)
+        if (this.mSelectedTabPosition <= 0) {
             this.mMarkTabAsSelected(0);
-        else
+            if(mainActivity != null)
+                mainActivity.setToolBarScrollable(true);
+        }else {
             this.mMarkTabAsSelected(this.mSelectedTabPosition);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        MainActivity mainActivity = (MainActivity)getActivity();
+        if(mainActivity != null)
+            mainActivity.setToolBarScrollable(false);
     }
 
     /**
@@ -289,6 +304,9 @@ public class HomeFragment extends BaseFragment {
            mMarkTabAsSelected(position);
             this.mViewPager.setCurrentItem(position);
         }
+    }
+    public int  getSelectedPage() {
+        return mViewPager.getCurrentItem();
     }
 
     public void updateExamSummary(ExamSummary updateExamSummary) {

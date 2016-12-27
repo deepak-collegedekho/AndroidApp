@@ -109,7 +109,7 @@ public class WishlistFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_wishlist, container, false);
 
-        boolean isTuteCompleted = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
+        boolean isTuteCompleted = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.WISHLIST_TUTE), false);
         if(!isTuteCompleted) {
             rootView.findViewById(R.id.recommended_tute_image).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.VISIBLE);
@@ -158,7 +158,7 @@ public class WishlistFragment extends BaseFragment {
                     getView().findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
                     getView().findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
                 }
-                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean("Wishlist tute", true).apply();
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.WISHLIST_TUTE), true).apply();
                 getActivity().invalidateOptionsMenu();
                 break;
         }
@@ -263,12 +263,11 @@ public class WishlistFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         this.peekAndPop.destroy();
-        //this.mMainActivity.setCurrentInstitute(null);
-        Institute institute = this.mMainActivity.getCurrentInstitute();
-
-        if (institute != null)
-            institute.setPosition(-1);
-
+        if(this.mMainActivity != null) {
+            Institute institute = this.mMainActivity.getCurrentInstitute();
+            if (institute != null)
+                institute.setPosition(-1);
+        }
         super.onDestroy();
     }
 

@@ -49,6 +49,8 @@ public class SubLevelAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
+        if(position > mSublevelList.size()-1)
+            position =0;
         return mSublevelList.get(position).getId();
     }
 
@@ -71,7 +73,7 @@ public class SubLevelAdapter extends BaseAdapter {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    ((ProfileBuildingFragment) mListener).onSubLevelSelected(position);
+                    mListener.onSubLevelSelected(position);
                 }
             }
         });

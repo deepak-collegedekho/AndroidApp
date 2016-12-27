@@ -205,7 +205,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
      * */
     private void mAddCardInAdapter(List<Institute> list)
     {
-        final  ArrayList<CardModel> modelArrayList = new ArrayList<>();
+         ArrayList<CardModel> modelArrayList = new ArrayList<>();
         for (int i = list.size() - 1; i >= 0; i--)
         {
             CardModel  model = new CardModel(list.get(i), this.getActivity());
@@ -414,7 +414,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     {
         if (getActivity() != null)
         {
-            //((MainActivity) getActivity()).setCurrentInstitute(null);
             Institute institute = ((MainActivity) getActivity()).getCurrentInstitute();
             if (institute != null)
                 institute.setPosition(-1);
@@ -433,7 +432,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                     getView().findViewById(R.id.wishlist_tute_image).setVisibility(View.GONE);
                     getView().findViewById(R.id.wishlist_tute_frame).setVisibility(View.GONE);
                 }
-                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean("Wishlist tute", true).apply();
+                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.WISHLIST_TUTE), true).apply();
                 getActivity().invalidateOptionsMenu();
                 break;
             case R.id.badge_counter_layout:
@@ -483,7 +482,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 break;
             case R.id.tab_wishlist:
                 mNoMoreFeaturedLayout.setVisibility(View.GONE);
-                this.IS_WISHLIST_TUTE_COMPLETED= getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean("Wishlist tute", false);
+                this.IS_WISHLIST_TUTE_COMPLETED= getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).getBoolean(getString(R.string.WISHLIST_TUTE), false);
                 View view = getView();
                 currentTabId = 2;
                 if(view != null){
@@ -971,7 +970,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
     public void UpdateAppliedStatus(int position) {
         this.mInstitutes.get(position).setIs_applied(true);
-        this.mWishlistInstituteListAdapter.notifyItemChanged(position);
+       // this.mWishlistInstituteListAdapter.notifyItemChanged(position);// crash due to this line commented by suresh
         this.mWishlistInstituteListAdapter.notifyDataSetChanged();
     }
 

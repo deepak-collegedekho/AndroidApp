@@ -8,8 +8,7 @@
     android:paddingBottom="@dimen/m16dp"
     android:paddingLeft="@dimen/m16dp"
     android:paddingRight="@dimen/m16dp"
-    android:paddingTop="@dimen/m40dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:paddingTop="@dimen/m40dp">
 
     <include
         android:id="@id/user_profile_image_update"
@@ -25,8 +24,7 @@
         android:layout_height="35dp"
         android:layout_marginTop="@dimen/m10dp"
         android:text="@string/ANONYMOUS_USER"
-        android:gravity="center|left"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:gravity="center|left" />
 
 
 </LinearLayout>

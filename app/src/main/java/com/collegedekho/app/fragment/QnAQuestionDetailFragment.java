@@ -39,6 +39,7 @@ import java.util.TimeZone;
 
 public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnClickListener {
     private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
     private final String TAG = "QuestionDetail Fragment";
     private QnAQuestions mQnAQuestion;
     private ArrayList<QnAAnswers> mQnAAnswersSet;
@@ -52,15 +53,17 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
     private volatile SimpleDateFormat mSDF;
     private View mAnswerQuestionFAB;
     private EditText mAnswerETV;
+    private int mQnAPosition;
 
     public QnAQuestionDetailFragment() {
         // Required empty public constructor
     }
 
-    public static QnAQuestionDetailFragment newInstance(QnAQuestions qnaQuestionAnswers) {
+    public static QnAQuestionDetailFragment newInstance(QnAQuestions qnaQuestionAnswers, int position) {
         QnAQuestionDetailFragment fragment = new QnAQuestionDetailFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_PARAM1, qnaQuestionAnswers);
+        args.putInt(ARG_PARAM2, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,6 +74,7 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.mQnAQuestion = getArguments().getParcelable(ARG_PARAM1);
+            this.mQnAPosition = getArguments().getInt(ARG_PARAM2);
             if(this.mQnAQuestion!=null) {
                 this.mQnAAnswersSet = mQnAQuestion.getAnswer_set();
             }
@@ -80,8 +84,7 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_qna_question_detail, container, false);
     }
 
@@ -190,7 +193,7 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
             }
         });
 
-        this.mQnAAnswersListAdapter = new QnAAnswersListAdapter(getActivity(), mQnAAnswersSet);
+        this.mQnAAnswersListAdapter = new QnAAnswersListAdapter(getActivity(), mQnAAnswersSet, mQnAPosition);
         this.mAnswersListView = (RecyclerView) rootView.findViewById(R.id.qna_answers_list);
         this.mAnswersListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         this.mAnswersListView.setAdapter(this.mQnAAnswersListAdapter);

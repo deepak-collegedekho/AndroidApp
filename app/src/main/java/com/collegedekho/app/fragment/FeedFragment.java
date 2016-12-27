@@ -16,6 +16,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.adapter.FeedAdapter;
 import com.collegedekho.app.entities.Feed;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,15 +99,13 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         }else{
             this.mFeedAdapter.updateFeedList(this.mFeedList);
         }
+
         super.layoutManager = new LinearLayoutManager(this.getContext());
         this.mFeedRecyclerView.setLayoutManager(super.layoutManager);
         this.mFeedRecyclerView.setAdapter(this.mFeedAdapter);
         this.mFeedRecyclerView.setItemAnimator(new DefaultItemAnimator());
         this.mFeedRecyclerView.addOnScrollListener(super.scrollListener);
-
         super.mNextUrl = this.mFeedFragmentNextURL;
-
-
         return rootView;
     }
 
@@ -152,7 +151,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        if(super.listener != null)
+        if(super.listener != null && NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED)
             ((onFeedInteractionListener) super.listener).onFeedRefreshed(Constants.TAG_REFRESHED_FEED, Constants.BASE_URL + "feeds/");
     }
 
@@ -179,10 +178,8 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             if(this.mFeedList == null) {
                 this.mFeedList = new ArrayList<>();
             }
-
             this.mFeedList.addAll(feedList);
             this.mFeedAdapter.updateFeedList(this.mFeedList);
-
             super.mNextUrl = this.mFeedFragmentNextURL = next;
         }
     }
@@ -190,11 +187,9 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        /*if (isVisibleToUser && this.getActivity() != null)
-        {
-            if (this.mFeedList == null || this.mFeedList.size() == 0)
-                ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
-        }*/
+        if(getActivity() != null){
+            ((MainActivity)getActivity()).setToolBarScrollable(isVisibleToUser);
+        }
     }
 
     /**

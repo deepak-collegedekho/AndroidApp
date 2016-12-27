@@ -3,6 +3,7 @@ package com.collegedekho.app.adapter;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -165,6 +166,7 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
                     viewToAnimate.startAnimation(mAnimFromRight);
                 }
             } else {
+                Log.e(TAG, "hiiiiiiiii  "+position);
                 viewToAnimate.startAnimation(mAnimFromLeft);
             }
             lastPosition = position;
@@ -247,8 +249,10 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
                     }
                     break;
                 case R.id.layout_item_expand:
-                case R.id.qna_card_container:
-                    mListener.onQnAQuestionSelected(mQnAQuestions.get(getAdapterPosition()));
+                case R.id.qna_card_container: {
+                    int qnaPosition = getAdapterPosition();
+                    mListener.onQnAQuestionSelected(mQnAQuestions.get(qnaPosition), qnaPosition);
+                }
                     break;
             }
         }

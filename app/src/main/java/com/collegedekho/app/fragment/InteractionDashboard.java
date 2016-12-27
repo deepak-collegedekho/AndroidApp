@@ -16,7 +16,6 @@ import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.listener.DashBoardItemListener;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
 
@@ -93,6 +92,8 @@ public class InteractionDashboard extends BaseFragment {
 
         TextView mProfileName = (TextView) view.findViewById(R.id.user_name);
         TextView mProfileNumber = (TextView) view.findViewById(R.id.user_phone);
+        mProfileName.setOnClickListener(this);
+        mProfileNumber.setOnClickListener(this);
         mProfileName.setVisibility(View.VISIBLE);
         mProfileNumber.setVisibility(View.VISIBLE);
 
@@ -128,12 +129,10 @@ public class InteractionDashboard extends BaseFragment {
     public void onClick(View view) {
         super.onClick(view);
         switch (view.getId()) {
+            case R.id.user_name:
+            case R.id.user_phone:
             case R.id.profile_image:
             case R.id.profile_image_edit_button:
-                if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
-                    ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
-                    return;
-                }
                 this.mListener.requestForProfileFragment();
                 break;
             case R.id.btn_tab_psychometric_test:
@@ -178,10 +177,10 @@ public class InteractionDashboard extends BaseFragment {
     private void mUpdateSubMenuItem(View view){
         if(view ==   null)    return;
 
-        TextView firstSubMenuTV       = (TextView)view.findViewById(R.id.home_widget_textview_first);
-        TextView secondSubMenuTV   = (TextView)view.findViewById(R.id.home_widget_textview_second);
-        ImageView firstSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_first);
-        ImageView secondSubMenuIV     = (ImageView)view.findViewById(R.id.home_widget_image_second);
+        TextView firstSubMenuTV     = (TextView)view.findViewById(R.id.home_widget_textview_first);
+        TextView secondSubMenuTV    = (TextView)view.findViewById(R.id.home_widget_textview_second);
+        ImageView firstSubMenuIV    = (ImageView)view.findViewById(R.id.home_widget_image_first);
+        ImageView secondSubMenuIV   = (ImageView)view.findViewById(R.id.home_widget_image_second);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
         boolean IsTutECompleted = sharedPreferences.getBoolean(getString(R.string.INTERACTION_HOME_TUTE), false);
@@ -192,14 +191,12 @@ public class InteractionDashboard extends BaseFragment {
         }
         view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
 
-        firstSubMenuIV.setImageResource(R.drawable.ic_chat_bubble_widget);
+        firstSubMenuIV.setImageResource(R.drawable.ic_chat_bubble_40dp);
         secondSubMenuIV.setImageResource(R.drawable.ic_qna);
         firstSubMenuTV.setText("Future Buddies");
         firstSubMenuTV.setContentDescription("Click to chat with your Future mates");
         secondSubMenuTV.setText("Q & A");
         secondSubMenuTV.setContentDescription("Click to ask questions");
-
-
     }
 
     @Override

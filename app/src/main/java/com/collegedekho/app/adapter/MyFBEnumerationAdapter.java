@@ -74,7 +74,7 @@ public class MyFBEnumerationAdapter extends RecyclerView.Adapter {
         if(myFBEnumeration.getUnread_count() > 0) {
             myFBEnumerationHolder.unreadCountLayout.setVisibility(View.VISIBLE);
             myFBEnumerationHolder.unreadCount.setVisibility(View.VISIBLE);
-            myFBEnumerationHolder.unreadCount.setText(""+myFBEnumeration.getUnread_count());
+            myFBEnumerationHolder.unreadCount.setText(String.valueOf(myFBEnumeration.getUnread_count()));
         } else{
             myFBEnumerationHolder.unreadCountLayout.setVisibility(View.GONE);
             myFBEnumerationHolder.unreadCount.setVisibility(View.GONE);

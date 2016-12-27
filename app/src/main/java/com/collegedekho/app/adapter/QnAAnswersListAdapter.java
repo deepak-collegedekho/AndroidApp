@@ -38,14 +38,16 @@ import java.util.TimeZone;
 public class QnAAnswersListAdapter extends RecyclerView.Adapter {
 
     private static final String TAG = "QnAQuestionsListAdapter";
+    private final int mQnAPosition;
     private ArrayList<QnAAnswers> mQnAQuestionAnswers;
     private Context mContext;
     private volatile SimpleDateFormat mSDF;
     private ImageLoader mImageLoader;
 
-    public QnAAnswersListAdapter(Context context, ArrayList<QnAAnswers> qnaQuestionAnswers) {
+    public QnAAnswersListAdapter(Context context, ArrayList<QnAAnswers> qnaQuestionAnswers, int mQnAPosition) {
         mQnAQuestionAnswers = qnaQuestionAnswers;
         mContext = context;
+        this.mQnAPosition = mQnAPosition;
         mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
         mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
         mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
@@ -178,14 +180,15 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
                             }else{
                                 answerDownvoteButton.setClickable(false);
                                 if(qnAAnswer.getCurrent_user_vote_type() == Constants.LIKE_THING) {
-                                    mListener.onQnAAnswerVote( Constants.NOT_INTERESTED_THING, position, qnAAnswer.getQuestionIndex());
+                                    mListener.onQnAAnswerVote( Constants.NOT_INTERESTED_THING, position, mQnAPosition);
                                 }else{
-                                    mListener.onQnAAnswerVote( Constants.DISLIKE_THING, position, qnAAnswer.getQuestionIndex());
+                                    mListener.onQnAAnswerVote( Constants.DISLIKE_THING, position, mQnAPosition);
                                 }
                             }
                         }
                     }else {
                         this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
+
                     }
                     break;
 
@@ -201,10 +204,10 @@ public class QnAAnswersListAdapter extends RecyclerView.Adapter {
                             } else {
                                 answerUpvoteButton.setClickable(false);
                                 if (qnAAnswer.getCurrent_user_vote_type() == Constants.DISLIKE_THING) {
-                                    mListener.onQnAAnswerVote(Constants.NOT_INTERESTED_THING, position, qnAAnswer.getQuestionIndex());
+                                    mListener.onQnAAnswerVote(Constants.NOT_INTERESTED_THING, position, mQnAPosition);
 
                                 } else {
-                                    mListener.onQnAAnswerVote(Constants.LIKE_THING, position, qnAAnswer.getQuestionIndex());
+                                    mListener.onQnAAnswerVote(Constants.LIKE_THING, position, mQnAPosition);
                                 }
                             }
                         }

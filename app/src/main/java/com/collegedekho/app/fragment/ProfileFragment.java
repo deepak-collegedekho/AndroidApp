@@ -1,6 +1,8 @@
 package com.collegedekho.app.fragment;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.ComponentName;
 import android.content.Context;
@@ -36,7 +38,7 @@ import android.widget.TextView;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
-import com.collegedekho.app.crop.Crop;
+import com.collegedekho.app.display.crop.Crop;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.entities.ProfileExam;
 import com.collegedekho.app.entities.ProfileSpinnerItem;
@@ -587,23 +589,23 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 View view = mRootView.findViewById(R.id.profile_expanded_info_layout);
                 if(view.getVisibility()== View.VISIBLE) {
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_info_btn)).setImageDrawable(mPlusDrawable);
-                    view.setVisibility(View.GONE);
                     mRootView.findViewById(R.id.profile_expand_info_btn).setContentDescription("Click to collapse your general profile information");
+                    hideViewWithAnimation(view);
                 }else {
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_info_btn)).setImageDrawable(mMinusDrawable);
-                    view.setVisibility(View.VISIBLE);
                     mRootView.findViewById(R.id.profile_expand_info_btn).setContentDescription("Click to expand your general profile information");
+                    showViewWithAnimation(view);
                 }
                 break;
             case R.id.profile_expand_education_btn:
                 view = mRootView.findViewById(R.id.profile_expanded_education_layout);
                 if(view.getVisibility()== View.VISIBLE) {
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_education_btn)).setImageDrawable(mPlusDrawable);
-                    view.setVisibility(View.GONE);
+                    hideViewWithAnimation(view);
                     mRootView.findViewById(R.id.profile_expand_education_btn).setContentDescription("Click to collapse your current education information");
                 }else {
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_education_btn)).setImageDrawable(mMinusDrawable);
-                    view.setVisibility(View.VISIBLE);
+                    showViewWithAnimation(view);
                     mRootView.findViewById(R.id.profile_expand_education_btn).setContentDescription("Click to expand your current education information");
                 }
                 break;
@@ -612,11 +614,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 if(view.getVisibility()== View.VISIBLE) {
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_preferred_btn)).setImageDrawable(mPlusDrawable);
                     setPreferredEducationInfo(false);
-                    view.setVisibility(View.GONE);
+                    hideViewWithAnimation(view);
                     mRootView.findViewById(R.id.profile_expand_preferred_btn).setContentDescription("Click to collapse your profile preferences");
                    } else {
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_preferred_btn)).setImageDrawable(mMinusDrawable);
-                    view.setVisibility(View.VISIBLE);
+                    showViewWithAnimation(view);
                     setPreferredEducationInfo(true);
                     mRootView.findViewById(R.id.profile_expand_preferred_btn).setContentDescription("Click to expand your profile preferences");
                 }
@@ -636,12 +638,12 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
                 view = mRootView.findViewById(R.id.profile_expanded_other_info_layout);
                 if(view.getVisibility()== View.VISIBLE) {
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_other_info_btn)).setImageDrawable(mPlusDrawable);
-                    view.setVisibility(View.GONE);
+                    hideViewWithAnimation(view);
                     v.setScaleY(1f);
                     mRootView.findViewById(R.id.profile_expand_other_info_btn).setContentDescription("Click to collapse miscellaneous profile information");
                 }else {
                     ((ImageView)mRootView.findViewById(R.id.profile_expand_other_info_btn)).setImageDrawable(mMinusDrawable);
-                    view.setVisibility(View.VISIBLE);
+                    showViewWithAnimation(view);
                     v.setScaleY(-1f);
                     mRootView.findViewById(R.id.profile_expand_other_info_btn).setContentDescription("Click to expand miscellaneous profile information");
                 }break;
@@ -743,6 +745,34 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             default:
                 break;
         }
+    }
+
+    private void hideViewWithAnimation(final View view) {
+        view.setAlpha(1f);
+        view.animate().alpha(0)
+                .setStartDelay(30)
+                .setDuration(Constants.ANIM_SHORT_DURATION)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        view.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    private void showViewWithAnimation(final View view) {
+        view.setAlpha(0);
+        view.animate().alpha(1f)
+                .setStartDelay(30)
+                .setDuration(Constants.ANIM_SHORT_DURATION)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        view.setVisibility(View.VISIBLE);
+                    }
+                });
     }
 
 

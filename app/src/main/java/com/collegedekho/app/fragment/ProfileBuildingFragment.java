@@ -374,7 +374,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         MainActivity mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             currentFragment = this;
-            mGoogleApiClient = mainActivity.getGoogleClient();
         }
     }
 
@@ -543,8 +542,9 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                             }
                         }).show();
     }
+
     public void onSubLevelSelected(int position){
-        // set mDeviceProfile's sub level base
+        // set user's sub level base
         mUserSubLevelID = (int)subLevelAdapter.getItemId(position);
         // Now show Next Button
         mAnimateFooterButtons();
@@ -1156,14 +1156,11 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     }
 
     public void updateExamsList(ArrayList<Exam> examList){
-        // update user stream ID
-        updateUserStreamId();
         if(this.mAllExamList == null) {
             this.mAllExamList = new ArrayList<>();
         }else {
             this.mAllExamList.clear();
         }
-
         this.mAllExamList.addAll(examList);
         if(isAdded()) {
             updateExamsLayouts(mAllExamList);
@@ -1248,32 +1245,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         mRootView.findViewById(R.id.navigation_cd_icon).setVisibility(View.GONE);
     }
 
-
-    private void mTakeMeToHome(int ViewId){
-        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
-            ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
-            return;
-        }
-        switch (ViewId){
-            case 1:
-                mListener.OnTakeMeToRecommended();
-                this.mEventValue.put("action_what", "go_to_recommended");
-                break;
-            case 2:
-                mListener.OnTakeMeToDashBoard();
-                this.mEventValue.put("action_what", "go_to_dash_board");
-                break;
-            case 3:
-                mListener.OnTakeMeToProfile();
-                this.mEventValue.put("action_what", "go_to_profile");
-                break;
-        }
-        if(mRootView != null)
-            mRootView.findViewById(R.id.user_education_top_layout).setVisibility(View.GONE);
-
-    }
-
-
     private void mResetEventVariables()
     {
         this.mEventAction = "";
@@ -1346,7 +1317,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         }
     }
 
-    private void updateUserEducationLevel(){
+    private void updateUserEducationLevel() {
         HashMap<String, String> params = new HashMap<>();
         params.put("current_level_id", String.valueOf(MainActivity.mProfile.getCurrent_level_id()));
         params.put("current_sublevel_id", String.valueOf(mUserSubLevelID));
@@ -1354,28 +1325,28 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         params.put("current_score_type", String.valueOf(ProfileMacro.PERCENTAGE));
 
         // set location coordinates
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (getActivity() != null){
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (mLastLocation != null ) {
-                params.put("latitude", String.valueOf(mLastLocation.getLatitude()));
-                params.put("longitude", String.valueOf(mLastLocation.getLongitude()));
+                mLastLocation = LocationServices.FusedLocationApi.getLastLocation(getGoogleApiClient());
+                if (mLastLocation != null) {
+                    params.put("latitude", String.valueOf(mLastLocation.getLatitude()));
+                    params.put("longitude", String.valueOf(mLastLocation.getLongitude()));
+                }
             }
-        }
+         }
         // save user's profile data on server
         if(this.mListener != null)
             this.mListener.requestForProfile(params);
     }
 
-
-    private void updateUserStreamId() {
-        HashMap<String, String> params = new HashMap<>();
-        // save user's current stream id on server
-        params.put("current_stream_id", String.valueOf(MainActivity.mProfile.getCurrent_stream_id()));
-        this.mListener.requestForProfile(params);
+    private GoogleApiClient getGoogleApiClient(){
+        if(mGoogleApiClient == null && getActivity() != null) {
+            mGoogleApiClient = ((MainActivity)getActivity()).getGoogleClient();
+        }
+        return mGoogleApiClient;
     }
-
 
     @Override
     public void updateInstituteCountOnStreamSelection(int instituteCount) {
@@ -1422,10 +1393,12 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
             params.put("longitude", String.valueOf(mLastLocation.getLongitude()));
         }
         if(params.size() > 0) {
-            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                    || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, locationListener);
+                LocationServices.FusedLocationApi.removeLocationUpdates(getGoogleApiClient(), locationListener);
             }
             if(mListener != null)
                 mListener.onRequestForLocationUpdate(params);
@@ -1438,6 +1411,10 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
+            // check fragment is added when we get location update
+            if(!isAdded())
+                return;
+
             mLastLocation = location;
             mRequestForLocationUpdate();
         }
@@ -1451,7 +1428,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                 if(getActivity() != null &&
                    ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                             || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, locationListener);
+                        LocationServices.FusedLocationApi.requestLocationUpdates(getGoogleApiClient(), locationRequest, locationListener);
                         ((MainActivity)getActivity()).showProgressDialog(Constants.TAG_USER_EXAMS_SUBMISSION,Constants.THEME_TRANSPARENT);
                 }else{
                     if(mListener != null)
@@ -1467,7 +1444,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     public void askForLocationSetting(){
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(getGoogleApiClient());
             if (mLastLocation == null && Constants.IS_LOCATION_SERVICES_ENABLED) {
                 checkLocationSettings();
             } else {
@@ -1489,7 +1466,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
                 .addLocationRequest(locationRequest);
         builder.setAlwaysShow(true);
 
-        final PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+        final PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(getGoogleApiClient(), builder.build());
         result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
 
             @Override
