@@ -59,6 +59,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -143,6 +144,7 @@ import com.collegedekho.app.fragment.SplashLoginFragment;
 import com.collegedekho.app.fragment.StreamFragment;
 import com.collegedekho.app.fragment.SyllabusSubjectsListFragment;
 import com.collegedekho.app.fragment.SyllabusUnitListFragment;
+import com.collegedekho.app.fragment.TrueCallerLogin;
 import com.collegedekho.app.fragment.UserAlertsFragment;
 import com.collegedekho.app.fragment.UserAlertsParentFragment;
 import com.collegedekho.app.fragment.WebViewFragment;
@@ -343,6 +345,7 @@ public class MainActivity extends AppCompatActivity
     public ActionBarDrawerToggle mDrawerToggle;
     private OTPReceiver mOtpReceiver;
     private FloatingActionMenu mFabMenu;
+    private int  mFabMenuMargin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -403,7 +406,11 @@ public class MainActivity extends AppCompatActivity
         Log.e(TAG, " onCreate()  step3 time_info  " + System.currentTimeMillis());
         this.setContentView(R.layout.activity_main);
 
-        Log.e(TAG, " onCreate()  st3.1 time_info  " + System.currentTimeMillis());
+        Log.e(TAG, " onCreate()  step3.1 time_info  " + System.currentTimeMillis());
+        // set up app tool bar
+        this.mSetAppToolBar();
+
+        Log.e(TAG, " onCreate()  st3.2 time_info  " + System.currentTimeMillis());
         // init App
         init();
 
@@ -426,9 +433,6 @@ public class MainActivity extends AppCompatActivity
         Log.e(TAG, " onCreate()  step8 time_info  " + System.currentTimeMillis());
         this.mSetupGTM();
 
-        Log.e(TAG, " onCreate()  step9 time_info  " + System.currentTimeMillis());
-        // set up app tool bar
-        this.mSetAppToolBar();
 
         Log.e(TAG, " onCreate()  stp10 time_info  " + System.currentTimeMillis());
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -439,7 +443,7 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
         Log.e(TAG, " onCreate()  stp11 time_info  " + System.currentTimeMillis());
-        if (this.mProfile != null && this.mProfile.getId() != null && !this.mProfile.getId().isEmpty()) {
+        if (IS_HOME_LOADED) {
             this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
         }else{
             mLoadUserStatusScreen();
@@ -474,15 +478,13 @@ public class MainActivity extends AppCompatActivity
 
         // set resource context
         MainActivity.this.mResources = getResources();
-        // set snackbar to show msg in snackbar display
-        this.mSnackbar = Snackbar.make(this.findViewById(R.id.drawer_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
-        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
-        layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
-
         // create network utils
         MainActivity.mNetworkUtils = new NetworkUtils(this,this);
 
-        mFabMenu =(FloatingActionMenu) findViewById(R.id.counselor_fab_menu);
+        this.mFabMenu =(FloatingActionMenu) findViewById(R.id.counselor_fab_menu);
+        //  FAB margin needed for animation
+        this.mFabMenuMargin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
+
         View counselorCall = findViewById(R.id.counselor_call_button);
         View counselorChat = findViewById(R.id.counselor_chat_button);
 
@@ -708,6 +710,11 @@ public class MainActivity extends AppCompatActivity
         // replace default action bar with Tool bar
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+
+        // set snackbar to show msg in snackbar display
+        this.mSnackbar = Snackbar.make(this.findViewById(R.id.coordinator_layout), "You are not connected to Internet", Snackbar.LENGTH_SHORT);
+        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
+        layout.setBackgroundColor(getResources().getColor(R.color.primary_color));
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -1354,7 +1361,7 @@ public class MainActivity extends AppCompatActivity
      * menu button which is present in activity_main.xml.
      * with the help Fab sub menu button user can chat nad call with the counselor
      */
-    private void showCounselorMenu(){
+    private void showCounselorCallMenu(){
         if(mProfile != null ){
             // user has a counselor contact number then show counselor call FAb button
             String contact = mProfile.getCounselor_contact_no();
@@ -1367,17 +1374,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void mHideCounselorMenu(){
+    public void mSetCounselorMenuVisibility(){
         if(mFabMenu.isOpened()){
             mFabMenu.close(true);
         }
         if(currentFragment instanceof MyFutureBuddiesFragment){
+            mFabMenu.setVisibility(View.GONE);
+        }else if(currentFragment instanceof SplashFragment){
             mFabMenu.setVisibility(View.GONE);
         }else if(!IS_HOME_LOADED){
             mFabMenu.setVisibility(View.GONE);
         }else{
             mFabMenu.setVisibility(View.VISIBLE);
         }
+        onShowFabMenu();
     }
 
     /**
@@ -2037,7 +2047,7 @@ public class MainActivity extends AppCompatActivity
 
             if (this.mFB != null) {
                 this.mFB.setResource_uri("https://www.collegedekho.com/api/1/l2-chats/");
-                this.mFB.setInstitute_name("Welcome");
+                this.mFB.setInstitute_name("");
                 commentsCount = this.mFB.getComments_count();
                 if (fragment == null) {
                     this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), true, MyFutureBuddiesFragment.class.getSimpleName());
@@ -2306,11 +2316,11 @@ public class MainActivity extends AppCompatActivity
 
             if (this.currentFragment instanceof HomeFragment) {
                 mShowAppBarLayout();
-                showCounselorMenu();
+                showCounselorCallMenu();
                 mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             }
             // hide counselor FAB menu
-            mHideCounselorMenu();
+            mSetCounselorMenuVisibility();
 
             mDisplayHomeAsUpEnabled();
         } catch (Exception e) {
@@ -2397,9 +2407,7 @@ public class MainActivity extends AppCompatActivity
                     this.mLoadUserStatusScreen();
                 }
                 break;
-            case Constants.TAG_SPLASH_SKIP_LOGIN:
             case Constants.TAG_SPLASH_HELP_ME_LOGIN:
-            case Constants.TAG_SPLASH_I_KNOW_LOGIN:
                 this.mSplashLoginSuccessfully(response,tags[0]);
                 break;
             case Constants.TAG_TRUE_SDK_LOGIN:
@@ -3012,14 +3020,9 @@ public class MainActivity extends AppCompatActivity
     private void mSplashLoginSuccessfully(String response, String tag){
         mUserCreatedSuccessfully(response, tag);
         switch (tag) {
-            case Constants.TAG_SPLASH_SKIP_LOGIN:
-                mDisplayNotPreparingFragment();
-                break;
+
             case Constants.TAG_SPLASH_HELP_ME_LOGIN:
                 mDisplayProfileBuildingFragment(true);
-                break;
-            case Constants.TAG_SPLASH_I_KNOW_LOGIN:
-                onIknowWhatIWant();
                 break;
             default:
                 mLoadUserStatusScreen();
@@ -3028,8 +3031,8 @@ public class MainActivity extends AppCompatActivity
     }
     /**
      *  handle response when user login by phone number or true caller
-     * @param response server response
-     * @param tag tag which action is taken by user on login screen
+     * @param response profile json from server response
+     * @param tag  which action is taken by user on login screen
      */
 
     private void mProfileLoginSuccessfully(String response, String tag){
@@ -3047,7 +3050,7 @@ public class MainActivity extends AppCompatActivity
             }
         }else{
             mUserCreatedSuccessfully(response, tag);
-            // load user status screeen
+            // load user status screen
             this.mLoadUserStatusScreen();
         }
     }
@@ -3565,19 +3568,21 @@ public class MainActivity extends AppCompatActivity
         if(tag.equalsIgnoreCase("next_shortlist_institutes") && responseCode == 404){
             this.mMakeNetworkCall(Constants.TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
             return;
-        }
-
-        if(tag.equalsIgnoreCase(Constants.TAG_LOAD_BUZZLIST_INSTITUTE)){
+        }else  if(tag.equalsIgnoreCase(Constants.TAG_LOAD_BUZZLIST_INSTITUTE)){
             Utils.DisplayToast(getApplicationContext(),"LOADING FAILED");
         }
-
-        if(tag.equalsIgnoreCase(Constants.ACTION_MY_FB_COMMENT_SUBMITTED)){
+        else if(tag.equalsIgnoreCase(Constants.TAG_LOAD_BUZZLIST_INSTITUTE)){
+            Utils.DisplayToast(getApplicationContext(),"LOADING FAILED");
+        }else  if(tag.equalsIgnoreCase(Constants.TAG_LOAD_FEED)){
+            if(currentFragment instanceof HomeFragment){
+                ((HomeFragment) currentFragment).feedsLoaded(null,null);
+            }
+        }
+        else  if(tag.equalsIgnoreCase(Constants.ACTION_MY_FB_COMMENT_SUBMITTED)){
             if(currentFragment instanceof MyFutureBuddiesFragment){
                 ((MyFutureBuddiesFragment) currentFragment).setmSubmittingState(false);
             }
-        }
-
-        if(tag.equalsIgnoreCase(Constants.TAG_CREATE_USER)){
+        }else   if(tag.equalsIgnoreCase(Constants.TAG_CREATE_USER)){
             if(!USER_CREATING_PROCESS){
                 USER_CREATING_PROCESS =true;
             }else{
@@ -4227,8 +4232,6 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_STREAM:
             case Constants.TAG_REQUEST_FOR_EXAMS:
             case Constants.TAG_SPLASH_HELP_ME_LOGIN:
-            case Constants.TAG_SPLASH_I_KNOW_LOGIN:
-            case Constants.TAG_SPLASH_SKIP_LOGIN:
             case Constants.TAG_USER_EXAMS_SUBMISSION:
             case Constants.TAG_LOCATION_UPDATED:
                 return Constants.THEME_TRANSPARENT;
@@ -4549,7 +4552,7 @@ public class MainActivity extends AppCompatActivity
                 mFabMenu.close(true);
                 return;
             }
-            mHideCounselorMenu();
+            mSetCounselorMenuVisibility();
         }
 
         if (currentFragment != null) {
@@ -4632,17 +4635,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSplashSkipLogin() {
-        if(IS_USER_CREATED){
-            mDisplayNotPreparingFragment();
-        }else {
-            HashMap<String, String> params = new HashMap<>();
-            params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
-            onUserCommonLogin(params, Constants.TAG_SPLASH_SKIP_LOGIN);
-        }
-    }
-
-    @Override
     public void onSplashHelpMeLogin() {
         if(IS_USER_CREATED){
             mDisplayProfileBuildingFragment(true);
@@ -4654,19 +4646,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSplashIKnowLogin() {
-        if(IS_USER_CREATED){
-            onIknowWhatIWant();
-        }else {
-            HashMap<String, String> params = new HashMap<>();
-            params.put(getString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
-            onUserCommonLogin(params, Constants.TAG_SPLASH_I_KNOW_LOGIN);
-            //Events
-            Map<String, Object> eventValue = new HashMap<>();
-            eventValue.put(getResourceString(R.string.ACTION_PROCEED_LOGIN), "Proceed login");
-            SendAppEvent(getResourceString(R.string.CATEGORY_PREFERENCE), getResourceString(R.string.ACTION_PROCEED_LOGIN), eventValue, this);
-
+    public void onExistingUserLogin() {
+        String tag = TrueCallerLogin.class.getSimpleName();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        boolean addToBackStack = false;
+        if(fragment ==  null){
+            fragment = TrueCallerLogin.newInstance();
+            addToBackStack = true;
         }
+        mDisplayFragment(fragment, addToBackStack, tag);
     }
 
     @Override
@@ -6462,6 +6450,18 @@ public class MainActivity extends AppCompatActivity
         this.mOtherAppSharedMessage = message;
     }
 
+    public void onHideFabMenu(){
+        this.mFabMenu.animate()
+                .translationY(mFabMenu.getHeight()+this.mFabMenuMargin)
+                .setInterpolator(new AccelerateInterpolator(3))
+                .start();
+    }
+    public void onShowFabMenu(){
+        this.mFabMenu.animate()
+                .translationY(0)
+                .setInterpolator(new AccelerateInterpolator(3))
+                .start();
+    }
 
 }
 

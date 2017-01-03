@@ -3,7 +3,6 @@ package com.collegedekho.app.adapter;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,8 +49,8 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
         this.mContext = context;
         this.mViewType = viewType;
         this.mImageLoader = MySingleton.getInstance(mContext).getImageLoader();
-        this.mAnimFromLeft = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_left);
-        this.mAnimFromRight = AnimationUtils.loadAnimation(this.mContext, R.anim.enter_from_right);
+        this.mAnimFromLeft = AnimationUtils.loadAnimation(this.mContext, R.anim.list_item_from_left);
+        this.mAnimFromRight = AnimationUtils.loadAnimation(this.mContext, R.anim.fab_slide_in_from_right);
     }
 
     @Override
@@ -158,6 +157,11 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
     {
         // If the bound view wasn't previously displayed on screen, it's animated
         if (position > lastPosition) {
+            Animation animation = viewToAnimate.getAnimation();
+            if(animation != null){
+                animation.cancel();
+            }
+            viewToAnimate.setAnimation(null);
             if (this.mViewType == Constants.VIEW_INTO_GRID){
                 if (position % 2 == 0)
                 {
@@ -166,7 +170,6 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
                     viewToAnimate.startAnimation(mAnimFromRight);
                 }
             } else {
-                Log.e(TAG, "hiiiiiiiii  "+position);
                 viewToAnimate.startAnimation(mAnimFromLeft);
             }
             lastPosition = position;
@@ -238,7 +241,6 @@ public class QnAQuestionsListAdapter extends RecyclerView.Adapter {
                             }else{
                                 if (!v.isSelected()) {
                                     mListener.onQnAQuestionVote(position, Constants.LIKE_THING);
-
                                 } else {
                                     mListener.onQnAQuestionVote(position, Constants.DISLIKE_THING);
                                 }

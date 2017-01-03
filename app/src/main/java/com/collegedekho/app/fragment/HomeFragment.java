@@ -53,6 +53,7 @@ public class HomeFragment extends BaseFragment {
             this.mHomePagerAdapter.feedListRefreshed(this.mFeedList, super.mNextUrl, false);
         }
         this.mViewPager.setAdapter(this.mHomePagerAdapter);
+        this.mViewPager.setOffscreenPageLimit(4);
         this.mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -67,7 +68,7 @@ public class HomeFragment extends BaseFragment {
                 Map<String, Object> eventValue = new HashMap<>();
                 String val = "";
                 if(getActivity() != null){
-                    ((MainActivity)getActivity()).mHideCounselorMenu();
+                    ((MainActivity)getActivity()).mSetCounselorMenuVisibility();
                 }
 
                 switch(position) {

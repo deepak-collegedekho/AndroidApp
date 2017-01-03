@@ -621,4 +621,5 @@
     <string name="sms_permission">We can automatically verify OTP sent by us. Allow us to read your sms and sit back and relax while with verify your phone number.</string>
     <string name="location_permission">To show state exams we need to know your current location. Press allow in the next step for location preference. </string>
     <string name="contact_permission">We can verify you android id to make it a more personalized experience for you. We do not share this information with anyone. Allow for contacts in the next step.</string>
+    <string name="feed_not_found">No Info Available</string>
 </resources>

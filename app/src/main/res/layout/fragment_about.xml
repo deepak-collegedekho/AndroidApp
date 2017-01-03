@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/app_version"
-                android:paddingBottom="@dimen/m10dp"
+                android:paddingBottom="@dimen/m4dp"
                 android:textColor="@color/black"
                 android:textSize="@dimen/m18sp"/>
 
@@ -39,7 +39,7 @@
 
 
     <android.support.v7.widget.CardView
-        android:layout_marginTop="@dimen/m30dp"
+        android:layout_marginTop="@dimen/m26dp"
         android:layout_width="match_parent"
         app:cardCornerRadius="@dimen/m3dp"
         app:cardElevation="@dimen/m4dp"
@@ -92,7 +92,7 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:layout_marginTop="@dimen/m30dp"
+        android:layout_marginTop="@dimen/m26dp"
         android:layout_width="match_parent"
         app:cardCornerRadius="@dimen/m3dp"
         app:cardElevation="@dimen/m4dp"

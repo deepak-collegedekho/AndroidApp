@@ -27,9 +27,7 @@ public class Constants
     public static final String TAG_TRUE_SDK_LOGIN = "true_sdk_login";
     public static final String TAG_CREATE_USER = "tag_splash_create_user";
     public static final String TAG_CREATING_USER = "tag_creating_user";
-    public static final String TAG_SPLASH_SKIP_LOGIN = "tag_splash_skip_login";
     public static final String TAG_SPLASH_HELP_ME_LOGIN = "tag_splash_help_me_login";
-    public static final String TAG_SPLASH_I_KNOW_LOGIN = "tag_splash_i_know_login";
     public static final String TAG_PHONE_NUMBER_LOGIN = "phone_number_login";
     public static final String TAG_USER_LOGIN = "user_login";
     public static final String TAG_EDUCATION_DETAILS_SUBMIT = "user_education_submit";

@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:id="@+id/coordinator_layout"
     tools:context=".activity.MainActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -59,8 +60,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
+        android:paddingBottom="15dp"
+        android:paddingLeft="6dp"
         app:menu_labels_ellipsize="end"
         app:menu_labels_singleLine="true"
         app:menu_labels_position="right"

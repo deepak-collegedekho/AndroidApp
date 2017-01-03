@@ -14,5 +14,35 @@
             android:layout_height="wrap_content"
             />
     </android.support.v4.widget.SwipeRefreshLayout>
+    <LinearLayout
+        android:id="@+id/feed_empty_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="visible"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/feed_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:text="@string/internet_not_available"
+            android:textStyle="italic"/>
+
+        <TextView
+            android:id="@+id/feed_empty_refresh"
+            style="@style/AppTheme.TextView.Empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Refresh"
+            android:textColor="@color/black"
+            android:drawablePadding="10dp"
+            android:drawableRight="@drawable/ic_refresh"
+            android:background="@drawable/bg_item_selected"
+            android:layout_centerInParent="true"
+            />
+    </LinearLayout>
 
 </FrameLayout>

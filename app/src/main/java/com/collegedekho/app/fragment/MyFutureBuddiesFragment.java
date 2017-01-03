@@ -95,7 +95,13 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         } else if (mMyFutureBuddies.getState_name() != null && !mMyFutureBuddies.getState_name().equalsIgnoreCase("null")){
             instiFullName = instiFullName + " | " + mMyFutureBuddies.getState_name().trim();
         }
-        ((TextView) rootView.findViewById(R.id.fb_title)).setText(instiFullName);
+        TextView instituteNameTV= (TextView) rootView.findViewById(R.id.fb_title);
+        if(instiFullName == null || instiFullName.isEmpty()){
+            instituteNameTV.setVisibility(View.GONE);
+        }else{
+            instituteNameTV.setVisibility(View.VISIBLE);
+            instituteNameTV.setText(instiFullName);
+        }
 
         this.mChatText = (EditText) rootView.findViewById(R.id.fb_chat_input);
 

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.collegedekho.app.R;
+import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Articles;
 import com.collegedekho.app.entities.ExamSummary;
 import com.collegedekho.app.entities.News;
@@ -39,7 +40,6 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     private int scrollDist = 0;
     private boolean isVisible = true;
 
-    private boolean hideToolBar;
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -68,6 +68,9 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
                 //  Hide fab & reset scrollDist
                 Log.e("BaseFragment", "Hide :" + scrollDist);
                 hide();
+                if(getActivity() != null) {
+                    ((MainActivity)getActivity()).onHideFabMenu();
+                }
                 scrollDist = 0;
                 isVisible = false;
             }
@@ -76,6 +79,9 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
                 //  Show fab & reset scrollDist
                 Log.e("BaseFragment", "Show :" + scrollDist);
                 show();
+                if(getActivity() != null) {
+                    ((MainActivity)getActivity()).onShowFabMenu();
+                }
                 scrollDist = 0;
                 isVisible = true;
             }
