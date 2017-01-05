@@ -21,13 +21,13 @@ import java.util.ArrayList;
  */
 public class UserAlertsFragment extends BaseFragment implements UserAlertsAdapter.OnUserAlertItemSelectListener {
 
+    private static final String PARAM1="param1";
     private ArrayList<MyAlertDate> alertDates;
     private OnAlertItemSelectListener mListener;
 
     public static UserAlertsFragment newInstance(ArrayList<MyAlertDate> dates) {
-
         Bundle args = new Bundle();
-        args.putParcelableArrayList("alerts_list", dates);
+        args.putParcelableArrayList(PARAM1, dates);
         UserAlertsFragment fragment = new UserAlertsFragment();
         fragment.setArguments(args);
         return fragment;
@@ -38,7 +38,7 @@ public class UserAlertsFragment extends BaseFragment implements UserAlertsAdapte
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         if (bundle != null) {
-            this.alertDates = bundle.getParcelableArrayList("alerts_list");
+            this.alertDates = bundle.getParcelableArrayList(PARAM1);
         }
     }
 

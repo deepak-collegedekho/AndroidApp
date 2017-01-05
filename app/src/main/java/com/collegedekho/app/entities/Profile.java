@@ -832,7 +832,7 @@ public class Profile implements Parcelable{
     }
 
     public String getCounselor_contact_no() {
-        return "9650672665";//counselor_contact_no;
+        return counselor_contact_no;
     }
 
     public void setCounselor_contact_no(String counselor_contact_no) {

@@ -6,6 +6,8 @@ import android.net.Uri;
 import com.appsflyer.AppsFlyerLib;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -13,6 +15,8 @@ import com.google.android.gms.tagmanager.DataLayer;
 import com.google.android.gms.tagmanager.TagManager;
 
 import java.util.Map;
+
+import static android.R.attr.category;
 
 //import io.connecto.android.sdk.Properties;
 
@@ -86,6 +90,12 @@ public class AnalyticsUtils {
             MainActivity.tracker.send(eventBuilder.build());
         }
 
+        CustomEvent customEvent = new CustomEvent(eventName);
+        customEvent.putCustomAttribute("category",category);
+        for (String label : labels)
+            customEvent.putCustomAttribute(label,label);
+
+        Answers.getInstance().logCustom(customEvent);
         //AppsFlyer Events
         AppsFlyerLib.getInstance().trackEvent(context, eventName, eventParams);
     }

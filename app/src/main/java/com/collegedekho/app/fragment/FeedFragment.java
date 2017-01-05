@@ -149,11 +149,12 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 mEmptyLayout.setVisibility(View.VISIBLE);
                 return;
             }
-            mEmptyLayout.setVisibility(View.GONE);
             if(getActivity() != null){
                 ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
             }
         }
+        if(mEmptyLayout != null)
+            mEmptyLayout.setVisibility(View.GONE);
     }
     @OnClick(R.id.feed_empty_layout)
     public void mLoadFeed(){
@@ -213,14 +214,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             }
         }else{
             this.mEmptyLayout.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if(getActivity() != null){
-            ((MainActivity)getActivity()).setToolBarScrollable(isVisibleToUser);
         }
     }
 

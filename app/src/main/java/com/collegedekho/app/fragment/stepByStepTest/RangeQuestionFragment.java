@@ -58,6 +58,8 @@ public class RangeQuestionFragment extends StepByStepFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_range_question, container, false);
+        if(pQuestion ==  null)
+            return  rootView;
 
         ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setText(pQuestion.getText());
         rootView.findViewById(R.id.institute_qna_question_title).setContentDescription(pQuestion.getText() + ". Please select a range below and then click on the lower right corner to move ahead");

@@ -144,7 +144,6 @@ import com.collegedekho.app.fragment.SplashLoginFragment;
 import com.collegedekho.app.fragment.StreamFragment;
 import com.collegedekho.app.fragment.SyllabusSubjectsListFragment;
 import com.collegedekho.app.fragment.SyllabusUnitListFragment;
-import com.collegedekho.app.fragment.TrueCallerLogin;
 import com.collegedekho.app.fragment.UserAlertsFragment;
 import com.collegedekho.app.fragment.UserAlertsParentFragment;
 import com.collegedekho.app.fragment.WebViewFragment;
@@ -443,11 +442,11 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
         Log.e(TAG, " onCreate()  stp11 time_info  " + System.currentTimeMillis());
-        if (IS_HOME_LOADED) {
+       /* if (IS_HOME_LOADED) {
             this.mDisplayFragment(SplashFragment.newInstance(), false, SplashFragment.class.getName());
-        }else{
+        }else{*/
             mLoadUserStatusScreen();
-        }
+        //}
 
         Log.e(TAG, " onCreate()  stp11 time_info  " + System.currentTimeMillis());
         if (NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED && IS_HOME_LOADED) {
@@ -482,6 +481,7 @@ public class MainActivity extends AppCompatActivity
         MainActivity.mNetworkUtils = new NetworkUtils(this,this);
 
         this.mFabMenu =(FloatingActionMenu) findViewById(R.id.counselor_fab_menu);
+        this.mFabMenu.setClosedOnTouchOutside(true);
         //  FAB margin needed for animation
         this.mFabMenuMargin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
 
@@ -658,7 +658,6 @@ public class MainActivity extends AppCompatActivity
                 } else if (!USER_CREATING_PROCESS && !IS_USER_CREATED && NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED) {
                     USER_CREATING_PROCESS = true;
                     showProgress(Constants.TAG_CREATING_USER);
-                    return;
                 } else {
                     mLoadUserStatusScreen();
                 }
@@ -792,7 +791,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         int position = -1;
@@ -1078,9 +1077,6 @@ public class MainActivity extends AppCompatActivity
         adjustFontScale(getResources().getConfiguration());
         // Logs 'install' and 'app activate' App Events.
         // AppEventsLogger.activateApp(this);
-        IntentFilter linkFilter = new IntentFilter(Constants.CONTENT_LINK_FILTER);
-        linkFilter.addAction(Constants.NOTIFICATION_FILTER);
-        LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver, linkFilter);
         Log.e(TAG, " onResume()  exit  time_info  " + System.currentTimeMillis());
     }
 
@@ -1100,6 +1096,10 @@ public class MainActivity extends AppCompatActivity
         Log.e(TAG, " onStart()   enter time_info  " + System.currentTimeMillis());
         super.onStart();
         Log.e(TAG, " onStart()   enter time_info  " + System.currentTimeMillis());
+
+        IntentFilter linkFilter = new IntentFilter(Constants.CONTENT_LINK_FILTER);
+        linkFilter.addAction(Constants.NOTIFICATION_FILTER);
+        LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver, linkFilter);
         // register OTP broadcast receiver if user's phone number
         // is not verified
         if (mProfile == null || mProfile.getIs_verified() != Constants.PHONE_VERIFIED) {
@@ -1115,6 +1115,7 @@ public class MainActivity extends AppCompatActivity
             }
             this.registerReceiver(mOtpReceiver, filter);
         }
+
 
         Log.e(TAG, " onStart()   step1 time_info  " + System.currentTimeMillis());
         mGoogleApiClient.connect();
@@ -1140,6 +1141,8 @@ public class MainActivity extends AppCompatActivity
             unregisterReceiver(mOtpReceiver);
             mOtpReceiver = null;
         }
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
                 "Main Page", // TODO: Define a title for the content shown.
@@ -1156,7 +1159,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
         hideProgressDialog();
         super.onDestroy();
 
@@ -1283,6 +1285,8 @@ public class MainActivity extends AppCompatActivity
         } else if (menu.size() > 0){
             menu.getItem(0).setVisible(true);
         }
+
+        mSetCounselorMenuVisibility();
         setSearchAvailable(menu);
         SharedPreferences sharedPreferences = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE);
         boolean isTuteComplete ;
@@ -1357,32 +1361,39 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * This method is used to show and hide counselor FAB
-     * menu button which is present in activity_main.xml.
-     * with the help Fab sub menu button user can chat nad call with the counselor
+     * This method is used to show and hide counselor Call FAB sub menu
+     *  button which is present in activity_main.xml with the help
+     *  of this button user can call to the counselor
      */
     private void showCounselorCallMenu(){
         if(mProfile != null ){
             // user has a counselor contact number then show counselor call FAb button
             String contact = mProfile.getCounselor_contact_no();
             View counselorCall = findViewById(R.id.counselor_call_button);
-            if(contact != null && !contact.isEmpty()){
-                counselorCall.setVisibility(View.VISIBLE);
-            }else{
-                counselorCall.setVisibility(View.GONE);
+            if(counselorCall.getVisibility() == View.GONE) {
+                if (contact != null && !contact.isEmpty()) {
+                    counselorCall.setVisibility(View.VISIBLE);
+                } else {
+                    counselorCall.setVisibility(View.GONE);
+                }
             }
         }
     }
 
     public void mSetCounselorMenuVisibility(){
-        if(mFabMenu.isOpened()){
-            mFabMenu.close(true);
+
+        if(this.mFabMenu != null && this.mFabMenu.isOpened()){
+            this.mFabMenu.close(true);
         }
-        if(currentFragment instanceof MyFutureBuddiesFragment){
+        if(!IS_HOME_LOADED){
+            this.mFabMenu.setVisibility(View.GONE);
+        }else   if(currentFragment instanceof SplashFragment){
+            this.mFabMenu.setVisibility(View.GONE);
+        }else   if(currentFragment instanceof StepByStepFragment){
+             this.mFabMenu.setVisibility(View.GONE);
+        }else if(currentFragment instanceof MyFutureBuddiesFragment){
             mFabMenu.setVisibility(View.GONE);
-        }else if(currentFragment instanceof SplashFragment){
-            mFabMenu.setVisibility(View.GONE);
-        }else if(!IS_HOME_LOADED){
+        }else if(currentFragment instanceof PsychometricTestParentFragment){
             mFabMenu.setVisibility(View.GONE);
         }else{
             mFabMenu.setVisibility(View.VISIBLE);
@@ -1844,8 +1855,15 @@ public class MainActivity extends AppCompatActivity
      * @param response server response to parse qna next list
      */
     private void updateLastInstituteList(String response) {
-        if (currentFragment instanceof InstituteListFragment) {
-            ((InstituteListFragment) currentFragment).updateLastList(this.mInstituteList, next);
+        try {
+            List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
+            this.mInstituteList = institutes;
+
+            if (currentFragment instanceof InstituteListFragment) {
+                ((InstituteListFragment) currentFragment).updateLastList(institutes, next);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -2048,6 +2066,7 @@ public class MainActivity extends AppCompatActivity
             if (this.mFB != null) {
                 this.mFB.setResource_uri("https://www.collegedekho.com/api/1/l2-chats/");
                 this.mFB.setInstitute_name("");
+                this.mFB.setCounselor(true);
                 commentsCount = this.mFB.getComments_count();
                 if (fragment == null) {
                     this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), true, MyFutureBuddiesFragment.class.getSimpleName());
@@ -2320,9 +2339,12 @@ public class MainActivity extends AppCompatActivity
                 mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             }
             // hide counselor FAB menu
-            mSetCounselorMenuVisibility();
-
-            mDisplayHomeAsUpEnabled();
+           // mSetCounselorMenuVisibility();
+           /* if(currentFragment instanceof MyFutureBuddiesFragment){
+                mFabMenu.setVisibility(View.GONE);
+            }
+           */
+           mDisplayHomeAsUpEnabled();
         } catch (Exception e) {
             Log.e(MainActivity.class.getSimpleName(), "mDisplayFragment is an issue");
         } finally {
@@ -2976,18 +2998,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void decreaseRecommendedCount(){
-        this.mRecommendedInstituteCount--;
-    }
-    public void decreaseUndecidedCount(){
-        this.mUndecidedInstitutesCount--;
-    }
-    public void decreaseFeaturedCount(){
-        this.mFeaturedInstituteCount--;
-    }
-   /* public void decreaseShortlistCount(){
-        this.mShortListInstituteCount--;
-    }*/
 
     public int getmRecommendedInstituteCount(){
         return mRecommendedInstituteCount;
@@ -3000,9 +3010,6 @@ public class MainActivity extends AppCompatActivity
     }
     public int getFeaturedInstituteCount(){
         return mFeaturedInstituteCount;
-    }
-    public int getShortlistInstituteCount(){
-        return mShortListInstituteCount;
     }
 
     private void updateCountInCDRecommendedFragment() {
@@ -3231,7 +3238,6 @@ public class MainActivity extends AppCompatActivity
         try {
             //Since after this all the filters are modified in all probabilities.
             DataBaseHelper.getInstance(this).deleteAllExamSummary();
-
             StepByStepResult sbsResult = JSON.std.beanFrom(StepByStepResult.class, response);
 
             this.requestForProfile(null);
@@ -3556,7 +3562,7 @@ public class MainActivity extends AppCompatActivity
             if (currentFragment != null && currentFragment instanceof InstituteDetailFragment)
                 ((InstituteDetailFragment) currentFragment).updateAppliedCourses(response);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "exception occurred while updating Applied course");
         }
     }
 
@@ -4547,12 +4553,9 @@ public class MainActivity extends AppCompatActivity
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
-        if(mFabMenu != null ){
-            if(mFabMenu.isOpened() ){
-                mFabMenu.close(true);
-                return;
-            }
-            mSetCounselorMenuVisibility();
+        if(this.mFabMenu != null && this.mFabMenu.isOpened() ){
+            this.mFabMenu.close(true);
+            return;
         }
 
         if (currentFragment != null) {
@@ -4647,14 +4650,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onExistingUserLogin() {
-        String tag = TrueCallerLogin.class.getSimpleName();
+        String tag = LoginFragment.class.getSimpleName();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
         boolean addToBackStack = false;
         if(fragment ==  null){
-            fragment = TrueCallerLogin.newInstance();
+            fragment = LoginFragment.newInstance();
             addToBackStack = true;
         }
         mDisplayFragment(fragment, addToBackStack, tag);
+       //mDisplayLoginFragment();
     }
 
     @Override
@@ -4847,15 +4851,15 @@ public class MainActivity extends AppCompatActivity
      */
     private void mDisplayHomeFragment() {
         mClearBackStack();
+        IS_HOME_LOADED = true;
+        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_HOME_LOADED), true).apply();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
         if (fragment == null)
             this.mDisplayFragment(HomeFragment.newInstance(), false, HomeFragment.class.getSimpleName());
         else {
             this.mDisplayFragment(fragment, false, HomeFragment.class.getSimpleName());
         }
-        IS_HOME_LOADED = true;
-        this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.USER_HOME_LOADED), true).apply();
-    }
+         }
 
     private void mDisplayFeedFragment(String response) {
         try {
@@ -5124,7 +5128,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
+    /*@Override
     public void OnTakeMeToRecommended() {
         this.mMakeNetworkCall(Constants.TAKE_ME_TO_RECOMMENDED, Constants.BASE_URL + "personalize/recommended-institutes/",null);
     }
@@ -5145,7 +5149,7 @@ public class MainActivity extends AppCompatActivity
         mShowAppBarLayout();
         isFromNotification = true;
 
-    }
+    }*/
 
     /**
      * This method is used to handle response having exams

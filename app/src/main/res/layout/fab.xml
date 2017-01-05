@@ -4,7 +4,10 @@
     android:id="@+id/myfab_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/m16dp"
+    android:paddingTop="@dimen/m16dp"
+    android:paddingBottom="@dimen/m30dp"
+    android:paddingLeft="@dimen/m16dp"
+    android:paddingRight="@dimen/m16dp"
     android:layout_gravity="bottom|end"
     android:importantForAccessibility="no">
 

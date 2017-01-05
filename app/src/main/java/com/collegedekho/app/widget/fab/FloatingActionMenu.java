@@ -625,6 +625,7 @@ public class FloatingActionMenu extends ViewGroup {
     }
 
     public void open(final boolean animate) {
+        setClickable(true);
         if (!isOpened()) {
             if (isBackgroundEnabled()) {
                 mShowBackgroundAnimator.start();
@@ -681,6 +682,7 @@ public class FloatingActionMenu extends ViewGroup {
     }
 
     public void close(final boolean animate) {
+        setClickable(false);
         if (isOpened()) {
             if (isBackgroundEnabled()) {
                 mHideBackgroundAnimator.start();
@@ -1015,4 +1017,5 @@ public class FloatingActionMenu extends ViewGroup {
     public void setOnMenuButtonLongClickListener(OnLongClickListener longClickListener) {
         mMenuButton.setOnLongClickListener(longClickListener);
     }
+
 }

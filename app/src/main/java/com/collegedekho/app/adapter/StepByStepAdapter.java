@@ -70,7 +70,7 @@ public class StepByStepAdapter extends FragmentStatePagerAdapter {
     }
 
     public StepByStepFragment getFragment(int position) {
-        if (position >= this.getCount()) {
+        if (mStepByStepFragmentsArray == null || position >= mStepByStepFragmentsArray.size()) {
             return null;
         }
 

@@ -160,7 +160,7 @@ public class SplashLoginFragment extends  BaseFragment {
             return;
         }
         if(mListener != null)
-            mListener.onExistingUserLogin();;
+            mListener.onExistingUserLogin();
     }
 
     @OnClick(R.id.splash_login_proceed)

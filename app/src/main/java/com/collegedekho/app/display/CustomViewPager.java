@@ -10,6 +10,7 @@ import android.util.Log;
  * Created by harshvardhan on 26/04/16.
  */
 public class CustomViewPager extends ViewPager {
+    private static final String TAG = "CustomViewPager";
     public CustomViewPager(Context context) {
         super(context);
     }
@@ -23,7 +24,7 @@ public class CustomViewPager extends ViewPager {
         try {
             super.draw(canvas);
         } catch (Exception e) {
-            Log.d("CustomViewPager", "Null Pointer Exception skipped");
+            Log.d(TAG, "Exception occurred while drawing custom view pager");
         }
     }
 }

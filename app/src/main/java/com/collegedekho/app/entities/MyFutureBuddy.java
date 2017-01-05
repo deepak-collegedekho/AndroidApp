@@ -30,6 +30,8 @@ public class MyFutureBuddy implements Parcelable {
     private int index;
     private ArrayList<MyFutureBuddyComment> futureBuddiesCommentsSet;
     private String next;
+    private boolean isCounselor;
+
 
     public MyFutureBuddy() {
     }
@@ -137,5 +139,13 @@ public class MyFutureBuddy implements Parcelable {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public boolean isCounselor() {
+        return isCounselor;
+    }
+
+    public void setCounselor(boolean counselor) {
+        isCounselor = counselor;
     }
 }

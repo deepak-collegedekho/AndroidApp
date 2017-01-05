@@ -65,6 +65,9 @@ public class SingleChoiceQuestionFragment extends StepByStepFragment implements 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_single_choice_question, container, false);
+        if(pQuestion ==  null)
+            return  rootView;
+
         ((TextView) rootView.findViewById(R.id.institute_qna_question_title)).setText(pQuestion.getText());
         rootView.findViewById(R.id.institute_qna_question_title).setContentDescription(pQuestion.getText() + ". Please select a choice from below and then click on the lower right corner to move ahead");
         ListView choiceList = (ListView) rootView.findViewById(R.id.single_choice_list);

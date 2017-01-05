@@ -1521,9 +1521,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         void requestForProfile(HashMap<String, String> params);
         void onRequestForLocationUpdate(HashMap<String, String> params);
         void onRequestForUserExams();
-        void OnTakeMeToRecommended();
-        void OnTakeMeToDashBoard();
-        void OnTakeMeToProfile();
     }
 
 }

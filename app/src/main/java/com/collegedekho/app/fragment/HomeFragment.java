@@ -57,10 +57,18 @@ public class HomeFragment extends BaseFragment {
         this.mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
             }
 
             @Override
             public void onPageSelected(int position) {
+                if( getActivity() != null){
+                    if(position ==0 ) {
+                        ((MainActivity) getActivity()).setToolBarScrollable(true);
+                    } else{
+                        ((MainActivity) getActivity()).setToolBarScrollable(false);
+                    }
+                }
                 HomeFragment.this.mSelectedTabPosition = position;
                 HomeFragment.this.mMarkTabAsSelected(position);
 
@@ -70,7 +78,6 @@ public class HomeFragment extends BaseFragment {
                 if(getActivity() != null){
                     ((MainActivity)getActivity()).mSetCounselorMenuVisibility();
                 }
-
                 switch(position) {
                     case 0:
                     {

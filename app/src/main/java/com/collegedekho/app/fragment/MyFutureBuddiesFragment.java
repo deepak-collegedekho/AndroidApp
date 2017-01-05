@@ -95,16 +95,19 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         } else if (mMyFutureBuddies.getState_name() != null && !mMyFutureBuddies.getState_name().equalsIgnoreCase("null")){
             instiFullName = instiFullName + " | " + mMyFutureBuddies.getState_name().trim();
         }
+        TextView headingTitleTV= (TextView) rootView.findViewById(R.id.fb_heading);
         TextView instituteNameTV= (TextView) rootView.findViewById(R.id.fb_title);
-        if(instiFullName == null || instiFullName.isEmpty()){
-            instituteNameTV.setVisibility(View.GONE);
-        }else{
-            instituteNameTV.setVisibility(View.VISIBLE);
-            instituteNameTV.setText(instiFullName);
+        if(mMyFutureBuddies != null ) {
+            if (mMyFutureBuddies.isCounselor()) {
+                instituteNameTV.setVisibility(View.GONE);
+                headingTitleTV.setText(getString(R.string.counselor_chat));
+            } else {
+                instituteNameTV.setVisibility(View.VISIBLE);
+                instituteNameTV.setText(instiFullName);
+            }
         }
 
         this.mChatText = (EditText) rootView.findViewById(R.id.fb_chat_input);
-
         (rootView.findViewById(R.id.fb_push_chat)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,8 +163,13 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
         (rootView.findViewById(R.id.fb_push_chat)).setContentDescription("Click to send your message.");
 
-        if (this.mMyFBCommentsSet.size() == 0)
-            (this.mEmptyTextView).setText("Say Hi to your Future Buddies");
+        if (this.mMyFBCommentsSet.size() == 0) {
+            if(mMyFutureBuddies.isCounselor()){
+                (this.mEmptyTextView).setText("Ask your queries and discuss with our counselor");
+            }else {
+                (this.mEmptyTextView).setText("Say Hi to your Future Buddies");
+            }
+        }
 
         this.mMyFBCommentsListAdapter = new MyFBCommentsListAdapter(getActivity(), this.mMyFBCommentsSet);
 

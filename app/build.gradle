@@ -32,7 +32,7 @@ android {
                 minSdkVersion 16
                 targetSdkVersion 25
                 versionCode 17
-                versionName "1.0.5_debug"
+                versionName "1.0.5_rc"
                 multiDexEnabled true
                 testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
             }
@@ -72,7 +72,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile(name: "truesdk-0.3", ext: "aar")
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.4@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
     }
     compile 'com.appsflyer:af-android-sdk:4.5.0@aar'
