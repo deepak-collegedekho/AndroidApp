@@ -456,7 +456,6 @@
     <!--for app tutorials-->
 
     <string name="KEY_USER_LEARNED_TOUCH">user_touch</string>
-    <string name="PROFILE_SCREEN_TUTE">profile_tute</string>
     <string name="EDUCATION_SCREEN_TUTE">education_tute</string>
     <string name="EXAMS_SCREEN_TUTE">exams_tute</string>
     <string name="INTERACTION_HOME_TUTE">interaction_home_tute</string>

@@ -196,6 +196,9 @@ public class InstituteDetailFragment extends BaseFragment {
 
             @Override
             public void onPageSelected(int position) {
+                if(getActivity() != null){
+                    ((MainActivity)getActivity()).mSetCounselorMenuVisibility();
+                }
                 if(position == 1)
                     mDetailsAdapter.setCourses(courses);
                 else if(position == 4)

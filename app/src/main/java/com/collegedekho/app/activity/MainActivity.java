@@ -167,6 +167,7 @@ import com.collegedekho.app.widget.CircularProgressBar;
 import com.collegedekho.app.widget.GifView;
 import com.collegedekho.app.widget.fab.FloatingActionMenu;
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.fasterxml.jackson.jr.ob.JSONObjectException;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -401,7 +402,8 @@ public class MainActivity extends AppCompatActivity
                 SendAppEvent(getResourceString(R.string.CATEGORY_NOTIFICATIONS), getResourceString(R.string.ACTION_NOTIFICATION_OPEN), eventValue, this);
             }
         }
-
+        Fabric.with(MainActivity.this, new Crashlytics());
+        Fabric.with(MainActivity.this, new Answers());
         Log.e(TAG, " onCreate()  step3 time_info  " + System.currentTimeMillis());
         this.setContentView(R.layout.activity_main);
 
@@ -419,7 +421,7 @@ public class MainActivity extends AppCompatActivity
 
         Log.e(TAG, " onCreate()  step5 time_info  " + System.currentTimeMillis());
         // register with fabric Crashlytics
-        this.mRegistrationFabricCrashlytics();
+       // this.mRegistrationFabricCrashlytics();
 
         Log.e(TAG, " onCreate()  step6 time_info  " + System.currentTimeMillis());
         // register with Apps Flayer
@@ -2499,12 +2501,15 @@ public class MainActivity extends AppCompatActivity
                 Constants.IS_RECOMENDED_COLLEGE = false;
                 mClearBackStack();
                 mShowAppBarLayout();
+
                 if(!IS_HOME_LOADED ){
                     IS_HOME_LOADED = true;
                     getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_HOME_LOADED), true).apply();
                     isFromNotification = true;
                 }
                 this.mDisplayInstituteList(response, true, true);
+                DataBaseHelper.getInstance(this).deleteAllExamSummary();
+                this.requestForProfile(null);
                 break;
 
             case Constants.WIDGET_TRENDING_INSTITUTES:
@@ -3237,29 +3242,26 @@ public class MainActivity extends AppCompatActivity
     private void mStepByStepDone(String response) {
         try {
             //Since after this all the filters are modified in all probabilities.
-            DataBaseHelper.getInstance(this).deleteAllExamSummary();
             StepByStepResult sbsResult = JSON.std.beanFrom(StepByStepResult.class, response);
+           if(sbsResult != null && sbsResult.getTags() != null){
+                int count = sbsResult.getTags().size();
+                Map<String, String> filterKeywords = new HashMap<>();
+                for (int n = 0; n < count; n++)
+                    filterKeywords.put("tag_uris[" + (n) + "]", sbsResult.getTags().get(n));
 
-            this.requestForProfile(null);
-
-            int count = 0;
-            Map<String, String> filterKeywords = new HashMap<>();
-
-            for (int n = 0; n < sbsResult.getTags().size(); n++)
-                filterKeywords.put("tag_uris[" + (count++) + "]", sbsResult.getTags().get(n));
-
-            this.mFilterKeywords = filterKeywords;
-            this.mFilterCount = this.mFilterKeywords.size();
+                this.mFilterKeywords = filterKeywords;
+                this.mFilterCount = this.mFilterKeywords.size();
+            }
 
             //save preferences.
-            getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getResourceString(R.string.PROFILE_SCREEN_TUTE), true).apply();
-            this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString()).apply();
+            SharedPreferences.Editor editor = getSharedPreferences(getResourceString(R.string.PREFS), Context.MODE_PRIVATE).edit();
+            editor.putString(Constants.SELECTED_FILTERS, this.mFilterKeywords.toString());
+            editor.apply();
 
             MainActivity.mProfile.setStep_by_step_given(1);
             //move to profile
             this.onHomeItemSelected(Constants.WIDGET_INSTITUTES_SBS, Constants.BASE_URL + "personalize/institutes/",null);
 
-//            this.mDisplayHomeFragment(null);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -4877,7 +4879,7 @@ public class MainActivity extends AppCompatActivity
         if (examDetailObj == null) return;
         int id = examDetailObj.getId();
         String dbSummary = DataBaseHelper.getInstance(this).getExamSummary(id);
-        if (dbSummary != null) {
+        if(dbSummary != null) {
             mUpdateExamDetail(dbSummary, false);
             return;
         }
@@ -4888,6 +4890,8 @@ public class MainActivity extends AppCompatActivity
         params.put("tag_uris[" + (params.size()) + "]", examDetailObj.getExam_tag());
         this.mMakeNetworkCall(Constants.TAG_EXAM_SUMMARY, Constants.BASE_URL + "yearly-exams/" + id + "/summary/", params);
     }
+
+
     private void mUpdateExamDetail(String responseJson, boolean update) {
         try {
             ExamSummary examSummary = JSON.std.beanFrom(ExamSummary.class, responseJson);
