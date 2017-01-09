@@ -84,6 +84,10 @@ public class NotificationFactory {
                     this.mCollegeDekhoNotifications = new InstituteNotification();
                     break;
                 }
+                case Constants.TAG_FRAGMENT_COUNSELOR_CHAT: {
+                    this.mCollegeDekhoNotifications = new MyFutureBuddyNotification();
+                    break;
+                }
                 case Constants.TAG_PROFILE_FIX:
                     if (jsonObject.has("profileJson"))
                     {

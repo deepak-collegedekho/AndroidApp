@@ -225,7 +225,8 @@ public class LoginFragment extends  BaseFragment {
             //params.put(MainActivity.getResourceString(R.string.USER_DEVICE_ID), deviceId);
             params.put(MainActivity.getResourceString(R.string.USER_LOGIN_TYPE), Constants.LOGIN_TYPE_ANONYMOUS);
 
-           // mListener.onSkipUserLogin(params);
+            if(getActivity() != null)
+                ((MainActivity)getActivity()).onSplashHelpMeLogin();
         }
     }
 

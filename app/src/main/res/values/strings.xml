@@ -593,7 +593,7 @@
 
     <!-- user profile tags-->
 
-    <string name="app_version">App Version</string>
+    <string name="app_version">app_version</string>
     <string name="term_of_services">Term of Services</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="send_feed_back">Send Feedback</string>

@@ -21,7 +21,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/app_version"
+                android:text="App Version"
                 android:paddingBottom="@dimen/m4dp"
                 android:textColor="@color/black"
                 android:textSize="@dimen/m18sp"/>

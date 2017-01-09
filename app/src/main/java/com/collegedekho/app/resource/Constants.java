@@ -74,8 +74,8 @@ public class Constants
     public static final String TAG_LOAD_QNA_QUESTIONS = "qna";
     //public static final String IP = "http://10.0.3.2";
     //public static final String IP = "http://www.launch.collegedekho.com";
-    //public static final String IP = "http://www.launch2.collegedekho.com";
-    public static final String IP = "https://www.collegedekho.com";
+    public static final String IP = "http://www.launch2.collegedekho.com";
+    //public static final String IP = "https://www.collegedekho.com";
     //public static final String IP = "http://192.168.8.101";
     //public static final String IP = "http://192.168.56.1";
     //public static final String BASE_URL = IP + ":8000/api/1/";
@@ -150,6 +150,7 @@ public class Constants
     public static final String TAG_FRAGMENT_MY_FB = "fragment_my_fb";
     public static final String TAG_FRAGMENT_MY_FB_ENUMERATION = "fragment_my_fb_enumeration";
     public static final String TAG_FRAGMENT_INSTITUTE_LIST = "fragment_institute_list";
+    public static final String TAG_FRAGMENT_COUNSELOR_CHAT = "fragment_counselor_chat";
     public static final String TAG_FRAGMENT_WISHLIST_INSTITUTE_LIST = "fragment_wishlist_institute_list";
     public static final String TAG_FRAGMENT_STREAMS = "fragment_streams";
     public static final String TAG_PROFILE_FIX = "profile_fix";
@@ -180,6 +181,7 @@ public class Constants
     public static final String TAG_LOAD_FEED = "tag_load_feed";
     public static final String TAG_REFRESHED_FEED = "tag_refreshed_feed";
     public static final String TAG_LOAD_COUNSELOR_CHAT = "tag_load_counselor_chat";
+    public static final String PNS_COUNSELOR_CHAT = "pns_counselor_chat";
 
     public static boolean SEND_REQUEST = true;
     public static volatile boolean IS_CONNECTED_TO_INTERNET = true;

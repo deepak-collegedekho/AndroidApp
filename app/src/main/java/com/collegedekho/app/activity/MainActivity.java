@@ -402,6 +402,7 @@ public class MainActivity extends AppCompatActivity
                 SendAppEvent(getResourceString(R.string.CATEGORY_NOTIFICATIONS), getResourceString(R.string.ACTION_NOTIFICATION_OPEN), eventValue, this);
             }
         }
+
         Fabric.with(MainActivity.this, new Crashlytics());
         Fabric.with(MainActivity.this, new Answers());
         Log.e(TAG, " onCreate()  step3 time_info  " + System.currentTimeMillis());
@@ -921,6 +922,7 @@ public class MainActivity extends AppCompatActivity
                     this.mMakeNetworkCall(Constants.WIDGET_FORUMS, MainActivity.resource_uri_with_notification_id, null);
                 }
                 break;
+
             }
             case Constants.TAG_FRAGMENT_SHORTLISTED_INSTITUTE: {
                 this.mCurrentTitle = "My Shortlist";
@@ -970,6 +972,12 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_PSYCHOMETRIC_QUESTIONS:
             {
                 this.onPsychometricTestSelected();
+                break;
+            }
+            case Constants.TAG_FRAGMENT_COUNSELOR_CHAT:
+            {
+                this.mCurrentTitle = "Counselor Chat";
+                this.mMakeNetworkCall(Constants.PNS_COUNSELOR_CHAT, MainActivity.resource_uri_with_notification_id, null);
                 break;
             }
 
@@ -2066,12 +2074,43 @@ public class MainActivity extends AppCompatActivity
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(MyFutureBuddiesFragment.class.getSimpleName());
 
             if (this.mFB != null) {
-                this.mFB.setResource_uri("https://www.collegedekho.com/api/1/l2-chats/");
+                this.mFB.setResource_uri(Constants.BASE_URL+"l2-chats/");
                 this.mFB.setInstitute_name("");
                 this.mFB.setCounselor(true);
                 commentsCount = this.mFB.getComments_count();
                 if (fragment == null) {
                     this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), true, MyFutureBuddiesFragment.class.getSimpleName());
+                }else{
+                    ((MyFutureBuddiesFragment)fragment).updateChatPings(this.mFB.getFutureBuddiesCommentsSet(), commentsCount);
+                }
+            }
+        }catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+    private void mLoadPNSCounselorChat(String response) {
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            int commentsCount = jsonObject.getInt("count");
+            this.mFB = new MyFutureBuddy();
+            if(commentsCount  > 0){
+                String result = extractResults(response);
+                List<MyFutureBuddyComment> commentList = JSON.std.listOfFrom(MyFutureBuddyComment.class, result);
+                this.mFB.setFutureBuddiesCommentsSet((ArrayList)commentList);
+            }
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(MyFutureBuddiesFragment.class.getSimpleName());
+
+            if (this.mFB != null) {
+                this.mFB.setResource_uri(Constants.BASE_URL+"l2-chats/");
+                this.mFB.setInstitute_name("");
+                this.mFB.setCounselor(true);
+                commentsCount = this.mFB.getComments_count();
+                boolean isAddToStack = false;
+                if (getSupportFragmentManager().getBackStackEntryCount() >= 1) {
+                    isAddToStack = true;
+                }
+                if (fragment == null) {
+                    this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), isAddToStack, MyFutureBuddiesFragment.class.getSimpleName());
                 }else{
                     ((MyFutureBuddiesFragment)fragment).updateChatPings(this.mFB.getFutureBuddiesCommentsSet(), commentsCount);
                 }
@@ -2872,7 +2911,10 @@ public class MainActivity extends AppCompatActivity
                 this.mFeedRefreshed(response);
                 break;
             case Constants.TAG_LOAD_COUNSELOR_CHAT:
-                mLoadCounselorChat(response);
+                this.mLoadCounselorChat(response);
+                break;
+            case Constants.PNS_COUNSELOR_CHAT:
+                this.mLoadPNSCounselorChat(response);
                 break;
         }
         try {
