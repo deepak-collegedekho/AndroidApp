@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -526,7 +527,7 @@ public class NetworkUtils {
         }else if (volleyError.networkResponse == null && volleyError.getClass().equals(TimeoutError.class)) {
             mListener.onError(tag, mContext.getString(R.string.server_timeout_error), responseCode, url, params, method);
         }
-        else  if(json != null) {
+        else  if(volleyError instanceof NoConnectionError || json != null) {
             mListener.onError(tag,mContext.getString(R.string.server_fault), responseCode,  url, params, method);
 
         }else {

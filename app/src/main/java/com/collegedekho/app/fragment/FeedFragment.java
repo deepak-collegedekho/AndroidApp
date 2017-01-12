@@ -156,7 +156,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         if(mEmptyLayout != null)
             mEmptyLayout.setVisibility(View.GONE);
     }
-    @OnClick(R.id.feed_empty_layout)
+    @OnClick(R.id.feed_empty_refresh)
     public void mLoadFeed(){
         if(NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED){
             return;

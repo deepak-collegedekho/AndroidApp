@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.entities.Profile;

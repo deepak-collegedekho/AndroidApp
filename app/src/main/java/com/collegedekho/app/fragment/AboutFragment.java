@@ -87,19 +87,27 @@ public class AboutFragment extends BaseFragment {
     }
     @OnClick(R.id.term_of_services)
     public void onTermOfServices(){
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.collegedekho.com/terms-and-conditions/"));
         try {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.collegedekho.com/terms-and-conditions/"));
+            browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            browserIntent.setPackage("com.android.chrome");
             startActivity(browserIntent);
         } catch (Exception e) {
+            browserIntent.setPackage(null);
+            startActivity(browserIntent);
             e.printStackTrace();
         }
     }
     @OnClick(R.id.app_privacy_policy)
     public void onPrivacyPolicy(){
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.collegedekho.com/privacy-policy/"));
         try {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.collegedekho.com/privacy-policy/"));
+            browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            browserIntent.setPackage("com.android.chrome");
             startActivity(browserIntent);
         } catch (Exception e) {
+            browserIntent.setPackage(null);
+            startActivity(browserIntent);
             e.printStackTrace();
         }
     }

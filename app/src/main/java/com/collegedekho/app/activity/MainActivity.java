@@ -358,7 +358,9 @@ public class MainActivity extends AppCompatActivity
             finish();
             reStartApplication();
         }
-
+        // Fabric should be initiali
+        Fabric.with(MainActivity.this, new Crashlytics());
+        Fabric.with(MainActivity.this, new Answers());
         Log.e(TAG, " onCreate()  step1 time_info  " + System.currentTimeMillis());
         this.mContext = this;
         Intent intent = this.getIntent();
@@ -403,8 +405,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        Fabric.with(MainActivity.this, new Crashlytics());
-        Fabric.with(MainActivity.this, new Answers());
         Log.e(TAG, " onCreate()  step3 time_info  " + System.currentTimeMillis());
         this.setContentView(R.layout.activity_main);
 
@@ -779,7 +779,7 @@ public class MainActivity extends AppCompatActivity
         String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
         toolbar.setLogoDescription(contentDescription);
         ArrayList<View> potentialViews = new ArrayList<View>();
-        //find the view based on it's content description, set programatically or with android:contentDescription
+        //find the view based on it's content description, set programmatically or with android:contentDescription
         toolbar.findViewsWithText(potentialViews,contentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
         //Nav icon is always instantiated at this point because calling setLogoDescription ensures its existence
         View logoIcon = null;
@@ -977,7 +977,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_FRAGMENT_COUNSELOR_CHAT:
             {
                 this.mCurrentTitle = "Counselor Chat";
-                this.mMakeNetworkCall(Constants.PNS_COUNSELOR_CHAT, MainActivity.resource_uri_with_notification_id, null);
+                this.mMakeNetworkCall(Constants.PNS_COUNSELOR_CHAT, MainActivity.resource_uri, null);
                 break;
             }
 
@@ -1392,21 +1392,23 @@ public class MainActivity extends AppCompatActivity
 
     public void mSetCounselorMenuVisibility(){
 
-        if(this.mFabMenu != null && this.mFabMenu.isOpened()){
-            this.mFabMenu.close(true);
-        }
-        if(!IS_HOME_LOADED){
-            this.mFabMenu.setVisibility(View.GONE);
-        }else   if(currentFragment instanceof SplashFragment){
-            this.mFabMenu.setVisibility(View.GONE);
-        }else   if(currentFragment instanceof StepByStepFragment){
-             this.mFabMenu.setVisibility(View.GONE);
-        }else if(currentFragment instanceof MyFutureBuddiesFragment){
-            mFabMenu.setVisibility(View.GONE);
-        }else if(currentFragment instanceof PsychometricTestParentFragment){
-            mFabMenu.setVisibility(View.GONE);
-        }else{
-            mFabMenu.setVisibility(View.VISIBLE);
+        if(this.mFabMenu != null) {
+            if (this.mFabMenu.isOpened()) {
+                this.mFabMenu.close(true);
+            }
+            if (!IS_HOME_LOADED) {
+                this.mFabMenu.setVisibility(View.GONE);
+            } else if (currentFragment instanceof SplashFragment) {
+                this.mFabMenu.setVisibility(View.GONE);
+            } else if (currentFragment instanceof StepByStepFragment) {
+                this.mFabMenu.setVisibility(View.GONE);
+            } else if (currentFragment instanceof MyFutureBuddiesFragment) {
+                mFabMenu.setVisibility(View.GONE);
+            } else if (currentFragment instanceof PsychometricTestParentFragment) {
+                mFabMenu.setVisibility(View.GONE);
+            } else {
+                mFabMenu.setVisibility(View.VISIBLE);
+            }
         }
         onShowFabMenu();
     }
@@ -2137,6 +2139,33 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void mUpdateCounselorChat(String response, int index, int oldCount) {
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            int commentsCount = jsonObject.getInt("count");
+            this.mFB = new MyFutureBuddy();
+            if(commentsCount  > 0){
+                String result = extractResults(response);
+                List<MyFutureBuddyComment> commentList = JSON.std.listOfFrom(MyFutureBuddyComment.class, result);
+                this.mFB.setFutureBuddiesCommentsSet((ArrayList)commentList);
+            }
+            if (this.mFB != null) {
+                this.mFB.setResource_uri(Constants.BASE_URL + "l2-chats/");
+                this.mFB.setInstitute_name("");
+                this.mFB.setCounselor(true);
+                this.mFB.setComments_count(commentsCount);
+            }
+            if (this.mFB.getComments_count() > oldCount) {
+                ArrayList<MyFutureBuddyComment> myFbComments = this.mFB.getFutureBuddiesCommentsSet();
+
+                if (currentFragment instanceof MyFutureBuddiesFragment)
+                    ((MyFutureBuddiesFragment) currentFragment).updateChatPings(myFbComments,this.mFB.getComments_count());
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
     private MyFutureBuddy mParseAndPopulateMyFB(String response, int index) {
         MyFutureBuddy myFB = new MyFutureBuddy();
 
@@ -2747,6 +2776,14 @@ public class MainActivity extends AppCompatActivity
                     childIndex = tags[2];
 
                     this.mUpdateMyFB(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
+                }
+                break;
+            case Constants.TAG_COUNSELOR_REFRESH:
+                if (tags.length > 1) {
+                    parentIndex = tags[1];
+                    childIndex = tags[2];
+
+                    this.mUpdateCounselorChat(response, Integer.parseInt(parentIndex), Integer.parseInt(childIndex));
                 }
                 break;
             case Constants.ACTION_QNA_ANSWER_SUBMITTED:
@@ -4472,11 +4509,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex) {
+    public void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex, boolean counselor) {
         HashMap<String, String> params = new HashMap<>();
         params.put("comment", commentText);
 
-        this.mMakeNetworkCall(Constants.ACTION_MY_FB_COMMENT_SUBMITTED + "#" + String.valueOf(myFbIndex) + "#" + String.valueOf(myFbCommentIndex), myFbURI + "comment/", params, Request.Method.POST);
+        if(!counselor){
+            myFbURI = myFbURI + "comment/";
+        }
+        this.mMakeNetworkCall(Constants.ACTION_MY_FB_COMMENT_SUBMITTED + "#" + String.valueOf(myFbIndex) + "#" + String.valueOf(myFbCommentIndex), myFbURI , params, Request.Method.POST);
     }
 
     @Override
@@ -4503,14 +4543,13 @@ public class MainActivity extends AppCompatActivity
 
     private void mOnMyFBCommentAdded(String response, int fbIndex, int index) {
         try {
-            JSONObject comment = new JSONObject(response);
-
+           /* JSONObject comment = new JSONObject(response);
             MyFutureBuddyComment fbComment = new MyFutureBuddyComment();
-
             fbComment.setComment(comment.getString("comment"));
             fbComment.setAdded_on(comment.getString("added_on"));
             fbComment.setUser(comment.getString("user"));
-            fbComment.setToken(comment.getString("token"));
+            fbComment.setToken(comment.getString("token"));*/
+            MyFutureBuddyComment fbComment = JSON.std.beanFrom(MyFutureBuddyComment.class, response);
             fbComment.setIndex(index);
             fbComment.setFbIndex(fbIndex);
             fbComment.setCommentSent(true);
@@ -6434,7 +6473,7 @@ public class MainActivity extends AppCompatActivity
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Bundle bundle=intent.getExtras();
-        if(bundle!=null) {
+        if(bundle != null) {
             if (bundle.containsKey("screen") && bundle.containsKey("resource_uri") && bundle.containsKey("notification_id")) {
                 MainActivity.type = bundle.getString("screen");
                 MainActivity.resource_uri = bundle.getString("resource_uri");

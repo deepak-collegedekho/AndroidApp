@@ -74,8 +74,8 @@ public class Constants
     public static final String TAG_LOAD_QNA_QUESTIONS = "qna";
     //public static final String IP = "http://10.0.3.2";
     //public static final String IP = "http://www.launch.collegedekho.com";
-    public static final String IP = "http://www.launch2.collegedekho.com";
-    //public static final String IP = "https://www.collegedekho.com";
+    //public static final String IP = "http://www.launch2.collegedekho.com";
+    public static final String IP = "https://www.collegedekho.com";
     //public static final String IP = "http://192.168.8.101";
     //public static final String IP = "http://192.168.56.1";
     //public static final String BASE_URL = IP + ":8000/api/1/";
@@ -155,6 +155,7 @@ public class Constants
     public static final String TAG_FRAGMENT_STREAMS = "fragment_streams";
     public static final String TAG_PROFILE_FIX = "profile_fix";
     public static final String TAG_PROFILE_FRAGMENT = "ProfileFragment";
+    public static final String TAG_COUNSELOR_REFRESH = "tag_counselor_refresh";
     public static final int LIKE_THING = 0;
     public static final int DISLIKE_THING = 1;
     public static final int NOT_INTERESTED_THING = -1;

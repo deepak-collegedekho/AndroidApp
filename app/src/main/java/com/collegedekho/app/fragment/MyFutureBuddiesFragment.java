@@ -271,7 +271,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         this.mMyFBCommentsListAdapter.notifyItemInserted(this.mMyFBCommentsSet.size() - 1);
         this.mMyFBCommentsListAdapter.notifyDataSetChanged();
         this.mCommentsListView.scrollToPosition(this.mMyFBCommentsSet.size() - 1);
-        this.mListener.onMyFBCommentSubmitted(this.mMyFutureBuddies.getResource_uri(), value, this.mMyFutureBuddies.getIndex(), this.mMyFBCommentsSet.size());
+        this.mListener.onMyFBCommentSubmitted(this.mMyFutureBuddies.getResource_uri(), value, this.mMyFutureBuddies.getIndex(), this.mMyFBCommentsSet.size(), mMyFutureBuddies.isCounselor());
         this.mChatText.setText("");
     }
 
@@ -337,12 +337,15 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                     public void run() {
                         //Called each time when 1000 milliseconds (1 second) (the period parameter)
                         //update the comment list here after checking the internet connection
-                        if (Constants.IS_CONNECTED_TO_INTERNET)
-                            MainActivity.mNetworkUtils.networkData(Constants.TAG_REFRESH_MY_FB + "#"
-                                    + String.valueOf(mMyFutureBuddies.getIndex()) + "#" + String.valueOf(MyFutureBuddiesFragment.this.mInitialCount)
+                        if (Constants.IS_CONNECTED_TO_INTERNET) {
+                            String tag = Constants.TAG_REFRESH_MY_FB;
+                            if(mMyFutureBuddies.isCounselor()){
+                                tag = Constants.TAG_COUNSELOR_REFRESH;
+                            }
+                            MainActivity.mNetworkUtils.networkData(tag+ "#"
+                                            + String.valueOf(mMyFutureBuddies.getIndex()) + "#" + String.valueOf(MyFutureBuddiesFragment.this.mInitialCount)
                                     , mMyFutureBuddies.getResource_uri(), null, Request.Method.GET);
-                        //else
-                        //Toast.makeText(mMainActivity, "Please connect to internet to receive messages..", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 },
                 //Set how long before to start calling the TimerTask (in milliseconds)
@@ -395,7 +398,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
 
         this.mMyFBCommentsSet.set(this.mMyFBCommentsSet.size() - 1, comment);
         this.mMyFBCommentsListAdapter.notifyItemChanged(this.mMyFBCommentsSet.size() - 1);
-        //this.mMyFBCommentsListAdapter.notifyItemInserted(this.mMyFBCommentsSet.size() - 1);
         this.mMyFBCommentsListAdapter.notifyDataSetChanged();
         this.mCommentsListView.scrollToPosition(this.mMyFBCommentsSet.size() - 1);
         this.setmSubmittingState(false);
@@ -417,6 +419,11 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         this.mMyFBCommentsListAdapter.notifyDataSetChanged();
         int netNewComments = newCommentCount - mInitialCount;
         this.mInitialCount = newCommentCount;
+        if(netNewComments > 0){
+           if(this.mCommentsListView != null){
+               this.mCommentsListView.scrollToPosition(this.mMyFBCommentsSet.size() - 1);
+            }
+        }
 
         if(mMainActivity != null){
             mMainActivity.speakMessageForAccessibility("You have "+String.valueOf(netNewComments)+" new Comments");
@@ -483,7 +490,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
     }
 
     public interface OnMyFBInteractionListener {
-        void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex);
+        void onMyFBCommentSubmitted(String myFbURI, String commentText, int myFbIndex, int myFbCommentIndex, boolean counselor);
         void onMyFBUpdated(int commentsSize, int myFbIndex);
         void onNameUpdated(HashMap params, String msg);
         void displayMessage(int messageId);
