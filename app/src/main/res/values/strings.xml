@@ -1,4 +1,33 @@
+<!--
+  ~ Copyright 2015 Google Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <resources>
+    <string name="last_initial">Last Initial</string>
+    <string name="first_name">First Name</string>
+    <string name="sign_in">Sign In</string>
+    <string name="choose_avatar">Choose an Avatar</string>
+    <string name="an_avatar">An Avatar</string>
+    <string name="quiz_of_quizzes">%1$s / %2$s</string>
+    <string name="btn_true">True</string>
+    <string name="btn_false">False</string>
+    <string name="category">Category</string>
+    <string name="sign_out">Sign out</string>
+    <string name="x_points">%1$d pts</string>
+    <string name="back">back</string>
+
     <string name="app_name">CollegeDekho</string>
     <string name="app_id">1701158673446224</string>
 
@@ -619,7 +648,8 @@
     <string name="media_file_permission">Want to choose the best pic from your gallery? Allow us access to files in the next step.</string>
     <string name="sms_permission">We can automatically verify OTP sent by us. Allow us to read your sms and sit back and relax while with verify your phone number.</string>
     <string name="location_permission">To show state exams we need to know your current location. Press allow in the next step for location preference. </string>
-    <string name="contact_permission">We can verify you android id to make it a more personalized experience for you. We do not share this information with anyone. Allow for contacts in the next step.</string>
+    <string name="contact_permission">We can verify your android id to make it a more personalized experience for you. We do not share this information with anyone. Allow for contacts in the next step.</string>
     <string name="feed_not_found">No Info Available</string>
     <string name="counselor_chat">Counselor Chat</string>
 </resources>
+

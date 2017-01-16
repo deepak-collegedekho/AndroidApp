@@ -200,21 +200,22 @@ public class NewsDetailFragment extends BaseFragment {
             if (mMainActivity != null)
                 mMainActivity.currentFragment = this;
         }
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_NEWS_LIST + "/personalize/news/" + this.mNews.getId());
-        AnalyticsUtils.AppIndexingView("CollegeDekho - News - " + this.mNews.title, val, val, (MainActivity) this.getActivity(), true);
+        Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_NEWS_LIST + "/personalize/news/" + this.mNews.getId());
+        Uri web_uri_val = Uri.parse(Constants.IP + "/news/" + this.mNews.getSlug() + "-" + this.mNews.getUri_id());
+        AnalyticsUtils.AppIndexingView("CollegeDekho - News - " + this.mNews.title, web_uri_val, app_uri_val, (MainActivity) this.getActivity(), true);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_NEWS_LIST + "/personalize/news/" + this.mNews.getId());
-        AnalyticsUtils.AppIndexingView("CollegeDekho - News - " + this.mNews.title, val, val, (MainActivity) this.getActivity(), false);
+        Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_NEWS_LIST + "/personalize/news/" + this.mNews.getId());
+        Uri web_uri_val = Uri.parse(Constants.IP + "/news/" + this.mNews.getSlug() + "-" + this.mNews.getUri_id());
+        AnalyticsUtils.AppIndexingView("CollegeDekho - News - " + this.mNews.title, web_uri_val, app_uri_val, (MainActivity) this.getActivity(), false);
     }
 
 }

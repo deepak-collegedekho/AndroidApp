@@ -231,10 +231,11 @@ public class InstituteDetailFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
 
-        Uri appUrl = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_INSTITUTE_LIST  + "/institutes/" + this.mInstitute.getId());
-        Uri webUrl = appUrl;
-//        Uri webUrl = Uri.parse(Constants.IP + "/colleges/" + this.mInstitute.getUri_slug());
-        AnalyticsUtils.AppIndexingView("CollegeDekho - Colleges - " + this.mInstitute.getUri_slug(), webUrl, appUrl, (MainActivity) this.getActivity(), true);
+        //android-app://com.collegedekho.app/https/www.collegedekho.com/fragment_institute_list/institutes/3633/
+        Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_INSTITUTE_LIST  + "/institutes/" + this.mInstitute.getId());
+        Uri web_uri_val = Uri.parse(Constants.IP + "/colleges/" + this.mInstitute.getUri_slug());
+
+        AnalyticsUtils.AppIndexingView("CollegeDekho - Colleges - " + this.mInstitute.getUri_slug(), web_uri_val, app_uri_val, (MainActivity) this.getActivity(), true);
 
 //        if(getActivity() != null && getActivity() instanceof MainActivity) {
 //            MainActivity mainActivity = (MainActivity) getActivity();
@@ -249,9 +250,10 @@ public class InstituteDetailFragment extends BaseFragment {
     public void onStop() {
         super.onStop();
 
-        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_INSTITUTE_LIST  + "/institutes/" + this.mInstitute.getId());
+        Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_INSTITUTE_LIST  + "/institutes/" + this.mInstitute.getId());
+        Uri web_uri_val = Uri.parse(Constants.IP + "/colleges/" + this.mInstitute.getUri_slug());
 
-        AnalyticsUtils.AppIndexingView("CollegeDekho - Colleges - " + this.mInstitute.getUri_slug(), val, val, (MainActivity) this.getActivity(), false);
+        AnalyticsUtils.AppIndexingView("CollegeDekho - Colleges - " + this.mInstitute.getUri_slug(), web_uri_val, app_uri_val, (MainActivity) this.getActivity(), false);
     }
 
     @Override

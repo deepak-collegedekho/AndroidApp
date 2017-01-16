@@ -869,18 +869,24 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mHandleNotifications(boolean isFromNotifications) {
-        if (isFromNotifications) {
+        /*if (isFromNotifications) {
             this.isFromNotification = true;
-            this.isFromDeepLinking = false;
+            //this.isFromDeepLinking = false;
         } else {
-            this.isFromNotification = false;
-            this.isFromDeepLinking = true;
-        }
+            this.isFromNotification = true;
+            //this.isFromDeepLinking = true;
+        }*/
+
+        this.isFromNotification = true;
 
         switch (MainActivity.type) {
             case Constants.TAG_FRAGMENT_INSTITUTE_LIST: {
                 this.mCurrentTitle = "Institute List";
-                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
+                // shim to open institute details page when
+                // institute-by-slug/jaypee-business-school is called.
+                // else it would try to open details response in list page.
+                // listing page will not open in app via deep linking
+                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri) || this.isFromDeepLinking) {
                     this.mMakeNetworkCall(Constants.PNS_INSTITUTES, MainActivity.resource_uri_with_notification_id, null);
                 } else {
                     this.mMakeNetworkCall(Constants.WIDGET_INSTITUTES, MainActivity.resource_uri_with_notification_id, null);
@@ -889,7 +895,7 @@ public class MainActivity extends AppCompatActivity
             }
             case Constants.TAG_FRAGMENT_NEWS_LIST: {
                 this.mCurrentTitle = "News";
-                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
+                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)  || this.isFromDeepLinking) {
                     this.mMakeNetworkCall(Constants.PNS_NEWS, MainActivity.resource_uri_with_notification_id, null);
                 } else {
                     this.mMakeNetworkCall(Constants.WIDGET_NEWS, MainActivity.resource_uri_with_notification_id, null);
@@ -898,7 +904,7 @@ public class MainActivity extends AppCompatActivity
             }
             case Constants.TAG_FRAGMENT_ARTICLES_LIST: {
                 this.mCurrentTitle = "Articles";
-                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
+                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)  || this.isFromDeepLinking) {
                     this.mMakeNetworkCall(Constants.PNS_ARTICLES, MainActivity.resource_uri_with_notification_id, null);
                 } else {
                     this.mMakeNetworkCall(Constants.WIDGET_ARTICES, MainActivity.resource_uri_with_notification_id, null);
@@ -907,7 +913,7 @@ public class MainActivity extends AppCompatActivity
             }
             case Constants.TAG_FRAGMENT_QNA_QUESTION_LIST: {
                 this.mCurrentTitle = "QnA";
-                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)) {
+                if (Utils.isUriEndsWithNumber(MainActivity.resource_uri)  || this.isFromDeepLinking) {
                     this.mMakeNetworkCall(Constants.PNS_QNA, MainActivity.resource_uri_with_notification_id, null);
                 } else {
                     this.mMakeNetworkCall(Constants.TAG_LOAD_QNA_QUESTIONS, MainActivity.resource_uri_with_notification_id, null);
@@ -1001,19 +1007,66 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mHandleDeepLinking(String uri) {
-        String[] uriArray = uri.split("/");
-        String resourceURI = "";
-        if (uriArray.length > 3) {
-            MainActivity.type = uriArray[3];
-            for (int i = 4; i < uriArray.length; i++) {
-                if (!uriArray[i].isEmpty())
-                    resourceURI += uriArray[i] + "/";
-            }
-            MainActivity.resource_uri = Constants.BASE_URL + resourceURI;
-        } else
-            MainActivity.type = "";
+        if (uri.contains("fragment_"))
+        {
+            String[] uriArray = uri.split("/");
+            String resourceURI = "";
+            if (uriArray.length > 3) {
+                MainActivity.type = uriArray[3];
+                for (int i = 4; i < uriArray.length; i++) {
+                    if (!uriArray[i].isEmpty())
+                        resourceURI += uriArray[i] + "/";
+                }
+                MainActivity.resource_uri = Constants.BASE_URL + resourceURI;
+            } else
+                MainActivity.type = "";
+        }
+        else
+        {
+            //article - https://www.collegedekho.com/articles/how-to-prepare-for-jee-mains-jee-advanced-while-in-class-12th/
+            //college - https://www.collegedekho.com/colleges/iit-delhi
+            //news - https://www.collegedekho.com/news/nobel-laureates-deliver-lectures-at-iit-gandhinagar-9583/
+            //qna - https://www.collegedekho.com/qna/want-to-know-abt-college/
 
-        this.mHandleNotifications(true);
+            String[] slashedURL = uri.split("/");
+
+            if (slashedURL.length > 4)
+            {
+                switch (slashedURL[3])
+                {
+
+                    case "colleges":
+                    {
+                        MainActivity.resource_uri = Constants.BASE_URL + "institute-by-slug/" + slashedURL[4];
+                        MainActivity.type = Constants.TAG_FRAGMENT_INSTITUTE_LIST;
+                        break;
+                    }
+                    case "qna":
+                    {
+                        MainActivity.resource_uri = Constants.BASE_URL + "question-by-slug/" + slashedURL[4];
+                        MainActivity.type = Constants.TAG_FRAGMENT_QNA_QUESTION_LIST;
+                        break;
+                    }
+                    case "news":
+                    {
+                        MainActivity.resource_uri = Constants.BASE_URL + "news-by-slug/" + slashedURL[4];
+                        MainActivity.type = Constants.TAG_FRAGMENT_NEWS_LIST;
+                        break;
+                    }
+                    case "articles":
+                    {
+                        MainActivity.resource_uri = Constants.BASE_URL + "article-by-slug/" + slashedURL[4];
+                        MainActivity.type = Constants.TAG_FRAGMENT_ARTICLES_LIST;
+                        break;
+                    }
+                    default:
+                        MainActivity.resource_uri = "";
+                        MainActivity.type = "";
+                }
+            }
+        }
+
+        MainActivity.resource_uri_with_notification_id = MainActivity.resource_uri;
 
         //events params
         Map<String, Object> eventValue = new HashMap<>();
@@ -1022,6 +1075,10 @@ public class MainActivity extends AppCompatActivity
 
         //Events
         SendAppEvent(getResourceString(R.string.CATEGORY_DEEP_LINKING), getResourceString(R.string.ACTION_DEEP_LINKING_OPEN), eventValue, this);
+
+        //this.mHandleNotifications(true);
+        //Harsh Making false
+        this.mHandleNotifications(false);
     }
 
     private void mHandleOtherAppSharedMessage(String message) {
@@ -1129,7 +1186,7 @@ public class MainActivity extends AppCompatActivity
 
         Log.e(TAG, " onStart()   step1 time_info  " + System.currentTimeMillis());
         mGoogleApiClient.connect();
-        Action viewAction = Action.newAction(Action.TYPE_VIEW,
+        /*Action viewAction = Action.newAction(Action.TYPE_VIEW,
                 // TODO: choose an action type.
                 "CollegeDekho App", // TODO: Define a title for the content shown.
                 // TODO: If you have web page content that matches this app activity's content,
@@ -1139,7 +1196,7 @@ public class MainActivity extends AppCompatActivity
                 // TODO: Make sure this auto-generated app URL is correct.
                 Uri.parse(Constants.BASE_APP_URI.toString())
         );
-        AppIndex.AppIndexApi.start(mGoogleApiClient, viewAction);
+        AppIndex.AppIndexApi.start(mGoogleApiClient, viewAction);*/
         Log.e(TAG, " onStart()   exit  time_info  " + System.currentTimeMillis());
     }
 
@@ -1153,17 +1210,17 @@ public class MainActivity extends AppCompatActivity
         }
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(appLinkReceiver);
-        Action viewAction = Action.newAction(
+        /*Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
-                "Main Page", // TODO: Define a title for the content shown.
+                "CollegeDekho App", // TODO: Define a title for the content shown.
                 // TODO: If you have web page content that matches this app activity's content,
                 // make sure this auto-generated web page URL is correct.
                 // Otherwise, set the URL to null.
                 Uri.parse("https://www.collegedekho.com"),
                 // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse(Constants.BASE_APP_URI.toString())
+                Constants.BASE_APP_URI
         );
-        AppIndex.AppIndexApi.end(mGoogleApiClient, viewAction);
+        AppIndex.AppIndexApi.end(mGoogleApiClient, viewAction);*/
         mGoogleApiClient.disconnect();
     }
 
@@ -1173,7 +1230,6 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
 
     }
-
 
     @Override
     public void onConnected(Bundle connectionHint) {
@@ -4998,7 +5054,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     @Override
     public void onChatRoomSwipedDown(String requestType, String url){
         Map<String, String> params = new HashMap<>();
@@ -5052,8 +5107,6 @@ public class MainActivity extends AppCompatActivity
     public void onTabStepByStep() {
         this.startStepByStep();
     }
-
-
 
     @Override
     public void onTabPsychometricReport(){
@@ -6378,6 +6431,7 @@ public class MainActivity extends AppCompatActivity
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
     BroadcastReceiver appLinkReceiver=new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

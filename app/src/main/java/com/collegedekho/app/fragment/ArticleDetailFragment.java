@@ -198,19 +198,20 @@ public class ArticleDetailFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+        Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_ARTICLES_LIST + "/personalize/articles/" + this.mArticle.getId());
+        Uri web_uri_val = Uri.parse(Constants.IP + "/articles/" + this.mArticle.getSlug());
 
-        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_ARTICLES_LIST + "/personalize/articles/" + this.mArticle.getId());
-
-        AnalyticsUtils.AppIndexingView("CollegeDekho - Article - " + this.mArticle.getTitle(), val, val, (MainActivity) this.getActivity(), true);
+        AnalyticsUtils.AppIndexingView("CollegeDekho - Article - " + this.mArticle.getTitle(), web_uri_val, app_uri_val, (MainActivity) this.getActivity(), true);
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
-        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_ARTICLES_LIST + "/personalize/articles/" + this.mArticle.getId());
+        Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_ARTICLES_LIST + "/personalize/articles/" + this.mArticle.getId());
+        Uri web_uri_val = Uri.parse(Constants.IP + "/articles/" + this.mArticle.getSlug());
 
-        AnalyticsUtils.AppIndexingView("CollegeDekho - Article - " + this.mArticle.getTitle(), val, val, (MainActivity) this.getActivity(), false);
+        AnalyticsUtils.AppIndexingView("CollegeDekho - Article - " + this.mArticle.getTitle(), web_uri_val, app_uri_val, (MainActivity) this.getActivity(), false);
     }
 
     @Override

@@ -284,8 +284,11 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
         super.onStart();
         String resourceURI = this.mQnAQuestion.getResource_uri();
         String[] resourceURIArray = resourceURI.split("/");
-        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_QNA_QUESTION_LIST + "/personalize/qna/" + resourceURIArray[resourceURIArray.length - 1]);
-        AnalyticsUtils.AppIndexingView("CollegeDekho - QnA - " + this.mQnAQuestion.getDesc(), val, val, (MainActivity) this.getActivity(), true);
+
+        Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_QNA_QUESTION_LIST + "/personalize/qna/" + resourceURIArray[resourceURIArray.length - 1]);
+        Uri web_uri_val = Uri.parse(Constants.IP + "/qna/" + this.mQnAQuestion.getUri_slug());
+
+        AnalyticsUtils.AppIndexingView("CollegeDekho - QnA - " + this.mQnAQuestion.getDesc(), web_uri_val, app_uri_val, (MainActivity) this.getActivity(), true);
     }
 
     @Override
@@ -293,8 +296,11 @@ public class  QnAQuestionDetailFragment extends BaseFragment implements View.OnC
         super.onStop();
         String resourceURI = this.mQnAQuestion.getResource_uri();
         String[] resourceURIArray = resourceURI.split("/");
-        Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_QNA_QUESTION_LIST + "/personalize/qna/" + resourceURIArray[resourceURIArray.length - 1]);
-        AnalyticsUtils.AppIndexingView("CollegeDekho - QnA - " + this.mQnAQuestion.getDesc(), val, val, (MainActivity) this.getActivity(), false);
+
+        Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_QNA_QUESTION_LIST + "/personalize/qna/" + resourceURIArray[resourceURIArray.length - 1]);
+        Uri web_uri_val = Uri.parse(Constants.IP + "/qna/" + this.mQnAQuestion.getUri_slug());
+
+        AnalyticsUtils.AppIndexingView("CollegeDekho - QnA - " + this.mQnAQuestion.getDesc(), web_uri_val, app_uri_val, (MainActivity) this.getActivity(), false);
     }
 
 

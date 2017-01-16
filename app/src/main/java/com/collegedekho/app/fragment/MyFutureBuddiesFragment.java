@@ -374,8 +374,9 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         String resourceURI = this.mMyFutureBuddies.getResource_uri();
         if (resourceURI != null) {
             String[] resourceURIArray = resourceURI.split("/");
-            Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_MY_FB_ENUMERATION + "/personalize/forums/" + resourceURIArray[resourceURIArray.length - 1]);
-            AnalyticsUtils.AppIndexingView("CollegeDekho - MyFutureBuddy - " + this.mMyFutureBuddies.getInstitute_name(), val, val, (MainActivity) this.getActivity(), true);
+            Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_MY_FB_ENUMERATION + "/personalize/forums/" + resourceURIArray[resourceURIArray.length - 1]);
+            //web_uri_val is null since there is no web counterpart for MyFB
+            AnalyticsUtils.AppIndexingView("CollegeDekho - MyFutureBuddy - " + this.mMyFutureBuddies.getInstitute_name(), null, app_uri_val, (MainActivity) this.getActivity(), true);
         }
     }
 
@@ -386,8 +387,10 @@ public class MyFutureBuddiesFragment extends BaseFragment{
         String resourceURI = this.mMyFutureBuddies.getResource_uri();
         if (resourceURI != null) {
             String[] resourceURIArray = resourceURI.split("/");
-            Uri val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_MY_FB_ENUMERATION + "/personalize/forums/" + resourceURIArray[resourceURIArray.length - 1]);
-            AnalyticsUtils.AppIndexingView("CollegeDekho - MyFutureBuddy - " + this.mMyFutureBuddies.getInstitute_name(), val, val, (MainActivity) this.getActivity(), false);
+            Uri app_uri_val = Uri.parse(Constants.BASE_APP_URI.toString() + Constants.TAG_FRAGMENT_MY_FB_ENUMERATION + "/personalize/forums/" + resourceURIArray[resourceURIArray.length - 1]);
+
+            //web_uri_val is null since there is no web counterpart for MyFB
+            AnalyticsUtils.AppIndexingView("CollegeDekho - MyFutureBuddy - " + this.mMyFutureBuddies.getInstitute_name(), null, app_uri_val, (MainActivity) this.getActivity(), false);
         }
     }
 

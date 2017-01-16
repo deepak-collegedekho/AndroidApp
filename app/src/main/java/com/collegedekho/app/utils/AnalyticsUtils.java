@@ -46,12 +46,12 @@ public class AnalyticsUtils {
         dataLayer.pushEvent("closeScreen", DataLayer.mapOf("screenName", screenName));
     }
 
-    public static void AppIndexingView(String objectName, Uri objectID, Uri objectAppURI, MainActivity context, boolean indexingStarting)
+    public static void AppIndexingView(String objectName, Uri objectWebURI, Uri objectAppURI, MainActivity context, boolean indexingStarting)
     {
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW,
                 objectName,
-                objectID,
+                objectWebURI,
                 objectAppURI
         );
 
