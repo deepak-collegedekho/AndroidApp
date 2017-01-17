@@ -9,6 +9,7 @@ import android.telephony.SmsMessage;
 
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Profile;
+import com.collegedekho.app.fragment.LoginForCounselorFragment;
 import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.OTPVerificationFragment;
 import com.collegedekho.app.fragment.PostAnonymousLoginFragment;
@@ -50,6 +51,7 @@ public class OTPReceiver extends BroadcastReceiver {
                                     if(mainActivity != null
                                             && (mainActivity.currentFragment instanceof LoginFragment
                                             || mainActivity.currentFragment instanceof OTPVerificationFragment
+                                            || mainActivity.currentFragment instanceof LoginForCounselorFragment
                                             || mainActivity.currentFragment instanceof PostAnonymousLoginFragment)) {
                                         Intent otpIntent = new Intent(Constants.OTP_INTENT_FILTER);
                                         otpIntent.putExtra(Constants.USER_OTP, otp);

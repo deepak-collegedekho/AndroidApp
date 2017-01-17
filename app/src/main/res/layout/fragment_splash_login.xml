@@ -153,13 +153,6 @@
                     android:textSize="19sp"
                     android:importantForAccessibility="no"/>
             </LinearLayout>
-            <com.truecaller.android.sdk.TrueButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:trueButtonText="signIn"
-                android:visibility="gone"
-                android:layout_gravity="center_horizontal"
-                android:contentDescription="Click to login with true caller" />
 
         </LinearLayout>
 </FrameLayout>

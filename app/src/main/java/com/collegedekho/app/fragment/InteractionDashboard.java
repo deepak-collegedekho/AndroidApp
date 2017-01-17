@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.collegedekho.app.R;
@@ -18,6 +20,12 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
 import com.collegedekho.app.widget.CircularImageView;
 import com.collegedekho.app.widget.CircularProgressBar;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.collegedekho.app.activity.MainActivity.getResourceString;
+import static com.collegedekho.app.utils.AnalyticsUtils.SendAppEvent;
 
 /**
  * Created by harshvardhan on 28/11/16.
@@ -44,6 +52,7 @@ public class InteractionDashboard extends BaseFragment {
 
         rootView.findViewById(R.id.home_widget_first).setOnClickListener(this);
         rootView.findViewById(R.id.home_widget_second).setOnClickListener(this);
+        rootView.findViewById(R.id.home_widget_third).setOnClickListener(this);
         rootView.findViewById(R.id.profile_image).setOnClickListener(this);
         rootView.findViewById(R.id.btn_tab_step_by_step).setOnClickListener(this);
         rootView.findViewById(R.id.btn_tab_psychometric_test).setOnClickListener(this);
@@ -171,16 +180,24 @@ public class InteractionDashboard extends BaseFragment {
             this.mHomeWidgetSelected(Constants.WIDGET_FORUMS, Constants.BASE_URL + "personalize/forums/", null);
         } else if (position == 2) {
             this.mHomeWidgetSelected(Constants.TAG_LOAD_QNA_QUESTIONS, Constants.BASE_URL + "personalize/qna/", null);
+        }else if (position == 3){
+            this.mHomeWidgetSelected(Constants.TAG_LOAD_COUNSELOR_CHAT , Constants.BASE_URL+"l2-chats/",null);
+            //Events
+            Map<String, Object> eventValue = new HashMap<>();
+            eventValue.put(getString(R.string.ACTION_USER_PREFERENCE),getString(R.string.ACTION_COUNSELOR_CHAT_SELECTED));
+            SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getString(R.string.ACTION_COUNSELOR_CHAT_SELECTED), eventValue, getActivity());
         }
-    }
+        }
 
     private void mUpdateSubMenuItem(View view){
         if(view ==   null)    return;
 
         TextView firstSubMenuTV     = (TextView)view.findViewById(R.id.home_widget_textview_first);
         TextView secondSubMenuTV    = (TextView)view.findViewById(R.id.home_widget_textview_second);
+        TextView thirdSubMenuTV    = (TextView)view.findViewById(R.id.home_widget_textview_third);
         ImageView firstSubMenuIV    = (ImageView)view.findViewById(R.id.home_widget_image_first);
         ImageView secondSubMenuIV   = (ImageView)view.findViewById(R.id.home_widget_image_second);
+        ImageView thirdSubMenuIV   = (ImageView)view.findViewById(R.id.home_widget_image_third);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
         boolean IsTutECompleted = sharedPreferences.getBoolean(getString(R.string.INTERACTION_HOME_TUTE), false);
@@ -189,14 +206,24 @@ public class InteractionDashboard extends BaseFragment {
         } else {
             view.findViewById(R.id.home_tute_image).setVisibility(View.GONE);
         }
-        view.findViewById(R.id.home_widget_second_layout).setVisibility(View.GONE);
+        view.findViewById(R.id.home_widget_fourth).setVisibility(View.GONE);
+
+        LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) view.findViewById(R.id.home_widget_third).getLayoutParams();
+        int marginInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45 , getResources().getDisplayMetrics());
+        lp2.setMargins(marginInDp,0,marginInDp,0);
+        view.findViewById(R.id.home_widget_third).setLayoutParams(lp2);
 
         firstSubMenuIV.setImageResource(R.drawable.ic_chat_bubble_40dp);
         secondSubMenuIV.setImageResource(R.drawable.ic_qna);
+        thirdSubMenuIV.setImageResource(R.drawable.ic_counselor_chat_vector);
         firstSubMenuTV.setText("Future Buddies");
         firstSubMenuTV.setContentDescription("Click to chat with your Future mates");
         secondSubMenuTV.setText("Q & A");
         secondSubMenuTV.setContentDescription("Click to ask questions");
+        thirdSubMenuTV.setText("Counselor Chat");
+        thirdSubMenuTV.setContentDescription("Click to chat with your Counselor");
+
+
     }
 
     @Override

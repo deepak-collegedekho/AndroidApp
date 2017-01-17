@@ -13,12 +13,12 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/m50dp"
+            android:layout_height="@dimen/m40dp"
             android:layout_margin="@dimen/m10dp"
             android:gravity="center"
             android:text="@string/otp_title"
             android:textColor="@color/white"
-            android:textSize="@dimen/m24sp"
+            android:textSize="@dimen/m23sp"
             android:textStyle="bold" />
 
         <View
@@ -30,7 +30,7 @@
             android:id="@+id/mobile_number_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
+            android:layout_gravity="center|top"
             android:gravity="center"
             android:orientation="vertical"
             android:visibility="visible">
@@ -42,8 +42,9 @@
                 android:text="@string/enter_mobile_number"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:layout_marginTop="@dimen/m15dp"
                 android:textColor="@color/white"
-                android:textSize="@dimen/m24sp" />
+                android:textSize="@dimen/m23sp" />
 
             <EditText
                 android:id="@+id/edt_mobile_number"
@@ -51,12 +52,13 @@
                 android:layout_height="40dp"
                 android:layout_marginLeft="@dimen/m40dp"
                 android:layout_marginRight="@dimen/m40dp"
-                android:layout_marginTop="@dimen/m20dp"
+                android:layout_marginTop="@dimen/m8dp"
                 android:background="@drawable/bg_exam_border"
                 android:inputType="phone"
                 android:maxLength="10"
                 android:digits="1234567890"
                 android:gravity="center"
+                android:imeOptions="actionDone"
                 android:textSize="@dimen/m22sp" />
 
             <LinearLayout
@@ -133,7 +135,7 @@
                 android:gravity="center"
                 android:text="@string/otp_sent_message"
                 android:textColor="@color/white"
-                android:textSize="@dimen/m26sp" />
+                android:textSize="@dimen/m24sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -144,7 +146,7 @@
                 android:text="Enter your OTP"
                 android:layout_marginTop="@dimen/m40dp"
                 android:textColor="@color/white"
-                android:textSize="@dimen/m26sp" />
+                android:textSize="@dimen/m24sp" />
 
             <EditText
                 android:id="@+id/edt_otp_number"
@@ -157,7 +159,8 @@
                 android:inputType="number"
                 android:maxLength="6"
                 android:gravity="center"
-                android:textSize="@dimen/m24sp" />
+                android:imeOptions="actionDone"
+                android:textSize="@dimen/m23sp" />
 
 
             <TextView android:id="@+id/btn_resend_otp"

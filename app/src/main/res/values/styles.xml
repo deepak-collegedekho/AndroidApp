@@ -16,7 +16,7 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Exists for inheritance purposes -->
+   <!-- &lt;!&ndash; Exists for inheritance purposes &ndash;&gt;
     <style name="Topeka" parent="Topeka.Base" />
 
     <style name="Topeka.Base" parent="Theme.AppCompat.Light.NoActionBar">
@@ -134,7 +134,7 @@
     </style>
 
     <style name="Topeka.TextAppearance.ListItem" parent="TextAppearance.AppCompat.Subhead" />
-    <style name="Topeka.TextAppearance.ListItemSecondary" parent="TextAppearance.AppCompat.Body1" />
+    <style name="Topeka.TextAppearance.ListItemSecondary" parent="TextAppearance.AppCompat.Body1" />-->
 
     <!-- Base application theme. -->
 

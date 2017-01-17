@@ -81,7 +81,7 @@
             android:id="@+id/counselor_chat_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_chat_bubble_wrapper"
+            android:src="@drawable/ic_counselor_chat"
             app:fab_size="mini"
             android:tint="@color/white"
             app:fab_colorNormal="@color/primary_color"

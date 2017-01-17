@@ -17,9 +17,11 @@ import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -29,8 +31,11 @@ import android.widget.TextView;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.utils.Utils;
 
 import java.util.HashMap;
+
+import static com.collegedekho.app.activity.MainActivity.mProfile;
 
 /**
  * Created by Bashir on 24/2/16.
@@ -74,17 +79,55 @@ public class OTPVerificationFragment extends BaseFragment {
         edtMobileNumber.addTextChangedListener(mobileNumberWatcher);
         edtOTP.addTextChangedListener(otpWatcher);
         cbTerms = (CheckBox) view.findViewById(R.id.cb_terms);
-        edtMobileNumber.requestFocus();
+        edtMobileNumber.setOnEditorActionListener(
+                new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
 
-        if (MainActivity.mProfile != null) {
-            String phone = MainActivity.mProfile.getPhone_no();
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            Utils.hideKeyboard(getActivity());
+                            checkForSmsPermission();
+                            return  true;
+                        }
+                        return false;
+                    }
+                });
+        edtOTP.setOnEditorActionListener(
+                new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            Utils.hideKeyboard(getActivity());
+
+                            mRequestForOtpVerification();
+                            return  true;
+                        }
+                        return false;
+                    }
+                }
+        );
+
+        if (mProfile != null) {
+
+            String phone = mProfile.getPhone_no();
             if (phone != null && !phone.isEmpty()) {
-            edtMobileNumber.setText(MainActivity.mProfile.getPhone_no());
+            edtMobileNumber.setText(mProfile.getPhone_no());
             ((TextView) view.findViewById(R.id.title_msg)).setText(R.string.Please_verify_your_number);
             ((TextView) view.findViewById(R.id.btn_submit_mobile)).setText(R.string.send_otp);
             }
         }
         view.findViewById(R.id.otp_verify_skip_button).setOnClickListener(this);
+    }
+
+    private void mRequestForOtpVerification() {
+        if (mListener != null) {
+            String otp = edtOTP.getText().toString();
+            if (otp != null && !otp.trim().equals("") && otp.trim().length() == 6) {
+                mListener.onSubmitOTP(edtMobileNumber.getText().toString(), otp);
+            } else {
+                edtOTP.setError("Invalid OTP");
+            }
+        }
     }
 
     @Override
@@ -143,14 +186,7 @@ public class OTPVerificationFragment extends BaseFragment {
                 checkForSmsPermission();
                 break;
             case R.id.btn_submit_otp:
-                if (mListener != null) {
-                    String otp = edtOTP.getText().toString();
-                    if (otp != null && !otp.trim().equals("") && otp.trim().length() == 6) {
-                        mListener.onSubmitOTP(edtMobileNumber.getText().toString(), otp);
-                    } else {
-                        edtOTP.setError("Invalid OTP");
-                    }
-                }
+               mRequestForOtpVerification();
                 break;
             case R.id.btn_resend_otp:
                 edtOTP.setText("");
@@ -200,25 +236,30 @@ public class OTPVerificationFragment extends BaseFragment {
 
     public void mRequestForOTP(){
 
-        if (mListener != null) {
-            String number = edtMobileNumber.getText().toString().trim();
-            if (!number.isEmpty() && number.trim().length() == 10 && TextUtils.isDigitsOnly(number)) {
-                if (cbTerms.isChecked()) {
-                    mListener.onRequestForOTP(number);
-                    if(MainActivity.mProfile != null){
-                        MainActivity.mProfile.setPhone_no(number);
-                        HashMap<String, String> params = new HashMap<>();
-                        params.put(getString(R.string.USER_PHONE), number);
-                        mListener.requestForProfile(params);
-                    }
-                } else {
-                    mListener.displayMessage(R.string.ACCEPT_TERMS_AND_CONDITIONS);
+        if (mListener == null) {
+            return;
+        }
+
+        String number = edtMobileNumber.getText().toString().trim();
+        if (!number.isEmpty() && number.trim().length() == 10 && TextUtils.isDigitsOnly(number)) {
+            if (cbTerms.isChecked()) {
+                mListener.onRequestForOTP(number);
+                if(mProfile != null){
+                    mProfile.setPhone_no(number);
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put(getString(R.string.USER_PHONE), number);
+                    mListener.requestForProfile(params);
                 }
             } else {
-                edtMobileNumber.setError("Enter Valid Mobile Number");
+                mListener.displayMessage(R.string.ACCEPT_TERMS_AND_CONDITIONS);
             }
+        } else {
+            edtMobileNumber.requestFocus();
+            edtMobileNumber.setError("Enter Valid Mobile Number");
         }
     }
+
+
 
     TextWatcher mobileNumberWatcher = new TextWatcher() {
         @Override

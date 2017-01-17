@@ -323,6 +323,13 @@ public class Constants
     public static final String GCM_DIALOG_RESULT="gcm_dialog_result";
     public static final String DIALOG_DATA="gcm_dialog_data";
 
+    public static final String TAG_MY_FB_COMMENT_SUBMITTED      = "action_my_fb_comment_submitted";
+    public static final String FRAGMENT_TYPE        =   "fragment_type";
+    public static final String DEFERRED_ARGUMENTS   =   "deferred_arguments";
+    public static final String FRAGMENT_INDEX       =   "fragment_index";
+    public static final String FRAGMENT_ACTION      =   "fragment_action";
+    public static final String LOCAL_DELIMITER = "#=#";
+
     public static final int TYPE_STANDARD = 0;
     public static final int TYPE_LONGHOLD = 1;
     public static final int TYPE_FLING = 2;

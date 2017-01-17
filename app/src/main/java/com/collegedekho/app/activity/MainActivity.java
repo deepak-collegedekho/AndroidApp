@@ -125,6 +125,7 @@ import com.collegedekho.app.fragment.InstituteListFragment;
 import com.collegedekho.app.fragment.InstituteOverviewFragment;
 import com.collegedekho.app.fragment.InstituteQnAFragment;
 import com.collegedekho.app.fragment.InstituteVideosFragment;
+import com.collegedekho.app.fragment.LoginForCounselorFragment;
 import com.collegedekho.app.fragment.LoginFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesEnumerationFragment;
 import com.collegedekho.app.fragment.MyFutureBuddiesFragment;
@@ -173,7 +174,6 @@ import com.fasterxml.jackson.jr.ob.JSONObjectException;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity
         QnAQuestionDetailFragment.OnQnAAnswerInteractionListener, MyFutureBuddiesEnumerationFragment.OnMyFBSelectedListener,
         MyFutureBuddiesFragment.OnMyFBInteractionListener, ProfileBuildingFragment.OnUserEducationInteractionListener,
         LoginFragment.OnUserLoginListener, PostAnonymousLoginFragment.OnUserPostAnonymousLoginListener, InstituteDetailFragment.OnInstituteDetailListener,
-        PsychometricTestParentFragment.OnPsychometricTestSubmitListener,
+        PsychometricTestParentFragment.OnPsychometricTestSubmitListener,LoginForCounselorFragment.OnUserPostAnonymousLoginListener,
         SyllabusSubjectsListFragment.OnSubjectSelectedListener, CalendarParentFragment.OnSubmitCalendarData,
         NotPreparingFragment.OnNotPreparingOptionsListener, StepByStepFragment.OnStepByStepFragmentListener,
         UserAlertsFragment.OnAlertItemSelectListener, GifView.OnGifCompletedListener, CDRecommendedInstituteFragment.OnCDRecommendedInstituteListener,
@@ -346,6 +346,7 @@ public class MainActivity extends AppCompatActivity
     private OTPReceiver mOtpReceiver;
     private FloatingActionMenu mFabMenu;
     private int  mFabMenuMargin;
+    private HashMap<String, String> defferedFunction = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1346,7 +1347,7 @@ public class MainActivity extends AppCompatActivity
                 || currentFragment instanceof ExamsFragment || currentFragment instanceof StreamFragment
                 || currentFragment instanceof PsychometricStreamFragment || currentFragment instanceof StepByStepFragment
                 || currentFragment instanceof OTPVerificationFragment || currentFragment instanceof WebViewFragment
-                || currentFragment instanceof PsychometricTestParentFragment) {
+                || currentFragment instanceof PsychometricTestParentFragment || currentFragment instanceof LoginForCounselorFragment ) {
             menu.setGroupVisible(R.id.main_menu_group, false);
         } else if (menu.size() > 0){
             menu.getItem(0).setVisible(true);
@@ -1462,7 +1463,16 @@ public class MainActivity extends AppCompatActivity
                 mFabMenu.setVisibility(View.GONE);
             } else if (currentFragment instanceof PsychometricTestParentFragment) {
                 mFabMenu.setVisibility(View.GONE);
-            } else {
+            } else if (currentFragment instanceof OTPVerificationFragment) {
+                mFabMenu.setVisibility(View.GONE);
+            } else if (currentFragment instanceof LoginForCounselorFragment) {
+               mFabMenu.setVisibility(View.GONE);
+            }else if (currentFragment instanceof QnAQuestionsListFragment
+                    || currentFragment instanceof QnAQuestionDetailFragment) {
+                mFabMenu.setVisibility(View.GONE);
+            }else if (currentFragment instanceof CDRecommendedInstituteFragment) {
+                mFabMenu.setVisibility(View.GONE);
+            }else {
                 mFabMenu.setVisibility(View.VISIBLE);
             }
         }
@@ -1704,13 +1714,43 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * This method is used to update user name when user does not have a name and wants to
-     * chat or asks  a queation and give answer
+     * chat or asks  a question and give answer
      * @param params
      * @param msg
      */
     @Override
     public void onNameUpdated(HashMap params, String msg) {
         this.requestForUserProfileUpdate(Constants.TAG_NAME_UPDATED + "#" + msg, params);
+    }
+
+
+    @Override
+    public void onRequestNumberVerification(String myFbURI, int index, int size, String msg) {
+        this.defferedFunction.put(Constants.FRAGMENT_TYPE, MyFutureBuddiesFragment.TAG);
+        this.defferedFunction.put(Constants.FRAGMENT_INDEX, "1");
+        this.defferedFunction.put(Constants.FRAGMENT_ACTION, Constants.TAG_MY_FB_COMMENT_SUBMITTED);
+        this.defferedFunction.put(Constants.DEFERRED_ARGUMENTS, myFbURI + Constants.LOCAL_DELIMITER + msg+
+                Constants.LOCAL_DELIMITER + index+ Constants.LOCAL_DELIMITER + size);
+
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(LoginForCounselorFragment.class.getSimpleName());
+        if (fragment == null)
+            mDisplayFragment(LoginForCounselorFragment.newInstance(), true, LoginForCounselorFragment.class.getSimpleName());
+        else
+            mDisplayFragment(fragment, false, LoginForCounselorFragment.class.getSimpleName());
+
+    }
+
+    private void hasNextDeferredFunction()
+    {
+
+        if (this.defferedFunction != null && this.defferedFunction.size() > 0)
+        {
+
+            String[] args = this.defferedFunction.get(Constants.DEFERRED_ARGUMENTS).split(Constants.LOCAL_DELIMITER);
+            this.onMyFBCommentSubmitted(args[0], args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), true);
+
+            this.defferedFunction.clear();
+        }
     }
 
     /**
@@ -2262,7 +2302,6 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
-
         return myFB;
     }
 
@@ -3194,9 +3233,17 @@ public class MainActivity extends AppCompatActivity
                 ((LoginFragment) currentFragment).onInvalidOtp();
             } else if (currentFragment instanceof PostAnonymousLoginFragment) {
                 ((PostAnonymousLoginFragment) currentFragment).onInvalidOtp();
+            }else if (currentFragment instanceof LoginForCounselorFragment) {
+                ((LoginForCounselorFragment) currentFragment).onInvalidOtp();
             }
         }else{
             mUserCreatedSuccessfully(response, tag);
+            if (currentFragment instanceof LoginForCounselorFragment) {
+                onBackPressed();
+                hasNextDeferredFunction();
+                return;
+
+            }
             // load user status screen
             this.mLoadUserStatusScreen();
         }
@@ -4613,12 +4660,14 @@ public class MainActivity extends AppCompatActivity
             if (currentFragment instanceof MyFutureBuddiesFragment)
                 ((MyFutureBuddiesFragment) currentFragment).commentAdded(fbComment);
 
-            Map<String, Object> eventValue = new HashMap<>();
-            eventValue.put(Constants.TAG_RESOURCE_URI, this.mFbEnumeration.get(fbIndex).getResource_uri());
-            eventValue.put(getResourceString(R.string.MY_FB_URI), this.mFbEnumeration.get(fbIndex).getResource_uri());
+            if(mFbEnumeration != null && mFbEnumeration.size() >fbIndex) {
+                Map<String, Object> eventValue = new HashMap<>();
+                eventValue.put(Constants.TAG_RESOURCE_URI, this.mFbEnumeration.get(fbIndex).getResource_uri());
+                eventValue.put(getResourceString(R.string.MY_FB_URI), this.mFbEnumeration.get(fbIndex).getResource_uri());
+                //Events
+                SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getResourceString(R.string.ACTION_MY_FB_COMMENT_SUBMITTED), eventValue, this);
 
-            //Events
-            SendAppEvent(getResourceString(R.string.CATEGORY_MY_FB), getResourceString(R.string.ACTION_MY_FB_COMMENT_SUBMITTED), eventValue, this);
+            }
 
         } catch (Exception e) {
             Log.e(TAG, "mOnMyFBCommentAdded() exception while parsing FB comment ");
@@ -5091,7 +5140,8 @@ public class MainActivity extends AppCompatActivity
             this.mMakeNetworkCall(requestType, url, null);
             return;
         }
-        if (requestType.equals(Constants.WIDGET_FORUMS) || requestType.equals(Constants.TAG_LOAD_QNA_QUESTIONS)) {
+        if (requestType.equals(Constants.WIDGET_FORUMS) || requestType.equals(Constants.TAG_LOAD_COUNSELOR_CHAT) ||
+                requestType.equals(Constants.TAG_LOAD_QNA_QUESTIONS)) {
             this.mMakeNetworkCall(requestType, url, null);
             return;
         }
@@ -5796,8 +5846,10 @@ public class MainActivity extends AppCompatActivity
                 //Events
                 SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
 
-                if(currentFragment instanceof  OTPVerificationFragment)
+                if(currentFragment instanceof  OTPVerificationFragment) {
                     onBackPressed();
+                }
+
             } else {
                 if (currentFragment != null && currentFragment instanceof OTPVerificationFragment) {
                     Map<String, Object> eventValue = new HashMap<>();
@@ -5805,7 +5857,6 @@ public class MainActivity extends AppCompatActivity
 
                     //Events
                     SendAppEvent(Constants.OTP_VERIFICATION, getResourceString(R.string.ACTION_OTP_VERIFIED), eventValue, this);
-
                     ((OTPVerificationFragment) currentFragment).onInvalidOtp();
                 }
             }
@@ -5819,6 +5870,8 @@ public class MainActivity extends AppCompatActivity
             ((OTPVerificationFragment) currentFragment).displayOTPLayout();
         }else if (currentFragment instanceof PostAnonymousLoginFragment) {
             ((PostAnonymousLoginFragment) currentFragment).displayOTPLayout();
+        }else if (currentFragment instanceof LoginForCounselorFragment) {
+            ((LoginForCounselorFragment) currentFragment).displayOTPLayout();
         }
     }
 
@@ -6373,6 +6426,8 @@ public class MainActivity extends AppCompatActivity
                         ((OTPVerificationFragment) currentFragment).mRequestForOTP();
                     }else if(currentFragment instanceof PostAnonymousLoginFragment){
                         ((PostAnonymousLoginFragment) currentFragment).mRequestForOTP();
+                    }else if(currentFragment instanceof LoginForCounselorFragment){
+                        ((LoginForCounselorFragment) currentFragment).mRequestForOTP();
                     }
                     //events params
                     eventValue.put(getString(R.string.ACTION_SMS_PERMISSION_ALLOW), getString(R.string.ACTION_SMS_PERMISSION_ALLOW));
