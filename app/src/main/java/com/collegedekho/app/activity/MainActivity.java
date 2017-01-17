@@ -1472,6 +1472,8 @@ public class MainActivity extends AppCompatActivity
                 mFabMenu.setVisibility(View.GONE);
             }else if (currentFragment instanceof CDRecommendedInstituteFragment) {
                 mFabMenu.setVisibility(View.GONE);
+            }else if (currentFragment instanceof InstituteListFragment) {
+                mFabMenu.setVisibility(View.GONE);
             }else {
                 mFabMenu.setVisibility(View.VISIBLE);
             }

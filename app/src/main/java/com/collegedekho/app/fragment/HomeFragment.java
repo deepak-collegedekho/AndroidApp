@@ -139,7 +139,6 @@ public class HomeFragment extends BaseFragment {
                     ((ImageView) view).setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute4));
                     if(isAdded())
                         getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.FEED_HOME_TUTE), true).apply();
-
                 }else{
                     view.setVisibility(View.GONE);
                     tabs.setVisibility(View.VISIBLE);
