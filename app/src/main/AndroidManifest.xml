@@ -77,7 +77,43 @@
                 <data
                     android:host="m.collegedekho.com"
                     android:scheme="https"
-                    android:pathPrefix="/" />
+                    android:pathPrefix="/news"
+                    />
+                <data
+                    android:host="m.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/fragment_news_list"
+                    />
+                <data
+                    android:host="m.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/articles"
+                    />
+                <data
+                    android:host="m.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/fragment_articles_list"
+                    />
+                <data
+                    android:host="m.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/qna"
+                    />
+                <data
+                    android:host="m.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/fragment_qna_questions_list"
+                    />
+                <data
+                    android:host="m.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/colleges"
+                    />
+                <data
+                    android:host="m.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/fragment_institute_list"
+                    />
             </intent-filter>
 
             <intent-filter android:autoVerify="true">
@@ -87,7 +123,43 @@
                 <data
                     android:host="www.collegedekho.com"
                     android:scheme="https"
-                    android:pathPrefix="/"/>
+                    android:pathPrefix="/news"
+                    />
+                <data
+                    android:host="www.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/fragment_news_list"
+                    />
+                <data
+                    android:host="www.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/articles"
+                    />
+                <data
+                    android:host="www.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/fragment_articles_list"
+                    />
+                <data
+                    android:host="www.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/qna"
+                    />
+                <data
+                    android:host="www.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/fragment_qna_questions_list"
+                    />
+                <data
+                    android:host="www.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/colleges"
+                    />
+                <data
+                    android:host="www.collegedekho.com"
+                    android:scheme="https"
+                    android:pathPrefix="/fragment_institute_list"
+                    />
             </intent-filter>
 
             <intent-filter>
