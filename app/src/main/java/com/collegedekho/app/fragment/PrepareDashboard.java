@@ -239,9 +239,10 @@ public class PrepareDashboard extends BaseFragment {
                 break;
             case R.id.home_tute_image:
                 view.setVisibility(View.GONE);
-                if(isAdded())
-                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.PREPARE_HOME_TUTE), true).apply();
-                break;
+                if(getActivity() != null) {
+                    ((MainActivity) getActivity()).mShowFabCounselor();
+                    getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.PREPARE_HOME_TUTE), true).apply();
+                }break;
             default:
                 try {
                     this.mSelectedSubMenuPosition = Integer.parseInt((String) view.getTag());

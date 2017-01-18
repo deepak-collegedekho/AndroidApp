@@ -124,7 +124,9 @@ public class FilterFragment extends BaseFragment implements View.OnClickListener
         rootView.findViewById(R.id.button_filter_apply).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().popBackStack();
+                if(getActivity() != null){
+                    getActivity().onBackPressed();
+                }
                 mListener.onFilterApplied();
             }
         });

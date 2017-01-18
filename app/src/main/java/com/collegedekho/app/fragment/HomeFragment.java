@@ -124,6 +124,7 @@ public class HomeFragment extends BaseFragment {
         if(!isTuteCompleted) {
             tuteImage.setVisibility(View.VISIBLE);
             tabs.setVisibility(View.GONE);
+
         } else {
             tuteImage.setVisibility(View.GONE);
             tabs.setVisibility(View.VISIBLE);
@@ -142,9 +143,10 @@ public class HomeFragment extends BaseFragment {
                 }else{
                     view.setVisibility(View.GONE);
                     tabs.setVisibility(View.VISIBLE);
-                    if(isAdded())
+                    if(getActivity() != null) {
+                        ((MainActivity)getActivity()).mShowFabCounselor();
                         getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.FEED_HOME_TUTE), true).apply();
-
+                    }
                 }
                 tuteCount ++;
 

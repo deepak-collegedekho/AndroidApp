@@ -409,8 +409,10 @@ public class CollegesDashboard extends BaseFragment {
                 break;
             case R.id.home_tute_image:
                 view.setVisibility(View.GONE);
-                if(isAdded())
-                getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.INSTITUTES_HOME_TUTE), true).apply();
+                if(getActivity() != null) {
+                    ((MainActivity) getActivity()).mShowFabCounselor();
+                    getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.INSTITUTES_HOME_TUTE), true).apply();
+                }
                 updateCollegeCount();
                     break;
             default:

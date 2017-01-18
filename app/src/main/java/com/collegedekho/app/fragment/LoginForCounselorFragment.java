@@ -30,6 +30,10 @@ import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;
 import com.collegedekho.app.utils.Utils;
 
+import java.util.HashMap;
+
+import static com.collegedekho.app.activity.MainActivity.mProfile;
+
 /**
  * Created by sureshsaini on 16/1/17.
  */
@@ -201,6 +205,14 @@ public class LoginForCounselorFragment extends  BaseFragment {
             mPhoneNumberET.setError("Enter Valid Mobile Number");
             return;
         }
+        if(mProfile != null){
+            mProfile.setPhone_no(phoneNumber);
+            mProfile.setName(name);
+            HashMap<String, String> params = new HashMap<>();
+            params.put(getString(R.string.USER_NAME), name);
+            params.put(getString(R.string.USER_PHONE), phoneNumber);
+            mListener.requestForProfile(params);
+        }
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_SMS)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -341,6 +353,7 @@ public class LoginForCounselorFragment extends  BaseFragment {
         void onOtpReceived(String phoneNumber, String otp);
 
         void displayMessage(int messageId);
+        void requestForProfile(HashMap<String, String> params);
 
     }
 }

@@ -155,9 +155,10 @@ public class InteractionDashboard extends BaseFragment {
                 break;
             case R.id.home_tute_image:
                 view.setVisibility(View.GONE);
-                if(isAdded())
+                if(getActivity() != null) {
+                    ((MainActivity) getActivity()).mShowFabCounselor();
                     getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.INTERACTION_HOME_TUTE), true).apply();
-
+                }
                 break;
             default:
                 try {

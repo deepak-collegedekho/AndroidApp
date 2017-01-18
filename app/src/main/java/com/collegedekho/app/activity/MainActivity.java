@@ -210,6 +210,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.fabric.sdk.android.Fabric;
 
+import static com.collegedekho.app.resource.Constants.TAG_REFRESH_PROFILE;
 import static com.collegedekho.app.utils.AnalyticsUtils.SendAppEvent;
 import static com.collegedekho.app.utils.NetworkUtils.getConnectivityStatus;
 
@@ -1474,11 +1475,31 @@ public class MainActivity extends AppCompatActivity
                 mFabMenu.setVisibility(View.GONE);
             }else if (currentFragment instanceof InstituteListFragment) {
                 mFabMenu.setVisibility(View.GONE);
-            }else {
-                mFabMenu.setVisibility(View.VISIBLE);
+            }else if (currentFragment instanceof HomeFragment) {
+                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
+                boolean  isTuteCompleted = sharedPreferences.getBoolean(getString(R.string.FEED_HOME_TUTE), false);
+                boolean IsChatTutCompleted = sharedPreferences.getBoolean(getString(R.string.INTERACTION_HOME_TUTE), false);
+                boolean IsCollegeTutCompleted = sharedPreferences.getBoolean(getString(R.string.INSTITUTES_HOME_TUTE), false);
+                boolean IsPrepareTutCompleted = sharedPreferences.getBoolean(getString(R.string.PREPARE_HOME_TUTE), false);
+                if(!isTuteCompleted) {
+                    this.mFabMenu.setVisibility(View.GONE);
+                }else if(!IsChatTutCompleted){
+                    this.mFabMenu.setVisibility(View.GONE);
+                }else if(!IsCollegeTutCompleted){
+                    this.mFabMenu.setVisibility(View.GONE);
+                }else if(!IsPrepareTutCompleted){
+                    this.mFabMenu.setVisibility(View.GONE);
+                }else{
+                    mFabMenu.setVisibility(View.VISIBLE);
+                }
             }
         }
         onShowFabMenu();
+    }
+
+    public void mShowFabCounselor(){
+        if(mFabMenu != null)
+            this.mFabMenu.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -1591,7 +1612,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRefreshProfile() {
-        this.requestForUserProfileUpdate(Constants.TAG_REFRESH_PROFILE, null);
+        this.requestForUserProfileUpdate(TAG_REFRESH_PROFILE, null);
     }
 
     private void mParseAndRefreshProfileResponse(String response) {
@@ -2638,7 +2659,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_LOAD_PROFILE:
                 this.mParseProfileResponse(response);
                 break;
-            case Constants.TAG_REFRESH_PROFILE:
+            case TAG_REFRESH_PROFILE:
                 this.mParseAndRefreshProfileResponse(response);
                 break;
             case Constants.PROFILE_IMAGE_UPLOADING:
@@ -3769,6 +3790,10 @@ public class MainActivity extends AppCompatActivity
             if(currentFragment instanceof HomeFragment){
                 ((HomeFragment) currentFragment).feedsLoaded(null,null);
             }
+        }else  if(tag.equalsIgnoreCase(Constants.TAG_REFRESH_PROFILE)){
+            if(currentFragment instanceof ProfileFragment){
+                ((ProfileFragment) currentFragment).mRefreshProfileOnResponse(null);
+            }
         }
         else  if(tag.equalsIgnoreCase(Constants.ACTION_MY_FB_COMMENT_SUBMITTED)){
             if(currentFragment instanceof MyFutureBuddiesFragment){
@@ -4406,7 +4431,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.TAG_UPDATE_PROFILE_OBJECT:
             case Constants.TAG_UPDATE_PROFILE_EXAMS:
             case Constants.REFRESH_CHATROOM:
-            case Constants.TAG_REFRESH_PROFILE:
+            case TAG_REFRESH_PROFILE:
             case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
             case Constants.TAG_CREATE_USER:
             case Constants.TAG_REFRESHED_FEED:
