@@ -1481,17 +1481,20 @@ public class MainActivity extends AppCompatActivity
                 boolean IsChatTutCompleted = sharedPreferences.getBoolean(getString(R.string.INTERACTION_HOME_TUTE), false);
                 boolean IsCollegeTutCompleted = sharedPreferences.getBoolean(getString(R.string.INSTITUTES_HOME_TUTE), false);
                 boolean IsPrepareTutCompleted = sharedPreferences.getBoolean(getString(R.string.PREPARE_HOME_TUTE), false);
-                if(!isTuteCompleted) {
-                    this.mFabMenu.setVisibility(View.GONE);
-                }else if(!IsChatTutCompleted){
-                    this.mFabMenu.setVisibility(View.GONE);
-                }else if(!IsCollegeTutCompleted){
-                    this.mFabMenu.setVisibility(View.GONE);
-                }else if(!IsPrepareTutCompleted){
-                    this.mFabMenu.setVisibility(View.GONE);
+                int tabPagerPosition = ((HomeFragment) currentFragment).getSelectedPage();
+                if(isTuteCompleted && tabPagerPosition == 0) {
+                    this.mFabMenu.setVisibility(View.VISIBLE);
+                }else if(IsCollegeTutCompleted &&   tabPagerPosition == 1){
+                    this.mFabMenu.setVisibility(View.VISIBLE);
+                }else if(IsChatTutCompleted &&  tabPagerPosition == 2){
+                    this.mFabMenu.setVisibility(View.VISIBLE);
+                }else if(IsPrepareTutCompleted &&  tabPagerPosition == 3){
+                    this.mFabMenu.setVisibility(View.VISIBLE);
                 }else{
-                    mFabMenu.setVisibility(View.VISIBLE);
+                    mFabMenu.setVisibility(View.GONE);
                 }
+            }else{
+                mFabMenu.setVisibility(View.VISIBLE);
             }
         }
         onShowFabMenu();
@@ -2104,7 +2107,7 @@ public class MainActivity extends AppCompatActivity
                         this.mRecommendedInstituteCount, this.mShortListInstituteCount, this.mFeaturedInstituteCount, this.mUndecidedInstitutesCount,cdRecommendedInstituteType.ordinal()),
                         !isFromNotification, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
             } else {
-                if (fragment instanceof CDRecommendedInstituteFragment) {
+                if (currentFragment instanceof  CDRecommendedInstituteFragment && fragment instanceof CDRecommendedInstituteFragment) {
                     if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.UNDECIDED) {
                         ((CDRecommendedInstituteFragment) fragment).showUndecidedInstitutes(this.mInstituteList, next);
                     }else if (cdRecommendedInstituteType == Constants.CDRecommendedInstituteType.RECOMMENDED) {
@@ -2115,7 +2118,8 @@ public class MainActivity extends AppCompatActivity
                         ((CDRecommendedInstituteFragment) fragment).updateBuzzList(this.mInstituteList, next,this.mFeaturedInstituteCount);
                     }
                 }
-                this.mDisplayFragment(fragment, false, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
+
+               // this.mDisplayFragment(fragment, false, getResourceString(R.string.TAG_FRAGMENT_CD_RECOMMENDED_INSTITUTE_LIST));
             }
         }
     }
@@ -2183,79 +2187,70 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mLoadCounselorChat(String response) {
+
+        this.mFB = new MyFutureBuddy();
+        this.mFB.setResource_uri(Constants.BASE_URL+"l2-chats/");
+        this.mFB.setInstitute_name("");
+        this.mFB.setCounselor(true);
+        int commentsCount ;
         try {
             JSONObject jsonObject = new JSONObject(response);
-            int commentsCount = jsonObject.getInt("count");
-            this.mFB = new MyFutureBuddy();
+            commentsCount = jsonObject.getInt("count");
             if(commentsCount  > 0){
                 String result = extractResults(response);
                 List<MyFutureBuddyComment> commentList = JSON.std.listOfFrom(MyFutureBuddyComment.class, result);
                 this.mFB.setFutureBuddiesCommentsSet((ArrayList)commentList);
             }
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(MyFutureBuddiesFragment.class.getSimpleName());
-
-            if (this.mFB != null) {
-                this.mFB.setResource_uri(Constants.BASE_URL+"l2-chats/");
-                this.mFB.setInstitute_name("");
-                this.mFB.setCounselor(true);
-                commentsCount = this.mFB.getComments_count();
-                if (fragment == null) {
-                    this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), true, MyFutureBuddiesFragment.class.getSimpleName());
-                }else{
-                    ((MyFutureBuddiesFragment)fragment).updateChatPings(this.mFB.getFutureBuddiesCommentsSet(), commentsCount);
-                }
-            }
         }catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "Exception occurred while parsing Counselor chat ");
         }
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(MyFutureBuddiesFragment.class.getSimpleName());
+        commentsCount = this.mFB.getComments_count();
+         if (fragment == null) {
+             this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), true, MyFutureBuddiesFragment.class.getSimpleName());
+         }else{
+             ((MyFutureBuddiesFragment)fragment).updateChatPings(this.mFB.getFutureBuddiesCommentsSet(), commentsCount);
+         }
     }
     private void mLoadPNSCounselorChat(String response) {
+
+        this.mFB = new MyFutureBuddy();
+        this.mFB.setResource_uri(Constants.BASE_URL+"l2-chats/");
+        this.mFB.setInstitute_name("");
+        this.mFB.setCounselor(true);
+        int commentsCount;
         try {
             JSONObject jsonObject = new JSONObject(response);
-            int commentsCount = jsonObject.getInt("count");
-            this.mFB = new MyFutureBuddy();
+            commentsCount = jsonObject.getInt("count");
             if(commentsCount  > 0){
                 String result = extractResults(response);
                 List<MyFutureBuddyComment> commentList = JSON.std.listOfFrom(MyFutureBuddyComment.class, result);
                 this.mFB.setFutureBuddiesCommentsSet((ArrayList)commentList);
             }
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(MyFutureBuddiesFragment.class.getSimpleName());
-
-            if (this.mFB != null) {
-                this.mFB.setResource_uri(Constants.BASE_URL+"l2-chats/");
-                this.mFB.setInstitute_name("");
-                this.mFB.setCounselor(true);
-                commentsCount = this.mFB.getComments_count();
-                boolean isAddToStack = false;
-                if (getSupportFragmentManager().getBackStackEntryCount() >= 1) {
-                    isAddToStack = true;
-                }
-                if (fragment == null) {
-                    this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), isAddToStack, MyFutureBuddiesFragment.class.getSimpleName());
-                }else{
-                    ((MyFutureBuddiesFragment)fragment).updateChatPings(this.mFB.getFutureBuddiesCommentsSet(), commentsCount);
-                }
-            }
         }catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG,"Exception occurred while parsing counselor chat");
+        }
+        boolean isAddToStack = false;
+        if (getSupportFragmentManager().getBackStackEntryCount() >= 1) {
+            isAddToStack = true;
+        }
+        commentsCount = this.mFB.getComments_count();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(MyFutureBuddiesFragment.class.getSimpleName());
+        if (fragment == null) {
+            this.mDisplayFragment(MyFutureBuddiesFragment.newInstance(this.mFB, commentsCount), isAddToStack, MyFutureBuddiesFragment.class.getSimpleName());
+        }else{
+            ((MyFutureBuddiesFragment)fragment).updateChatPings(this.mFB.getFutureBuddiesCommentsSet(), commentsCount);
         }
     }
 
     private void mUpdateMyFB(String response, int index, int oldCount) {
-        try {
             this.mFB = this.mParseAndPopulateMyFB(response, index);
-
             //if number of comments have increased
-//            this.speakMessageForAccessibility("You have "+String.valueOf(this.mFB.getComments_count()-oldCount)+" Comments");
-            if (this.mFB.getComments_count() > oldCount) {
+            if (this. mFB != null && this.mFB.getComments_count() > oldCount) {
                 ArrayList<MyFutureBuddyComment> myFbComments = this.mFB.getFutureBuddiesCommentsSet();
-
                 if (currentFragment instanceof MyFutureBuddiesFragment)
                     ((MyFutureBuddiesFragment) currentFragment).updateChatPings(myFbComments,this.mFB.getComments_count());
             }
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
     }
 
     private void mUpdateCounselorChat(String response, int index, int oldCount) {
@@ -3262,7 +3257,9 @@ public class MainActivity extends AppCompatActivity
         }else{
             mUserCreatedSuccessfully(response, tag);
             if (currentFragment instanceof LoginForCounselorFragment) {
-                onBackPressed();
+                if(currentFragment.isAdded()) {
+                    onBackPressed();
+                }
                 hasNextDeferredFunction();
                 return;
 
@@ -3760,7 +3757,7 @@ public class MainActivity extends AppCompatActivity
                 ((InstituteDetailFragment) currentFragment).updateInstituteNews((ArrayList<News>) this.mNewsList, next);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "exception occurred in parsing newslist");
         }
     }
 
@@ -4020,7 +4017,7 @@ public class MainActivity extends AppCompatActivity
         try {
             Folder.populateFolderList(JSON.std.getStreamingFactory().createParser(response), mFolderList);
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "exception occurred in update filter list ");
         }
     }
 
@@ -4661,24 +4658,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mLoadPreviousComments(String response){
-        try {
             MyFutureBuddy mFb = this.mParseAndPopulateMyFB(response, 0);
             if(currentFragment instanceof MyFutureBuddiesFragment){
                 ((MyFutureBuddiesFragment) currentFragment).mDisplayPreviousComments(mFb);
             }
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
     }
 
     private void mOnMyFBCommentAdded(String response, int fbIndex, int index) {
         try {
-           /* JSONObject comment = new JSONObject(response);
-            MyFutureBuddyComment fbComment = new MyFutureBuddyComment();
-            fbComment.setComment(comment.getString("comment"));
-            fbComment.setAdded_on(comment.getString("added_on"));
-            fbComment.setUser(comment.getString("user"));
-            fbComment.setToken(comment.getString("token"));*/
             MyFutureBuddyComment fbComment = JSON.std.beanFrom(MyFutureBuddyComment.class, response);
             fbComment.setIndex(index);
             fbComment.setFbIndex(fbIndex);
@@ -4823,7 +4810,7 @@ public class MainActivity extends AppCompatActivity
             for (int i = 0; i < count; i++)
                 getSupportFragmentManager().popBackStack();
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "exception occurred while clearing back stack");
         }
     }
 
@@ -4840,7 +4827,7 @@ public class MainActivity extends AppCompatActivity
                 getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             Constants.DISABLE_FRAGMENT_ANIMATION = false;
         }catch (Exception error)  {
-            Log.e(TAG, error.getMessage());
+            Log.e(TAG, "exception occurred while clering back stack without animation");
         }
     }
     @Override
@@ -5083,7 +5070,7 @@ public class MainActivity extends AppCompatActivity
                 ((HomeFragment) currentFragment).feedsLoaded(new ArrayList<>(feedList), this.next);
             }
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "exception occurred on display feed fragment");
         }
     }
 
@@ -5242,7 +5229,7 @@ public class MainActivity extends AppCompatActivity
             this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams)), true, Constants.TAG_FRAGMENT_STREAMS);
             mDisplayOtpVerificationFragment();
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "Exception occurred on display tream fragment");
         }
     }
 
@@ -6035,7 +6022,7 @@ public class MainActivity extends AppCompatActivity
                 this.mDisplayFragment(fragment, false, CalendarParentFragment.class.getSimpleName());
             }
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "Exception occurred on display calender fragment");
         }
     }
 

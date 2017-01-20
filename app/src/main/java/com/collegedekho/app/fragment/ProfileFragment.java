@@ -68,7 +68,7 @@ import java.util.List;
  */
 public class ProfileFragment extends BaseFragment implements ProfileFragmentListener, CustomSwipeRefreshLayout.OnRefreshListener {
 
-    private final static String TAG ="Profile Fragment";
+    private final static String TAG = ProfileFragment.class.getSimpleName();
     private final static String PARAM1  = "param1";
     public Profile mProfile ;
     private UserProfileListener mListener;
@@ -82,13 +82,18 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     private static List<ProfileSpinnerItem> mPreferredDegreesList;
     private RelativeLayout mUserImageLayout;
     private CustomSwipeRefreshLayout mSwipeRefreshLayout;
+    private static ProfileFragment mInstance;
 
     public static ProfileFragment getInstance(Profile profile){
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(PARAM1, profile);
-        fragment.setArguments(args);
-        return fragment;
+        synchronized (ProfileFragment.class) {
+            if(mInstance == null){
+                mInstance = new ProfileFragment();
+            }
+            Bundle args = new Bundle();
+            args.putParcelable(PARAM1, profile);
+            mInstance.setArguments(args);
+            return mInstance;
+        }
     }
 
     @Override
@@ -2050,11 +2055,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
         if(uri == null)
             return;
-        // set bitmap to profile image
-        if(getView() != null) {
-            CircularImageView profileImage   = (CircularImageView) getView().findViewById(R.id.profile_image);
-            profileImage.setImageURI(uri);
-        }
+
 
         File imageFile = new File(uri.getPath());
         FileInputStream fis = null;
@@ -2080,6 +2081,11 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
+        // set bitmap to profile image
+        if(getView() != null) {
+            CircularImageView profileImage   = (CircularImageView) getView().findViewById(R.id.profile_image);
+            profileImage.setImageBitmap(resizedBitmap);
+        }
         // delete  temp created profile image
         deleteTempImageFile();
         // request to upload profile image file

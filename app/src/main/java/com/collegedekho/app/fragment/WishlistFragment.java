@@ -36,7 +36,7 @@ public class WishlistFragment extends BaseFragment {
     public static final String TITLE = "Shortlist Institutes";
     private static final String ARG_INSTITUTE = "wishlist_institute";
     private static final String ARG_FILTER_ALLOWED = "filter_allowed";
-    private static final String TAG = "Wishlist Fragment";
+    private static final String TAG = WishlistFragment.class.getSimpleName();
     private ArrayList<Institute> mInstitutes;
     private String mTitle;
     private boolean filterAllowed;
@@ -45,6 +45,8 @@ public class WishlistFragment extends BaseFragment {
     private PeekAndPop peekAndPop;
     private WishlistInstituteListAdapter mWishlistInstituteListAdapter;
     private MainActivity mMainActivity;
+
+    private static WishlistFragment mInstance;
 
     public WishlistFragment() {
         // Required empty public constructor
@@ -57,34 +59,35 @@ public class WishlistFragment extends BaseFragment {
      * @return A new instance of fragment WishlistFragment.
      */
     public static WishlistFragment newInstance(ArrayList<Institute> institutes, String title, String next, boolean filterAllowed) {
-        WishlistFragment fragment = new WishlistFragment();
+        synchronized (WishlistFragment.class) {
+            if(mInstance == null)
+                mInstance = new WishlistFragment();
 
-        Bundle args = new Bundle();
-        args.putParcelableArrayList(ARG_INSTITUTE, institutes);
-        args.putString(ARG_TITLE, title);
-        args.putString(ARG_NEXT, next);
-        args.putBoolean(ARG_FILTER_ALLOWED, filterAllowed);
-
-        fragment.setArguments(args);
-
-        return fragment;
+            Bundle args = new Bundle();
+            args.putParcelableArrayList(ARG_INSTITUTE, institutes);
+            args.putString(ARG_TITLE, title);
+            args.putString(ARG_NEXT, next);
+            args.putBoolean(ARG_FILTER_ALLOWED, filterAllowed);
+            mInstance.setArguments(args);
+            return mInstance;
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            this.mInstitutes = getArguments().getParcelableArrayList(ARG_INSTITUTE);
-            this.mTitle = getArguments().getString(ARG_TITLE);
-            this.mNextUrl = getArguments().getString(ARG_NEXT);
-            this.filterAllowed = getArguments().getBoolean(ARG_FILTER_ALLOWED);
-            listType = Constants.WISH_LIST_TYPE;
+        Bundle args = getArguments();
+        if (args != null) {
+            this.mInstitutes = args.getParcelableArrayList(ARG_INSTITUTE);
+            this.mTitle = args.getString(ARG_TITLE);
+            this.mNextUrl = args.getString(ARG_NEXT);
+            this.filterAllowed = args.getBoolean(ARG_FILTER_ALLOWED);
+            super.listType = Constants.WISH_LIST_TYPE;
         }
     }
 
     public void RemoveInstitute(int position)
     {
-
         this.mInstitutes.remove(position);
         this.mWishlistInstituteListAdapter.notifyItemRemoved(position);
         this.mWishlistInstituteListAdapter.notifyDataSetChanged();

@@ -315,8 +315,9 @@ public class HomeFragment extends BaseFragment {
         }
     }
     public int  getSelectedPage() {
-        return mViewPager.getCurrentItem();
+        return mViewPager != null?mViewPager.getCurrentItem():0;
     }
+
 
     public void updateExamSummary(ExamSummary updateExamSummary) {
         if (this.mHomePagerAdapter != null)

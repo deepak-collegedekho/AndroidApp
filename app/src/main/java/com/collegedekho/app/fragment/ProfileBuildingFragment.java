@@ -725,6 +725,10 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
             builder.create();
             builder.show();
         }else {
+            if(mGoogleApiClient == null){
+                setUserEducationStream();
+                return;
+            }
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             if(mLastLocation == null && Constants.IS_LOCATION_SERVICES_ENABLED){
                 checkLocationSettings();
@@ -1253,10 +1257,11 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
 
 
     public void mLevelStreamResponseCompleted(ArrayList<ProfileSpinnerItem> streamList) {
+
         // request to update user level info on server
         updateUserEducationLevel();
 
-        if(mRootView == null)return;
+        if(mRootView == null || getActivity() == null)return;
         //  show next layout to select current stream
         // set heading to acco. current stream screen
         ((TextView) mRootView.findViewById(R.id.user_education_heading)).setText(getString(R.string.your_current_stream));

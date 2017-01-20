@@ -74,40 +74,45 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     public int currentTabId;
     private MainActivity mMainActivity;
     private static final char[] NUMBER_LIST = TickerUtils.getDefaultNumberList();
-
+    private static CDRecommendedInstituteFragment mInstance ;
 
     public CDRecommendedInstituteFragment() {
         // Required empty public constructor
     }
 
     public static CDRecommendedInstituteFragment newInstance(ArrayList<Institute> institutes, String title,String next,
-                                                             int recommendedCount, int wishListCount, int  buzzListCount, int undecidedCount, int category) {
-        CDRecommendedInstituteFragment fragment = new CDRecommendedInstituteFragment();
-        Bundle args = new Bundle();
-        args.putParcelableArrayList(ARG_INSTITUTE, institutes);
-        args.putString(ARG_TITLE, title);
-        args.putString(ARG_NEXT, next);
-        args.putInt(ARG_RECOMMENDED_INSTITUTE_COUNT, recommendedCount);
-        args.putInt(ARG_WISHLIST_INSTITUTE_COUNT, wishListCount);
-        args.putInt(ARG_BUZZLIST_INSTITUTE_COUNT, buzzListCount);
-        args.putInt(ARG_UNDECIDED_INSTITUTE_COUNT, undecidedCount);
-        args.putInt(ARG_CARD_CATEGORY,category);
-        fragment.setArguments(args);
-        return fragment;
+                                                              int recommendedCount, int wishListCount, int  buzzListCount, int undecidedCount, int category) {
+        synchronized (CDRecommendedInstituteFragment.class) {
+            if(mInstance == null) {
+                mInstance = new CDRecommendedInstituteFragment();
+            }
+            Bundle args = new Bundle();
+            args.putParcelableArrayList(ARG_INSTITUTE, institutes);
+            args.putString(ARG_TITLE, title);
+            args.putString(ARG_NEXT, next);
+            args.putInt(ARG_RECOMMENDED_INSTITUTE_COUNT, recommendedCount);
+            args.putInt(ARG_WISHLIST_INSTITUTE_COUNT, wishListCount);
+            args.putInt(ARG_BUZZLIST_INSTITUTE_COUNT, buzzListCount);
+            args.putInt(ARG_UNDECIDED_INSTITUTE_COUNT, undecidedCount);
+            args.putInt(ARG_CARD_CATEGORY, category);
+            mInstance.setArguments(args);
+            return mInstance;
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            this.mInstitutes = this.getArguments().getParcelableArrayList(ARG_INSTITUTE);
-            this.mTitle = this.getArguments().getString(ARG_TITLE);
-            this.mNextUrl = this.getArguments().getString(ARG_NEXT);
-            this.mRecommendedCount = this.getArguments().getInt(ARG_RECOMMENDED_INSTITUTE_COUNT);
-            this.mShortListCount = this.getArguments().getInt(ARG_WISHLIST_INSTITUTE_COUNT);
-            this.mBuzzListCount = this.getArguments().getInt(ARG_BUZZLIST_INSTITUTE_COUNT);
-            this.mUndecidedCount = this.getArguments().getInt(ARG_UNDECIDED_INSTITUTE_COUNT);
-            this.CARD_CATEGORY =this.getArguments().getInt(ARG_CARD_CATEGORY);
+        Bundle args = getArguments();
+        if (args != null) {
+            this.mInstitutes = args.getParcelableArrayList(ARG_INSTITUTE);
+            this.mRecommendedCount  = args.getInt(ARG_RECOMMENDED_INSTITUTE_COUNT);
+            this.mShortListCount  = args.getInt(ARG_WISHLIST_INSTITUTE_COUNT);
+            this.mBuzzListCount   = args.getInt(ARG_BUZZLIST_INSTITUTE_COUNT);
+            this.mUndecidedCount  = args.getInt(ARG_UNDECIDED_INSTITUTE_COUNT);
+            this.CARD_CATEGORY    = args.getInt(ARG_CARD_CATEGORY);
+            this.mTitle     = args.getString(ARG_TITLE);
+            this.mNextUrl   = args.getString(ARG_NEXT);
         }
     }
 
@@ -115,7 +120,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_recommended_institute_listing, container, false);
-
         /**
          * Get the Tutorial Status. Show tute layout if tute has not been performed.
          * */
@@ -128,8 +132,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             rootView.findViewById(R.id.recommended_tute_image).setVisibility(View.GONE);
             rootView.findViewById(R.id.recommended_tute_frame).setVisibility(View.GONE);
         }
-
-
 
         listType = Constants.WISH_LIST_TYPE;
         this.mCardContainer = (CardContainer) rootView.findViewById(R.id.fragment_recommended_institute_cards_container);
@@ -171,6 +173,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         this.mRecommendedCountText.setText(String.valueOf(mRecommendedCount));
         this.mShortListCountText.setText(String.valueOf(mShortListCount));
         this.mBuzzListCountText.setText(String.valueOf(mBuzzListCount));
+
+
 
         if(this.mAdapter == null){
             this.mAdapter = new SimpleCardStackAdapter(this.getContext(), this, CARD_CATEGORY);
@@ -257,10 +261,14 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(ARG_INSTITUTE, this.mInstitutes);
-        outState.putString(ARG_TITLE, this.mTitle);
-        outState.putString(ARG_NEXT, this.mNextUrl);
-        outState.putInt(ARG_UNDECIDED_INSTITUTE_COUNT, this.mUndecidedCount);
+        outState.putParcelableArrayList(ARG_INSTITUTE, mInstitutes);
+        outState.putString(ARG_TITLE, mTitle);
+        outState.putString(ARG_NEXT, mNextUrl);
+        outState.putInt(ARG_RECOMMENDED_INSTITUTE_COUNT, mRecommendedCount);
+        outState.putInt(ARG_WISHLIST_INSTITUTE_COUNT, mShortListCount);
+        outState.putInt(ARG_BUZZLIST_INSTITUTE_COUNT, mBuzzListCount);
+        outState.putInt(ARG_UNDECIDED_INSTITUTE_COUNT, mUndecidedCount);
+        outState.putInt(ARG_CARD_CATEGORY, CARD_CATEGORY);
         super.onSaveInstanceState(outState);
     }
 
@@ -306,7 +314,6 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
         if (getView() != null)
             getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-       // getActivity().invalidateOptionsMenu();
         this.mMainActivity = (MainActivity) this.getActivity();
         if(mMainActivity != null && mMainActivity.mDrawerToggle != null){
             mMainActivity.mDrawerToggle.setDrawerIndicatorEnabled(false);
@@ -376,9 +383,10 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 //removed from shortlist
                 if (institute.getIs_shortlisted() == 0)
                 {
-                    this.mInstitutes.remove(institute.getPosition());
-                    this.mWishlistInstituteListAdapter.notifyItemRemoved(institute.getPosition());
-
+                    if(mInstitutes .size() > institute.getPosition()) {
+                        this.mInstitutes.remove(institute.getPosition());
+                        this.mWishlistInstituteListAdapter.notifyItemRemoved(institute.getPosition());
+                    }
                     this.mShortListCount--;
                     this.mShortListCountText.setText(String.valueOf(mShortListCount));
 
@@ -392,7 +400,9 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 }
                 //applied
                 else {
-                    this.mInstitutes.set(institute.getPosition(), institute);
+                    if(mInstitutes .size() >= institute.getPosition()) {
+                        this.mInstitutes.set(institute.getPosition(), institute);
+                    }
                 }
                 //update the list
                 this.mWishlistInstituteListAdapter.notifyDataSetChanged();
@@ -525,6 +535,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
                 break;
         }
     }
+
 
 
 
@@ -1000,6 +1011,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
      * */
     public void setUpStackAdapter(){
         this.mAdapter.clear();
+
         if(this.mInstitutes != null && !this.mInstitutes.isEmpty()){
             List<Institute> list = new ArrayList<>();
             if(mInstitutes.size() >= 2) {

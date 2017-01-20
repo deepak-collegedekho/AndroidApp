@@ -59,13 +59,14 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     private String mFeedFragmentNextURL;
     private FeedAdapter mFeedAdapter;
     private Unbinder mUnbinder;
+    private static  FeedFragment mInstance;
 
 
     public FeedFragment() {
         // Required empty public constructor
     }
 
-    /**
+    /*
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
@@ -73,18 +74,26 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
      * @param nextURL Parameter 2.
      * @return A new instance of fragment FeedFragment.
      */
-    public static FeedFragment newInstance(ArrayList<Feed> feedArrayList, String nextURL) {
-        FeedFragment fragment = new FeedFragment();
-        Bundle args = new Bundle();
-        args.putParcelableArrayList(FEED_LIST, feedArrayList);
-        args.putString(FEED_FRAGMENT_NEXT_URL, nextURL);
-        fragment.setArguments(args);
-
-        return fragment;
-    }
+    /*public static FeedFragment newInstance(ArrayList<Feed> feedArrayList, String nextURL) {
+        synchronized (FeedFragment.class) {
+            if(mInstance == null) {
+                mInstance = new FeedFragment();
+            }
+            Bundle args = new Bundle();
+            args.putParcelableArrayList(FEED_LIST, feedArrayList);
+            args.putString(FEED_FRAGMENT_NEXT_URL, nextURL);
+            mInstance.setArguments(args);
+            return mInstance;
+        }
+    }*/
 
     public static FeedFragment newInstance() {
-        return new FeedFragment();
+        synchronized (FeedFragment.class) {
+            if (mInstance == null) {
+                mInstance = new FeedFragment();
+            }
+            return  mInstance;
+        }
     }
 
     @Override
