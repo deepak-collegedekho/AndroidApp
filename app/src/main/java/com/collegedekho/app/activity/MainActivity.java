@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity
 
     public static NetworkUtils mNetworkUtils;
     public static volatile BaseFragment currentFragment;
-    private List<Institute> mInstituteList;
+    private List<Institute> mInstituteList = new ArrayList<>();
     private List<Chapters> chaptersList;
     private List<PsychometricTestQuestion> psychometricQuestionsList;
     private int currentInstitute;
@@ -1146,6 +1146,7 @@ public class MainActivity extends AppCompatActivity
         adjustFontScale(getResources().getConfiguration());
         // Logs 'install' and 'app activate' App Events.
         // AppEventsLogger.activateApp(this);
+        System.gc();
         Log.e(TAG, " onResume()  exit  time_info  " + System.currentTimeMillis());
     }
 
@@ -1474,6 +1475,8 @@ public class MainActivity extends AppCompatActivity
             }else if (currentFragment instanceof CDRecommendedInstituteFragment) {
                 mFabMenu.setVisibility(View.GONE);
             }else if (currentFragment instanceof InstituteListFragment) {
+                mFabMenu.setVisibility(View.GONE);
+            }else if (currentFragment instanceof InstituteDetailFragment) {
                 mFabMenu.setVisibility(View.GONE);
             }else if (currentFragment instanceof HomeFragment) {
                 SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
@@ -1991,7 +1994,8 @@ public class MainActivity extends AppCompatActivity
     private void updateLastInstituteList(String response) {
         try {
             List<Institute> institutes = JSON.std.listOfFrom(Institute.class, extractResults(response));
-            this.mInstituteList = institutes;
+            this.mInstituteList.clear();
+            this.mInstituteList.addAll(institutes);
 
             if (currentFragment instanceof InstituteListFragment) {
                 ((InstituteListFragment) currentFragment).updateLastList(institutes, next);
@@ -2081,6 +2085,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void mDisplayCDRecommendedInstituteList(String response, boolean isHavingNextUrl, Constants.CDRecommendedInstituteType cdRecommendedInstituteType, boolean isUpdate) {
+        System.gc();
 
         if (!isHavingNextUrl)
             next = null;

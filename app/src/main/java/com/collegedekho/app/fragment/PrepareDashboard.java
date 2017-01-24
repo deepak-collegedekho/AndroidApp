@@ -141,6 +141,8 @@ public class PrepareDashboard extends BaseFragment {
         ImageView tuteImage = (ImageView)rootView.findViewById(R.id.home_tute_image);
         tuteImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute7));
         tuteImage.setOnClickListener(this);
+       // tuteImage.setImageBitmap(BitMapResize.decodeSampledBitmapFromResource(getResources(), tuteImage.getId(), tuteImage.getWidth(), tuteImage.getHeight()));
+
 
         rootView.findViewById(R.id.include_image_layout).findViewById(R.id.profile_image_edit_button).setOnClickListener(this);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);

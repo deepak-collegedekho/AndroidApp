@@ -3,7 +3,6 @@ package com.collegedekho.app.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +15,15 @@ public class SplashFragment extends BaseFragment {
 
     private final String TAG = "Splash Fragment";
     private OnSplashListener mListener;
+    private static SplashFragment sInstance;
 
     public static SplashFragment newInstance() {
-        return new SplashFragment();
+        synchronized (SplashFragment.class) {
+            if(sInstance == null){
+                sInstance = new SplashFragment();
+            }
+            return  sInstance;
+        }
     }
 
     public SplashFragment() {
@@ -33,9 +38,7 @@ public class SplashFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.e(TAG, "request step 1"+System.currentTimeMillis());
         if(mListener != null && NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED){
-            Log.e(TAG, "request step 2"+System.currentTimeMillis());
             mListener.onRequestForUserCreation();
         }
     }
@@ -74,6 +77,7 @@ public class SplashFragment extends BaseFragment {
 
     @Override
     public void hide() { }
+
     public interface OnSplashListener {
         void onRequestForUserCreation();
     }

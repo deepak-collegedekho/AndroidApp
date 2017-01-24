@@ -109,10 +109,7 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
     private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
     private TextView mSkipButton;
-
-    public ProfileBuildingFragment() {
-        // Required empty public constructor
-    }
+    private static ProfileBuildingFragment sInstance;
 
     /**
      * Use this factory method to create a new instance of
@@ -120,9 +117,17 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
      * @return A new instance of fragment ProfileBuildingFragment.
      */
     public static ProfileBuildingFragment newInstance() {
-        return new ProfileBuildingFragment();
+        synchronized (ProfileBuildingFragment.class) {
+            if(sInstance == null)
+                sInstance =new ProfileBuildingFragment();
+            return  sInstance;
+        }
     }
 
+
+    public ProfileBuildingFragment() {
+        // Required empty public constructor
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return  mRootView = inflater.inflate(R.layout.fragment_profile_building, container, false);

@@ -132,12 +132,17 @@ public class HomeFragment extends BaseFragment {
         tuteImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(tuteCount == 1)
-                    ((ImageView)view).setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute2));
-                else  if(tuteCount == 2)
-                    ((ImageView)view).setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute3));
-                else  if(tuteCount == 3) {
+                if(tuteCount == 1) {
+                    ((ImageView) view).setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute2));
+                       // ((ImageView) view).setImageBitmap(BitMapResize.decodeSampledBitmapFromResource(getResources(), view.getId(), view.getWidth(), view.getHeight()));
+                }else  if(tuteCount == 2) {
+                    ((ImageView) view).setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute3));
+                    //((ImageView) view).setImageBitmap(BitMapResize.decodeSampledBitmapFromResource(getResources(), view.getId(), view.getWidth(), view.getHeight()));
+
+                }else  if(tuteCount == 3) {
                     ((ImageView) view).setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute4));
+                    //((ImageView) view).setImageBitmap(BitMapResize.decodeSampledBitmapFromResource(getResources(), view.getId(), view.getWidth(), view.getHeight()));
+
                     if(isAdded())
                         getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.FEED_HOME_TUTE), true).apply();
                 }else{

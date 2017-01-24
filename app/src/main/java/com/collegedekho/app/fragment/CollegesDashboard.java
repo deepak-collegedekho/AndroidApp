@@ -115,6 +115,8 @@ public class CollegesDashboard extends BaseFragment {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
         ImageView tuteImage = (ImageView)rootView.findViewById(R.id.home_tute_image);
         tuteImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_home_tute5));
+        //tuteImage.setImageBitmap(BitMapResize.decodeSampledBitmapFromResource(getResources(), tuteImage.getId(), tuteImage.getWidth(), tuteImage.getHeight()));
+
         tuteImage.setOnClickListener(this);
 
         if(MainActivity.mProfile != null) {

@@ -2053,9 +2053,9 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     @Override
     public void uploadUserProfileImage(Uri uri) {
 
-        if(uri == null)
+        if(uri == null) {
             return;
-
+        }
 
         File imageFile = new File(uri.getPath());
         FileInputStream fis = null;

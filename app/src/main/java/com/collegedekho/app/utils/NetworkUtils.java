@@ -29,7 +29,6 @@ import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.listener.DataLoadListener;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.resource.ErrorCode;
 import com.collegedekho.app.resource.MySingleton;
 import com.crashlytics.android.Crashlytics;
 
@@ -500,7 +499,7 @@ public class NetworkUtils {
         }
 
         String[] tags = tag.split("#");
-        if(tags[0].equalsIgnoreCase(Constants.TAG_TRUE_SDK_LOGIN)  )
+       /* if(tags[0].equalsIgnoreCase(Constants.TAG_TRUE_SDK_LOGIN)  )
         {
             try {
                 JSONObject jsonObj = new JSONObject(json);
@@ -515,8 +514,8 @@ public class NetworkUtils {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
-        else if(tags[0].equalsIgnoreCase(Constants.TAG_APPLIED_COURSE))
+        }else*/
+        if(tags[0].equalsIgnoreCase(Constants.TAG_APPLIED_COURSE))
         {
             saveToSharedPref(params);
         }
