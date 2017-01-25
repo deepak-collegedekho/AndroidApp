@@ -110,6 +110,13 @@ public class InstituteDetailFragment extends BaseFragment {
         updateInstituteDetail(view);
     }
 
+    public boolean updateFabCounselorButton(){
+        if (this.mInstituteType == Constants.CDRecommendedInstituteType.SHORTLIST)
+        {
+            return  true;
+        }
+        return false;
+    }
     private void updateInstituteDetail(View rootView){
         if(rootView == null) return;
         if (this.mInstituteType == Constants.CDRecommendedInstituteType.SHORTLIST)

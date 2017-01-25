@@ -1477,7 +1477,16 @@ public class MainActivity extends AppCompatActivity
             }else if (currentFragment instanceof InstituteListFragment) {
                 mFabMenu.setVisibility(View.GONE);
             }else if (currentFragment instanceof InstituteDetailFragment) {
-                mFabMenu.setVisibility(View.GONE);
+                if (mInstitute != null){
+                 boolean isShow =   ((InstituteDetailFragment) currentFragment).updateFabCounselorButton();
+                    if(isShow){
+                        mFabMenu.setVisibility(View.GONE);
+                    }else{
+                        mFabMenu.setVisibility(View.VISIBLE);
+                    }
+                }else {
+                    mFabMenu.setVisibility(View.GONE);
+                }
             }else if (currentFragment instanceof HomeFragment) {
                 SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE);
                 boolean  isTuteCompleted = sharedPreferences.getBoolean(getString(R.string.FEED_HOME_TUTE), false);
