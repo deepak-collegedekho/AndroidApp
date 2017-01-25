@@ -14,11 +14,6 @@ import android.widget.Toast;
 import com.collegedekho.app.BuildConfig;
 import com.collegedekho.app.R;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.Unbinder;
-
 
 /**
  * Created by sureshsaini on 23/12/16.
@@ -27,11 +22,6 @@ import butterknife.Unbinder;
 public class AboutFragment extends BaseFragment {
 
     private final String TAG = "About Fragment";
-
-    @BindView(R.id.app_version)
-    TextView app_version;
-
-    private Unbinder unbinder;
 
     public static AboutFragment newInstance() {
         return new AboutFragment();
@@ -44,18 +34,41 @@ public class AboutFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_about, container, false);
-        unbinder = ButterKnife.bind(this, view);
         return  view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        TextView app_version = (TextView)view.findViewById(R.id.app_version);
         app_version.setText("v"+BuildConfig.VERSION_NAME);
 
     }
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()){
+            case R.id.send_feedback:
+                onSendFeedBack();
+                break;
+            case R.id.rate_on_google_play:
+                onRateOnGooglePlay();
+                break;
+            case R.id.term_of_services:
+                onTermOfServices();
+                break;
+            case R.id.app_privacy_policy:
+                onPrivacyPolicy();
+                break;
+            case R.id.app_share:
+                onAppShare();
+                break;
+            default:
+                break;
+        }
+    }
 
-    @OnClick(R.id.send_feedback)
     public void onSendFeedBack(){
         Intent i = new Intent(Intent.ACTION_SEND);
         i.setType("message/rfc822");
@@ -69,7 +82,6 @@ public class AboutFragment extends BaseFragment {
         }
     }
 
-    @OnClick(R.id.rate_on_google_play)
     public void onRateOnGooglePlay(){
         Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
         Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
@@ -85,7 +97,6 @@ public class AboutFragment extends BaseFragment {
                     Uri.parse("http://play.google.com/store/apps/details?id=" + getActivity().getPackageName())));
         }
     }
-    @OnClick(R.id.term_of_services)
     public void onTermOfServices(){
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.collegedekho.com/terms-and-conditions/"));
         try {
@@ -98,7 +109,6 @@ public class AboutFragment extends BaseFragment {
             e.printStackTrace();
         }
     }
-    @OnClick(R.id.app_privacy_policy)
     public void onPrivacyPolicy(){
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.collegedekho.com/privacy-policy/"));
         try {
@@ -112,7 +122,6 @@ public class AboutFragment extends BaseFragment {
         }
     }
 
-    @OnClick(R.id.app_share)
     public void onAppShare(){
         try {
             // request for share intent to download app  from playStore
@@ -132,7 +141,6 @@ public class AboutFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unbinder.unbind();
     }
 
     @Override

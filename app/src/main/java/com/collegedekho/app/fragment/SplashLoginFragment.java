@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
@@ -17,10 +16,6 @@ import com.collegedekho.app.utils.NetworkUtils;
 import com.robinhood.ticker.TickerUtils;
 import com.robinhood.ticker.TickerView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.Unbinder;
 
 /**
  *Created by ${sureshsaini} on ${20/11/15}.
@@ -29,32 +24,13 @@ public class SplashLoginFragment extends  BaseFragment {
 
     private static final char[] NUMBER_LIST = TickerUtils.getDefaultNumberList();
     private OnSplashLoginListener mListener;
-    private Unbinder mUnBinder;
-    @BindView(R.id.institute_count_ticker)
-    TickerView mInstituteCountTicker;
-
-    @BindView(R.id.institute_count_ticker1)
-    TickerView mInstituteCountTicker1;
-
-    @BindView(R.id.institute_count_ticker2)
-    TickerView mInstituteCountTicker2 ;
-
-    @BindView(R.id.institute_count_ticker3)
-    TickerView mInstituteCountTicker3;
-
-    @BindView(R.id.institute_count_ticker4)
-    TickerView mInstituteCountTicker4;
-
-    @BindView(R.id.institute_count_ticker5)
-    TickerView mInstituteCountTicker5;
-
-    @BindView(R.id.institute_count_ticker_plus)
-    TickerView mInstituteCountTickerPlus;
-
-    @BindView(R.id.existing_user_layout)
-    LinearLayout mExistingUserLayout;
-
-
+    private TickerView mInstituteCountTicker ;
+    private TickerView mInstituteCountTicker1 ;
+    private TickerView mInstituteCountTicker2 ;
+    private TickerView mInstituteCountTicker3 ;
+    private TickerView mInstituteCountTicker4 ;
+    private TickerView mInstituteCountTicker5 ;
+    private TickerView mInstituteCountTickerPlus ;
 
     public static SplashLoginFragment newInstance() {
         return new SplashLoginFragment();
@@ -67,13 +43,19 @@ public class SplashLoginFragment extends  BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.fragment_splash_login, container, false);
-        mUnBinder = ButterKnife.bind(this, view);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mInstituteCountTicker = (TickerView)view.findViewById(R.id.institute_count_ticker);
+        mInstituteCountTicker1 = (TickerView)view.findViewById(R.id.institute_count_ticker1);
+        mInstituteCountTicker2 = (TickerView)view.findViewById(R.id.institute_count_ticker2) ;
+        mInstituteCountTicker3 = (TickerView)view.findViewById(R.id.institute_count_ticker3);
+        mInstituteCountTicker4 = (TickerView)view.findViewById(R.id.institute_count_ticker4);
+        mInstituteCountTicker5 = (TickerView)view.findViewById(R.id.institute_count_ticker5);
+        mInstituteCountTickerPlus = (TickerView)view.findViewById(R.id.institute_count_ticker_plus);
 
         mInstituteCountTicker.setCharacterList(NUMBER_LIST);
         mInstituteCountTicker1.setCharacterList(NUMBER_LIST);
@@ -89,6 +71,9 @@ public class SplashLoginFragment extends  BaseFragment {
         mInstituteCountTicker4.setText("0");
         mInstituteCountTicker5.setText("0");
         mInstituteCountTickerPlus.setText("+");
+
+        view.findViewById(R.id.existing_user_layout).setOnClickListener(this);
+        view.findViewById(R.id.splash_login_proceed).setOnClickListener(this);
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -141,30 +126,29 @@ public class SplashLoginFragment extends  BaseFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        if(mUnBinder != null)
-            mUnBinder.unbind();
     }
 
-    @OnClick(R.id.existing_user_layout)
-    public void onExistingUserClick(){
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
         if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
             ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
             return;
         }
-        if(mListener != null)
-            mListener.onExistingUserLogin();
-    }
+        switch (v.getId()){
+            case R.id.existing_user_layout:
 
-    @OnClick(R.id.splash_login_proceed)
-    public void onProceedClick(){
-        if (NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
-            ((MainActivity) getActivity()).displaySnackBar(R.string.INTERNET_CONNECTION_ERROR);
-            return;
+                if(mListener != null)
+                    mListener.onExistingUserLogin();
+                break;
+            case R.id.splash_login_proceed:
+                if(mListener != null)
+                    mListener.onSplashHelpMeLogin();
+                break;
+            default:
+                break;
         }
-        if(mListener != null)
-            mListener.onSplashHelpMeLogin();
     }
-
 
     public interface OnSplashLoginListener {
         void onSplashHelpMeLogin();

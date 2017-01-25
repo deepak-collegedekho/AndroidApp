@@ -494,12 +494,12 @@
         <item name="android:paddingTop">1dp</item>
         <item name="android:paddingLeft">5dp</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/text_lightest_grey</item>
+        <item name="android:textColor">@color/black</item>
         <item name="android:gravity">center|left</item>
     </style>
 
     <style name="AppTheme.profileTextViewTitle" parent="AppTheme.profileTextView">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/black</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">.27</item>
         <item name="android:textSize">16sp</item>
@@ -511,7 +511,7 @@
     </style>
 
     <style name="AppTheme.profileTextViewExpendedTitle" parent="AppTheme.profileTextView">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/black</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">.27</item>
         <item name="android:paddingLeft">5dp</item>

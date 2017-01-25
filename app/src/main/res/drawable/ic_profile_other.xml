@@ -6,20 +6,20 @@
     android:viewportHeight="500">
 
     <path
-        android:fillColor="#ffffff"
+        android:fillColor="@color/primary_color"
         android:pathData="M220.704,216.015c0,14.177-11.48,25.672-25.674,25.672c-14.174,0-25.674-11.495-25.674-25.672
 c0-14.174,11.5-25.669,25.674-25.669C209.224,190.346,220.704,201.841,220.704,216.015z" />
     <path
-        android:fillColor="#ffffff"
+        android:fillColor="@color/primary_color"
         android:pathData="M330.644,216.015c0,14.177-11.479,25.672-25.673,25.672c-14.172,0-25.674-11.495-25.674-25.672
 c0-14.174,11.502-25.669,25.674-25.669C319.165,190.346,330.644,201.841,330.644,216.015z" />
     <path
-        android:fillColor="#ffffff"
+        android:fillColor="@color/primary_color"
         android:pathData="M367.584,121.143c2.318,2.864,24.369,31.677,27.777,36.497c-0.503-18.636-6.936-36.625-18.617-51.427
 c-13.564-17.177-32.921-28.534-54.511-31.975c-4.907-0.791-9.845-1.09-14.761-1.032C319.421,80.271,343.973,92.077,367.584,121.143
 z" />
     <path
-        android:strokeColor="#ffffff"
+        android:strokeColor="@color/primary_color"
         android:strokeWidth="25"
         android:strokeMiterLimit="20"
         android:pathData="M455.217,217.169
