@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/reco_feed_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/white"
+    app:cardElevation="@dimen/m3dp"
+    app:cardUseCompatPadding="true"
+    app:cardPreventCornerOverlap="true"
+    android:layout_marginTop="@dimen/m10dp"
+    android:layout_marginBottom="@dimen/m10dp"
+    android:background="@color/white"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:weightSum="@integer/int1"
+        android:background="@color/white"
+        >
+        <TextView
+            android:id="@+id/feed_reco_title"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight=".25"
+            android:textSize="@dimen/m20sp"
+            android:textAlignment="center"
+            android:text="Recommended Institutes"
+            android:gravity="center"
+            android:paddingLeft="@dimen/m10dp"
+            android:layout_marginBottom="@dimen/m5dp"
+            android:background="@color/white"
+            android:layout_marginTop="@dimen/m13dp"
+            android:fontFamily="sans-serif-medium"
+            />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/feed_reco_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".75"
+            android:orientation="horizontal"
+            android:background="@color/white"
+            android:backgroundTint="@color/white"
+            android:layout_marginBottom="@dimen/m13dp"
+            >
+        </android.support.v7.widget.RecyclerView>
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

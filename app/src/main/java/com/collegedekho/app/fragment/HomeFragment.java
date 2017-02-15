@@ -53,7 +53,6 @@ public class HomeFragment extends BaseFragment {
             this.mHomePagerAdapter.feedListRefreshed(this.mFeedList, super.mNextUrl, false);
         }
         this.mViewPager.setAdapter(this.mHomePagerAdapter);
-        this.mViewPager.setOffscreenPageLimit(4);
         this.mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -312,17 +311,17 @@ public class HomeFragment extends BaseFragment {
             this.mHomePagerAdapter.updateUserYearlyExamSummary(examSummary);
     }
 
-    public void  setSelectedPage(int position)
+    public void setSelectedPage(int position)
     {
         if ( position >=0){
            mMarkTabAsSelected(position);
             this.mViewPager.setCurrentItem(position);
         }
     }
+
     public int  getSelectedPage() {
         return mViewPager != null?mViewPager.getCurrentItem():0;
     }
-
 
     public void updateExamSummary(ExamSummary updateExamSummary) {
         if (this.mHomePagerAdapter != null)

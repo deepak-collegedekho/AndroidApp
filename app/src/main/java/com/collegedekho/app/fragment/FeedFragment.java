@@ -2,6 +2,7 @@ package com.collegedekho.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -82,11 +83,16 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
 
-        this.mFeedRecyclerView  = (RecyclerView) rootView.findViewById(R.id.feed_list);
-        this.mSwipeRefreshLayout  = (SwipeRefreshLayout) rootView.findViewById(R.id.feed_swipe_refresh_container);
-        this.mEmptyLayout  = (LinearLayout)rootView.findViewById(R.id.feed_empty_layout);
-        this.mEmptTV  = (TextView)rootView.findViewById(R.id.feed_empty);
-        rootView.findViewById(R.id.feed_empty).setOnClickListener(this);
+        return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        this.mFeedRecyclerView  = (RecyclerView) view.findViewById(R.id.feed_list);
+        this.mSwipeRefreshLayout  = (SwipeRefreshLayout) view.findViewById(R.id.feed_swipe_refresh_container);
+        this.mEmptyLayout  = (LinearLayout)view.findViewById(R.id.feed_empty_layout);
+        this.mEmptTV  = (TextView)view.findViewById(R.id.feed_empty);
+        view.findViewById(R.id.feed_empty).setOnClickListener(this);
 
         this.mSwipeRefreshLayout.setOnRefreshListener(this);
         if(this.mFeedAdapter == null) {
@@ -101,9 +107,9 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         this.mFeedRecyclerView.setItemAnimator(new DefaultItemAnimator());
         this.mFeedRecyclerView.addOnScrollListener(super.scrollListener);
         super.mNextUrl = this.mFeedFragmentNextURL;
-        return rootView;
-    }
 
+        super.onViewCreated(view, savedInstanceState);
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -131,7 +137,9 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 return;
             }
             if(getActivity() != null){
-                ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
+                //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
+                //((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/1aa84d");
+                ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/fpkqp");
             }
         }
         if(mEmptyLayout != null)
@@ -147,14 +155,15 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                     return;
                 }
                 if(getActivity() != null){
-                    ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
+                    ////((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, Constants.BASE_URL + "feeds/");
+                   // ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/1aa84d");
+                    ((MainActivity) this.getActivity()).mGetFeed(Constants.TAG_LOAD_FEED, "https://api.myjson.com/bins/fpkqp");
                 }
                 break;
             default:
                 break;
         }
     }
-
 
     @Override
     public void onRefresh() {

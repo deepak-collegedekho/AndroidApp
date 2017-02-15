@@ -25,6 +25,7 @@ public class Feed implements Parcelable {
     private String title_color = "";
     private String time_color = "";
     private String description_color = "";
+    private String result = "";
 
     public Feed(){
 
@@ -43,6 +44,7 @@ public class Feed implements Parcelable {
         title_color = in.readString();
         time_color = in.readString();
         description_color = in.readString();
+        result = in.readString();
     }
 
     @Override
@@ -64,6 +66,8 @@ public class Feed implements Parcelable {
         parcel.writeString(title_color);
         parcel.writeString(time_color);
         parcel.writeString(description_color);
+        parcel.writeString(result);
+
     }
 
     public static final Creator<Feed> CREATOR = new Creator<Feed>() {
@@ -172,5 +176,13 @@ public class Feed implements Parcelable {
 
     public void setDescription_color(String description_color) {
         this.description_color = description_color;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
     }
 }

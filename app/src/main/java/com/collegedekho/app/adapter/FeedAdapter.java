@@ -2,22 +2,21 @@ package com.collegedekho.app.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
+import com.collegedekho.app.display.feedViews.FeedViewHolder;
+import com.collegedekho.app.display.feedViews.RecoFeedViewHolder;
 import com.collegedekho.app.entities.Feed;
 import com.collegedekho.app.fragment.FeedFragment;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.widget.FadeInImageView;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ import java.util.ArrayList;
  * Created by harshvardhan on 16/11/16.
  */
 
-public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder> {
+public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<Feed> mFeedList;
     private final Context mContext;
@@ -34,6 +33,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     private FeedFragment.onFeedInteractionListener mListener;
     // Allows to remember the last item shown on screen
     public int lastPosition = -1;
+
+    public static final int DEFAULT = 0;
+    public static final int RECOMMENDED_INSTITUTES = 1;
 
     public FeedAdapter(Context context, ArrayList<Feed> feedList)
     {
@@ -43,18 +45,77 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     }
 
     @Override
-    public FeedViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        View rootView = LayoutInflater.from(this.mContext).inflate(R.layout.feed_default_ui, parent, false);
-
-        return new FeedViewHolder(rootView, (FeedFragment.onFeedInteractionListener) this.mContext);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder;
+        LayoutInflater inflater = LayoutInflater.from(this.mContext);
+        View view;
+        switch (viewType) {
+            case FeedAdapter.RECOMMENDED_INSTITUTES:
+                view = inflater.inflate(R.layout.feed_reco_ui, parent, false);
+                viewHolder = new RecoFeedViewHolder(view, this.mContext);
+                break;
+            default:
+                view = inflater.inflate(R.layout.feed_default_ui, parent, false);
+                viewHolder = new FeedViewHolder(view, (FeedFragment.onFeedInteractionListener) this.mContext);
+                break;
+        }
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(FeedViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final Feed feed = this.mFeedList.get(position);
-        final FeedViewHolder feedViewHolder = holder;
+        switch (feed.getScreen())
+        {
+            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
+                this.setRecoFeedViewHolder(feed, (RecoFeedViewHolder) holder, position);
+                break;
+            default:
+                this.setDefaultViewHolder(feed, (FeedViewHolder) holder, position);
+                break;
+        }
+    }
 
+    /**
+     * Here is the key method to apply the animation
+     */
+    private void mSetAnimation(View viewToAnimate, int position)
+    {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.fade_in);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        holder.itemView.clearAnimation();
+        super.onViewDetachedFromWindow(holder);
+    }
+
+    public void updateFeedList(ArrayList<Feed> feedList){
+        this.mFeedList = feedList;
+        notifyDataSetChanged();
+
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        Feed feed = this.mFeedList.get(position);
+        switch(feed.getScreen())
+        {
+            case Constants.WIDGET_RECOMMENDED_INSTITUTES:
+                return FeedAdapter.RECOMMENDED_INSTITUTES;
+            default:
+                return FeedAdapter.DEFAULT;
+        }
+    }
+
+    private void setDefaultViewHolder(final Feed feed, final FeedViewHolder feedViewHolder, int position)
+    {
         //setting title
         String title = feed.getTitle();
         try {
@@ -157,58 +218,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         this.mSetAnimation(feedViewHolder.feedCard, position);
     }
 
-    /**
-     * Here is the key method to apply the animation
-     */
-    private void mSetAnimation(View viewToAnimate, int position)
+    private void setRecoFeedViewHolder(final Feed feed, final RecoFeedViewHolder feedViewHolder, int position)
     {
-        // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition)
-        {
-            Animation animation = AnimationUtils.loadAnimation(this.mContext, R.anim.fade_in);
-            viewToAnimate.startAnimation(animation);
-            lastPosition = position;
-        }
-    }
+        feedViewHolder.recoFeedInstitutesUpdate(feed.getResult());
 
-    @Override
-    public void onViewDetachedFromWindow(FeedAdapter.FeedViewHolder holder) {
-        holder.itemView.clearAnimation();
-        super.onViewDetachedFromWindow(holder);
-    }
-
-    public void updateFeedList(ArrayList<Feed> feedList){
-        this.mFeedList = feedList;
-        notifyDataSetChanged();
-
+        this.mSetAnimation(feedViewHolder.feedCard, position);
     }
 
     @Override
     public int getItemCount() {
         return this.mFeedList.size();
-    }
-
-    protected class FeedViewHolder extends RecyclerView.ViewHolder
-    {
-        CardView feedCard;
-        FadeInImageView feedIcon;
-        TextView feedTitle;
-        TextView feedTime;
-        FadeInImageView feedImage;
-        TextView feedDescription;
-        FeedFragment.onFeedInteractionListener mListener;
-
-        FeedViewHolder(View itemView, FeedFragment.onFeedInteractionListener listener) {
-            super(itemView);
-
-            this.feedCard = (CardView) itemView.findViewById(R.id.def_feed_card);
-            this.feedIcon = (FadeInImageView) itemView.findViewById(R.id.def_feed_icon);
-            this.feedTitle = (TextView) itemView.findViewById(R.id.def_feed_title);
-            this.feedTime = (TextView) itemView.findViewById(R.id.def_feed_time);
-            this.feedImage = (FadeInImageView) itemView.findViewById(R.id.def_feed_image);
-            this.feedDescription = (TextView) itemView.findViewById(R.id.def_feed_desc);
-
-            this.mListener = listener;
-        }
     }
 }
