@@ -141,5 +141,7 @@
     <color name="green">#00e676</color>
     <color name="red">#ff5252</color>
     <color name="light_grey">#f5f5f5</color>
+    <color name="dark_grey">#938d8d</color>
+    <color name="darker_grey">#6c6b6b</color>
 
 </resources>

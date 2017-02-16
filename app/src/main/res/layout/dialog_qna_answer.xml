@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:background="@drawable/rounded_box_blue"
+    android:elevation="5dp"
+    >
+    <ImageView
+        android:id="@+id/answer_question_cross"
+        android:layout_width="@dimen/m30dp"
+        android:layout_height="@dimen/m30dp"
+        android:visibility="visible"
+        android:layout_gravity="end|center"
+        android:scaleType="centerCrop"
+        android:padding="@dimen/m7dp"
+        android:layout_marginRight="@dimen/m7dp"
+        android:layout_marginTop="@dimen/m7dp"
+        android:tint="@color/white"
+        app:srcCompat="@drawable/ic_cancel"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SUBMIT ANSWER"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:gravity="center"
+        />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/institute_qna_question_content_til"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/m15dp"
+        >
+        <EditText
+            style="@style/AppTheme.EditText.bg_white"
+            android:id="@+id/qna_answer_edittext"
+            android:layout_height="180dp"
+            android:hint="Your Answer"
+            android:inputType="textMultiLine|textCapSentences"
+            android:paddingTop="2dp"
+            android:gravity="top"
+            android:maxLines="30"
+            android:textColorHint="@color/white"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/qna_answer_submit_button"
+        style="@style/AppTheme.OrangeButton"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:text="SUBMIT"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/m20dp"
+        android:layout_marginBottom="@dimen/m8dp"
+        android:layout_marginLeft="@dimen/m20dp"
+        android:layout_marginRight="@dimen/m20dp"
+        android:layout_gravity="center"       />
+
+</LinearLayout>

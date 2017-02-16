@@ -19,7 +19,7 @@
     <com.collegedekho.app.display.NonSwipeableViewPager
         android:id="@+id/psychometric_test_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1">
 
     </com.collegedekho.app.display.NonSwipeableViewPager>

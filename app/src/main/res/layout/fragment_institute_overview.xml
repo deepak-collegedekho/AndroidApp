@@ -12,7 +12,6 @@
         android:id="@+id/overview_image"
         android:layout_width="match_parent"
         android:layout_height="@dimen/m180dp"
-        android:layout_weight=".3"
         android:scaleType="centerCrop"
         android:src="@drawable/default_banner"
         />

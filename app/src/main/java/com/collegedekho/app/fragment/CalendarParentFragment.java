@@ -177,15 +177,15 @@ public class CalendarParentFragment extends BaseFragment implements ViewPager.On
 
     }
     public void submitCalendarData() {
-        ArrayList<Integer>chaptersArray=new ArrayList<>();
-        ArrayList<Integer>subjectsArray=new ArrayList<>();
+        ArrayList<Integer>chaptersArray = new ArrayList<>();
+        ArrayList<Integer>subjectsArray = new ArrayList<>();
         JSONObject object=new JSONObject();
         boolean isReadyToSubmit=false;
         if (mChapterList==null || mChapterList.isEmpty()){
             return;
         }
         Chapters chapters = mChapterList.get(0);
-        String exam_id=chapters.getYearly_exam_id();
+        String exam_id = chapters.getYearly_exam_id();
         if (chaptersDetailsList != null && !chaptersDetailsList.isEmpty()) {
 
             for (String key : chaptersDetailsList.keySet()) {

@@ -1,10 +1,9 @@
-package com.collegedekho.app.service;
+package com.collegedekho.app.tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
 import com.collegedekho.app.R;
-import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.resource.Constants;
 import com.collegedekho.app.utils.NetworkUtils;

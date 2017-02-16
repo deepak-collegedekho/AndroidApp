@@ -48,6 +48,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -109,6 +111,8 @@ import com.collegedekho.app.entities.SubLevel;
 import com.collegedekho.app.entities.Subjects;
 import com.collegedekho.app.entities.VideoEntry;
 import com.collegedekho.app.entities.YoutubeVideoDetails;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
 import com.collegedekho.app.fragment.AboutFragment;
 import com.collegedekho.app.fragment.ArticleDetailFragment;
 import com.collegedekho.app.fragment.ArticleFragment;
@@ -140,6 +144,7 @@ import com.collegedekho.app.fragment.PsychometricStreamFragment;
 import com.collegedekho.app.fragment.PsychometricTestParentFragment;
 import com.collegedekho.app.fragment.QnAQuestionDetailFragment;
 import com.collegedekho.app.fragment.QnAQuestionsListFragment;
+import com.collegedekho.app.fragment.QnaQuestionDetailFragmentNew;
 import com.collegedekho.app.fragment.SplashFragment;
 import com.collegedekho.app.fragment.SplashLoginFragment;
 import com.collegedekho.app.fragment.StreamFragment;
@@ -188,6 +193,8 @@ import com.truecaller.android.sdk.TrueClient;
 import com.truecaller.android.sdk.TrueError;
 import com.truecaller.android.sdk.TrueProfile;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -206,6 +213,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.concurrent.TimeUnit;
 
 import io.fabric.sdk.android.Fabric;
@@ -240,7 +249,7 @@ SOFTWARE.*/
 //TODO::Put DataObserver on Filter count. If it changes, delete all exam summary to get new
 
 public class MainActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<Cursor>, NavigationView.OnNavigationItemSelectedListener,
+        implements LoaderManager.LoaderCallbacks<Cursor>, Observer, NavigationView.OnNavigationItemSelectedListener,
         SplashFragment.OnSplashListener, SplashLoginFragment.OnSplashLoginListener,
         GoogleApiClient.ConnectionCallbacks,  GoogleApiClient.OnConnectionFailedListener,
         DataLoadListener, StreamFragment.OnStreamInteractionListener, PsychometricStreamFragment.OnStreamInteractionListener,
@@ -350,6 +359,7 @@ public class MainActivity extends AppCompatActivity
     private FloatingActionMenu mFabMenu;
     private int  mFabMenuMargin;
     private HashMap<String, String> defferedFunction = new HashMap<>();
+    private Map<String, QnAQuestions> mQuestionListForAnswer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -371,6 +381,7 @@ public class MainActivity extends AppCompatActivity
         String action = intent.getAction();
         String data = intent.getDataString();
         String intentType = intent.getType();
+
 
         if (Intent.ACTION_VIEW.equals(action) && data != null) {
             if (data.contains("collegedekho.com")) {
@@ -408,6 +419,7 @@ public class MainActivity extends AppCompatActivity
                 SendAppEvent(getResourceString(R.string.CATEGORY_NOTIFICATIONS), getResourceString(R.string.ACTION_NOTIFICATION_OPEN), eventValue, this);
             }
         }
+
 
         Log.e(TAG, " onCreate()  step3 time_info  " + System.currentTimeMillis());
         this.setContentView(R.layout.activity_main);
@@ -536,6 +548,9 @@ public class MainActivity extends AppCompatActivity
                 mNetworkUtils.setToken(MainActivity.mProfile.getToken());
                 // user id registration
                 setUserIdWithAllEvents();
+                if(mProfile.getIs_verified() == Constants.PHONE_VERIFIED){
+                    mProfile.addObserver(this);
+                }
                 // sync user detail info with server
                 requestForProfile(null);
             }
@@ -1168,7 +1183,9 @@ public class MainActivity extends AppCompatActivity
         Log.e(TAG, " onStart()   enter time_info  " + System.currentTimeMillis());
         super.onStart();
         Log.e(TAG, " onStart()   enter time_info  " + System.currentTimeMillis());
-
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
         IntentFilter linkFilter = new IntentFilter(Constants.CONTENT_LINK_FILTER);
         linkFilter.addAction(Constants.NOTIFICATION_FILTER);
         LocalBroadcastManager.getInstance(this).registerReceiver(appLinkReceiver, linkFilter);
@@ -1208,6 +1225,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         // unregister Otp broadcast receiver
         if (mOtpReceiver != null) {
             unregisterReceiver(mOtpReceiver);
@@ -1233,6 +1253,9 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         hideProgressDialog();
         super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
 
     }
 
@@ -1472,6 +1495,7 @@ public class MainActivity extends AppCompatActivity
             } else if (currentFragment instanceof LoginForCounselorFragment) {
                mFabMenu.setVisibility(View.GONE);
             }else if (currentFragment instanceof QnAQuestionsListFragment
+                    || currentFragment instanceof QnaQuestionDetailFragmentNew
                     || currentFragment instanceof QnAQuestionDetailFragment) {
                 mFabMenu.setVisibility(View.GONE);
             }else if (currentFragment instanceof CDRecommendedInstituteFragment) {
@@ -1557,11 +1581,9 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
-    // TODO :: EDIT THIS TO MAKE POST ANONYOUS LOGIN
+    // TODO :: EDIT THIS TO MAKE POST ANONYMOUS LOGIN
     @Override
     public void onPostAnonymousLogin() {
         mDisplayPostAnonymousLoginFragment();
@@ -1574,6 +1596,9 @@ public class MainActivity extends AppCompatActivity
             String u = JSON.std.asString(mProfile);
             this.getSharedPreferences(getResourceString(R.string.PREFS), MODE_PRIVATE).edit().putString(getResourceString(R.string.KEY_USER), u).apply();
 
+            if(mProfile.getIs_verified() == Constants.PHONE_VERIFIED){
+                mProfile.addObserver(this);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -3082,6 +3107,12 @@ public class MainActivity extends AppCompatActivity
             case Constants.PNS_COUNSELOR_CHAT:
                 this.mLoadPNSCounselorChat(response);
                 break;
+            case Constants.TAG_SIMILAR_QUESTIONS:
+                parseSimilarQuestions(response);
+                break;
+            case AllEvents.ACTION_ANSWER_FOR_QUESTION:
+                 onResponseAnswerForQuestion(response);
+                break;
         }
         try {
             if(hideProgressDialog)
@@ -3794,7 +3825,11 @@ public class MainActivity extends AppCompatActivity
         if(tag.equalsIgnoreCase("next_shortlist_institutes") && responseCode == 404){
             this.mMakeNetworkCall(Constants.TAG_LAST_SHORTLIST_INSTITUTES_WHILE_REMOVING, Constants.BASE_URL + "personalize/shortlistedinstitutes", null);
             return;
-        }else  if(tag.equalsIgnoreCase(Constants.TAG_LOAD_BUZZLIST_INSTITUTE)){
+        }else  if(tag.equalsIgnoreCase(Constants.TAG_SIMILAR_QUESTIONS)){
+            if(currentFragment instanceof  QnaQuestionDetailFragmentNew)
+           ((QnaQuestionDetailFragmentNew) currentFragment).updateSimilarQuestion(null);
+        }
+        else  if(tag.equalsIgnoreCase(Constants.TAG_LOAD_BUZZLIST_INSTITUTE)){
             Utils.DisplayToast(getApplicationContext(),"LOADING FAILED");
         }
         else if(tag.equalsIgnoreCase(Constants.TAG_LOAD_BUZZLIST_INSTITUTE)){
@@ -3803,7 +3838,7 @@ public class MainActivity extends AppCompatActivity
             if(currentFragment instanceof HomeFragment){
                 ((HomeFragment) currentFragment).feedsLoaded(null,null);
             }
-        }else  if(tag.equalsIgnoreCase(Constants.TAG_REFRESH_PROFILE)){
+        }else  if(tag.equalsIgnoreCase(TAG_REFRESH_PROFILE)){
             if(currentFragment instanceof ProfileFragment){
                 ((ProfileFragment) currentFragment).mRefreshProfileOnResponse(null);
             }
@@ -4448,6 +4483,7 @@ public class MainActivity extends AppCompatActivity
             case Constants.ACTION_MY_FB_COMMENT_SUBMITTED:
             case Constants.TAG_CREATE_USER:
             case Constants.TAG_REFRESHED_FEED:
+            case Constants.TAG_SIMILAR_QUESTIONS:
             case "":
                 return null;
             default:
@@ -4482,7 +4518,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onQnAQuestionSelected(QnAQuestions qnaQuestion, int position) {
-        this.mDisplayFragment(QnAQuestionDetailFragment.newInstance(qnaQuestion, position), true, getResourceString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
+        this.mDisplayFragment(QnaQuestionDetailFragmentNew.getInstance(qnaQuestion), true, getResourceString(R.string.TAG_FRAGMENT_QNA_QUESTION_DETAIL));
     }
 
     @Override
@@ -4877,7 +4913,6 @@ public class MainActivity extends AppCompatActivity
             addToBackStack = true;
         }
         mDisplayFragment(fragment, addToBackStack, tag);
-       //mDisplayLoginFragment();
     }
 
     @Override
@@ -5273,7 +5308,7 @@ public class MainActivity extends AppCompatActivity
             this.mDisplayFragment(PsychometricStreamFragment.newInstance(new ArrayList(streams)), true, Constants.TAG_FRAGMENT_STREAMS);
             mDisplayOtpVerificationFragment();
         } catch (IOException e) {
-            Log.e(TAG, "Exception occurred on display tream fragment");
+            Log.e(TAG, "Exception occurred on display stream fragment");
         }
     }
 
@@ -5374,28 +5409,75 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    /*@Override
-    public void OnTakeMeToRecommended() {
-        this.mMakeNetworkCall(Constants.TAKE_ME_TO_RECOMMENDED, Constants.BASE_URL + "personalize/recommended-institutes/",null);
+    @Subscribe
+    public void onEvent(Event event) {
+        if (event != null) {
+            switch (event.getTag()) {
+                case AllEvents.ACTION_PROFILE_COMPLETION_CLICK:
+                    String name = mProfile.getName();
+                    String phone = mProfile.getPhone_no();
+                    if (phone == null || phone.length() < 10 || name == null || name.isEmpty()
+                            || name.toLowerCase().contains(Constants.ANONYMOUS_USER.toLowerCase())){
+                         mAskForNameAndPhone();
+                    }else{
+                        mDisplayProfileFragment(mProfile, true);
+                    }
+                    break;
+                case AllEvents.ACTION_REQUEST_SIMILAR_QUESTION:
+                    mMakeNetworkCall(Constants.TAG_SIMILAR_QUESTIONS,"https://api.myjson.com/bins/ksj8l",null);
+                    break;
+                case AllEvents.ACTION_ANSWER_FOR_QUESTION:{
+                    QnAQuestions qnAQuestions = (QnAQuestions) event.getObj();
+                    String answerText  =  event.getMessage();
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("answer_text", answerText);
+                    this.mMakeNetworkCall(AllEvents.ACTION_ANSWER_FOR_QUESTION , "https://api.myjson.com/bins/g12ed", null);//qnAQuestions.getResource_uri() + "answer/", params, Request.Method.POST);
+
+                    if(this.mQuestionListForAnswer  == null)
+                         this.mQuestionListForAnswer = new HashMap<>();
+                    this.mQuestionListForAnswer.put(qnAQuestions.getId(),qnAQuestions);
+
+                }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    private void parseSimilarQuestions(String json){
+        try {
+            ArrayList<QnAQuestions> questionLIst = (ArrayList<QnAQuestions>) JSON.std.listOfFrom(QnAQuestions.class, json);
+            ((QnaQuestionDetailFragmentNew) currentFragment).updateSimilarQuestion(questionLIst);
+        }catch (Exception e){
+
+        }
     }
 
-    @Override
-    public void OnTakeMeToDashBoard() {
-        this.mClearBackStack();
-        this.mDisplayHomeFragment();
+    private void onResponseAnswerForQuestion(String response) {
+        if(this.mQuestionListForAnswer  == null)
+            return;
+
+        try {
+            QnAAnswers qnaAnswer = JSON.std.beanFrom(QnAAnswers.class, response);
+            if(qnaAnswer == null)
+                return;
+
+            String questionUrl = qnaAnswer.getQuestion();
+            if(questionUrl == null)
+                return;
+
+            String questionUrlTags[] = questionUrl.split("/");
+            QnAQuestions question = mQuestionListForAnswer.get(questionUrlTags[questionUrlTags.length-1]);
+            question.getAnswer_set().add(qnaAnswer);
+            if(currentFragment instanceof  QnaQuestionDetailFragmentNew){
+
+                ((QnaQuestionDetailFragmentNew) currentFragment).addNewAnswer();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
-
-    @Override
-    public void OnTakeMeToProfile() {
-        mClearBackStack();
-        mDisplayProfileFragment(MainActivity.mProfile, false);
-        getSharedPreferences(getString(R.string.PREFS), Context.MODE_PRIVATE).edit().putBoolean(getString(R.string.USER_HOME_LOADED), true).apply();
-        if(currentFragment instanceof ProfileBuildingFragment)
-            ((ProfileBuildingFragment)currentFragment).hideNavigationIcon();
-        mShowAppBarLayout();
-        isFromNotification = true;
-
-    }*/
 
     /**
      * This method is used to handle response having exams
@@ -5977,13 +6059,24 @@ public class MainActivity extends AppCompatActivity
 
         //Events
         SendAppEvent(getResourceString(R.string.CATEGORY_FEED), getResourceString(R.string.ACTION_FEED_SELECTED), eventValue, this);
-
         this.mHandleNotifications(true);
     }
 
     @Override
     public void onFeedRefreshed(String tag, String url) {
         this.mMakeNetworkCall(tag, url, null);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+
+        if(mProfile != null && mProfile.getIs_verified() != Constants.PHONE_VERIFIED){
+
+            if(NetworkUtils.getConnectivityStatus() != Constants.TYPE_NOT_CONNECTED){
+                 // send number for verication
+            }
+
+        }
     }
 
     private static class ContainerLoadedCallback implements ContainerHolder.ContainerAvailableListener {
@@ -6717,6 +6810,92 @@ public class MainActivity extends AppCompatActivity
                 .translationY(0)
                 .setInterpolator(new AccelerateInterpolator(3))
                 .start();
+    }
+
+    private void mAskForNameAndPhone(){
+        // show dialog for name if user name is not present
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.name_phone_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setTitle("Complete Your Profile");
+        TextView submit = (TextView) dialog.findViewById(R.id.name_submit);
+        final EditText nameEditText = (EditText) dialog.findViewById(R.id.user_name);
+        final EditText phoneEditText = (EditText) dialog.findViewById(R.id.user_phone);
+
+        String name = mProfile.getName();
+        String phone = mProfile.getPhone_no();
+        if (phone != null && phone.length() == 10){
+            phoneEditText.setText(phone);
+        }
+        if(name != null && !name.isEmpty()){
+            nameEditText.setText(name);
+        }
+        dialog.show();
+        nameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                nameEditText.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        phoneEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                phoneEditText.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String name = nameEditText.getText().toString();
+                if (name.length() <= 0) {
+                    nameEditText.requestFocus();
+                    nameEditText.setError(getString(R.string.NAME_EMPTY));
+                    return;
+                } else if (!Utils.isValidName(name)) {
+                    nameEditText.requestFocus();
+                    nameEditText.setError(getString(R.string.NAME_INVALID));
+                    return;
+                }
+                String phone = phoneEditText.getText().toString();
+                if ( phone.length() <= 0) {
+                    phoneEditText.requestFocus();
+                    phoneEditText.setError( getString(R.string.PHONE_EMPTY));
+                    return;
+                }else if (phone.length() <= 9 || !Utils.isValidPhone(phone)) {
+                    phoneEditText.requestFocus();
+                    phoneEditText.setError( getString(R.string.PHONE_INVALID));
+                    return;
+                }
+
+                dialog.dismiss();
+                HashMap<String, String> params = new HashMap<>();
+                params.put(MainActivity.getResourceString(R.string.USER_NAME), name);
+                params.put(MainActivity.getResourceString(R.string.USER_PHONE), phone);
+                requestForUserProfileUpdate(AllEvents.ACTION_PROFILE_COMPLETION_CLICK,params);
+            }
+        });
     }
 
 }

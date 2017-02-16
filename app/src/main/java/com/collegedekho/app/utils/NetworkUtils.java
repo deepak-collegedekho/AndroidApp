@@ -113,6 +113,7 @@ public class NetworkUtils {
 
     public void setToken(String token) {
         this.mtoken = token;
+        this.mHeaders = null;
     }
 
 

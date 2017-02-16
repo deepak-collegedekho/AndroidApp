@@ -133,11 +133,6 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         return  mRootView = inflater.inflate(R.layout.fragment_profile_building, container, false);
     }
 
-    @Override
-    public void onStart() {
-        createLocationRequest();
-        super.onStart();
-    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -743,6 +738,19 @@ public class ProfileBuildingFragment extends BaseFragment implements ExamFragmen
         }
     }
     public void setUserEducationStream() {
+        if(mStreamList == null){
+            int streamType = 1 ; //  0 for college and 1 for school
+            if(MainActivity.mProfile != null) {
+                int currentLevelID = MainActivity.mProfile.getCurrent_level_id();
+                if (currentLevelID == ProfileMacro.LEVEL_UNDER_GRADUATE) {
+                    streamType = 0;
+                } else if (currentLevelID == ProfileMacro.LEVEL_POST_GRADUATE) {
+                    streamType = 0;
+                }
+            }
+            mListener.onRequestForLevelStreams(streamType);
+            return;
+        }
 
         // check user has been selected a stream
         int currentStreamId  = 0;

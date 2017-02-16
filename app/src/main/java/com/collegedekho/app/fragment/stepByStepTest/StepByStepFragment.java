@@ -284,18 +284,14 @@ public class StepByStepFragment extends BaseFragment implements PsychometricAnal
     {
         if (this.mListener != null) {
             int index = StepByStepQuestion.CurrentLevels.valueOf(StepByStepQuestion.getCurrentLevel().toString()).ordinal();
-
             index = index  + 1;
-
             try {
                 StepByStepFragment.mAnswersMap.put("user_type", index);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
             this.mListener.onSBSTestFinish(Constants.BASE_URL + "step-by-step/answers/", StepByStepFragment.mAnswersMap);
         }
-
     }
 
     private void mGetQuestions(String tag, String url) {

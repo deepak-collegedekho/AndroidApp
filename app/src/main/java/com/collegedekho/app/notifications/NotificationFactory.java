@@ -15,7 +15,7 @@ import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.NotificationPayload;
 import com.collegedekho.app.entities.Profile;
 import com.collegedekho.app.resource.Constants;
-import com.collegedekho.app.service.PassiveProfileSyncTask;
+import com.collegedekho.app.tasks.PassiveProfileSyncTask;
 import com.crashlytics.android.Crashlytics;
 import com.fasterxml.jackson.jr.ob.JSON;
 
@@ -114,7 +114,6 @@ public class NotificationFactory {
                             }
                         }
                     }
-
                     return;
                 default:
                 {

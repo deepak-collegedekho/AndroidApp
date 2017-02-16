@@ -74,7 +74,6 @@ public class InstituteDetailFragment extends BaseFragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
      * @param institute Parameter 1.
      * @param institutesType type of institute
      * @return A new instance of fragment InstituteOverviewFragment.
@@ -85,7 +84,6 @@ public class InstituteDetailFragment extends BaseFragment {
         args.putParcelable(ARG_INSTITUTE, institute);
         args.putSerializable(ARG_FROM_WISHLIST, institutesType);
         fragment.setArguments(args);
-
         return fragment;
     }
 
@@ -99,8 +97,7 @@ public class InstituteDetailFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
      return inflater.inflate(R.layout.fragment_institute_detail, container, false);
     }
 

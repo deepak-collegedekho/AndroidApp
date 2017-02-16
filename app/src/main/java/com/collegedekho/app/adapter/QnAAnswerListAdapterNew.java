@@ -1,6 +1,8 @@
 package com.collegedekho.app.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -9,20 +11,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.activity.MainActivity;
 import com.collegedekho.app.entities.QnAAnswers;
-import com.collegedekho.app.fragment.QnAQuestionDetailFragment;
-import com.collegedekho.app.resource.Constants;
+import com.collegedekho.app.entities.QnAQuestions;
+import com.collegedekho.app.events.AllEvents;
+import com.collegedekho.app.events.Event;
 import com.collegedekho.app.resource.DetectHtml;
-import com.collegedekho.app.resource.MySingleton;
-import com.collegedekho.app.utils.NetworkUtils;
-import com.collegedekho.app.widget.CircularImageView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,6 +30,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+
 /**
  * Created by sureshsaini on 24/1/17.
  */
@@ -38,38 +38,74 @@ import java.util.TimeZone;
 public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
 
     private static final String TAG = "QnAQuestionsListAdapter";
-    private final int mQnAPosition;
-    private ArrayList<QnAAnswers> mQnAQuestionAnswers;
-    private Context mContext;
+    private final int QUESTION_COUNT =0, QUESTION = 1, ANSWER = 2;
+    private ArrayList<? super Object> mQnAQuestionAnswers;
     private volatile SimpleDateFormat mSDF;
-    private ImageLoader mImageLoader;
 
-    public QnAAnswerListAdapterNew(Context context, ArrayList<QnAAnswers> qnaQuestionAnswers, int mQnAPosition) {
+    public QnAAnswerListAdapterNew(Context context, ArrayList qnaQuestionAnswers) {
         mQnAQuestionAnswers = qnaQuestionAnswers;
-        mContext = context;
-        this.mQnAPosition = mQnAPosition;
         mSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
         mSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
-        mImageLoader = MySingleton.getInstance(this.mContext).getImageLoader();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if(mQnAQuestionAnswers.get(position) instanceof String){
+            return  QUESTION_COUNT;
+        }else if(mQnAQuestionAnswers.get(position) instanceof QnAAnswers){
+          return  ANSWER;
+        }else if(mQnAQuestionAnswers.get(position) instanceof QnAQuestions){
+            return  QUESTION;
+        }
+        return -1;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(mContext).inflate(R.layout.card_qna_answer, parent, false);
-        try {
-            return new QnAAnswerHolder(rootView, (QnAQuestionDetailFragment.OnQnAAnswerInteractionListener) mContext);
-        } catch (ClassCastException e) {
-            throw new ClassCastException(mContext.toString()
-                    + " must implement OnQnAQuestionSelectedListener");
+
+        RecyclerView.ViewHolder viewHolder;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        switch (viewType) {
+            case ANSWER:
+                View v1 = inflater.inflate(R.layout.layout_question_answer, parent, false);
+                viewHolder = new QnAAnswerHolder(v1);
+                break;
+            case QUESTION:
+                View v2 = inflater.inflate(R.layout.layout_question, parent, false);
+                viewHolder = new QnAQuestionHolder(v2);
+                break;
+            default:
+                View v = inflater.inflate(R.layout.layout_qna_answer_count, parent, false);
+                viewHolder = new QnAAnswerCountHolder(v);
+                break;
+        }
+        return viewHolder;
+    }
+
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+
+        switch (viewHolder.getItemViewType()) {
+            case ANSWER:
+                QnAAnswerHolder  viewHolder1 = (QnAAnswerHolder) viewHolder;
+                configureViewHolder1(viewHolder1, position);
+                break;
+            case QUESTION:
+                QnAQuestionHolder  viewHolder2 = (QnAQuestionHolder) viewHolder;
+                configureViewHolder2(viewHolder2, position);
+                break;
+            default:
+                QnAAnswerCountHolder  viewHolder3 = (QnAAnswerCountHolder) viewHolder;
+                configureViewHolder3(viewHolder3, position);
+                break;
         }
     }
 
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        QnAAnswers qnaAnswer = mQnAQuestionAnswers.get(position);
-        QnAAnswerHolder qnaAnswerHolder = (QnAAnswerHolder) holder;
+    private void configureViewHolder1(QnAAnswerHolder viewHolder1, int position) {
+        QnAAnswers qnaAnswer =(QnAAnswers) mQnAQuestionAnswers.get(position);
+        QnAAnswerHolder qnaAnswerHolder = viewHolder1;
         String simpleDate = "";
-        String description = "";
         try {
             mSDF.applyLocalizedPattern("yyyy-MM-dd'T'HH:mm:ss");
             Date date = mSDF.parse(qnaAnswer.getAdded_on());
@@ -79,50 +115,46 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
             Log.e(TAG, "Date format unknown: " + qnaAnswer.getAdded_on());
         }
 
-        String answerText = qnaAnswer.getAnswer_text();
-        if (DetectHtml.isHtml(answerText)) {
+        String description = qnaAnswer.getAnswer_text();
+        if (DetectHtml.isHtml(description)) {
             Spanned result;
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                result = Html.fromHtml(answerText, Html.FROM_HTML_MODE_LEGACY);
+                result = Html.fromHtml(description, Html.FROM_HTML_MODE_LEGACY);
             } else {
-                result = Html.fromHtml(answerText);
+                result = Html.fromHtml(description);
             }
-            answerText = result.toString();
+            description = result.toString();
         }
-        description = description + answerText;
-        qnaAnswerHolder.answerText.setText(answerText);
-        qnaAnswerHolder.answerVotes.setText(String.valueOf(qnaAnswer.getUpvotes() - qnaAnswer.getDownvotes()));
+        qnaAnswerHolder.answerText.setText(description);
         String userId = qnaAnswer.getUser_id();
         if (userId != null && userId.equalsIgnoreCase(MainActivity.mProfile.getId())) {
-            qnaAnswerHolder.answerCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.self_comment_card_background));
-            qnaAnswerHolder.userName.setText("Me");
-            description = "you answered " + description;
+            qnaAnswerHolder.askedByUser.setText("Me");
         } else {
-            qnaAnswerHolder.userName.setText(qnaAnswer.getUser());
-            qnaAnswerHolder.answerCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.comment_card_background));
-            description = qnaAnswer.getUser() + " answered " + description;
-        }
-
-        qnaAnswerHolder.mContainer.setContentDescription(description);
-        qnaAnswerHolder.dateAddedOn.setText(simpleDate);
-        qnaAnswerHolder.answerUpvoteButton.setClickable(true);
-        qnaAnswerHolder.answerDownvoteButton.setClickable(true);
-        qnaAnswerHolder.answerUpvoteButton.setSelected(qnaAnswer.getCurrent_user_vote_type() == Constants.LIKE_THING);
-        qnaAnswerHolder.answerDownvoteButton.setSelected(qnaAnswer.getCurrent_user_vote_type() == Constants.DISLIKE_THING);
-        updateUserImage(qnaAnswer.getUser_image(), qnaAnswerHolder.userImage);
-    }
-
-    private void updateUserImage(String image, CircularImageView imageView) {
-        imageView.setDefaultImageResId(R.drawable.ic_profile_default);
-        imageView.setErrorImageResId(R.drawable.ic_profile_default);
-
-        if (image != null && !image.isEmpty()) {
-            imageView.setImageUrl(image, mImageLoader);
-        } else {
-            imageView.setImageUrl(null, mImageLoader);
+            qnaAnswerHolder.askedByUser.setText(qnaAnswer.getUser() +" - "+simpleDate);
         }
     }
+
+    private void configureViewHolder2(QnAQuestionHolder viewHolder2, int position) {
+        QnAQuestions qnAQuestions =(QnAQuestions) mQnAQuestionAnswers.get(position);
+        QnAQuestionHolder qnaAnswerHolder = viewHolder2;
+        if(qnAQuestions == null)
+            return;
+        qnaAnswerHolder.questionText.setText(qnAQuestions.getDesc());
+    }
+
+    private void configureViewHolder3(QnAAnswerCountHolder viewHolder3, int position) {
+
+        String  answerMsg  =(String) mQnAQuestionAnswers.get(position);
+        if(position != 0){
+            viewHolder3.answerCountText.setText(answerMsg);
+            viewHolder3.answerCountText.setBackgroundColor(Color.WHITE);
+            viewHolder3.answerCountText.setTypeface(Typeface.DEFAULT_BOLD);
+        }else {
+            viewHolder3.answerCountText.setText(answerMsg);
+        }
+    }
+
 
     @Override
     public int getItemCount() {
@@ -130,93 +162,44 @@ public class QnAAnswerListAdapterNew extends RecyclerView.Adapter {
     }
 
 
-    private class QnAAnswerHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView answerText;
-        TextView answerVotes;
-        TextView userName;
-        TextView dateAddedOn;
-        ImageButton answerUpvoteButton;
-        ImageButton answerDownvoteButton;
+    private class QnAAnswerHolder extends RecyclerView.ViewHolder {
         CardView answerCard;
-        QnAQuestionDetailFragment.OnQnAAnswerInteractionListener mListener;
-        View mContainer;
-        CircularImageView userImage;
-
-        public QnAAnswerHolder(View itemView, QnAQuestionDetailFragment.OnQnAAnswerInteractionListener listener) {
+        TextView answerText;
+        TextView askedByUser;
+        public QnAAnswerHolder(View itemView) {
             super(itemView);
-
             answerCard = (CardView) itemView.findViewById(R.id.card_qna_answer);
             answerText = (TextView) itemView.findViewById(R.id.qna_answer_text);
-            answerVotes = (TextView) itemView.findViewById(R.id.qna_answer_votes);
-            userName = (TextView) itemView.findViewById(R.id.qna_answer_user_name);
-            dateAddedOn = (TextView) itemView.findViewById(R.id.qna_answer_date_added_on);
-            answerUpvoteButton = (ImageButton) itemView.findViewById(R.id.qna_answer_button_upvote);
-            answerDownvoteButton = (ImageButton) itemView.findViewById(R.id.qna_answer_button_downvote);
-            userImage = (CircularImageView) itemView.findViewById(R.id.user_image);
-            mContainer = itemView;
+            askedByUser = (TextView) itemView.findViewById(R.id.asked_by_user);
+        }
+    }
 
-            mListener = listener;
+    private class QnAQuestionHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        TextView questionText;
+        TextView askedByUser;
+        View questionDivider;
 
-            answerUpvoteButton.setOnClickListener(this);
-            answerDownvoteButton.setOnClickListener(this);
-
+        public QnAQuestionHolder(View itemView) {
+            super(itemView);
+            questionText = (TextView) itemView.findViewById(R.id.qna_question_text);
+            questionDivider = itemView.findViewById(R.id.question_divider);
+            questionDivider.setVisibility(View.GONE);
+            askedByUser = (TextView) itemView.findViewById(R.id.asked_by_user);
             itemView.setOnClickListener(this);
         }
 
         @Override
-        public void onClick(View v) {
-            int connectivityStatus = new NetworkUtils(v.getContext(), null).getConnectivityStatus();
-            switch (v.getId()) {
-                case R.id.qna_answer_button_downvote:
-                    if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
-                        int position = getAdapterPosition();
-                        if (position < mQnAQuestionAnswers.size()) {
-                            QnAAnswers qnAAnswer = mQnAQuestionAnswers.get(position);
-                            if (qnAAnswer.getCurrent_user_vote_type() == Constants.DISLIKE_THING) {
-                                Toast.makeText(mContext, "You can't downvote the downvoted", Toast.LENGTH_SHORT).show();
-                            } else {
-                                answerDownvoteButton.setClickable(false);
-                                if (qnAAnswer.getCurrent_user_vote_type() == Constants.LIKE_THING) {
-                                    mListener.onQnAAnswerVote(Constants.NOT_INTERESTED_THING, position, mQnAPosition);
-                                } else {
-                                    mListener.onQnAAnswerVote(Constants.DISLIKE_THING, position, mQnAPosition);
-                                }
-                            }
-                        }
-                    } else {
-                        this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
-
-                    }
-                    break;
-
-                case R.id.qna_answer_button_upvote:
-                    if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {
-
-                        int position = getAdapterPosition();
-                        if (position < mQnAQuestionAnswers.size()) {
-
-                            QnAAnswers qnAAnswer = mQnAQuestionAnswers.get(position);
-                            if (qnAAnswer.getCurrent_user_vote_type() == Constants.LIKE_THING) {
-                                Toast.makeText(mContext, "You can't upvote the upvoted", Toast.LENGTH_SHORT).show();
-                            } else {
-                                answerUpvoteButton.setClickable(false);
-                                if (qnAAnswer.getCurrent_user_vote_type() == Constants.DISLIKE_THING) {
-                                    mListener.onQnAAnswerVote(Constants.NOT_INTERESTED_THING, position, mQnAPosition);
-
-                                } else {
-                                    mListener.onQnAAnswerVote(Constants.LIKE_THING, position, mQnAPosition);
-                                }
-                            }
-                        }
-                    } else {
-                        this.mListener.displayMessage(R.string.INTERNET_CONNECTION_ERROR);
-                    }
-                    break;
-
-                default: {
-                    break;
-                }
-            }
+        public void onClick(View view) {
+           EventBus.getDefault().post(new Event(AllEvents.ACTION_SIMILAR_QUESTION_CLICK, mQnAQuestionAnswers.get(getAdapterPosition()), null));
         }
     }
+    private class QnAAnswerCountHolder extends RecyclerView.ViewHolder {
+        TextView answerCountText;
+
+        public QnAAnswerCountHolder(View itemView) {
+            super(itemView);
+            answerCountText  =(TextView)itemView;
+        }
+    }
+
 }

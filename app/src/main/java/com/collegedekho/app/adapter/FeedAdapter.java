@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import com.android.volley.toolbox.ImageLoader;
 import com.collegedekho.app.R;
 import com.collegedekho.app.display.feedViews.FeedViewHolder;
+import com.collegedekho.app.display.feedViews.ProfileViewHolder;
 import com.collegedekho.app.display.feedViews.RecoFeedViewHolder;
 import com.collegedekho.app.entities.Feed;
 import com.collegedekho.app.fragment.FeedFragment;
@@ -35,7 +36,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public int lastPosition = -1;
 
     public static final int DEFAULT = 0;
-    public static final int RECOMMENDED_INSTITUTES = 1;
+    public static final int PROFILE_COMPLETION = 1;
+    public static final int RECOMMENDED_INSTITUTES = 2;
 
     public FeedAdapter(Context context, ArrayList<Feed> feedList)
     {
@@ -50,6 +52,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         LayoutInflater inflater = LayoutInflater.from(this.mContext);
         View view;
         switch (viewType) {
+            case FeedAdapter.PROFILE_COMPLETION:
+                view = inflater.inflate(R.layout.layout_profile_completion, parent, false);
+                viewHolder = new ProfileViewHolder(view, this.mContext);
+                break;
             case FeedAdapter.RECOMMENDED_INSTITUTES:
                 view = inflater.inflate(R.layout.feed_reco_ui, parent, false);
                 viewHolder = new RecoFeedViewHolder(view, this.mContext);
@@ -64,9 +70,12 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        final Feed feed = this.mFeedList.get(position);
+        Feed feed = this.mFeedList.get(position);
         switch (feed.getScreen())
         {
+            case Constants.PROFILE_COMPLETION:
+                this.setProfileCompletionInfo((ProfileViewHolder) holder);
+                break;
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
                 this.setRecoFeedViewHolder(feed, (RecoFeedViewHolder) holder, position);
                 break;
@@ -107,6 +116,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Feed feed = this.mFeedList.get(position);
         switch(feed.getScreen())
         {
+            case Constants.PROFILE_COMPLETION:
+                return FeedAdapter.PROFILE_COMPLETION;
             case Constants.WIDGET_RECOMMENDED_INSTITUTES:
                 return FeedAdapter.RECOMMENDED_INSTITUTES;
             default:
@@ -221,8 +232,13 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void setRecoFeedViewHolder(final Feed feed, final RecoFeedViewHolder feedViewHolder, int position)
     {
         feedViewHolder.recoFeedInstitutesUpdate(feed.getResult());
-
         this.mSetAnimation(feedViewHolder.feedCard, position);
+    }
+
+    private void setProfileCompletionInfo(ProfileViewHolder viewHolder)
+    {
+        viewHolder.updateProfileCompletionBar();
+
     }
 
     @Override

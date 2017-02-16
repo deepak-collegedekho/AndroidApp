@@ -135,14 +135,7 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                                 return;
                             }
                         }else {
-                           /* if (profile.getName() == null || profile.getName().isEmpty() ||
-                                    profile.getName().equalsIgnoreCase(getString(R.string.ANONYMOUS_USER)) ||
-                                    profile.getPhone_no() == null || profile.getPhone_no().isEmpty()
-                                    || profile.getPhone_no().length() < 10) {
-                                mAskForNameAndPhone(value);
-                                return;
-                            }*/
-                            mListener.onRequestNumberVerification(mMyFutureBuddies.getResource_uri(),mMyFutureBuddies.getIndex(), mMyFBCommentsSet.size(),value);
+                          mListener.onRequestNumberVerification(mMyFutureBuddies.getResource_uri(),mMyFutureBuddies.getIndex(), mMyFBCommentsSet.size(),value);
                           return;
                         }
                     }else if(profile.getName() == null || profile.getName().isEmpty() ||
@@ -224,43 +217,6 @@ public class MyFutureBuddiesFragment extends BaseFragment{
                 }
             });
     }
-    private void mAskForNameAndPhone(final String chatMsg){
-        // show dialog for name if user name is not present
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.name_phone_dialog);
-        dialog.setCanceledOnTouchOutside(true);
-        TextView submit = (TextView) dialog.findViewById(R.id.name_submit);
-        dialog.show();
-
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String name = ((EditText) dialog.findViewById(R.id.user_name)).getText().toString();
-                if (name.length() <= 0) {
-                    mListener.displayMessage(R.string.NAME_EMPTY);
-                    return;
-                } else if (!Utils.isValidName(name)) {
-                    mListener.displayMessage(R.string.NAME_INVALID);
-                    return;
-                }
-                String phone = ((EditText) dialog.findViewById(R.id.profile_edit_phone)).getText().toString();
-                if ( phone.length() > 0) {
-                    if (phone.length() <= 9 || !Utils.isValidPhone(phone)) {
-                        mListener.displayMessage(R.string.PHONE_INVALID);
-                        return;
-                    }
-                }
-
-                dialog.dismiss();
-                HashMap<String, String> hashMap = new HashMap<>();
-                hashMap.put(MainActivity.getResourceString(R.string.USER_NAME), name);
-                hashMap.put(MainActivity.getResourceString(R.string.USER_PHONE), phone);
-                //mListener.onNameAndNumberUpdated(hashMap,mMyFutureBuddies.getResource_uri(),mMyFutureBuddies.getIndex(), mMyFBCommentsSet.size(), chatMsg);
-            }
-        });
-    }
-
     private void mHandleOtherAppMessage(){
         int connectivityStatus= NetworkUtils.getConnectivityStatus();
         if (connectivityStatus != Constants.TYPE_NOT_CONNECTED) {

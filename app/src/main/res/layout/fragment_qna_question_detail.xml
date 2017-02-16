@@ -242,7 +242,7 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <include layout="@layout/layout_qna_answer_question"
+    <include layout="@layout/dialog_qna_answer"
         android:id="@+id/qna_answer_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

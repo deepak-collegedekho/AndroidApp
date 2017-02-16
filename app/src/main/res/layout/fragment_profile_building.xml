@@ -106,12 +106,14 @@
                 android:textStyle="bold"
                 android:textSize="@dimen/m18sp"
                 android:text="Education  :"
+                android:textColor="@color/white"
                 android:importantForAccessibility="no"/>
 
             <TextView
                 android:id="@+id/user_education_level"
                 android:layout_width="0dp"
                 android:layout_weight=".51"
+                android:textColor="@color/white"
                 style="@style/AppTheme.profileTextViewTitle"
                 android:importantForAccessibility="no"/>
 
@@ -153,6 +155,7 @@
                 android:textStyle="bold"
                 android:textSize="@dimen/m18sp"
                 android:text="Streams    :"
+                android:textColor="@color/white"
                 android:importantForAccessibility="no"/>
 
             <TextView
@@ -160,6 +163,7 @@
                 android:layout_width="0dp"
                 android:layout_weight=".51"
                 style="@style/AppTheme.profileTextViewTitle"
+                android:textColor="@color/white"
                 android:importantForAccessibility="no"/>
 
             <ImageView
@@ -199,6 +203,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:textSize="@dimen/m18sp"
+                android:textColor="@color/white"
                 android:text="Exams       :"
                 android:importantForAccessibility="no"/>
 
@@ -207,6 +212,7 @@
                 android:layout_width="0dp"
                 android:layout_weight=".51"
                 style="@style/AppTheme.profileTextViewTitle"
+                android:textColor="@color/white"
                 android:importantForAccessibility="no"/>
 
             <ImageView

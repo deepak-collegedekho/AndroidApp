@@ -23,6 +23,7 @@ public class QnAQuestions implements Parcelable {
 
     private String resource_uri;
     private String uri;
+    private String id;
     private int answers_count = 0;
     private ArrayList<String> tags;
     private String title;
@@ -44,6 +45,7 @@ public class QnAQuestions implements Parcelable {
     private String state;
     private ArrayList<QnAAnswers> answer_set;
     private int index;
+    private ArrayList<String> similar_questions;
 
     public QnAQuestions() {
     }
@@ -51,6 +53,7 @@ public class QnAQuestions implements Parcelable {
     public QnAQuestions(Parcel source) {
         resource_uri = source.readString();
         uri = source.readString();
+        id = source.readString();
         answers_count = source.readInt();
         title = source.readString();
         desc = source.readString();
@@ -70,6 +73,7 @@ public class QnAQuestions implements Parcelable {
         course = source.readString();
         city = source.readString();
         state = source.readString();
+        source.readStringList(similar_questions);
         answer_set = source.createTypedArrayList(QnAAnswers.CREATOR);
         if(answer_set == null)
             answer_set = new ArrayList<>();
@@ -85,6 +89,7 @@ public class QnAQuestions implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(resource_uri);
         dest.writeString(uri);
+        dest.writeString(id);
         dest.writeInt(answers_count);
         dest.writeString(title);
         dest.writeString(desc);
@@ -104,6 +109,7 @@ public class QnAQuestions implements Parcelable {
         dest.writeString(city);
         dest.writeString(state);
         dest.writeTypedList(answer_set);
+        dest.writeStringList(similar_questions);
         dest.writeInt(index);
     }
 
@@ -121,6 +127,14 @@ public class QnAQuestions implements Parcelable {
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public int getAnswers_count() {
@@ -289,5 +303,13 @@ public class QnAQuestions implements Parcelable {
 
     public void setCurrent_user_vote_type(int current_user_vote_type) {
         this.current_user_vote_type = current_user_vote_type;
+    }
+
+    public ArrayList<String> getSimilar_questions() {
+        return similar_questions;
+    }
+
+    public void setSimilar_questions(ArrayList<String> similar_questions) {
+        this.similar_questions = similar_questions;
     }
 }

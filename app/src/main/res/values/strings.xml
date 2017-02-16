@@ -651,5 +651,8 @@
     <string name="contact_permission">We can verify your android id to make it a more personalized experience for you. We do not share this information with anyone. Allow for contacts in the next step.</string>
     <string name="feed_not_found">No Info Available</string>
     <string name="counselor_chat">Counselor Chat</string>
+    <string name="similar_question">similar_question</string>
+    <string name="profile_completion_text"><![CDATA[Get Better Recommendation & Personalized Feed]]></string>
+    <string name="complete_your_profile">Complete Your Profile</string>
 </resources>
 

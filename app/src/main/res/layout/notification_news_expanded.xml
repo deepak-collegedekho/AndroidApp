@@ -35,7 +35,7 @@
             android:gravity="bottom"
             android:layout_gravity="left"
             android:id="@+id/expanded_notification_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="11dp"
             android:text="Example Title1\nTitle2"

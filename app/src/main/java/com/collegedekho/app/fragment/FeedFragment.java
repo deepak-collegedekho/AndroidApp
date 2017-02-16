@@ -43,7 +43,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     RecyclerView mFeedRecyclerView;
     SwipeRefreshLayout mSwipeRefreshLayout;
     LinearLayout mEmptyLayout;
-    TextView mEmptTV;
+    TextView mEmptyTV;
 
     private ArrayList<Feed> mFeedList;
     private String mFeedFragmentNextURL;
@@ -75,15 +75,15 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         }else {
             this.mFeedList = new ArrayList<>();
         }
+        Feed feed = new Feed();
+        feed.setScreen(Constants.PROFILE_COMPLETION);
+        this.mFeedList.add(0,feed);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
-
-        return rootView;
+        return inflater.inflate(R.layout.fragment_feed, container, false);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         this.mFeedRecyclerView  = (RecyclerView) view.findViewById(R.id.feed_list);
         this.mSwipeRefreshLayout  = (SwipeRefreshLayout) view.findViewById(R.id.feed_swipe_refresh_container);
         this.mEmptyLayout  = (LinearLayout)view.findViewById(R.id.feed_empty_layout);
-        this.mEmptTV  = (TextView)view.findViewById(R.id.feed_empty);
+        this.mEmptyTV  = (TextView)view.findViewById(R.id.feed_empty);
         view.findViewById(R.id.feed_empty).setOnClickListener(this);
 
         this.mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -185,6 +185,9 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 this.mFeedList.clear();
             }
 
+            Feed feed = new Feed();
+            feed.setScreen(Constants.PROFILE_COMPLETION);
+            this.mFeedList.add(feed);
             this.mFeedList.addAll(feedList);
             this.mFeedAdapter.updateFeedList(this.mFeedList);
             super.mNextUrl = this.mFeedFragmentNextURL = next;
@@ -206,14 +209,16 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         if(this.mFeedList == null || this.mFeedList.isEmpty()){
             this.mEmptyLayout.setVisibility(View.VISIBLE);
             if(NetworkUtils.getConnectivityStatus() == Constants.TYPE_NOT_CONNECTED) {
-                this.mEmptTV.setText(getString(R.string.internet_not_available));
+                this.mEmptyTV.setText(getString(R.string.internet_not_available));
             }else{
-                this.mEmptTV.setText(getString(R.string.feed_not_found));
+                this.mEmptyTV.setText(getString(R.string.feed_not_found));
             }
         }else{
             this.mEmptyLayout.setVisibility(View.GONE);
         }
     }
+
+
 
     @Override
     public void show() {

@@ -74,7 +74,7 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     public int currentTabId;
     private MainActivity mMainActivity;
     private static final char[] NUMBER_LIST = TickerUtils.getDefaultNumberList();
-    private static CDRecommendedInstituteFragment mInstance ;
+    private static CDRecommendedInstituteFragment sInstance ;
 
     public CDRecommendedInstituteFragment() {
         // Required empty public constructor
@@ -83,8 +83,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
     public static CDRecommendedInstituteFragment newInstance(ArrayList<Institute> institutes, String title,String next,
                                                               int recommendedCount, int wishListCount, int  buzzListCount, int undecidedCount, int category) {
         synchronized (CDRecommendedInstituteFragment.class) {
-            if(mInstance == null) {
-                mInstance = new CDRecommendedInstituteFragment();
+            if(sInstance == null) {
+                sInstance = new CDRecommendedInstituteFragment();
             }
             Bundle args = new Bundle();
             args.putParcelableArrayList(ARG_INSTITUTE, institutes);
@@ -95,8 +95,8 @@ public class CDRecommendedInstituteFragment extends BaseFragment implements Simp
             args.putInt(ARG_BUZZLIST_INSTITUTE_COUNT, buzzListCount);
             args.putInt(ARG_UNDECIDED_INSTITUTE_COUNT, undecidedCount);
             args.putInt(ARG_CARD_CATEGORY, category);
-            mInstance.setArguments(args);
-            return mInstance;
+            sInstance.setArguments(args);
+            return sInstance;
         }
     }
 

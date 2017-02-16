@@ -62,6 +62,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.collegedekho.app.activity.MainActivity.mProfile;
+
 
 /**
  * Created by {sureshsaini} on {17/5/16.}
@@ -70,7 +72,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     private final static String TAG = ProfileFragment.class.getSimpleName();
     private final static String PARAM1  = "param1";
-    public Profile mProfile ;
     private UserProfileListener mListener;
     private TextView mProfileName;
     private Uri mImageCaptureUri;
@@ -96,14 +97,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
-        if(args != null) {
-            this.mProfile = args.getParcelable(PARAM1);
-        }
-    }
 
     @Nullable
     @Override
@@ -188,7 +181,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
     }
 
     public void updateUserProfile() {
-        mProfile = MainActivity.mProfile;
         if (mProfile == null && !isAdded())
             return;
         if(mUserImageLayout != null)
@@ -393,7 +385,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
         }else
         {
             //if nothing is set in profile, dig in current passing year from profile and set it as admission year
-            int currentEducationPassingYear = MainActivity.mProfile.getCurrent_passing_year();
+            int currentEducationPassingYear = mProfile.getCurrent_passing_year();
 
             //if current passing year is not set set current year as admission year
             if (currentEducationPassingYear <= 0)
@@ -407,7 +399,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
             ((MainActivity) getActivity()).requestForProfile(hashMap);
 
-            MainActivity.mProfile.setPreferred_year_of_admission(currentEducationPassingYear);
+            mProfile.setPreferred_year_of_admission(currentEducationPassingYear);
         }
 
 
@@ -746,7 +738,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             case R.id.profile_other_info_save_btn:
                 mRequestForUpdateOtherInfo();
                 break;
-
             default:
                 break;
         }
@@ -1458,7 +1449,7 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
             {
                 //set current passing year, if set
                 //else set current year as passing year if nothing is set in the profile
-                int preferredCurrentPassingYear = MainActivity.mProfile.getCurrent_passing_year();
+                int preferredCurrentPassingYear = mProfile.getCurrent_passing_year();
 
                 if (preferredCurrentPassingYear > 0)
                     preferredYearSpinner.setSelectedIndex(ProfileMacro.GetYearIndexInAddmissionYearList(preferredCurrentPassingYear));
@@ -2106,13 +2097,13 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
 
     public void updateProfileImage(){
-        if(mRootView != null && MainActivity.mProfile != null) {
+        if(mRootView != null && mProfile != null) {
             // set profile error image
             CircularImageView mProfileImage = (CircularImageView) mRootView.findViewById(R.id.profile_image);
             mProfileImage.setDefaultImageResId(R.drawable.ic_profile_default);
             mProfileImage.setErrorImageResId(R.drawable.ic_profile_default);
 
-            String image = MainActivity.mProfile.getImage();
+            String image = mProfile.getImage();
             mProfileImage.setImageUrl(image, MySingleton.getInstance(getActivity()).getImageLoader());
         }
     }
@@ -2223,7 +2214,6 @@ public class ProfileFragment extends BaseFragment implements ProfileFragmentList
 
     public void mRefreshProfileOnResponse(Profile profile){
         if(profile != null){
-            this.mProfile = profile;
             this.updateUserProfile();
         }
         this.mSwipeRefreshLayout.setRefreshing(false);

@@ -31,9 +31,15 @@ public class SplashLoginFragment extends  BaseFragment {
     private TickerView mInstituteCountTicker4 ;
     private TickerView mInstituteCountTicker5 ;
     private TickerView mInstituteCountTickerPlus ;
+    private static SplashLoginFragment sInstance ;
 
     public static SplashLoginFragment newInstance() {
-        return new SplashLoginFragment();
+        synchronized (SplashLoginFragment.class){
+            if(sInstance == null) {
+                sInstance = new SplashLoginFragment();
+            }
+            return sInstance;
+        }
     }
 
     public SplashLoginFragment(){
@@ -42,8 +48,7 @@ public class SplashLoginFragment extends  BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-       View view = inflater.inflate(R.layout.fragment_splash_login, container, false);
-        return view;
+       return inflater.inflate(R.layout.fragment_splash_login, container, false);
     }
 
     @Override
@@ -137,7 +142,6 @@ public class SplashLoginFragment extends  BaseFragment {
         }
         switch (v.getId()){
             case R.id.existing_user_layout:
-
                 if(mListener != null)
                     mListener.onExistingUserLogin();
                 break;

@@ -1118,6 +1118,10 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/m15dp"
+                        android:paddingRight="@dimen/m50dp"
+                        android:paddingTop="@dimen/m10dp"
+                        android:paddingBottom="@dimen/m10dp"
                         android:weightSum="1">
 
                         <Button
@@ -1129,10 +1133,7 @@
                             android:text="My Feed"
                             android:textAllCaps="false"
                             android:gravity="center"
-                            android:layout_marginLeft="@dimen/m30dp"
-                            android:layout_marginRight="@dimen/m15dp"
-                            android:layout_marginTop="@dimen/m10dp"
-                            android:layout_marginBottom="@dimen/m10dp"
+                            android:layout_marginRight="@dimen/m10dp"
                             android:padding="@dimen/m5dp"
                             android:textSize="14sp"
                             android:textColor="@color/white"
@@ -1147,10 +1148,6 @@
                             android:textAllCaps="false"
                             android:text="Recommended Colleges"
                             android:gravity="center"
-                            android:layout_marginLeft="@dimen/m15dp"
-                            android:layout_marginRight="@dimen/m30dp"
-                            android:layout_marginTop="@dimen/m10dp"
-                            android:layout_marginBottom="@dimen/m10dp"
                             android:padding="@dimen/m5dp"
                             android:textSize="14sp"
                             android:textColor="@color/white"
